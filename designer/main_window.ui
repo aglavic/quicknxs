@@ -13,6 +13,11 @@
   <property name="windowTitle">
    <string>QuickNXS</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="applications-utilities">
+    <normaloff/>
+   </iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -157,7 +162,7 @@
                <item row="0" column="2">
                 <widget class="QLabel" name="datasetName">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -173,7 +178,7 @@
                <item row="0" column="4">
                 <widget class="QLabel" name="datasetPCharge">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -189,7 +194,7 @@
                <item row="1" column="2">
                 <widget class="QLabel" name="datasetDangle">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -205,7 +210,7 @@
                <item row="1" column="4">
                 <widget class="QLabel" name="datasetSangle">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -221,7 +226,7 @@
                <item row="2" column="4">
                 <widget class="QLabel" name="datasetAi">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -237,7 +242,7 @@
                <item row="2" column="2">
                 <widget class="QLabel" name="datasetTth">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -253,7 +258,7 @@
                <item row="1" column="6">
                 <widget class="QLabel" name="datasetROI">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -269,7 +274,7 @@
                <item row="0" column="6">
                 <widget class="QLabel" name="datasetTotCounts">
                  <property name="text">
-                  <string>    </string>
+                  <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -406,7 +411,7 @@
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_5">
                  <item>
-                  <widget class="QPushButton" name="pushButton">
+                  <widget class="QPushButton" name="reduceButton">
                    <property name="text">
                     <string>Reduce</string>
                    </property>
@@ -582,7 +587,16 @@
     <addaction name="actionNext_File"/>
     <addaction name="actionPrevious_File"/>
    </widget>
+   <widget class="QMenu" name="menuReduce">
+    <property name="title">
+     <string>Reduce</string>
+    </property>
+    <addaction name="actionNorm"/>
+    <addaction name="actionAddPlot"/>
+    <addaction name="actionClear"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuReduce"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
@@ -735,6 +749,16 @@
          </property>
          <property name="value">
           <double>50.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>%</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -944,7 +968,9 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset theme="document-open">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Open...</string>
@@ -958,7 +984,9 @@
   </action>
   <action name="actionNext_File">
    <property name="icon">
-    <iconset theme="go-next"/>
+    <iconset theme="go-next">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Next File</string>
@@ -972,7 +1000,9 @@
   </action>
   <action name="actionPrevious_File">
    <property name="icon">
-    <iconset theme="go-previous"/>
+    <iconset theme="go-previous">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Previous File</string>
@@ -985,8 +1015,13 @@
    </property>
   </action>
   <action name="actionNorm">
+   <property name="icon">
+    <iconset theme="view-fullscreen">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
-    <string>Norm</string>
+    <string>Set Normalization</string>
    </property>
    <property name="toolTip">
     <string>Take current dataset for normalization (Ctrl+N)</string>
@@ -996,8 +1031,13 @@
    </property>
   </action>
   <action name="actionAddPlot">
+   <property name="icon">
+    <iconset theme="list-add">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
-    <string>Keep</string>
+    <string>Keep Plot in List</string>
    </property>
    <property name="toolTip">
     <string>Add to current dataset to data reduction list (Ctrl+K)</string>
@@ -1007,8 +1047,13 @@
    </property>
   </action>
   <action name="actionClear">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
-    <string>Clear</string>
+    <string>Clear List</string>
    </property>
    <property name="toolTip">
     <string>Remove all plots from data reduction list</string>
@@ -1351,6 +1396,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reduceButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduceDatasets()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>560</x>
+     <y>776</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -1365,5 +1426,6 @@
   <slot>replotProjections()</slot>
   <slot>nextFile()</slot>
   <slot>prevFile()</slot>
+  <slot>reduceDatasets()</slot>
  </slots>
 </ui>

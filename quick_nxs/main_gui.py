@@ -540,6 +540,20 @@ class MainGUI(QtGui.QMainWindow):
     if self.ref_data is None:
       return
     # collect current settings
+    channels=map(lambda item: item.split('entry-')[1], self.xydata.keys())
+    channels.sort()
+    if self.add_to_ref==[]:
+      self.ref_list_channels=channels
+    elif self.ref_list_channels!=channels:
+      QtGui.QMessageBox.information(self, u'Wrong Channels',
+u'''The active dataset has not the same channels 
+as the ones already in the list:
+
+%s
+!=
+%s'''%(channels, self.ref_list_channels),
+                                    QtGui.QMessageBox.Close)
+      return
     try:
       index=int(self.active_file.split('REF_M_', 1)[1].split('_', 1)[0])
     except:
@@ -583,6 +597,9 @@ class MainGUI(QtGui.QMainWindow):
     self.add_to_ref=[]
     self.ui.reductionTable.setRowCount(0)
     self.plot_refl()
+
+  def reduceDatasets(self):
+    pass
 
   def plotMouseEvent(self, event):
     if event.inaxes is None:
