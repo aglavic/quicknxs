@@ -79,20 +79,68 @@
                <string>Active Dataset Information</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_15">
+               <item row="2" column="3">
+                <widget class="QLabel" name="label_12">
                  <property name="text">
-                  <string>2Θ</string>
+                  <string>SANGLE</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_8">
+               <item row="3" column="2">
+                <widget class="QLabel" name="datasetTth">
                  <property name="text">
-                  <string>Name</string>
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="margin">
+                  <number>2</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="4">
+                <widget class="QLabel" name="datasetAi">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="margin">
+                  <number>2</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_11">
+                 <property name="text">
+                  <string>DANGLE</string>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="6">
+                <widget class="QLabel" name="datasetTotCounts">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="margin">
+                  <number>2</number>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -109,58 +157,24 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_11">
+               <item row="2" column="6">
+                <widget class="QLabel" name="datasetROI">
                  <property name="text">
-                  <string>DANGLE</string>
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="margin">
+                  <number>2</number>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="3">
-                <widget class="QLabel" name="label_12">
-                 <property name="text">
-                  <string>SANGLE</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="3">
-                <widget class="QLabel" name="label_9">
-                 <property name="text">
-                  <string>Proton Charge</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="3">
-                <widget class="QLabel" name="label_13">
-                 <property name="text">
-                  <string>αi-calc</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="5">
-                <widget class="QLabel" name="label_14">
-                 <property name="text">
-                  <string>Counts ROI</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="datasetName">
+               <item row="2" column="2">
+                <widget class="QLabel" name="datasetDangle">
                  <property name="text">
                   <string/>
                  </property>
@@ -191,24 +205,28 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="datasetDangle">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
+                  <string>Name</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="4">
-                <widget class="QLabel" name="datasetSangle">
+               <item row="2" column="5">
+                <widget class="QLabel" name="label_14">
+                 <property name="text">
+                  <string>Counts ROI</string>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="datasetName">
                  <property name="text">
                   <string/>
                  </property>
@@ -224,7 +242,7 @@
                 </widget>
                </item>
                <item row="2" column="4">
-                <widget class="QLabel" name="datasetAi">
+                <widget class="QLabel" name="datasetSangle">
                  <property name="text">
                   <string/>
                  </property>
@@ -239,51 +257,47 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="datasetTth">
+               <item row="0" column="3">
+                <widget class="QLabel" name="label_9">
                  <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
+                  <string>Proton Charge</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="6">
-                <widget class="QLabel" name="datasetROI">
+               <item row="3" column="3">
+                <widget class="QLabel" name="label_13">
                  <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
+                  <string>αi-calc</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="6">
-                <widget class="QLabel" name="datasetTotCounts">
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_15">
                  <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
+                  <string>2Θ</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="5">
+                <widget class="QLabel" name="label_17">
+                 <property name="text">
+                  <string>Direct Pixel</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="6">
+                <widget class="QLabel" name="datasetDirectPixel">
+                 <property name="text">
+                  <string>      </string>
                  </property>
                 </widget>
                </item>
@@ -945,6 +959,32 @@
        </property>
       </widget>
      </item>
+     <item row="5" column="2">
+      <widget class="QDoubleSpinBox" name="directPixelOverwrite">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>-1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>300.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>Overwrite Direct Pixel</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -1398,7 +1438,7 @@
   </connection>
   <connection>
    <sender>reduceButton</sender>
-   <signal>clicked()</signal>
+   <signal>pressed()</signal>
    <receiver>MainWindow</receiver>
    <slot>reduceDatasets()</slot>
    <hints>

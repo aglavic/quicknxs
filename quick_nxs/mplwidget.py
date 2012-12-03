@@ -88,6 +88,12 @@ class MPLWidget(QtGui.QWidget):
     '''
     return self.canvas.ax.semilogy(*args, **opts)
 
+  def errorbar(self, *args, **opts):
+    '''
+      Convenience wrapper for self.canvas.ax.semilogy
+    '''
+    return self.canvas.ax.errorbar(*args, **opts)
+
   def pcolormesh(self, *args, **opts):
     '''
       Convenience wrapper for self.canvas.ax.plot
@@ -116,6 +122,12 @@ class MPLWidget(QtGui.QWidget):
 
   def set_ylabel(self, label):
     return self.canvas.ax.set_ylabel(label)
+
+  def set_xscale(self, scale):
+    return self.canvas.ax.set_xscale(scale)
+
+  def set_yscale(self, scale):
+    return self.canvas.ax.set_yscale(scale)
 
   def clear_fig(self):
     self.cplot=None

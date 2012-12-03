@@ -4,26 +4,30 @@
 '''
 
 import os
-import h5py
 from glob import glob
 #from time import sleep
-from numpy import where, pi, sin, newaxis, isnan, maximum, arange, exp
+from numpy import where, pi, newaxis, isnan, maximum, arange, exp
 from scipy.stats.mstats import mquantiles
 from cPickle import load, dump
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
+from . import data_reduction
 from .main_window import Ui_MainWindow
+from .plot_dialog import Ui_Dialog as UiPlot
+from .gui_utils import ReduceDialog
 from .instrument_constants import *
 from .mpfit import mpfit
 
 class MainGUI(QtGui.QMainWindow):
   active_folder=u'.'
   active_file=u''
+  ref_list_channels=[]
   ref_data=None
   ref_norm=None
   auto_change_active=False
   add_to_ref=[]
   color=None
+  open_plots=[] # to keep non modal dialogs open
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -82,35 +86,15 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Open a new datafile and plot the data.
     '''
-    fdata=h5py.File(filename)
+    data=data_reduction.read_file(filename)
     folder, base=os.path.split(filename)
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     self.active_file=base
-    channels=fdata.keys()
-    xy={}
-    xtof={}
-    for channel in channels:
-      if fdata[channel][u'total_counts'].value[0]==0:
-        continue
-      norm=fdata[channel]['proton_charge'].value[0]
-      xy[channel]=fdata[channel]['bank1']['data_x_y'].value.transpose().astype(float)/norm
-      xtof[channel]=fdata[channel]['bank1']['data_x_time_of_flight'].value.astype(float)/norm
-    norm=fdata['entry-Off_Off']['proton_charge'].value[0]
-    self.fulldata={
-         'pc': norm,
-         'counts': fdata['entry-Off_Off']['total_counts'].value[0],
-         'data': fdata['entry-Off_Off']['bank1']['data'].value.astype(float)/norm, # 3D dataset
-         'tof': fdata['entry-Off_Off']['bank1']['time_of_flight'].value,
-         'dangle': fdata['entry-Off_Off']['instrument']['bank1']['DANGLE']['value'].value[0],
-         'tth': fdata['entry-Off_Off']['instrument']['bank1']['DANGLE']['value'].value[0]-
-                fdata['entry-Off_Off']['instrument']['bank1']['DANGLE0']['value'].value[0],
-         'ai': fdata['entry-Off_Off']['sample']['SANGLE']['value'].value[0],
-         'dp': fdata['entry-Off_Off']['instrument']['bank1']['DIRPIX']['value'].value[0],
-                   }
-    fdata.close()
-    self.xydata=xy
-    self.xtofdata=xtof
+    self.fulldata=data[data['channels'][0]]
+    self.xydata=data['xydata']
+    self.xtofdata=data['xtofdata']
+    self.channels=data['channels']
     self.updateLabels()
     self.calcReflParams()
     self.plotActiveTab()
@@ -191,8 +175,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
       X vs. Y and X vs. Tof for main channel.
     '''
-    xy=self.xydata['entry-Off_Off']
-    xtof=self.xtofdata['entry-Off_Off']
+    xy=self.xydata[0]
+    xtof=self.xtofdata[0]
     if self.ui.normalizeXTof.isChecked() and self.ref_norm is not None:
       # normalize ToF dataset for wavelength distribution
       xtof=xtof.astype(float)/self.ref_norm[newaxis, :]
@@ -220,97 +204,73 @@ class MainGUI(QtGui.QMainWindow):
       X vs. Y plots for all channels.
     '''
     data=self.xydata
-    plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm]
+    plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_mp, self.ui.xy_pm]
     imin=1e20
     imax=1e-20
-    for d in data.values():
+    for d in data:
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
-    self.ui.xy_pp.imshow(data['entry-Off_Off'], log=True, imin=imin, imax=imax,
-                         aspect='auto', cmap=self.color)
-    if 'entry-On_Off' in data:
+
+    if len(data)>1:
       self.ui.frame_xy_mm.show()
-      if 'entry-Off_On' in data:
-        self.ui.xy_mp.imshow(data['entry-On_Off'], log=True, imin=imin, imax=imax,
-                             aspect='auto', cmap=self.color)
-        self.ui.xy_pm.imshow(data['entry-Off_On'], log=True, imin=imin, imax=imax,
-                             aspect='auto', cmap=self.color)
-        self.ui.xy_mm.imshow(data['entry-On_On'], log=True, imin=imin, imax=imax,
-                             aspect='auto', cmap=self.color)
-        self.ui.xy_pp.set_title(u'(++)')
-        self.ui.xy_mm.set_title(u'(--)')
-        self.ui.xy_pm.set_title(u'(+-)')
-        self.ui.xy_mp.set_title(u'(-+)')
+      if len(data)==4:
         self.ui.frame_xy_sf.show()
       else:
-        self.ui.xy_mm.imshow(data['entry-On_Off'], log=True, imin=imin, imax=imax,
-                             aspect='auto', cmap=self.color)
-        self.ui.xy_pp.set_title(u'(+)')
-        self.ui.xy_mm.set_title(u'(-)')
         self.ui.frame_xy_sf.hide()
     else:
       self.ui.frame_xy_mm.hide()
       self.ui.frame_xy_sf.hide()
-    for plot in plots:
-      plot.set_xlabel(u'x [pix]')
-      plot.set_ylabel(u'y [pix]')
-      if plot.cplot is not None:
-        plot.cplot.set_clim([imin, imax])
-      if plot.cplot is not None and self.ui.show_colorbars.isChecked() and plot.cbar is None:
-        plot.cbar=plot.canvas.fig.colorbar(plot.cplot)
-      plot.draw()
+
+    for i, datai in enumerate(data):
+      plots[i].imshow(datai, log=True, imin=imin, imax=imax,
+                           aspect='auto', cmap=self.color)
+      plots[i].set_title(self.channels[i])
+      plots[i].set_xlabel(u'x [pix]')
+      plots[i].set_ylabel(u'y [pix]')
+      if plots[i].cplot is not None:
+        plots[i].cplot.set_clim([imin, imax])
+      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
+        plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+      plots[i].draw()
 
   def plot_xtof(self):
     '''
       X vs. ToF plots for all channels.
     '''
     data=self.xtofdata
-    plots=[self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm]
+    plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_mp, self.ui.xtof_pm]
     if self.ui.normalizeXTof.isChecked() and self.ref_norm is not None:
       # normalize all datasets for wavelength distribution
-      data_new={}
-      for key, ds in data.items():
-        data_new[key]=ds.astype(float)/self.ref_norm[newaxis, :]
-        data_new[key][isnan(data_new[key])]=0.
+      data_new=[]
+      for ds in data:
+        data_new.append(ds.astype(float)/self.ref_norm[newaxis, :])
+        data_new[-1][isnan(data_new[-1])]=0.
       data=data_new
     imin=1e20
     imax=1e-20
-    for d in data.values():
+    for d in data:
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
-    self.ui.xtof_pp.imshow(data['entry-Off_Off'], log=True, imin=imin, imax=imax,
-                           aspect='auto', cmap=self.color)
-    if 'entry-On_Off' in data:
+    if len(data)>1:
       self.ui.frame_xtof_mm.show()
-      if 'entry-Off_On' in data:
-        self.ui.xtof_mp.imshow(data['entry-On_Off'], log=True, imin=imin, imax=imax,
-                               aspect='auto', cmap=self.color)
-        self.ui.xtof_pm.imshow(data['entry-Off_On'], log=True, imin=imin, imax=imax,
-                               aspect='auto', cmap=self.color)
-        self.ui.xtof_mm.imshow(data['entry-On_On'], log=True, imin=imin, imax=imax,
-                               aspect='auto', cmap=self.color)
-        self.ui.xtof_pp.set_title(u'(++)')
-        self.ui.xtof_mm.set_title(u'(--)')
-        self.ui.xtof_pm.set_title(u'(+-)')
-        self.ui.xtof_mm.set_title(u'(-+)')
+      if len(data)==4:
         self.ui.frame_xtof_sf.show()
       else:
-        self.ui.xtof_mm.imshow(data['entry-On_Off'], log=True, imin=imin, imax=imax,
-                               aspect='auto', cmap=self.color)
-        self.ui.xtof_pp.set_title(u'(+)')
-        self.ui.xtof_mm.set_title(u'(-)')
         self.ui.frame_xtof_sf.hide()
     else:
       self.ui.frame_xtof_mm.hide()
       self.ui.frame_xtof_sf.hide()
-    for plot in plots:
-      plot.set_xlabel(u'ToF [Channel]')
-      plot.set_ylabel(u'x [pix]')
-      if plot.cplot is not None:
-        plot.cplot.set_clim([imin, imax])
-      if plot.cplot is not None and self.ui.show_colorbars.isChecked() and plot.cbar is None:
-        plot.cbar=plot.canvas.fig.colorbar(plot.cplot)
-      plot.draw()
+    for i, datai in enumerate(data):
+      plots[i].imshow(datai, log=True, imin=imin, imax=imax,
+                           aspect='auto', cmap=self.color)
+      plots[i].set_title(self.channels[i])
+      plots[i].set_xlabel(u'ToF [Channel]')
+      plots[i].set_ylabel(u'x [pix]')
+      if plots[i].cplot is not None:
+        plots[i].cplot.set_clim([imin, imax])
+      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
+        plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+      plots[i].draw()
 
   def updateLabels(self):
     d=self.fulldata
@@ -321,15 +281,16 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.datasetDangle.setText(u"%.3f"%d['dangle'])
     self.ui.datasetTth.setText(u"%.3f"%d['tth'])
     self.ui.datasetSangle.setText(u"%.3f"%d['ai'])
+    self.ui.datasetDirectPixel.setText(u"%.1f"%d['dp'])
 
   def calcReflParams(self):
     '''
       Calculate x and y regions for reflectivity extraction and put them in the
       entry fields.
     '''
-    data=self.xydata['entry-Off_Off']
+    data=self.xydata[0]
     if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata['entry-Off_Off']
+      d2=self.xtofdata[0]
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
     else:
       xproj=data.max(axis=0)
@@ -338,7 +299,11 @@ class MainGUI(QtGui.QMainWindow):
     # calculate approximate peak position
     tth_bank=self.fulldata['tth']*pi/180.
     ai=self.fulldata['ai']*pi/180.
-    pix_position=self.fulldata['dp']-(ai*2-tth_bank)/RAD_PER_PIX
+    if self.ui.directPixelOverwrite.value()>=0:
+      dp=self.ui.directPixelOverwrite.value()
+    else:
+      dp=self.fulldata['dp']
+    pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
 
     # find the first peak which is above 10% of the maximum
     x_peaks=where((xproj[3:-1]<=xproj[2:-2])&(xproj[1:-3]<=xproj[2:-2])
@@ -390,9 +355,9 @@ class MainGUI(QtGui.QMainWindow):
       exceeded by a certain number of points. This can be helpful to better
       separate the specular reflection from bragg-sheets
     '''
-    data=self.xydata['entry-Off_Off']
+    data=self.xydata[0]
     if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata['entry-Off_Off']
+      d2=self.xtofdata[0]
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1)
     else:
       xproj=data.max(axis=0)
@@ -456,52 +421,52 @@ class MainGUI(QtGui.QMainWindow):
       measurements can be used for normalization.
     '''
     data=self.fulldata['data']
-    tof=self.fulldata['tof']
-    tof=(tof[1:]+tof[:-1])/2.
-    v=TOF_DISTANCE/tof*1e6 #m/s
-    lamda=H_OVER_M_NEUTRON/v*1e10 #A
-    x_pos=self.ui.refXPos.value()
-    x_width=self.ui.refXWidth.value()
-    y_pos=self.ui.refYPos.value()
-    y_width=self.ui.refYWidth.value()
-    bg_pos=self.ui.bgCenter.value()
-    bg_width=self.ui.bgWidth.value()
-    reg=map(lambda item: int(round(item)),
-            [x_pos-x_width/2., x_pos+x_width/2., y_pos-y_width/2., y_pos+y_width/2.,
-             bg_pos-bg_width/2., bg_pos+bg_width/2., ])
-
-    fdata=data[reg[0]:reg[1], reg[2]:reg[3], :]
-    bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :]
-    pix_offset=self.fulldata['dp']-(reg[0]+reg[1])/2.
-    tth_bank=self.fulldata['tth']*pi/180.
-    tth=tth_bank+pix_offset*RAD_PER_PIX
-    self.ui.datasetAi.setText("%.3f"%(tth/2.*180./pi))
-    self.ui.datasetROI.setText("%.4g"%(fdata.sum()*float(self.ui.datasetPCharge.text())))
-
-    if tth>0.001:
-      self.ref_x=4.*pi/lamda*sin(tth/2.)
+    tof_edges=self.fulldata['tof']
+    #tof=(tof_edges[1:]+tof_edges[:-1])/2.
+    if self.ui.directPixelOverwrite.value()>=0:
+      dp=self.ui.directPixelOverwrite.value()
     else:
-      tth=1. # just for scaling
-      self.ref_x=1./lamda
+      dp=self.fulldata['dp']
+    settings=dict(
+                x_pos=self.ui.refXPos.value(),
+                x_width=self.ui.refXWidth.value(),
+                y_pos=self.ui.refYPos.value(),
+                y_width=self.ui.refYWidth.value(),
+                bg_pos=self.ui.bgCenter.value(),
+                bg_width=self.ui.bgWidth.value(),
+                dp=dp,
+                tth=self.fulldata['tth']*pi/180.,
+                scale=10**self.ui.refScale.value(),
+                  )
 
-    R=fdata.sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[1]-reg[0])
-    BG=bgdata.sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[5]-reg[4])
-    self.ref_data=(R-BG)*10**self.ui.refScale.value()/tth # scale by user factor and beam-size
+    Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
+    self.ui.datasetAi.setText("%.3f"%(ai*180./pi))
+    self.ui.datasetROI.setText("%.4g"%(Iraw.sum()))
+
+    self.ref_x=Qz
+
+    self.ref_data=R/self.fulldata['pc'] # normalize to proton charge
+    self.dref=dR/self.fulldata['pc'] # normalize to proton charge
     self.ui.refl.clear()
     try:
       index=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
     except:
       index='0'
     if self.ref_norm is not None:
-      for settings, x, y in self.add_to_ref:
-        self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
-      self.ui.refl.semilogy(self.ref_x, self.ref_data/self.ref_norm, label=index)
+      self.ui.refl.set_yscale('log')
+      for settings, x, y, dy in self.add_to_ref:
+        #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
+        self.ui.refl.errorbar(x, y/self.ref_norm,
+                              yerr=dy, label=str(settings['index']))
+      #self.ui.refl.semilogy(self.ref_x, self.ref_data/self.ref_norm, label=index)
+      self.ui.refl.errorbar(self.ref_x, self.ref_data/self.ref_norm,
+                            yerr=self.dref/self.ref_norm, label=index)
       self.ui.refl.set_ylabel(u'I$_{Norm}$')
     else:
-      self.ui.refl.semilogy(self.ref_x, R, label='R-'+index)
+      self.ui.refl.semilogy(self.ref_x, I, label='I-'+index)
       self.ui.refl.semilogy(self.ref_x, BG, label='BG-'+index)
       self.ui.refl.set_ylabel(u'I$_{Raw}$')
-    if tth>0.001:
+    if ai>0.001:
       self.ui.refl.set_xlabel(u'Q$_z$ [$\\AA^{-1}$]')
     else:
       self.ui.refl.set_xlabel(u'1/$\\lambda$ [$\\AA^{-1}$]')
@@ -540,28 +505,31 @@ class MainGUI(QtGui.QMainWindow):
     if self.ref_data is None:
       return
     # collect current settings
-    channels=map(lambda item: item.split('entry-')[1], self.xydata.keys())
-    channels.sort()
+    channels=self.channels
     if self.add_to_ref==[]:
-      self.ref_list_channels=channels
+      self.ref_list_channels=list(channels)
     elif self.ref_list_channels!=channels:
       QtGui.QMessageBox.information(self, u'Wrong Channels',
 u'''The active dataset has not the same channels 
 as the ones already in the list:
 
-%s
-!=
-%s'''%(channels, self.ref_list_channels),
+%s  ≠  %s'''%(u" / ".join(channels), u' / '.join(self.ref_list_channels)),
                                     QtGui.QMessageBox.Close)
       return
     try:
       index=int(self.active_file.split('REF_M_', 1)[1].split('_', 1)[0])
     except:
       index=0
+    if self.ui.directPixelOverwrite.value()>=0:
+      dp=self.ui.directPixelOverwrite.value()
+    else:
+      dp=self.fulldata['dp']
     settings={'file': self.active_file,
               'path': self.active_folder,
               'index': index,
 
+              'dp': dp,
+              'tth': self.fulldata['tth']*pi/180.,
               'x_pos': self.ui.refXPos.value(),
               'x_width': self.ui.refXWidth.value(),
               'y_pos': self.ui.refYPos.value(),
@@ -570,7 +538,7 @@ as the ones already in the list:
               'bg_width': self.ui.bgWidth.value(),
               'scale': 10**self.ui.refScale.value(),
               }
-    self.add_to_ref.append((settings, self.ref_x, self.ref_data))
+    self.add_to_ref.append((settings, self.ref_x, self.ref_data, self.dref))
     self.ui.reductionTable.setRowCount(len(self.add_to_ref))
     idx=len(self.add_to_ref)-1
     self.ui.reductionTable.setItem(idx, 0,
@@ -599,7 +567,35 @@ as the ones already in the list:
     self.plot_refl()
 
   def reduceDatasets(self):
-    pass
+    if len(self.add_to_ref)==0:
+      QtGui.QMessageBox.information(self, u'Select a dataset',
+                                    u'Please select at least\none dataset to reduce.',
+                                    QtGui.QMessageBox.Close)
+      return
+    if self.ref_norm is None:
+      QtGui.QMessageBox.information(self, u'Select normlaization',
+                                    u'You cannot extract data without normalization.',
+                                    QtGui.QMessageBox.Close)
+      return
+    dialog=ReduceDialog(self, self.ref_list_channels,
+                        self.ref_norm, self.add_to_ref)
+    ind_str, channels, output_data=dialog.exec_()
+    dialog.destroy()
+    # plot the results in a new window
+    dialog=QtGui.QDialog()
+    ui=UiPlot()
+    ui.setupUi(dialog)
+    for channel in channels:
+      data=output_data[channel]
+      ui.plot.errorbar(data[:, 0], data[:, 1], yerr=data[:, 2], label=channel)
+    ui.plot.legend()
+    ui.plot.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
+    ui.plot.set_ylabel(u'R [a.u.]')
+    ui.plot.set_yscale('log')
+    ui.plot.set_title(ind_str)
+    ui.plot.show()
+    dialog.show()
+    self.open_plots.append(dialog)
 
   def plotMouseEvent(self, event):
     if event.inaxes is None:
