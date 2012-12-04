@@ -2,9 +2,10 @@
 from PyQt4 import QtCore, QtGui
 import matplotlib
 
-font={'family' : 'sans',
-        'weight' : 'normal',
-        'size'   : 6}
+font={
+      #'family' : 'sans',
+      #  'weight' : 'normal',
+        'size': 6}
 
 matplotlib.rc('font', **font)
 
@@ -94,11 +95,17 @@ class MPLWidget(QtGui.QWidget):
     '''
     return self.canvas.ax.errorbar(*args, **opts)
 
-  def pcolormesh(self, *args, **opts):
+  def pcolormesh(self, datax, datay, dataz, log=False, imin=None, imax=None, update=False, **opts):
     '''
       Convenience wrapper for self.canvas.ax.plot
     '''
-    self.cplot=self.canvas.ax.pcolormesh(*args, **opts)
+    if self.cplot is None or not update:
+      if log:
+        self.cplot=self.canvas.ax.pcolormesh(datax, datay, dataz, norm=LogNorm(imin, imax), **opts)
+      else:
+        self.cplot=self.canvas.ax.pcolormesh(datax, datay, dataz, **opts)
+    else:
+      self.update(datax, datay, dataz)
     return self.cplot
 
   def imshow(self, data, log=False, imin=None, imax=None, update=True, **opts):

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Mon Dec  3 18:14:39 2012
+# Created: Tue Dec  4 16:42:52 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!

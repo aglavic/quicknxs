@@ -48,20 +48,22 @@ class ReduceDialog(QDialog):
         fname=os.path.join(settings['path'], settings['file'])
         fdata=read_file(fname)
         indices.append(settings['index'])
+        P0=31-settings['range'][0]
+        PN=30-settings['range'][1]
         for channel in self.channels:
           Qz, R, dR, ai, _I, _BG, _Iraw=calc_reflectivity(
                         fdata[channel]['data'],
                         fdata[channel]['tof'],
                                   settings)
-          rdata=vstack([Qz, R/fdata[channel]['pc']/self.norm,
-                        dR/fdata[channel]['pc']/self.norm, 0.*Qz+ai]).transpose()
+          rdata=vstack([Qz[PN:P0], (R/fdata[channel]['pc']/self.norm)[PN:P0],
+                  (dR/fdata[channel]['pc']/self.norm)[PN:P0], 0.*Qz[PN:P0]+ai]).transpose()
           output_data[channel].append(rdata)
       for channel in self.channels:
         d=vstack(output_data[channel])
         # sort dataset for alpha i and Qz
         order=argsort(d.view([('Qz', float), ('R', float),
                               ('dR', float), ('ai', float)
-                              ]), order=['ai', 'Qz'], axis=0)
+                              ]), order=['Qz', 'ai'], axis=0)
         d=d[order.flatten(), :]
         # remove zero counts
         d=d[d[:, 1]>0, :]

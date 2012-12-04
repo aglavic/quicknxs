@@ -6,7 +6,7 @@
 import os
 from glob import glob
 #from time import sleep
-from numpy import where, pi, newaxis, isnan, maximum, arange, exp
+from numpy import where, pi, newaxis, isnan, maximum, arange, exp, log10
 from scipy.stats.mstats import mquantiles
 from cPickle import load, dump
 from matplotlib.lines import Line2D
@@ -91,10 +91,17 @@ class MainGUI(QtGui.QMainWindow):
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     self.active_file=base
-    self.fulldata=data[data['channels'][0]]
     self.xydata=data['xydata']
     self.xtofdata=data['xtofdata']
     self.channels=data['channels']
+
+    desiredChannel=self.ui.selectedChannel.currentText().split('/')
+    self.use_channel=data['channels'][0]
+    for channel in self.channels:
+      if channel in desiredChannel:
+        self.use_channel=channel
+        break
+    self.fulldata=data[self.use_channel]
     self.updateLabels()
     self.calcReflParams()
     self.plotActiveTab()
@@ -132,6 +139,8 @@ class MainGUI(QtGui.QMainWindow):
       self.plot_xy()
     if self.ui.plotTab.currentIndex()==2:
       self.plot_xtof()
+    if self.ui.plotTab.currentIndex()==3:
+      self.plot_offspec()
 
   def folderModified(self, flist):
     '''
@@ -175,8 +184,9 @@ class MainGUI(QtGui.QMainWindow):
     '''
       X vs. Y and X vs. Tof for main channel.
     '''
-    xy=self.xydata[0]
-    xtof=self.xtofdata[0]
+    cindex=self.channels.index(self.use_channel)
+    xy=self.xydata[cindex]
+    xtof=self.xtofdata[cindex]
     if self.ui.normalizeXTof.isChecked() and self.ref_norm is not None:
       # normalize ToF dataset for wavelength distribution
       xtof=xtof.astype(float)/self.ref_norm[newaxis, :]
@@ -275,29 +285,38 @@ class MainGUI(QtGui.QMainWindow):
   def updateLabels(self):
     d=self.fulldata
 
+    try:
+      tth=(d['dangle']-float(self.ui.dangle0Overwrite.text()))
+    except ValueError:
+      tth=d['tth']
     self.ui.datasetName.setText(self.active_file)
     self.ui.datasetPCharge.setText(u"%.3e"%d['pc'])
     self.ui.datasetTotCounts.setText(u"%.4e"%d['counts'])
     self.ui.datasetDangle.setText(u"%.3f"%d['dangle'])
-    self.ui.datasetTth.setText(u"%.3f"%d['tth'])
+    self.ui.datasetTth.setText(u"%.3f"%tth)
     self.ui.datasetSangle.setText(u"%.3f"%d['ai'])
     self.ui.datasetDirectPixel.setText(u"%.1f"%d['dp'])
+    self.ui.currentChannel.setText('Current Channel:   (%s)'%self.use_channel)
 
   def calcReflParams(self):
     '''
       Calculate x and y regions for reflectivity extraction and put them in the
       entry fields.
     '''
-    data=self.xydata[0]
+    cindex=self.channels.index(self.use_channel)
+    data=self.xydata[cindex]
     if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata[0]
+      d2=self.xtofdata[cindex]
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
     else:
       xproj=data.max(axis=0)
     yproj=data.max(axis=1)
 
     # calculate approximate peak position
-    tth_bank=self.fulldata['tth']*pi/180.
+    try:
+      tth_bank=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
+    except ValueError:
+      tth_bank=self.fulldata['tth']*pi/180.
     ai=self.fulldata['ai']*pi/180.
     if self.ui.directPixelOverwrite.value()>=0:
       dp=self.ui.directPixelOverwrite.value()
@@ -355,13 +374,14 @@ class MainGUI(QtGui.QMainWindow):
       exceeded by a certain number of points. This can be helpful to better
       separate the specular reflection from bragg-sheets
     '''
-    data=self.xydata[0]
+    cindex=self.channels.index(self.use_channel)
+    data=self.xydata[cindex]
     if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata[0]
+      d2=self.xtofdata[cindex]
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1)
     else:
-      xproj=data.max(axis=0)
-    yproj=data.max(axis=1)
+      xproj=data.mean(axis=0)
+    yproj=data.mean(axis=1)
 
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
@@ -427,6 +447,10 @@ class MainGUI(QtGui.QMainWindow):
       dp=self.ui.directPixelOverwrite.value()
     else:
       dp=self.fulldata['dp']
+    try:
+      tth=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
+    except ValueError:
+      tth=self.fulldata['tth']*pi/180.
     settings=dict(
                 x_pos=self.ui.refXPos.value(),
                 x_width=self.ui.refXWidth.value(),
@@ -435,8 +459,9 @@ class MainGUI(QtGui.QMainWindow):
                 bg_pos=self.ui.bgCenter.value(),
                 bg_width=self.ui.bgWidth.value(),
                 dp=dp,
-                tth=self.fulldata['tth']*pi/180.,
+                tth=tth,
                 scale=10**self.ui.refScale.value(),
+                beam_width=self.fulldata['beam_width'],
                   )
 
     Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
@@ -452,15 +477,19 @@ class MainGUI(QtGui.QMainWindow):
       index=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
     except:
       index='0'
+    P0=31-self.ui.rangeStart.value()
+    PN=30-self.ui.rangeEnd.value()
     if self.ref_norm is not None:
       self.ui.refl.set_yscale('log')
       for settings, x, y, dy in self.add_to_ref:
         #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
-        self.ui.refl.errorbar(x, y/self.ref_norm,
-                              yerr=dy, label=str(settings['index']))
+        P0i=31-settings['range'][0]
+        PNi=30-settings['range'][1]
+        self.ui.refl.errorbar(x[PNi:P0i], (y/self.ref_norm)[PNi:P0i],
+                              yerr=dy[PNi:P0i], label=str(settings['index']))
       #self.ui.refl.semilogy(self.ref_x, self.ref_data/self.ref_norm, label=index)
-      self.ui.refl.errorbar(self.ref_x, self.ref_data/self.ref_norm,
-                            yerr=self.dref/self.ref_norm, label=index)
+      self.ui.refl.errorbar(self.ref_x[PN:P0], (self.ref_data/self.ref_norm)[PN:P0],
+                            yerr=(self.dref/self.ref_norm)[PN:P0], label=index)
       self.ui.refl.set_ylabel(u'I$_{Norm}$')
     else:
       self.ui.refl.semilogy(self.ref_x, I, label='I-'+index)
@@ -472,6 +501,24 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.refl.set_xlabel(u'1/$\\lambda$ [$\\AA^{-1}$]')
     self.ui.refl.legend()
     self.ui.refl.draw()
+
+  def plot_offspec(self):
+    if self.ref_norm is None:
+      return
+    self.ui.offspec.clear()
+    for item in self.add_to_ref:
+      fname=os.path.join(item[0]['path'], item[0]['file'])
+      data=data_reduction.read_file(fname)
+      selected_data=data[data['channels'][0]]
+      data=selected_data['data']
+      tof_edges=selected_data['tof']
+      settings=item[0]
+      Qx, Qz, ki_z, kf_z, I=data_reduction.calc_offspec(data, tof_edges, settings)
+      I/=self.ref_norm[newaxis, :]*selected_data['pc']
+      self.ui.offspec.pcolormesh(ki_z-kf_z, Qz, I, log=True)
+#      self.ui.offspec.pcolormesh(ki_z, kf_z, I, log=True)
+    self.ui.offspec.draw()
+
 
   def setNorm(self):
     if self.ref_data is None:
@@ -501,6 +548,30 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normalizationLabel.setText('None')
     self.plot_refl()
 
+  def normalizeTotalReflection(self):
+    '''
+      Extract the scaling factor from the reflectivity curve.
+    '''
+    if self.ref_x.min()>0.02 or self.ref_norm is None:
+      QtGui.QMessageBox.information(self, 'Select other dataset',
+            'Please select a dataset with total reflection plateau\nand normalization.')
+      return
+    y=self.ref_data/self.ref_norm
+    x=self.ref_x[y>0]
+    dy=self.dref[y>0]/self.ref_norm[y>0]
+    y=y[y>0]
+    # Start from low Q and search for the critical edge
+    for i in range(len(y)-5, 0,-1):
+      wmean=(y[i:]/dy[i:]).sum()/(1./dy[i:]).sum()
+      yi=y[i-1]
+      if yi<wmean*0.9:
+        break
+    self.ui.refScale.setValue(self.ui.refScale.value()+log10(1./wmean)) #change the scaling factor
+    # show a line in the plot corresponding to the extraction region
+    totref=Line2D([x.min(), x[i]], [1., 1.], color='red')
+    self.ui.refl.canvas.ax.add_line(totref)
+    self.ui.refl.draw()
+
   def addRefList(self):
     if self.ref_data is None:
       return
@@ -524,47 +595,133 @@ as the ones already in the list:
       dp=self.ui.directPixelOverwrite.value()
     else:
       dp=self.fulldata['dp']
+    try:
+      tth=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
+    except ValueError:
+      tth=self.fulldata['tth']*pi/180.
     settings={'file': self.active_file,
               'path': self.active_folder,
               'index': index,
 
               'dp': dp,
-              'tth': self.fulldata['tth']*pi/180.,
+              'tth': tth,
               'x_pos': self.ui.refXPos.value(),
               'x_width': self.ui.refXWidth.value(),
               'y_pos': self.ui.refYPos.value(),
               'y_width': self.ui.refYWidth.value(),
               'bg_pos': self.ui.bgCenter.value(),
               'bg_width': self.ui.bgWidth.value(),
+              'range': [self.ui.rangeStart.value(), self.ui.rangeEnd.value()],
               'scale': 10**self.ui.refScale.value(),
+              'beam_width': self.fulldata['beam_width'],
               }
-    self.add_to_ref.append((settings, self.ref_x, self.ref_data, self.dref))
+    self.add_to_ref.append([settings, self.ref_x, self.ref_data, self.dref])
     self.ui.reductionTable.setRowCount(len(self.add_to_ref))
     idx=len(self.add_to_ref)-1
+    self.auto_change_active=True
     self.ui.reductionTable.setItem(idx, 0,
                                    QtGui.QTableWidgetItem(str(index)))
     self.ui.reductionTable.setItem(idx, 1,
                                    QtGui.QTableWidgetItem(str(settings['scale'])))
     self.ui.reductionTable.setItem(idx, 2,
-                                   QtGui.QTableWidgetItem(str(settings['x_pos'])))
+                                   QtGui.QTableWidgetItem(str(settings['range'][0])))
     self.ui.reductionTable.setItem(idx, 3,
-                                   QtGui.QTableWidgetItem(str(settings['x_width'])))
+                                   QtGui.QTableWidgetItem(str(settings['range'][1])))
     self.ui.reductionTable.setItem(idx, 4,
-                                   QtGui.QTableWidgetItem(str(settings['y_pos'])))
+                                   QtGui.QTableWidgetItem(str(settings['x_pos'])))
     self.ui.reductionTable.setItem(idx, 5,
-                                   QtGui.QTableWidgetItem(str(settings['y_width'])))
+                                   QtGui.QTableWidgetItem(str(settings['x_width'])))
     self.ui.reductionTable.setItem(idx, 6,
-                                   QtGui.QTableWidgetItem(str(settings['bg_pos'])))
+                                   QtGui.QTableWidgetItem(str(settings['y_pos'])))
     self.ui.reductionTable.setItem(idx, 7,
-                                   QtGui.QTableWidgetItem(str(settings['bg_width'])))
+                                   QtGui.QTableWidgetItem(str(settings['y_width'])))
     self.ui.reductionTable.setItem(idx, 8,
+                                   QtGui.QTableWidgetItem(str(settings['bg_pos'])))
+    self.ui.reductionTable.setItem(idx, 9,
+                                   QtGui.QTableWidgetItem(str(settings['bg_width'])))
+    self.ui.reductionTable.setItem(idx, 10,
                                    QtGui.QTableWidgetItem(os.path.join(settings['path'],
                                                                        settings['file'])))
+    self.ui.reductionTable.setItem(idx, 11,
+                                   QtGui.QTableWidgetItem(str(settings['dp'])))
+    self.ui.reductionTable.setItem(idx, 12,
+                                   QtGui.QTableWidgetItem(str(settings['tth']*180./pi)))
+    self.auto_change_active=False
+
+  def reductionTableChanged(self, item):
+    '''
+      Perform action upon change in data reduction list.
+    '''
+    if self.auto_change_active:
+      return
+    entry=item.row()
+    column=item.column()
+    settings=self.add_to_ref[entry][0]
+    # reset options that can't be changed
+    if column==0:
+      item.setText(str(settings['index']))
+      return
+    elif column==10:
+      item.setText(os.path.join(settings['path'], settings['file']))
+      return
+    # update settings from selected option
+    elif column==1:
+      try:
+        settings['scale']=float(item.text())
+      except ValueError:
+        item.setText(str(settings['scale']))
+      else:
+        Qz, R, dR=self.recalculateReflectivity(settings)
+        self.add_to_ref[entry][1:]=[Qz, R, dR]
+    elif column==2:
+      try:
+        settings['range'][0]=int(item.text())
+      except ValueError:
+        item.setText(str(settings['range'][0]))
+    elif column==3:
+      try:
+        settings['range'][1]=int(item.text())
+      except ValueError:
+        item.setText(str(settings['range'][1]))
+    self.plot_refl()
+
+  def recalculateReflectivity(self, settings):
+    '''
+      Use parameters to calculate and return the reflectivity
+      of one file.
+    '''
+    filename=os.path.join(settings['path'], settings['file'])
+    data=data_reduction.read_file(filename)
+    fulldata=data[self.use_channel]
+    data=fulldata['data']
+    tof_edges=fulldata['tof']
+    Qz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
+    return Qz, R/fulldata['pc'], dR/fulldata['pc']
+  
+  def changeActiveChannel(self):
+    if self.use_channel in self.ref_list_channels:
+      for items in self.add_to_ref:
+        Qz, R, dR=self.recalculateReflectivity(items[0])
+        items[1:]=[Qz, R, dR]
+    self.fileOpen(os.path.join(self.active_folder, self.active_file))
 
   def clearRefList(self):
     self.add_to_ref=[]
     self.ui.reductionTable.setRowCount(0)
     self.plot_refl()
+  
+  def overwriteDirectBeam(self):
+    self.auto_change_active=True
+    self.ui.directPixelOverwrite.setValue(self.ui.refXPos.value())
+    self.ui.dangle0Overwrite.setText("%g"%self.fulldata['dangle'])
+    self.auto_change_active=False
+    self.overwriteChanged()
+
+  def overwriteChanged(self):
+    if not self.auto_change_active:
+      self.updateLabels()
+      self.calcReflParams()
+      self.plot_projections(preserve_lim=True)
 
   def reduceDatasets(self):
     if len(self.add_to_ref)==0:

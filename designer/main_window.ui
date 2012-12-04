@@ -31,6 +31,16 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_13">
         <item>
+         <widget class="QLabel" name="currentChannel">
+          <property name="text">
+           <string>Current Channel: +</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QSplitter" name="splitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -51,6 +61,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>150</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item>
@@ -60,6 +76,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>150</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -297,7 +319,7 @@
                <item row="3" column="6">
                 <widget class="QLabel" name="datasetDirectPixel">
                  <property name="text">
-                  <string>      </string>
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -332,12 +354,42 @@
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QComboBox" name="selectedChannel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>x/+/++</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>-/--</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>+-</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>-+</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
                 </layout>
                </item>
                <item>
                 <widget class="QTableWidget" name="reductionTable">
                  <property name="editTriggers">
-                  <set>QAbstractItemView::NoEditTriggers</set>
+                  <set>QAbstractItemView::DoubleClicked</set>
                  </property>
                  <property name="horizontalScrollMode">
                   <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -348,11 +400,17 @@
                  <property name="rowCount">
                   <number>0</number>
                  </property>
+                 <attribute name="horizontalHeaderVisible">
+                  <bool>true</bool>
+                 </attribute>
                  <attribute name="horizontalHeaderDefaultSectionSize">
                   <number>50</number>
                  </attribute>
                  <attribute name="horizontalHeaderMinimumSectionSize">
-                  <number>35</number>
+                  <number>25</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderStretchLastSection">
+                  <bool>true</bool>
                  </attribute>
                  <attribute name="verticalHeaderVisible">
                   <bool>false</bool>
@@ -364,6 +422,9 @@
                   <property name="text">
                    <string>File No.</string>
                   </property>
+                  <property name="toolTip">
+                   <string>File Number</string>
+                  </property>
                  </column>
                  <column>
                   <property name="text">
@@ -371,6 +432,22 @@
                   </property>
                   <property name="toolTip">
                    <string>Scaling Factor</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>P0</string>
+                  </property>
+                  <property name="toolTip">
+                   <string>First Point</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>PN</string>
+                  </property>
+                  <property name="toolTip">
+                   <string>Last Point</string>
                   </property>
                  </column>
                  <column>
@@ -409,15 +486,37 @@
                   <property name="text">
                    <string>bg0</string>
                   </property>
+                  <property name="toolTip">
+                   <string>Background Region Center</string>
+                  </property>
                  </column>
                  <column>
                   <property name="text">
                    <string>bgw</string>
                   </property>
+                  <property name="toolTip">
+                   <string>Background Region Width</string>
+                  </property>
                  </column>
                  <column>
                   <property name="text">
                    <string>Path</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>DP</string>
+                  </property>
+                  <property name="toolTip">
+                   <string>DirectPixel</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>TTH</string>
+                  </property>
+                  <property name="toolTip">
+                   <string>Two Theta of Detector Arm</string>
                   </property>
                  </column>
                 </widget>
@@ -577,6 +676,16 @@
            </item>
           </layout>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Off-Specular</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_14">
+        <item>
+         <widget class="MPLWidget" name="offspec" native="true"/>
         </item>
        </layout>
       </widget>
@@ -843,21 +952,21 @@
      <property name="verticalSpacing">
       <number>0</number>
      </property>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>X</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Y</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
+     <item row="5" column="0" colspan="2">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Scale 10^</string>
@@ -867,7 +976,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="2" column="2">
       <widget class="QDoubleSpinBox" name="refYWidth">
        <property name="decimals">
         <number>1</number>
@@ -880,7 +989,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
+     <item row="3" column="2">
       <widget class="QDoubleSpinBox" name="refXWidth">
        <property name="decimals">
         <number>1</number>
@@ -893,7 +1002,7 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
+     <item row="5" column="2">
       <widget class="QDoubleSpinBox" name="refScale">
        <property name="decimals">
         <number>2</number>
@@ -912,7 +1021,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="refYPos">
        <property name="decimals">
         <number>1</number>
@@ -922,21 +1031,27 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
+     <item row="1" column="2">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>width</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+       </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="1">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>position</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+       </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="refXPos">
        <property name="decimals">
         <number>1</number>
@@ -946,42 +1061,66 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="bgCenter"/>
      </item>
-     <item row="3" column="2">
+     <item row="4" column="2">
       <widget class="QDoubleSpinBox" name="bgWidth"/>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>BG X</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
-      <widget class="QDoubleSpinBox" name="directPixelOverwrite">
-       <property name="decimals">
-        <number>1</number>
+     <item row="0" column="1">
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="minimum">
-        <double>-1.000000000000000</double>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-       <property name="maximum">
-        <double>300.000000000000000</double>
+      </spacer>
+     </item>
+     <item row="7" column="1">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="singleStep">
-        <double>1.000000000000000</double>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-       <property name="value">
-        <double>-1.000000000000000</double>
+      </spacer>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>Range</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="2">
-      <widget class="QLabel" name="label_18">
-       <property name="text">
-        <string>Overwrite Direct Pixel</string>
+     <item row="6" column="1">
+      <widget class="QSpinBox" name="rangeStart">
+       <property name="maximum">
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QSpinBox" name="rangeEnd">
+       <property name="maximum">
+        <number>30</number>
+       </property>
+       <property name="value">
+        <number>30</number>
        </property>
       </widget>
      </item>
@@ -1003,8 +1142,75 @@
    <addaction name="actionNext_File"/>
    <addaction name="separator"/>
    <addaction name="actionNorm"/>
+   <addaction name="actionNormalizeScaling"/>
    <addaction name="actionAddPlot"/>
    <addaction name="actionClear"/>
+   <addaction name="separator"/>
+   <addaction name="actionAdjust_Dirct_Beam"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_7">
+   <property name="windowTitle">
+    <string>Overwrite Parameters</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_7">
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>Direct Pixel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="directPixelOverwrite">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>-1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>304.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>-1.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_19">
+       <property name="text">
+        <string>Dangle0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="dangle0Overwrite">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>None</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -1088,7 +1294,7 @@
   </action>
   <action name="actionClear">
    <property name="icon">
-    <iconset theme="application-exit">
+    <iconset theme="list-remove">
      <normaloff/>
     </iconset>
    </property>
@@ -1097,6 +1303,28 @@
    </property>
    <property name="toolTip">
     <string>Remove all plots from data reduction list</string>
+   </property>
+  </action>
+  <action name="actionAdjust_Dirct_Beam">
+   <property name="icon">
+    <iconset theme="go-top"/>
+   </property>
+   <property name="text">
+    <string>Adjust Dirct Beam</string>
+   </property>
+   <property name="toolTip">
+    <string>Use active dataset to set overwrite parameters for direct pixel and Dangle0</string>
+   </property>
+  </action>
+  <action name="actionNormalizeScaling">
+   <property name="icon">
+    <iconset theme="object-flip-vertical"/>
+   </property>
+   <property name="text">
+    <string>Set Scaling</string>
+   </property>
+   <property name="toolTip">
+    <string>Get normalization scale from total reflection</string>
    </property>
   </action>
  </widget>
@@ -1118,7 +1346,7 @@
  <connections>
   <connection>
    <sender>actionOpen</sender>
-   <signal>triggered()</signal>
+   <signal>activated()</signal>
    <receiver>MainWindow</receiver>
    <slot>fileOpenDialog()</slot>
    <hints>
@@ -1156,7 +1384,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>399</y>
+     <y>357</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1172,7 +1400,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>456</y>
+     <y>414</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -1188,7 +1416,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>149</x>
-     <y>481</y>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -1204,7 +1432,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>234</x>
-     <y>534</y>
+     <y>492</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -1219,8 +1447,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>796</y>
+     <x>262</x>
+     <y>666</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -1236,7 +1464,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>741</y>
+     <y>597</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -1252,7 +1480,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>741</y>
+     <y>597</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -1268,7 +1496,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>764</y>
+     <y>620</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -1284,7 +1512,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>764</y>
+     <y>620</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -1299,8 +1527,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>768</y>
+     <x>175</x>
+     <y>643</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1315,8 +1543,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>768</y>
+     <x>262</x>
+     <y>643</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1331,8 +1559,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1078</x>
-     <y>314</y>
+     <x>1064</x>
+     <y>343</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1347,8 +1575,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>966</x>
-     <y>313</y>
+     <x>1002</x>
+     <y>342</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1358,7 +1586,7 @@
   </connection>
   <connection>
    <sender>actionNext_File</sender>
-   <signal>triggered()</signal>
+   <signal>activated()</signal>
    <receiver>MainWindow</receiver>
    <slot>nextFile()</slot>
    <hints>
@@ -1374,7 +1602,7 @@
   </connection>
   <connection>
    <sender>actionPrevious_File</sender>
-   <signal>triggered()</signal>
+   <signal>activated()</signal>
    <receiver>MainWindow</receiver>
    <slot>prevFile()</slot>
    <hints>
@@ -1452,6 +1680,134 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAdjust_Dirct_Beam</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>overwriteDirectBeam()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>directPixelOverwrite</sender>
+   <signal>valueChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>overwriteChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>765</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dangle0Overwrite</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>overwriteChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>792</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNormalizeScaling</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalizeTotalReflection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rangeStart</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plot_refl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>678</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rangeEnd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plot_refl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>678</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>itemChanged(QTableWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reductionTableChanged(QTableWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>738</x>
+     <y>592</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1015</x>
+     <y>841</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>734</x>
+     <y>840</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -1467,5 +1823,10 @@
   <slot>nextFile()</slot>
   <slot>prevFile()</slot>
   <slot>reduceDatasets()</slot>
+  <slot>overwriteDirectBeam()</slot>
+  <slot>overwriteChanged()</slot>
+  <slot>normalizeTotalReflection()</slot>
+  <slot>reductionTableChanged(QTableWidgetItem*)</slot>
+  <slot>changeActiveChannel()</slot>
  </slots>
 </ui>
