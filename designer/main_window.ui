@@ -1209,6 +1209,13 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QCheckBox" name="fanReflectivity">
+       <property name="text">
+        <string>Extract from &quot;Fan&quot;-Reflection</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -1307,7 +1314,9 @@
   </action>
   <action name="actionAdjust_Dirct_Beam">
    <property name="icon">
-    <iconset theme="go-top"/>
+    <iconset theme="go-top">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Adjust Dirct Beam</string>
@@ -1318,7 +1327,9 @@
   </action>
   <action name="actionNormalizeScaling">
    <property name="icon">
-    <iconset theme="object-flip-vertical"/>
+    <iconset theme="object-flip-vertical">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Set Scaling</string>
@@ -1384,7 +1395,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>357</y>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1400,7 +1411,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>414</y>
+     <y>349</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -1416,7 +1427,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>149</x>
-     <y>439</y>
+     <y>374</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -1432,7 +1443,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>234</x>
-     <y>492</y>
+     <y>427</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -1448,7 +1459,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>666</y>
+     <y>621</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -1464,7 +1475,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>597</y>
+     <y>552</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -1480,7 +1491,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>597</y>
+     <y>552</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -1496,7 +1507,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>620</y>
+     <y>575</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -1512,7 +1523,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>620</y>
+     <y>575</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -1528,7 +1539,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>643</y>
+     <y>598</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1544,7 +1555,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>643</y>
+     <y>598</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1703,8 +1714,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>107</x>
-     <y>765</y>
+     <x>136</x>
+     <y>751</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1719,8 +1730,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>792</y>
+     <x>190</x>
+     <y>778</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1751,8 +1762,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>678</y>
+     <x>175</x>
+     <y>644</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1767,8 +1778,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>678</y>
+     <x>262</x>
+     <y>644</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1799,12 +1810,28 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>267</y>
+     <x>864</x>
+     <y>470</y>
     </hint>
     <hint type="destinationlabel">
      <x>734</x>
      <y>840</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fanReflectivity</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plot_refl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>65</x>
+     <y>796</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>85</x>
+     <y>839</y>
     </hint>
    </hints>
   </connection>

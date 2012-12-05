@@ -464,7 +464,11 @@ class MainGUI(QtGui.QMainWindow):
                 beam_width=self.fulldata['beam_width'],
                   )
 
-    Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
+    if self.ui.fanReflectivity.isChecked():
+      Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
+                                                                      self.ref_norm)
+    else:
+      Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
     self.ui.datasetAi.setText("%.3f"%(ai*180./pi))
     self.ui.datasetROI.setText("%.4g"%(Iraw.sum()))
 

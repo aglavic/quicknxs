@@ -5,7 +5,7 @@
   or scripts.
 '''
 
-from numpy import pi, sin, cos, sqrt, arange, newaxis, ones_like
+from numpy import pi, sin, cos, sqrt, arange, newaxis, ones_like, argsort
 import h5py
 from .instrument_constants import *
 #from time import time
@@ -105,6 +105,65 @@ def calc_reflectivity(data, tof_channels, settings):
   dR=sqrt(dI**2+dBG**2)*scale
   Qz=(Qz_edges[:-1]+Qz_edges[1:])/2.
   return Qz, R, dR, ai, I, BG, Iraw
+
+def calc_fan_reflectivity(data, tof_channels, settings, Inorm):
+  """
+    Extract reflectivity from 4D dataset (x,y,ToF,I).
+    Uses a window in x and y to filter the 4D data
+    and than sums all I values for each ToF channel.
+    
+    In contrast to calc_reflectivity this function assumes
+    that a brought region reflected from a bend sample is
+    analyzed, so each x line corresponds to different alpha i
+    values.
+    
+    Returns: tuple of Qz, R, dR
+  """
+  tof_edges=tof_channels
+  x_pos=settings['x_pos']
+  x_width=settings['x_width']
+  y_pos=settings['y_pos']
+  y_width=settings['y_width']
+  bg_pos=settings['bg_pos']
+  bg_width=settings['bg_width']
+  direct_pixel=settings['dp']
+  tth_bank=settings['tth']
+  scale=settings['scale']/settings['beam_width'] # scale by user factor and beam-size
+
+  reg=map(lambda item: int(round(item)),
+          [x_pos-x_width/2., x_pos+x_width/2.,
+           y_pos-y_width/2., y_pos+y_width/2.,
+           bg_pos-bg_width/2., bg_pos+bg_width/2.])
+
+  Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
+  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :]
+  x_region=arange(reg[0], reg[1])
+  pix_offset=direct_pixel-x_region
+  tth=tth_bank+pix_offset*RAD_PER_PIX
+  ai=tth/2.
+
+  v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+  lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
+  # calculate ROI intensities and normalize by number of points
+  Iraw=Idata.sum(axis=1)
+  dI=sqrt(Iraw)/(reg[3]-reg[2])
+  I=Iraw/(reg[3]-reg[2])
+  BG=bgdata.sum(axis=0).sum(axis=0)
+  dBG=sqrt(BG)/(reg[3]-reg[2])/(reg[5]-reg[4])
+  BG/=(reg[3]-reg[2])*(reg[5]-reg[4])
+  R=(I-BG[newaxis, :])*scale/Inorm[newaxis, :]
+  dR=sqrt(dI**2+(dBG**2)[newaxis, :])*scale/Inorm[newaxis, :]
+
+  Qz_edges=4.*pi/lamda_edges*sin(ai[:, newaxis])
+  Qz=(Qz_edges[:, :-1]+Qz_edges[:, 1:])/2.
+  R=R.flatten()
+  dR=dR.flatten()
+  Qz=Qz.flatten()
+  order=argsort(Qz)
+  R=R[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
+  dR=sqrt(((dR[order].reshape(-1, reg[1]-reg[0]))**2).mean(axis=1))
+  Qz=Qz[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
+  return Qz, R*Inorm, dR*Inorm, 0.2, R, R, R
 
 def calc_offspec(data, tof_channels, settings):
   """

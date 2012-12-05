@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Tue Dec  4 16:42:52 2012
+# Created: Wed Dec  5 12:08:07 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -573,6 +573,9 @@ class Ui_MainWindow(object):
     self.dangle0Overwrite.setSizePolicy(sizePolicy)
     self.dangle0Overwrite.setObjectName(_fromUtf8("dangle0Overwrite"))
     self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.dangle0Overwrite)
+    self.fanReflectivity = QtGui.QCheckBox(self.dockWidgetContents_7)
+    self.fanReflectivity.setObjectName(_fromUtf8("fanReflectivity"))
+    self.formLayout.setWidget(2, QtGui.QFormLayout.SpanningRole, self.fanReflectivity)
     self.dockWidget_7.setWidget(self.dockWidgetContents_7)
     MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget_7)
     self.actionOpen = QtGui.QAction(MainWindow)
@@ -657,6 +660,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.rangeEnd, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), MainWindow.plot_refl)
     QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), MainWindow.reductionTableChanged)
     QtCore.QObject.connect(self.selectedChannel, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.changeActiveChannel)
+    QtCore.QObject.connect(self.fanReflectivity, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.plot_refl)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
@@ -753,6 +757,7 @@ class Ui_MainWindow(object):
     self.label_18.setText(QtGui.QApplication.translate("MainWindow", "Direct Pixel", None, QtGui.QApplication.UnicodeUTF8))
     self.label_19.setText(QtGui.QApplication.translate("MainWindow", "Dangle0", None, QtGui.QApplication.UnicodeUTF8))
     self.dangle0Overwrite.setText(QtGui.QApplication.translate("MainWindow", "None", None, QtGui.QApplication.UnicodeUTF8))
+    self.fanReflectivity.setText(QtGui.QApplication.translate("MainWindow", "Extract from \"Fan\"-Reflection", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "Open...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setToolTip(QtGui.QApplication.translate("MainWindow", "Open a new file (Ctrl+O)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
