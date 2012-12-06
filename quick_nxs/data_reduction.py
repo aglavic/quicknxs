@@ -5,7 +5,7 @@
   or scripts.
 '''
 
-from numpy import pi, sin, cos, sqrt, arange, newaxis, ones_like, argsort
+from numpy import pi, sin, cos, sqrt, arange, newaxis, ones_like, argsort, zeros_like
 import h5py
 from .instrument_constants import *
 #from time import time
@@ -108,7 +108,7 @@ def calc_reflectivity(data, tof_channels, settings):
   Qz=(Qz_edges[:-1]+Qz_edges[1:])/2.
   return Qz, R, dR, ai, I, BG, Iraw
 
-def calc_fan_reflectivity(data, tof_channels, settings, Inorm):
+def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
   """
     Extract reflectivity from 4D dataset (x,y,ToF,I).
     Uses a window in x and y to filter the 4D data
@@ -153,19 +153,25 @@ def calc_fan_reflectivity(data, tof_channels, settings, Inorm):
   BG=bgdata.sum(axis=0).sum(axis=0)
   dBG=sqrt(BG)/(reg[3]-reg[2])/(reg[5]-reg[4])
   BG/=(reg[3]-reg[2])*(reg[5]-reg[4])
-  R=(I-BG[newaxis, :])*scale/Inorm[newaxis, :]
-  dR=sqrt(dI**2+(dBG**2)[newaxis, :])*scale/Inorm[newaxis, :]
+  R=((I-BG[newaxis, :])*scale/Inorm[newaxis, :])[:, PN:P0]
+  dR=(sqrt(dI**2+(dBG**2)[newaxis, :])*scale/Inorm[newaxis, :])[:, PN:P0]
 
   Qz_edges=4.*pi/lamda_edges*sin(ai[:, newaxis])
   Qz=(Qz_edges[:, :-1]+Qz_edges[:, 1:])/2.
   R=R.flatten()
   dR=dR.flatten()
-  Qz=Qz.flatten()
-  order=argsort(Qz)
+  Qzf=Qz[:, PN:P0].flatten()
+  order=argsort(Qzf)
   R=R[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
   dR=sqrt(((dR[order].reshape(-1, reg[1]-reg[0]))**2).mean(axis=1))
-  Qz=Qz[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
-  return Qz, R*Inorm, dR*Inorm, ai.mean(), R, R, R
+  Qzf=Qzf[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
+  Rout=zeros_like(Inorm)
+  dRout=zeros_like(Inorm)
+  Qz=zeros_like(Inorm)
+  Rout[PN:P0]=R
+  dRout[PN:P0]=dR
+  Qz[PN:P0]=Qzf
+  return Qz[::-1], Rout[::-1]*Inorm, dRout[::-1]*Inorm, ai.mean(), Rout[::-1], Rout[::-1], Rout[::-1]
 
 def calc_offspec(data, tof_channels, settings):
   """

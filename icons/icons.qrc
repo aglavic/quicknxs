@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="General">
+    <file>logo.png</file>
+    <file>totalReflection.png</file>
+    <file>tthZero.png</file>
+    <file>extractNormalization.png</file>
+  </qresource>
+</RCC>

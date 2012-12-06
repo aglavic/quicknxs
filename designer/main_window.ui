@@ -14,9 +14,8 @@
    <string>QuickNXS</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="applications-utilities">
-    <normaloff/>
-   </iconset>
+   <iconset resource="../icons/icons.qrc">
+    <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1290,9 +1289,8 @@
   </action>
   <action name="actionNorm">
    <property name="icon">
-    <iconset theme="view-fullscreen">
-     <normaloff/>
-    </iconset>
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/extractNormalization.png</normaloff>:/General/extractNormalization.png</iconset>
    </property>
    <property name="text">
     <string>Set Normalization</string>
@@ -1335,9 +1333,8 @@
   </action>
   <action name="actionAdjust_Dirct_Beam">
    <property name="icon">
-    <iconset theme="go-top">
-     <normaloff/>
-    </iconset>
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/tthZero.png</normaloff>:/General/tthZero.png</iconset>
    </property>
    <property name="text">
     <string>Adjust Dirct Beam</string>
@@ -1348,9 +1345,8 @@
   </action>
   <action name="actionNormalizeScaling">
    <property name="icon">
-    <iconset theme="object-flip-vertical">
-     <normaloff/>
-    </iconset>
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/totalReflection.png</normaloff>:/General/totalReflection.png</iconset>
    </property>
    <property name="text">
     <string>Set Scaling</string>
@@ -1387,7 +1383,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons/icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionOpen</sender>
@@ -1473,7 +1471,7 @@
    <sender>color_selector</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>plotActiveTab()</slot>
+   <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>234</x>
@@ -1505,7 +1503,7 @@
    <sender>refYPos</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
@@ -1521,7 +1519,7 @@
    <sender>refYWidth</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
@@ -1537,7 +1535,7 @@
    <sender>refXPos</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
@@ -1553,7 +1551,7 @@
    <sender>refXWidth</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
@@ -1569,7 +1567,7 @@
    <sender>bgCenter</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
@@ -1585,7 +1583,7 @@
    <sender>bgWidth</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
@@ -1885,6 +1883,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>normalizeXTof</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggleColorbars()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -1906,5 +1920,6 @@
   <slot>reductionTableChanged(QTableWidgetItem*)</slot>
   <slot>changeActiveChannel()</slot>
   <slot>removeRefList()</slot>
+  <slot>changeRegionValues()</slot>
  </slots>
 </ui>

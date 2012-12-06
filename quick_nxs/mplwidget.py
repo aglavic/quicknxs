@@ -71,6 +71,18 @@ class MPLWidget(QtGui.QWidget):
       self.vbox.addWidget(self.toolbar)
     self.setLayout(self.vbox)
 
+  def set_config(self, config):
+    self.canvas.fig.subplots_adjust(**config)
+
+  def get_config(self):
+    spp=self.canvas.fig.subplotpars
+    config=dict(left=spp.left,
+                right=spp.right,
+                bottom=spp.bottom,
+                top=spp.top)
+    return config
+
+
   def draw(self):
     '''
       Convenience to redraw the graph.

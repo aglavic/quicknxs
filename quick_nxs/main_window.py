@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Thu Dec  6 09:42:42 2012
+# Created: Thu Dec  6 15:54:11 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,8 @@ class Ui_MainWindow(object):
   def setupUi(self, MainWindow):
     MainWindow.setObjectName(_fromUtf8("MainWindow"))
     MainWindow.resize(1087, 834)
-    icon = QtGui.QIcon.fromTheme(_fromUtf8("applications-utilities"))
+    icon = QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     MainWindow.setWindowIcon(icon)
     self.centralwidget = QtGui.QWidget(MainWindow)
     self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -595,8 +596,9 @@ class Ui_MainWindow(object):
     self.actionPrevious_File.setIcon(icon)
     self.actionPrevious_File.setObjectName(_fromUtf8("actionPrevious_File"))
     self.actionNorm = QtGui.QAction(MainWindow)
-    icon = QtGui.QIcon.fromTheme(_fromUtf8("view-fullscreen"))
-    self.actionNorm.setIcon(icon)
+    icon1 = QtGui.QIcon()
+    icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/extractNormalization.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionNorm.setIcon(icon1)
     self.actionNorm.setObjectName(_fromUtf8("actionNorm"))
     self.actionAddPlot = QtGui.QAction(MainWindow)
     icon = QtGui.QIcon.fromTheme(_fromUtf8("list-add"))
@@ -607,12 +609,14 @@ class Ui_MainWindow(object):
     self.actionClear.setIcon(icon)
     self.actionClear.setObjectName(_fromUtf8("actionClear"))
     self.actionAdjust_Dirct_Beam = QtGui.QAction(MainWindow)
-    icon = QtGui.QIcon.fromTheme(_fromUtf8("go-top"))
-    self.actionAdjust_Dirct_Beam.setIcon(icon)
+    icon2 = QtGui.QIcon()
+    icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/tthZero.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionAdjust_Dirct_Beam.setIcon(icon2)
     self.actionAdjust_Dirct_Beam.setObjectName(_fromUtf8("actionAdjust_Dirct_Beam"))
     self.actionNormalizeScaling = QtGui.QAction(MainWindow)
-    icon = QtGui.QIcon.fromTheme(_fromUtf8("object-flip-vertical"))
-    self.actionNormalizeScaling.setIcon(icon)
+    icon3 = QtGui.QIcon()
+    icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/totalReflection.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionNormalizeScaling.setIcon(icon3)
     self.actionNormalizeScaling.setObjectName(_fromUtf8("actionNormalizeScaling"))
     self.actionRemove = QtGui.QAction(MainWindow)
     icon = QtGui.QIcon.fromTheme(_fromUtf8("list-remove"))
@@ -651,14 +655,14 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.file_list, QtCore.SIGNAL(_fromUtf8("itemSelectionChanged()")), MainWindow.fileOpenList)
     QtCore.QObject.connect(self.show_colorbars, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.hide_plots, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleHide)
-    QtCore.QObject.connect(self.color_selector, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.plotActiveTab)
+    QtCore.QObject.connect(self.color_selector, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.refScale, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.plot_refl)
-    QtCore.QObject.connect(self.refYPos, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
-    QtCore.QObject.connect(self.refYWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
-    QtCore.QObject.connect(self.refXPos, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
-    QtCore.QObject.connect(self.refXWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
-    QtCore.QObject.connect(self.bgCenter, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
-    QtCore.QObject.connect(self.bgWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
+    QtCore.QObject.connect(self.refYPos, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.refYWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.refXPos, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.refXWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.bgCenter, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.bgWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.xprojQuantiles, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
     QtCore.QObject.connect(self.xprojUseQuantiles, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.replotProjections)
     QtCore.QObject.connect(self.actionNext_File, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.nextFile)
@@ -677,6 +681,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.selectedChannel, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.fanReflectivity, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.plot_refl)
     QtCore.QObject.connect(self.actionRemove, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.removeRefList)
+    QtCore.QObject.connect(self.normalizeXTof, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
@@ -800,3 +805,4 @@ class Ui_MainWindow(object):
 
 from mplwidget import MPLWidget
 from persistentframe import PersistentFrame
+from . import icons_rc

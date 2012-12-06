@@ -31,6 +31,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
+    self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     self.toggleHide()
@@ -46,6 +47,7 @@ class MainGUI(QtGui.QMainWindow):
       self.fileOpen(argv[0])
     self.connect_plot_events()
     self._path_watcher.directoryChanged.connect(self.folderModified)
+    self.auto_change_active=False
 
   def processDelayedTrigger(self, item, args):
     '''
@@ -181,12 +183,13 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.file_list.setCurrentItem(listitem)
 
   def toggleColorbars(self):
-    plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-           self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-           self.ui.xy_overview, self.ui.xtof_overview]
-    for plot in plots:
-      plot.clear_fig()
-    self.plotActiveTab()
+    if not self.auto_change_active:
+      plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
+             self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
+             self.ui.xy_overview, self.ui.xtof_overview]
+      for plot in plots:
+        plot.clear_fig()
+      self.plotActiveTab()
 
   def toggleHide(self):
     plots=[self.ui.frame_xy_mm, self.ui.frame_xy_sf, self.ui.frame_xtof_mm, self.ui.frame_xtof_sf]
@@ -383,7 +386,7 @@ class MainGUI(QtGui.QMainWindow):
     G=exp(-0.5*((xdata-x0)/sigma)**2)
     return 0, data-I0*G
 
-  def replotProjections(self):
+  def changeRegionValues(self):
     if self.auto_change_active:
       return
     lines=self.proj_lines
@@ -404,13 +407,11 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.draw()
     self.ui.y_project.draw()
     self.trigger('plot_refl')
-    #self.plot_projections(preserve_lim=True)
+
+  def replotProjections(self):
+    self.plot_projections(preserve_lim=True)
 
   def plot_projections(self, preserve_lim=False):
-#    if self.tline is not None:
-#      self.tline.set_xdata([self.ui.refXPos.value(), self.ui.refXPos.value()])
-#      self.ui.xy_overview.draw()
-    # delay the projection plots to allow quicker change of parameters in the GUI
     self.trigger('_plot_projections', preserve_lim)
 
   def _plot_projections(self, preserve_lim):
@@ -438,15 +439,12 @@ class MainGUI(QtGui.QMainWindow):
     bg_width=self.ui.bgWidth.value()
 
     if preserve_lim:
-      xxlim=self.ui.x_project.canvas.ax.get_xlim()
-      xylim=self.ui.x_project.canvas.ax.get_ylim()
-      yxlim=self.ui.y_project.canvas.ax.get_xlim()
-      yylim=self.ui.y_project.canvas.ax.get_ylim()
-    else:
-      xxlim=(0, len(xproj)-1)
-      xylim=(xproj[xproj>0].min(), xproj.max()*2)
-      yxlim=(0, len(yproj)-1)
-      yylim=(yproj[yproj>0].min(), yproj.max()*2)
+      xview=self.ui.x_project.canvas.ax.axis()
+      yview=self.ui.y_project.canvas.ax.axis()
+    xxlim=(0, len(xproj)-1)
+    xylim=(xproj[xproj>0].min(), xproj.max()*2)
+    yxlim=(0, len(yproj)-1)
+    yylim=(yproj[yproj>0].min(), yproj.max()*2)
     self.ui.x_project.clear()
     self.ui.y_project.clear()
 
@@ -465,7 +463,6 @@ class MainGUI(QtGui.QMainWindow):
     xright_bg=Line2D([bg_pos+bg_width/2., bg_pos+bg_width/2.], [xylim[0], xylim[1]], color='green')
     self.ui.x_project.canvas.ax.add_line(xleft_bg)
     self.ui.x_project.canvas.ax.add_line(xright_bg)
-    self.ui.x_project.draw()
 
     self.ui.y_project.semilogy(yproj, color='blue')[0]
     self.ui.y_project.set_xlabel(u'y [pix]')
@@ -478,11 +475,15 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.y_project.canvas.ax.add_line(yreg_right)
     y_bg=Line2D([0, yxlim[1]], [self.y_bg, self.y_bg], color='green')
     self.ui.y_project.canvas.ax.add_line(y_bg)
+    if preserve_lim:
+      self.ui.x_project.canvas.ax.axis(xview)
+      self.ui.y_project.canvas.ax.axis(yview)
+    self.ui.x_project.draw()
     self.ui.y_project.draw()
     self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
     self.plot_refl()
 
-  def plot_refl(self):
+  def plot_refl(self, preserve_lim=False):
     '''
       Calculate and display the reflectivity from the current dataset
       and any dataset stored. Intensities from direct beam
@@ -490,7 +491,6 @@ class MainGUI(QtGui.QMainWindow):
     '''
     data=self.fulldata['data']
     tof_edges=self.fulldata['tof']
-    #tof=(tof_edges[1:]+tof_edges[:-1])/2.
     if self.ui.directPixelOverwrite.value()>=0:
       dp=self.ui.directPixelOverwrite.value()
     else:
@@ -512,6 +512,8 @@ class MainGUI(QtGui.QMainWindow):
                 beam_width=self.fulldata['beam_width'],
                   )
 
+    P0=31-self.ui.rangeStart.value()
+    PN=30-self.ui.rangeEnd.value()
     if self.ui.fanReflectivity.isChecked():
       if self.ref_norm is None:
         QtGui.QMessageBox.information(self, 'No normalization',
@@ -519,7 +521,7 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.fanReflectivity.setChecked(False)
         return
       Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
-                                                                      self.ref_norm)
+                                                                      self.ref_norm, P0, PN)
     else:
       Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
     self.ui.datasetAi.setText("%.3f"%(ai*180./pi))
@@ -529,13 +531,15 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ref_data=R/self.fulldata['pc'] # normalize to proton charge
     self.dref=dR/self.fulldata['pc'] # normalize to proton charge
+
+    if preserve_lim:
+      view=self.ui.refl.canvas.ax.axis()
+
     self.ui.refl.clear()
     try:
       index=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
     except:
       index='0'
-    P0=31-self.ui.rangeStart.value()
-    PN=30-self.ui.rangeEnd.value()
     if self.ref_norm is not None:
       self.ui.refl.set_yscale('log')
       for settings, x, y, dy in self.add_to_ref:
@@ -557,6 +561,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.refl.set_xlabel(u'1/$\\lambda$ [$\\AA^{-1}$]')
     self.ui.refl.legend()
+    if preserve_lim:
+      self.ui.refl.canvas.ax.axis(view)
     self.ui.refl.draw()
 
   def plot_offspec(self):
@@ -570,7 +576,7 @@ class MainGUI(QtGui.QMainWindow):
       data=selected_data['data']
       tof_edges=selected_data['tof']
       settings=item[0]
-      Qx, Qz, ki_z, kf_z, I=data_reduction.calc_offspec(data, tof_edges, settings)
+      _Qx, Qz, ki_z, kf_z, I=data_reduction.calc_offspec(data, tof_edges, settings)
       I/=self.ref_norm[newaxis, :]*selected_data['pc']
       self.ui.offspec.pcolormesh(ki_z-kf_z, Qz, I, log=True)
 #      self.ui.offspec.pcolormesh(ki_z, kf_z, I, log=True)
@@ -754,7 +760,7 @@ as the ones already in the list:
       else:
         Qz, R, dR=self.recalculateReflectivity(settings)
         self.add_to_ref[entry][1:]=[Qz, R, dR]
-    self.plot_refl()
+    self.plot_refl(preserve_lim=True)
 
   def recalculateReflectivity(self, settings):
     '''
@@ -770,6 +776,15 @@ as the ones already in the list:
     return Qz, R/fulldata['pc'], dR/fulldata['pc']
 
   def changeActiveChannel(self):
+    '''
+      The overview and reflectivity channel was changed. This
+      recalculates already extracted reflectivities.
+    '''
+    desiredChannel=self.ui.selectedChannel.currentText().split('/')
+    for channel in self.ref_list_channels:
+      if channel in desiredChannel:
+        self.use_channel=channel
+        break
     if self.use_channel in self.ref_list_channels:
       for items in self.add_to_ref:
         Qz, R, dR=self.recalculateReflectivity(items[0])
@@ -902,7 +917,18 @@ as the ones already in the list:
         obj=load(open(path, 'rb'))
         self.restoreGeometry(obj[0])
         self.restoreState(obj[1])
-        #self.ui.splitter.moveSplitter(obj[2], 0)
+        self.ui.splitter.setSizes(obj[2])
+        self.ui.color_selector.setCurrentIndex(obj[3])
+        self.ui.show_colorbars.setChecked(obj[4])
+        self.ui.normalizeXTof.setChecked(obj[5])
+        for i, fig in enumerate([
+                                self.ui.xy_overview,
+                                self.ui.xtof_overview,
+                                self.ui.refl,
+                                self.ui.x_project,
+                                self.ui.y_project,
+                                ]):
+          fig.set_config(obj[6][i])
       except:
         return
     else:
@@ -916,9 +942,23 @@ as the ones already in the list:
     # join delay thread
     self.trigger.stay_alive=False
     self.trigger.wait()
-    # store geometry
+    # store geometry and setting parameters
+    figure_params=[]
+    for fig in [
+                self.ui.xy_overview,
+                self.ui.xtof_overview,
+                self.ui.refl,
+                self.ui.x_project,
+                self.ui.y_project,
+                ]:
+      figure_params.append(fig.get_config())
     obj=(self.saveGeometry(), self.saveState(),
-         self.ui.splitter.sizes()[0])
+         self.ui.splitter.sizes(),
+         self.ui.color_selector.currentIndex(),
+         self.ui.show_colorbars.isChecked(),
+         self.ui.normalizeXTof.isChecked(),
+         figure_params,
+         )
     path=os.path.expanduser('~/.quicknxs')
     if not os.path.exists(path):
       os.makedirs(path)
