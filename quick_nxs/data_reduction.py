@@ -12,12 +12,14 @@ from .instrument_constants import *
 
 def read_file(filename):
   #start=time()
-  nxs=h5py.File(filename)
+  nxs=h5py.File(filename, mode='r')
   # analyze channels
   channels=nxs.keys()
   for channel in list(channels):
     if nxs[channel][u'total_counts'].value[0]==0:
       channels.remove(channel)
+  if len(channels)==0:
+    return None
   ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
   pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
   if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]:
@@ -163,7 +165,7 @@ def calc_fan_reflectivity(data, tof_channels, settings, Inorm):
   R=R[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
   dR=sqrt(((dR[order].reshape(-1, reg[1]-reg[0]))**2).mean(axis=1))
   Qz=Qz[order].reshape(-1, reg[1]-reg[0]).mean(axis=1)
-  return Qz, R*Inorm, dR*Inorm, 0.2, R, R, R
+  return Qz, R*Inorm, dR*Inorm, ai.mean(), R, R, R
 
 def calc_offspec(data, tof_channels, settings):
   """

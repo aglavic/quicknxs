@@ -4,8 +4,10 @@
 '''
 
 import os
-from PyQt4.QtGui import QDialog
-from numpy import vstack, savetxt, argsort
+from PyQt4.QtGui import QDialog, QFileDialog
+from PyQt4.QtCore import QThread, SIGNAL
+from time import sleep, time
+from numpy import vstack, savetxt
 from .reduce_dialog import Ui_Dialog as Ui_Resource_Dialog
 from .data_reduction import *
 
@@ -78,7 +80,7 @@ class ReduceDialog(QDialog):
       ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
                           unicode(self.ui.fileNameEntry.text()))
       indices.sort()
-      ind_str='['+"+".join(map(str, indices))+']'
+      ind_str="+".join(map(str, indices))
       for channel, value in output_data.items():
         output=ofname.replace('{item}', 'Specular').replace('{channel}', channel)\
                      .replace('{type}', 'dat').replace('{numbers}', ind_str)
@@ -92,3 +94,41 @@ class ReduceDialog(QDialog):
       if name in self.channels:
         self.channels.remove(name)
         return
+
+  def changeDir(self):
+    oldd=self.ui.directoryEntry.text()
+    newd=QFileDialog.getExistingDirectory(parent=self, caption=u'Select new folder',
+                                          directory=oldd)
+    if newd is not None:
+      self.ui.directoryEntry.setText(newd)
+
+class DelayedTrigger(QThread):
+  '''
+    A loop that carries out tasks after a short delay.
+    If the tasks are triggered again later, the first
+    ones are ignored and the delay is reset.
+    
+    This allows the GUI to be more responsive when changing
+    parameters for e.g. a plot that takes longer time to
+    draw.
+  '''
+  parent=None
+  stay_alive=True
+  refresh=0.01
+  delay=0.25
+  actions={}
+
+  def __init__(self):
+    QThread.__init__(self)
+
+  def run(self):
+    while self.stay_alive:
+      for name, items in self.actions.items():
+        ti, args=items
+        if time()-ti>self.delay:
+          self.emit(SIGNAL('activate(QString, PyQt_PyObject)'), name, args)
+          del(self.actions[name])
+      sleep(self.refresh)
+
+  def __call__(self, action, *args):
+    self.actions[action]=(time(), args)

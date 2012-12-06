@@ -14,7 +14,7 @@ from PyQt4 import QtGui, QtCore
 from . import data_reduction
 from .main_window import Ui_MainWindow
 from .plot_dialog import Ui_Dialog as UiPlot
-from .gui_utils import ReduceDialog
+from .gui_utils import ReduceDialog, DelayedTrigger
 from .instrument_constants import *
 from .mpfit import mpfit
 
@@ -35,12 +35,24 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.setupUi(self)
     self.toggleHide()
     self.readSettings()
+    # start a separate thread for delayed actions
+    self.trigger=DelayedTrigger()
+    self.connect(self.trigger, QtCore.SIGNAL("activate(QString, PyQt_PyObject)"),
+                 self.processDelayedTrigger)
+    self.trigger.start()
 
     self._path_watcher=QtCore.QFileSystemWatcher(self.active_folder, self)
     if len(argv)>0:
       self.fileOpen(argv[0])
     self.connect_plot_events()
     self._path_watcher.directoryChanged.connect(self.folderModified)
+
+  def processDelayedTrigger(self, item, args):
+    '''
+      Calls private method after delay action was
+      triggered.
+    '''
+    getattr(self, str(item))(*args)
 
   def connect_plot_events(self):
     '''
@@ -51,7 +63,10 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.xy_overview, self.ui.xtof_overview,
            self.ui.x_project, self.ui.y_project, self.ui.refl]:
       plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
+    self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
     self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotPickX)
+    self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
+    self.ui.y_project.canvas.mpl_connect('button_release_event', self.plotPickY)
 
   def fileOpenDialog(self):
     '''
@@ -86,14 +101,17 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Open a new datafile and plot the data.
     '''
-    data=data_reduction.read_file(filename)
     folder, base=os.path.split(filename)
+    data=data_reduction.read_file(filename)
+    if data is None:
+      self.ui.currentChannel.setText(u'!!!NO DATA IN FILE %s!!!'%base)
+      return
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     self.active_file=base
+    self.channels=data['channels']
     self.xydata=data['xydata']
     self.xtofdata=data['xtofdata']
-    self.channels=data['channels']
 
     desiredChannel=self.ui.selectedChannel.currentText().split('/')
     self.use_channel=data['channels'][0]
@@ -180,6 +198,7 @@ class MainGUI(QtGui.QMainWindow):
         plot.show()
         plot.do_hide=False
 
+#  tline=None
   def plot_overview(self):
     '''
       X vs. Y and X vs. Tof for main channel.
@@ -203,6 +222,9 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.xtof_overview.set_xlabel(u'ToF [channel]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
+#    if self.tline is None:
+#      self.tline=Line2D([20, 20], [0, 300], color='red')
+#      self.ui.xy_overview.canvas.ax.add_line(self.tline)
     if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
       self.ui.xy_overview.cbar=self.ui.xy_overview.canvas.fig.colorbar(self.ui.xy_overview.cplot)
       self.ui.xtof_overview.cbar=self.ui.xtof_overview.canvas.fig.colorbar(self.ui.xtof_overview.cplot)
@@ -309,8 +331,8 @@ class MainGUI(QtGui.QMainWindow):
       d2=self.xtofdata[cindex]
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
     else:
-      xproj=data.max(axis=0)
-    yproj=data.max(axis=1)
+      xproj=data.mean(axis=0)
+    yproj=data.mean(axis=1)
 
     # calculate approximate peak position
     try:
@@ -364,9 +386,34 @@ class MainGUI(QtGui.QMainWindow):
   def replotProjections(self):
     if self.auto_change_active:
       return
-    self.plot_projections(preserve_lim=True)
+    lines=self.proj_lines
+    x_peak=self.ui.refXPos.value()
+    x_width=self.ui.refXWidth.value()
+    y_pos=self.ui.refYPos.value()
+    y_width=self.ui.refYWidth.value()
+    bg_pos=self.ui.bgCenter.value()
+    bg_width=self.ui.bgWidth.value()
+
+    lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+    lines[1].set_xdata([x_peak, x_peak])
+    lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+    lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+    lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+    lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+    lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+    self.ui.x_project.draw()
+    self.ui.y_project.draw()
+    self.trigger('plot_refl')
+    #self.plot_projections(preserve_lim=True)
 
   def plot_projections(self, preserve_lim=False):
+#    if self.tline is not None:
+#      self.tline.set_xdata([self.ui.refXPos.value(), self.ui.refXPos.value()])
+#      self.ui.xy_overview.draw()
+    # delay the projection plots to allow quicker change of parameters in the GUI
+    self.trigger('_plot_projections', preserve_lim)
+
+  def _plot_projections(self, preserve_lim):
     '''
       Create projections of the data on the x and y axes.
       The x-projection can also be done be means of quantile calculation,
@@ -432,6 +479,7 @@ class MainGUI(QtGui.QMainWindow):
     y_bg=Line2D([0, yxlim[1]], [self.y_bg, self.y_bg], color='green')
     self.ui.y_project.canvas.ax.add_line(y_bg)
     self.ui.y_project.draw()
+    self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
     self.plot_refl()
 
   def plot_refl(self):
@@ -465,6 +513,11 @@ class MainGUI(QtGui.QMainWindow):
                   )
 
     if self.ui.fanReflectivity.isChecked():
+      if self.ref_norm is None:
+        QtGui.QMessageBox.information(self, 'No normalization',
+                 'You need an active normalization to extract Fan-Reflectivity')
+        self.ui.fanReflectivity.setChecked(False)
+        return
       Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
                                                                       self.ref_norm)
     else:
@@ -560,9 +613,10 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMessageBox.information(self, 'Select other dataset',
             'Please select a dataset with total reflection plateau\nand normalization.')
       return
-    y=self.ref_data/self.ref_norm
-    x=self.ref_x[y>0]
-    dy=self.dref[y>0]/self.ref_norm[y>0]
+    first=31-self.ui.rangeStart.value()
+    y=self.ref_data[:first]/self.ref_norm[:first]
+    x=self.ref_x[:first][y>0]
+    dy=self.dref[:first][y>0]/self.ref_norm[:first][y>0]
     y=y[y>0]
     # Start from low Q and search for the critical edge
     for i in range(len(y)-5, 0,-1):
@@ -669,11 +723,16 @@ as the ones already in the list:
       item.setText(os.path.join(settings['path'], settings['file']))
       return
     # update settings from selected option
-    elif column==1:
+    elif column in [1, 4, 5, 6, 7, 8, 9, 11]:
+      key=[None, 'scale', None, None,
+           'x_pos', 'x_width',
+           'y_pos', 'y_width',
+           'bg_pos', 'bg_width',
+           None, 'dp'][column]
       try:
-        settings['scale']=float(item.text())
+        settings[key]=float(item.text())
       except ValueError:
-        item.setText(str(settings['scale']))
+        item.setText(str(settings[key]))
       else:
         Qz, R, dR=self.recalculateReflectivity(settings)
         self.add_to_ref[entry][1:]=[Qz, R, dR]
@@ -687,6 +746,14 @@ as the ones already in the list:
         settings['range'][1]=int(item.text())
       except ValueError:
         item.setText(str(settings['range'][1]))
+    elif column==12:
+      try:
+        settings['tth']=float(item.text())*pi/180.
+      except ValueError:
+        item.setText(str(settings['tth']*180./pi))
+      else:
+        Qz, R, dR=self.recalculateReflectivity(settings)
+        self.add_to_ref[entry][1:]=[Qz, R, dR]
     self.plot_refl()
 
   def recalculateReflectivity(self, settings):
@@ -701,7 +768,7 @@ as the ones already in the list:
     tof_edges=fulldata['tof']
     Qz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
     return Qz, R/fulldata['pc'], dR/fulldata['pc']
-  
+
   def changeActiveChannel(self):
     if self.use_channel in self.ref_list_channels:
       for items in self.add_to_ref:
@@ -713,7 +780,16 @@ as the ones already in the list:
     self.add_to_ref=[]
     self.ui.reductionTable.setRowCount(0)
     self.plot_refl()
-  
+
+  def removeRefList(self):
+    index=self.ui.reductionTable.currentRow()
+    if index<0:
+      return
+    self.add_to_ref.pop(index)
+    self.ui.reductionTable.removeRow(index)
+    #self.ui.reductionTable.setRowCount(0)
+    self.plot_refl()
+
   def overwriteDirectBeam(self):
     self.auto_change_active=True
     self.ui.directPixelOverwrite.setValue(self.ui.refXPos.value())
@@ -740,8 +816,11 @@ as the ones already in the list:
       return
     dialog=ReduceDialog(self, self.ref_list_channels,
                         self.ref_norm, self.add_to_ref)
-    ind_str, channels, output_data=dialog.exec_()
+    result=dialog.exec_()
     dialog.destroy()
+    if result is None:
+      return
+    ind_str, channels, output_data=result
     # plot the results in a new window
     dialog=QtGui.QDialog()
     ui=UiPlot()
@@ -764,11 +843,54 @@ as the ones already in the list:
     self.ui.statusbar.showMessage(u"x=%15g    y=%15g"%(event.xdata, event.ydata))
 
   def plotPickX(self, event):
-    if self.ui.x_project.toolbar._active is None and event.xdata is not None:
+    if event.button is not None and self.ui.x_project.toolbar._active is None and \
+        event.xdata is not None:
       if event.button==1:
-        self.ui.refXPos.setValue(event.xdata)
+        xcen=self.ui.refXPos.value()
+        bgc=self.ui.bgCenter.value()
+        bgw=self.ui.bgWidth.value()
+        bgl=bgc-bgw/2.
+        bgr=bgc+bgw/2.
+        if event.xdata<bgr and abs(event.xdata-bgl)<abs(event.xdata-bgr):
+          # left of right background bar and closer to left one
+          bgl=event.xdata
+          bgc=(bgr+bgl)/2.
+          bgw=(bgr-bgl)
+          self.auto_change_active=True
+          self.ui.bgCenter.setValue(bgc)
+          self.auto_change_active=False
+          self.ui.bgWidth.setValue(bgw)
+        elif event.xdata<bgr or abs(event.xdata-bgr)<abs(event.xdata-xcen):
+          # left of right background bar or closer to right background than peak
+          bgr=event.xdata
+          bgc=(bgr+bgl)/2.
+          bgw=(bgr-bgl)
+          self.auto_change_active=True
+          self.ui.bgCenter.setValue(bgc)
+          self.auto_change_active=False
+          self.ui.bgWidth.setValue(bgw)
+        else:
+          self.ui.refXPos.setValue(event.xdata)
       elif event.button==3:
         self.ui.refXWidth.setValue(abs(self.ui.refXPos.value()-event.xdata)*2.)
+
+  def plotPickY(self, event):
+    if event.button==1 and self.ui.x_project.toolbar._active is None and \
+        event.xdata is not None:
+      ypos=self.ui.refYPos.value()
+      yw=self.ui.refYWidth.value()
+      yl=ypos-yw/2.
+      yr=ypos+yw/2.
+      if abs(event.xdata-yl)<abs(event.xdata-yr):
+        yl=event.xdata
+      else:
+        yr=event.xdata
+      ypos=(yr+yl)/2.
+      yw=(yr-yl)
+      self.auto_change_active=True
+      self.ui.refYPos.setValue(ypos)
+      self.auto_change_active=False
+      self.ui.refYWidth.setValue(yw)
 
   def readSettings(self):
     '''
@@ -791,6 +913,10 @@ as the ones already in the list:
     '''
       Save window and dock geometry.
     '''
+    # join delay thread
+    self.trigger.stay_alive=False
+    self.trigger.wait()
+    # store geometry
     obj=(self.saveGeometry(), self.saveState(),
          self.ui.splitter.sizes()[0])
     path=os.path.expanduser('~/.quicknxs')

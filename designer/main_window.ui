@@ -389,7 +389,7 @@
                <item>
                 <widget class="QTableWidget" name="reductionTable">
                  <property name="editTriggers">
-                  <set>QAbstractItemView::DoubleClicked</set>
+                  <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
                  </property>
                  <property name="horizontalScrollMode">
                   <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -408,9 +408,6 @@
                  </attribute>
                  <attribute name="horizontalHeaderMinimumSectionSize">
                   <number>25</number>
-                 </attribute>
-                 <attribute name="horizontalHeaderStretchLastSection">
-                  <bool>true</bool>
                  </attribute>
                  <attribute name="verticalHeaderVisible">
                   <bool>false</bool>
@@ -715,8 +712,13 @@
      <string>Reduce</string>
     </property>
     <addaction name="actionNorm"/>
+    <addaction name="actionNormalizeScaling"/>
+    <addaction name="separator"/>
     <addaction name="actionAddPlot"/>
+    <addaction name="actionRemove"/>
     <addaction name="actionClear"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdjust_Dirct_Beam"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduce"/>
@@ -984,6 +986,9 @@
        <property name="minimum">
         <double>1.000000000000000</double>
        </property>
+       <property name="maximum">
+        <double>400.000000000000000</double>
+       </property>
        <property name="value">
         <double>6.000000000000000</double>
        </property>
@@ -1021,16 +1026,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="refYPos">
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <double>400.000000000000000</double>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="2">
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -1062,20 +1057,17 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="bgCenter"/>
-     </item>
-     <item row="4" column="2">
-      <widget class="QDoubleSpinBox" name="bgWidth"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>BG X</string>
+      <widget class="QDoubleSpinBox" name="bgCenter">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>400.000000000000000</double>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <spacer name="verticalSpacer_2">
+     <item row="7" column="1">
+      <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -1087,8 +1079,25 @@
        </property>
       </spacer>
      </item>
-     <item row="7" column="1">
-      <spacer name="verticalSpacer">
+     <item row="4" column="2">
+      <widget class="QDoubleSpinBox" name="bgWidth">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>400.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>BG X</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -1124,6 +1133,16 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="refYPos">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>400.000000000000000</double>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -1143,7 +1162,9 @@
    <addaction name="separator"/>
    <addaction name="actionNorm"/>
    <addaction name="actionNormalizeScaling"/>
+   <addaction name="separator"/>
    <addaction name="actionAddPlot"/>
+   <addaction name="actionRemove"/>
    <addaction name="actionClear"/>
    <addaction name="separator"/>
    <addaction name="actionAdjust_Dirct_Beam"/>
@@ -1301,7 +1322,7 @@
   </action>
   <action name="actionClear">
    <property name="icon">
-    <iconset theme="list-remove">
+    <iconset theme="edit-delete">
      <normaloff/>
     </iconset>
    </property>
@@ -1336,6 +1357,19 @@
    </property>
    <property name="toolTip">
     <string>Get normalization scale from total reflection</string>
+   </property>
+  </action>
+  <action name="actionRemove">
+   <property name="icon">
+    <iconset theme="list-remove">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Remove Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove one plots from data reduction list</string>
    </property>
   </action>
  </widget>
@@ -1835,6 +1869,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRemove</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeRefList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -1855,5 +1905,6 @@
   <slot>normalizeTotalReflection()</slot>
   <slot>reductionTableChanged(QTableWidgetItem*)</slot>
   <slot>changeActiveChannel()</slot>
+  <slot>removeRefList()</slot>
  </slots>
 </ui>

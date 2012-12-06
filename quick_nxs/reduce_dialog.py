@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Wed Dec  5 12:08:07 2012
+# Created: Thu Dec  6 09:42:42 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -83,6 +83,8 @@ class Ui_Dialog(object):
     self.directoryEntry.setObjectName(_fromUtf8("directoryEntry"))
     self.horizontalLayout_2.addWidget(self.directoryEntry)
     self.toolButton = QtGui.QToolButton(Dialog)
+    icon = QtGui.QIcon.fromTheme(_fromUtf8("document-open"))
+    self.toolButton.setIcon(icon)
     self.toolButton.setObjectName(_fromUtf8("toolButton"))
     self.horizontalLayout_2.addWidget(self.toolButton)
     self.verticalLayout_2.addLayout(self.horizontalLayout_2)
@@ -104,6 +106,7 @@ class Ui_Dialog(object):
     self.retranslateUi(Dialog)
     QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
     QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
+    QtCore.QObject.connect(self.toolButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.changeDir)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
 
   def retranslateUi(self, Dialog):
@@ -120,5 +123,5 @@ class Ui_Dialog(object):
     self.label.setText(QtGui.QApplication.translate("Dialog", "Directory", None, QtGui.QApplication.UnicodeUTF8))
     self.toolButton.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
     self.label_2.setText(QtGui.QApplication.translate("Dialog", "File Namins", None, QtGui.QApplication.UnicodeUTF8))
-    self.fileNameEntry.setText(QtGui.QApplication.translate("Dialog", "{item}_({channel})_{numbers}.{type}", None, QtGui.QApplication.UnicodeUTF8))
+    self.fileNameEntry.setText(QtGui.QApplication.translate("Dialog", "[{numbers}]_{item}_({channel}).{type}", None, QtGui.QApplication.UnicodeUTF8))
 
