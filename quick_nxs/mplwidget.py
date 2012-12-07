@@ -5,9 +5,15 @@ import matplotlib
 font={
       #'family' : 'sans',
       #  'weight' : 'normal',
-        'size': 6}
+        'size': 6,
+        }
+savefig={
+         'dpi': 600,
+         }
+
 
 matplotlib.rc('font', **font)
+matplotlib.rc('savefig', **savefig)
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
@@ -46,7 +52,6 @@ class MplCanvas(FigureCanvas):
       xlabel.set_fontsize(8)
     for ylabel in labels_y:
       ylabel.set_fontsize(8)
-      ylabel.set_color('b')
 
   def sizeHint(self):
     w, h=self.get_width_height()

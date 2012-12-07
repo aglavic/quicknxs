@@ -217,5 +217,9 @@ def calc_offspec(data, tof_channels, settings):
 
   # calculate ROI intensities and normalize by number of points
   Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3], :]
-  I=Idata.sum(axis=1)/(reg[3]-reg[2])*scale
-  return Qx, Qz, ki_z, kf_z, I
+  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :].sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[5]-reg[4])
+  Iraw=Idata.sum(axis=1)
+  dIraw=sqrt(Iraw)
+  I=(Iraw/(reg[3]-reg[2])-bgdata[newaxis, :])*scale
+  dI=dIraw/(reg[3]-reg[2])*scale
+  return Qx, Qz, ki_z, kf_z, I, dI

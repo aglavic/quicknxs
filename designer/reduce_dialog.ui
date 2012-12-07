@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>375</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,11 +51,28 @@
          </item>
          <item>
           <widget class="QCheckBox" name="exportOffSpecular">
+           <property name="text">
+            <string>Off-Specular Raw</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="exportOffSpecularSmoothed">
            <property name="enabled">
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Off-Specular Map</string>
+            <string>Off-Specular Smoothed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="exportGISANS">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>GISANS</string>
            </property>
           </widget>
          </item>
@@ -121,6 +138,76 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Output Formats</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="multiAscii">
+        <property name="text">
+         <string>ASCII for each channel</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="combinedAscii">
+        <property name="text">
+         <string>Combined ASCII</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="matlab">
+        <property name="text">
+         <string>Matlab</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="gnuplot">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Gnuplot Script</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="plot">
+        <property name="text">
+         <string>Show Plot</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="genx">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>GenX</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="numpy">
+        <property name="text">
+         <string>Numpy .npz</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label">
@@ -138,7 +225,9 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-open"/>
+        <iconset theme="document-open">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
@@ -149,14 +238,14 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>File Namins</string>
+        <string>File Naming</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="fileNameEntry">
        <property name="text">
-        <string>[{numbers}]_{item}_({channel}).{type}</string>
+        <string>REF_M_{numbers}_{item}_{channel}.{type}</string>
        </property>
       </widget>
      </item>

@@ -24,7 +24,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="Overview">
+      <widget class="QWidget" name="Overview_Tab">
        <attribute name="title">
         <string>Overview</string>
        </attribute>
@@ -537,7 +537,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="XY_Tab">
        <attribute name="title">
         <string>X-Y</string>
        </attribute>
@@ -620,7 +620,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="XTof_Tab">
        <attribute name="title">
         <string>X-ToF</string>
        </attribute>
@@ -675,13 +675,104 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_3">
+      <widget class="QWidget" name="OffSpec_Tab">
        <attribute name="title">
         <string>Off-Specular</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_14">
-        <item>
-         <widget class="MPLWidget" name="offspec" native="true"/>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="1" column="1">
+         <widget class="QFrame" name="frame_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="MPLWidget" name="offspec_mm" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QFrame" name="frame_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="MPLWidget" name="offspec_pm" native="true"/>
+           </item>
+           <item>
+            <widget class="MPLWidget" name="offspec_mp" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QFrame" name="frame_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <item>
+            <widget class="MPLWidget" name="offspec_pp" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QRadioButton" name="kizmkfzVSqz">
+            <property name="text">
+             <string>(ki_z-kf_z) VS. Qz</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="qxVSqz">
+            <property name="text">
+             <string>Qx VS. Qz</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="kizVSkfz">
+            <property name="text">
+             <string>ki_z VS. kf_z</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -1002,7 +1093,7 @@
         <double>1.000000000000000</double>
        </property>
        <property name="value">
-        <double>6.000000000000000</double>
+        <double>9.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -1892,6 +1983,54 @@
     <hint type="sourcelabel">
      <x>134</x>
      <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kizVSkfz</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plotActiveTab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>778</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qxVSqz</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plotActiveTab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>580</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>kizmkfzVSqz</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plotActiveTab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>

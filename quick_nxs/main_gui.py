@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 '''
-  Actions performed for main window signals.
+  Module including main GUI class with all signal handling and plot creation.
 '''
 
 import os
@@ -13,7 +13,6 @@ from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
 from . import data_reduction
 from .main_window import Ui_MainWindow
-from .plot_dialog import Ui_Dialog as UiPlot
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .instrument_constants import *
 from .mpfit import mpfit
@@ -28,6 +27,8 @@ class MainGUI(QtGui.QMainWindow):
   add_to_ref=[]
   color=None
   open_plots=[] # to keep non modal dialogs open
+  channels=[]
+  use_channel='x'
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -36,6 +37,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.setupUi(self)
     self.toggleHide()
     self.readSettings()
+    self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
     self.trigger=DelayedTrigger()
     self.connect(self.trigger, QtCore.SIGNAL("activate(QString, PyQt_PyObject)"),
@@ -143,6 +145,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Select the appropriate function to plot all visible images.
     '''
+    if self.auto_change_active:
+      return
     color=str(self.ui.color_selector.currentText())
     if color!=self.color and self.color is not None:
       self.color=color
@@ -239,7 +243,7 @@ class MainGUI(QtGui.QMainWindow):
       X vs. Y plots for all channels.
     '''
     data=self.xydata
-    plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_mp, self.ui.xy_pm]
+    plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_pm, self.ui.xy_mp]
     imin=1e20
     imax=1e-20
     for d in data:
@@ -273,7 +277,7 @@ class MainGUI(QtGui.QMainWindow):
       X vs. ToF plots for all channels.
     '''
     data=self.xtofdata
-    plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_mp, self.ui.xtof_pm]
+    plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
     if self.ui.normalizeXTof.isChecked() and self.ref_norm is not None:
       # normalize all datasets for wavelength distribution
       data_new=[]
@@ -566,21 +570,59 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refl.draw()
 
   def plot_offspec(self):
+    plots=[self.ui.offspec_pp, self.ui.offspec_mm,
+           self.ui.offspec_pm, self.ui.offspec_mp]
     if self.ref_norm is None:
       return
-    self.ui.offspec.clear()
+    Imin=1e10
+    Imax=0.
+    for plot in plots:
+        plot.clear()
     for item in self.add_to_ref:
       fname=os.path.join(item[0]['path'], item[0]['file'])
-      data=data_reduction.read_file(fname)
-      selected_data=data[data['channels'][0]]
-      data=selected_data['data']
-      tof_edges=selected_data['tof']
-      settings=item[0]
-      _Qx, Qz, ki_z, kf_z, I=data_reduction.calc_offspec(data, tof_edges, settings)
-      I/=self.ref_norm[newaxis, :]*selected_data['pc']
-      self.ui.offspec.pcolormesh(ki_z-kf_z, Qz, I, log=True)
-#      self.ui.offspec.pcolormesh(ki_z, kf_z, I, log=True)
-    self.ui.offspec.draw()
+      data_all=data_reduction.read_file(fname)
+      for i, channel in enumerate(self.ref_list_channels):
+        plot=plots[i]
+        selected_data=data_all[channel]
+        data=selected_data['data']
+        tof_edges=selected_data['tof']
+        settings=item[0]
+        Qx, Qz, ki_z, kf_z, I, _dI=data_reduction.calc_offspec(data, tof_edges, settings)
+        I/=self.ref_norm[newaxis, :]*selected_data['pc']
+        Imin=min(Imin, I[I>0].min())
+        Imax=max(Imax, I.max())
+        P0=31-self.ui.rangeStart.value()
+        PN=30-self.ui.rangeEnd.value()
+        if self.ui.kizmkfzVSqz.isChecked():
+          plot.pcolormesh((ki_z-kf_z)[:, PN:P0],
+                                        Qz[:, PN:P0], I[:, PN:P0], log=True)
+        elif self.ui.qxVSqz.isChecked():
+          plot.pcolormesh(Qx[:, PN:P0],
+                                        Qz[:, PN:P0], I[:, PN:P0], log=True)
+        else:
+          plot.pcolormesh(ki_z[:, PN:P0],
+                                        kf_z[:, PN:P0], I[:, PN:P0], log=True)
+    for i, channel in enumerate(self.ref_list_channels):
+      plot=plots[i]
+      if self.ui.kizmkfzVSqz.isChecked():
+        plot.canvas.ax.set_xlim([-0.03, 0.03])
+        plot.canvas.ax.set_ylim([0., None])
+        plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [$\\AA^{-1}$]')
+        plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
+      elif self.ui.qxVSqz.isChecked():
+        plot.canvas.ax.set_xlim([-0.0015, 0.0015])
+        plot.canvas.ax.set_ylim([0., None])
+        plot.set_xlabel(u'Q$_x$ [$\\AA^{-1}$]')
+        plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
+      else:
+        plot.canvas.ax.set_xlim([0., None])
+        plot.canvas.ax.set_ylim([0., None])
+        plot.set_xlabel(u'k$_{i,z}$ [$\\AA^{-1}$]')
+        plot.set_ylabel(u'k$_{f,z}$ [$\\AA^{-1}$]')
+      plot.set_title(channel)
+      if plot.cplot is not None:
+        plot.cplot.set_clim([Imin, Imax])
+      plot.draw()
 
 
   def setNorm(self):
@@ -634,6 +676,7 @@ class MainGUI(QtGui.QMainWindow):
     # show a line in the plot corresponding to the extraction region
     totref=Line2D([x.min(), x[i]], [1., 1.], color='red')
     self.ui.refl.canvas.ax.add_line(totref)
+    self.ui.refl.canvas.ax.set_ylim([None, 2.])
     self.ui.refl.draw()
 
   def addRefList(self):
@@ -831,26 +874,8 @@ as the ones already in the list:
       return
     dialog=ReduceDialog(self, self.ref_list_channels,
                         self.ref_norm, self.add_to_ref)
-    result=dialog.exec_()
+    dialog.exec_()
     dialog.destroy()
-    if result is None:
-      return
-    ind_str, channels, output_data=result
-    # plot the results in a new window
-    dialog=QtGui.QDialog()
-    ui=UiPlot()
-    ui.setupUi(dialog)
-    for channel in channels:
-      data=output_data[channel]
-      ui.plot.errorbar(data[:, 0], data[:, 1], yerr=data[:, 2], label=channel)
-    ui.plot.legend()
-    ui.plot.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
-    ui.plot.set_ylabel(u'R [a.u.]')
-    ui.plot.set_yscale('log')
-    ui.plot.set_title(ind_str)
-    ui.plot.show()
-    dialog.show()
-    self.open_plots.append(dialog)
 
   def plotMouseEvent(self, event):
     if event.inaxes is None:
