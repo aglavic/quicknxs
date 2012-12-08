@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="General">
+    <file>reduce.png</file>
+    <file>fitXPos.png</file>
     <file>logo.png</file>
     <file>totalReflection.png</file>
     <file>tthZero.png</file>

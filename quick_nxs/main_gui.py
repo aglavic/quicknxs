@@ -376,10 +376,34 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
     self.auto_change_active=False
 
+  def refineXpos(self):
+    if self.ui.actionRefineX.isChecked():
+      cindex=self.channels.index(self.use_channel)
+      data=self.xydata[cindex]
+      if self.ui.xprojUseQuantiles.isChecked():
+        d2=self.xtofdata[cindex]
+        xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
+      else:
+        xproj=data.mean(axis=0)
+      # refine gaussian to this peak position
+      x_width=self.ui.refXWidth.value()
+      x_peak=self.ui.refXPos.value()
+      x_peak=self.refineGauss(xproj, x_peak, x_width)
+      self.ui.refXPos.setValue(x_peak)
+
   def refineGauss(self, data, pos, width):
     p0=[data[int(pos)], pos, width]
-    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0)
-    #print pos, res.params[1], res.niter
+    parinfo=[{'value':0., 'fixed':0, 'limited':[0, 0],
+              'limits':[0., 0.]} for ignore in range(3)]
+    parinfo[0]['limited']=[True, False]
+    parinfo[0]['limits']=[0., None]
+    parinfo[2]['fixed']=True
+    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
+    parinfo[2]['fixed']=False
+    parinfo[2]['limited']=[True, True]
+    parinfo[2]['limits']=[1., 4.*width]
+    p0=[data[int(res.params[1])], res.params[1], width]
+    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
     return res.params[1]
 
   def gauss_residuals(self, p, fjac=None, data=None, width=1):
@@ -911,6 +935,8 @@ as the ones already in the list:
           self.ui.bgWidth.setValue(bgw)
         else:
           self.ui.refXPos.setValue(event.xdata)
+          if self.ui.actionRefineX.isChecked():
+            self.refineXpos()
       elif event.button==3:
         self.ui.refXWidth.setValue(abs(self.ui.refXPos.value()-event.xdata)*2.)
 

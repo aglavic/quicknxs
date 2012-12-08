@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot_dialog.ui'
 #
-# Created: Fri Dec  7 14:15:37 2012
+# Created: Sat Dec  8 10:45:29 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,9 @@ class Ui_Dialog(object):
   def setupUi(self, Dialog):
     Dialog.setObjectName(_fromUtf8("Dialog"))
     Dialog.resize(800, 600)
+    icon = QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    Dialog.setWindowIcon(icon)
     self.verticalLayout = QtGui.QVBoxLayout(Dialog)
     self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
     self.plot = MPLWidget(Dialog)
@@ -33,6 +36,7 @@ class Ui_Dialog(object):
     QtCore.QMetaObject.connectSlotsByName(Dialog)
 
   def retranslateUi(self, Dialog):
-    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Plot", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import MPLWidget
+from . import icons_rc
