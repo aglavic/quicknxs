@@ -18,7 +18,7 @@ from .instrument_constants import *
 from .mpfit import mpfit
 
 class MainGUI(QtGui.QMainWindow):
-  active_folder=u'.'
+  active_folder=u''
   active_file=u''
   ref_list_channels=[]
   ref_data=None
@@ -32,6 +32,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
+    self.active_folder=os.curdir
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
@@ -43,6 +44,8 @@ class MainGUI(QtGui.QMainWindow):
     self.connect(self.trigger, QtCore.SIGNAL("activate(QString, PyQt_PyObject)"),
                  self.processDelayedTrigger)
     self.trigger.start()
+    self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
+    self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
 
     self._path_watcher=QtCore.QFileSystemWatcher(self.active_folder, self)
     if len(argv)>0:
@@ -88,7 +91,10 @@ class MainGUI(QtGui.QMainWindow):
     '''
     item=self.ui.file_list.currentItem()
     name=unicode(item.text())
-    mtime=os.path.getmtime(os.path.join(self.active_folder, self.active_file))
+    try:
+      mtime=os.path.getmtime(os.path.join(self.active_folder, self.active_file))
+    except OSError:
+      mtime=1e10
     if name!=self.active_file or mtime>self.last_mtime:
       # only reload if filename was actually changed or file was modifiede
       self.fileOpen(os.path.join(self.active_folder, name))
@@ -190,7 +196,8 @@ class MainGUI(QtGui.QMainWindow):
     if not self.auto_change_active:
       plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
              self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-             self.ui.xy_overview, self.ui.xtof_overview]
+             self.ui.xy_overview, self.ui.xtof_overview,
+             self.ui.offspec_pp, self.ui.offspec_mp, self.ui.offspec_pm, self.ui.offspec_mm]
       for plot in plots:
         plot.clear_fig()
       self.plotActiveTab()
@@ -372,8 +379,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refXPos.setValue(x_peak)
     self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
     self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
-    self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
-    self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
     self.auto_change_active=False
 
   def refineXpos(self):
@@ -598,54 +603,64 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.offspec_pm, self.ui.offspec_mp]
     if self.ref_norm is None:
       return
-    Imin=1e10
-    Imax=0.
     for plot in plots:
         plot.clear()
+    Imin=10**self.ui.offspecImin.value()
+    Imax=10**self.ui.offspecImax.value()
+    Qzmax=0.01
     for item in self.add_to_ref:
       fname=os.path.join(item[0]['path'], item[0]['file'])
       data_all=data_reduction.read_file(fname)
+      settings=item[0]
       for i, channel in enumerate(self.ref_list_channels):
         plot=plots[i]
         selected_data=data_all[channel]
         data=selected_data['data']
         tof_edges=selected_data['tof']
-        settings=item[0]
         Qx, Qz, ki_z, kf_z, I, _dI=data_reduction.calc_offspec(data, tof_edges, settings)
         I/=self.ref_norm[newaxis, :]*selected_data['pc']
-        Imin=min(Imin, I[I>0].min())
-        Imax=max(Imax, I.max())
-        P0=31-self.ui.rangeStart.value()
-        PN=30-self.ui.rangeEnd.value()
+        #Imin_i=I[I>0].min()
+        #I[I<=0]=Imin_i # remove zero and negative points
+        P0=31-settings['range'][0]
+        PN=30-settings['range'][1]
+        Qzmax=max(Qz[int(settings['x_pos']), PN:P0].max(), Qzmax)
         if self.ui.kizmkfzVSqz.isChecked():
           plot.pcolormesh((ki_z-kf_z)[:, PN:P0],
-                                        Qz[:, PN:P0], I[:, PN:P0], log=True)
+                                        Qz[:, PN:P0], I[:, PN:P0], log=True,
+                                        imin=Imin, imax=Imax, cmap=self.color,
+                                        shading='gouraud')
         elif self.ui.qxVSqz.isChecked():
           plot.pcolormesh(Qx[:, PN:P0],
-                                        Qz[:, PN:P0], I[:, PN:P0], log=True)
+                                        Qz[:, PN:P0], I[:, PN:P0], log=True,
+                                        imin=Imin, imax=Imax, cmap=self.color,
+                                        shading='gouraud')
         else:
           plot.pcolormesh(ki_z[:, PN:P0],
-                                        kf_z[:, PN:P0], I[:, PN:P0], log=True)
+                                        kf_z[:, PN:P0], I[:, PN:P0], log=True,
+                                        imin=Imin, imax=Imax, cmap=self.color,
+                                        shading='gouraud')
     for i, channel in enumerate(self.ref_list_channels):
       plot=plots[i]
       if self.ui.kizmkfzVSqz.isChecked():
         plot.canvas.ax.set_xlim([-0.03, 0.03])
-        plot.canvas.ax.set_ylim([0., None])
+        plot.canvas.ax.set_ylim([0., Qzmax])
         plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [$\\AA^{-1}$]')
         plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
       elif self.ui.qxVSqz.isChecked():
-        plot.canvas.ax.set_xlim([-0.0015, 0.0015])
-        plot.canvas.ax.set_ylim([0., None])
+        plot.canvas.ax.set_xlim([-0.001, 0.001])
+        plot.canvas.ax.set_ylim([0., Qzmax])
         plot.set_xlabel(u'Q$_x$ [$\\AA^{-1}$]')
         plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
       else:
-        plot.canvas.ax.set_xlim([0., None])
-        plot.canvas.ax.set_ylim([0., None])
+        plot.canvas.ax.set_xlim([0., Qzmax/2.])
+        plot.canvas.ax.set_ylim([0., Qzmax/2.])
         plot.set_xlabel(u'k$_{i,z}$ [$\\AA^{-1}$]')
         plot.set_ylabel(u'k$_{f,z}$ [$\\AA^{-1}$]')
       plot.set_title(channel)
       if plot.cplot is not None:
         plot.cplot.set_clim([Imin, Imax])
+        if self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
+          plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plot.draw()
 
 
@@ -907,6 +922,9 @@ as the ones already in the list:
     self.ui.statusbar.showMessage(u"x=%15g    y=%15g"%(event.xdata, event.ydata))
 
   def plotPickX(self, event):
+    '''
+      Plot for x-projection has been clicked.
+    '''
     if event.button is not None and self.ui.x_project.toolbar._active is None and \
         event.xdata is not None:
       if event.button==1:
@@ -941,6 +959,9 @@ as the ones already in the list:
         self.ui.refXWidth.setValue(abs(self.ui.refXPos.value()-event.xdata)*2.)
 
   def plotPickY(self, event):
+    '''
+      Plot for y-projection has been clicked.
+    '''
     if event.button==1 and self.ui.x_project.toolbar._active is None and \
         event.xdata is not None:
       ypos=self.ui.refYPos.value()

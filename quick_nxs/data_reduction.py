@@ -82,8 +82,8 @@ def calc_reflectivity(data, tof_channels, settings):
            y_pos-y_width/2., y_pos+y_width/2.,
            bg_pos-bg_width/2., bg_pos+bg_width/2.])
 
-  Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
-  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :]
+  Idata=data[reg[0]:reg[1]+1, reg[2]:reg[3]+1, :]
+  bgdata=data[reg[4]:reg[5]+1, reg[2]:reg[3]+1, :]
   pix_offset=direct_pixel-x_pos
   tth=tth_bank+pix_offset*RAD_PER_PIX
   ai=tth/2.
@@ -137,8 +137,8 @@ def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
            y_pos-y_width/2., y_pos+y_width/2.,
            bg_pos-bg_width/2., bg_pos+bg_width/2.])
 
-  Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
-  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :]
+  Idata=data[reg[0]:reg[1]+1, reg[2]:reg[3]+1, :]
+  bgdata=data[reg[4]:reg[5]+1, reg[2]:reg[3]+1, :]
   x_region=arange(reg[0], reg[1])
   pix_offset=direct_pixel-x_region
   tth=tth_bank+pix_offset*RAD_PER_PIX
@@ -216,8 +216,8 @@ def calc_offspec(data, tof_channels, settings):
   kf_z=k[newaxis, :]*sin(af)[:, newaxis]
 
   # calculate ROI intensities and normalize by number of points
-  Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3], :]
-  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :].sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[5]-reg[4])
+  Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3]+1, :]
+  bgdata=data[reg[4]:reg[5]+1, reg[2]:reg[3]+1, :].sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[5]-reg[4])
   Iraw=Idata.sum(axis=1)
   dIraw=sqrt(Iraw)
   I=(Iraw/(reg[3]-reg[2])-bgdata[newaxis, :])*scale

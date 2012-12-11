@@ -7,8 +7,7 @@ import os
 from PyQt4.QtGui import QDialog, QFileDialog
 from PyQt4.QtCore import QThread, SIGNAL
 from time import sleep, time
-from numpy import vstack, savetxt, savez_compressed, array
-from matplotlib.colors import LogNorm
+from numpy import vstack, savetxt, savez, array
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as Ui_Resource_Dialog
 from .data_reduction import *
@@ -226,7 +225,7 @@ class ReduceDialog(QDialog):
         dictdata=self.dictize_data(output_data)
         output=ofname.replace('{item}', key).replace('{channel}', 'all')\
                        .replace('{type}', 'npz').replace('{numbers}', self.ind_str)
-        savez_compressed(output, **dictdata)
+        savez(output, **dictdata)
 
   def dictize_data(self, output_data):
     '''
