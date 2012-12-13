@@ -62,9 +62,6 @@
          </item>
          <item>
           <widget class="QCheckBox" name="exportOffSpecularSmoothed">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
            <property name="text">
             <string>Off-Specular Smoothed</string>
            </property>
@@ -173,9 +170,6 @@
       </item>
       <item row="2" column="0">
        <widget class="QCheckBox" name="gnuplot">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>Gnuplot Script</string>
         </property>

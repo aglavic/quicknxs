@@ -22,7 +22,7 @@ class MainGUI(QtGui.QMainWindow):
   active_file=u''
   ref_list_channels=[]
   ref_data=None
-  ref_norm=None
+  ref_norm={}
   auto_change_active=False
   add_to_ref=[]
   color=None
@@ -71,9 +71,9 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.x_project, self.ui.y_project, self.ui.refl]:
       plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
     self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
-    self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotPickX)
+    self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
     self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
-    self.ui.y_project.canvas.mpl_connect('button_release_event', self.plotPickY)
+    self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
 
   def fileOpenDialog(self):
     '''
@@ -220,9 +220,13 @@ class MainGUI(QtGui.QMainWindow):
     cindex=self.channels.index(self.use_channel)
     xy=self.xydata[cindex]
     xtof=self.xtofdata[cindex]
-    if self.ui.normalizeXTof.isChecked() and self.ref_norm is not None:
+    if self.fulldata['lambda_center'] in self.ref_norm:
+      ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    else:
+      ref_norm=None
+    if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
       # normalize ToF dataset for wavelength distribution
-      xtof=xtof.astype(float)/self.ref_norm[newaxis, :]
+      xtof=xtof.astype(float)/ref_norm[newaxis, :]
       xtof[isnan(xtof)]=0.
     xy_imin=xy[xy>0].min()
     xy_imax=xy.max()
@@ -285,11 +289,15 @@ class MainGUI(QtGui.QMainWindow):
     '''
     data=self.xtofdata
     plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
-    if self.ui.normalizeXTof.isChecked() and self.ref_norm is not None:
+    if self.fulldata['lambda_center'] in self.ref_norm:
+      ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    else:
+      ref_norm=None
+    if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
       # normalize all datasets for wavelength distribution
       data_new=[]
       for ds in data:
-        data_new.append(ds.astype(float)/self.ref_norm[newaxis, :])
+        data_new.append(ds.astype(float)/ref_norm[newaxis, :])
         data_new[-1][isnan(data_new[-1])]=0.
       data=data_new
     imin=1e20
@@ -545,16 +553,21 @@ class MainGUI(QtGui.QMainWindow):
                 beam_width=self.fulldata['beam_width'],
                   )
 
-    P0=31-self.ui.rangeStart.value()
-    PN=30-self.ui.rangeEnd.value()
+    if self.fulldata['lambda_center'] in self.ref_norm:
+      ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    else:
+      ref_norm=None
+
+    P0=len(tof_edges)-self.ui.rangeStart.value()-1
+    PN=self.ui.rangeEnd.value()
     if self.ui.fanReflectivity.isChecked():
-      if self.ref_norm is None:
+      if ref_norm is None:
         QtGui.QMessageBox.information(self, 'No normalization',
                  'You need an active normalization to extract Fan-Reflectivity')
         self.ui.fanReflectivity.setChecked(False)
         return
       Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
-                                                                      self.ref_norm, P0, PN)
+                                                                      ref_norm, P0, PN)
     else:
       Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
     self.ui.datasetAi.setText("%.3f"%(ai*180./pi))
@@ -573,17 +586,25 @@ class MainGUI(QtGui.QMainWindow):
       index=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
     except:
       index='0'
-    if self.ref_norm is not None:
+    if self.fulldata['lambda_center'] in self.ref_norm:
       self.ui.refl.set_yscale('log')
-      for settings, x, y, dy in self.add_to_ref:
-        #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
-        P0i=31-settings['range'][0]
-        PNi=30-settings['range'][1]
-        self.ui.refl.errorbar(x[PNi:P0i], (y/self.ref_norm)[PNi:P0i],
-                              yerr=dy[PNi:P0i], label=str(settings['index']))
-      #self.ui.refl.semilogy(self.ref_x, self.ref_data/self.ref_norm, label=index)
-      self.ui.refl.errorbar(self.ref_x[PN:P0], (self.ref_data/self.ref_norm)[PN:P0],
-                            yerr=(self.dref/self.ref_norm)[PN:P0], label=index)
+      if ai>0.001:
+        for settings, x, y, dy in self.add_to_ref:
+          if settings['lambda_center'] in self.ref_norm:
+            ref_norm=self.ref_norm[settings['lambda_center']]['data']
+          else:
+            ref_norm=1.
+          #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
+          P0i=len(tof_edges)-settings['range'][0]-1
+          PNi=settings['range'][1]
+          self.ui.refl.errorbar(x[PNi:P0i], (y/ref_norm)[PNi:P0i],
+                                yerr=dy[PNi:P0i], label=str(settings['index']))
+      if self.fulldata['lambda_center'] in self.ref_norm:
+        ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+      else:
+        ref_norm=1.
+      self.ui.refl.errorbar(self.ref_x[PN:P0], (self.ref_data/ref_norm)[PN:P0],
+                            yerr=(self.dref/ref_norm)[PN:P0], label=index)
       self.ui.refl.set_ylabel(u'I$_{Norm}$')
     else:
       self.ui.refl.semilogy(self.ref_x, I, label='I-'+index)
@@ -592,7 +613,7 @@ class MainGUI(QtGui.QMainWindow):
     if ai>0.001:
       self.ui.refl.set_xlabel(u'Q$_z$ [$\\AA^{-1}$]')
     else:
-      self.ui.refl.set_xlabel(u'1/$\\lambda$ [$\\AA^{-1}$]')
+      self.ui.refl.set_xlabel(u'$\\lambda$ [$\\AA$]')
     self.ui.refl.legend()
     if preserve_lim:
       self.ui.refl.canvas.ax.axis(view)
@@ -601,8 +622,6 @@ class MainGUI(QtGui.QMainWindow):
   def plot_offspec(self):
     plots=[self.ui.offspec_pp, self.ui.offspec_mm,
            self.ui.offspec_pm, self.ui.offspec_mp]
-    if self.ref_norm is None:
-      return
     for plot in plots:
         plot.clear()
     Imin=10**self.ui.offspecImin.value()
@@ -612,17 +631,20 @@ class MainGUI(QtGui.QMainWindow):
       fname=os.path.join(item[0]['path'], item[0]['file'])
       data_all=data_reduction.read_file(fname)
       settings=item[0]
+      if settings['lambda_center'] in self.ref_norm:
+        ref_norm=self.ref_norm[settings['lambda_center']]['data']
+      else:
+        ref_norm=1.
       for i, channel in enumerate(self.ref_list_channels):
         plot=plots[i]
         selected_data=data_all[channel]
         data=selected_data['data']
         tof_edges=selected_data['tof']
         Qx, Qz, ki_z, kf_z, I, _dI=data_reduction.calc_offspec(data, tof_edges, settings)
-        I/=self.ref_norm[newaxis, :]*selected_data['pc']
-        #Imin_i=I[I>0].min()
-        #I[I<=0]=Imin_i # remove zero and negative points
-        P0=31-settings['range'][0]
-        PN=30-settings['range'][1]
+        I/=ref_norm[newaxis, :]*selected_data['pc']
+        I=maximum(Imin, I)
+        P0=len(tof_edges)-settings['range'][0]-1
+        PN=settings['range'][1]
         Qzmax=max(Qz[int(settings['x_pos']), PN:P0].max(), Qzmax)
         if self.ui.kizmkfzVSqz.isChecked():
           plot.pcolormesh((ki_z-kf_z)[:, PN:P0],
@@ -667,8 +689,10 @@ class MainGUI(QtGui.QMainWindow):
   def setNorm(self):
     if self.ref_data is None:
       return
-    if self.ref_norm is None:
-      self.ref_norm=maximum(self.ref_data, self.ref_data[self.ref_data>0].min())
+    if self.fulldata['lambda_center'] not in self.ref_norm:
+      self.ref_norm[self.fulldata['lambda_center']]={
+                         'data':maximum(self.ref_data,
+                                self.ref_data[self.ref_data>0].min())}
       # collect current settings
       try:
         index=int(self.active_file.split('REF_M_', 1)[1].split('_', 1)[0])
@@ -686,24 +710,26 @@ class MainGUI(QtGui.QMainWindow):
                               'bg_width': self.ui.bgWidth.value(),
                               'scale': 10**self.ui.refScale.value(),
                               }
-      self.ui.normalizationLabel.setText(self.active_file)
+      self.ui.normalizationLabel.setText(",".join(map(str,
+                                            sorted(self.ref_norm.keys()))))
     else:
-      self.ref_norm=None
-      self.ui.normalizationLabel.setText('None')
+      self.ref_norm={}
+      self.ui.normalizationLabel.setText('Unset')
     self.plot_refl()
 
   def normalizeTotalReflection(self):
     '''
       Extract the scaling factor from the reflectivity curve.
     '''
-    if self.ref_x.min()>0.02 or self.ref_norm is None:
+    if self.ref_x.min()>0.02 or self.fulldata['lambda_center'] not in self.ref_norm:
       QtGui.QMessageBox.information(self, 'Select other dataset',
             'Please select a dataset with total reflection plateau\nand normalization.')
       return
-    first=31-self.ui.rangeStart.value()
-    y=self.ref_data[:first]/self.ref_norm[:first]
+    ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    first=len(ref_norm)-self.ui.rangeStart.value()
+    y=self.ref_data[:first]/ref_norm[:first]
     x=self.ref_x[:first][y>0]
-    dy=self.dref[:first][y>0]/self.ref_norm[:first][y>0]
+    dy=self.dref[:first][y>0]/ref_norm[:first][y>0]
     y=y[y>0]
     # Start from low Q and search for the critical edge
     for i in range(len(y)-5, 0,-1):
@@ -745,10 +771,17 @@ as the ones already in the list:
       tth=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
     except ValueError:
       tth=self.fulldata['tth']*pi/180.
+    lamda=self.fulldata['lambda_center']
+    point_range=[self.ui.rangeStart.value(), self.ui.rangeEnd.value()]
+    Pstart=len(self.ref_data)-where(self.ref_data>0)[0][-1]-1
+    Pend=where(self.ref_data>0)[0][0]
+    point_range[0]=max(Pstart, point_range[0])
+    point_range[1]=max(Pend, point_range[1])
     settings={'file': self.active_file,
               'path': self.active_folder,
               'index': index,
 
+              'lambda_center': lamda,
               'dp': dp,
               'tth': tth,
               'x_pos': self.ui.refXPos.value(),
@@ -757,7 +790,7 @@ as the ones already in the list:
               'y_width': self.ui.refYWidth.value(),
               'bg_pos': self.ui.bgCenter.value(),
               'bg_width': self.ui.bgWidth.value(),
-              'range': [self.ui.rangeStart.value(), self.ui.rangeEnd.value()],
+              'range': point_range,
               'scale': 10**self.ui.refScale.value(),
               'beam_width': self.fulldata['beam_width'],
               }
@@ -792,6 +825,8 @@ as the ones already in the list:
                                    QtGui.QTableWidgetItem(str(settings['dp'])))
     self.ui.reductionTable.setItem(idx, 12,
                                    QtGui.QTableWidgetItem(str(settings['tth']*180./pi)))
+    self.ui.reductionTable.setItem(idx, 13,
+                                   QtGui.QTableWidgetItem(str(settings['lambda_center'])))
     self.auto_change_active=False
 
   def reductionTableChanged(self, item):
@@ -810,6 +845,8 @@ as the ones already in the list:
     elif column==10:
       item.setText(os.path.join(settings['path'], settings['file']))
       return
+    elif column==13:
+      item.setText(str(settings['lambda_center']))
     # update settings from selected option
     elif column in [1, 4, 5, 6, 7, 8, 9, 11]:
       key=[None, 'scale', None, None,

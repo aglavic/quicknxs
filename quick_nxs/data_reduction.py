@@ -5,7 +5,7 @@
   or scripts.
 '''
 
-from numpy import pi, sin, cos, sqrt, arange, newaxis, ones_like, argsort, zeros_like
+from numpy import *
 import h5py
 from .instrument_constants import *
 #from time import time
@@ -48,6 +48,7 @@ def read_file(filename):
          'ai': raw['sample/SANGLE/value'].value[0],
          'dp': raw['instrument/bank1/DIRPIX/value'].value[0],
          'beam_width': raw['instrument/aperture3/S3HWidth/value'].value[0],
+         'lambda_center': raw['DASlogs/LambdaRequest/value'].value[0],
                 }
     data['xydata'].append(raw['bank1']['data_x_y'].value.transpose().astype(float)/norm)
     data['xtofdata'].append(raw['bank1']['data_x_time_of_flight'].value.astype(float)/norm)
@@ -99,14 +100,14 @@ def calc_reflectivity(data, tof_channels, settings):
   BG/=(reg[3]-reg[2])*(reg[5]-reg[4])
 
   if ai>0.001:
-    Qz_edges=4.*pi/lamda_edges*sin(ai)
+    x_edges=4.*pi/lamda_edges*sin(ai)
   else:
     # for direct beam measurements
-    Qz_edges=1./lamda_edges
+    x_edges=lamda_edges
   R=(I-BG)*scale
   dR=sqrt(dI**2+dBG**2)*scale
-  Qz=(Qz_edges[:-1]+Qz_edges[1:])/2.
-  return Qz, R, dR, ai, I, BG, Iraw
+  x=(x_edges[:-1]+x_edges[1:])/2.
+  return x, R, dR, ai, I, BG, Iraw
 
 def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
   """
@@ -200,8 +201,8 @@ def calc_offspec(data, tof_channels, settings):
            bg_pos-bg_width/2., bg_pos+bg_width/2.])
 
   xtth=direct_pixel-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
-  pix_offset_sped=direct_pixel-x_pos
-  tth_spec=tth_bank+pix_offset_sped*RAD_PER_PIX
+  pix_offset_spec=direct_pixel-x_pos
+  tth_spec=tth_bank+pix_offset_spec*RAD_PER_PIX
   af=tth_bank+xtth*RAD_PER_PIX-tth_spec/2.
   ai=ones_like(af)*tth_spec/2.
 
@@ -223,3 +224,33 @@ def calc_offspec(data, tof_channels, settings):
   I=(Iraw/(reg[3]-reg[2])-bgdata[newaxis, :])*scale
   dI=dIraw/(reg[3]-reg[2])*scale
   return Qx, Qz, ki_z, kf_z, I, dI
+
+def smooth_data(settings, x, y, I, callback=None):
+  '''
+    Smooth a irregular spaced dataset onto a regular grid.
+    Takes each intensities with a distance < 3*sigma
+    to a given grid point and averages their intensities
+    weighted by the gaussian of the distance.
+  '''
+  gridx, gridy=settings['grid']
+  sigmax, sigmay=settings['sigma']
+  ssigmax, ssigmay=sigmax**2, sigmay**2
+  x1, x2, y1, y2=settings['region']
+  xout=linspace(x1, x2, gridx)
+  yout=linspace(y1, y2, gridy)
+  Xout, Yout=meshgrid(xout, yout)
+  Iout=zeros_like(Xout)
+  imax=len(Xout)
+  for i in range(imax):
+    if callback is not None and i%5==0:
+      progress=float(i)/imax
+      callback(progress)
+    for j in range(len(Xout[0])):
+      xij=Xout[i, j]
+      yij=Yout[i, j]
+      rij=(x-xij)**2/ssigmax+(y-yij)**2/ssigmay # normalized distance^2
+      take=where(rij<9.) # take points up to 3 sigma distance
+      Pij=exp(-0.5*rij[take])
+      Pij/=Pij.sum()
+      Iout[i, j]=(Pij*I[take]).sum()
+  return Xout, Yout, Iout
