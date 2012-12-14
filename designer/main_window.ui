@@ -1463,6 +1463,90 @@
    </attribute>
    <addaction name="actionAdjust_Dirct_Beam"/>
   </widget>
+  <widget class="QDockWidget" name="dockWidget_8">
+   <property name="windowTitle">
+    <string>Peak Finder Algorithm</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <layout class="QFormLayout" name="formLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_24">
+       <property name="text">
+        <string>Signal/Noise</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_26">
+       <property name="text">
+        <string>Min. Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="pfMinWidth">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_25">
+       <property name="text">
+        <string>Max. Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="pfMaxWidth">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <double>500.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>300.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_23">
+       <property name="text">
+        <string>Ridge Length</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QSpinBox" name="pfRidgeLength">
+       <property name="value">
+        <number>12</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="pfSNR">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <double>5.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Visualize</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionOpen">
    <property name="icon">
     <iconset theme="document-open">
@@ -1694,7 +1778,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>292</y>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1710,7 +1794,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>349</y>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -1726,7 +1810,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>149</x>
-     <y>374</y>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -1742,7 +1826,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>234</x>
-     <y>427</y>
+     <y>342</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -1758,7 +1842,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>621</y>
+     <y>491</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -1774,7 +1858,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>552</y>
+     <y>422</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -1790,7 +1874,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>552</y>
+     <y>422</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -1806,7 +1890,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>575</y>
+     <y>445</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -1822,7 +1906,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>575</y>
+     <y>445</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -1838,7 +1922,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>598</y>
+     <y>468</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1854,7 +1938,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>598</y>
+     <y>468</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2014,7 +2098,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>136</x>
-     <y>751</y>
+     <y>576</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2030,7 +2114,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>190</x>
-     <y>778</y>
+     <y>603</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2062,7 +2146,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>644</y>
+     <y>514</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2078,7 +2162,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>644</y>
+     <y>514</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2110,7 +2194,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>864</x>
-     <y>470</y>
+     <y>456</y>
     </hint>
     <hint type="destinationlabel">
      <x>734</x>
@@ -2126,7 +2210,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>65</x>
-     <y>796</y>
+     <y>628</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -2158,7 +2242,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>385</y>
+     <y>314</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2246,6 +2330,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>visualizePeakfinding()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>122</x>
+     <y>789</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>805</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -2269,5 +2369,6 @@
   <slot>removeRefList()</slot>
   <slot>changeRegionValues()</slot>
   <slot>refineXpos()</slot>
+  <slot>visualizePeakfinding()</slot>
  </slots>
 </ui>

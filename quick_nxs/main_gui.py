@@ -5,8 +5,8 @@
 
 import os
 from glob import glob
-#from time import sleep
-from numpy import where, pi, newaxis, isnan, maximum, arange, exp, log10
+#from time import time #sleep
+from numpy import where, pi, newaxis, isnan, maximum, arange, exp, log10, array
 from scipy.stats.mstats import mquantiles
 from cPickle import load, dump
 from matplotlib.lines import Line2D
@@ -16,6 +16,7 @@ from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .instrument_constants import *
 from .mpfit import mpfit
+from .peakfinder import PeakFinder
 
 class MainGUI(QtGui.QMainWindow):
   active_folder=u''
@@ -368,12 +369,23 @@ class MainGUI(QtGui.QMainWindow):
       dp=self.fulldata['dp']
     pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
 
-    # find the first peak which is above 10% of the maximum
-    x_peaks=where((xproj[3:-1]<=xproj[2:-2])&(xproj[1:-3]<=xproj[2:-2])
-                 &(xproj[4:]<=xproj[2:-2])&(xproj[:-4]<=xproj[2:-2])
-                 &(xproj[2:-2]>=xproj.max()/10.))[0]+2
-    delta_pix=abs(pix_position-x_peaks)
-    x_peak=x_peaks[delta_pix==delta_pix.min()][0]
+    try:
+      # locate peaks using CWT peak finder algorithm
+      self.pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
+                         xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
+      # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
+      peaks=self.pf.get_peaks(snr=self.ui.pfSNR.value(),
+                              min_width=self.ui.pfMinWidth.value(),
+                              max_width=self.ui.pfMaxWidth.value(),
+                              ridge_length=self.ui.pfRidgeLength.value())
+      x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
+
+
+      delta_pix=abs(pix_position-x_peaks)
+      x_peak=x_peaks[delta_pix==delta_pix.min()][0]
+    except:
+      # if there was any error finding the peak, use the position from the file
+      x_peak=pix_position
     # refine gaussian to this peak position
     x_width=self.ui.refXWidth.value()
     x_peak=self.refineGauss(xproj, x_peak, x_width)
@@ -388,6 +400,13 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
     self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
     self.auto_change_active=False
+
+  def visualizePeakfinding(self):
+    self.pf.visualize(snr=self.ui.pfSNR.value(),
+                      min_width=self.ui.pfMinWidth.value(),
+                      max_width=self.ui.pfMaxWidth.value(),
+                      ridge_length=self.ui.pfRidgeLength.value())
+
 
   def refineXpos(self):
     if self.ui.actionRefineX.isChecked():
