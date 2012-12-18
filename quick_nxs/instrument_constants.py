@@ -6,9 +6,8 @@
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
 
 TOF_DISTANCE=21.2535 # m
-#RAD_PER_PIX=0.000171
-#RAD_PER_PIX=0.000171*1.125
-RAD_PER_PIX=0.0002734242
+#RAD_PER_PIX=0.0002734242
+RAD_PER_PIX=0.00027429694 # arctan(212.8mm/2/2550.5mm)/152pix
 DETECTOR_X_REGION=(8, 295)
 
 # position and maximum deviation of polarizer and analzer in it's working position

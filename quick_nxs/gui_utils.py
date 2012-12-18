@@ -44,7 +44,7 @@ class ReduceDialog(QDialog):
       if not self.ui.exportDownUp.isChecked():
         self.rm_channel(['-+'])
       if not self.ui.exportUpDown.isChecked():
-        self.rm_channel(['-+'])
+        self.rm_channel(['+-'])
       if not self.ui.exportDownDown.isChecked():
         self.rm_channel(['-', '--'])
       if not self.ui.exportUpUp.isChecked():
@@ -97,7 +97,7 @@ class ReduceDialog(QDialog):
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     output_data['column_units']=['A^-1', 'a.u.', 'a.u.', 'rad']
-    output_data['column_names']=['Qz', 'R', 'dR', 'ai']
+    output_data['column_names']=['Qz', 'R', 'dR', 'dQz', 'ai']
 
     for settings, ignore, ignore, ignore in self.settings:
       index=settings['index']
@@ -109,18 +109,19 @@ class ReduceDialog(QDialog):
       else:
         norm=1.
       for channel in self.channels:
-        Qz, R, dR, ai, _I, _BG, _Iraw=calc_reflectivity(
+        Qz, dQz, R, dR, ai, _I, _BG, _Iraw=calc_reflectivity(
                       fdata[channel]['data'],
                       fdata[channel]['tof'],
                                 settings)
         rdata=vstack([Qz[PN:P0], (R/fdata[channel]['pc']/norm)[PN:P0],
-                (dR/fdata[channel]['pc']/norm)[PN:P0], 0.*Qz[PN:P0]+ai]).transpose()
+                (dR/fdata[channel]['pc']/norm)[PN:P0], dQz[PN:P0],
+                0.*Qz[PN:P0]+ai]).transpose()
         output_data[channel].append(rdata)
     for channel in self.channels:
       d=vstack(output_data[channel])
       # sort dataset for alpha i and Qz
       order=argsort(d.view([('Qz', float), ('R', float),
-                            ('dR', float), ('ai', float)
+                            ('dR', float), ('dQz', float), ('ai', float)
                             ]), order=['Qz', 'ai'], axis=0)
       d=d[order.flatten(), :]
       # remove zero counts
@@ -144,6 +145,7 @@ class ReduceDialog(QDialog):
     output_data['column_names']=['Qx', 'Qz', 'ki_z', 'kf_z', 'ki_zMkf_z', 'I', 'dI']
 
 
+    ki_max=0.01
     for settings, ignore, ignore, ignore in self.settings:
       index=settings['index']
       fdata=self.raw_data[index]
@@ -165,6 +167,8 @@ class ReduceDialog(QDialog):
                       ki_z[:, PN:P0]-kf_z[:, PN:P0], I[:, PN:P0], dI[:, PN:P0]],
                     copy=False).transpose((1, 2, 0))
         output_data[channel].append(rdata)
+        ki_max=max(ki_max, ki_z.max())                
+    output_data['ki_max']=ki_max
     self.output_data['OffSpec']=output_data
 
   def smooth_offspec(self):
@@ -201,8 +205,9 @@ class ReduceDialog(QDialog):
         output_data['column_units']=['A^-1', 'A^-1', 'a.u.']
         output_data['column_names']=['ki_z', 'kf_z', 'I']
       I=data[:, :, 5].flatten()
-      x, y, I=smooth_data(settings, x, y, I, callback=pb.progress)
+      x, y, I=smooth_data(settings, x, y, I, callback=pb.progress, sigmas=settings['sigmas'])
       output_data[channel]=[array([x, y, I]).transpose((1, 2, 0))]
+    output_data['ki_max']=self.output_data['OffSpec']['ki_max']
     self.output_data['OffSpecSmooth']=output_data
     pb.destroy()
 
@@ -307,6 +312,7 @@ class ReduceDialog(QDialog):
                  .replace('{type}', 'gp').replace('{numbers}', self.ind_str)
     ofname=unicode(self.ui.fileNameEntry.text())
     if type(output_data[self.channels[0]]) is not list:
+      # 2D PLot
       params=dict(
                   output=ofname.replace('{item}', title).replace('{channel}', 'all')\
                          .replace('{type}', 'png').replace('{numbers}', self.ind_str),
@@ -323,7 +329,54 @@ class ReduceDialog(QDialog):
       script=GP_TEMPLATE%params
       open(output, 'w').write(script.encode('utf8'))
     else:
-      pass
+      # 3D plot
+      ki_max=output_data['ki_max']
+      rows=1+int(len(self.channels)>2)
+      cols=1+int(len(self.channels)>1)
+      params=dict(
+                  output=ofname.replace('{item}', title).replace('{channel}', 'all')\
+                         .replace('{type}', 'png').replace('{numbers}', self.ind_str),
+                  zlabel=u"I [a.u.]",
+                  title=ind_str+' - '+title,
+                  rows=rows,
+                  cols=cols,
+                  )
+      params['pix_x']=1000*cols
+      params['pix_y']=200+1200*rows
+      if title=='OffSpec':
+        params['ratio']=1.75
+        params['ylabel']=u"Q_z [Å^{-1}]"
+        params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
+        params['xrange']="%f:%f"%(-0.025, 0.025)
+        params['yrange']="%f:%f"%(0.0, 1.413*ki_max)
+        line_params=dict(x=5, y=2, z=6)
+      else:
+        line_params=dict(x=1, y=2, z=3)
+        if output_data['column_names'][1]=='Qz':
+          params['ratio']=1.75
+          params['ylabel']=u"Q_z [Å^{-1}]"
+          params['yrange']="%f:%f"%(0.0, 1.413*ki_max)
+          if output_data['column_names'][0]=='Qx':
+            params['xlabel']=u"Q_x [Å^{-1}]"
+            params['xrange']="%f:%f"%(-0.0005, 0.0005)
+          else:
+            params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
+            params['xrange']="%f:%f"%(-0.025, 0.025)
+        else:
+          params['ratio']=1.
+          params['xlabel']=u"k_{i,z} [Å^{-1}]"
+          params['ylabel']=u"k_{f,z} [Å^{-1}]"
+          params['xrange']="%f:%f"%(0., ki_max)
+          params['yrange']="%f:%f"%(0., ki_max)
+          params['pix_x']=1400*cols
+      plotlines=''
+      for channel in self.channels:
+        line_params['file_name']=ofname.replace('{item}', title).replace('{channel}', channel)\
+                     .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
+        plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
+      params['plot_lines']=plotlines
+      script=GP_TEMPLATE_3D%params
+      open(output, 'w').write(script.encode('utf8'))
     try:
       subprocess.call(['gnuplot', output], cwd=self.ui.directoryEntry.text(),
                       shell=False)
@@ -563,6 +616,7 @@ class SmoothDialog(QDialog):
     width=self.ui.sigmaX.value()
     height=self.ui.sigmaY.value()
     output['sigma']=(width, height)
+    output['sigmas']=self.ui.rSigmas.value()
     gx=self.ui.gridSizeX.value()
     gy=self.ui.gridSizeY.value()
     output['grid']=(gx, gy)

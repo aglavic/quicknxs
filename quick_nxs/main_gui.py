@@ -369,36 +369,38 @@ class MainGUI(QtGui.QMainWindow):
       dp=self.fulldata['dp']
     pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
 
-    try:
-      # locate peaks using CWT peak finder algorithm
-      self.pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
-                         xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
-      # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
-      peaks=self.pf.get_peaks(snr=self.ui.pfSNR.value(),
-                              min_width=self.ui.pfMinWidth.value(),
-                              max_width=self.ui.pfMaxWidth.value(),
-                              ridge_length=self.ui.pfRidgeLength.value())
-      x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
-
-
-      delta_pix=abs(pix_position-x_peaks)
-      x_peak=x_peaks[delta_pix==delta_pix.min()][0]
-    except:
-      # if there was any error finding the peak, use the position from the file
-      x_peak=pix_position
-    # refine gaussian to this peak position
-    x_width=self.ui.refXWidth.value()
-    x_peak=self.refineGauss(xproj, x_peak, x_width)
-
-    # find the central peak reagion with intensities larger than 10% of maximum
-    y_bg=mquantiles(yproj, 0.5)[0]
-    self.y_bg=y_bg
-    y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
-    yregion=(y_peak_region[0], y_peak_region[-1])
     self.auto_change_active=True
-    self.ui.refXPos.setValue(x_peak)
-    self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
-    self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
+    if self.ui.actionAutomaticXPeak.isChecked():
+      try:
+        # locate peaks using CWT peak finder algorithm
+        self.pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
+                            xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
+        # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
+        peaks=self.pf.get_peaks(snr=self.ui.pfSNR.value(),
+                                min_width=self.ui.pfMinWidth.value(),
+                                max_width=self.ui.pfMaxWidth.value(),
+                                ridge_length=self.ui.pfRidgeLength.value())
+        x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
+
+
+        delta_pix=abs(pix_position-x_peaks)
+        x_peak=x_peaks[delta_pix==delta_pix.min()][0]
+      except:
+        # if there was any error finding the peak, use the position from the file
+        x_peak=pix_position
+      # refine gaussian to this peak position
+      x_width=self.ui.refXWidth.value()
+      x_peak=self.refineGauss(xproj, x_peak, x_width)
+      self.ui.refXPos.setValue(x_peak)
+
+    if self.ui.actionAutoYLimits.isChecked():
+      # find the central peak reagion with intensities larger than 10% of maximum
+      y_bg=mquantiles(yproj, 0.5)[0]
+      self.y_bg=y_bg
+      y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
+      yregion=(y_peak_region[0], y_peak_region[-1])
+      self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
+      self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
     self.auto_change_active=False
 
   def visualizePeakfinding(self):
@@ -585,10 +587,10 @@ class MainGUI(QtGui.QMainWindow):
                  'You need an active normalization to extract Fan-Reflectivity')
         self.ui.fanReflectivity.setChecked(False)
         return
-      Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
+      Qz, _dQz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
                                                                       ref_norm, P0, PN)
     else:
-      Qz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
+      Qz, _dQz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
     self.ui.datasetAi.setText("%.3f"%(ai*180./pi))
     self.ui.datasetROI.setText("%.4g"%(Iraw.sum()))
 
@@ -910,7 +912,7 @@ as the ones already in the list:
     fulldata=data[self.use_channel]
     data=fulldata['data']
     tof_edges=fulldata['tof']
-    Qz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
+    Qz, _dQz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
     return Qz, R/fulldata['pc'], dR/fulldata['pc']
 
   def changeActiveChannel(self):

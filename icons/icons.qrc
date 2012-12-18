@@ -1,5 +1,12 @@
 <RCC>
   <qresource prefix="General">
+    <file>listUp.png</file>
+    <file>listDown.png</file>
+    <file>clearRef.png</file>
+    <file>addRef.png</file>
+    <file>delRef.png</file>
+    <file>findXauto.png</file>
+    <file>limitYauto.png</file>
     <file>reduce.png</file>
     <file>fitXPos.png</file>
     <file>logo.png</file>

@@ -107,7 +107,8 @@ def calc_reflectivity(data, tof_channels, settings):
   R=(I-BG)*scale
   dR=sqrt(dI**2+dBG**2)*scale
   x=(x_edges[:-1]+x_edges[1:])/2.
-  return x, R, dR, ai, I, BG, Iraw
+  dx=abs(x_edges[:-1]-x_edges[1:])/2. #sqrt(12) error due to binning
+  return x, dx, R, dR, ai, I, BG, Iraw
 
 def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
   """
@@ -159,6 +160,7 @@ def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
 
   Qz_edges=4.*pi/lamda_edges*sin(ai[:, newaxis])
   Qz=(Qz_edges[:, :-1]+Qz_edges[:, 1:])/2.
+  dQz=abs(Qz_edges[:, :-1]-Qz_edges[:, 1:])/2. #sqrt(12) error due to binning
   R=R.flatten()
   dR=dR.flatten()
   Qzf=Qz[:, PN:P0].flatten()
@@ -172,7 +174,7 @@ def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
   Rout[PN:P0]=R
   dRout[PN:P0]=dR
   Qz[PN:P0]=Qzf
-  return Qz[::-1], Rout[::-1]*Inorm, dRout[::-1]*Inorm, ai.mean(), Rout[::-1], Rout[::-1], Rout[::-1]
+  return Qz[::-1], dQz[::-1], Rout[::-1]*Inorm, dRout[::-1]*Inorm, ai.mean(), Rout[::-1], Rout[::-1], Rout[::-1]
 
 def calc_offspec(data, tof_channels, settings):
   """
@@ -225,7 +227,7 @@ def calc_offspec(data, tof_channels, settings):
   dI=dIraw/(reg[3]-reg[2])*scale
   return Qx, Qz, ki_z, kf_z, I, dI
 
-def smooth_data(settings, x, y, I, callback=None):
+def smooth_data(settings, x, y, I, sigmas=3., callback=None):
   '''
     Smooth a irregular spaced dataset onto a regular grid.
     Takes each intensities with a distance < 3*sigma
@@ -249,7 +251,7 @@ def smooth_data(settings, x, y, I, callback=None):
       xij=Xout[i, j]
       yij=Yout[i, j]
       rij=(x-xij)**2/ssigmax+(y-yij)**2/ssigmay # normalized distance^2
-      take=where(rij<9.) # take points up to 3 sigma distance
+      take=where(rij<sigmas**2) # take points up to 3 sigma distance
       Pij=exp(-0.5*rij[take])
       Pij/=Pij.sum()
       Iout[i, j]=(Pij*I[take]).sum()

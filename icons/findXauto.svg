@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="fitXPos.svg"
+   sodipodi:docname="findXauto.svg"
    inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/fitXPos.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -120,7 +120,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -130,13 +130,13 @@
      id="layer1"
      transform="translate(0,-1004.3622)">
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 6.75,1050.3622 c 0,0 0.649567,-2.5502 1.5,-3.4871 0.7031668,-0.7747 1.7366787,-1.2526 2.75,-1.5129 1.614243,-0.4147 3.333333,0 5,0 1.666667,0 3.509288,0.7454 5,0 2,-1 0,-36 3,-38 0.5547,-0.3698 1.528595,-0.4714 2,0 2,2 1,32 2,36 0.542326,2.1693 3.823749,2.4863 6,3 1.622082,0.3829 3.561318,-0.8414 5,0 1.320535,0.7723 2.25,4 2.25,4"
        id="path2999"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="csssssssssc" />
     <path
-       style="fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 27,1010.3622 0,40"
        id="path5049-6"
        inkscape:connector-curvature="0"
@@ -148,7 +148,7 @@
        inkscape:connector-curvature="0"
        transform="translate(0,1004.3622)" />
     <path
-       style="fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 19,1010.3622 0,40"
        id="path5049-6-1"
        inkscape:connector-curvature="0"
@@ -160,12 +160,6 @@
        inkscape:connector-curvature="0"
        transform="translate(0,1004.3622)"
        sodipodi:nodetypes="ccc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.79999995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
-       d="m 8,1027.3622 35,0"
-       id="path3079"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot5087"
