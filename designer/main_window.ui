@@ -506,11 +506,6 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>Path</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
                        <string>DP</string>
                       </property>
                       <property name="toolTip">
@@ -530,6 +525,11 @@
                        <string>λ</string>
                       </property>
                      </column>
+                     <column>
+                      <property name="text">
+                       <string>Path</string>
+                      </property>
+                     </column>
                     </widget>
                    </item>
                   </layout>
@@ -541,6 +541,9 @@
                   <layout class="QVBoxLayout" name="verticalLayout_17">
                    <item>
                     <widget class="QTableWidget" name="normalizeTable">
+                     <attribute name="verticalHeaderVisible">
+                      <bool>false</bool>
+                     </attribute>
                      <column>
                       <property name="text">
                        <string>λ</string>
@@ -937,7 +940,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>189</width>
+     <width>214</width>
      <height>162</height>
     </size>
    </property>
@@ -949,6 +952,27 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_11">
+       <item>
+        <widget class="QRadioButton" name="histogramActive">
+         <property name="text">
+          <string>Histogram</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="eventActive">
+         <property name="text">
+          <string>Event</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="QListWidget" name="file_list"/>
      </item>
@@ -1562,6 +1586,72 @@
    <addaction name="actionAutomaticXPeak"/>
    <addaction name="actionAutoYLimits"/>
   </widget>
+  <widget class="QDockWidget" name="dockWidget_9">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Event Mode Readout</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_9">
+    <layout class="QVBoxLayout" name="verticalLayout_18">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <item>
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>Bins</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="eventTofBins">
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>200</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="value">
+          <number>40</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QComboBox" name="eventBinMode">
+       <item>
+        <property name="text">
+         <string>Linear</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1/x</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="eventProgress">
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="format">
+        <string>%p%</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionOpen">
    <property name="icon">
     <iconset theme="document-open">
@@ -1830,7 +1920,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>207</y>
+     <y>206</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1846,7 +1936,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>264</y>
+     <y>263</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -1862,7 +1952,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>149</x>
-     <y>289</y>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -1878,7 +1968,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>234</x>
-     <y>342</y>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -1894,7 +1984,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>491</y>
+     <y>487</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -1910,7 +2000,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>422</y>
+     <y>418</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -1926,7 +2016,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>422</y>
+     <y>418</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -1942,7 +2032,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>445</y>
+     <y>441</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -1958,7 +2048,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>445</y>
+     <y>441</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -1974,7 +2064,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>468</y>
+     <y>464</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -1990,7 +2080,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>468</y>
+     <y>464</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2006,7 +2096,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1064</x>
-     <y>343</y>
+     <y>304</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2022,7 +2112,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1002</x>
-     <y>342</y>
+     <y>303</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2150,7 +2240,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>136</x>
-     <y>576</y>
+     <y>569</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2166,7 +2256,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>190</x>
-     <y>603</y>
+     <y>596</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2198,7 +2288,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>514</y>
+     <y>510</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2214,7 +2304,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>514</y>
+     <y>510</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2262,7 +2352,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>65</x>
-     <y>628</y>
+     <y>621</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -2294,7 +2384,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>314</y>
+     <y>313</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2398,6 +2488,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>histogramActive</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>folderModified()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eventActive</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>folderModified()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>62</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -2422,5 +2544,6 @@
   <slot>changeRegionValues()</slot>
   <slot>refineXpos()</slot>
   <slot>visualizePeakfinding()</slot>
+  <slot>folderModified()</slot>
  </slots>
 </ui>

@@ -11,6 +11,11 @@ from .instrument_constants import *
 #from time import time
 
 def read_file(filename):
+  '''
+    Load data from a Nexus file containing histogrammed information.
+    
+    :return: Dictionary with data and metadata for all channels
+  '''
   #start=time()
   nxs=h5py.File(filename, mode='r')
   # analyze channels
@@ -52,6 +57,91 @@ def read_file(filename):
                 }
     data['xydata'].append(raw['bank1']['data_x_y'].value.transpose().astype(float)/norm)
     data['xtofdata'].append(raw['bank1']['data_x_time_of_flight'].value.astype(float)/norm)
+  #print time()-start
+  nxs.close()
+  return data
+
+def read_event_file(filename, bin_type='linear', bins=40, callback=None):
+  '''
+    Load data from a Nexus file containing event information.
+    Creates 3D histogram with ither linear or 1/t spaced 
+    time of flight channels. The result has the same format as
+    from the read_file function.
+    
+    :return: Dictionary with data and metadata for all channels
+  '''
+  #start=time()
+  nxs=h5py.File(filename, mode='r')
+  # analyze channels
+  channels=nxs.keys()
+  for channel in list(channels):
+    if nxs[channel][u'total_counts'].value[0]==0:
+      channels.remove(channel)
+  if len(channels)==0:
+    return None
+  ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
+  pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+  if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]:
+    mapping=MAPPING_FULLPOL
+  elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]:
+    mapping=MAPPING_HALFPOL
+  else:
+    mapping=MAPPING_UNPOL
+  data={'channels': [], 'origins':[],
+        'xydata': [], 'xtofdata': []}
+  # create pixal map
+  x=arange(304)
+  y=arange(256)
+  Y, X=meshgrid(y, x)
+  X=X.flatten()
+  Y=Y.flatten()
+  i=0
+  for dest, channel in mapping:
+    if channel not in channels:
+      continue
+    i+=1
+    data['origins'].append(channel)
+    data['channels'].append(dest)
+    raw=nxs[channel]
+    norm=raw['proton_charge'].value[0]
+    tof_ids=array(raw['bank1_events/event_id'].value, dtype=int)
+    tof_time=raw['bank1_events/event_time_offset'].value
+    tof_x=X[tof_ids]
+    tof_y=Y[tof_ids]
+    # calculate tof bins
+    lcenter=raw['DASlogs/LambdaRequest/value'].value[0]
+    tmin=TOF_DISTANCE/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+    tmax=TOF_DISTANCE/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+    if bin_type.lower()=='linear':
+      tof_edges=linspace(tmin, tmax, bins+1)
+    elif bin_type.lower()=='1/x':
+      tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+    else:
+      raise ValueError, 'Unknown bin type %s'%bin_type
+
+    # create the binning
+    Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
+                       bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+    if callback:
+      progress=float(i)/len(channels)
+      callback(progress)
+    Ixy=Ixyt.sum(axis=2)
+    Ixt=Ixyt.sum(axis=1)
+    data[dest]={
+         'pc': norm,
+         'counts': raw['total_counts'].value[0],
+         'data': Ixyt, # 4D dataset
+         'tof': D[2],
+         'dangle': raw['instrument/bank1/DANGLE/value'].value[0],
+         'tth': raw['instrument/bank1/DANGLE/value'].value[0]-
+                raw['instrument/bank1/DANGLE0/value'].value[0],
+         'ai': raw['sample/SANGLE/value'].value[0],
+         'dp': raw['instrument/bank1/DIRPIX/value'].value[0],
+         'beam_width': raw['instrument/aperture3/S3HWidth/value'].value[0],
+         'lambda_center': lcenter,
+                }
+    data['xydata'].append(Ixy.transpose().astype(float)/norm)
+    data['xtofdata'].append(Ixt.astype(float)/norm)
   #print time()-start
   nxs.close()
   return data

@@ -88,7 +88,10 @@ class ReduceDialog(QDialog):
       settings['P0']=settings['range'][0]
       settings['PN']=settings['range'][1]
       index=settings['index']
-      self.raw_data[index]=read_file(fname)
+      if fname.endswith('event.nxs'):
+        self.raw_data[index]=read_event_file(fname, settings['bin_type'], settings['bins'])
+      else:
+        self.raw_data[index]=read_file(fname)
       self.indices.append(index)
 
   def extract_reflectivity(self):

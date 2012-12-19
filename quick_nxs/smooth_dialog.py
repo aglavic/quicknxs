@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/smooth_dialog.ui'
 #
-# Created: Tue Dec 18 14:11:19 2012
+# Created: Wed Dec 19 09:58:31 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!

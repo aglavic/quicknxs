@@ -19,17 +19,20 @@ from .mpfit import mpfit
 from .peakfinder import PeakFinder
 
 class MainGUI(QtGui.QMainWindow):
+  '''
+    The program top level window with all direct event handling.
+  '''
   active_folder=u''
   active_file=u''
-  ref_list_channels=[]
-  ref_data=None
-  ref_norm={}
+  ref_list_channels=[] #: Store which channels are available for stored reflectivities
+  ref_data=None #: Reflectivity of the active dataset
+  ref_norm={} #: Store normalization data with extraction information
   auto_change_active=False
-  add_to_ref=[]
+  add_to_ref=[] #: Store information and data of reflectivities from different files
   color=None
-  open_plots=[] # to keep non modal dialogs open
-  channels=[]
-  use_channel='x'
+  open_plots=[] #: to keep non modal dialogs open when their caller is destroyed
+  channels=[] #: Available channels of the active dataset
+  use_channel='x' #: Selected channel for the overview and projection plots
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -76,44 +79,19 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
     self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
 
-  def fileOpenDialog(self):
-    '''
-      Show a dialog to open a new file.
-    '''
-    filename=QtGui.QFileDialog.getOpenFileName(self, u'Open NXS file...',
-                                               directory=self.active_folder,
-                                               filter=u'Histo Nexus (*histo.nxs);;All (*.*)')
-    if filename!=u'':
-      self.fileOpen(unicode(filename))
-
-  def fileOpenList(self):
-    '''
-      Called when a new file is selected from the file list.
-    '''
-    item=self.ui.file_list.currentItem()
-    name=unicode(item.text())
-    try:
-      mtime=os.path.getmtime(os.path.join(self.active_folder, self.active_file))
-    except OSError:
-      mtime=1e10
-    if name!=self.active_file or mtime>self.last_mtime:
-      # only reload if filename was actually changed or file was modifiede
-      self.fileOpen(os.path.join(self.active_folder, name))
-
-  def nextFile(self):
-    item=self.ui.file_list.currentRow()
-    self.ui.file_list.setCurrentRow(item+1)
-
-  def prevFile(self):
-    item=self.ui.file_list.currentRow()
-    self.ui.file_list.setCurrentRow(item-1)
-
   def fileOpen(self, filename):
     '''
       Open a new datafile and plot the data.
     '''
     folder, base=os.path.split(filename)
-    data=data_reduction.read_file(filename)
+    if filename.endswith('histo.nxs'):
+      data=data_reduction.read_file(filename)
+    else:
+      self.updateEventReadout(0.1)
+      data=data_reduction.read_event_file(filename,
+                                          bin_type=str(self.ui.eventBinMode.currentText()),
+                                          bins=self.ui.eventTofBins.value(),
+                                          callback=self.updateEventReadout)
     if data is None:
       self.ui.currentChannel.setText(u'!!!NO DATA IN FILE %s!!!'%base)
       return
@@ -138,15 +116,7 @@ class MainGUI(QtGui.QMainWindow):
     self.last_mtime=os.path.getmtime(filename)
     self.ui.statusbar.showMessage(u"%s loaded"%(filename), 1500)
 
-  def onPathChanged(self, base, folder):
-    '''
-      Update the file list and create a watcher to update the list again if a new file was
-      created.
-    '''
-    self._path_watcher.removePath(self.active_folder)
-    self.active_folder=folder
-    self.updateFileList(base, folder)
-    self._path_watcher.addPath(self.active_folder)
+####### Plot related methods
 
   def plotActiveTab(self):
     '''
@@ -173,47 +143,6 @@ class MainGUI(QtGui.QMainWindow):
     if self.ui.plotTab.currentIndex()==3:
       self.plot_offspec()
 
-  def folderModified(self, flist):
-    '''
-      Called by the path watcher to update the file list when the folder
-      has been modified.
-    '''
-    self.updateFileList(self.active_file, self.active_folder)
-
-  def updateFileList(self, base, folder):
-    '''
-      Create a new filelist if the folder has changes.
-    '''
-    newlist=glob(os.path.join(folder, '*histo.nxs'))
-    newlist.sort()
-    newlist=map(lambda name: os.path.basename(name), newlist)
-    self.ui.file_list.clear()
-    for item in newlist:
-      listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
-      if item==base:
-        self.ui.file_list.setCurrentItem(listitem)
-
-  def toggleColorbars(self):
-    if not self.auto_change_active:
-      plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-             self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-             self.ui.xy_overview, self.ui.xtof_overview,
-             self.ui.offspec_pp, self.ui.offspec_mp, self.ui.offspec_pm, self.ui.offspec_mm]
-      for plot in plots:
-        plot.clear_fig()
-      self.plotActiveTab()
-
-  def toggleHide(self):
-    plots=[self.ui.frame_xy_mm, self.ui.frame_xy_sf, self.ui.frame_xtof_mm, self.ui.frame_xtof_sf]
-    if self.ui.hide_plots.isChecked():
-      for plot in plots:
-        plot.do_hide=True
-    else:
-      for plot in plots:
-        plot.show()
-        plot.do_hide=False
-
-#  tline=None
   def plot_overview(self):
     '''
       X vs. Y and X vs. Tof for main channel.
@@ -326,152 +255,6 @@ class MainGUI(QtGui.QMainWindow):
       if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
         plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plots[i].draw()
-
-  def updateLabels(self):
-    d=self.fulldata
-
-    try:
-      tth=(d['dangle']-float(self.ui.dangle0Overwrite.text()))
-    except ValueError:
-      tth=d['tth']
-    self.ui.datasetName.setText(self.active_file)
-    self.ui.datasetPCharge.setText(u"%.3e"%d['pc'])
-    self.ui.datasetTotCounts.setText(u"%.4e"%d['counts'])
-    self.ui.datasetDangle.setText(u"%.3f"%d['dangle'])
-    self.ui.datasetTth.setText(u"%.3f"%tth)
-    self.ui.datasetSangle.setText(u"%.3f"%d['ai'])
-    self.ui.datasetDirectPixel.setText(u"%.1f"%d['dp'])
-    self.ui.currentChannel.setText('Current Channel:   (%s)'%self.use_channel)
-
-  def calcReflParams(self):
-    '''
-      Calculate x and y regions for reflectivity extraction and put them in the
-      entry fields.
-    '''
-    cindex=self.channels.index(self.use_channel)
-    data=self.xydata[cindex]
-    if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata[cindex]
-      xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
-    else:
-      xproj=data.mean(axis=0)
-    yproj=data.mean(axis=1)
-
-    # calculate approximate peak position
-    try:
-      tth_bank=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
-    except ValueError:
-      tth_bank=self.fulldata['tth']*pi/180.
-    ai=self.fulldata['ai']*pi/180.
-    if self.ui.directPixelOverwrite.value()>=0:
-      dp=self.ui.directPixelOverwrite.value()
-    else:
-      dp=self.fulldata['dp']
-    pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
-
-    self.auto_change_active=True
-    if self.ui.actionAutomaticXPeak.isChecked():
-      try:
-        # locate peaks using CWT peak finder algorithm
-        self.pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
-                            xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
-        # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
-        peaks=self.pf.get_peaks(snr=self.ui.pfSNR.value(),
-                                min_width=self.ui.pfMinWidth.value(),
-                                max_width=self.ui.pfMaxWidth.value(),
-                                ridge_length=self.ui.pfRidgeLength.value())
-        x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
-
-
-        delta_pix=abs(pix_position-x_peaks)
-        x_peak=x_peaks[delta_pix==delta_pix.min()][0]
-      except:
-        # if there was any error finding the peak, use the position from the file
-        x_peak=pix_position
-      # refine gaussian to this peak position
-      x_width=self.ui.refXWidth.value()
-      x_peak=self.refineGauss(xproj, x_peak, x_width)
-      self.ui.refXPos.setValue(x_peak)
-
-    if self.ui.actionAutoYLimits.isChecked():
-      # find the central peak reagion with intensities larger than 10% of maximum
-      y_bg=mquantiles(yproj, 0.5)[0]
-      self.y_bg=y_bg
-      y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
-      yregion=(y_peak_region[0], y_peak_region[-1])
-      self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
-      self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
-    self.auto_change_active=False
-
-  def visualizePeakfinding(self):
-    self.pf.visualize(snr=self.ui.pfSNR.value(),
-                      min_width=self.ui.pfMinWidth.value(),
-                      max_width=self.ui.pfMaxWidth.value(),
-                      ridge_length=self.ui.pfRidgeLength.value())
-
-
-  def refineXpos(self):
-    if self.ui.actionRefineX.isChecked():
-      cindex=self.channels.index(self.use_channel)
-      data=self.xydata[cindex]
-      if self.ui.xprojUseQuantiles.isChecked():
-        d2=self.xtofdata[cindex]
-        xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
-      else:
-        xproj=data.mean(axis=0)
-      # refine gaussian to this peak position
-      x_width=self.ui.refXWidth.value()
-      x_peak=self.ui.refXPos.value()
-      x_peak=self.refineGauss(xproj, x_peak, x_width)
-      self.ui.refXPos.setValue(x_peak)
-
-  def refineGauss(self, data, pos, width):
-    p0=[data[int(pos)], pos, width]
-    parinfo=[{'value':0., 'fixed':0, 'limited':[0, 0],
-              'limits':[0., 0.]} for ignore in range(3)]
-    parinfo[0]['limited']=[True, False]
-    parinfo[0]['limits']=[0., None]
-    parinfo[2]['fixed']=True
-    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-    parinfo[2]['fixed']=False
-    parinfo[2]['limited']=[True, True]
-    parinfo[2]['limits']=[1., 4.*width]
-    p0=[data[int(res.params[1])], res.params[1], width]
-    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-    return res.params[1]
-
-  def gauss_residuals(self, p, fjac=None, data=None, width=1):
-    xdata=arange(data.shape[0])
-    I0=p[0]
-    x0=p[1]
-    sigma=p[2]/5.
-    G=exp(-0.5*((xdata-x0)/sigma)**2)
-    return 0, data-I0*G
-
-  def changeRegionValues(self):
-    if self.auto_change_active:
-      return
-    lines=self.proj_lines
-    x_peak=self.ui.refXPos.value()
-    x_width=self.ui.refXWidth.value()
-    y_pos=self.ui.refYPos.value()
-    y_width=self.ui.refYWidth.value()
-    bg_pos=self.ui.bgCenter.value()
-    bg_width=self.ui.bgWidth.value()
-
-    lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-    lines[1].set_xdata([x_peak, x_peak])
-    lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-    lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-    lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
-    lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
-    lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
-    self.ui.x_project.draw()
-    self.ui.y_project.draw()
-    self.trigger('plot_refl')
-
-  def replotProjections(self):
-    self.plot_projections(preserve_lim=True)
 
   def plot_projections(self, preserve_lim=False):
     self.trigger('_plot_projections', preserve_lim)
@@ -641,6 +424,12 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refl.draw()
 
   def plot_offspec(self):
+    '''
+      Create an offspecular plot for all channels of the datasets in the
+      reduction list. The user can define upper and lower bounds for the 
+      plotted intensity and select the coordinates to be ither kiz-kfz vs. Qz,
+      Qx vs. Qz or kiz vs. kfz.
+    '''
     plots=[self.ui.offspec_pp, self.ui.offspec_mm,
            self.ui.offspec_pm, self.ui.offspec_mp]
     for plot in plots:
@@ -649,8 +438,12 @@ class MainGUI(QtGui.QMainWindow):
     Imax=10**self.ui.offspecImax.value()
     Qzmax=0.01
     for item in self.add_to_ref:
+      settings=item[0]
       fname=os.path.join(item[0]['path'], item[0]['file'])
-      data_all=data_reduction.read_file(fname)
+      if fname.endswith('event.nxs'):
+        data_all=data_reduction.read_event_file(fname, settings['bin_type'], settings['bins'])
+      else:
+        data_all=data_reduction.read_file(fname)
       settings=item[0]
       if settings['lambda_center'] in self.ref_norm:
         ref_norm=self.ref_norm[settings['lambda_center']]['data']
@@ -706,12 +499,155 @@ class MainGUI(QtGui.QMainWindow):
           plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plot.draw()
 
+###### GUI actions
+
+  def fileOpenDialog(self):
+    '''
+      Show a dialog to open a new file.
+    '''
+    if self.ui.histogramActive.isChecked():
+      filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
+    else:
+      filter_=u'Event Nexus (*event.nxs);;All (*.*)'
+    filename=QtGui.QFileDialog.getOpenFileName(self, u'Open NXS file...',
+                                               directory=self.active_folder,
+                                               filter=filter_)
+    if filename!=u'':
+      self.fileOpen(unicode(filename))
+
+  def fileOpenList(self):
+    '''
+      Called when a new file is selected from the file list.
+    '''
+    item=self.ui.file_list.currentItem()
+    name=unicode(item.text())
+    try:
+      mtime=os.path.getmtime(os.path.join(self.active_folder, self.active_file))
+    except OSError:
+      mtime=1e10
+    if name!=self.active_file or mtime>self.last_mtime:
+      # only reload if filename was actually changed or file was modifiede
+      self.fileOpen(os.path.join(self.active_folder, name))
+
+  def nextFile(self):
+    item=self.ui.file_list.currentRow()
+    self.ui.file_list.setCurrentRow(item+1)
+
+  def prevFile(self):
+    item=self.ui.file_list.currentRow()
+    self.ui.file_list.setCurrentRow(item-1)
+
+  def onPathChanged(self, base, folder):
+    '''
+      Update the file list and create a watcher to update the list again if a new file was
+      created.
+    '''
+    self._path_watcher.removePath(self.active_folder)
+    self.active_folder=folder
+    self.updateFileList(base, folder)
+    self._path_watcher.addPath(self.active_folder)
+
+  def folderModified(self, flist=None):
+    '''
+      Called by the path watcher to update the file list when the folder
+      has been modified.
+    '''
+    self.updateFileList(self.active_file, self.active_folder)
+
+  def updateFileList(self, base, folder):
+    '''
+      Create a new filelist if the folder has changes.
+    '''
+    if self.ui.histogramActive.isChecked():
+      newlist=glob(os.path.join(folder, '*histo.nxs'))
+    else:
+      newlist=glob(os.path.join(folder, '*event.nxs'))
+    newlist.sort()
+    newlist=map(lambda name: os.path.basename(name), newlist)
+    self.ui.file_list.clear()
+    for item in newlist:
+      listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
+      if item==base:
+        self.ui.file_list.setCurrentItem(listitem)
+
+  def updateLabels(self):
+    '''
+      Write file metadata to the labels in the overview tab.
+    '''
+    d=self.fulldata
+
+    try:
+      tth=(d['dangle']-float(self.ui.dangle0Overwrite.text()))
+    except ValueError:
+      tth=d['tth']
+    self.ui.datasetName.setText(self.active_file)
+    self.ui.datasetPCharge.setText(u"%.3e"%d['pc'])
+    self.ui.datasetTotCounts.setText(u"%.4e"%d['counts'])
+    self.ui.datasetDangle.setText(u"%.3f"%d['dangle'])
+    self.ui.datasetTth.setText(u"%.3f"%tth)
+    self.ui.datasetSangle.setText(u"%.3f"%d['ai'])
+    self.ui.datasetDirectPixel.setText(u"%.1f"%d['dp'])
+    self.ui.currentChannel.setText('Current Channel:   (%s)'%self.use_channel)
+
+  def toggleColorbars(self):
+    if not self.auto_change_active:
+      plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
+             self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
+             self.ui.xy_overview, self.ui.xtof_overview,
+             self.ui.offspec_pp, self.ui.offspec_mp, self.ui.offspec_pm, self.ui.offspec_mm]
+      for plot in plots:
+        plot.clear_fig()
+      self.plotActiveTab()
+
+  def toggleHide(self):
+    plots=[self.ui.frame_xy_mm, self.ui.frame_xy_sf, self.ui.frame_xtof_mm, self.ui.frame_xtof_sf]
+    if self.ui.hide_plots.isChecked():
+      for plot in plots:
+        plot.do_hide=True
+    else:
+      for plot in plots:
+        plot.show()
+        plot.do_hide=False
+
+  def changeRegionValues(self):
+    '''
+      Called when the reflectivity extraction region has been changed.
+      Sets up a trigger to replot the reflectivity with a delay so
+      a subsequent change can occur without several replots.
+    '''
+    if self.auto_change_active:
+      return
+    lines=self.proj_lines
+    x_peak=self.ui.refXPos.value()
+    x_width=self.ui.refXWidth.value()
+    y_pos=self.ui.refYPos.value()
+    y_width=self.ui.refYWidth.value()
+    bg_pos=self.ui.bgCenter.value()
+    bg_width=self.ui.bgWidth.value()
+
+    lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+    lines[1].set_xdata([x_peak, x_peak])
+    lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+    lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+    lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+    lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+    lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+    self.ui.x_project.draw()
+    self.ui.y_project.draw()
+    self.trigger('plot_refl')
+
+  def replotProjections(self):
+    self.plot_projections(preserve_lim=True)
 
   def setNorm(self):
+    '''
+      Add dataset to the available normalizations or clear the normalization list.
+    '''
     if self.ref_data is None:
       return
     if self.fulldata['lambda_center'] not in self.ref_norm:
-      self.ref_norm[self.fulldata['lambda_center']]={
+      lamda=self.fulldata['lambda_center']
+      self.ref_norm[lamda]={
                          'data':maximum(self.ref_data,
                                 self.ref_data[self.ref_data>0].min())}
       # collect current settings
@@ -719,9 +655,10 @@ class MainGUI(QtGui.QMainWindow):
         index=int(self.active_file.split('REF_M_', 1)[1].split('_', 1)[0])
       except:
         index=0
-      self.ref_norm_settings={'file': self.active_file,
+      settings={'file': self.active_file,
                               'path': self.active_folder,
                               'index': index,
+                              'lambda': self.fulldata['lambda_center'],
 
                               'x_pos': self.ui.refXPos.value(),
                               'x_width': self.ui.refXWidth.value(),
@@ -731,11 +668,17 @@ class MainGUI(QtGui.QMainWindow):
                               'bg_width': self.ui.bgWidth.value(),
                               'scale': 10**self.ui.refScale.value(),
                               }
+      self.ref_norm_settings=settings
+      idx=sorted(self.ref_norm.keys()).index(lamda)
+      self.ui.normalizeTable.insertRow(idx)
+      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(str(settings['lambda'])))
+      self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(settings['index'])))
       self.ui.normalizationLabel.setText(",".join(map(str,
                                             sorted(self.ref_norm.keys()))))
     else:
       self.ref_norm={}
       self.ui.normalizationLabel.setText('Unset')
+      self.ui.normalizeTable.setRowCount(0)
     self.plot_refl()
 
   def normalizeTotalReflection(self):
@@ -766,6 +709,10 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refl.draw()
 
   def addRefList(self):
+    '''
+      Collect information about the current extraction settings and store them
+      in the list of reduction items.
+    '''
     if self.ref_data is None:
       return
     # collect current settings
@@ -814,40 +761,48 @@ as the ones already in the list:
               'range': point_range,
               'scale': 10**self.ui.refScale.value(),
               'beam_width': self.fulldata['beam_width'],
+              'bin_type': str(self.ui.eventBinMode.currentText()),
+              'bins': self.ui.eventTofBins.value(),
               }
     self.add_to_ref.append([settings, self.ref_x, self.ref_data, self.dref])
     self.ui.reductionTable.setRowCount(len(self.add_to_ref))
     idx=len(self.add_to_ref)-1
     self.auto_change_active=True
-    self.ui.reductionTable.setItem(idx, 0,
-                                   QtGui.QTableWidgetItem(str(index)))
+    item=QtGui.QTableWidgetItem(str(index))
+    item.setTextColor(QtGui.QColor(100, 0, 0))
+    item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+    self.ui.reductionTable.setItem(idx, 0, item)
     self.ui.reductionTable.setItem(idx, 1,
-                                   QtGui.QTableWidgetItem(str(settings['scale'])))
+                                   QtGui.QTableWidgetItem("%.4f"%(settings['scale'])))
     self.ui.reductionTable.setItem(idx, 2,
                                    QtGui.QTableWidgetItem(str(settings['range'][0])))
     self.ui.reductionTable.setItem(idx, 3,
                                    QtGui.QTableWidgetItem(str(settings['range'][1])))
-    self.ui.reductionTable.setItem(idx, 4,
-                                   QtGui.QTableWidgetItem(str(settings['x_pos'])))
+    item=QtGui.QTableWidgetItem(str(settings['x_pos']))
+    item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+    self.ui.reductionTable.setItem(idx, 4, item)
     self.ui.reductionTable.setItem(idx, 5,
                                    QtGui.QTableWidgetItem(str(settings['x_width'])))
-    self.ui.reductionTable.setItem(idx, 6,
-                                   QtGui.QTableWidgetItem(str(settings['y_pos'])))
+    item=QtGui.QTableWidgetItem(str(settings['y_pos']))
+    item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+    self.ui.reductionTable.setItem(idx, 6, item)
     self.ui.reductionTable.setItem(idx, 7,
                                    QtGui.QTableWidgetItem(str(settings['y_width'])))
-    self.ui.reductionTable.setItem(idx, 8,
-                                   QtGui.QTableWidgetItem(str(settings['bg_pos'])))
+    item=QtGui.QTableWidgetItem(str(settings['bg_pos']))
+    item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+    self.ui.reductionTable.setItem(idx, 8, item)
     self.ui.reductionTable.setItem(idx, 9,
                                    QtGui.QTableWidgetItem(str(settings['bg_width'])))
     self.ui.reductionTable.setItem(idx, 10,
+                                   QtGui.QTableWidgetItem(str(settings['dp'])))
+    self.ui.reductionTable.setItem(idx, 11,
+                                   QtGui.QTableWidgetItem("%.4f"%(settings['tth']*180./pi)))
+    self.ui.reductionTable.setItem(idx, 12,
+                                   QtGui.QTableWidgetItem(str(settings['lambda_center'])))
+    self.ui.reductionTable.setItem(idx, 13,
                                    QtGui.QTableWidgetItem(os.path.join(settings['path'],
                                                                        settings['file'])))
-    self.ui.reductionTable.setItem(idx, 11,
-                                   QtGui.QTableWidgetItem(str(settings['dp'])))
-    self.ui.reductionTable.setItem(idx, 12,
-                                   QtGui.QTableWidgetItem(str(settings['tth']*180./pi)))
-    self.ui.reductionTable.setItem(idx, 13,
-                                   QtGui.QTableWidgetItem(str(settings['lambda_center'])))
+    self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
 
   def reductionTableChanged(self, item):
@@ -863,13 +818,13 @@ as the ones already in the list:
     if column==0:
       item.setText(str(settings['index']))
       return
-    elif column==10:
+    elif column==13:
       item.setText(os.path.join(settings['path'], settings['file']))
       return
-    elif column==13:
+    elif column==12:
       item.setText(str(settings['lambda_center']))
     # update settings from selected option
-    elif column in [1, 4, 5, 6, 7, 8, 9, 11]:
+    elif column in [1, 4, 5, 6, 7, 8, 9, 10]:
       key=[None, 'scale', None, None,
            'x_pos', 'x_width',
            'y_pos', 'y_width',
@@ -892,7 +847,7 @@ as the ones already in the list:
         settings['range'][1]=int(item.text())
       except ValueError:
         item.setText(str(settings['range'][1]))
-    elif column==12:
+    elif column==11:
       try:
         settings['tth']=float(item.text())*pi/180.
       except ValueError:
@@ -900,20 +855,8 @@ as the ones already in the list:
       else:
         Qz, R, dR=self.recalculateReflectivity(settings)
         self.add_to_ref[entry][1:]=[Qz, R, dR]
+    self.ui.reductionTable.resizeColumnsToContents()
     self.plot_refl(preserve_lim=True)
-
-  def recalculateReflectivity(self, settings):
-    '''
-      Use parameters to calculate and return the reflectivity
-      of one file.
-    '''
-    filename=os.path.join(settings['path'], settings['file'])
-    data=data_reduction.read_file(filename)
-    fulldata=data[self.use_channel]
-    data=fulldata['data']
-    tof_edges=fulldata['tof']
-    Qz, _dQz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
-    return Qz, R/fulldata['pc'], dR/fulldata['pc']
 
   def changeActiveChannel(self):
     '''
@@ -932,11 +875,17 @@ as the ones already in the list:
     self.fileOpen(os.path.join(self.active_folder, self.active_file))
 
   def clearRefList(self):
+    '''
+      Remove all items from the reduction list.
+    '''
     self.add_to_ref=[]
     self.ui.reductionTable.setRowCount(0)
     self.plot_refl()
 
   def removeRefList(self):
+    '''
+      Remove one item from the reduction list.
+    '''
     index=self.ui.reductionTable.currentRow()
     if index<0:
       return
@@ -946,6 +895,10 @@ as the ones already in the list:
     self.plot_refl()
 
   def overwriteDirectBeam(self):
+    '''
+      Take the active x0 and Dangle values as overwrite parameters
+      to be used with other datasets as well.
+    '''
     self.auto_change_active=True
     self.ui.directPixelOverwrite.setValue(self.ui.refXPos.value())
     self.ui.dangle0Overwrite.setText("%g"%self.fulldata['dangle'])
@@ -953,12 +906,19 @@ as the ones already in the list:
     self.overwriteChanged()
 
   def overwriteChanged(self):
+    '''
+      Recalculate reflectivity based on changed overwrite parameters.
+    '''
     if not self.auto_change_active:
       self.updateLabels()
       self.calcReflParams()
       self.plot_projections(preserve_lim=True)
 
   def reduceDatasets(self):
+    '''
+      Open a dialog to select reduction options for the current list of
+      reduction items.
+    '''
     if len(self.add_to_ref)==0:
       QtGui.QMessageBox.information(self, u'Select a dataset',
                                     u'Please select at least\none dataset to reduce.',
@@ -975,6 +935,11 @@ as the ones already in the list:
     dialog.destroy()
 
   def plotMouseEvent(self, event):
+    '''
+      Show the mouse position of any plot in the main window
+      status bar, as the single plot status indicator is only
+      visible for larger plot toolbars.
+    '''
     if event.inaxes is None:
       return
     self.ui.statusbar.showMessage(u"x=%15g    y=%15g"%(event.xdata, event.ydata))
@@ -1036,6 +1001,152 @@ as the ones already in the list:
       self.ui.refYPos.setValue(ypos)
       self.auto_change_active=False
       self.ui.refYWidth.setValue(yw)
+
+  def updateEventReadout(self, progress):
+    '''
+      When reading event mode data this is the callback
+      used after each finished channel to indicate the progress.
+    '''
+    self.ui.eventProgress.setValue(progress*100)
+    QtGui.QApplication.instance().processEvents()
+
+####### Calculations and data treatment
+
+  def calcReflParams(self):
+    '''
+      Calculate x and y regions for reflectivity extraction and put them in the
+      entry fields.
+    '''
+    cindex=self.channels.index(self.use_channel)
+    data=self.xydata[cindex]
+    if self.ui.xprojUseQuantiles.isChecked():
+      d2=self.xtofdata[cindex]
+      xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
+    else:
+      xproj=data.mean(axis=0)
+    yproj=data.mean(axis=1)
+
+    # calculate approximate peak position
+    try:
+      tth_bank=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
+    except ValueError:
+      tth_bank=self.fulldata['tth']*pi/180.
+    ai=self.fulldata['ai']*pi/180.
+    if self.ui.directPixelOverwrite.value()>=0:
+      dp=self.ui.directPixelOverwrite.value()
+    else:
+      dp=self.fulldata['dp']
+    pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
+
+    self.auto_change_active=True
+    if self.ui.actionAutomaticXPeak.isChecked():
+      try:
+        # locate peaks using CWT peak finder algorithm
+        self.pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
+                            xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
+        # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
+        peaks=self.pf.get_peaks(snr=self.ui.pfSNR.value(),
+                                min_width=self.ui.pfMinWidth.value(),
+                                max_width=self.ui.pfMaxWidth.value(),
+                                ridge_length=self.ui.pfRidgeLength.value())
+        x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
+
+
+        delta_pix=abs(pix_position-x_peaks)
+        x_peak=x_peaks[delta_pix==delta_pix.min()][0]
+      except:
+        # if there was any error finding the peak, use the position from the file
+        x_peak=pix_position
+      # refine gaussian to this peak position
+      x_width=self.ui.refXWidth.value()
+      x_peak=self.refineGauss(xproj, x_peak, x_width)
+      self.ui.refXPos.setValue(x_peak)
+
+    if self.ui.actionAutoYLimits.isChecked():
+      # find the central peak reagion with intensities larger than 10% of maximum
+      y_bg=mquantiles(yproj, 0.5)[0]
+      self.y_bg=y_bg
+      y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
+      yregion=(y_peak_region[0], y_peak_region[-1])
+      self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
+      self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
+    self.auto_change_active=False
+
+  def visualizePeakfinding(self):
+    '''
+      Show a graphical representation of the peakfinder process.
+    '''
+    self.pf.visualize(snr=self.ui.pfSNR.value(),
+                      min_width=self.ui.pfMinWidth.value(),
+                      max_width=self.ui.pfMaxWidth.value(),
+                      ridge_length=self.ui.pfRidgeLength.value())
+
+
+  def refineXpos(self):
+    '''
+      Fit the selected x position to the closest peak.
+    '''
+    if self.ui.actionRefineX.isChecked():
+      cindex=self.channels.index(self.use_channel)
+      data=self.xydata[cindex]
+      if self.ui.xprojUseQuantiles.isChecked():
+        d2=self.xtofdata[cindex]
+        xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
+      else:
+        xproj=data.mean(axis=0)
+      # refine gaussian to this peak position
+      x_width=self.ui.refXWidth.value()
+      x_peak=self.ui.refXPos.value()
+      x_peak=self.refineGauss(xproj, x_peak, x_width)
+      self.ui.refXPos.setValue(x_peak)
+
+  def refineGauss(self, data, pos, width):
+    '''
+      Fit a gaussian function to a given dataset and return the x0 position.
+    '''
+    p0=[data[int(pos)], pos, width]
+    parinfo=[{'value':0., 'fixed':0, 'limited':[0, 0],
+              'limits':[0., 0.]} for ignore in range(3)]
+    parinfo[0]['limited']=[True, False]
+    parinfo[0]['limits']=[0., None]
+    parinfo[2]['fixed']=True
+    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
+    parinfo[2]['fixed']=False
+    parinfo[2]['limited']=[True, True]
+    parinfo[2]['limits']=[1., 4.*width]
+    p0=[data[int(res.params[1])], res.params[1], width]
+    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
+    return res.params[1]
+
+  def gauss_residuals(self, p, fjac=None, data=None, width=1):
+    '''
+      Gaussian of I0, x0 and sigma parameters minus the data.
+    '''
+    xdata=arange(data.shape[0])
+    I0=p[0]
+    x0=p[1]
+    sigma=p[2]/5.
+    G=exp(-0.5*((xdata-x0)/sigma)**2)
+    return 0, data-I0*G
+
+  def recalculateReflectivity(self, settings):
+    '''
+      Use parameters to calculate and return the reflectivity
+      of one file.
+    '''
+    filename=os.path.join(settings['path'], settings['file'])
+
+    if filename.endswith('event.nxs'):
+      data=data_reduction.read_event_file(filename, settings['bin_type'], settings['bins'])
+    else:
+      data=data_reduction.read_file(filename)
+    fulldata=data[self.use_channel]
+    data=fulldata['data']
+    tof_edges=fulldata['tof']
+    Qz, _dQz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
+    return Qz, R/fulldata['pc'], dR/fulldata['pc']
+
+###### Window initialization and exit
 
   def readSettings(self):
     '''
