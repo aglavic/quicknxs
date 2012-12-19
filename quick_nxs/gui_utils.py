@@ -1,10 +1,13 @@
 #-*- coding: utf-8 -*-
 '''
-  doc
+  Helper dialogs for the GUI. ReduceDialog is used to export the extracted
+  data to user defined formats.
 '''
 
-import os
+import os, sys
 import subprocess
+from zipfile import ZipFile
+from cPickle import loads, dumps
 from PyQt4.QtGui import QDialog, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
 from PyQt4.QtCore import QThread, SIGNAL
 from time import sleep, time
@@ -16,6 +19,13 @@ from .reduce_dialog import Ui_Dialog as UiReduction
 from .smooth_dialog import Ui_Dialog as UiSmooth
 from .data_reduction import *
 from .output_templates import *
+from . import genx_data
+# make sure importing and changing genx templates do only use our
+# build in dummy module
+sys.modules['genx.data']=genx_data
+genx_data.DataList.__module__='genx.data'
+genx_data.DataSet.__module__='genx.data'
+TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
 
 class ReduceDialog(QDialog):
 
@@ -68,6 +78,8 @@ class ReduceDialog(QDialog):
       if self.ui.gnuplot.isChecked():
         for title, output_data in self.output_data.items():
           self.create_gnuplot_script(self.ind_str, output_data, title)
+      if self.ui.genx.isChecked():
+        self.create_genx_file()
       if self.ui.plot.isChecked():
         for title, output_data in self.output_data.items():
           self.plot_result(self.ind_str, output_data, title)
@@ -170,7 +182,7 @@ class ReduceDialog(QDialog):
                       ki_z[:, PN:P0]-kf_z[:, PN:P0], I[:, PN:P0], dI[:, PN:P0]],
                     copy=False).transpose((1, 2, 0))
         output_data[channel].append(rdata)
-        ki_max=max(ki_max, ki_z.max())                
+        ki_max=max(ki_max, ki_z.max())
     output_data['ki_max']=ki_max
     self.output_data['OffSpec']=output_data
 
@@ -385,6 +397,37 @@ class ReduceDialog(QDialog):
                       shell=False)
     except:
       pass
+
+  def create_genx_file(self):
+    ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
+                        unicode(self.ui.fileNameEntry.text()))
+    if 'x' in self.channels:
+      template=os.path.join(TEMPLATE_PATH, 'unpolarized.gx')
+    elif '+' in self.channels or '-' in self.channels:
+      template=os.path.join(TEMPLATE_PATH, 'polarized.gx')
+    else:
+      template=os.path.join(TEMPLATE_PATH, 'spinflip.gx')
+    for key, output_data in self.output_data.items():
+      if not key in ['Specular', 'TrueSpecular']:
+        continue
+      output=ofname.replace('{item}', key).replace('{channel}', 'all')\
+                   .replace('{type}', 'gx').replace('{numbers}', self.ind_str)
+      oz=ZipFile(output, 'w')
+      iz=ZipFile(template, 'r')
+      for key in ['script', 'parameters', 'fomfunction', 'config', 'optimizer']:
+        oz.writestr(key, iz.read(key))
+      model_data=loads(iz.read('data'))
+      for i, channel in enumerate(self.channels):
+        model_data[i].x_raw=output_data[channel][:, 0]
+        model_data[i].y_raw=output_data[channel][:, 1]
+        model_data[i].error_raw=output_data[channel][:, 2]
+        model_data[i].xerror_raw=output_data[channel][:, 3]
+        model_data[i].name=channel
+        model_data[i].run_command()
+      oz.writestr('data', dumps(model_data))
+      iz.close()
+      oz.close()
+
 
   def plot_result(self, ind_str, output_data, title):
     if type(output_data[self.channels[0]]) is not list:

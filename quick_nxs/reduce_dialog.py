@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Wed Dec 19 09:58:31 2012
+# Created: Wed Dec 19 15:52:58 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -105,7 +105,6 @@ class Ui_Dialog(object):
     self.plot.setObjectName(_fromUtf8("plot"))
     self.gridLayout.addWidget(self.plot, 2, 1, 1, 1)
     self.genx = QtGui.QCheckBox(self.groupBox_3)
-    self.genx.setEnabled(False)
     self.genx.setObjectName(_fromUtf8("genx"))
     self.gridLayout.addWidget(self.genx, 3, 0, 1, 1)
     self.numpy = QtGui.QCheckBox(self.groupBox_3)
