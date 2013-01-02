@@ -30,10 +30,7 @@ class PeakFinder(object):
         (this is where the user parameters enter and can be recalculated fast) 
   '''
 
-  def __init__(self,
-               xdata, ydata,
-               resolution=5,
-               ):
+  def __init__(self, xdata, ydata, resolution=5):
     xdata=numpy.array(xdata)
     ydata=numpy.array(ydata)
     idx=numpy.argsort(xdata)
@@ -65,7 +62,7 @@ class PeakFinder(object):
       scale. Strong peaks will produce longer ridge lines than
       weaker or noise, as they start at higher scales.
     '''
-    cwt=self.CWT.getdata().real
+    cwt=self.CWT.getdata()
     scales=self.CWT.getscales()
     # initialize ridges starting at smoothest scaling
     ridges=[]
@@ -108,6 +105,8 @@ class PeakFinder(object):
       #info.append(ridge[max_idx][0])
       info.append(scales[ridge[max_idx][0]])
       info.append(ridge_intensity[max_idx])
+      # peak center estimate fromridge maximum
+      info.append(ridge[max_idx][1])
       ridge_info.append(info)
       ridge_intensities.append(ridge_intensity)
       evaluated_ridges.append(numpy.vstack([ridge[:, 0], ridge[:, 1], ridge_intensity]))
@@ -115,19 +114,21 @@ class PeakFinder(object):
     self.ridge_info=ridge_info
     self.ridge_intensities=ridge_intensities
 
-  def _SNR(self, minimum_noise_level=0.0001):
+  def _SNR(self, minimum_noise_level=0.05):
     '''
       Calculate signal to nois ratio. Signal is the highest
       CWT intensity of all scales, noise is the 95% quantile
       of the lowest scale WT, which is dominated by noise.
     '''
     ridge_info=self.ridge_info
-    cwt=self.CWT.getdata().real
+    cwt=self.CWT.getdata()
     noise_cwt=cwt[0]
+    # minimum noise is the noise value for the whole dataset times minimum_noise_level
     minimum_noise=float(minimum_noise_level*mquantiles(
                         noise_cwt,
                         0.95,
                         3./8., 3./8.))
+#    minimum_noise=minimum_noise_level*abs(noise_cwt).mean() # use average of high frequency noise for minimum
     for info in ridge_info:
       scale=min(5, info[2])
       signal=info[3]
@@ -161,7 +162,8 @@ class PeakFinder(object):
                 min_width=None, max_width=None,
                 ridge_length=15, analyze=False,
                 double_peak_detection=False,
-                double_peak_reduced_ridge_length=3):
+                double_peak_reduced_ridge_length=3,
+                estimate_center=False):
     '''
       Return a list of peaks fulfilling the defined conditions.
       
@@ -171,10 +173,13 @@ class PeakFinder(object):
       :param ridge_length: Minimal ridge line length
       :param analyze: Store information to analyze the filtering
       :param double_peak_detection: Perform a second run, where the ridge_length is reduced near found peaks
+      :param estimate_center: Use the x position of the ridge maximum to estimate peak position
+      
+      :return: List of found peaks as (x0, width, I0, ridge length, SNR)
     '''
     xdata=self.xdata
     if min_width is None:
-      min_width=2.*abs(xdata[1]-xdata[0])
+      min_width=1.5*abs(xdata[1]-xdata[0])
     if max_width is None:
       max_width=0.3*(xdata.max()-xdata.min())
     ridge_info=self.ridge_info
@@ -182,9 +187,9 @@ class PeakFinder(object):
     if analyze:
       self.length_filtered=filter(lambda item: item[0]<ridge_length,
                      ridge_info)
-      self.snr_filtered=filter(lambda item: item[4]<snr, ridge_info)
+      self.snr_filtered=filter(lambda item: item[5]<snr, ridge_info)
     # filter for signal to noise ratio
-    ridge_info=filter(lambda item: item[4]>=snr, ridge_info)
+    ridge_info=filter(lambda item: item[5]>=snr, ridge_info)
     if double_peak_detection:
       # store peaks filtered by ridge length
       ridge_filtered=filter(lambda item: (item[0]<ridge_length)&
@@ -199,10 +204,13 @@ class PeakFinder(object):
     for item in ridge_info:
       info=[]
       # x corresponding to index
-      info.append(xdata[item[1]])
+      if estimate_center:
+        info.append(xdata[item[4]])
+      else:
+        info.append(xdata[item[1]])
       # width corresponding to index width
-      i_low=int(item[1]-item[2]/2)
-      i_high=int(item[1]+item[2]/2)
+      i_low=int(item[1]-item[2])
+      i_high=int(item[1]+item[2])
       if i_low<0:
         i_low=0
       elif i_low==item[1]:
@@ -214,13 +222,13 @@ class PeakFinder(object):
       w_low=xdata[i_low]
       w_high=xdata[i_high]
       w=w_high-w_low
-      info.append(float(abs(w))/1.6) # estimated peak width
-      # intensity
+      info.append(float(abs(w))) # estimated peak FWHM
+      # intensity assuming a Gaussian peak shape
       info.append(item[3]*1.41/numpy.sqrt(item[2]))
       # ridge length
       info.append(item[0])
       # SNR
-      info.append(item[4])
+      info.append(item[5])
       peak_info.append(info)
     # filter for peak width
     peak_info=filter(lambda item: (item[1]>=min_width)&(item[1]<=max_width),
@@ -234,7 +242,10 @@ class PeakFinder(object):
       for item in ridge_filtered:
         info=[]
         # x corresponding to index
-        info.append(xdata[item[1]])
+        if estimate_center:
+          info.append(xdata[item[4]])
+        else:
+          info.append(xdata[item[1]])
         # width corresponding to index width
         i_low=int(item[1]-item[2]/2)
         i_high=int(item[1]+item[2]/2)
@@ -255,7 +266,7 @@ class PeakFinder(object):
         # ridge length
         info.append(item[0])
         # SNR
-        info.append(item[4])
+        info.append(item[5])
         if (w>=min_width)&(w<=max_width):
           double_peak_info.append(info)
       adjecent_peaks=[]
@@ -270,37 +281,50 @@ class PeakFinder(object):
     if analyze:
       width_filtered=zip(ridge_info, peak_info)
       self.width_filtered=filter(lambda item: \
-              (item[1][1]>min_width)|(item[1][1]>max_width), width_filtered)
+              (item[1][1]<min_width)|(item[1][1]>max_width), width_filtered)
     peak_info.sort()
     return peak_info
 
   def visualize(self, snr=2.5,
                 min_width=None, max_width=None,
                 ridge_length=15, double_peak_detection=False,
-                double_peak_reduced_ridge_length=3):
+                double_peak_reduced_ridge_length=3,
+                estimate_center=False):
     '''
       Use matplotlib to visualize the peak finding routine.
     '''
-    from pylab import figure, plot, semilogy, errorbar, pcolormesh, show, legend, title, xlabel, ylabel
-    figure(101)
+    from pylab import figure, plot, semilogy, errorbar, pcolormesh, show, draw, \
+                      legend, title, xlabel, ylabel, ylim
+    fig=figure(101)
+    fig.clear()
     peaks=self.get_peaks(snr, min_width, max_width, ridge_length, True,
-                         double_peak_detection, double_peak_reduced_ridge_length)
-    semilogy(self.xdata, self.ydata, 'r-', label='Data')
-    errorbar([p[0] for p in peaks], [p[2] for p in peaks],
-           xerr=[p[1] for p in peaks], fmt='go',
-           elinewidth=2, barsabove=True, capsize=6,
-           label='Detected Peaks', markersize=10)
+                         double_peak_detection, double_peak_reduced_ridge_length,
+                         estimate_center)
+    mcount=self.ydata[self.ydata>0].min()
+    semilogy(self.xdata, numpy.maximum(self.ydata, 0.1*mcount), 'r-', label='Data')
+    if len(peaks)>0:
+      errorbar([p[0] for p in peaks], [p[2] for p in peaks],
+             xerr=[p[1] for p in peaks], fmt='go',
+             elinewidth=2, barsabove=True, capsize=6,
+             label='Detected Peaks', markersize=10)
     legend()
     xlabel('x')
     ylabel('I')
-    figure(102)
+    ylim((0.5*mcount, None))
+    draw()
+    fig=figure(102)
+    fig.clear()
     pcolormesh(self.CWT.getdata())
     peak_pos=[p[0] for p in peaks]
     snr_filtered=self.snr_filtered
     length_filtered=self.length_filtered
     #width_filtered=[item[0] for item in self.width_filtered]
+    if estimate_center:
+      xidx=4
+    else:
+      xidx=1
     for ridge, ridge_info in reversed(zip(self.ridges, self.ridge_info)):
-      if self.xdata[ridge[1][-1]] in peak_pos:
+      if self.xdata[ridge_info[xidx]] in peak_pos:
         plot(ridge[1], ridge[0], 'r-', linewidth=3)
       elif ridge_info in length_filtered:
         plot(ridge[1], ridge[0], 'g-', linewidth=2)
@@ -311,6 +335,7 @@ class PeakFinder(object):
     title('Detected Peaks (Red) and Filtered by Ridge Length (Green), SNR (Blue), Width (Yellow)')
     xlabel('x')
     ylabel('CWT scale index')
+    draw()
     show()
 
 
@@ -362,7 +387,7 @@ class Cwt:
         self.order=order
         self.scale=largestscale
         self._setscales(ndata, largestscale, notes, scaling)
-        self.cwt=numpy.zeros((self.nscale, ndata), numpy.complex64)
+        self.cwt=numpy.zeros((self.nscale, ndata), numpy.float64)
         omega=numpy.array(range(0, ndata+1))*(2.0*numpy.pi/ndata)
         # create a grid twice the size of the original grid to remove boundary
         # effects in the convolution
@@ -399,7 +424,7 @@ class Cwt:
             self.nscale=notes*noctave
             self.scales=numpy.zeros(self.nscale, float)
             for j in range(self.nscale):
-                self.scales[j]=2.0**(float(j)/notes)
+                self.scales[j]=0.5*2.0**(float(j)/notes)
         elif scaling=="linear":
             nmax=ndata/largestscale/2
             self.scales=numpy.arange(float(2), float(nmax))

@@ -119,7 +119,7 @@ def read_event_file(filename, bin_type='linear', bins=40, callback=None):
     else:
       raise ValueError, 'Unknown bin type %s'%bin_type
 
-    # create the binning
+    # create the 3D binning
     Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
                        bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
     if callback:

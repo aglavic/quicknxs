@@ -152,10 +152,16 @@ class MPLWidget(QtGui.QWidget):
     return self.canvas.ax.set_ylabel(label)
 
   def set_xscale(self, scale):
-    return self.canvas.ax.set_xscale(scale)
+    try:
+      return self.canvas.ax.set_xscale(scale)
+    except ValueError:
+      pass
 
   def set_yscale(self, scale):
-    return self.canvas.ax.set_yscale(scale)
+    try:
+      return self.canvas.ax.set_yscale(scale)
+    except ValueError:
+      pass
 
   def clear_fig(self):
     self.cplot=None
