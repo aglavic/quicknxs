@@ -8,7 +8,7 @@
         wavelet transform-based pattern matching
         Bioinformatics 22(17) (2006)
     
-    Implemented by Artur Glavic (artur.glavic@fz-juelich.de) 2012
+    Implemented by Artur Glavic (artur.glavic@gmail.com) 2012-2013
 '''
 
 import numpy

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Wed Dec 19 15:52:58 2012
+# Created: Wed Jan  2 15:28:10 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -861,12 +861,13 @@ class Ui_MainWindow(object):
     icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/findXauto.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.actionAutomaticXPeak.setIcon(icon12)
     self.actionAutomaticXPeak.setObjectName(_fromUtf8("actionAutomaticXPeak"))
+    self.actionClear_Overwrite = QtGui.QAction(MainWindow)
+    self.actionClear_Overwrite.setObjectName(_fromUtf8("actionClear_Overwrite"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionNext_File)
     self.menuFile.addAction(self.actionPrevious_File)
     self.menuReduce.addAction(self.actionNorm)
     self.menuReduce.addAction(self.actionNormalizeScaling)
-    self.menuReduce.addAction(self.actionRefineX)
     self.menuReduce.addSeparator()
     self.menuReduce.addAction(self.actionAddPlot)
     self.menuReduce.addAction(self.actionRemove)
@@ -875,7 +876,10 @@ class Ui_MainWindow(object):
     self.menuReduce.addAction(self.actionReduce)
     self.menuAdvanced.addAction(self.actionAutomaticXPeak)
     self.menuAdvanced.addAction(self.actionAutoYLimits)
+    self.menuAdvanced.addAction(self.actionRefineX)
+    self.menuAdvanced.addSeparator()
     self.menuAdvanced.addAction(self.actionAdjust_Dirct_Beam)
+    self.menuAdvanced.addAction(self.actionClear_Overwrite)
     self.menuHelp.addAction(self.actionManual)
     self.menuHelp.addAction(self.actionAbout)
     self.menubar.addAction(self.menuFile.menuAction())
@@ -942,6 +946,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.visualizePeakfinding)
     QtCore.QObject.connect(self.histogramActive, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.folderModified)
     QtCore.QObject.connect(self.eventActive, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.folderModified)
+    QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.clearOverwrite)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
@@ -1105,6 +1110,7 @@ class Ui_MainWindow(object):
     self.actionAutoYLimits.setToolTip(QtGui.QApplication.translate("MainWindow", "Try to find the Y region of the beam automatically", None, QtGui.QApplication.UnicodeUTF8))
     self.actionAutomaticXPeak.setText(QtGui.QApplication.translate("MainWindow", "Automatic Peak Finder", None, QtGui.QApplication.UnicodeUTF8))
     self.actionAutomaticXPeak.setToolTip(QtGui.QApplication.translate("MainWindow", "Find the reflected peak automatically when loading a new file", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionClear_Overwrite.setText(QtGui.QApplication.translate("MainWindow", "Clear Overwrite", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import MPLWidget
 from persistentframe import PersistentFrame

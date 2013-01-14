@@ -905,6 +905,16 @@ as the ones already in the list:
     self.auto_change_active=False
     self.overwriteChanged()
 
+  def clearOverwrite(self):
+    '''
+      Reset overwrite to use values from the .nxs files.
+    '''
+    self.auto_change_active=True
+    self.ui.directPixelOverwrite.setValue(-1)
+    self.ui.dangle0Overwrite.setText("None")
+    self.auto_change_active=False
+    self.overwriteChanged()
+
   def overwriteChanged(self):
     '''
       Recalculate reflectivity based on changed overwrite parameters.

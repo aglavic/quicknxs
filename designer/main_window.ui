@@ -902,7 +902,6 @@
     </property>
     <addaction name="actionNorm"/>
     <addaction name="actionNormalizeScaling"/>
-    <addaction name="actionRefineX"/>
     <addaction name="separator"/>
     <addaction name="actionAddPlot"/>
     <addaction name="actionRemove"/>
@@ -916,7 +915,10 @@
     </property>
     <addaction name="actionAutomaticXPeak"/>
     <addaction name="actionAutoYLimits"/>
+    <addaction name="actionRefineX"/>
+    <addaction name="separator"/>
     <addaction name="actionAdjust_Dirct_Beam"/>
+    <addaction name="actionClear_Overwrite"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1861,6 +1863,11 @@
     <string>Find the reflected peak automatically when loading a new file</string>
    </property>
   </action>
+  <action name="actionClear_Overwrite">
+   <property name="text">
+    <string>Clear Overwrite</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2520,6 +2527,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionClear_Overwrite</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearOverwrite()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -2545,5 +2568,6 @@
   <slot>refineXpos()</slot>
   <slot>visualizePeakfinding()</slot>
   <slot>folderModified()</slot>
+  <slot>clearOverwrite()</slot>
  </slots>
 </ui>

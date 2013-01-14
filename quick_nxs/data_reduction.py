@@ -178,9 +178,15 @@ def calc_reflectivity(data, tof_channels, settings):
   pix_offset=direct_pixel-x_pos
   tth=tth_bank+pix_offset*RAD_PER_PIX
   ai=tth/2.
+  # set good angular resolution as real resolution not implemented, yet
+  dai=0.00025
 
   v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
   lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
+  lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
+  # resolution for lambda is digital range with equal probability
+  # therefore it is the bin size devided by sqrt(12)
+  dlamda=abs(lamda_edges[:-1]-lamda_edges[1:])/sqrt(12)
   # calculate ROI intensities and normalize by number of points
   Iraw=Idata.sum(axis=0).sum(axis=0)
   dI=sqrt(Iraw)/(reg[3]-reg[2])/(reg[1]-reg[0])
@@ -190,14 +196,15 @@ def calc_reflectivity(data, tof_channels, settings):
   BG/=(reg[3]-reg[2])*(reg[5]-reg[4])
 
   if ai>0.001:
-    x_edges=4.*pi/lamda_edges*sin(ai)
+    x=4.*pi/lamda*sin(ai)
+    # error propagation from lambda and angular resolution
+    dx=4*pi*sqrt((dlamda/lamda**2*sin(ai))**2+(cos(ai)*dai/lamda)**2)
   else:
     # for direct beam measurements
-    x_edges=lamda_edges
+    x=lamda
+    dx=dlamda
   R=(I-BG)*scale
   dR=sqrt(dI**2+dBG**2)*scale
-  x=(x_edges[:-1]+x_edges[1:])/2.
-  dx=abs(x_edges[:-1]-x_edges[1:])/2. #sqrt(12) error due to binning
   return x, dx, R, dR, ai, I, BG, Iraw
 
 def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):

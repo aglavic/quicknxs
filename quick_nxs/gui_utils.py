@@ -27,6 +27,8 @@ genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
 
+result_folder=os.path.expanduser(u'~/results')
+
 class ReduceDialog(QDialog):
 
   def __init__(self, parent, channels, norm, settings):
@@ -36,7 +38,10 @@ class ReduceDialog(QDialog):
     self.norm=norm
     self.channels=list(channels) # make sure we don't alter the original list
     self.settings=settings
-    self.ui.directoryEntry.setText(settings[0][0]['path'])
+    if not os.path.exists(result_folder):
+      self.ui.directoryEntry.setText(settings[0][0]['path'])
+    else:
+      self.ui.directoryEntry.setText(result_folder)
     if len(channels)==1:
       self.ui.exportDownDown.setEnabled(False)
       self.ui.exportDownUp.setEnabled(False)
@@ -49,6 +54,7 @@ class ReduceDialog(QDialog):
     '''
       Run the dialog and perform reflectivity extraction.
     '''
+    global result_folder
     if QDialog.exec_(self):
       # remove channels not selected
       if not self.ui.exportDownUp.isChecked():
@@ -83,6 +89,7 @@ class ReduceDialog(QDialog):
       if self.ui.plot.isChecked():
         for title, output_data in self.output_data.items():
           self.plot_result(self.ind_str, output_data, title)
+      result_folder=unicode(self.ui.directoryEntry.text())
       return True
     else:
       return False
@@ -139,14 +146,6 @@ class ReduceDialog(QDialog):
                             ('dR', float), ('dQz', float), ('ai', float)
                             ]), order=['Qz', 'ai'], axis=0)
       d=d[order.flatten(), :]
-      # remove zero counts
-      d=d[d[:, 1]>0, :]
-      # remove overlap by taking the higher incident angle values
-      keep=[]
-      for i in range(d.shape[0]-2):
-        if d[i, 0]<d[i+1:, 0].min():
-          keep.append(i)
-      d=d[keep, :]
 
       output_data[channel]=d
     self.output_data['Specular']=output_data
@@ -330,16 +329,16 @@ class ReduceDialog(QDialog):
       # 2D PLot
       params=dict(
                   output=ofname.replace('{item}', title).replace('{channel}', 'all')\
-                         .replace('{type}', 'png').replace('{numbers}', self.ind_str),
+                         .replace('{type}', '').replace('{numbers}', self.ind_str),
                   xlabel=u"Q_z [Å^{-1}]",
-                  ylabel=u"R [a.u.]",
+                  ylabel=u"Reflectivity",
                   title=ind_str+' - '+title,
                   )
       plotlines=[]
-      for channel in self.channels:
+      for i, channel in enumerate(self.channels):
         filename=ofname.replace('{item}', title).replace('{channel}', channel)\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
-        plotlines.append(GP_LINE%(filename, channel))
+        plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
       params['plot_lines']=GP_SEP.join(plotlines)
       script=GP_TEMPLATE%params
       open(output, 'w').write(script.encode('utf8'))
@@ -350,7 +349,7 @@ class ReduceDialog(QDialog):
       cols=1+int(len(self.channels)>1)
       params=dict(
                   output=ofname.replace('{item}', title).replace('{channel}', 'all')\
-                         .replace('{type}', 'png').replace('{numbers}', self.ind_str),
+                         .replace('{type}', '').replace('{numbers}', self.ind_str),
                   zlabel=u"I [a.u.]",
                   title=ind_str+' - '+title,
                   rows=rows,
