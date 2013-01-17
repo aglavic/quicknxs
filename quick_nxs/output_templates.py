@@ -56,8 +56,8 @@ set multiplot layout %(rows)i,%(cols)i title "%(title)s"
 unset multiplot
 """
 
-#GP_LINE=u'"%(file_name)s" u 1:2:4:3 w xyerrorlines t "(%(channel)s)" lw 1.5 pt 7'
-GP_LINE=u'"%(file_name)s" u 1:2:4:3 w xyerrorbars t "(%(channel)s)" lw 1.5 lc %(index)i pt 7 ps 0.5, "%(file_name)s" u 1:2 smooth csplines t "" lw 1.5 lc %(index)i'
+GP_LINE=u'"%(file_name)s" u 1:2:4:3 w xyerrorlines t "(%(channel)s)" lw 1.5 pt 7'
+#GP_LINE=u'"%(file_name)s" u 1:2:4:3 w xyerrorbars t "(%(channel)s)" lw 1.5 lc %(index)i pt 7 ps 0.5, "%(file_name)s" u 1:2 smooth csplines t "" lw 1.5 lc %(index)i'
 GP_LINE_3D=u'splot "%(file_name)s" u %(x)i:%(y)i:(Imin($%(z)i)) w pm3d t ""'
 GP_SEP=u',\\\n     '
 GP_SEP_3D=u'\nset title "%s"\n'
