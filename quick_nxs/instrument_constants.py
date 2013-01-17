@@ -24,4 +24,7 @@ MAPPING_HALFPOL=(
                  (u'+', u'entry-Off_Off'),
                  (u'-', u'entry-On_Off'),
                  )
-MAPPING_UNPOL=((u'x', u'entry-Off_Off'))
+MAPPING_UNPOL=((u'x', u'entry-Off_Off'),)
+MAPPING_EFIELD=((u'0V', u'entry-Off_Off'),
+                (u'+V', u'entry-On_Off'),
+                (u'-V', u'entry-Off_On'))

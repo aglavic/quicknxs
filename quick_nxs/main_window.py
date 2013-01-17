@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Wed Jan  2 15:28:10 2013
+# Created: Thu Jan 17 16:43:39 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -965,9 +965,9 @@ class Ui_MainWindow(object):
     self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Data Reduction", None, QtGui.QApplication.UnicodeUTF8))
     self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Normalization:", None, QtGui.QApplication.UnicodeUTF8))
     self.normalizationLabel.setText(QtGui.QApplication.translate("MainWindow", "Unset", None, QtGui.QApplication.UnicodeUTF8))
-    self.selectedChannel.setItemText(0, QtGui.QApplication.translate("MainWindow", "x/+/++", None, QtGui.QApplication.UnicodeUTF8))
-    self.selectedChannel.setItemText(1, QtGui.QApplication.translate("MainWindow", "-/--", None, QtGui.QApplication.UnicodeUTF8))
-    self.selectedChannel.setItemText(2, QtGui.QApplication.translate("MainWindow", "+-", None, QtGui.QApplication.UnicodeUTF8))
+    self.selectedChannel.setItemText(0, QtGui.QApplication.translate("MainWindow", "x/+/++/0V", None, QtGui.QApplication.UnicodeUTF8))
+    self.selectedChannel.setItemText(1, QtGui.QApplication.translate("MainWindow", "-/--/+V", None, QtGui.QApplication.UnicodeUTF8))
+    self.selectedChannel.setItemText(2, QtGui.QApplication.translate("MainWindow", "+-/-V", None, QtGui.QApplication.UnicodeUTF8))
     self.selectedChannel.setItemText(3, QtGui.QApplication.translate("MainWindow", "-+", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(0)
     item.setText(QtGui.QApplication.translate("MainWindow", "File No.", None, QtGui.QApplication.UnicodeUTF8))

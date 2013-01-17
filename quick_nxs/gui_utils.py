@@ -46,6 +46,8 @@ class ReduceDialog(QDialog):
       self.ui.exportDownDown.setEnabled(False)
       self.ui.exportDownUp.setEnabled(False)
       self.ui.exportUpDown.setEnabled(False)
+    elif '0V' in channels:
+      self.ui.exportDownUp.setEnabled(False)
     elif len(channels)<4:
       self.ui.exportDownUp.setEnabled(False)
       self.ui.exportUpDown.setEnabled(False)
@@ -60,11 +62,11 @@ class ReduceDialog(QDialog):
       if not self.ui.exportDownUp.isChecked():
         self.rm_channel(['-+'])
       if not self.ui.exportUpDown.isChecked():
-        self.rm_channel(['+-'])
+        self.rm_channel(['+-', '-V'])
       if not self.ui.exportDownDown.isChecked():
-        self.rm_channel(['-', '--'])
+        self.rm_channel(['-', '--', '+V'])
       if not self.ui.exportUpUp.isChecked():
-        self.rm_channel(['x', '+', '++'])
+        self.rm_channel(['x', '+', '++', '0V'])
       # calculate and collect reflectivities
       self.output_data={}
       self.read_data()

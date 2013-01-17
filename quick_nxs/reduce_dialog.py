@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Wed Jan  2 15:28:10 2013
+# Created: Thu Jan 17 16:43:39 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -155,9 +155,9 @@ class Ui_Dialog(object):
     self.exportOffSpecularSmoothed.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Smoothed", None, QtGui.QApplication.UnicodeUTF8))
     self.exportGISANS.setText(QtGui.QApplication.translate("Dialog", "GISANS", None, QtGui.QApplication.UnicodeUTF8))
     self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Channels", None, QtGui.QApplication.UnicodeUTF8))
-    self.exportUpUp.setText(QtGui.QApplication.translate("Dialog", " X / + / ++", None, QtGui.QApplication.UnicodeUTF8))
-    self.exportDownDown.setText(QtGui.QApplication.translate("Dialog", "- / --", None, QtGui.QApplication.UnicodeUTF8))
-    self.exportUpDown.setText(QtGui.QApplication.translate("Dialog", "+-", None, QtGui.QApplication.UnicodeUTF8))
+    self.exportUpUp.setText(QtGui.QApplication.translate("Dialog", " X / + / ++/0V", None, QtGui.QApplication.UnicodeUTF8))
+    self.exportDownDown.setText(QtGui.QApplication.translate("Dialog", "- / --/+V", None, QtGui.QApplication.UnicodeUTF8))
+    self.exportUpDown.setText(QtGui.QApplication.translate("Dialog", "+-/-V", None, QtGui.QApplication.UnicodeUTF8))
     self.exportDownUp.setText(QtGui.QApplication.translate("Dialog", "-+", None, QtGui.QApplication.UnicodeUTF8))
     self.groupBox_3.setTitle(QtGui.QApplication.translate("Dialog", "Output Formats", None, QtGui.QApplication.UnicodeUTF8))
     self.multiAscii.setText(QtGui.QApplication.translate("Dialog", "ASCII for each channel", None, QtGui.QApplication.UnicodeUTF8))

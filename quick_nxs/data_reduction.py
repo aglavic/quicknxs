@@ -27,10 +27,13 @@ def read_file(filename):
     return None
   ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
   pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+  
   if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]:
     mapping=MAPPING_FULLPOL
   elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]:
     mapping=MAPPING_HALFPOL
+  elif len(channels)==3:
+    mapping=MAPPING_EFIELD
   else:
     mapping=MAPPING_UNPOL
   data={'channels': [], 'origins':[],
