@@ -685,27 +685,48 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Extract the scaling factor from the reflectivity curve.
     '''
-    if self.ref_x.min()>0.02 or self.fulldata['lambda_center'] not in self.ref_norm:
+    if self.fulldata['lambda_center'] not in self.ref_norm:
       QtGui.QMessageBox.information(self, 'Select other dataset',
             'Please select a dataset with total reflection plateau\nand normalization.')
       return
+    is_first=True
     ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
     first=len(ref_norm)-self.ui.rangeStart.value()
     y=self.ref_data[:first]/ref_norm[:first]
     x=self.ref_x[:first][y>0]
     dy=self.dref[:first][y>0]/ref_norm[:first][y>0]
     y=y[y>0]
-    # Start from low Q and search for the critical edge
-    for i in range(len(y)-5, 0,-1):
-      wmean=(y[i:]/dy[i:]).sum()/(1./dy[i:]).sum()
-      yi=y[i-1]
-      if yi<wmean*0.9:
+    for settings_other, x_other, y_other, dy_other in self.add_to_ref:
+      # try to scale overlapping regions
+      if not (x_other.min()<x.min() and x_other.max()>x.min()):
+        continue
+      else:
+        is_first=False
         break
-    self.ui.refScale.setValue(self.ui.refScale.value()+log10(1./wmean)) #change the scaling factor
-    # show a line in the plot corresponding to the extraction region
-    totref=Line2D([x.min(), x[i]], [1., 1.], color='red')
-    self.ui.refl.canvas.ax.add_line(totref)
-    self.ui.refl.canvas.ax.set_ylim([None, 2.])
+    if not is_first:
+      range_to=settings_other['range'][1]
+      norm_other=self.ref_norm[settings_other['lambda_center']]['data']
+      dy_other=dy_other/norm_other
+      y_other=y_other/norm_other
+      idxs=arange(len(y_other))
+      reg_other=where((x_other>=x.min())&(y_other>0)&(idxs>=range_to))
+      reg_this=where(x<=x_other.max())
+      val_other=(y_other[reg_other]/dy_other[reg_other]*x_other[reg_other]**4).sum()/(1./dy_other[reg_other]).sum()
+      val_this=(y[reg_this]/dy[reg_this]*x[reg_this]**4).sum()/(1./dy[reg_this]).sum()
+      self.ui.refScale.setValue(self.ui.refScale.value()+log10(val_other/val_this)) #change the scaling factor
+    else:
+      # normalize total reflection plateau
+      # Start from low Q and search for the critical edge
+      for i in range(len(y)-5, 0,-1):
+        wmean=(y[i:]/dy[i:]).sum()/(1./dy[i:]).sum()
+        yi=y[i-1]
+        if yi<wmean*0.9:
+          break
+      self.ui.refScale.setValue(self.ui.refScale.value()+log10(1./wmean)) #change the scaling factor
+      # show a line in the plot corresponding to the extraction region
+      totref=Line2D([x.min(), x[i]], [1., 1.], color='red')
+      self.ui.refl.canvas.ax.add_line(totref)
+      self.ui.refl.canvas.ax.set_ylim([None, 2.])
     self.ui.refl.draw()
 
   def addRefList(self):

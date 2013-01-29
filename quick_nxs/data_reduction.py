@@ -88,6 +88,8 @@ def read_event_file(filename, bin_type='linear', bins=40, callback=None):
     mapping=MAPPING_FULLPOL
   elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]:
     mapping=MAPPING_HALFPOL
+  elif len(channels)==3:
+    mapping=MAPPING_EFIELD
   else:
     mapping=MAPPING_UNPOL
   data={'channels': [], 'origins':[],
@@ -171,41 +173,50 @@ def calc_reflectivity(data, tof_channels, settings):
   tth_bank=settings['tth']
   scale=settings['scale']/settings['beam_width'] # scale by user factor and beam-size
 
+  # Get regions in pixels as integers
   reg=map(lambda item: int(round(item)),
-          [x_pos-x_width/2., x_pos+x_width/2.,
-           y_pos-y_width/2., y_pos+y_width/2.,
-           bg_pos-bg_width/2., bg_pos+bg_width/2.])
+          [x_pos-x_width/2., x_pos+x_width/2.+1,
+           y_pos-y_width/2., y_pos+y_width/2.+1,
+           bg_pos-bg_width/2., bg_pos+bg_width/2.+1])
 
-  Idata=data[reg[0]:reg[1]+1, reg[2]:reg[3]+1, :]
-  bgdata=data[reg[4]:reg[5]+1, reg[2]:reg[3]+1, :]
+  # restrict the intensity and background data to the given regions
+  Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
+  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :]
+  # calculate region size for later use
+  size_I=float((reg[3]-reg[2])*(reg[1]-reg[0]))
+  size_BG=float((reg[3]-reg[2])*(reg[5]-reg[4]))
+  # calculate ROI intensities and normalize by number of points
+  Iraw=Idata.sum(axis=0).sum(axis=0)
+  dI=sqrt(Iraw)/size_I
+  I=Iraw/size_I
+  BG=bgdata.sum(axis=0).sum(axis=0)
+  dBG=sqrt(BG)/size_BG
+  BG/=size_BG
+  
+  # get incident angle of reflected beam
   pix_offset=direct_pixel-x_pos
   tth=tth_bank+pix_offset*RAD_PER_PIX
   ai=tth/2.
   # set good angular resolution as real resolution not implemented, yet
-  dai=0.00025
+  dai=0.0001
 
   v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
   lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
   lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
   # resolution for lambda is digital range with equal probability
-  # therefore it is the bin size devided by sqrt(12)
+  # therefore it is the bin size divided by sqrt(12)
   dlamda=abs(lamda_edges[:-1]-lamda_edges[1:])/sqrt(12)
-  # calculate ROI intensities and normalize by number of points
-  Iraw=Idata.sum(axis=0).sum(axis=0)
-  dI=sqrt(Iraw)/(reg[3]-reg[2])/(reg[1]-reg[0])
-  I=Iraw/(reg[3]-reg[2])/(reg[1]-reg[0])
-  BG=bgdata.sum(axis=0).sum(axis=0)
-  dBG=sqrt(BG)/(reg[3]-reg[2])/(reg[5]-reg[4])
-  BG/=(reg[3]-reg[2])*(reg[5]-reg[4])
 
   if ai>0.001:
+    # for reflectivity use Q as x
     x=4.*pi/lamda*sin(ai)
     # error propagation from lambda and angular resolution
     dx=4*pi*sqrt((dlamda/lamda**2*sin(ai))**2+(cos(ai)*dai/lamda)**2)
   else:
-    # for direct beam measurements
+    # for direct beam measurements use λ as x
     x=lamda
     dx=dlamda
+  # finally scale reflectivity by the given factor and beam width
   R=(I-BG)*scale
   dR=sqrt(dI**2+dBG**2)*scale
   return x, dx, R, dR, ai, I, BG, Iraw
@@ -235,12 +246,12 @@ def calc_fan_reflectivity(data, tof_channels, settings, Inorm, P0, PN):
   scale=settings['scale']/settings['beam_width'] # scale by user factor and beam-size
 
   reg=map(lambda item: int(round(item)),
-          [x_pos-x_width/2., x_pos+x_width/2.,
-           y_pos-y_width/2., y_pos+y_width/2.,
-           bg_pos-bg_width/2., bg_pos+bg_width/2.])
+          [x_pos-x_width/2., x_pos+x_width/2.+1,
+           y_pos-y_width/2., y_pos+y_width/2.+1,
+           bg_pos-bg_width/2., bg_pos+bg_width/2.+1])
 
-  Idata=data[reg[0]:reg[1]+1, reg[2]:reg[3]+1, :]
-  bgdata=data[reg[4]:reg[5]+1, reg[2]:reg[3]+1, :]
+  Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
+  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :]
   x_region=arange(reg[0], reg[1])
   pix_offset=direct_pixel-x_region
   tth=tth_bank+pix_offset*RAD_PER_PIX
@@ -319,8 +330,8 @@ def calc_offspec(data, tof_channels, settings):
   kf_z=k[newaxis, :]*sin(af)[:, newaxis]
 
   # calculate ROI intensities and normalize by number of points
-  Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3]+1, :]
-  bgdata=data[reg[4]:reg[5]+1, reg[2]:reg[3]+1, :].sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[5]-reg[4])
+  Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3], :]
+  bgdata=data[reg[4]:reg[5], reg[2]:reg[3], :].sum(axis=0).sum(axis=0)/(reg[3]-reg[2])/(reg[5]-reg[4])
   Iraw=Idata.sum(axis=1)
   dIraw=sqrt(Iraw)
   I=(Iraw/(reg[3]-reg[2])-bgdata[newaxis, :])*scale
