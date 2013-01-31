@@ -11,14 +11,14 @@ from cPickle import loads, dumps
 from PyQt4.QtGui import QDialog, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
 from PyQt4.QtCore import QThread, SIGNAL
 from time import sleep, time, strftime
-from numpy import vstack, hstack, argsort, newaxis, array, savetxt, savez, maximum
+from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
 from .smooth_dialog import Ui_Dialog as UiSmooth
-from .mreduce import NXSData, Reflectivity
+from .mreduce import NXSData, Reflectivity, OffSpecular, smooth_data
 from .output_templates import *
 from . import genx_data
 # make sure importing and changing genx templates do only use our
@@ -155,25 +155,19 @@ class ReduceDialog(QDialog):
 
 
     ki_max=0.01
-    for settings, ignore, ignore, ignore in self.settings:
-      index=settings['index']
+    for refli in self.refls:
+      opts=refli.options
+      index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[channel]['tof'])-settings['range'][0]-1
-      PN=settings['range'][1]
-      if settings['lambda_center'] in self.norm:
-        norm=self.norm[settings['lambda_center']]['data']
-      else:
-        norm=1.
+      P0=len(fdata[channel].tof)-opts['P0']
+      PN=opts['PN']
       for channel in self.channels:
-        Qx, Qz, ki_z, kf_z, I, dI=calc_offspec(
-                      fdata[channel]['data'],
-                      fdata[channel]['tof'],
-                                settings)
-        I/=norm[newaxis, :]*fdata[channel]['pc']
-        dI/=norm[newaxis, :]*fdata[channel]['pc']
+        offspec=OffSpecular(fdata[channel], **opts)
+        Qx, Qz, ki_z, kf_z, S, dS=(offspec.Qx, offspec.Qz, offspec.ki_z, offspec.kf_z,
+                                   offspec.S, offspec.dS)
 
         rdata=array([Qx[:, PN:P0], Qz[:, PN:P0], ki_z[:, PN:P0], kf_z[:, PN:P0],
-                      ki_z[:, PN:P0]-kf_z[:, PN:P0], I[:, PN:P0], dI[:, PN:P0]],
+                      ki_z[:, PN:P0]-kf_z[:, PN:P0], S[:, PN:P0], dS[:, PN:P0]],
                     copy=False).transpose((1, 2, 0))
         output_data[channel].append(rdata)
         ki_max=max(ki_max, ki_z.max())

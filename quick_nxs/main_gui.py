@@ -233,8 +233,16 @@ class MainGUI(QtGui.QMainWindow):
     imin=1e20
     imax=1e-20
     xtofnormed=[]
+    if self.active_data[0].lambda_center in self.ref_norm:
+      ref_norm=self.ref_norm[self.active_data[0].lambda_center].R
+      ref_norm=where(ref_norm>0, ref_norm, 1.)
+    else:
+      ref_norm=None
     for dataset in self.active_data:
       d=dataset.xtofdata/dataset.proton_charge
+      if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
+        # normalize all datasets for wavelength distribution
+        d=d/ref_norm[newaxis, :]
       xtofnormed.append(d)
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
@@ -242,17 +250,6 @@ class MainGUI(QtGui.QMainWindow):
     tof=self.active_data[0].tof
 
     plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
-    if self.active_data[0].lambda_center in self.ref_norm:
-      ref_norm=self.ref_norm[self.active_data[0].lambda_center].R
-    else:
-      ref_norm=None
-    if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
-      # normalize all datasets for wavelength distribution
-      data_new=[]
-      for ds in xtofnormed:
-        ref_norm=where(ref_norm>0, ref_norm, 1.)
-        data_new.append(ds.astype(float)/ref_norm[newaxis, :])
-      xtofnormed=data_new
     if len(xtofnormed)>1:
       self.ui.frame_xtof_mm.show()
       if len(xtofnormed)==4:
@@ -458,38 +455,29 @@ class MainGUI(QtGui.QMainWindow):
     Imax=10**self.ui.offspecImax.value()
     Qzmax=0.01
     for item in self.reduction_list:
-      settings=item[0]
-      fname=os.path.join(item[0]['path'], item[0]['file'])
-      data_all=NXSData(fname, settings['bin_type'], settings['bins'])
-      settings=item[0]
-      if settings['lambda_center'] in self.ref_norm:
-        ref_norm=self.ref_norm[settings['lambda_center']]['data']
-      else:
-        ref_norm=1.
+      fname=item.origin[0]
+      data_all=NXSData(fname, **item.read_options)
       for i, channel in enumerate(self.ref_list_channels):
         plot=plots[i]
         selected_data=data_all[channel]
-        data=selected_data['data']
-        tof_edges=selected_data['tof']
-        Qx, Qz, ki_z, kf_z, I, _dI=OffSpecular(data, tof_edges, settings)
-        I/=ref_norm[newaxis, :]*selected_data['pc']
-        I=maximum(Imin, I)
-        P0=len(tof_edges)-settings['range'][0]-1
-        PN=settings['range'][1]
-        Qzmax=max(Qz[int(settings['x_pos']), PN:P0].max(), Qzmax)
+        offspec=OffSpecular(selected_data, **item.options)
+        P0=len(selected_data.tof)-item.options['P0']
+        PN=item.options['PN']
+        Qzmax=max(offspec.Qz[int(item.options['x_pos']), PN:P0].max(), Qzmax)
+        ki_z, kf_z, Qx, Qz, S=offspec.ki_z, offspec.kf_z, offspec.Qx, offspec.Qz, offspec.S
         if self.ui.kizmkfzVSqz.isChecked():
           plot.pcolormesh((ki_z-kf_z)[:, PN:P0],
-                                        Qz[:, PN:P0], I[:, PN:P0], log=True,
+                                        Qz[:, PN:P0], S[:, PN:P0], log=True,
                                         imin=Imin, imax=Imax, cmap=self.color,
                                         shading='gouraud')
         elif self.ui.qxVSqz.isChecked():
           plot.pcolormesh(Qx[:, PN:P0],
-                                        Qz[:, PN:P0], I[:, PN:P0], log=True,
+                                        Qz[:, PN:P0], S[:, PN:P0], log=True,
                                         imin=Imin, imax=Imax, cmap=self.color,
                                         shading='gouraud')
         else:
           plot.pcolormesh(ki_z[:, PN:P0],
-                                        kf_z[:, PN:P0], I[:, PN:P0], log=True,
+                                        kf_z[:, PN:P0], S[:, PN:P0], log=True,
                                         imin=Imin, imax=Imax, cmap=self.color,
                                         shading='gouraud')
     for i, channel in enumerate(self.ref_list_channels):
@@ -754,6 +742,11 @@ class MainGUI(QtGui.QMainWindow):
       in the list of reduction items.
     '''
     if self.refl is None:
+      return
+    if self.refl.options['normalization'] is None:
+      QtGui.QMessageBox.information(self, u'Data not normalized',
+                                    u"You can only add reflectivities (λ normalized)!",
+                                    QtGui.QMessageBox.Close)
       return
     # collect current settings
     channels=self.channels

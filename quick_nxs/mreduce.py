@@ -662,5 +662,133 @@ class Reflectivity(object):
     else:
       raise ValueError, "Unknown background method '%s'"%self.options['bg_method']
 
-class OffSpecular(object):
-  pass
+class OffSpecular(Reflectivity):
+  '''
+    Calculate off-specular scattering similarly as done for reflectivity.
+  '''
+
+  def __init__(self, dataset, **options):
+    all_options=dict(OffSpecular.DEFAULT_OPTIONS)
+    for key, value in options.items():
+      if not key in all_options:
+        raise ValueError, "%s is not a known option parameter"%key
+      all_options[key]=value
+    self.options=all_options
+    self.origin=dataset.origin
+    self.read_options=dataset.read_options
+    if self.options['x_pos'] is None:
+      # if nor x_pos is given, use the value from the dataset
+      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/RAD_PER_PIX
+    if self.options['tth'] is None:
+      self.options['tth']=dataset.dangle-dataset.dangle0
+    if self.options['dpix'] is None:
+      self.options['dpix']=dataset.dpix
+    self.lambda_center=dataset.lambda_center
+
+    self._calc_offspec(dataset)
+
+  def __repr__(self):
+    output='<OffSpecular[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
+                                        self.origin[1])
+    if self.options['normalization'] is None:
+      output+=' NOT normalized'
+    output+='>'
+    return output
+
+  def _calc_offspec(self, dataset):
+    """
+      Extract off-specular scattering from 4D dataset (x,y,ToF,I).
+      Uses a window in y to filter the 4D data
+      and than sums all I values for each ToF and x channel.
+      Qz,Qx,kiz,kfz is calculated using the x and ToF positions
+      together with the tth-bank and direct pixel values.
+    """
+    tof_edges=dataset.tof_edges
+    data=dataset.data
+    x_pos=self.options['x_pos']
+    x_width=self.options['x_width']
+    y_pos=self.options['y_pos']
+    y_width=self.options['y_width']
+    scale=self.options['scale']/dataset.proton_charge # scale by user factor
+    if self.options['scale_by_beam']:
+      scale/=dataset.beam_width # scale by beam-size
+
+    # Get regions in pixels as integers
+    reg=map(lambda item: int(round(item)),
+            [x_pos-x_width/2., x_pos+x_width/2.+1,
+             y_pos-y_width/2., y_pos+y_width/2.+1])
+
+    self._calc_bg(dataset)
+
+    xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
+    pix_offset_spec=self.options['dpix']-x_pos
+    tth_spec=self.options['tth']*pi/180.+pix_offset_spec*RAD_PER_PIX
+    af=self.options['tth']*pi/180.+xtth*RAD_PER_PIX-tth_spec/2.
+    ai=ones_like(af)*tth_spec/2.
+
+    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
+    # store the ToF as well for comparison etc.
+    self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
+    self.lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
+    # resolution for lambda is digital range with equal probability
+    # therefore it is the bin size divided by sqrt(12)
+    self.dlamda=abs(lamda_edges[:-1]-lamda_edges[1:])/sqrt(12)
+    k=2.*pi/self.lamda
+
+    # calculate reciprocal space, incident and outgoing perpendicular wave vectors
+    self.Qz=k[newaxis, :]*(sin(af)+sin(ai))[:, newaxis]
+    self.Qx=k[newaxis, :]*(cos(af)-cos(ai))[:, newaxis]
+    self.ki_z=k[newaxis, :]*sin(ai)[:, newaxis]
+    self.kf_z=k[newaxis, :]*sin(af)[:, newaxis]
+
+    # calculate ROI intensities and normalize by number of points
+    Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3], :]
+    self.Iraw=Idata.sum(axis=1)
+    self.dIraw=sqrt(self.Iraw)
+    # normalize data by width in y and multiply scaling factor
+    self.I=self.Iraw/(reg[3]-reg[2])*scale
+    self.dI=self.dIraw/(reg[3]-reg[2])*scale
+    self.S=self.I-self.BG[newaxis, :]
+    self.dS=sqrt(self.dI**2+(self.dBG**2)[newaxis, :])
+
+    if self.options['normalization']:
+      norm=self.options['normalization']
+      idxs=norm.R>0.
+      self.dS[:, idxs]=sqrt(
+                   (self.dS[:, idxs]/norm.R[idxs][newaxis, :])**2+
+                   (self.S[:, idxs]/norm.R[idxs][newaxis, :]**2*norm.dR[idxs][newaxis, :])**2
+                   )
+      self.S[:, idxs]/=norm.R[idxs][newaxis, :]
+      self.S[:, logical_not(idxs)]=0.
+      self.dS[:, logical_not(idxs)]=0.
+
+def smooth_data(settings, x, y, I, sigmas=3., callback=None):
+  '''
+    Smooth a irregular spaced dataset onto a regular grid.
+    Takes each intensities with a distance < 3*sigma
+    to a given grid point and averages their intensities
+    weighted by the gaussian of the distance.
+  '''
+  gridx, gridy=settings['grid']
+  sigmax, sigmay=settings['sigma']
+  ssigmax, ssigmay=sigmax**2, sigmay**2
+  x1, x2, y1, y2=settings['region']
+  xout=linspace(x1, x2, gridx)
+  yout=linspace(y1, y2, gridy)
+  Xout, Yout=meshgrid(xout, yout)
+  Iout=zeros_like(Xout)
+  imax=len(Xout)
+  for i in range(imax):
+    if callback is not None and i%5==0:
+      progress=float(i)/imax
+      callback(progress)
+    for j in range(len(Xout[0])):
+      xij=Xout[i, j]
+      yij=Yout[i, j]
+      rij=(x-xij)**2/ssigmax+(y-yij)**2/ssigmay # normalized distance^2
+      take=where(rij<sigmas**2) # take points up to 3 sigma distance
+      Pij=exp(-0.5*rij[take])
+      Pij/=Pij.sum()
+      Iout[i, j]=(Pij*I[take]).sum()
+  return Xout, Yout, Iout
