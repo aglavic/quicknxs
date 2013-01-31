@@ -6,40 +6,47 @@
 import os
 from glob import glob
 #from time import time #sleep
-from numpy import where, pi, newaxis, isnan, maximum, arange, exp, log10, array
+from numpy import where, pi, newaxis, maximum, arange, exp, log10, array, hstack
 from scipy.stats.mstats import mquantiles
 from cPickle import load, dump
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
-from . import data_reduction
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
-from .instrument_constants import *
+from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION, RAD_PER_PIX
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
+
+BASE_FOLDER='/SNS/REF_M'
+BASE_SEARCH='*/data/REF_M_%s_'
 
 class MainGUI(QtGui.QMainWindow):
   '''
     The program top level window with all direct event handling.
   '''
-  active_folder=u''
+  active_folder=BASE_FOLDER
   active_file=u''
+  active_data=None
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
-  ref_data=None #: Reflectivity of the active dataset
+  refl=None #: Reflectivity of the active dataset
   ref_norm={} #: Store normalization data with extraction information
   auto_change_active=False
-  add_to_ref=[] #: Store information and data of reflectivities from different files
+  reduction_list=[] #: Store information and data of reflectivities from different files
   color=None
   open_plots=[] #: to keep non modal dialogs open when their caller is destroyed
   channels=[] #: Available channels of the active dataset
-  use_channel='x' #: Selected channel for the overview and projection plots
+  active_channel='x' #: Selected channel for the overview and projection plots
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
-    self.active_folder=os.curdir
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
+    self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
+    self.eventProgress.setMinimumSize(20, 14)
+    self.eventProgress.setMaximumSize(80, 100)
+    self.ui.statusbar.addPermanentWidget(self.eventProgress)
+
     self.toggleHide()
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -51,7 +58,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
     self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
 
-    self._path_watcher=QtCore.QFileSystemWatcher(self.active_folder, self)
+    self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     if len(argv)>0:
       self.fileOpen(argv[0])
     self.connect_plot_events()
@@ -84,31 +91,26 @@ class MainGUI(QtGui.QMainWindow):
       Open a new datafile and plot the data.
     '''
     folder, base=os.path.split(filename)
-    if filename.endswith('histo.nxs'):
-      data=data_reduction.read_file(filename)
-    else:
-      self.updateEventReadout(0.1)
-      data=data_reduction.read_event_file(filename,
-                                          bin_type=str(self.ui.eventBinMode.currentText()),
-                                          bins=self.ui.eventTofBins.value(),
-                                          callback=self.updateEventReadout)
-    if data is None:
+    data=NXSData(filename,
+                bin_type=str(self.ui.eventBinMode.currentText()),
+                bins=self.ui.eventTofBins.value(),
+                callback=self.updateEventReadout)
+    if len(data)==0:
       self.ui.currentChannel.setText(u'!!!NO DATA IN FILE %s!!!'%base)
       return
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     self.active_file=base
-    self.channels=data['channels']
-    self.xydata=data['xydata']
-    self.xtofdata=data['xtofdata']
+    self.channels=data.keys()
 
     desiredChannel=self.ui.selectedChannel.currentText().split('/')
-    self.use_channel=data['channels'][0]
+    self.active_channel=self.channels[0]
     for channel in self.channels:
       if channel in desiredChannel:
-        self.use_channel=channel
+        self.active_channel=channel
         break
-    self.fulldata=data[self.use_channel]
+    self.active_data=data
+
     self.updateLabels()
     self.calcReflParams()
     self.plotActiveTab()
@@ -147,27 +149,36 @@ class MainGUI(QtGui.QMainWindow):
     '''
       X vs. Y and X vs. Tof for main channel.
     '''
-    cindex=self.channels.index(self.use_channel)
-    xy=self.xydata[cindex]
-    xtof=self.xtofdata[cindex]
-    if self.fulldata['lambda_center'] in self.ref_norm:
-      ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    data=self.active_data[self.active_channel]
+    xy=data.xydata
+    xtof=data.xtofdata
+    if data.lambda_center in self.ref_norm:
+      ref_norm=self.ref_norm[data.lambda_center].R
     else:
       ref_norm=None
     if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
       # normalize ToF dataset for wavelength distribution
+      ref_norm=where(ref_norm>0., ref_norm, 1.)
       xtof=xtof.astype(float)/ref_norm[newaxis, :]
-      xtof[isnan(xtof)]=0.
     xy_imin=xy[xy>0].min()
     xy_imax=xy.max()
     tof_imin=xtof[xtof>0].min()
     tof_imax=xtof.max()
-    self.ui.xy_overview.imshow(xy, log=True, aspect='auto', cmap=self.color)
-    self.ui.xtof_overview.imshow(xtof, log=True, aspect='auto', cmap=self.color)
+    self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
+                               aspect='auto', cmap=self.color)
+    if self.ui.xLamda.isChecked():
+      self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
+                                   aspect='auto', cmap=self.color,
+                                   extent=[data.lamda[0], data.lamda[-1], 0, data.x.shape[0]-1])
+      self.ui.xtof_overview.set_xlabel(u'λ [Å]')
+    else:
+      self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
+                                   aspect='auto', cmap=self.color,
+                                   extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
+      self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xy_overview.set_xlabel(u'x [pix]')
     self.ui.xy_overview.set_ylabel(u'y [pix]')
     self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
-    self.ui.xtof_overview.set_xlabel(u'ToF [channel]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 #    if self.tline is None:
@@ -183,17 +194,19 @@ class MainGUI(QtGui.QMainWindow):
     '''
       X vs. Y plots for all channels.
     '''
-    data=self.xydata
     plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_pm, self.ui.xy_mp]
     imin=1e20
     imax=1e-20
-    for d in data:
+    xynormed=[]
+    for dataset in self.active_data:
+      d=dataset.xydata/dataset.proton_charge
+      xynormed.append(d)
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
 
-    if len(data)>1:
+    if len(xynormed)>1:
       self.ui.frame_xy_mm.show()
-      if len(data)==4:
+      if len(xynormed)==4:
         self.ui.frame_xy_sf.show()
       else:
         self.ui.frame_xy_sf.hide()
@@ -201,8 +214,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.frame_xy_mm.hide()
       self.ui.frame_xy_sf.hide()
 
-    for i, datai in enumerate(data):
-      plots[i].imshow(datai, log=True, imin=imin, imax=imax,
+    for i, datai in enumerate(xynormed):
+      plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                            aspect='auto', cmap=self.color)
       plots[i].set_title(self.channels[i])
       plots[i].set_xlabel(u'x [pix]')
@@ -217,38 +230,48 @@ class MainGUI(QtGui.QMainWindow):
     '''
       X vs. ToF plots for all channels.
     '''
-    data=self.xtofdata
+    imin=1e20
+    imax=1e-20
+    xtofnormed=[]
+    for dataset in self.active_data:
+      d=dataset.xtofdata/dataset.proton_charge
+      xtofnormed.append(d)
+      imin=min(imin, d[d>0].min())
+      imax=max(imax, d.max())
+    lamda=self.active_data[0].lamda
+    tof=self.active_data[0].tof
+
     plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
-    if self.fulldata['lambda_center'] in self.ref_norm:
-      ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    if self.active_data[0].lambda_center in self.ref_norm:
+      ref_norm=self.ref_norm[self.active_data[0].lambda_center].R
     else:
       ref_norm=None
     if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
       # normalize all datasets for wavelength distribution
       data_new=[]
-      for ds in data:
+      for ds in xtofnormed:
+        ref_norm=where(ref_norm>0, ref_norm, 1.)
         data_new.append(ds.astype(float)/ref_norm[newaxis, :])
-        data_new[-1][isnan(data_new[-1])]=0.
-      data=data_new
-    imin=1e20
-    imax=1e-20
-    for d in data:
-      imin=min(imin, d[d>0].min())
-      imax=max(imax, d.max())
-    if len(data)>1:
+      xtofnormed=data_new
+    if len(xtofnormed)>1:
       self.ui.frame_xtof_mm.show()
-      if len(data)==4:
+      if len(xtofnormed)==4:
         self.ui.frame_xtof_sf.show()
       else:
         self.ui.frame_xtof_sf.hide()
     else:
       self.ui.frame_xtof_mm.hide()
       self.ui.frame_xtof_sf.hide()
-    for i, datai in enumerate(data):
-      plots[i].imshow(datai, log=True, imin=imin, imax=imax,
-                           aspect='auto', cmap=self.color)
+    for i, datai in enumerate(xtofnormed):
+      if self.ui.xLamda.isChecked():
+        plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                             aspect='auto', cmap=self.color, extent=[lamda[0], lamda[-1], 0, datai.shape[0]-1])
+        plots[i].set_xlabel(u'λ [Å]')
+      else:
+        plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                             aspect='auto', cmap=self.color, extent=[tof[0]*1e-3, tof[-1]*1e-3, 0, datai.shape[0]-1])
+        plots[i].set_xlabel(u'ToF [ms]')
       plots[i].set_title(self.channels[i])
-      plots[i].set_xlabel(u'ToF [Channel]')
       plots[i].set_ylabel(u'x [pix]')
       if plots[i].cplot is not None:
         plots[i].cplot.set_clim([imin, imax])
@@ -267,14 +290,13 @@ class MainGUI(QtGui.QMainWindow):
       exceeded by a certain number of points. This can be helpful to better
       separate the specular reflection from bragg-sheets
     '''
-    cindex=self.channels.index(self.use_channel)
-    data=self.xydata[cindex]
+    data=self.active_data[self.active_channel]
     if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata[cindex]
+      d2=data.xtofdata
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1)
     else:
-      xproj=data.mean(axis=0)
-    yproj=data.mean(axis=1)
+      xproj=data.xdata
+    yproj=data.ydata
 
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
@@ -293,7 +315,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.clear()
     self.ui.y_project.clear()
 
-    self.ui.x_project.semilogy(xproj, color='blue')[0]
+    self.ui.x_project.plot(xproj, color='blue')[0]
     self.ui.x_project.set_xlabel(u'x [pix]')
     self.ui.x_project.set_ylabel(u'I$_{max}$')
     self.ui.x_project.canvas.ax.set_xlim(xxlim)
@@ -309,7 +331,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.canvas.ax.add_line(xleft_bg)
     self.ui.x_project.canvas.ax.add_line(xright_bg)
 
-    self.ui.y_project.semilogy(yproj, color='blue')[0]
+    self.ui.y_project.plot(yproj, color='blue')[0]
     self.ui.y_project.set_xlabel(u'y [pix]')
     self.ui.y_project.set_ylabel(u'I$_{max}$')
     self.ui.y_project.canvas.ax.set_xlim(yxlim)
@@ -323,6 +345,12 @@ class MainGUI(QtGui.QMainWindow):
     if preserve_lim:
       self.ui.x_project.canvas.ax.axis(xview)
       self.ui.y_project.canvas.ax.axis(yview)
+    if self.ui.logarithmic_y.isChecked():
+      self.ui.x_project.set_yscale('log')
+      self.ui.y_project.set_yscale('log')
+    else:
+      self.ui.x_project.set_yscale('linear')
+      self.ui.y_project.set_yscale('linear')
     self.ui.x_project.draw()
     self.ui.y_project.draw()
     self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
@@ -334,90 +362,82 @@ class MainGUI(QtGui.QMainWindow):
       and any dataset stored. Intensities from direct beam
       measurements can be used for normalization.
     '''
-    data=self.fulldata['data']
-    tof_edges=self.fulldata['tof']
+    data=self.active_data[self.active_channel]
     if self.ui.directPixelOverwrite.value()>=0:
-      dp=self.ui.directPixelOverwrite.value()
+      dpix=self.ui.directPixelOverwrite.value()
     else:
-      dp=self.fulldata['dp']
+      dpix=None
     try:
-      tth=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
+      tth=data.dangle-float(self.ui.dangle0Overwrite.text())
     except ValueError:
-      tth=self.fulldata['tth']*pi/180.
-    settings=dict(
+      tth=None
+    try:
+      number=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
+    except:
+      number='0'
+    options=dict(
                 x_pos=self.ui.refXPos.value(),
                 x_width=self.ui.refXWidth.value(),
                 y_pos=self.ui.refYPos.value(),
                 y_width=self.ui.refYWidth.value(),
                 bg_pos=self.ui.bgCenter.value(),
                 bg_width=self.ui.bgWidth.value(),
-                dp=dp,
-                tth=tth,
                 scale=10**self.ui.refScale.value(),
-                beam_width=self.fulldata['beam_width'],
+                extract_fan=self.ui.fanReflectivity.isChecked(),
+                P0=self.ui.rangeStart.value(),
+                PN=self.ui.rangeEnd.value(),
+                number=number,
+                tth=tth,
+                dpix=dpix,
                   )
 
-    if self.fulldata['lambda_center'] in self.ref_norm:
-      ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
+    if data.lambda_center in self.ref_norm:
+      options['normalization']=self.ref_norm[data.lambda_center]
     else:
-      ref_norm=None
+      options['normalization']=None
 
-    P0=len(tof_edges)-self.ui.rangeStart.value()-1
+    self.refl=Reflectivity(data, **options)
+    P0=len(self.refl.Q)-self.ui.rangeStart.value()
     PN=self.ui.rangeEnd.value()
-    if self.ui.fanReflectivity.isChecked():
-      if ref_norm is None:
-        QtGui.QMessageBox.information(self, 'No normalization',
-                 'You need an active normalization to extract Fan-Reflectivity')
-        self.ui.fanReflectivity.setChecked(False)
-        return
-      Qz, _dQz, R, dR, ai, I, BG, Iraw=data_reduction.calc_fan_reflectivity(data, tof_edges, settings,
-                                                                      ref_norm, P0, PN)
-    else:
-      Qz, _dQz, R, dR, ai, I, BG, Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
-    self.ui.datasetAi.setText("%.3f"%(ai*180./pi))
-    self.ui.datasetROI.setText("%.4g"%(Iraw.sum()))
-
-    self.ref_x=Qz
-
-    self.ref_data=R/self.fulldata['pc'] # normalize to proton charge
-    self.dref=dR/self.fulldata['pc'] # normalize to proton charge
+    self.ui.datasetAi.setText("%.3f"%(self.refl.ai*180./pi))
+    self.ui.datasetROI.setText("%.4g"%(self.refl.Iraw.sum()))
 
     if preserve_lim:
       view=self.ui.refl.canvas.ax.axis()
 
     self.ui.refl.clear()
-    try:
-      index=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
-    except:
-      index='0'
-    if self.fulldata['lambda_center'] in self.ref_norm:
-      self.ui.refl.set_yscale('log')
-      if ai>0.001:
-        for settings, x, y, dy in self.add_to_ref:
-          if settings['lambda_center'] in self.ref_norm:
-            ref_norm=self.ref_norm[settings['lambda_center']]['data']
-          else:
-            ref_norm=1.
-          #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
-          P0i=len(tof_edges)-settings['range'][0]-1
-          PNi=settings['range'][1]
-          self.ui.refl.errorbar(x[PNi:P0i], (y/ref_norm)[PNi:P0i],
-                                yerr=dy[PNi:P0i], label=str(settings['index']))
-      if self.fulldata['lambda_center'] in self.ref_norm:
-        ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
-      else:
-        ref_norm=1.
-      self.ui.refl.errorbar(self.ref_x[PN:P0], (self.ref_data/ref_norm)[PN:P0],
-                            yerr=(self.dref/ref_norm)[PN:P0], label=index)
-      self.ui.refl.set_ylabel(u'I$_{Norm}$')
-    else:
-      self.ui.refl.semilogy(self.ref_x, I, label='I-'+index)
-      self.ui.refl.semilogy(self.ref_x, BG, label='BG-'+index)
-      self.ui.refl.set_ylabel(u'I$_{Raw}$')
-    if ai>0.001:
+    if options['normalization']:
+      ymin=1e50
+      ymax=1e-50
+      for refli in self.reduction_list:
+        #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
+        P0i=len(refli.Q)-refli.options['P0']
+        PNi=refli.options['PN']
+        ynormed=refli.R[PNi:P0i]
+        ymin=min(ymin, ynormed[ynormed>0].min())
+        ymax=max(ymax, ynormed.max())
+        self.ui.refl.errorbar(refli.Q[PNi:P0i], ynormed,
+                              yerr=refli.dR[PNi:P0i], label=str(refli.options['number']))
+      ynormed=self.refl.R[PN:P0]
+      ymin=min(ymin, ynormed[ynormed>0].min())
+      ymax=max(ymax, ynormed.max())
+      self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
+                            yerr=self.refl.dR[PN:P0], label=number)
+      self.ui.refl.set_ylabel(u'I')
+      self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'Q$_z$ [$\\AA^{-1}$]')
     else:
+      ymin=min(self.refl.BG[self.refl.BG>0].min(), self.refl.I[self.refl.I>0].min())
+      ymax=max(self.refl.BG.max(), self.refl.I.max())
+      self.ui.refl.errorbar(self.refl.lamda, self.refl.I, yerr=self.refl.dI, label='I-'+number)
+      self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+number)
+      self.ui.refl.set_ylabel(u'I')
+      self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'$\\lambda$ [$\\AA$]')
+    if self.ui.logarithmic_y.isChecked():
+      self.ui.refl.set_yscale('log')
+    else:
+      self.ui.refl.set_yscale('linear')
     self.ui.refl.legend()
     if preserve_lim:
       self.ui.refl.canvas.ax.axis(view)
@@ -437,13 +457,10 @@ class MainGUI(QtGui.QMainWindow):
     Imin=10**self.ui.offspecImin.value()
     Imax=10**self.ui.offspecImax.value()
     Qzmax=0.01
-    for item in self.add_to_ref:
+    for item in self.reduction_list:
       settings=item[0]
       fname=os.path.join(item[0]['path'], item[0]['file'])
-      if fname.endswith('event.nxs'):
-        data_all=data_reduction.read_event_file(fname, settings['bin_type'], settings['bins'])
-      else:
-        data_all=data_reduction.read_file(fname)
+      data_all=NXSData(fname, settings['bin_type'], settings['bins'])
       settings=item[0]
       if settings['lambda_center'] in self.ref_norm:
         ref_norm=self.ref_norm[settings['lambda_center']]['data']
@@ -454,7 +471,7 @@ class MainGUI(QtGui.QMainWindow):
         selected_data=data_all[channel]
         data=selected_data['data']
         tof_edges=selected_data['tof']
-        Qx, Qz, ki_z, kf_z, I, _dI=data_reduction.calc_offspec(data, tof_edges, settings)
+        Qx, Qz, ki_z, kf_z, I, _dI=OffSpecular(data, tof_edges, settings)
         I/=ref_norm[newaxis, :]*selected_data['pc']
         I=maximum(Imin, I)
         P0=len(tof_edges)-settings['range'][0]-1
@@ -529,13 +546,29 @@ class MainGUI(QtGui.QMainWindow):
       # only reload if filename was actually changed or file was modifiede
       self.fileOpen(os.path.join(self.active_folder, name))
 
+  def openByNumber(self):
+    '''
+      Search the data folders for a specific file number and open it.
+    '''
+    number=self.ui.numberSearchEntry.text()
+    self.ui.statusbar.showMessage('Trying to locate file number %s...'%number)
+    QtGui.QApplication.instance().processEvents()
+    if self.ui.histogramActive.isChecked():
+      search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'histo.nxs'))
+    else:
+      search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
+    if search:
+      self.fileOpen(search[0])
+
   def nextFile(self):
     item=self.ui.file_list.currentRow()
-    self.ui.file_list.setCurrentRow(item+1)
+    if (item+1)<self.ui.file_list.count():
+      self.ui.file_list.setCurrentRow(item+1)
 
   def prevFile(self):
     item=self.ui.file_list.currentRow()
-    self.ui.file_list.setCurrentRow(item-1)
+    if item>0:
+      self.ui.file_list.setCurrentRow(item-1)
 
   def onPathChanged(self, base, folder):
     '''
@@ -574,20 +607,24 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Write file metadata to the labels in the overview tab.
     '''
-    d=self.fulldata
+    d=self.active_data[self.active_channel]
 
     try:
-      tth=(d['dangle']-float(self.ui.dangle0Overwrite.text()))
+      tth=u"%.3f (%.3f)"%(d.dangle-float(self.ui.dangle0Overwrite.text()), d.dangle-d.dangle0)
     except ValueError:
-      tth=d['tth']
+      tth=u"%.3f"%(d.dangle-d.dangle0)
+    if self.ui.directPixelOverwrite.value()>=0:
+      dpix=u"%.1f (%.1f)"%(self.ui.directPixelOverwrite.value(), d.dpix)
+    else:
+      dpix=u"%.1f"%d.dpix
     self.ui.datasetName.setText(self.active_file)
-    self.ui.datasetPCharge.setText(u"%.3e"%d['pc'])
-    self.ui.datasetTotCounts.setText(u"%.4e"%d['counts'])
-    self.ui.datasetDangle.setText(u"%.3f"%d['dangle'])
-    self.ui.datasetTth.setText(u"%.3f"%tth)
-    self.ui.datasetSangle.setText(u"%.3f"%d['ai'])
-    self.ui.datasetDirectPixel.setText(u"%.1f"%d['dp'])
-    self.ui.currentChannel.setText('Current Channel:   (%s)'%self.use_channel)
+    self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
+    self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
+    self.ui.datasetDangle.setText(u"%.3f"%d.dangle)
+    self.ui.datasetTth.setText(tth)
+    self.ui.datasetSangle.setText(u"%.3f"%d.sangle)
+    self.ui.datasetDirectPixel.setText(dpix)
+    self.ui.currentChannel.setText('Current Channel:   (%s)'%self.active_channel)
 
   def toggleColorbars(self):
     if not self.auto_change_active:
@@ -643,36 +680,15 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Add dataset to the available normalizations or clear the normalization list.
     '''
-    if self.ref_data is None:
+    if self.refl is None:
       return
-    if self.fulldata['lambda_center'] not in self.ref_norm:
-      lamda=self.fulldata['lambda_center']
-      self.ref_norm[lamda]={
-                         'data':maximum(self.ref_data,
-                                self.ref_data[self.ref_data>0].min())}
-      # collect current settings
-      try:
-        index=int(self.active_file.split('REF_M_', 1)[1].split('_', 1)[0])
-      except:
-        index=0
-      settings={'file': self.active_file,
-                              'path': self.active_folder,
-                              'index': index,
-                              'lambda': self.fulldata['lambda_center'],
-
-                              'x_pos': self.ui.refXPos.value(),
-                              'x_width': self.ui.refXWidth.value(),
-                              'y_pos': self.ui.refYPos.value(),
-                              'y_width': self.ui.refYWidth.value(),
-                              'bg_pos': self.ui.bgCenter.value(),
-                              'bg_width': self.ui.bgWidth.value(),
-                              'scale': 10**self.ui.refScale.value(),
-                              }
-      self.ref_norm_settings=settings
+    if self.active_data[0].lambda_center not in self.ref_norm:
+      lamda=self.active_data[0].lambda_center
+      self.ref_norm[lamda]=self.refl
       idx=sorted(self.ref_norm.keys()).index(lamda)
       self.ui.normalizeTable.insertRow(idx)
-      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(str(settings['lambda'])))
-      self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(settings['index'])))
+      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(str(lamda)))
+      self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(self.refl.options['number'])))
       self.ui.normalizationLabel.setText(",".join(map(str,
                                             sorted(self.ref_norm.keys()))))
     else:
@@ -685,35 +701,36 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Extract the scaling factor from the reflectivity curve.
     '''
-    if self.fulldata['lambda_center'] not in self.ref_norm:
+    if self.refl is None or not self.refl.options['normalization']:
       QtGui.QMessageBox.information(self, 'Select other dataset',
             'Please select a dataset with total reflection plateau\nand normalization.')
       return
     is_first=True
-    ref_norm=self.ref_norm[self.fulldata['lambda_center']]['data']
-    first=len(ref_norm)-self.ui.rangeStart.value()
-    y=self.ref_data[:first]/ref_norm[:first]
-    x=self.ref_x[:first][y>0]
-    dy=self.dref[:first][y>0]/ref_norm[:first][y>0]
+    first=len(self.refl.R)-self.ui.rangeStart.value()
+    y=self.refl.R[:first]
+    x=self.refl.Q[:first][y>0]
+    dy=self.refl.dR[:first][y>0]
     y=y[y>0]
-    for settings_other, x_other, y_other, dy_other in self.add_to_ref:
-      # try to scale overlapping regions
+    for refli in self.reduction_list:
+      last=refli.options['PN']
+      y_other=refli.R[last:]
+      dy_other=refli.dR[last:][y_other>0]
+      x_other=refli.Q[last:][y_other>0]
+      y_other=y_other[y_other>0]
+      # try to find overlapping regions
       if not (x_other.min()<x.min() and x_other.max()>x.min()):
         continue
       else:
         is_first=False
         break
     if not is_first:
-      range_to=settings_other['range'][1]
-      norm_other=self.ref_norm[settings_other['lambda_center']]['data']
-      dy_other=dy_other/norm_other
-      y_other=y_other/norm_other
-      idxs=arange(len(y_other))
-      reg_other=where((x_other>=x.min())&(y_other>0)&(idxs>=range_to))
-      reg_this=where(x<=x_other.max())
-      val_other=(y_other[reg_other]/dy_other[reg_other]*x_other[reg_other]**4).sum()/(1./dy_other[reg_other]).sum()
-      val_this=(y[reg_this]/dy[reg_this]*x[reg_this]**4).sum()/(1./dy[reg_this]).sum()
-      self.ui.refScale.setValue(self.ui.refScale.value()+log10(val_other/val_this)) #change the scaling factor
+      reg_this=max(0, where(x<=x_other.max())[0][0]-self.ui.addStitchPoints.value())
+      reg_other=where(x_other>=x.min())[0][-1]+1+self.ui.addStitchPoints.value()
+      # try to match both datasets by fitting a polynomiral to the overlapping region
+      rescale, xfit, yfit=self.refineOverlap(x[reg_this:], y[reg_this:], dy[reg_this:],
+                                x_other[:reg_other], y_other[:reg_other], dy_other[:reg_other])
+      self.ui.refScale.setValue(self.ui.refScale.value()+log10(rescale)) #change the scaling factor
+      self.ui.refl.plot(xfit, yfit)
     else:
       # normalize total reflection plateau
       # Start from low Q and search for the critical edge
@@ -726,7 +743,9 @@ class MainGUI(QtGui.QMainWindow):
       # show a line in the plot corresponding to the extraction region
       totref=Line2D([x.min(), x[i]], [1., 1.], color='red')
       self.ui.refl.canvas.ax.add_line(totref)
-      self.ui.refl.canvas.ax.set_ylim([None, 2.])
+    ymin, ymax=self.ui.refl.canvas.ax.get_ylim()
+    ymax=max(ymax, 1.1)
+    self.ui.refl.canvas.ax.set_ylim((ymin, ymax))
     self.ui.refl.draw()
 
   def addRefList(self):
@@ -734,11 +753,11 @@ class MainGUI(QtGui.QMainWindow):
       Collect information about the current extraction settings and store them
       in the list of reduction items.
     '''
-    if self.ref_data is None:
+    if self.refl is None:
       return
     # collect current settings
     channels=self.channels
-    if self.add_to_ref==[]:
+    if self.reduction_list==[]:
       self.ref_list_channels=list(channels)
     elif self.ref_list_channels!=channels:
       QtGui.QMessageBox.information(self, u'Wrong Channels',
@@ -748,81 +767,55 @@ as the ones already in the list:
 %s  ≠  %s'''%(u" / ".join(channels), u' / '.join(self.ref_list_channels)),
                                     QtGui.QMessageBox.Close)
       return
-    try:
-      index=int(self.active_file.split('REF_M_', 1)[1].split('_', 1)[0])
-    except:
-      index=0
-    if self.ui.directPixelOverwrite.value()>=0:
-      dp=self.ui.directPixelOverwrite.value()
-    else:
-      dp=self.fulldata['dp']
-    try:
-      tth=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
-    except ValueError:
-      tth=self.fulldata['tth']*pi/180.
-    lamda=self.fulldata['lambda_center']
-    point_range=[self.ui.rangeStart.value(), self.ui.rangeEnd.value()]
-    Pstart=len(self.ref_data)-where(self.ref_data>0)[0][-1]-1
-    Pend=where(self.ref_data>0)[0][0]
-    point_range[0]=max(Pstart, point_range[0])
-    point_range[1]=max(Pend, point_range[1])
-    settings={'file': self.active_file,
-              'path': self.active_folder,
-              'index': index,
+    # options used for the extraction
+    opts=self.refl.options
 
-              'lambda_center': lamda,
-              'dp': dp,
-              'tth': tth,
-              'x_pos': self.ui.refXPos.value(),
-              'x_width': self.ui.refXWidth.value(),
-              'y_pos': self.ui.refYPos.value(),
-              'y_width': self.ui.refYWidth.value(),
-              'bg_pos': self.ui.bgCenter.value(),
-              'bg_width': self.ui.bgWidth.value(),
-              'range': point_range,
-              'scale': 10**self.ui.refScale.value(),
-              'beam_width': self.fulldata['beam_width'],
-              'bin_type': str(self.ui.eventBinMode.currentText()),
-              'bins': self.ui.eventTofBins.value(),
-              }
-    self.add_to_ref.append([settings, self.ref_x, self.ref_data, self.dref])
-    self.ui.reductionTable.setRowCount(len(self.add_to_ref))
-    idx=len(self.add_to_ref)-1
+    Pstart=len(self.refl.R)-where(self.refl.R>0)[0][-1]-1
+    Pend=where(self.refl.R>0)[0][0]
+    opts['P0']=max(Pstart, opts['P0'])
+    opts['PN']=max(Pend, opts['PN'])
+
+    if len(self.reduction_list)==0:
+      # use the same y region for all following datasets (can be changed by user if desired)
+      self.ui.actionAutoYLimits.setChecked(False)
+    self.reduction_list.append(self.refl)
+    self.ui.reductionTable.setRowCount(len(self.reduction_list))
+    idx=len(self.reduction_list)-1
     self.auto_change_active=True
-    item=QtGui.QTableWidgetItem(str(index))
+
+    item=QtGui.QTableWidgetItem(opts['number'])
     item.setTextColor(QtGui.QColor(100, 0, 0))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 0, item)
     self.ui.reductionTable.setItem(idx, 1,
-                                   QtGui.QTableWidgetItem("%.4f"%(settings['scale'])))
+                                   QtGui.QTableWidgetItem("%.4f"%(opts['scale'])))
     self.ui.reductionTable.setItem(idx, 2,
-                                   QtGui.QTableWidgetItem(str(settings['range'][0])))
+                                   QtGui.QTableWidgetItem(str(opts['P0'])))
     self.ui.reductionTable.setItem(idx, 3,
-                                   QtGui.QTableWidgetItem(str(settings['range'][1])))
-    item=QtGui.QTableWidgetItem(str(settings['x_pos']))
+                                   QtGui.QTableWidgetItem(str(opts['PN'])))
+    item=QtGui.QTableWidgetItem(str(opts['x_pos']))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 4, item)
     self.ui.reductionTable.setItem(idx, 5,
-                                   QtGui.QTableWidgetItem(str(settings['x_width'])))
-    item=QtGui.QTableWidgetItem(str(settings['y_pos']))
+                                   QtGui.QTableWidgetItem(str(opts['x_width'])))
+    item=QtGui.QTableWidgetItem(str(opts['y_pos']))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 6, item)
     self.ui.reductionTable.setItem(idx, 7,
-                                   QtGui.QTableWidgetItem(str(settings['y_width'])))
-    item=QtGui.QTableWidgetItem(str(settings['bg_pos']))
+                                   QtGui.QTableWidgetItem(str(opts['y_width'])))
+    item=QtGui.QTableWidgetItem(str(opts['bg_pos']))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 8, item)
     self.ui.reductionTable.setItem(idx, 9,
-                                   QtGui.QTableWidgetItem(str(settings['bg_width'])))
+                                   QtGui.QTableWidgetItem(str(opts['bg_width'])))
     self.ui.reductionTable.setItem(idx, 10,
-                                   QtGui.QTableWidgetItem(str(settings['dp'])))
+                                   QtGui.QTableWidgetItem(str(opts['dpix'])))
     self.ui.reductionTable.setItem(idx, 11,
-                                   QtGui.QTableWidgetItem("%.4f"%(settings['tth']*180./pi)))
+                                   QtGui.QTableWidgetItem("%.4f"%(opts['tth']*180./pi)))
     self.ui.reductionTable.setItem(idx, 12,
-                                   QtGui.QTableWidgetItem(str(settings['lambda_center'])))
+                                   QtGui.QTableWidgetItem(str(self.active_data[0].lambda_center)))
     self.ui.reductionTable.setItem(idx, 13,
-                                   QtGui.QTableWidgetItem(os.path.join(settings['path'],
-                                                                       settings['file'])))
+                                   QtGui.QTableWidgetItem(os.path.basename(self.active_data.origin)))
     self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
 
@@ -834,16 +827,17 @@ as the ones already in the list:
       return
     entry=item.row()
     column=item.column()
-    settings=self.add_to_ref[entry][0]
+    refl=self.reduction_list[entry]
+    options=dict(refl.options)
     # reset options that can't be changed
     if column==0:
-      item.setText(str(settings['index']))
+      item.setText(str(options['number']))
       return
     elif column==13:
-      item.setText(os.path.join(settings['path'], settings['file']))
+      item.setText(refl.origin[0])
       return
     elif column==12:
-      item.setText(str(settings['lambda_center']))
+      item.setText(str(refl.lambda_center))
     # update settings from selected option
     elif column in [1, 4, 5, 6, 7, 8, 9, 10]:
       key=[None, 'scale', None, None,
@@ -852,30 +846,30 @@ as the ones already in the list:
            'bg_pos', 'bg_width',
            None, 'dp'][column]
       try:
-        settings[key]=float(item.text())
+        options[key]=float(item.text())
       except ValueError:
-        item.setText(str(settings[key]))
+        item.setText(str(options[key]))
       else:
-        Qz, R, dR=self.recalculateReflectivity(settings)
-        self.add_to_ref[entry][1:]=[Qz, R, dR]
+        refl_new=self.recalculateReflectivity(refl, options)
+        self.reduction_list[entry]=refl_new
     elif column==2:
       try:
-        settings['range'][0]=int(item.text())
+        refl.options['P0']=int(item.text())
       except ValueError:
-        item.setText(str(settings['range'][0]))
+        item.setText(str(options['P0']))
     elif column==3:
       try:
-        settings['range'][1]=int(item.text())
+        refl.options['PN']=int(item.text())
       except ValueError:
-        item.setText(str(settings['range'][1]))
+        item.setText(str(options['PN']))
     elif column==11:
       try:
-        settings['tth']=float(item.text())*pi/180.
+        options['tth']=float(item.text())*pi/180.
       except ValueError:
-        item.setText(str(settings['tth']*180./pi))
+        item.setText(str(options['tth']*180./pi))
       else:
-        Qz, R, dR=self.recalculateReflectivity(settings)
-        self.add_to_ref[entry][1:]=[Qz, R, dR]
+        Qz, R, dR=self.recalculateReflectivity(refl, options)
+        self.reduction_list[entry][1:]=[Qz, R, dR]
     self.ui.reductionTable.resizeColumnsToContents()
     self.plot_refl(preserve_lim=True)
 
@@ -885,22 +879,25 @@ as the ones already in the list:
       recalculates already extracted reflectivities.
     '''
     desiredChannel=self.ui.selectedChannel.currentText().split('/')
-    for channel in self.ref_list_channels:
+    for channel in self.channels:
       if channel in desiredChannel:
-        self.use_channel=channel
+        self.active_channel=channel
         break
-    if self.use_channel in self.ref_list_channels:
-      for items in self.add_to_ref:
-        Qz, R, dR=self.recalculateReflectivity(items[0])
-        items[1:]=[Qz, R, dR]
-    self.fileOpen(os.path.join(self.active_folder, self.active_file))
+    if self.active_channel in self.ref_list_channels:
+      for i, refli in enumerate(self.reduction_list):
+        refli=self.recalculateReflectivity(refli)
+        self.reduction_list[i]=refli
+    self.updateLabels()
+    self.plotActiveTab()
+    self.plot_projections()
 
   def clearRefList(self):
     '''
       Remove all items from the reduction list.
     '''
-    self.add_to_ref=[]
+    self.reduction_list=[]
     self.ui.reductionTable.setRowCount(0)
+    self.ui.actionAutoYLimits.setChecked(True)
     self.plot_refl()
 
   def removeRefList(self):
@@ -910,7 +907,7 @@ as the ones already in the list:
     index=self.ui.reductionTable.currentRow()
     if index<0:
       return
-    self.add_to_ref.pop(index)
+    self.reduction_list.pop(index)
     self.ui.reductionTable.removeRow(index)
     #self.ui.reductionTable.setRowCount(0)
     self.plot_refl()
@@ -922,7 +919,7 @@ as the ones already in the list:
     '''
     self.auto_change_active=True
     self.ui.directPixelOverwrite.setValue(self.ui.refXPos.value())
-    self.ui.dangle0Overwrite.setText("%g"%self.fulldata['dangle'])
+    self.ui.dangle0Overwrite.setText("%g"%self.active_data[0].dangle0)
     self.auto_change_active=False
     self.overwriteChanged()
 
@@ -950,18 +947,12 @@ as the ones already in the list:
       Open a dialog to select reduction options for the current list of
       reduction items.
     '''
-    if len(self.add_to_ref)==0:
+    if len(self.reduction_list)==0:
       QtGui.QMessageBox.information(self, u'Select a dataset',
                                     u'Please select at least\none dataset to reduce.',
                                     QtGui.QMessageBox.Close)
       return
-    if self.ref_norm is None:
-      QtGui.QMessageBox.information(self, u'Select normlaization',
-                                    u'You cannot extract data without normalization.',
-                                    QtGui.QMessageBox.Close)
-      return
-    dialog=ReduceDialog(self, self.ref_list_channels,
-                        self.ref_norm, self.add_to_ref)
+    dialog=ReduceDialog(self, self.ref_list_channels, self.reduction_list)
     dialog.exec_()
     dialog.destroy()
 
@@ -1038,8 +1029,9 @@ as the ones already in the list:
       When reading event mode data this is the callback
       used after each finished channel to indicate the progress.
     '''
-    self.ui.eventProgress.setValue(progress*100)
-    QtGui.QApplication.instance().processEvents()
+    self.eventProgress.setValue(progress*100)
+    app=QtGui.QApplication.instance()
+    app.processEvents()
 
 ####### Calculations and data treatment
 
@@ -1048,25 +1040,24 @@ as the ones already in the list:
       Calculate x and y regions for reflectivity extraction and put them in the
       entry fields.
     '''
-    cindex=self.channels.index(self.use_channel)
-    data=self.xydata[cindex]
+    data=self.active_data[self.active_channel]
     if self.ui.xprojUseQuantiles.isChecked():
-      d2=self.xtofdata[cindex]
+      d2=data.xtofdata
       xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
     else:
-      xproj=data.mean(axis=0)
-    yproj=data.mean(axis=1)
+      xproj=data.xdata
+    yproj=data.ydata
 
     # calculate approximate peak position
     try:
-      tth_bank=(self.fulldata['dangle']-float(self.ui.dangle0Overwrite.text()))*pi/180.
+      tth_bank=(data.dangle-float(self.ui.dangle0Overwrite.text()))*pi/180.
     except ValueError:
-      tth_bank=self.fulldata['tth']*pi/180.
-    ai=self.fulldata['ai']*pi/180.
+      tth_bank=(data.dangle-data.dangle0)*pi/180.
+    ai=data.sangle*pi/180.
     if self.ui.directPixelOverwrite.value()>=0:
       dp=self.ui.directPixelOverwrite.value()
     else:
-      dp=self.fulldata['dp']
+      dp=data.dpix
     pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
 
     self.auto_change_active=True
@@ -1118,7 +1109,7 @@ as the ones already in the list:
       Fit the selected x position to the closest peak.
     '''
     if self.ui.actionRefineX.isChecked():
-      cindex=self.channels.index(self.use_channel)
+      cindex=self.channels.index(self.active_channel)
       data=self.xydata[cindex]
       if self.ui.xprojUseQuantiles.isChecked():
         d2=self.xtofdata[cindex]
@@ -1160,22 +1151,43 @@ as the ones already in the list:
     G=exp(-0.5*((xdata-x0)/sigma)**2)
     return 0, data-I0*G
 
-  def recalculateReflectivity(self, settings):
+  def refineOverlap(self, x1, y1, dy1, x2, y2, dy2):
+    '''
+      Refine a polynomial to the logarithm of two datasets while
+      scaling the first dataset as well. Return the resulting
+      scaling parameter and the refined function for plotting.
+    '''
+    result=mpfit(self.overlapResiduals, [1., 0.,-40., 0.],
+                 functkw=dict(
+                              x1=x1, y1=y1, dy1=dy1,
+                              x2=x2, y2=y2, dy2=dy2
+                              ),
+                 nprint=0)
+    xfit=hstack([x1, x2])
+    xfit.sort()
+    yscale, a, b, c=result.params
+    yfit=10**(a*xfit**2+b*xfit+c)
+    return yscale, xfit, yfit
+
+  def overlapResiduals(self, p, fjac=None, x1=None, y1=None, dy1=None,
+                                           x2=None, y2=None, dy2=None):
+    yscale, a, b, c=p
+    part1=(log10(yscale*y1)-a*x1**2-b*x1-c)/(dy1/y1)
+    part2=(log10(y2)-a*x2**2-b*x2-c)/(dy2/y2)
+    return 0, hstack([part1, part2])
+
+  def recalculateReflectivity(self, old_object, overwrite_options=None):
     '''
       Use parameters to calculate and return the reflectivity
       of one file.
     '''
-    filename=os.path.join(settings['path'], settings['file'])
-
-    if filename.endswith('event.nxs'):
-      data=data_reduction.read_event_file(filename, settings['bin_type'], settings['bins'])
+    filename, _channel=old_object.origin
+    data=NXSData(filename, **old_object.read_options)[self.active_channel]
+    if overwrite_options:
+      refl=Reflectivity(data, **overwrite_options)
     else:
-      data=data_reduction.read_file(filename)
-    fulldata=data[self.use_channel]
-    data=fulldata['data']
-    tof_edges=fulldata['tof']
-    Qz, _dQz, R, dR, _ai, _I, _BG, _Iraw=data_reduction.calc_reflectivity(data, tof_edges, settings)
-    return Qz, R/fulldata['pc'], dR/fulldata['pc']
+      refl=Reflectivity(data, **old_object.options)
+    return refl
 
 ###### Window initialization and exit
 

@@ -18,6 +18,8 @@ import os
 from numpy import *
 import h5py
 from time import time
+# ignore zero devision error
+#seterr(invalid='ignore')
 
 '''
 Parameters needed for some calculations.
@@ -26,7 +28,8 @@ H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
 
 TOF_DISTANCE=21.2535 # m
 #RAD_PER_PIX=0.0002734242
-RAD_PER_PIX=0.00027429694 # arctan(212.8mm/2/2550.5mm)/152pix
+#RAD_PER_PIX=0.00027429694 # arctan(212.8mm/2/2550.5mm)/152pix
+RAD_PER_PIX=0.00027445599 # arctan(212.8mm/2/2550.5mm)/152pix
 DETECTOR_X_REGION=(8, 295)
 
 # position and maximum deviation of polarizer and analzer in it's working position
@@ -66,12 +69,10 @@ class NXSData(object):
     * bin_type='linear: 'linear'/'1/x' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
-  DEFAULT_OPTIONS=dict(bin_type='linear', bins=40, use_caching=False)
+  DEFAULT_OPTIONS=dict(bin_type='linear', bins=40, use_caching=False, callback=None)
   COUNT_THREASHOLD=100
   MAX_CACHE=20
-  _progress_callback=None
   _cache=[]
-  _cached_names=[]
 
   def __new__(cls, filename, **options):
     all_options=dict(cls.DEFAULT_OPTIONS)
@@ -79,9 +80,10 @@ class NXSData(object):
       if not key in all_options:
         raise ValueError, "%s is not a known option parameter"%key
       all_options[key]=value
-    basename=os.path.basename(filename)
-    if all_options['use_caching'] and basename in cls._cached_names:
-      cache_index=cls._cached_names.index(basename)
+    filename=os.path.abspath(filename)
+    cached_names=[item.origin for item in cls._cache]
+    if all_options['use_caching'] and filename in cached_names:
+      cache_index=cached_names.index(filename)
       cached_object=cls._cache[cache_index]
       if cached_object._options==all_options:
         return cached_object
@@ -93,19 +95,18 @@ class NXSData(object):
     self._channel_origin=[]
     self._channel_data=[]
     self.measurement_type=""
+    self.origin=filename
     # process the file
     self._read_times=[]
     self._read_file(filename)
     if all_options['use_caching']:
-      if basename in cls._cached_names:
-        cache_index=cls._cached_names.index(basename)
+      if filename in cached_names:
+        cache_index=cached_names.index(filename)
         cls._cache.pop(cache_index)
-        cls._cached_names.pop(cache_index)
-      if len(cls._cache)>cls.MAX_CACHE:
+      if len(cls._cache)>=cls.MAX_CACHE:
         cls._cache.pop(0)
-        cls._cached_names.pop(0)
       cls._cache.append(self)
-      cls._cached_names.append(basename)
+      cls._cached_names.append(filename)
     return self
 
   def _read_file(self, filename):
@@ -113,6 +114,8 @@ class NXSData(object):
     Load data from a Nexus file.
     '''
     start=time()
+    if self._options['callback']:
+      self._options['callback'](0.)
     nxs=h5py.File(filename, mode='r')
     # analyze channels
     channels=nxs.keys()
@@ -138,22 +141,25 @@ class NXSData(object):
       self.measurement_type='Unpolarized'
       mapping=MAPPING_UNPOL
 
+    if self._options['callback']:
+      progress=1./(len(channels)+1)
+      self._options['callback'](progress)
     self._read_times.append(time()-start)
-    i=0
+    i=2
     for dest, channel in mapping:
       if channel not in channels:
         continue
       raw_data=nxs[channel]
       if filename.endswith('event.nxs'):
-        data=MRDataset.from_event(raw_data)
+        data=MRDataset.from_event(raw_data, self._options)
       else:
-        data=MRDataset.from_histogram(raw_data)
+        data=MRDataset.from_histogram(raw_data, self._options)
       self._channel_data.append(data)
       self._channel_names.append(dest)
       self._channel_origin.append(channel)
-      if self._progress_callback:
-        progress=float(i)/len(channels)
-        self._progress_callback(progress)
+      if self._options['callback']:
+        progress=float(i)/(len(channels)+1)
+        self._options['callback'](progress)
       i+=1
       self._read_times.append(time()-self._read_times[-1]-start)
     #print time()-start
@@ -169,6 +175,9 @@ class NXSData(object):
         return self._channel_data[self._channel_origin.index(item)]
       else:
         raise KeyError, "No such channel: %s"%str(item)
+
+  def __len__(self):
+    return len(self._channel_data)
 
   def __repr__(self):
     output=self.__class__.__name__+'({'
@@ -225,11 +234,12 @@ class MRDataset(object):
     self.origin=('none', 'none')
 
   @classmethod
-  def from_histogram(cls, data):
+  def from_histogram(cls, data, read_options):
     '''
     Create object from a histogram Nexus file.
     '''
     output=cls()
+    output.read_options=read_options
     output._collect_info(data)
 
     output.proton_charge=data['proton_charge'].value[0]
@@ -248,7 +258,7 @@ class MRDataset(object):
     return output
 
   @classmethod
-  def from_event(cls, data, bin_type='linear', bins=40):
+  def from_event(cls, data, read_options):
     '''
     Load data from a Nexus file containing event information.
     Creates 3D histogram with ither linear or 1/t spaced 
@@ -256,6 +266,9 @@ class MRDataset(object):
     from the read_file function.
     '''
     output=cls()
+    output.read_options=read_options
+    bin_type=read_options['bin_type']
+    bins=read_options['bins']
     output._collect_info(data)
 
     output.proton_charge=data['proton_charge'].value[0]
@@ -304,29 +317,29 @@ class MRDataset(object):
     return output
 
   def _collect_info(self, data):
-    self.origin=(os.path.basename(data.file.filename), data.name.lstrip('/'))
+    self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
 
   def __repr__(self):
     return "<%s '%s' counts: %i>"%(self.__class__.__name__,
-                                   "/".join(self.origin),
+                                   "%s/%s"%(os.path.basename(self.origin[0]), self.origin[1]),
                                    self.total_counts)
 
   ################## Properties for easy data access ##########################
   @property
-  def xdata(self): return self.xydata.sum(axis=0)
+  def xdata(self): return self.xydata.mean(axis=0)
 
   @property
-  def ydata(self): return self.xydata.sum(axis=1)
+  def ydata(self): return self.xydata.mean(axis=1)
 
   @property
-  def tofdata(self): return self.xtofdata.sum(axis=0)
+  def tofdata(self): return self.xtofdata.mean(axis=0)
 
-  # coordinates corresponding to the data items above
+  # coordinates corresponding to the data items
   @property
-  def x(self): return arange(self._data.shape[0])
+  def x(self): return arange(self.xydata.shape[1])
 
   @property
-  def y(self): return arange(self._data.shape[1])
+  def y(self): return arange(self.xydata.shape[0])
 
   @property
   def xy(self): return meshgrid(self.x, self.y)
@@ -336,6 +349,12 @@ class MRDataset(object):
 
   @property
   def xtof(self): return meshgrid(self.tof, self.x)
+
+  @property
+  def lamda(self):
+    v_n=TOF_DISTANCE/self.tof*1e6 #m/s
+    lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
+    return lamda_n
 
   # easy access to automatically extracted reflectivity
   # could be useful for automatic extraction scripts
@@ -357,17 +376,6 @@ class MRDataset(object):
       self._autocalc_ref()
     return self._dI
 
-  #############################################################################
-
-  def tth(self, pixel):
-    '''
-    Return the tth value corresponding to a specific pixel.
-    '''
-    tth0=self.dangle-self.dangle0
-    relpix=self.dpix-pixel
-    return tth0+relpix*RAD_PER_PIX*180./pi
-
-
 class Reflectivity(object):
   """
   Extraction of reflectivity from MRDatatset object storing all data
@@ -380,11 +388,16 @@ class Reflectivity(object):
        y_width=204,
        bg_pos=80,
        bg_width=40,
+       tth=None,
+       dpix=None,
        scale=1.,
        extract_fan=False, # Treat every x-pixel separately and join the data afterwards
        normalization=None, # another Reflectivity object used for normalization
        scale_by_beam=True, # use the beam width in the scaling
        bg_method='data', # method to use for background subtraction
+       P0=0,
+       PN=0,
+       number='0',
        )
 
   def __init__(self, dataset, **options):
@@ -394,10 +407,16 @@ class Reflectivity(object):
         raise ValueError, "%s is not a known option parameter"%key
       all_options[key]=value
     self.options=all_options
-    self.origin="%s/%s"%dataset.origin
+    self.origin=dataset.origin
+    self.read_options=dataset.read_options
     if self.options['x_pos'] is None:
       # if nor x_pos is given, use the value from the dataset
       self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/RAD_PER_PIX
+    if self.options['tth'] is None:
+      self.options['tth']=dataset.dangle-dataset.dangle0
+    if self.options['dpix'] is None:
+      self.options['dpix']=dataset.dpix
+    self.lambda_center=dataset.lambda_center
 
     if all_options['extract_fan']:
       if all_options['normalization'] is None:
@@ -407,13 +426,16 @@ class Reflectivity(object):
       self._calc_normal(dataset)
 
   def __repr__(self):
-    output='<Reflectivity[%i] "%s"'%(len(self.Q), self.origin)
+    output='<Reflectivity[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
+                                        self.origin[1])
     if self.options['extract_fan']:
       output+=' FAN'
     if self.options['normalization'] is None:
       output+=' NOT normalized'
     output+='>'
     return output
+
+  #############################################################################
 
   def _calc_normal(self, dataset):
     """
@@ -454,13 +476,16 @@ class Reflectivity(object):
     self._calc_bg(dataset)
 
     # get incident angle of reflected beam
-    tth=dataset.tth(x_pos)*pi/180.
+    relpix=self.options['dpix']-x_pos
+    tth=(self.options['tth']*pi/180.+relpix*RAD_PER_PIX)
     self.ai=tth/2.
     # set good angular resolution as real resolution not implemented, yet
     dai=0.0001
 
     v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
+    # store the ToF as well for comparison etc.
+    self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
     self.lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
     # resolution for lambda is digital range with equal probability
     # therefore it is the bin size divided by sqrt(12)
@@ -474,13 +499,17 @@ class Reflectivity(object):
     # finally scale reflectivity by the given factor and beam width
     self.R=(self.I-self.BG)
     self.dR=sqrt(self.dI**2+self.dBG**2)
+
     if self.options['normalization']:
       norm=self.options['normalization']
-      self.dR=sqrt(
-                   (self.dR/norm.R)**2+
-                   (self.R/norm.R**2*norm.dR)**2
+      idxs=norm.R>0.
+      self.dR[idxs]=sqrt(
+                   (self.dR[idxs]/norm.R[idxs])**2+
+                   (self.R[idxs]/norm.R[idxs]**2*norm.dR[idxs])**2
                    )
-      self.R/=norm.R
+      self.R[idxs]/=norm.R[idxs]
+      self.R[logical_not(idxs)]=0.
+      self.dR[logical_not(idxs)]=0.
 
   def _calc_fan(self, dataset):
     """
@@ -499,7 +528,7 @@ class Reflectivity(object):
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
-    scale=self.options['scale'] # scale by user factor
+    scale=self.options['scale']/dataset.proton_charge # scale by user factor
     if self.options['scale_by_beam']:
       scale/=dataset.beam_width # scale by beam-size
 
@@ -509,12 +538,14 @@ class Reflectivity(object):
 
     Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
     x_region=arange(reg[0], reg[1])
-    tth=dataset.tth(x_region)*pi/180.
+    relpix=self.options['dpix']-x_region
+    tth=(self.options['tth']*pi/180.+relpix*RAD_PER_PIX)
     ai=tth/2.
     self.ai=ai[len(ai)//2]
 
     v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
+    self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
     self.lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
     # resolution for lambda is digital range with equal probability
     # therefore it is the bin size divided by sqrt(12)
@@ -523,43 +554,45 @@ class Reflectivity(object):
     # calculate ROI intensities and normalize by number of points
     # still keeping it as 2D dataset
     self.Iraw=Idata.sum(axis=1)
+    I=self.Iraw/(reg[3]-reg[2])*scale
     self.dIraw=sqrt(self.Iraw)
-    dI=self.Iraw/(reg[3]-reg[2])
-    I=self.Iraw/(reg[3]-reg[2])
+    dI=self.dIraw/(reg[3]-reg[2])*scale
     # For comparison store intensity summed over whole area
     self.I=I.sum(axis=0)/(reg[1]-reg[0])
-    self.dI=self.Iraw.sum(axis=0)/(reg[3]-reg[2])/(reg[1]-reg[0])
+    self.dI=dI.sum(axis=0)/(reg[1]-reg[0])
 
     self._calc_bg(dataset)
 
-    R=(I-self.BG[newaxis, :])*scale
-    dR=sqrt(dI**2+(self.dBG**2)[newaxis, :])*scale
+    R=(I-self.BG[newaxis, :])
+    dR=sqrt(dI**2+(self.dBG**2)[newaxis, :])
 
     norm=self.options['normalization']
+    normR=where(norm.R>0, norm.R, 1.)
     # normalize each line by the incident intensity including error propagation
-    dR=sqrt((dR/norm.R[newaxis, :])**2+(R*(norm.dR/norm.R**2)[newaxis, :])**2)
-    R/=norm.R[newaxis, :]
+    dR=sqrt((dR/normR[newaxis, :])**2+(R*(norm.dR/normR**2)[newaxis, :])**2)
+    R/=normR[newaxis, :]
+    # reduce ToF region to points with incident intensity
 
     # calculate Q for each point of R
-    Qz_edges=4.*pi/lamda_edges*sin(ai[:, newaxis])
+    Qz_edges=4.*pi/lamda_edges*sin(ai)[:, newaxis]
     Qz_centers=(Qz_edges[:, :-1]+Qz_edges[:, 1:])/2.
     #dQz=abs(Qz_edges[:, :-1]-Qz_edges[:, 1:])/2. #sqrt(12) error due to binning
 
     # create the Q bins to combine all R lines to
     # uses the smallest and largest Q all lines have in common with
     # a step size which has one point of every line in it.
-    Qz_start=Qz_edges[0,-1]
-    Qz_end=Qz_edges[-1, 0]
+    #Qz_start=Qz_edges[0,-1]
+    Qz_start=Qz_edges[0, where(norm.R>0)[0][-1]]
+    Qz_end=Qz_edges[-1, where(norm.R>0)[0][0]]
     Q=[]
     dQ=[]
     Rsum=[]
     ddRsum=[]
-    Qz_bin_low=Qz_start
     Qz_edges_first=Qz_edges[0]
     Qz_edges_last=Qz_edges[-1]
     lines=range(Qz_edges.shape[0])
     ddR=dR**2
-    for Qz_bin_low in reversed(Qz_edges_first[Qz_edges_first<=Qz_end]):
+    for Qz_bin_low in reversed(Qz_edges_first[(Qz_edges_first<=Qz_end)&(Qz_edges_first>=Qz_start)]):
       # create a bin where at least one point from every
       # line is present
       try:
@@ -579,7 +612,7 @@ class Reflectivity(object):
         Rselect=R[line, select]
         ddRselect=ddR[line, select]
         Rsumi.append(Rselect.sum()/len(Rselect))
-        ddRsumi.append(ddRselect.sum()/len(Rselect))
+        ddRsumi.append(ddRselect.sum()/len(Rselect)**2)
       Rsum.append(array(Rsumi).sum())
       ddRsum.append(array(ddRsumi).sum())
 
@@ -591,8 +624,8 @@ class Reflectivity(object):
     ddRsum.reverse()
     self.dQ=array(dQ)
     self.Q=array(Q)
-    self.R=array(Rsum)
-    self.dR=sqrt(array(ddRsum))
+    self.R=array(Rsum)/len(lines)
+    self.dR=sqrt(array(ddRsum))/len(lines)
 
   def _calc_bg(self, dataset):
     '''
@@ -629,3 +662,5 @@ class Reflectivity(object):
     else:
       raise ValueError, "Unknown background method '%s'"%self.options['bg_method']
 
+class OffSpecular(object):
+  pass

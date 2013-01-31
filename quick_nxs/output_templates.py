@@ -64,12 +64,17 @@ GP_SEP=u',\\\n     '
 GP_SEP_3D=u'\nset title "%s"\n'
 
 FILE_HEADER=u'''# Datafile created by QuickNXS
+# Date: %(date)s
 # Type: %(datatype)s
 # Input file indices: %(indices)s
 # Extracted channels: %(channels)s
 #
-# Parameters used for extraction:
-# I0           P0           PN           x0           xw           y0           yw           bg0          bgw          File
+# Parameters used for extraction of normalization:
+# I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       N. Index  File
+%(norm_lines)s
+#
+# Parameters used for extraction of reflectivity:
+# I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       N. Index  File
 %(params_lines)s
 #
 # Column Units:
@@ -77,7 +82,7 @@ FILE_HEADER=u'''# Datafile created by QuickNXS
 # Column Names:
 # %(column_names)s
 '''
-FILE_HEADER_PARAMS=u'%(scale)-12g %(P0)-12i %(PN)-12i %(x_pos)-12g %(x_width)-12g %(y_pos)-12g %(y_width)-12g %(bg_pos)-12g %(bg_width)-12g %(filename)-12s '
+FILE_HEADER_PARAMS=u'%(scale)-12g %(P0)-3i %(PN)-5i %(x_pos)-8g %(x_width)-12g %(y_pos)-8g %(y_width)-12g %(bg_pos)-8g %(bg_width)-12g %(dpix)-12g %(tth)-12g %(file_number)-12i %(norm_index)-9i %(file_name)-12s '
 
 DICTIZE_CHANNELS={
                  'x': 'unpolarized',

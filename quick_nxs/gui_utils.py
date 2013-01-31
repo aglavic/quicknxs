@@ -10,14 +10,15 @@ from zipfile import ZipFile
 from cPickle import loads, dumps
 from PyQt4.QtGui import QDialog, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
 from PyQt4.QtCore import QThread, SIGNAL
-from time import sleep, time
-#from numpy import maximum
+from time import sleep, time, strftime
+from numpy import vstack, hstack, argsort, newaxis, array, savetxt, savez, maximum
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
+
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
 from .smooth_dialog import Ui_Dialog as UiSmooth
-from .data_reduction import *
+from .mreduce import NXSData, Reflectivity
 from .output_templates import *
 from . import genx_data
 # make sure importing and changing genx templates do only use our
@@ -30,27 +31,33 @@ TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
 result_folder=os.path.expanduser(u'~/results')
 
 class ReduceDialog(QDialog):
+  CHANNEL_NAMINGS=['UpUp','DownDown','UpDown','DownUp']
+  CHANNEL_COMPARE=[
+                   ['x','+','++','0V'],
+                   ['-','--','+V'],
+                   ['+-','-V'],
+                   ['-+']
+                   ]
 
-  def __init__(self, parent, channels, norm, settings):
+  def __init__(self, parent, channels, refls):
     QDialog.__init__(self, parent)
     self.ui=UiReduction()
     self.ui.setupUi(self)
-    self.norm=norm
+    self.norms=[]
+    for refli in refls:
+      if refli.options['normalization'] not in self.norms:
+        self.norms.append(refli.options['normalization'])
     self.channels=list(channels) # make sure we don't alter the original list
-    self.settings=settings
+    self.refls=refls
     if not os.path.exists(result_folder):
-      self.ui.directoryEntry.setText(settings[0][0]['path'])
+      self.ui.directoryEntry.setText(os.path.dirname(refls[0].origin[0]))
     else:
       self.ui.directoryEntry.setText(result_folder)
-    if len(channels)==1:
-      self.ui.exportDownDown.setEnabled(False)
-      self.ui.exportDownUp.setEnabled(False)
-      self.ui.exportUpDown.setEnabled(False)
-    elif '0V' in channels:
-      self.ui.exportDownUp.setEnabled(False)
-    elif len(channels)<4:
-      self.ui.exportDownUp.setEnabled(False)
-      self.ui.exportUpDown.setEnabled(False)
+    for i in range(4):
+      if not any(map(lambda item: item in self.CHANNEL_COMPARE[i], channels)):
+        checkbutton=getattr(self.ui, 'export'+self.CHANNEL_NAMINGS[i])
+        checkbutton.setEnabled(False)
+        checkbutton.setChecked(False)
 
   def exec_(self):
     '''
@@ -103,17 +110,9 @@ class ReduceDialog(QDialog):
     '''
     self.indices=[]
     self.raw_data={}
-    for settings, ignore, ignore, ignore in self.settings:
-      fname=os.path.join(settings['path'], settings['file'])
-      settings['filename']=fname
-      settings['P0']=settings['range'][0]
-      settings['PN']=settings['range'][1]
-      index=settings['index']
-      if fname.endswith('event.nxs'):
-        self.raw_data[index]=read_event_file(fname, settings['bin_type'], settings['bins'])
-      else:
-        self.raw_data[index]=read_file(fname)
-      self.indices.append(index)
+    for refli in self.refls:
+      self.raw_data[refli.options['number']]=NXSData(refli.origin[0], **refli.read_options)
+      self.indices.append(refli.options['number'])
 
   def extract_reflectivity(self):
     '''
@@ -123,23 +122,17 @@ class ReduceDialog(QDialog):
     output_data['column_units']=['A^-1', 'a.u.', 'a.u.', 'rad']
     output_data['column_names']=['Qz', 'R', 'dR', 'dQz', 'ai']
 
-    for settings, ignore, ignore, ignore in self.settings:
-      index=settings['index']
+    for refli in self.refls:
+      opts=refli.options
+      index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[channel]['tof'])-settings['range'][0]-1
-      PN=settings['range'][1]
-      if settings['lambda_center'] in self.norm:
-        norm=self.norm[settings['lambda_center']]['data']
-      else:
-        norm=1.
+      P0=len(fdata[channel].tof)-opts['P0']
+      PN=opts['PN']
       for channel in self.channels:
-        Qz, dQz, R, dR, ai, _I, _BG, _Iraw=calc_reflectivity(
-                      fdata[channel]['data'],
-                      fdata[channel]['tof'],
-                                settings)
-        rdata=vstack([Qz[PN:P0], (R/fdata[channel]['pc']/norm)[PN:P0],
-                (dR/fdata[channel]['pc']/norm)[PN:P0], dQz[PN:P0],
-                0.*Qz[PN:P0]+ai]).transpose()
+        res=Reflectivity(fdata[channel], **opts)
+        Qz, R, dR, dQz=res.Q, res.R, res.dR, res.dQ
+        rdata=vstack([Qz[PN:P0], R[PN:P0], dR[PN:P0], dQz[PN:P0],
+                      0.*Qz[PN:P0]+res.ai]).transpose()
         output_data[channel].append(rdata)
     for channel in self.channels:
       d=vstack(output_data[channel])
@@ -233,10 +226,25 @@ class ReduceDialog(QDialog):
     '''
     ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
                         unicode(self.ui.fileNameEntry.text()))
+    nlines=''
     plines=''
-    for  settings, ignore, ignore, ignore in self.settings:
-      plines+='# '+FILE_HEADER_PARAMS%settings
+    for i, normi in enumerate(self.norms):
+      opts=dict(normi.options)
+      opts.update({'norm_index': i+1,
+                   'file_number': int(normi.options['number']),
+                   'file_name': normi.origin[0],
+                   })
+      nlines+='# '+FILE_HEADER_PARAMS%opts
+      nlines+='\n'
+    for refli in self.refls:
+      opts=dict(refli.options)
+      opts.update({'norm_index': self.norms.index(refli.options['normalization'])+1,
+                   'file_number': int(refli.options['number']),
+                   'file_name': refli.origin[0],
+                   })
+      plines+='# '+FILE_HEADER_PARAMS%opts
       plines+='\n'
+    nlines=nlines[:-1] # remove last newline
     plines=plines[:-1] # remove last newline
     for key, output_data in self.output_data.items():
       if self.ui.multiAscii.isChecked():
@@ -247,9 +255,11 @@ class ReduceDialog(QDialog):
           of=open(output, 'w')
           # write the file header
           of.write(FILE_HEADER%{
+                                'date': strftime("%Y-%m-%d %H:%M:%S"),
                                 'datatype': key,
                                 'indices': self.ind_str,
                                 'params_lines': plines,
+                                'norm_lines': nlines,
                                 'column_units': "\t".join(output_data['column_units']),
                                 'column_names':  "\t".join(output_data['column_names']),
                                 'channels': channel,
@@ -270,9 +280,11 @@ class ReduceDialog(QDialog):
         of=open(output, 'w')
         # write the file header
         of.write(FILE_HEADER%{
+                              'date': strftime("%Y-%m-%d %H:%M:%S"),
                               'datatype': key,
                               'indices': self.ind_str,
                               'params_lines': plines,
+                                'norm_lines': nlines,
                               'column_units': "\t".join(output_data['column_units']),
                               'column_names':  "\t".join(output_data['column_names']),
                               'channels': ", ".join(self.channels),
@@ -334,7 +346,7 @@ class ReduceDialog(QDialog):
                          .replace('{type}', '').replace('{numbers}', self.ind_str),
                   xlabel=u"Q_z [Å^{-1}]",
                   ylabel=u"Reflectivity",
-                  title=ind_str+' - '+title,
+                  title=ind_str,
                   )
       plotlines=[]
       for i, channel in enumerate(self.channels):
@@ -353,7 +365,7 @@ class ReduceDialog(QDialog):
                   output=ofname.replace('{item}', title).replace('{channel}', 'all')\
                          .replace('{type}', '').replace('{numbers}', self.ind_str),
                   zlabel=u"I [a.u.]",
-                  title=ind_str+' - '+title,
+                  title=ind_str,
                   rows=rows,
                   cols=cols,
                   )

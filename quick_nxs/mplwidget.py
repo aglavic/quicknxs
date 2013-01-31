@@ -6,7 +6,7 @@ import matplotlib.colors
 font={
       #'family' : 'sans',
       #  'weight' : 'normal',
-        'size': 6,
+        'size': 7,
         }
 savefig={
          'dpi': 600,
@@ -46,16 +46,16 @@ class MplCanvas(FigureCanvas):
 
   def format_labels(self):
     self.ax.set_title(self.PlotTitle)
-    self.ax.title.set_fontsize(10)
-    self.ax.set_xlabel(self.xtitle, fontsize=9)
-    self.ax.set_ylabel(self.ytitle, fontsize=9)
-    labels_x=self.ax.get_xticklabels()
-    labels_y=self.ax.get_yticklabels()
-
-    for xlabel in labels_x:
-      xlabel.set_fontsize(8)
-    for ylabel in labels_y:
-      ylabel.set_fontsize(8)
+#    self.ax.title.set_fontsize(10)
+#    self.ax.set_xlabel(self.xtitle, fontsize=9)
+#    self.ax.set_ylabel(self.ytitle, fontsize=9)
+#    labels_x=self.ax.get_xticklabels()
+#    labels_y=self.ax.get_yticklabels()
+#
+#    for xlabel in labels_x:
+#      xlabel.set_fontsize(8)
+#    for ylabel in labels_y:
+#      ylabel.set_fontsize(8)
 
   def sizeHint(self):
     w, h=self.get_width_height()

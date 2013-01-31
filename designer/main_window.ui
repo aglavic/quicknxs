@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1087</width>
-    <height>834</height>
+    <height>871</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -399,6 +399,12 @@
                     <widget class="QTableWidget" name="reductionTable">
                      <property name="editTriggers">
                       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+                     </property>
+                     <property name="showDropIndicator" stdset="0">
+                      <bool>false</bool>
+                     </property>
+                     <property name="selectionMode">
+                      <enum>QAbstractItemView::SingleSelection</enum>
                      </property>
                      <property name="horizontalScrollMode">
                       <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -942,8 +948,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>214</width>
-     <height>162</height>
+     <width>221</width>
+     <height>168</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -976,6 +982,20 @@
       </layout>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <item>
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Open Number:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="numberSearchEntry"/>
+       </item>
+      </layout>
+     </item>
+     <item>
       <widget class="QListWidget" name="file_list"/>
      </item>
     </layout>
@@ -995,29 +1015,49 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout_5">
-     <item>
-      <widget class="QCheckBox" name="show_colorbars">
-       <property name="text">
-        <string>Show Colorbars</string>
-       </property>
-      </widget>
-     </item>
-     <item>
+    <layout class="QGridLayout" name="gridLayout_6">
+     <item row="3" column="0">
       <widget class="QCheckBox" name="hide_plots">
        <property name="text">
-        <string>Hide Nonexisting Channels</string>
+        <string>Hide Empty</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="show_colorbars">
+       <property name="text">
+        <string>Colorbars</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="logarithmic_colorscale">
+       <property name="text">
+        <string>Log Colorscale</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QCheckBox" name="normalizeXTof">
        <property name="text">
-        <string>Normalize X-ToF Map</string>
+        <string>Norm. X-ToF/λ</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="logarithmic_y">
+       <property name="text">
+        <string>Log Y for lines</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
       <widget class="QComboBox" name="color_selector">
        <item>
         <property name="text">
@@ -1054,6 +1094,20 @@
          <string>binary</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="xLamda">
+       <property name="text">
+        <string>X-λ Maps</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="tthPhi">
+       <property name="text">
+        <string>2θ-φ Maps</string>
+       </property>
       </widget>
      </item>
     </layout>
@@ -1238,7 +1292,7 @@
      <item row="7" column="2">
       <widget class="QDoubleSpinBox" name="refScale">
        <property name="decimals">
-        <number>2</number>
+        <number>3</number>
        </property>
        <property name="minimum">
         <double>-20.000000000000000</double>
@@ -1340,7 +1394,7 @@
      <item row="8" column="0">
       <widget class="QLabel" name="label_20">
        <property name="text">
-        <string>Cut Range</string>
+        <string>Cut Points</string>
        </property>
       </widget>
      </item>
@@ -1406,7 +1460,7 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_7">
    <property name="windowTitle">
-    <string>Overwrite Parameters</string>
+    <string>Advanced Parameters</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -1467,9 +1521,6 @@
      </item>
      <item row="2" column="0" colspan="2">
       <widget class="QCheckBox" name="fanReflectivity">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="text">
         <string>Extract from &quot;Fan&quot;-Reflection</string>
        </property>
@@ -1493,41 +1544,13 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_8">
    <property name="windowTitle">
-    <string>Peak Finder Algorithm</string>
+    <string>Algorithm Parameters</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_8">
-    <layout class="QFormLayout" name="formLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_24">
-       <property name="text">
-        <string>Signal/Noise</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_26">
-       <property name="text">
-        <string>Min. Width</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="pfMinWidth">
-       <property name="decimals">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_25">
-       <property name="text">
-        <string>Max. Width</string>
-       </property>
-      </widget>
-     </item>
+    <layout class="QGridLayout" name="gridLayout_7">
      <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="pfMaxWidth">
        <property name="decimals">
@@ -1548,14 +1571,21 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="pfRidgeLength">
-       <property name="value">
-        <number>12</number>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="pfMinWidth">
+       <property name="decimals">
+        <number>1</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_25">
+       <property name="text">
+        <string>Max. Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
       <widget class="QDoubleSpinBox" name="pfSNR">
        <property name="decimals">
         <number>1</number>
@@ -1565,10 +1595,65 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="2">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_26">
+       <property name="text">
+        <string>Min. Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_29">
+       <property name="text">
+        <string>Peak Finder</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_24">
+       <property name="text">
+        <string>Signal/Noise</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_30">
+       <property name="text">
+        <string>Stitching</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
       <widget class="QPushButton" name="pushButton">
        <property name="text">
         <string>Visualize</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QSpinBox" name="pfRidgeLength">
+       <property name="value">
+        <number>12</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_31">
+       <property name="text">
+        <string>Add Points</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QSpinBox" name="addStitchPoints">
+       <property name="toolTip">
+        <string>When Stitching together two scans, add this amount of points from each scan to the overlap area for the fit.</string>
+       </property>
+       <property name="maximum">
+        <number>20</number>
+       </property>
+       <property name="value">
+        <number>3</number>
        </property>
       </widget>
      </item>
@@ -1641,24 +1726,13 @@
        </item>
       </widget>
      </item>
-     <item>
-      <widget class="QProgressBar" name="eventProgress">
-       <property name="value">
-        <number>100</number>
-       </property>
-       <property name="format">
-        <string>%p%</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
   </widget>
   <action name="actionOpen">
    <property name="icon">
     <iconset theme="document-open">
-     <normaloff/>
-    </iconset>
+     <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Open...</string>
@@ -1679,10 +1753,10 @@
     <string>Next File</string>
    </property>
    <property name="toolTip">
-    <string>Next file in active folder (Ctrl+Down)</string>
+    <string>Next file in active folder (Ctrl+D)</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Down</string>
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionPrevious_File">
@@ -1694,10 +1768,10 @@
     <string>Previous File</string>
    </property>
    <property name="toolTip">
-    <string>Previous file in current foldet (Ctrl+Up)</string>
+    <string>Previous file in current foldet (Ctrl+Shift+D)</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Up</string>
+    <string>Ctrl+Shift+D</string>
    </property>
   </action>
   <action name="actionNorm">
@@ -1709,10 +1783,10 @@
     <string>Set Normalization</string>
    </property>
    <property name="toolTip">
-    <string>Take current dataset for normalization (Ctrl+N)</string>
+    <string>Take current dataset for wavelength normalization (Ctrl+W)</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+N</string>
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="actionAddPlot">
@@ -1724,10 +1798,10 @@
     <string>Keep Item in List</string>
    </property>
    <property name="toolTip">
-    <string>Add to current dataset to data reduction list (Ctrl+K)</string>
+    <string>Add to current dataset to data reduction list (Ctrl+Z)</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+K</string>
+    <string>Ctrl+Z</string>
    </property>
   </action>
   <action name="actionClear">
@@ -1959,7 +2033,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>149</x>
-     <y>288</y>
+     <y>348</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -1974,8 +2048,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>234</x>
-     <y>341</y>
+     <x>262</x>
+     <y>280</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -1991,7 +2065,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>487</y>
+     <y>533</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -2007,7 +2081,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>418</y>
+     <y>464</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -2023,7 +2097,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>418</y>
+     <y>464</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -2039,7 +2113,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>441</y>
+     <y>487</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -2055,7 +2129,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>441</y>
+     <y>487</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -2071,7 +2145,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>464</y>
+     <y>510</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2087,7 +2161,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>464</y>
+     <y>510</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2214,8 +2288,8 @@
    <slot>reduceDatasets()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>560</x>
-     <y>776</y>
+     <x>853</x>
+     <y>825</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2247,7 +2321,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>136</x>
-     <y>569</y>
+     <y>613</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2263,7 +2337,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>190</x>
-     <y>596</y>
+     <y>640</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2295,7 +2369,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>510</y>
+     <y>556</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2311,7 +2385,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>510</y>
+     <y>556</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2359,7 +2433,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>65</x>
-     <y>621</y>
+     <y>665</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -2391,7 +2465,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>313</y>
+     <y>382</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2487,7 +2561,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>122</x>
-     <y>789</y>
+     <y>840</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -2543,6 +2617,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>logarithmic_colorscale</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggleColorbars()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>134</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>logarithmic_y</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>replotProjections()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xLamda</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggleColorbars()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>208</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>numberSearchEntry</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openByNumber()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>211</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -2569,5 +2707,6 @@
   <slot>visualizePeakfinding()</slot>
   <slot>folderModified()</slot>
   <slot>clearOverwrite()</slot>
+  <slot>openByNumber()</slot>
  </slots>
 </ui>
