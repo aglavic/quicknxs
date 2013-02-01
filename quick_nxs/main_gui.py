@@ -162,7 +162,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Select the appropriate function to plot all visible images.
     '''
-    if self.auto_change_active:
+    if self.auto_change_active or not self.active_data:
       return
     color=str(self.ui.color_selector.currentText())
     if color!=self.color and self.color is not None:
@@ -182,6 +182,8 @@ class MainGUI(QtGui.QMainWindow):
       self.plot_xtof()
     if self.ui.plotTab.currentIndex()==3:
       self.plot_offspec()
+    if self.ui.plotTab.currentIndex()==4:
+      self.update_daslog()
 
   def plot_overview(self):
     '''
@@ -247,6 +249,10 @@ class MainGUI(QtGui.QMainWindow):
       X vs. Y plots for all channels.
     '''
     plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_pm, self.ui.xy_mp]
+    for i in range(len(self.active_data), 4):
+      if plots[i].cplot is not None:
+        plots[i].clear()
+        plots[i].draw()
     imin=1e20
     imax=1e-20
     xynormed=[]
@@ -315,6 +321,11 @@ class MainGUI(QtGui.QMainWindow):
     tof=self.active_data[0].tof
 
     plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
+    for i in range(len(self.active_data), 4):
+      if plots[i].cplot is not None:
+        plots[i].clear()
+        plots[i].draw()
+
     if len(xtofnormed)>1:
       self.ui.frame_xtof_mm.show()
       if len(xtofnormed)==4:
@@ -519,6 +530,9 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.offspec_pm, self.ui.offspec_mp]
     for plot in plots:
         plot.clear()
+    for i in range(len(self.active_data), 4):
+      if plots[i].cplot is not None:
+        plots[i].draw()
     Imin=10**self.ui.offspecImin.value()
     Imax=10**self.ui.offspecImax.value()
     Qzmax=0.01
@@ -571,6 +585,24 @@ class MainGUI(QtGui.QMainWindow):
         if self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
           plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plot.draw()
+
+  def update_daslog(self):
+    '''
+      Write parameters from all file daslogs to the tables in the 
+      daslog tab.
+    '''
+    table=self.ui.daslogTableBox
+    table.setRowCount(0)
+    table.setColumnCount(len(self.channels)+2)
+    table.setHorizontalHeaderLabels(['Name']+self.channels+['Unit'])
+    for j, key in enumerate(sorted(self.active_data[0].logs.keys())):
+      table.insertRow(j)
+      table.setItem(j, 0, QtGui.QTableWidgetItem(key))
+      table.setItem(j, len(self.channels)+1,
+                    QtGui.QTableWidgetItem(self.active_data[0].log_units[key]))
+      for i, _channel, data in self.active_data.numitems():
+        table.setItem(j, i+1, QtGui.QTableWidgetItem(str(data.logs[key])))
+    table.resizeColumnsToContents()
 
 ###### GUI actions
 
@@ -828,7 +860,7 @@ class MainGUI(QtGui.QMainWindow):
   def replotProjections(self):
     self.plot_projections(preserve_lim=True)
 
-  def setNorm(self, do_plot=None, do_remove=True):
+  def setNorm(self, do_plot=True, do_remove=True):
     '''
       Add dataset to the available normalizations or clear the normalization list.
     '''

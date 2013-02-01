@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Feb  1 15:31:33 2013
+# Created: Fri Feb  1 18:12:31 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -460,6 +460,32 @@ class Ui_MainWindow(object):
     self.horizontalLayout_9.addWidget(self.offspecImax)
     self.gridLayout_5.addLayout(self.horizontalLayout_9, 1, 0, 1, 2)
     self.plotTab.addTab(self.OffSpec_Tab, _fromUtf8(""))
+    self.tab_3 = QtGui.QWidget()
+    self.tab_3.setObjectName(_fromUtf8("tab_3"))
+    self.gridLayout_8 = QtGui.QGridLayout(self.tab_3)
+    self.gridLayout_8.setObjectName(_fromUtf8("gridLayout_8"))
+    self.daslogBox = QtGui.QGroupBox(self.tab_3)
+    self.daslogBox.setObjectName(_fromUtf8("daslogBox"))
+    self.verticalLayout_19 = QtGui.QVBoxLayout(self.daslogBox)
+    self.verticalLayout_19.setObjectName(_fromUtf8("verticalLayout_19"))
+    self.daslogTableBox = QtGui.QTableWidget(self.daslogBox)
+    self.daslogTableBox.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+    self.daslogTableBox.setProperty("showDropIndicator", False)
+    self.daslogTableBox.setAlternatingRowColors(True)
+    self.daslogTableBox.setObjectName(_fromUtf8("daslogTableBox"))
+    self.daslogTableBox.setColumnCount(3)
+    self.daslogTableBox.setRowCount(0)
+    item = QtGui.QTableWidgetItem()
+    self.daslogTableBox.setHorizontalHeaderItem(0, item)
+    item = QtGui.QTableWidgetItem()
+    self.daslogTableBox.setHorizontalHeaderItem(1, item)
+    item = QtGui.QTableWidgetItem()
+    self.daslogTableBox.setHorizontalHeaderItem(2, item)
+    self.daslogTableBox.verticalHeader().setVisible(False)
+    self.daslogTableBox.verticalHeader().setDefaultSectionSize(25)
+    self.verticalLayout_19.addWidget(self.daslogTableBox)
+    self.gridLayout_8.addWidget(self.daslogBox, 0, 0, 1, 1)
+    self.plotTab.addTab(self.tab_3, _fromUtf8(""))
     self.verticalLayout_2.addWidget(self.plotTab)
     MainWindow.setCentralWidget(self.centralwidget)
     self.menubar = QtGui.QMenuBar(MainWindow)
@@ -1099,6 +1125,15 @@ class Ui_MainWindow(object):
     self.label_21.setText(QtGui.QApplication.translate("MainWindow", "Imin 10^", None, QtGui.QApplication.UnicodeUTF8))
     self.label_22.setText(QtGui.QApplication.translate("MainWindow", "Imax 10^", None, QtGui.QApplication.UnicodeUTF8))
     self.plotTab.setTabText(self.plotTab.indexOf(self.OffSpec_Tab), QtGui.QApplication.translate("MainWindow", "Off-Specular", None, QtGui.QApplication.UnicodeUTF8))
+    self.daslogBox.setTitle(QtGui.QApplication.translate("MainWindow", "Recorded values for all Motors/Devices:", None, QtGui.QApplication.UnicodeUTF8))
+    self.daslogTableBox.setSortingEnabled(True)
+    item = self.daslogTableBox.horizontalHeaderItem(0)
+    item.setText(QtGui.QApplication.translate("MainWindow", "Name", None, QtGui.QApplication.UnicodeUTF8))
+    item = self.daslogTableBox.horizontalHeaderItem(1)
+    item.setText(QtGui.QApplication.translate("MainWindow", "Value", None, QtGui.QApplication.UnicodeUTF8))
+    item = self.daslogTableBox.horizontalHeaderItem(2)
+    item.setText(QtGui.QApplication.translate("MainWindow", "Unit", None, QtGui.QApplication.UnicodeUTF8))
+    self.plotTab.setTabText(self.plotTab.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "DAS Logs", None, QtGui.QApplication.UnicodeUTF8))
     self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
     self.menuAdvanced.setTitle(QtGui.QApplication.translate("MainWindow", "Advanced", None, QtGui.QApplication.UnicodeUTF8))
     self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))

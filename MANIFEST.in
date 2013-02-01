@@ -1,0 +1,6 @@
+recursive-include icons *.png *.svg
+recursive-include doc *
+recursive-include designer *.ui
+include compile_gui.sh
+include MANIFEST.in
+

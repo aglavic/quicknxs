@@ -9,6 +9,7 @@ import gzip
 from cPickle import dumps
 from PyQt4 import QtGui
 from .gui_utils import DelayedTrigger
+from .version import str_version
 
 
 DEVELOPER_EMAIL=u'Artur Glavic <glavicag@ornl.gov>'
@@ -48,7 +49,7 @@ class ErrorHandler(QtGui.QWidget):
     Dump error report to gziped file and show an error dialog.
     '''
     try:
-      report={'traceback': self.last_text}
+      report={'traceback': self.last_text, 'version': str_version}
       for attrib in COLLECT_GUI_ATTRIBUTES:
         report[attrib]=getattr(self.parent, attrib, None)
       report_dump=dumps(report, 2)

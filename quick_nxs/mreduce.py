@@ -242,6 +242,8 @@ class MRDataset(object):
   xydata=None
   xtofdata=None
   data=None
+  logs={}
+  log_units={}
   _Q=None
   _I=None
   _dI=None
@@ -338,6 +340,17 @@ class MRDataset(object):
 
   def _collect_info(self, data):
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
+    self.logs={}
+    self.log_units={}
+    for motor, item in data['DASlogs'].items():
+      try:
+        self.logs[motor]=item['value'].value[0]
+        if 'units' in item['value'].attrs:
+          self.log_units[motor]=item['value'].attrs['units']
+        else:
+          self.log_units[motor]=u''
+      except:
+        continue
 
   def __repr__(self):
     return "<%s '%s' counts: %i>"%(self.__class__.__name__,
