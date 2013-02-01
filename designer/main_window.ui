@@ -1944,9 +1944,6 @@
    </property>
   </action>
   <action name="actionAbout">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>About...</string>
    </property>
@@ -2768,6 +2765,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tthPhi</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggleColorbars()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>aboutDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -2796,5 +2825,6 @@
   <slot>clearOverwrite()</slot>
   <slot>openByNumber()</slot>
   <slot>loadExtraction()</slot>
+  <slot>aboutDialog()</slot>
  </slots>
 </ui>

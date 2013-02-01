@@ -27,9 +27,9 @@ class MainGUI(QtGui.QMainWindow):
   '''
   active_folder=BASE_FOLDER
   active_file=u''
-  active_data=None
+  _active_data=None
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
-  refl=None #: Reflectivity of the active dataset
+  _refl=None #: Reflectivity of the active dataset
   ref_norm={} #: Store normalization data with extraction information
   auto_change_active=False
   reduction_list=[] #: Store information and data of reflectivities from different files
@@ -37,6 +37,23 @@ class MainGUI(QtGui.QMainWindow):
   open_plots=[] #: to keep non modal dialogs open when their caller is destroyed
   channels=[] #: Available channels of the active dataset
   active_channel='x' #: Selected channel for the overview and projection plots
+
+  ##### for IPython mode, keep namespace up to date ######
+  @property
+  def active_data(self): return self._active_data
+  @active_data.setter
+  def active_data(self, value):
+    if self.ipython:
+      self.ipython.namespace['data']=value
+    self._active_data=value
+  @property
+  def refl(self): return self._refl
+  @refl.setter
+  def refl(self, value):
+    if self.ipython:
+      self.ipython.namespace['refl']=value
+    self._refl=value
+  ##### for IPython mode, keep namespace up to date ######
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -69,12 +86,18 @@ class MainGUI(QtGui.QMainWindow):
     # watch folder for changes
     self.auto_change_active=False
 
-    # connect error handling, only works after main loop is started
-    sys.stderr=ErrorHandler(self)
-
     # open file after GUI is shown
+    if '-ipython' in argv:
+      argv.remove('-ipython')
+      from .ipython_widget import IPythonConsoleQtWidget
+      self.ipython=IPythonConsoleQtWidget(self)
+      self.ui.plotTab.addTab(self.ipython, 'IPython')
+    else:
+      # catch python errors with error handling from stderr
+      sys.stderr=ErrorHandler(self)
+      self.ipython=None
     if len(argv)>0:
-#      self.fileOpen(argv[0])
+      # delay action to be run within event loop, this allows the error handling to work
       if argv[0][-4:]=='.nxs':
         self.trigger('fileOpen', argv[0])
       if argv[0][-4:]=='.dat':
@@ -177,8 +200,27 @@ class MainGUI(QtGui.QMainWindow):
     xy_imax=xy.max()
     tof_imin=xtof[xtof>0].min()
     tof_imax=xtof.max()
-    self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
+    # XY plot
+    if self.ui.tthPhi.isChecked():
+      phi_range=xy.shape[0]*RAD_PER_PIX*180./pi
+      tth_range=xy.shape[1]*RAD_PER_PIX*180./pi
+      phi0=self.ui.refYPos.value()*RAD_PER_PIX*180./pi
+      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*RAD_PER_PIX*180./pi
+      self.ui.xy_overview.clear()
+
+      self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
+                               aspect='auto', cmap=self.color,
+                               extent=[tth_range+tth0, tth0, phi0-phi_range, phi0])
+      self.ui.xy_overview.set_xlabel(u'2θ [°]')
+      self.ui.xy_overview.set_ylabel(u'φ [°]')
+      self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
+    else:
+      self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
                                aspect='auto', cmap=self.color)
+      self.ui.xy_overview.set_xlabel(u'x [pix]')
+      self.ui.xy_overview.set_ylabel(u'y [pix]')
+      self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
+    # XToF plot
     if self.ui.xLamda.isChecked():
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
                                    aspect='auto', cmap=self.color,
@@ -189,9 +231,6 @@ class MainGUI(QtGui.QMainWindow):
                                    aspect='auto', cmap=self.color,
                                    extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
       self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
-    self.ui.xy_overview.set_xlabel(u'x [pix]')
-    self.ui.xy_overview.set_ylabel(u'y [pix]')
-    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 #    if self.tline is None:
@@ -228,11 +267,24 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.frame_xy_sf.hide()
 
     for i, datai in enumerate(xynormed):
-      plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                           aspect='auto', cmap=self.color)
+      if self.ui.tthPhi.isChecked():
+        plots[i].clear()
+        phi_range=datai.shape[0]*RAD_PER_PIX*180./pi
+        tth_range=datai.shape[1]*RAD_PER_PIX*180./pi
+        phi0=self.ui.refYPos.value()*RAD_PER_PIX*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*RAD_PER_PIX*180./pi
+
+        plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                             aspect='auto', cmap=self.color,
+                             extent=[tth_range+tth0, tth0, phi0-phi_range, phi0])
+        plots[i].set_xlabel(u'2θ [°]')
+        plots[i].set_ylabel(u'φ [°]')
+      else:
+        plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                             aspect='auto', cmap=self.color)
+        plots[i].set_xlabel(u'x [pix]')
+        plots[i].set_ylabel(u'y [pix]')
       plots[i].set_title(self.channels[i])
-      plots[i].set_xlabel(u'x [pix]')
-      plots[i].set_ylabel(u'y [pix]')
       if plots[i].cplot is not None:
         plots[i].cplot.set_clim([imin, imax])
       if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
@@ -1392,3 +1444,25 @@ as the ones already in the list:
     dump(obj, open(os.path.join(path, 'window.pkl'), 'wb'))
     QtGui.QMainWindow.closeEvent(self, event)
 
+  def aboutDialog(self):
+    from .version import str_version
+    from numpy.version import full_version as npversion
+    from matplotlib import __version__ as mplversion
+    from h5py.version import version as h5pyversion
+    from h5py.version import hdf5_version as hdf5version
+    from PyQt4.pyqtconfig import Configuration
+    pyqtversion=Configuration().pyqt_version_str
+
+    QtGui.QMessageBox.about(self, 'About QuickNXS',
+'''
+QuickNXS - SNS Magnetism Reflectometer data reduction program
+  Version %s
+
+Library Versions:
+  Numpy %s
+  Matplotlib %s
+  Qt %s
+  PyQt4 %s
+  H5py %s
+  HDF5 %s
+'''%(str_version, npversion, mplversion, QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))

@@ -79,15 +79,15 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
 
     def __init__(self, parent):
       RichIPythonWidget.__init__(self)
+      self._parent=parent
       kernelapp=IPythonLocalKernelApp.instance()
       kernelapp.initialize()
       self.set_default_style(colors='linux')
       self.connect_kernel(connection_file=kernelapp.get_connection_file())
       self.namespace=kernelapp.get_user_namespace()
       self.namespace['app']=QtGui.QApplication.instance()
-      for widget in QtGui.QApplication.instance().topLevelWidgets():
-        if widget.__class__.__base__ is QtGui.QMainWindow:
-          self.namespace['gui']=widget
+      self.namespace['gui']=parent
+      self.namespace['plot']=self._plot
 
     def connect_kernel(self, connection_file, heartbeat=False):
         """
@@ -127,3 +127,8 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
         km.start_channels(hb=heartbeat)
         self.kernel_manager=km
         atexit.register(self.kernel_manager.cleanup_connection_file)
+
+    def _plot(self, *args, **opts):
+      self._parent.ui.refl.clear()
+      self._parent.ui.refl.plot(*args, **opts)
+      self._parent.ui.refl.draw()

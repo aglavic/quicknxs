@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Feb  1 13:56:48 2013
+# Created: Fri Feb  1 15:31:33 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -907,7 +907,6 @@ class Ui_MainWindow(object):
     self.actionManual.setEnabled(False)
     self.actionManual.setObjectName(_fromUtf8("actionManual"))
     self.actionAbout = QtGui.QAction(MainWindow)
-    self.actionAbout.setEnabled(False)
     self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
     self.actionAutoYLimits = QtGui.QAction(MainWindow)
     self.actionAutoYLimits.setCheckable(True)
@@ -1010,6 +1009,8 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.numberSearchEntry, QtCore.SIGNAL(_fromUtf8("returnPressed()")), MainWindow.openByNumber)
     QtCore.QObject.connect(self.bgToFConstant, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.plot_refl)
     QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.loadExtraction)
+    QtCore.QObject.connect(self.tthPhi, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
+    QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.aboutDialog)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
