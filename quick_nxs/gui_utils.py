@@ -9,7 +9,7 @@ import subprocess
 from zipfile import ZipFile
 from cPickle import loads, dumps
 from PyQt4.QtGui import QDialog, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
-from PyQt4.QtCore import QThread, SIGNAL
+from PyQt4.QtCore import QThread, pyqtSignal
 from time import sleep, time, strftime
 from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum
 from matplotlib.lines import Line2D
@@ -31,11 +31,11 @@ TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
 result_folder=os.path.expanduser(u'~/results')
 
 class ReduceDialog(QDialog):
-  CHANNEL_NAMINGS=['UpUp','DownDown','UpDown','DownUp']
+  CHANNEL_NAMINGS=['UpUp', 'DownDown', 'UpDown', 'DownUp']
   CHANNEL_COMPARE=[
-                   ['x','+','++','0V'],
-                   ['-','--','+V'],
-                   ['+-','-V'],
+                   ['x', '+', '++', '0V'],
+                   ['-', '--', '+V'],
+                   ['+-', '-V'],
                    ['-+']
                    ]
 
@@ -714,15 +714,18 @@ class DelayedTrigger(QThread):
   delay=0.25
   actions={}
 
+  activate=pyqtSignal(str, tuple)
+
   def __init__(self):
     QThread.__init__(self)
+    self.actions={}
 
   def run(self):
     while self.stay_alive:
       for name, items in self.actions.items():
         ti, args=items
         if time()-ti>self.delay:
-          self.emit(SIGNAL('activate(QString, PyQt_PyObject)'), name, args)
+          self.activate.emit(name, args)
           del(self.actions[name])
       sleep(self.refresh)
 

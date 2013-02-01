@@ -17,6 +17,12 @@
    <iconset resource="../icons/icons.qrc">
     <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
   </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -336,15 +342,18 @@
                  <item>
                   <widget class="QLabel" name="label_7">
                    <property name="text">
-                    <string>Normalization:</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    <string>Normalizations:</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QLabel" name="normalizationLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>2</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="text">
                     <string>Unset</string>
                    </property>
@@ -357,7 +366,7 @@
                   <widget class="QComboBox" name="selectedChannel">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
+                     <horstretch>1</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
@@ -402,9 +411,6 @@
                      </property>
                      <property name="showDropIndicator" stdset="0">
                       <bool>false</bool>
-                     </property>
-                     <property name="selectionMode">
-                      <enum>QAbstractItemView::SingleSelection</enum>
                      </property>
                      <property name="horizontalScrollMode">
                       <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -528,12 +534,7 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>λ</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Path</string>
+                       <string>Norm</string>
                       </property>
                      </column>
                     </widget>
@@ -547,9 +548,26 @@
                   <layout class="QVBoxLayout" name="verticalLayout_17">
                    <item>
                     <widget class="QTableWidget" name="normalizeTable">
+                     <property name="editTriggers">
+                      <set>QAbstractItemView::NoEditTriggers</set>
+                     </property>
+                     <attribute name="horizontalHeaderDefaultSectionSize">
+                      <number>50</number>
+                     </attribute>
+                     <attribute name="horizontalHeaderMinimumSectionSize">
+                      <number>25</number>
+                     </attribute>
                      <attribute name="verticalHeaderVisible">
                       <bool>false</bool>
                      </attribute>
+                     <attribute name="verticalHeaderDefaultSectionSize">
+                      <number>20</number>
+                     </attribute>
+                     <column>
+                      <property name="text">
+                       <string>File No.</string>
+                      </property>
+                     </column>
                      <column>
                       <property name="text">
                        <string>λ</string>
@@ -557,7 +575,32 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>File No.</string>
+                       <string>x0</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>xw</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>y0</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>yw</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>bg0</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>bgw</string>
                       </property>
                      </column>
                     </widget>
@@ -901,19 +944,8 @@
     <addaction name="actionOpen"/>
     <addaction name="actionNext_File"/>
     <addaction name="actionPrevious_File"/>
-   </widget>
-   <widget class="QMenu" name="menuReduce">
-    <property name="title">
-     <string>Reduction</string>
-    </property>
-    <addaction name="actionNorm"/>
-    <addaction name="actionNormalizeScaling"/>
     <addaction name="separator"/>
-    <addaction name="actionAddPlot"/>
-    <addaction name="actionRemove"/>
-    <addaction name="actionClear"/>
-    <addaction name="separator"/>
-    <addaction name="actionReduce"/>
+    <addaction name="actionLoad_Extraction"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -934,7 +966,6 @@
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuReduce"/>
    <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -1394,7 +1425,7 @@
      <item row="8" column="0">
       <widget class="QLabel" name="label_20">
        <property name="text">
-        <string>Cut Points</string>
+        <string>Cut Pts</string>
        </property>
       </widget>
      </item>
@@ -1729,6 +1760,25 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dockWidget_10">
+   <property name="windowTitle">
+    <string>Advanced Background</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_10">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QCheckBox" name="bgToFConstant">
+       <property name="text">
+        <string>BG~I(λ)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionOpen">
    <property name="icon">
     <iconset theme="document-open">
@@ -1942,6 +1992,11 @@
     <string>Clear Overwrite</string>
    </property>
   </action>
+  <action name="actionLoad_Extraction">
+   <property name="text">
+    <string>Load Extraction...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2032,8 +2087,8 @@
    <slot>toggleHide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>348</y>
+     <x>134</x>
+     <y>332</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -2064,8 +2119,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>533</y>
+     <x>264</x>
+     <y>506</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -2080,8 +2135,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>464</y>
+     <x>176</x>
+     <y>437</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -2096,8 +2151,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>464</y>
+     <x>264</x>
+     <y>437</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -2112,8 +2167,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>487</y>
+     <x>176</x>
+     <y>460</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -2128,8 +2183,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>487</y>
+     <x>264</x>
+     <y>460</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -2144,8 +2199,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>510</y>
+     <x>176</x>
+     <y>483</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2160,8 +2215,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>510</y>
+     <x>264</x>
+     <y>483</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2177,7 +2232,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1064</x>
-     <y>304</y>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2193,7 +2248,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1002</x>
-     <y>303</y>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2321,7 +2376,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>136</x>
-     <y>613</y>
+     <y>591</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2337,7 +2392,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>190</x>
-     <y>640</y>
+     <y>618</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2368,8 +2423,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>556</y>
+     <x>176</x>
+     <y>529</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2384,8 +2439,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>556</y>
+     <x>264</x>
+     <y>529</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2433,7 +2488,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>65</x>
-     <y>665</y>
+     <y>643</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -2465,7 +2520,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>382</y>
+     <y>357</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2560,8 +2615,8 @@
    <slot>visualizePeakfinding()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>840</y>
+     <x>81</x>
+     <y>843</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -2625,7 +2680,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>134</x>
-     <y>314</y>
+     <y>307</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2640,8 +2695,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>314</y>
+     <x>247</x>
+     <y>307</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2656,8 +2711,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>208</x>
-     <y>335</y>
+     <x>193</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2678,6 +2733,38 @@
     <hint type="destinationlabel">
      <x>-1</x>
      <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bgToFConstant</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plot_refl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>934</x>
+     <y>831</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>946</x>
+     <y>871</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad_Extraction</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadExtraction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -2708,5 +2795,6 @@
   <slot>folderModified()</slot>
   <slot>clearOverwrite()</slot>
   <slot>openByNumber()</slot>
+  <slot>loadExtraction()</slot>
  </slots>
 </ui>

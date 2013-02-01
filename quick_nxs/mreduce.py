@@ -69,7 +69,7 @@ class NXSData(object):
     * bin_type='linear: 'linear'/'1/x' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
-  DEFAULT_OPTIONS=dict(bin_type='linear', bins=40, use_caching=False, callback=None)
+  DEFAULT_OPTIONS=dict(bin_type='linear', bins=40, use_caching=True, callback=None)
   COUNT_THREASHOLD=100
   MAX_CACHE=20
   _cache=[]
@@ -85,7 +85,9 @@ class NXSData(object):
     if all_options['use_caching'] and filename in cached_names:
       cache_index=cached_names.index(filename)
       cached_object=cls._cache[cache_index]
-      if cached_object._options==all_options:
+      compare_options=dict(all_options)
+      compare_options['callback']=None
+      if cached_object._options==compare_options:
         return cached_object
     # else
     self=object.__new__(cls)
@@ -98,7 +100,9 @@ class NXSData(object):
     self.origin=filename
     # process the file
     self._read_times=[]
-    self._read_file(filename)
+
+    if not self._read_file(filename):
+      return None
     if all_options['use_caching']:
       if filename in cached_names:
         cache_index=cached_names.index(filename)
@@ -106,7 +110,8 @@ class NXSData(object):
       if len(cls._cache)>=cls.MAX_CACHE:
         cls._cache.pop(0)
       cls._cache.append(self)
-      cls._cached_names.append(filename)
+    # remove callback function to make the object Pickleable
+    self._options['callback']=None
     return self
 
   def _read_file(self, filename):
@@ -116,14 +121,17 @@ class NXSData(object):
     start=time()
     if self._options['callback']:
       self._options['callback'](0.)
-    nxs=h5py.File(filename, mode='r')
+    try:
+      nxs=h5py.File(filename, mode='r')
+    except IOError:
+      return False
     # analyze channels
     channels=nxs.keys()
     for channel in list(channels):
       if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
         channels.remove(channel)
     if len(channels)==0:
-      return None
+      return False
     ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
     pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
 
@@ -164,6 +172,7 @@ class NXSData(object):
       self._read_times.append(time()-self._read_times[-1]-start)
     #print time()-start
     nxs.close()
+    return True
 
   def __getitem__(self, item):
     if type(item)==int:
@@ -203,6 +212,17 @@ class NXSData(object):
   def __iter__(self):
     for item in self.values():
       yield item
+
+  # easy access properties
+
+  @property
+  def lambda_center(self): return self[0].lambda_center
+  @property
+  def file_no(self):
+    try:
+      return int(self.origin.split('REF_M_', 1)[1].split('_', 1)[0])
+    except:
+      return 0
 
 class MRDataset(object):
   '''
@@ -394,7 +414,8 @@ class Reflectivity(object):
        extract_fan=False, # Treat every x-pixel separately and join the data afterwards
        normalization=None, # another Reflectivity object used for normalization
        scale_by_beam=True, # use the beam width in the scaling
-       bg_method='data', # method to use for background subtraction
+       bg_tof_constant=False, # treat background to be independent of wavelength for better statistics
+       bg_scale_xfit=False, # use a linear fit on x-axes projection to scale the background
        P0=0,
        PN=0,
        number='0',
@@ -418,9 +439,7 @@ class Reflectivity(object):
       self.options['dpix']=dataset.dpix
     self.lambda_center=dataset.lambda_center
 
-    if all_options['extract_fan']:
-      if all_options['normalization'] is None:
-        raise ValueError, "Cannot extract fan reflectivity without normalization"
+    if all_options['extract_fan'] and all_options['normalization'] is not None:
       self._calc_fan(dataset)
     else:
       self._calc_normal(dataset)
@@ -428,10 +447,10 @@ class Reflectivity(object):
   def __repr__(self):
     output='<Reflectivity[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
                                         self.origin[1])
-    if self.options['extract_fan']:
-      output+=' FAN'
     if self.options['normalization'] is None:
       output+=' NOT normalized'
+    elif self.options['extract_fan']:
+      output+=' FAN'
     output+='>'
     return output
 
@@ -454,7 +473,7 @@ class Reflectivity(object):
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
-    scale=self.options['scale']/dataset.proton_charge # scale by user factor
+    scale=1./dataset.proton_charge # scale by user factor
     if self.options['scale_by_beam']:
       scale/=dataset.beam_width # scale by beam-size
 
@@ -497,17 +516,19 @@ class Reflectivity(object):
     self.dQ=4*pi*sqrt((self.dlamda/self.lamda**2*sin(self.ai))**2+
                       (cos(self.ai)*dai/self.lamda)**2)
     # finally scale reflectivity by the given factor and beam width
-    self.R=(self.I-self.BG)
-    self.dR=sqrt(self.dI**2+self.dBG**2)
+    self.Rraw=(self.I-self.BG) # used for normalization files
+    self.dRraw=sqrt(self.dI**2+self.dBG**2)
+    self.R=self.options['scale']*self.Rraw
+    self.dR=self.options['scale']*self.dRraw
 
     if self.options['normalization']:
       norm=self.options['normalization']
-      idxs=norm.R>0.
+      idxs=norm.Rraw>0.
       self.dR[idxs]=sqrt(
-                   (self.dR[idxs]/norm.R[idxs])**2+
-                   (self.R[idxs]/norm.R[idxs]**2*norm.dR[idxs])**2
+                   (self.dR[idxs]/norm.Rraw[idxs])**2+
+                   (self.R[idxs]/norm.Rraw[idxs]**2*norm.dRraw[idxs])**2
                    )
-      self.R[idxs]/=norm.R[idxs]
+      self.R[idxs]/=norm.Rraw[idxs]
       self.R[logical_not(idxs)]=0.
       self.dR[logical_not(idxs)]=0.
 
@@ -567,7 +588,7 @@ class Reflectivity(object):
     dR=sqrt(dI**2+(self.dBG**2)[newaxis, :])
 
     norm=self.options['normalization']
-    normR=where(norm.R>0, norm.R, 1.)
+    normR=where(norm.Rraw>0, norm.Rraw, 1.)
     # normalize each line by the incident intensity including error propagation
     dR=sqrt((dR/normR[newaxis, :])**2+(R*(norm.dR/normR**2)[newaxis, :])**2)
     R/=normR[newaxis, :]
@@ -582,8 +603,8 @@ class Reflectivity(object):
     # uses the smallest and largest Q all lines have in common with
     # a step size which has one point of every line in it.
     #Qz_start=Qz_edges[0,-1]
-    Qz_start=Qz_edges[0, where(norm.R>0)[0][-1]]
-    Qz_end=Qz_edges[-1, where(norm.R>0)[0][0]]
+    Qz_start=Qz_edges[0, where(norm.Rraw>0)[0][-1]]
+    Qz_end=Qz_edges[-1, where(norm.Rraw>0)[0][0]]
     Q=[]
     dQ=[]
     Rsum=[]
@@ -635,32 +656,38 @@ class Reflectivity(object):
     Methods supported:
         'data': Just take a region in x to extract an average count rate vs. ToF
     '''
-    if self.options['bg_method']=='data':
-      data=dataset.data
-      y_pos=self.options['y_pos']
-      y_width=self.options['y_width']
-      bg_pos=self.options['bg_pos']
-      bg_width=self.options['bg_width']
-      scale=self.options['scale']/dataset.proton_charge # scale by user factor
-      if self.options['scale_by_beam']:
-        scale/=dataset.beam_width # scale by beam-size
+    data=dataset.data
+    y_pos=self.options['y_pos']
+    y_width=self.options['y_width']
+    bg_pos=self.options['bg_pos']
+    bg_width=self.options['bg_width']
+    scale=1./dataset.proton_charge # scale by user factor
+    if self.options['scale_by_beam']:
+      scale/=dataset.beam_width # scale by beam-size
 
-      # Get regions in pixels as integers
-      reg=map(lambda item: int(round(item)),
-              [bg_pos-bg_width/2., bg_pos+bg_width/2.+1,
-               y_pos-y_width/2., y_pos+y_width/2.+1 ])
+    # Get regions in pixels as integers
+    reg=map(lambda item: int(round(item)),
+            [bg_pos-bg_width/2., bg_pos+bg_width/2.+1,
+             y_pos-y_width/2., y_pos+y_width/2.+1 ])
 
-      # restrict the intensity and background data to the given regions
-      bgdata=data[reg[0]:reg[1], reg[2]:reg[3], :]
-      # calculate region size for later use
-      size_BG=float((reg[3]-reg[2])*(reg[1]-reg[0]))
-      # calculate ROI intensities and normalize by number of points
-      self.BGraw=bgdata.sum(axis=0).sum(axis=0)
-      self.BG=self.BGraw/size_BG*scale
-      self.dBGraw=sqrt(self.BGraw)
-      self.dBG=self.dBGraw/size_BG*scale
+    # restrict the intensity and background data to the given regions
+    bgdata=data[reg[0]:reg[1], reg[2]:reg[3], :]
+    # calculate region size for later use
+    size_BG=float((reg[3]-reg[2])*(reg[1]-reg[0]))
+    # calculate ROI intensities and normalize by number of points
+    self.BGraw=bgdata.sum(axis=0).sum(axis=0)
+    self.dBGraw=sqrt(self.BGraw)
+    if self.options['bg_tof_constant'] and self.options['normalization']:
+      norm=self.options['normalization'].R
+      reg=(self.dBGraw>0)&(norm>0)
+      norm_BG=self.BGraw[reg]/norm[reg]
+      norm_dBG=self.dBGraw[reg]/norm[reg]
+      wmeanBG=(norm_BG/norm_dBG).sum()/(1./norm_dBG).sum()
+      self.BG=wmeanBG*norm/size_BG*scale
+      self.dBG=0.*norm/size_BG*scale
     else:
-      raise ValueError, "Unknown background method '%s'"%self.options['bg_method']
+      self.BG=self.BGraw/size_BG*scale
+      self.dBG=self.dBGraw/size_BG*scale
 
 class OffSpecular(Reflectivity):
   '''
@@ -754,12 +781,12 @@ class OffSpecular(Reflectivity):
 
     if self.options['normalization']:
       norm=self.options['normalization']
-      idxs=norm.R>0.
+      idxs=norm.Rraw>0.
       self.dS[:, idxs]=sqrt(
-                   (self.dS[:, idxs]/norm.R[idxs][newaxis, :])**2+
-                   (self.S[:, idxs]/norm.R[idxs][newaxis, :]**2*norm.dR[idxs][newaxis, :])**2
+                   (self.dS[:, idxs]/norm.Rraw[idxs][newaxis, :])**2+
+                   (self.S[:, idxs]/norm.Rraw[idxs][newaxis, :]**2*norm.dRraw[idxs][newaxis, :])**2
                    )
-      self.S[:, idxs]/=norm.R[idxs][newaxis, :]
+      self.S[:, idxs]/=norm.Rraw[idxs][newaxis, :]
       self.S[:, logical_not(idxs)]=0.
       self.dS[:, logical_not(idxs)]=0.
 

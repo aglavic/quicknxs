@@ -3,16 +3,17 @@
   Module including main GUI class with all signal handling and plot creation.
 '''
 
-import os
+import os, sys
 from glob import glob
-#from time import time #sleep
-from numpy import where, pi, newaxis, maximum, arange, exp, log10, array, hstack
+from numpy import where, pi, newaxis, arange, exp, log10, array, hstack
 from scipy.stats.mstats import mquantiles
 from cPickle import load, dump
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
+
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
+from .error_handling import ErrorHandler
 from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION, RAD_PER_PIX
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
@@ -39,6 +40,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
+
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
@@ -46,24 +48,37 @@ class MainGUI(QtGui.QMainWindow):
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(80, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
+    # perhaps use this in the future?
+    self.ui.xprojQuantiles.hide()
+    self.ui.xprojUseQuantiles.hide()
+    self.ui.label_16.hide()
 
     self.toggleHide()
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
     self.trigger=DelayedTrigger()
-    self.connect(self.trigger, QtCore.SIGNAL("activate(QString, PyQt_PyObject)"),
-                 self.processDelayedTrigger)
+    self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
     self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
     self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
 
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
-    if len(argv)>0:
-      self.fileOpen(argv[0])
-    self.connect_plot_events()
     self._path_watcher.directoryChanged.connect(self.folderModified)
+    self.connect_plot_events()
+    # watch folder for changes
     self.auto_change_active=False
+
+    # connect error handling, only works after main loop is started
+    sys.stderr=ErrorHandler(self)
+
+    # open file after GUI is shown
+    if len(argv)>0:
+#      self.fileOpen(argv[0])
+      if argv[0][-4:]=='.nxs':
+        self.trigger('fileOpen', argv[0])
+      if argv[0][-4:]=='.dat':
+        self.trigger('loadExtraction', argv[0])
 
   def processDelayedTrigger(self, item, args):
     '''
@@ -91,16 +106,16 @@ class MainGUI(QtGui.QMainWindow):
       Open a new datafile and plot the data.
     '''
     folder, base=os.path.split(filename)
+    if folder!=self.active_folder:
+      self.onPathChanged(base, folder)
+    self.active_file=base
     data=NXSData(filename,
                 bin_type=str(self.ui.eventBinMode.currentText()),
                 bins=self.ui.eventTofBins.value(),
                 callback=self.updateEventReadout)
-    if len(data)==0:
+    if data is None:
       self.ui.currentChannel.setText(u'!!!NO DATA IN FILE %s!!!'%base)
       return
-    if folder!=self.active_folder:
-      self.onPathChanged(base, folder)
-    self.active_file=base
     self.channels=data.keys()
 
     desiredChannel=self.ui.selectedChannel.currentText().split('/')
@@ -152,11 +167,9 @@ class MainGUI(QtGui.QMainWindow):
     data=self.active_data[self.active_channel]
     xy=data.xydata
     xtof=data.xtofdata
-    if data.lambda_center in self.ref_norm:
-      ref_norm=self.ref_norm[data.lambda_center].R
-    else:
-      ref_norm=None
+    ref_norm=self.getNorm()
     if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
+      ref_norm=ref_norm.Rraw
       # normalize ToF dataset for wavelength distribution
       ref_norm=where(ref_norm>0., ref_norm, 1.)
       xtof=xtof.astype(float)/ref_norm[newaxis, :]
@@ -233,11 +246,11 @@ class MainGUI(QtGui.QMainWindow):
     imin=1e20
     imax=1e-20
     xtofnormed=[]
-    if self.active_data[0].lambda_center in self.ref_norm:
-      ref_norm=self.ref_norm[self.active_data[0].lambda_center].R
+    ref_norm=self.getNorm()
+    if ref_norm is not None:
+      ref_norm=ref_norm.Rraw
       ref_norm=where(ref_norm>0, ref_norm, 1.)
-    else:
-      ref_norm=None
+
     for dataset in self.active_data:
       d=dataset.xtofdata/dataset.proton_charge
       if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
@@ -386,12 +399,9 @@ class MainGUI(QtGui.QMainWindow):
                 number=number,
                 tth=tth,
                 dpix=dpix,
+                bg_tof_constant=self.ui.bgToFConstant.isChecked(),
+                normalization=self.getNorm(),
                   )
-
-    if data.lambda_center in self.ref_norm:
-      options['normalization']=self.ref_norm[data.lambda_center]
-    else:
-      options['normalization']=None
 
     self.refl=Reflectivity(data, **options)
     P0=len(self.refl.Q)-self.ui.rangeStart.value()
@@ -411,12 +421,18 @@ class MainGUI(QtGui.QMainWindow):
         P0i=len(refli.Q)-refli.options['P0']
         PNi=refli.options['PN']
         ynormed=refli.R[PNi:P0i]
-        ymin=min(ymin, ynormed[ynormed>0].min())
+        try:
+          ymin=min(ymin, ynormed[ynormed>0].min())
+        except ValueError:
+          pass
         ymax=max(ymax, ynormed.max())
         self.ui.refl.errorbar(refli.Q[PNi:P0i], ynormed,
                               yerr=refli.dR[PNi:P0i], label=str(refli.options['number']))
       ynormed=self.refl.R[PN:P0]
-      ymin=min(ymin, ynormed[ynormed>0].min())
+      try:
+        ymin=min(ymin, ynormed[ynormed>0].min())
+      except ValueError:
+        pass
       ymax=max(ymax, ynormed.max())
       self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
                             yerr=self.refl.dR[PN:P0], label=number)
@@ -547,6 +563,8 @@ class MainGUI(QtGui.QMainWindow):
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
     if search:
       self.fileOpen(search[0])
+    else:
+      self.ui.statusbar.showMessage('Could not locate %s...'%number, 2500)
 
   def nextFile(self):
     item=self.ui.file_list.currentRow()
@@ -557,6 +575,100 @@ class MainGUI(QtGui.QMainWindow):
     item=self.ui.file_list.currentRow()
     if item>0:
       self.ui.file_list.setCurrentRow(item-1)
+
+  def loadExtraction(self, filename=None):
+    '''
+      Analyse an already extracted dataset header to reload all settings
+      used for this extraction for further processing.
+    '''
+    if filename is None:
+      filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
+                                               directory=self.active_folder,
+                                               filter=u'Extracted Dataset (*.dat)')
+    if filename!=u'':
+      self.clearRefList(do_plot=False)
+      text=open(filename, 'r').read()
+      split1='# Parameters used for extraction of normalization:'
+      split2='# Parameters used for extraction of reflectivity:'
+      split3='# Column Units:'
+      normdata=text.split(split1)[1].split(split2)[0]
+      refdata=text.split(split2)[1].split(split3)[0]
+      normlines=[line.strip('# \t').split() for line in normdata.splitlines()]
+      reflines=[line.strip('# \t').split() for line in refdata.splitlines()]
+      norms={}
+      refs=[]
+      for entry in normlines:
+        if len(entry)==0 or entry[0]=='I0':
+          continue
+        I0, P0, PN=entry[:3]
+        x0, xw, y0, yw, bg0, bgw=entry[3:9]
+        dpix, tth, number, nidx=entry[9:13]
+        filename=entry[14]
+        options=dict(
+                x_pos=float(x0),
+                x_width=float(xw),
+                y_pos=float(y0),
+                y_width=float(yw),
+                bg_pos=float(bg0),
+                bg_width=float(bgw),
+                scale=float(I0),
+                extract_fan=False,
+                P0=int(P0),
+                PN=int(PN),
+                number=number,
+                tth=float(tth),
+                dpix=float(dpix),
+                bg_tof_constant=False,
+                normalization=None,
+                     )
+        data=NXSData(filename)
+        norms[nidx]=Reflectivity(data[0], **options)
+        self.refl=norms[nidx]
+        self.active_file=filename
+        self.active_data=data
+        self.setNorm(do_plot=False, do_remove=False)
+      for entry in reflines:
+        if len(entry)==0 or entry[0]=='I0':
+          continue
+        I0, P0, PN=entry[:3]
+        x0, xw, y0, yw, bg0, bgw=entry[3:9]
+        dpix, tth, number, nidx, fan=entry[9:14]
+        filename=entry[14]
+        options=dict(
+                x_pos=float(x0),
+                x_width=float(xw),
+                y_pos=float(y0),
+                y_width=float(yw),
+                bg_pos=float(bg0),
+                bg_width=float(bgw),
+                scale=float(I0),
+                extract_fan=bool(int(fan)),
+                P0=int(P0),
+                PN=int(PN),
+                number=number,
+                tth=float(tth),
+                dpix=float(dpix),
+                bg_tof_constant=False,
+                normalization=norms[nidx],
+                     )
+        data=NXSData(filename)
+        self.channels=data.keys()
+        desiredChannel=self.ui.selectedChannel.currentText().split('/')
+        self.active_channel=self.channels[0]
+        for channel in self.channels:
+          if channel in desiredChannel:
+            self.active_channel=channel
+            break
+        self.active_data=data
+        self.active_file=filename
+        ref=Reflectivity(data[0], **options)
+        refs.append(ref)
+        self.refl=ref
+        self.addRefList()
+
+    self.ui.actionAutoYLimits.setChecked(True)
+    self.fileOpen(filename)
+    self.ui.actionAutoYLimits.setChecked(False)
 
   def onPathChanged(self, base, folder):
     '''
@@ -664,26 +776,65 @@ class MainGUI(QtGui.QMainWindow):
   def replotProjections(self):
     self.plot_projections(preserve_lim=True)
 
-  def setNorm(self):
+  def setNorm(self, do_plot=None, do_remove=True):
     '''
       Add dataset to the available normalizations or clear the normalization list.
     '''
     if self.refl is None:
       return
-    if self.active_data[0].lambda_center not in self.ref_norm:
-      lamda=self.active_data[0].lambda_center
-      self.ref_norm[lamda]=self.refl
-      idx=sorted(self.ref_norm.keys()).index(lamda)
+    if self.active_data.file_no not in self.ref_norm:
+      lamda=self.active_data.lambda_center
+      number=self.active_data.file_no
+      opts=self.refl.options
+      self.ref_norm[number]=self.refl
+      idx=sorted(self.ref_norm.keys()).index(number)
       self.ui.normalizeTable.insertRow(idx)
-      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(str(lamda)))
-      self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(self.refl.options['number'])))
-      self.ui.normalizationLabel.setText(",".join(map(str,
-                                            sorted(self.ref_norm.keys()))))
+      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(str(number)))
+      self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(lamda)))
+      self.ui.normalizeTable.setItem(idx, 2, QtGui.QTableWidgetItem(str(opts['x_pos'])))
+      self.ui.normalizeTable.setItem(idx, 3, QtGui.QTableWidgetItem(str(opts['x_width'])))
+      self.ui.normalizeTable.setItem(idx, 4, QtGui.QTableWidgetItem(str(opts['y_pos'])))
+      self.ui.normalizeTable.setItem(idx, 5, QtGui.QTableWidgetItem(str(opts['y_width'])))
+      self.ui.normalizeTable.setItem(idx, 6, QtGui.QTableWidgetItem(str(opts['bg_pos'])))
+      self.ui.normalizeTable.setItem(idx, 7, QtGui.QTableWidgetItem(str(opts['bg_width'])))
+      self.ui.normalizationLabel.setText(",".join(map(str, sorted(self.ref_norm.keys()))))
+    elif do_remove:
+      number=self.active_data.file_no
+      idx=sorted(self.ref_norm.keys()).index(number)
+      del(self.ref_norm[number])
+      self.ui.normalizeTable.removeRow(idx)
+      self.ui.normalizationLabel.setText(",".join(map(str, sorted(self.ref_norm.keys()))))
+    if do_plot:
+      self.plot_refl()
+
+  def getNorm(self, data=None):
+    '''
+      Return a fitting normalization (same ToF channels and wavelength) for 
+      a dataset.
+    '''
+    fittings=[]
+    indices=[]
+    if data is None:
+      data=self.active_data[self.active_channel]
+    for index, norm in sorted(self.ref_norm.items()):
+      if len(norm.Rraw)==len(data.tof) and norm.lambda_center==data.lambda_center:
+        fittings.append(norm)
+        indices.append(str(index))
+    if len(fittings)==0:
+      return None
+    elif len(fittings)==1:
+      return fittings[0]
+    elif str(self.active_data.file_no) in indices:
+      return fittings[indices.index(str(self.active_data.file_no))]
     else:
-      self.ref_norm={}
-      self.ui.normalizationLabel.setText('Unset')
-      self.ui.normalizeTable.setRowCount(0)
-    self.plot_refl()
+      result=QtGui.QInputDialog.getItem(self, 'Select Normalization',
+                                        'There are more than one normalizations\nfor this wavelength available,\nplease select one:',
+                                        indices, editable=False)
+      if not result[1]:
+        return None
+      else:
+        return fittings[indices.index(result[0])]
+
 
   def normalizeTotalReflection(self):
     '''
@@ -804,11 +955,9 @@ as the ones already in the list:
     self.ui.reductionTable.setItem(idx, 10,
                                    QtGui.QTableWidgetItem(str(opts['dpix'])))
     self.ui.reductionTable.setItem(idx, 11,
-                                   QtGui.QTableWidgetItem("%.4f"%(opts['tth']*180./pi)))
+                                   QtGui.QTableWidgetItem("%.4f"%opts['tth']))
     self.ui.reductionTable.setItem(idx, 12,
-                                   QtGui.QTableWidgetItem(str(self.active_data[0].lambda_center)))
-    self.ui.reductionTable.setItem(idx, 13,
-                                   QtGui.QTableWidgetItem(os.path.basename(self.active_data.origin)))
+                                   QtGui.QTableWidgetItem(str(opts['normalization'].options['number'])))
     self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
 
@@ -826,11 +975,9 @@ as the ones already in the list:
     if column==0:
       item.setText(str(options['number']))
       return
-    elif column==13:
-      item.setText(refl.origin[0])
-      return
     elif column==12:
-      item.setText(str(refl.lambda_center))
+      item.setText(str(options['normalization'].options['number']))
+      return
     # update settings from selected option
     elif column in [1, 4, 5, 6, 7, 8, 9, 10]:
       key=[None, 'scale', None, None,
@@ -884,14 +1031,15 @@ as the ones already in the list:
     self.plotActiveTab()
     self.plot_projections()
 
-  def clearRefList(self):
+  def clearRefList(self, do_plot=True):
     '''
       Remove all items from the reduction list.
     '''
     self.reduction_list=[]
     self.ui.reductionTable.setRowCount(0)
     self.ui.actionAutoYLimits.setChecked(True)
-    self.plot_refl()
+    if do_plot:
+      self.plot_refl()
 
   def removeRefList(self):
     '''
@@ -912,7 +1060,7 @@ as the ones already in the list:
     '''
     self.auto_change_active=True
     self.ui.directPixelOverwrite.setValue(self.ui.refXPos.value())
-    self.ui.dangle0Overwrite.setText("%g"%self.active_data[0].dangle0)
+    self.ui.dangle0Overwrite.setText(str(self.active_data[self.active_channel].dangle))
     self.auto_change_active=False
     self.overwriteChanged()
 
@@ -1085,6 +1233,8 @@ as the ones already in the list:
       yregion=(y_peak_region[0], y_peak_region[-1])
       self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
       self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
+    else:
+      self.y_bg=0.
     self.auto_change_active=False
 
   def visualizePeakfinding(self):
