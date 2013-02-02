@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Feb  1 18:12:31 2013
+# Created: Fri Feb  1 22:23:37 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -952,11 +952,14 @@ class Ui_MainWindow(object):
     self.actionClear_Overwrite.setObjectName(_fromUtf8("actionClear_Overwrite"))
     self.actionLoad_Extraction = QtGui.QAction(MainWindow)
     self.actionLoad_Extraction.setObjectName(_fromUtf8("actionLoad_Extraction"))
+    self.actionAutomatic_Extraction = QtGui.QAction(MainWindow)
+    self.actionAutomatic_Extraction.setObjectName(_fromUtf8("actionAutomatic_Extraction"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionNext_File)
     self.menuFile.addAction(self.actionPrevious_File)
     self.menuFile.addSeparator()
     self.menuFile.addAction(self.actionLoad_Extraction)
+    self.menuFile.addAction(self.actionAutomatic_Extraction)
     self.menuAdvanced.addAction(self.actionAutomaticXPeak)
     self.menuAdvanced.addAction(self.actionAutoYLimits)
     self.menuAdvanced.addAction(self.actionRefineX)
@@ -1037,6 +1040,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.loadExtraction)
     QtCore.QObject.connect(self.tthPhi, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.aboutDialog)
+    QtCore.QObject.connect(self.actionAutomatic_Extraction, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.automaticExtraction)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
@@ -1230,6 +1234,7 @@ class Ui_MainWindow(object):
     self.actionAutomaticXPeak.setToolTip(QtGui.QApplication.translate("MainWindow", "Find the reflected peak automatically when loading a new file", None, QtGui.QApplication.UnicodeUTF8))
     self.actionClear_Overwrite.setText(QtGui.QApplication.translate("MainWindow", "Clear Overwrite", None, QtGui.QApplication.UnicodeUTF8))
     self.actionLoad_Extraction.setText(QtGui.QApplication.translate("MainWindow", "Load Extraction...", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAutomatic_Extraction.setText(QtGui.QApplication.translate("MainWindow", "Automatic Extraction...", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import MPLWidget
 from persistentframe import PersistentFrame

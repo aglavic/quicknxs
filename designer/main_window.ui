@@ -999,6 +999,7 @@
     <addaction name="actionPrevious_File"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Extraction"/>
+    <addaction name="actionAutomatic_Extraction"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -2047,6 +2048,11 @@
     <string>Load Extraction...</string>
    </property>
   </action>
+  <action name="actionAutomatic_Extraction">
+   <property name="text">
+    <string>Automatic Extraction...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2122,7 +2128,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>263</y>
+     <y>294</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -2137,8 +2143,8 @@
    <slot>toggleHide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>332</y>
+     <x>133</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -2169,8 +2175,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>506</y>
+     <x>263</x>
+     <y>516</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -2201,8 +2207,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>437</y>
+     <x>263</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -2233,8 +2239,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>460</y>
+     <x>263</x>
+     <y>470</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -2265,8 +2271,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>483</y>
+     <x>263</x>
+     <y>493</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2489,8 +2495,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>264</x>
-     <y>529</y>
+     <x>263</x>
+     <y>539</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2569,8 +2575,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>357</y>
+     <x>133</x>
+     <y>371</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2729,8 +2735,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
-     <y>307</y>
+     <x>133</x>
+     <y>321</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2761,8 +2767,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>193</x>
-     <y>319</y>
+     <x>263</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2850,6 +2856,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAutomatic_Extraction</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>automaticExtraction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -2879,5 +2901,6 @@
   <slot>openByNumber()</slot>
   <slot>loadExtraction()</slot>
   <slot>aboutDialog()</slot>
+  <slot>automaticExtraction()</slot>
  </slots>
 </ui>

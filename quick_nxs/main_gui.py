@@ -14,6 +14,7 @@ from PyQt4 import QtGui, QtCore
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .error_handling import ErrorHandler
+from .autoreduction import AutoReductionDialog
 from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION, RAD_PER_PIX
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
@@ -37,6 +38,7 @@ class MainGUI(QtGui.QMainWindow):
   open_plots=[] #: to keep non modal dialogs open when their caller is destroyed
   channels=[] #: Available channels of the active dataset
   active_channel='x' #: Selected channel for the overview and projection plots
+  _control_down=False
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -123,8 +125,9 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
     self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
     self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
+    self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
 
-  def fileOpen(self, filename):
+  def fileOpen(self, filename, do_plot=True):
     '''
       Open a new datafile and plot the data.
     '''
@@ -151,8 +154,9 @@ class MainGUI(QtGui.QMainWindow):
 
     self.updateLabels()
     self.calcReflParams()
-    self.plotActiveTab()
-    self.plot_projections()
+    if do_plot:
+      self.plotActiveTab()
+      self.plot_projections()
     self.last_mtime=os.path.getmtime(filename)
     self.ui.statusbar.showMessage(u"%s loaded"%(filename), 1500)
 
@@ -429,12 +433,7 @@ class MainGUI(QtGui.QMainWindow):
     self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
     self.plot_refl()
 
-  def plot_refl(self, preserve_lim=False):
-    '''
-      Calculate and display the reflectivity from the current dataset
-      and any dataset stored. Intensities from direct beam
-      measurements can be used for normalization.
-    '''
+  def calc_refl(self):
     data=self.active_data[self.active_channel]
     if self.ui.directPixelOverwrite.value()>=0:
       dpix=self.ui.directPixelOverwrite.value()
@@ -467,10 +466,19 @@ class MainGUI(QtGui.QMainWindow):
                   )
 
     self.refl=Reflectivity(data, **options)
-    P0=len(self.refl.Q)-self.ui.rangeStart.value()
-    PN=self.ui.rangeEnd.value()
     self.ui.datasetAi.setText("%.3f"%(self.refl.ai*180./pi))
     self.ui.datasetROI.setText("%.4g"%(self.refl.Iraw.sum()))
+
+  def plot_refl(self, preserve_lim=False):
+    '''
+      Calculate and display the reflectivity from the current dataset
+      and any dataset stored. Intensities from direct beam
+      measurements can be used for normalization.
+    '''
+    self.calc_refl()
+    options=self.refl.options
+    P0=len(self.refl.Q)-self.ui.rangeStart.value()
+    PN=self.ui.rangeEnd.value()
 
     if preserve_lim:
       view=self.ui.refl.canvas.ax.axis()
@@ -498,15 +506,15 @@ class MainGUI(QtGui.QMainWindow):
         pass
       ymax=max(ymax, ynormed.max())
       self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
-                            yerr=self.refl.dR[PN:P0], label=number)
+                            yerr=self.refl.dR[PN:P0], label=options['number'])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'Q$_z$ [$\\AA^{-1}$]')
     else:
       ymin=min(self.refl.BG[self.refl.BG>0].min(), self.refl.I[self.refl.I>0].min())
       ymax=max(self.refl.BG.max(), self.refl.I.max())
-      self.ui.refl.errorbar(self.refl.lamda, self.refl.I, yerr=self.refl.dI, label='I-'+number)
-      self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+number)
+      self.ui.refl.errorbar(self.refl.lamda, self.refl.I, yerr=self.refl.dI, label='I-'+options['number'])
+      self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+options['number'])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'$\\lambda$ [$\\AA$]')
@@ -753,6 +761,36 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.actionAutoYLimits.setChecked(True)
     self.fileOpen(filename)
     self.ui.actionAutoYLimits.setChecked(False)
+
+  def automaticExtraction(self):
+    '''
+      Make use of all automatic algorithms to reduce a full set of data in one run.
+      The result is shown in the table and can be modified by the user.
+    '''
+    dia=AutoReductionDialog(self, BASE_FOLDER, self.active_folder)
+    result=dia.exec_()
+    if result:
+      norms, refs=result
+      self.clearRefList(do_plot=False)
+      for norm in norms:
+        # read normalization files
+        self.fileOpen(norm, do_plot=False)
+        self.calc_refl()
+        self.setNorm(do_plot=False, do_remove=False)
+      for ref in refs:
+        self.fileOpen(ref, do_plot=False)
+        self.calc_refl()
+        norm=self.getNorm()
+        region=where(norm.Rraw>=(norm.Rraw.max()*0.1))[0]
+        P0=len(norm.Rraw)-region[-1]
+        PN=region[0]
+        self.ui.rangeStart.setValue(P0)
+        self.ui.rangeEnd.setValue(PN)
+        self.normalizeTotalReflection()
+        self.addRefList()
+      self.ui.rangeStart.setValue(0)
+      self.ui.rangeEnd.setValue(0)
+      self.fileOpen(ref)
 
   def onPathChanged(self, base, folder):
     '''
@@ -1248,6 +1286,31 @@ as the ones already in the list:
       self.ui.refYPos.setValue(ypos)
       self.auto_change_active=False
       self.ui.refYWidth.setValue(yw)
+
+  def scaleOnPlot(self, event):
+    steps=event.step
+    xpos=event.xdata
+    if xpos is None:
+      return
+    for i, refl in enumerate(self.reduction_list):
+      if (refl.Q.min()<xpos) and (refl.Q.max()>xpos):
+        Ival=refl.options['scale']
+        if self._control_down:
+          Inew=Ival*10**(0.05*steps)
+        else:
+          Inew=Ival*10**(0.01*steps)
+        self.ui.reductionTable.setItem(i, 1,
+                                   QtGui.QTableWidgetItem("%.4f"%(Inew)))
+        return
+
+  def keyPressEvent(self, event):
+    if event.modifiers()==QtCore.Qt.ControlModifier:
+      self._control_down=True
+    else:
+      self._control_down=False
+
+  def keyReleaseEvent(self, event):
+    self._control_down=False
 
   def updateEventReadout(self, progress):
     '''
