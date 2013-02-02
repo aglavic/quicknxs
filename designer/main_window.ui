@@ -999,7 +999,6 @@
     <addaction name="actionPrevious_File"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Extraction"/>
-    <addaction name="actionAutomatic_Extraction"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -2845,22 +2844,6 @@
    <signal>activated()</signal>
    <receiver>MainWindow</receiver>
    <slot>aboutDialog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>435</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAutomatic_Extraction</sender>
-   <signal>activated()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>automaticExtraction()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

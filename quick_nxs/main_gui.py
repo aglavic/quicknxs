@@ -101,7 +101,10 @@ class MainGUI(QtGui.QMainWindow):
     if len(argv)>0:
       # delay action to be run within event loop, this allows the error handling to work
       if argv[0][-4:]=='.nxs':
-        self.trigger('fileOpen', argv[0])
+        if len(argv)==1:
+          self.trigger('fileOpen', argv[0])
+        else:
+          self.trigger('automaticExtraction', argv)
       if argv[0][-4:]=='.dat':
         self.trigger('loadExtraction', argv[0])
 
@@ -622,11 +625,15 @@ class MainGUI(QtGui.QMainWindow):
       filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
     else:
       filter_=u'Event Nexus (*event.nxs);;All (*.*)'
-    filename=QtGui.QFileDialog.getOpenFileName(self, u'Open NXS file...',
+    filenames=QtGui.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
                                                directory=self.active_folder,
                                                filter=filter_)
-    if filename!=u'':
-      self.fileOpen(unicode(filename))
+    if filenames:
+      filenames=map(unicode, filenames)
+      if len(filenames)==1:
+        self.fileOpen(filenames[0])
+      else:
+        self.automaticExtraction(filenames)
 
   def fileOpenList(self):
     '''
@@ -762,25 +769,26 @@ class MainGUI(QtGui.QMainWindow):
     self.fileOpen(filename)
     self.ui.actionAutoYLimits.setChecked(False)
 
-  def automaticExtraction(self):
+  def automaticExtraction(self, filenames):
     '''
       Make use of all automatic algorithms to reduce a full set of data in one run.
+      Normalization files are detected by the tth angle to the selected peak position.
+      
       The result is shown in the table and can be modified by the user.
     '''
-    dia=AutoReductionDialog(self, BASE_FOLDER, self.active_folder)
-    result=dia.exec_()
-    if result:
-      norms, refs=result
-      self.clearRefList(do_plot=False)
-      for norm in norms:
-        # read normalization files
-        self.fileOpen(norm, do_plot=False)
-        self.calc_refl()
+    self.clearRefList(do_plot=False)
+    for filename in sorted(filenames):
+      # read files data and extract reflectivity
+      self.fileOpen(filename, do_plot=False)
+      self.calc_refl()
+      if (self.refl.ai*180./pi)<0.05:
         self.setNorm(do_plot=False, do_remove=False)
-      for ref in refs:
-        self.fileOpen(ref, do_plot=False)
-        self.calc_refl()
+      else:
         norm=self.getNorm()
+        if norm is None:
+          QtGui.QMessageBox.warning(self, 'Autmatic extraction failes',
+            'There is a dataset without fitting normalization, automatic extraction stoped!')
+          break
         region=where(norm.Rraw>=(norm.Rraw.max()*0.1))[0]
         P0=len(norm.Rraw)-region[-1]
         PN=region[0]
@@ -788,9 +796,9 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.rangeEnd.setValue(PN)
         self.normalizeTotalReflection()
         self.addRefList()
-      self.ui.rangeStart.setValue(0)
-      self.ui.rangeEnd.setValue(0)
-      self.fileOpen(ref)
+    self.ui.rangeStart.setValue(0)
+    self.ui.rangeEnd.setValue(0)
+    self.fileOpen(filename)
 
   def onPathChanged(self, base, folder):
     '''

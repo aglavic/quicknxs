@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Feb  1 22:23:37 2013
+# Created: Sat Feb  2 09:24:06 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -959,7 +959,6 @@ class Ui_MainWindow(object):
     self.menuFile.addAction(self.actionPrevious_File)
     self.menuFile.addSeparator()
     self.menuFile.addAction(self.actionLoad_Extraction)
-    self.menuFile.addAction(self.actionAutomatic_Extraction)
     self.menuAdvanced.addAction(self.actionAutomaticXPeak)
     self.menuAdvanced.addAction(self.actionAutoYLimits)
     self.menuAdvanced.addAction(self.actionRefineX)
@@ -1040,7 +1039,6 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.loadExtraction)
     QtCore.QObject.connect(self.tthPhi, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.aboutDialog)
-    QtCore.QObject.connect(self.actionAutomatic_Extraction, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.automaticExtraction)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
