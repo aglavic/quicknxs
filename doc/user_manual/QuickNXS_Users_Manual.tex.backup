@@ -1,0 +1,8 @@
+\input{header.tex}
+
+\begin{document}
+  \include{titlepage}
+
+  \tableofcontents
+
+\end{document}

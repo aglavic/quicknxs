@@ -1,0 +1,29 @@
+\BOOKMARK [0][]{chapter.1}{Introduction and Background}{}% 1
+\BOOKMARK [1][-]{section.1.1}{The data recorded at Beamline 4A}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{What does QuickNXS data reduction do?}{chapter.1}% 3
+\BOOKMARK [0][]{chapter.2}{User Interface}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Overview}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.2}{Menu and toolbar actions}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.3}{Docked Windows}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.4}{Plots}{chapter.2}% 8
+\BOOKMARK [1][-]{section.2.5}{Data reduction table}{chapter.2}% 9
+\BOOKMARK [0][]{chapter.3}{Data Reduction}{}% 10
+\BOOKMARK [1][-]{section.3.1}{Open and view a dataset}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.2}{Go full-automatic: Reduction for dummies}{chapter.3}% 12
+\BOOKMARK [1][-]{section.3.3}{Quick start: Step-by-step standard reduction}{chapter.3}% 13
+\BOOKMARK [2][-]{subsection.3.3.1}{Step 1: Set wavelength normalization from direct beam}{section.3.3}% 14
+\BOOKMARK [2][-]{subsection.3.3.2}{Step 2: Define a suitable background- and y-region}{section.3.3}% 15
+\BOOKMARK [2][-]{subsection.3.3.3}{Step 3: Normalize total reflection plateau}{section.3.3}% 16
+\BOOKMARK [2][-]{subsection.3.3.4}{Step 4: Add additional datasets}{section.3.3}% 17
+\BOOKMARK [2][-]{subsection.3.3.5}{Step 5: Refine the dataset scaling and cutting}{section.3.3}% 18
+\BOOKMARK [2][-]{subsection.3.3.6}{Step 6: Export the result}{section.3.3}% 19
+\BOOKMARK [1][-]{section.3.4}{Examples}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.5}{Common problems to be aware of}{chapter.3}% 21
+\BOOKMARK [0][]{chapter.4}{Advanced Usage}{}% 22
+\BOOKMARK [1][-]{section.4.1}{GUI Customization}{chapter.4}% 23
+\BOOKMARK [1][-]{section.4.2}{Event mode data}{chapter.4}% 24
+\BOOKMARK [1][-]{section.4.3}{Re-reduction of already exported data}{chapter.4}% 25
+\BOOKMARK [1][-]{section.4.4}{Overwrite direct beam parameters}{chapter.4}% 26
+\BOOKMARK [1][-]{section.4.5}{Advanced background subtraction}{chapter.4}% 27
+\BOOKMARK [1][-]{section.4.6}{"Fan"-Reflectivity}{chapter.4}% 28
+\BOOKMARK [1][-]{section.4.7}{Off-specular scattering}{chapter.4}% 29

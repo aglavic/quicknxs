@@ -14,7 +14,6 @@ from PyQt4 import QtGui, QtCore
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .error_handling import ErrorHandler
-from .autoreduction import AutoReductionDialog
 from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION, RAD_PER_PIX
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
@@ -143,7 +142,7 @@ class MainGUI(QtGui.QMainWindow):
                 bins=self.ui.eventTofBins.value(),
                 callback=self.updateEventReadout)
     if data is None:
-      self.ui.currentChannel.setText(u'!!!NO DATA IN FILE %s!!!'%base)
+      self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
       return
     self.channels=data.keys()
 
@@ -324,8 +323,8 @@ class MainGUI(QtGui.QMainWindow):
       xtofnormed.append(d)
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
-    lamda=self.active_data[0].lamda
-    tof=self.active_data[0].tof
+    lamda=self.active_data[self.active_channel].lamda
+    tof=self.active_data[self.active_channel].tof
 
     plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
     for i in range(len(self.active_data), 4):
@@ -398,8 +397,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.plot(xproj, color='blue')[0]
     self.ui.x_project.set_xlabel(u'x [pix]')
     self.ui.x_project.set_ylabel(u'I$_{max}$')
-    self.ui.x_project.canvas.ax.set_xlim(xxlim)
-    self.ui.x_project.canvas.ax.set_ylim(xylim)
     xpos=Line2D([x_peak, x_peak], [xylim[0], xylim[1]], color='black')
     xleft=Line2D([x_peak-x_width/2., x_peak-x_width/2.], [xylim[0], xylim[1]], color='red')
     xright=Line2D([x_peak+x_width/2., x_peak+x_width/2.], [xylim[0], xylim[1]], color='red')
@@ -414,8 +411,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.y_project.plot(yproj, color='blue')[0]
     self.ui.y_project.set_xlabel(u'y [pix]')
     self.ui.y_project.set_ylabel(u'I$_{max}$')
-    self.ui.y_project.canvas.ax.set_xlim(yxlim)
-    self.ui.y_project.canvas.ax.set_ylim(yylim)
     yreg_left=Line2D([y_pos-y_width/2., y_pos-y_width/2.], [yylim[0], yylim[1]], color='red')
     yreg_right=Line2D([y_pos+y_width/2., y_pos+y_width/2.], [yylim[0], yylim[1]], color='red')
     self.ui.y_project.canvas.ax.add_line(yreg_left)
@@ -431,12 +426,19 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.x_project.set_yscale('linear')
       self.ui.y_project.set_yscale('linear')
+    self.ui.x_project.canvas.ax.set_xlim(*xxlim)
+    self.ui.x_project.canvas.ax.set_ylim(*xylim)
+    self.ui.y_project.canvas.ax.set_xlim(*yxlim)
+    self.ui.y_project.canvas.ax.set_ylim(*yylim)
+
     self.ui.x_project.draw()
     self.ui.y_project.draw()
     self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
     self.plot_refl()
 
   def calc_refl(self):
+    if self.active_data is None:
+      return False
     data=self.active_data[self.active_channel]
     if self.ui.directPixelOverwrite.value()>=0:
       dpix=self.ui.directPixelOverwrite.value()
@@ -446,10 +448,7 @@ class MainGUI(QtGui.QMainWindow):
       tth=data.dangle-float(self.ui.dangle0Overwrite.text())
     except ValueError:
       tth=None
-    try:
-      number=self.active_file.split('REF_M_', 1)[1].split('_', 1)[0]
-    except:
-      number='0'
+    number=str(self.active_data.number)
     options=dict(
                 x_pos=self.ui.refXPos.value(),
                 x_width=self.ui.refXWidth.value(),
@@ -469,8 +468,9 @@ class MainGUI(QtGui.QMainWindow):
                   )
 
     self.refl=Reflectivity(data, **options)
-    self.ui.datasetAi.setText("%.3f"%(self.refl.ai*180./pi))
-    self.ui.datasetROI.setText("%.4g"%(self.refl.Iraw.sum()))
+    self.ui.datasetAi.setText(u"%.3f°"%(self.refl.ai*180./pi))
+    self.ui.datasetROI.setText(u"%.4g"%(self.refl.Iraw.sum()))
+    return True
 
   def plot_refl(self, preserve_lim=False):
     '''
@@ -478,7 +478,8 @@ class MainGUI(QtGui.QMainWindow):
       and any dataset stored. Intensities from direct beam
       measurements can be used for normalization.
     '''
-    self.calc_refl()
+    if not self.calc_refl():
+      return
     options=self.refl.options
     P0=len(self.refl.Q)-self.ui.rangeStart.value()
     PN=self.ui.rangeEnd.value()
@@ -512,7 +513,7 @@ class MainGUI(QtGui.QMainWindow):
                             yerr=self.refl.dR[PN:P0], label=options['number'])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
-      self.ui.refl.set_xlabel(u'Q$_z$ [$\\AA^{-1}$]')
+      self.ui.refl.set_xlabel(u'Q$_z$ [Å⁻¹]')
     else:
       ymin=min(self.refl.BG[self.refl.BG>0].min(), self.refl.I[self.refl.I>0].min())
       ymax=max(self.refl.BG.max(), self.refl.I.max())
@@ -520,7 +521,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+options['number'])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
-      self.ui.refl.set_xlabel(u'$\\lambda$ [$\\AA$]')
+      self.ui.refl.set_xlabel(u'λ [Å]')
     if self.ui.logarithmic_y.isChecked():
       self.ui.refl.set_yscale('log')
     else:
@@ -578,18 +579,18 @@ class MainGUI(QtGui.QMainWindow):
       if self.ui.kizmkfzVSqz.isChecked():
         plot.canvas.ax.set_xlim([-0.03, 0.03])
         plot.canvas.ax.set_ylim([0., Qzmax])
-        plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [$\\AA^{-1}$]')
-        plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
+        plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [Å⁻¹]')
+        plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
       elif self.ui.qxVSqz.isChecked():
         plot.canvas.ax.set_xlim([-0.001, 0.001])
         plot.canvas.ax.set_ylim([0., Qzmax])
-        plot.set_xlabel(u'Q$_x$ [$\\AA^{-1}$]')
-        plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
+        plot.set_xlabel(u'Q$_x$ [Å⁻¹]')
+        plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
       else:
         plot.canvas.ax.set_xlim([0., Qzmax/2.])
         plot.canvas.ax.set_ylim([0., Qzmax/2.])
-        plot.set_xlabel(u'k$_{i,z}$ [$\\AA^{-1}$]')
-        plot.set_ylabel(u'k$_{f,z}$ [$\\AA^{-1}$]')
+        plot.set_xlabel(u'k$_{i,z}$ [Å⁻¹]')
+        plot.set_ylabel(u'k$_{f,z}$ [Å⁻¹]')
       plot.set_title(channel)
       if plot.cplot is not None:
         plot.cplot.set_clim([Imin, Imax])
@@ -786,16 +787,19 @@ class MainGUI(QtGui.QMainWindow):
       else:
         norm=self.getNorm()
         if norm is None:
-          QtGui.QMessageBox.warning(self, 'Autmatic extraction failes',
-            'There is a dataset without fitting normalization, automatic extraction stoped!')
+          QtGui.QMessageBox.warning(self, 'Automatic extraction failed',
+            'There is a dataset without fitting normalization, automatic extraction stopped!')
           break
+        # cut regions where the incident intensity drops below 10% of the maximum
         region=where(norm.Rraw>=(norm.Rraw.max()*0.1))[0]
         P0=len(norm.Rraw)-region[-1]
         PN=region[0]
         self.ui.rangeStart.setValue(P0)
         self.ui.rangeEnd.setValue(PN)
+        # normalize total reflection or stich together adjecent scans
         self.normalizeTotalReflection()
         self.addRefList()
+    # rest cut options and show the file, which was added last
     self.ui.rangeStart.setValue(0)
     self.ui.rangeEnd.setValue(0)
     self.fileOpen(filename)
@@ -840,21 +844,25 @@ class MainGUI(QtGui.QMainWindow):
     d=self.active_data[self.active_channel]
 
     try:
-      tth=u"%.3f (%.3f)"%(d.dangle-float(self.ui.dangle0Overwrite.text()), d.dangle-d.dangle0)
+      tth=u"%.3f° (%.3f°)"%(d.dangle-float(self.ui.dangle0Overwrite.text()), d.dangle-d.dangle0)
     except ValueError:
-      tth=u"%.3f"%(d.dangle-d.dangle0)
+      tth=u"%.3f°"%(d.dangle-d.dangle0)
     if self.ui.directPixelOverwrite.value()>=0:
       dpix=u"%.1f (%.1f)"%(self.ui.directPixelOverwrite.value(), d.dpix)
     else:
       dpix=u"%.1f"%d.dpix
-    self.ui.datasetName.setText(self.active_file)
+    self.ui.datasetLambda.setText(u"%.2f Å"%self.active_data.lambda_center)
     self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
     self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
-    self.ui.datasetDangle.setText(u"%.3f"%d.dangle)
+    self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
     self.ui.datasetTth.setText(tth)
-    self.ui.datasetSangle.setText(u"%.3f"%d.sangle)
+    self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
     self.ui.datasetDirectPixel.setText(dpix)
-    self.ui.currentChannel.setText('Current Channel:   (%s)'%self.active_channel)
+    self.ui.currentChannel.setText('<b>%s</b> (%s)&nbsp;&nbsp;&nbsp;Type: %s&nbsp;&nbsp;&nbsp;Current Channel: <b>%s</b>'%(
+                                                      self.active_data.number,
+                                                      self.active_data.experiment,
+                                                      self.active_data.measurement_type,
+                                                      self.active_channel))
 
   def toggleColorbars(self):
     if not self.auto_change_active:
@@ -912,9 +920,9 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.refl is None:
       return
-    if self.active_data.file_no not in self.ref_norm:
+    if str(self.active_data.number) not in self.ref_norm:
       lamda=self.active_data.lambda_center
-      number=self.active_data.file_no
+      number=str(self.active_data.number)
       opts=self.refl.options
       self.ref_norm[number]=self.refl
       idx=sorted(self.ref_norm.keys()).index(number)
@@ -929,7 +937,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normalizeTable.setItem(idx, 7, QtGui.QTableWidgetItem(str(opts['bg_width'])))
       self.ui.normalizationLabel.setText(",".join(map(str, sorted(self.ref_norm.keys()))))
     elif do_remove:
-      number=self.active_data.file_no
+      number=str(self.active_data.number)
       idx=sorted(self.ref_norm.keys()).index(number)
       del(self.ref_norm[number])
       self.ui.normalizeTable.removeRow(idx)
@@ -954,8 +962,8 @@ class MainGUI(QtGui.QMainWindow):
       return None
     elif len(fittings)==1:
       return fittings[0]
-    elif str(self.active_data.file_no) in indices:
-      return fittings[indices.index(str(self.active_data.file_no))]
+    elif str(self.active_data.number) in indices:
+      return fittings[indices.index(str(self.active_data.number))]
     else:
       result=QtGui.QInputDialog.getItem(self, 'Select Normalization',
                                         'There are more than one normalizations\nfor this wavelength available,\nplease select one:',
@@ -1301,7 +1309,7 @@ as the ones already in the list:
     if xpos is None:
       return
     for i, refl in enumerate(self.reduction_list):
-      if (refl.Q.min()<xpos) and (refl.Q.max()>xpos):
+      if (refl.Q[len(refl.Q)-refl.options['P0']]<xpos) and (refl.Q[refl.options['PN']]>xpos):
         Ival=refl.options['scale']
         if self._control_down:
           Inew=Ival*10**(0.05*steps)

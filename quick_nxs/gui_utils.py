@@ -442,11 +442,12 @@ class ReduceDialog(QDialog):
       dialog=QDialog()
       ui=UiPlot()
       ui.setupUi(dialog)
+      ui.plot.toolbar.coordinates=True
       for channel in self.channels:
         data=output_data[channel]
         ui.plot.errorbar(data[:, 0], data[:, 1], yerr=data[:, 2], label=channel)
       ui.plot.legend()
-      ui.plot.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
+      ui.plot.set_xlabel(u'Q$_z$ [Å⁻¹]')
       ui.plot.set_ylabel(u'R [a.u.]')
       ui.plot.set_yscale('log')
       ui.plot.set_title(ind_str+' - '+title)
@@ -456,17 +457,18 @@ class ReduceDialog(QDialog):
     else:
       if title=='OffSpec':
         x, y, z=4, 1, 5
-        xl=u'k$_{i,z}$-k$_{f,z}$ [Å$^{-1}$]'
-        yl=u'Q$_z$ [Å$^{-1}$]'
+        xl=u'k$_{i,z}$-k$_{f,z}$ [Å⁻¹]'
+        yl=u'Q$_z$ [Å⁻¹]'
       else:
         x, y, z=0, 1, 2
-        xl=u'%s [Å$^{-1}$]'%output_data['column_names'][0]
-        yl=u'%s [Å$^{-1}$]'%output_data['column_names'][1]
+        xl=u'%s [Å⁻¹]'%output_data['column_names'][0]
+        yl=u'%s [Å⁻¹]'%output_data['column_names'][1]
       for channel in self.channels:
         # plot the results in a new window
         dialog=QDialog()
         ui=UiPlot()
         ui.setupUi(dialog)
+        ui.plot.toolbar.coordinates=True
         for data in output_data[channel]:
           ui.plot.pcolormesh(data[:, :, x], data[:, :, y], maximum(1e-6, data[:, :, z]), log=True,
                              imin=1e-6, imax=None, label=channel, cmap='default')
@@ -535,8 +537,8 @@ class SmoothDialog(QDialog):
     if self.ui.kizmkfzVSqz.isChecked():
       plot.canvas.ax.set_xlim([-0.035, 0.035])
       plot.canvas.ax.set_ylim([0., Qzmax*1.01])
-      plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [$\\AA^{-1}$]')
-      plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
+      plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [Å⁻¹]')
+      plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
       x1=-0.03
       x2=0.03
       y1=0.
@@ -550,8 +552,8 @@ class SmoothDialog(QDialog):
     elif self.ui.qxVSqz.isChecked():
       plot.canvas.ax.set_xlim([-0.0005, 0.0005])
       plot.canvas.ax.set_ylim([0., Qzmax*1.01])
-      plot.set_xlabel(u'Q$_x$ [$\\AA^{-1}$]')
-      plot.set_ylabel(u'Q$_z$ [$\\AA^{-1}$]')
+      plot.set_xlabel(u'Q$_x$ [Å⁻¹]')
+      plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
       x1=-0.0002
       x2=0.0002
       y1=0.
@@ -565,8 +567,8 @@ class SmoothDialog(QDialog):
     else:
       plot.canvas.ax.set_xlim([0., Qzmax/2.*1.01])
       plot.canvas.ax.set_ylim([0., Qzmax/2.*1.01])
-      plot.set_xlabel(u'k$_{i,z}$ [$\\AA^{-1}$]')
-      plot.set_ylabel(u'k$_{f,z}$ [$\\AA^{-1}$]')
+      plot.set_xlabel(u'k$_{i,z}$ [Å⁻¹]')
+      plot.set_ylabel(u'k$_{f,z}$ [Å⁻¹]')
       x1=0.0
       x2=Qzmax/2.
       y1=0.

@@ -1,0 +1,44 @@
+\chapter{Data Reduction}
+\label{chap:data_reduction}
+
+\section{Open and view a dataset}
+
+
+\section{Go full-automatic: Reduction for dummies}
+  For good quality data the program supports a fully automatized mode, where all reduction parameters are automatically calculated.
+  This mode will be applied automatically when more than one dataset is selected at the File Open Dialog.
+  The direct beam measurement have to have lower numbers than the actual measurements or need to be set in advance for this method to work.
+  
+  The automatic algorithm performs the same steps as described in section \ref{sec:quick_start}, while trying to guess the best parameters.
+  The datasets are read one-by-one and, depending on the \tth-angle, they are either set as normalization or reflectivity data in the reduction list.
+  Here is an example how the interface might look after the algorithm has finished:
+  
+  
+  You can now scale individual datasets as described in \ref{sec:scaling}, if the stitching was not performed optimally.
+  When satisfied with the result, you can save the data as described in the export section \ref{sec:export}.
+  
+
+\section{Quick start: Step-by-step standard reduction}
+\label{sec:quick_start}
+  For most datasets the reduction is done very similar to the fully automatized method but with more control of the user.
+  Every dataset is examined by the operator to select the best extraction parameters.
+  
+  \subsection{Step 1: Set wavelength normalization from direct beam}
+  
+  \subsection{Step 2: Define a suitable background- and y-region}
+  
+  \subsection{Step 3: Normalize total reflection plateau}
+  
+  \subsection{Step 4: Add additional datasets}
+
+  \subsection{Step 5: Refine the dataset scaling and cutting}
+  \label{sec:scaling}
+  
+  \subsection{Step 6: Export the result}
+  \label{sec:export}
+  
+  
+\section{Examples}
+  This section will give three example datasets, which you can use to try the reduction yourself and compare the result with the images in this manual.
+  
+\section{Common problems to be aware of}

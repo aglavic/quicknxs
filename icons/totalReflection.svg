@@ -28,14 +28,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.2"
-     inkscape:cx="11.699949"
+     inkscape:cx="-3.2554081"
      inkscape:cy="24.689844"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1012"
-     inkscape:window-x="1676"
+     inkscape:window-width="1816"
+     inkscape:window-height="1005"
+     inkscape:window-x="100"
      inkscape:window-y="-4"
      inkscape:window-maximized="1">
     <inkscape:grid
@@ -99,5 +99,23 @@
        inkscape:connector-curvature="0"
        transform="translate(0,1004.3622)"
        sodipodi:nodetypes="cc" />
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/totalReflection.png"
+       sodipodi:nodetypes="czzzzzzc"
+       inkscape:connector-curvature="0"
+       id="path2990"
+       d="m 20,1027.3622 c 1.536423,0.8323 3.509862,-1.4512 5,-1 1.490138,0.4512 2.026082,1.3448 3,3 0.973918,1.6552 0.117399,5.81 2,7 1.882601,1.19 4.421237,-1.3389 6,-1 1.578763,0.3389 2.150163,1.1502 3,2 0.849837,0.8498 0.69882,2.6545 2,3 1.30118,0.3455 4,-2 4,-2"
+       style="fill:none;stroke:#008000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       d="m 36,1035.3622 c 1.578763,0.3389 2.150163,1.1502 3,2 0.849837,0.8498 0.69882,2.6545 2,3 1.30118,0.3455 4,-2 4,-2"
+       id="path3760"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="czzc"
+       inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/totalReflection.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

@@ -136,37 +136,42 @@ class NXSData(object):
     pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
 
     # select the type of measurement that has been used
-    if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]:
+    if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
       self.measurement_type='Polarization Analysis'
       mapping=MAPPING_FULLPOL
-    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]:
+    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
       self.measurement_type='Polarized'
       mapping=MAPPING_HALFPOL
-    elif len(channels)==3:
+    elif nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None: # is E-field cart connected
       self.measurement_type='Electric Field'
       mapping=MAPPING_EFIELD
-    else:
+    elif len(channels)==1:
       self.measurement_type='Unpolarized'
       mapping=MAPPING_UNPOL
+    else:
+      self.measurement_type='Unknown'
+      mapping={}
 
+    progress=0.1
     if self._options['callback']:
-      progress=1./(len(channels)+1)
       self._options['callback'](progress)
     self._read_times.append(time()-start)
-    i=2
+    i=1
     for dest, channel in mapping:
       if channel not in channels:
         continue
       raw_data=nxs[channel]
       if filename.endswith('event.nxs'):
-        data=MRDataset.from_event(raw_data, self._options)
+        data=MRDataset.from_event(raw_data, self._options,
+                                  callback=self._options['callback'], callback_offset=progress,
+                                  callback_scaling=1./len(channels))
       else:
         data=MRDataset.from_histogram(raw_data, self._options)
       self._channel_data.append(data)
       self._channel_names.append(dest)
       self._channel_origin.append(channel)
+      progress=float(i)/len(channels)
       if self._options['callback']:
-        progress=float(i)/(len(channels)+1)
         self._options['callback'](progress)
       i+=1
       self._read_times.append(time()-self._read_times[-1]-start)
@@ -213,16 +218,27 @@ class NXSData(object):
     for item in self.values():
       yield item
 
-  # easy access properties
+  # easy access properties common to all datasets
 
   @property
   def lambda_center(self): return self[0].lambda_center
   @property
-  def file_no(self):
-    try:
-      return int(self.origin.split('REF_M_', 1)[1].split('_', 1)[0])
-    except:
-      return 0
+  def number(self): return self[0].number
+  @property
+  def experiment(self): return self[0].experiment
+  @property
+  def merge_warnings(self): return self[0].merge_warnings
+  @property
+  def beam_width(self): return self[0].beam_width
+  @property
+  def dpix(self): return self[0].dpix
+  @property
+  def dangle(self): return self[0].dangle
+  @property
+  def dangle0(self): return self[0].dangle0
+  @property
+  def sangle(self): return self[0].sangle
+
 
 class MRDataset(object):
   '''
@@ -244,6 +260,9 @@ class MRDataset(object):
   data=None
   logs={}
   log_units={}
+  experiment=''
+  number=0
+  merge_warnings=''
   _Q=None
   _I=None
   _dI=None
@@ -264,15 +283,7 @@ class MRDataset(object):
     output.read_options=read_options
     output._collect_info(data)
 
-    output.proton_charge=data['proton_charge'].value[0]
-    output.total_counts=data['total_counts'].value[0]
     output.tof_edges=data['bank1/time_of_flight'].value
-    output.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    output.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
-    output.sangle=data['sample/SANGLE/value'].value[0]
-    output.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-    output.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    output.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
     # the data arrays
     output.data=data['bank1/data'].value.astype(float) # 3D dataset
     output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
@@ -280,7 +291,8 @@ class MRDataset(object):
     return output
 
   @classmethod
-  def from_event(cls, data, read_options):
+  def from_event(cls, data, read_options,
+                 callback=None, callback_offset=0., callback_scaling=1.):
     '''
     Load data from a Nexus file containing event information.
     Creates 3D histogram with ither linear or 1/t spaced 
@@ -292,15 +304,6 @@ class MRDataset(object):
     bin_type=read_options['bin_type']
     bins=read_options['bins']
     output._collect_info(data)
-
-    output.proton_charge=data['proton_charge'].value[0]
-    output.total_counts=data['total_counts'].value[0]
-    output.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    output.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
-    output.sangle=data['sample/SANGLE/value'].value[0]
-    output.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-    output.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    output.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
 
     # Histogram the data
     # create pixel map
@@ -325,9 +328,22 @@ class MRDataset(object):
     else:
       raise ValueError, 'Unknown bin type %s'%bin_type
 
-    # create the 3D binning
-    Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
-                       bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+    if callback is not None:
+      # create the 3D binning
+      Ixyt, D=histogramdd(vstack([tof_x[:5e5], tof_y[:5e5], tof_time[:5e5]]).transpose(),
+                         bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+      steps=int(tof_x.shape[0]/5e5)
+      callback(callback_offset+callback_scaling*1/(steps+1))
+      for i in range(1, steps+1):
+        Ixyti, D=histogramdd(vstack([tof_x[5e5*i:5e5*(i+1)], tof_y[5e5*i:5e5*(i+1)],
+                                     tof_time[5e5*i:5e5*(i+1)]]).transpose(),
+                           bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+        Ixyt+=Ixyti
+        callback(callback_offset+callback_scaling*(i+1)/(steps+1))
+    else:
+      # create the 3D binning
+      Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
+                         bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
     # create projections for the 2D datasets
     Ixy=Ixyt.sum(axis=2)
     Ixt=Ixyt.sum(axis=1)
@@ -351,6 +367,19 @@ class MRDataset(object):
           self.log_units[motor]=u''
       except:
         continue
+    self.proton_charge=data['proton_charge'].value[0]
+    self.total_counts=data['total_counts'].value[0]
+    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
+    self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
+    self.sangle=data['sample/SANGLE/value'].value[0]
+    self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
+    self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
+    self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
+
+    self.experiment=str(data['experiment_identifier'].value[0])
+    self.number=int(data['run_number'].value[0])
+    self.merge_warnings
+    self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
 
   def __repr__(self):
     return "<%s '%s' counts: %i>"%(self.__class__.__name__,

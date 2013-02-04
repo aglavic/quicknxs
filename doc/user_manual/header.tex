@@ -1,0 +1,77 @@
+\documentclass[
+            letterpaper,
+            pdftex,  % use PDFTex
+            oneside,
+            parskip=half,%        European paragraphs with spaces in between
+%             headsepline,%         Linie nach Kopfzeile
+%             footsepline,%         Linie vor Fusszeile
+            numbers=noenddot,%    Remove dot aver figure numberings
+            pagesize=pdftex,%     Write pagesize in pdf                          
+            12pt                          
+                          ]{scrbook}
+\usepackage[utf8x]{inputenc}
+
+\usepackage[
+        bookmarks,
+        hyperfootnotes=false,  
+        bookmarksopen,              
+        bookmarksopenlevel=1,       
+        pdfstartpage=3,            
+        pdfstartview=FitH,  
+        pdftitle={QuickNXS Users Manual},
+        pdfauthor={Artur Gregor Glavic},
+        pdfsubject={},
+        pdfkeywords={ },
+        colorlinks=true,   
+        linkcolor=black,
+        urlcolor=black,
+        citecolor=black,
+        breaklinks=true             
+        ]{hyperref}
+    \pdfminorversion=5 %>4 für objcompress
+    \pdfcompresslevel=1 %0-9 (Alles größer als 1 hat nur minimalen Einfluss, 0 etwa 3,5 mal so groß.)
+    \pdfobjcompresslevel=0 %0-3 (Bringt auch nur bei bestimmten Grafiken was, hier nur etwa 5%)
+
+\usepackage{mathptmx}            % Times + passende Mathefonts
+\usepackage{helvet}  % skalierte Helvetica als \sfdefault
+
+\usepackage[T1]{fontenc}
+\input{chartable.tex}
+\usepackage[pdftex]{graphicx}
+\usepackage{wrapfig}
+\usepackage[labelformat=parens,labelsep=space,listofformat=subsimple]{subfig}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{upgreek} % Grichische Buchstaben in standard textstil
+\usepackage{units} % Nicefaction etc.
+
+
+% some new commands for simplification
+\usepackage{xspace}
+\newcommand{\outmath}[1]{\ifmmode\text{#1}\else{#1}\fi} % If in math mode use normal text
+\def\unitspacer{\,} % Defines how units are spaced to the adjacent values
+% Units
+\def\m{\unitspacer{}\outmath{m}\xspace}                     % m
+\def\cm{\unitspacer{}\outmath{cm}\xspace}                     % cm
+\def\A{\unitspacer{}\outmath{\AA{}}\xspace}                       % Angstrom
+\def\rA{\unitspacer{}\ensuremath{\text{\AA}^\text{-1}}\xspace}    % Angstrom^{-1}
+\def\mus{\unitspacer{}\ensuremath{\upmu{}}\outmath{s}\xspace} % µs with upright µ-symbol for the unit
+
+% Constants
+\def\muB{\ensuremath{\mu_B}\xspace} % Bohr magnetron
+\def\mun{\ensuremath{\vec{\mu}_n}\xspace} %Neutron magnetic moment
+\def\mn{\ensuremath{m_n}\xspace} %Neutron mass
+
+% Misc
+\def\tth{\ensuremath{2\theta}\xspace}
+\def\Q{\ensuremath{\vec{Q}}\xspace}
+\def\Qx{\ensuremath{Q_x}\xspace}
+\def\Qy{\ensuremath{Q_y}\xspace}
+\def\Qz{\ensuremath{Q_z}\xspace}
+\def\ki{\ensuremath{\vec{k}_i}\xspace}
+\def\kf{\ensuremath{\vec{k}_f}\xspace}
+\def\kiz{\ensuremath{k_{i,z}}\xspace}
+\def\kfz{\ensuremath{k_{f,z}}\xspace}
+
+

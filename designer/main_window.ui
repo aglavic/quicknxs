@@ -30,15 +30,24 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
       <widget class="QWidget" name="Overview_Tab">
        <attribute name="title">
         <string>Overview</string>
        </attribute>
+       <attribute name="toolTip">
+        <string>Show the active dataset and information about the datasets selected for normalization and reduction</string>
+       </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_13">
         <item>
          <widget class="QLabel" name="currentChannel">
+          <property name="toolTip">
+           <string>Displays information about the dataset selected at the moment</string>
+          </property>
           <property name="text">
-           <string>Current Channel: +</string>
+           <string>Dataset information will be displayed here after loading</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -95,252 +104,360 @@
           <widget class="QWidget" name="widget_3" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_11">
             <item>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>100</height>
-               </size>
+             <widget class="QFrame" name="frame">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
               </property>
-              <property name="title">
-               <string>Active Dataset Information</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_4">
-               <item row="2" column="3">
-                <widget class="QLabel" name="label_12">
-                 <property name="text">
-                  <string>SANGLE</string>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <property name="margin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QFrame" name="frame_5">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
                  </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
                  </property>
+                 <layout class="QGridLayout" name="gridLayout_4">
+                  <property name="margin">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_17">
+                    <property name="toolTip">
+                     <string>Direct pixel value read from file, if overwrite is active, the read value is in brackets</string>
+                    </property>
+                    <property name="text">
+                     <string>Direct Pixel</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_11">
+                    <property name="toolTip">
+                     <string>Detector Angle value read from file</string>
+                    </property>
+                    <property name="text">
+                     <string>DANGLE</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_15">
+                    <property name="toolTip">
+                     <string>Two theta value calculated from file, if DANGLE0 overwrite is active, the read value is in brackets</string>
+                    </property>
+                    <property name="text">
+                     <string>2Θ</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="datasetDirectPixel">
+                    <property name="toolTip">
+                     <string>Direct pixel value read from file, if overwrite is active, the read value is in brackets</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="datasetDangle">
+                    <property name="toolTip">
+                     <string>Detector Angle value read from file</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="datasetTth">
+                    <property name="toolTip">
+                     <string>Two theta value calculated from file, if DANGLE0 overwrite is active, the read value is in brackets</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
-               <item row="3" column="2">
-                <widget class="QLabel" name="datasetTth">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
+               <item>
+                <widget class="QWidget" name="widget_8" native="true">
+                 <layout class="QGridLayout" name="gridLayout_11">
+                  <property name="margin">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_9">
+                    <property name="toolTip">
+                     <string>Read from file</string>
+                    </property>
+                    <property name="text">
+                     <string>Proton Charge</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="datasetPCharge">
+                    <property name="toolTip">
+                     <string>Read from file</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" colspan="2">
+                   <widget class="QFrame" name="frame_6">
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_9">
+                     <property name="margin">
+                      <number>0</number>
+                     </property>
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_12">
+                       <property name="toolTip">
+                        <string>Sample angle read from file</string>
+                       </property>
+                       <property name="text">
+                        <string>SANGLE</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                       <property name="textInteractionFlags">
+                        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QLabel" name="datasetSangle">
+                       <property name="toolTip">
+                        <string>Sample angle read from file</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="margin">
+                        <number>2</number>
+                       </property>
+                       <property name="textInteractionFlags">
+                        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_13">
+                       <property name="toolTip">
+                        <string>Sample angle calculated from 2Θ and X-center position</string>
+                       </property>
+                       <property name="text">
+                        <string>αi-calc</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
+                       <property name="textInteractionFlags">
+                        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QLabel" name="datasetAi">
+                       <property name="toolTip">
+                        <string>Sample angle calculated from 2Θ and X-center position</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="margin">
+                        <number>2</number>
+                       </property>
+                       <property name="textInteractionFlags">
+                        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
-               <item row="3" column="4">
-                <widget class="QLabel" name="datasetAi">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_11">
-                 <property name="text">
-                  <string>DANGLE</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="6">
-                <widget class="QLabel" name="datasetTotCounts">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="5">
-                <widget class="QLabel" name="label_10">
-                 <property name="text">
-                  <string>Total Counts</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="6">
-                <widget class="QLabel" name="datasetROI">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="datasetDangle">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="4">
-                <widget class="QLabel" name="datasetPCharge">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="text">
-                  <string>Name</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="5">
-                <widget class="QLabel" name="label_14">
-                 <property name="text">
-                  <string>Counts ROI</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="datasetName">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="4">
-                <widget class="QLabel" name="datasetSangle">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="margin">
-                  <number>2</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="3">
-                <widget class="QLabel" name="label_9">
-                 <property name="text">
-                  <string>Proton Charge</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QLabel" name="label_13">
-                 <property name="text">
-                  <string>αi-calc</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_15">
-                 <property name="text">
-                  <string>2Θ</string>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="5">
-                <widget class="QLabel" name="label_17">
-                 <property name="text">
-                  <string>Direct Pixel</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="6">
-                <widget class="QLabel" name="datasetDirectPixel">
-                 <property name="text">
-                  <string/>
-                 </property>
+               <item>
+                <widget class="QWidget" name="widget_7" native="true">
+                 <layout class="QGridLayout" name="gridLayout_10">
+                  <property name="margin">
+                   <number>0</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_8">
+                    <property name="toolTip">
+                     <string>Read from file</string>
+                    </property>
+                    <property name="text">
+                     <string>λ-Center</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="datasetLambda">
+                    <property name="toolTip">
+                     <string>Read from file</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_10">
+                    <property name="toolTip">
+                     <string>Read from file</string>
+                    </property>
+                    <property name="text">
+                     <string>Total Counts</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="datasetTotCounts">
+                    <property name="toolTip">
+                     <string>Read from file</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_14">
+                    <property name="toolTip">
+                     <string>Counts in the window selected for X and Y</string>
+                    </property>
+                    <property name="text">
+                     <string>Counts ROI</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="datasetROI">
+                    <property name="toolTip">
+                     <string>Counts in the window selected for X and Y</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="margin">
+                     <number>2</number>
+                    </property>
+                    <property name="textInteractionFlags">
+                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string>Data Reduction</string>
+             <widget class="QFrame" name="frame_2">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_12">
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_7">
                  <item>
                   <widget class="QLabel" name="label_7">
+                   <property name="toolTip">
+                    <string>A list of files selected fro normalization</string>
+                   </property>
                    <property name="text">
                     <string>Normalizations:</string>
                    </property>
@@ -353,6 +470,9 @@
                      <horstretch>2</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>A list of files selected fro normalization</string>
                    </property>
                    <property name="text">
                     <string>Unset</string>
@@ -369,6 +489,9 @@
                      <horstretch>1</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>Select the channel for the overview. If channel is not in file, the first will be used.</string>
                    </property>
                    <item>
                     <property name="text">
@@ -402,6 +525,9 @@
                  <widget class="QWidget" name="tab">
                   <attribute name="title">
                    <string>Data</string>
+                  </attribute>
+                  <attribute name="toolTip">
+                   <string>A list of datasets that will be used for reduction</string>
                   </attribute>
                   <layout class="QVBoxLayout" name="verticalLayout_16">
                    <item>
@@ -457,7 +583,7 @@
                        <string>P0</string>
                       </property>
                       <property name="toolTip">
-                       <string>First Point</string>
+                       <string>Points cut from low Q side</string>
                       </property>
                      </column>
                      <column>
@@ -465,7 +591,7 @@
                        <string>PN</string>
                       </property>
                       <property name="toolTip">
-                       <string>Last Point</string>
+                       <string>Points cut from high Q side</string>
                       </property>
                      </column>
                      <column>
@@ -536,6 +662,9 @@
                       <property name="text">
                        <string>Norm</string>
                       </property>
+                      <property name="toolTip">
+                       <string>The normalization file used for this dataset</string>
+                      </property>
                      </column>
                     </widget>
                    </item>
@@ -544,6 +673,9 @@
                  <widget class="QWidget" name="tab_2">
                   <attribute name="title">
                    <string>Normalization</string>
+                  </attribute>
+                  <attribute name="toolTip">
+                   <string>A list of datasets available for wavelength normalization</string>
                   </attribute>
                   <layout class="QVBoxLayout" name="verticalLayout_17">
                    <item>
@@ -567,40 +699,64 @@
                       <property name="text">
                        <string>File No.</string>
                       </property>
+                      <property name="toolTip">
+                       <string>Dataset number</string>
+                      </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>λ</string>
+                      </property>
+                      <property name="toolTip">
+                       <string>Central Wavelength</string>
                       </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>x0</string>
                       </property>
+                      <property name="toolTip">
+                       <string>X-Center of extraction window</string>
+                      </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>xw</string>
+                      </property>
+                      <property name="toolTip">
+                       <string>X-Width of extraction window</string>
                       </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>y0</string>
                       </property>
+                      <property name="toolTip">
+                       <string>Y-Center of extraction window</string>
+                      </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>yw</string>
+                      </property>
+                      <property name="toolTip">
+                       <string>Y-Width of extraction window</string>
                       </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>bg0</string>
                       </property>
+                      <property name="toolTip">
+                       <string>Background X-Center</string>
+                      </property>
                      </column>
                      <column>
                       <property name="text">
                        <string>bgw</string>
+                      </property>
+                      <property name="toolTip">
+                       <string>Background X-width</string>
                       </property>
                      </column>
                     </widget>
@@ -632,6 +788,9 @@
       <widget class="QWidget" name="XY_Tab">
        <attribute name="title">
         <string>X-Y</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>X-Y intensity maps for all channels in this file</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
@@ -716,6 +875,9 @@
        <attribute name="title">
         <string>X-ToF</string>
        </attribute>
+       <attribute name="toolTip">
+        <string>X-ToF intensity maps for all channels in this file</string>
+       </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
          <widget class="PersistentFrame" name="frame_xtof_pp">
@@ -770,6 +932,9 @@
       <widget class="QWidget" name="OffSpec_Tab">
        <attribute name="title">
         <string>Off-Specular</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Off-Specular scattering intensity preview for all files in the reduction list</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="2" column="1">
@@ -928,6 +1093,9 @@
        <attribute name="title">
         <string>DAS Logs</string>
        </attribute>
+       <attribute name="toolTip">
+        <string>Motor and parameter log read from the file</string>
+       </attribute>
        <layout class="QGridLayout" name="gridLayout_8">
         <item row="0" column="0">
          <widget class="QGroupBox" name="daslogBox">
@@ -1018,7 +1186,21 @@
     <addaction name="actionManual"/>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuReduction">
+    <property name="title">
+     <string>Reduction</string>
+    </property>
+    <addaction name="actionNorm"/>
+    <addaction name="actionNormalizeScaling"/>
+    <addaction name="separator"/>
+    <addaction name="actionAddPlot"/>
+    <addaction name="actionRemove"/>
+    <addaction name="actionClear"/>
+    <addaction name="separator"/>
+    <addaction name="actionReduce"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuReduction"/>
    <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -1027,7 +1209,7 @@
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
      <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
+     <verstretch>1</verstretch>
     </sizepolicy>
    </property>
    <property name="minimumSize">
@@ -1069,18 +1251,32 @@
       <layout class="QHBoxLayout" name="horizontalLayout_12">
        <item>
         <widget class="QLabel" name="label_28">
+         <property name="toolTip">
+          <string>Search for a file by measurement number</string>
+         </property>
          <property name="text">
           <string>Open Number:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="numberSearchEntry"/>
+        <widget class="QLineEdit" name="numberSearchEntry">
+         <property name="toolTip">
+          <string>Search for a file by measurement number</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="QListWidget" name="file_list"/>
+      <widget class="QListWidget" name="file_list">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -1093,7 +1289,7 @@
     </sizepolicy>
    </property>
    <property name="windowTitle">
-    <string>PlotOptions</string>
+    <string>Plot Options</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -1102,6 +1298,9 @@
     <layout class="QGridLayout" name="gridLayout_6">
      <item row="3" column="0">
       <widget class="QCheckBox" name="hide_plots">
+       <property name="toolTip">
+        <string>Hide empty channels in the X-Y and X-ToF tabs to make more space for the measured channels</string>
+       </property>
        <property name="text">
         <string>Hide Empty</string>
        </property>
@@ -1109,6 +1308,9 @@
      </item>
      <item row="0" column="0">
       <widget class="QCheckBox" name="show_colorbars">
+       <property name="toolTip">
+        <string>Show a colorbar for the map plots</string>
+       </property>
        <property name="text">
         <string>Colorbars</string>
        </property>
@@ -1116,6 +1318,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QCheckBox" name="logarithmic_colorscale">
+       <property name="toolTip">
+        <string>Logarithmic colorscale in the maps</string>
+       </property>
        <property name="text">
         <string>Log Colorscale</string>
        </property>
@@ -1126,6 +1331,9 @@
      </item>
      <item row="4" column="0">
       <widget class="QCheckBox" name="normalizeXTof">
+       <property name="toolTip">
+        <string>Normalize the intensity in the X-ToF maps by the incident beam measurement</string>
+       </property>
        <property name="text">
         <string>Norm. X-ToF/λ</string>
        </property>
@@ -1133,6 +1341,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QCheckBox" name="logarithmic_y">
+       <property name="toolTip">
+        <string>Logarithmic Y-scale for the projections and reflectivity</string>
+       </property>
        <property name="text">
         <string>Log Y for lines</string>
        </property>
@@ -1143,6 +1354,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="color_selector">
+       <property name="toolTip">
+        <string>Select the color scale from a list of presets</string>
+       </property>
        <item>
         <property name="text">
          <string>default</string>
@@ -1182,6 +1396,9 @@
      </item>
      <item row="3" column="1">
       <widget class="QCheckBox" name="xLamda">
+       <property name="toolTip">
+        <string>Replace ToF axis with wavelength for the maps</string>
+       </property>
        <property name="text">
         <string>X-λ Maps</string>
        </property>
@@ -1189,6 +1406,9 @@
      </item>
      <item row="4" column="1">
       <widget class="QCheckBox" name="tthPhi">
+       <property name="toolTip">
+        <string>Replace X and Y axes by the according scattering angle for the maps</string>
+       </property>
        <property name="text">
         <string>2θ-φ Maps</string>
        </property>
@@ -1329,6 +1549,9 @@
      </property>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
+       <property name="toolTip">
+        <string>Y Pixel Window</string>
+       </property>
        <property name="text">
         <string>Y</string>
        </property>
@@ -1336,6 +1559,9 @@
      </item>
      <item row="7" column="0" colspan="2">
       <widget class="QLabel" name="label_5">
+       <property name="toolTip">
+        <string>Scaling factor for the reflectivity in powers of 10</string>
+       </property>
        <property name="text">
         <string>Scale 10^</string>
        </property>
@@ -1346,6 +1572,9 @@
      </item>
      <item row="2" column="2">
       <widget class="QDoubleSpinBox" name="refYWidth">
+       <property name="toolTip">
+        <string>Width of region used for extraction</string>
+       </property>
        <property name="decimals">
         <number>1</number>
        </property>
@@ -1362,6 +1591,9 @@
      </item>
      <item row="4" column="2">
       <widget class="QDoubleSpinBox" name="refXWidth">
+       <property name="toolTip">
+        <string>Width of region used for extraction</string>
+       </property>
        <property name="decimals">
         <number>1</number>
        </property>
@@ -1375,6 +1607,9 @@
      </item>
      <item row="7" column="2">
       <widget class="QDoubleSpinBox" name="refScale">
+       <property name="toolTip">
+        <string>Scaling factor for the reflectivity in powers of 10</string>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
@@ -1440,6 +1675,9 @@
      </item>
      <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="refXPos">
+       <property name="toolTip">
+        <string>Center of region used for extraction</string>
+       </property>
        <property name="decimals">
         <number>1</number>
        </property>
@@ -1450,6 +1688,9 @@
      </item>
      <item row="5" column="1">
       <widget class="QDoubleSpinBox" name="bgCenter">
+       <property name="toolTip">
+        <string>Center of region used for extraction</string>
+       </property>
        <property name="decimals">
         <number>1</number>
        </property>
@@ -1460,6 +1701,9 @@
      </item>
      <item row="5" column="2">
       <widget class="QDoubleSpinBox" name="bgWidth">
+       <property name="toolTip">
+        <string>Width of region used for extraction</string>
+       </property>
        <property name="decimals">
         <number>1</number>
        </property>
@@ -1470,6 +1714,9 @@
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_6">
+       <property name="toolTip">
+        <string>Background X Pixel Window</string>
+       </property>
        <property name="text">
         <string>BG X</string>
        </property>
@@ -1484,6 +1731,9 @@
      </item>
      <item row="8" column="1">
       <widget class="QSpinBox" name="rangeStart">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove points from the extracted intensity on the low Q side. &lt;/p&gt;&lt;p&gt;Uses the full ToF range available in the file, so it is possible it does not have any effect for lower values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="maximum">
         <number>200</number>
        </property>
@@ -1491,6 +1741,9 @@
      </item>
      <item row="8" column="2">
       <widget class="QSpinBox" name="rangeEnd">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove points from the extracted intensity on the high Q side. &lt;/p&gt;&lt;p&gt;Uses the full ToF range available in the file, so it is possible it does not have any effect for lower values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="maximum">
         <number>200</number>
        </property>
@@ -1501,6 +1754,9 @@
      </item>
      <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="refYPos">
+       <property name="toolTip">
+        <string>Center of region used for extraction</string>
+       </property>
        <property name="decimals">
         <number>1</number>
        </property>
@@ -1511,6 +1767,9 @@
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_4">
+       <property name="toolTip">
+        <string>X Pixel Window</string>
+       </property>
        <property name="text">
         <string>X</string>
        </property>
@@ -1553,6 +1812,9 @@
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_18">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overwrite the direct pixel value, read from the file.&lt;/p&gt;&lt;p&gt;Usefull if the wrong values have been written during the measurement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Direct Pixel</string>
        </property>
@@ -1565,6 +1827,9 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overwrite the direct pixel value, read from the file.&lt;/p&gt;&lt;p&gt;Usefull if the wrong values have been written during the measurement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="decimals">
         <number>1</number>
@@ -1585,6 +1850,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_19">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overwrite the DANGLE0 value from the datafile.&lt;/p&gt;&lt;p&gt;Useful if the values have not been set properly during the measurement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Dangle0</string>
        </property>
@@ -1598,6 +1866,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overwrite the DANGLE0 value from the datafile.&lt;/p&gt;&lt;p&gt;Useful if the values have not been set properly during the measurement.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>None</string>
        </property>
@@ -1605,6 +1876,9 @@
      </item>
      <item row="2" column="0" colspan="2">
       <widget class="QCheckBox" name="fanReflectivity">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Evaluate Q for each X line of the reflectivity and combine these measurements.&lt;/p&gt;&lt;p&gt;Can be used with a large X-width of e.g. 15 for samples scattering to a large 2θ area.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>Extract from &quot;Fan&quot;-Reflection</string>
        </property>
@@ -1773,6 +2047,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_10">
        <item>
         <widget class="QLabel" name="label_27">
+         <property name="toolTip">
+          <string>The number of bins for the Time of Flight channels</string>
+         </property>
          <property name="text">
           <string>Bins</string>
          </property>
@@ -1780,6 +2057,9 @@
        </item>
        <item>
         <widget class="QSpinBox" name="eventTofBins">
+         <property name="toolTip">
+          <string>The number of bins for the Time of Flight channels</string>
+         </property>
          <property name="minimum">
           <number>5</number>
          </property>
@@ -1798,6 +2078,9 @@
      </item>
      <item>
       <widget class="QComboBox" name="eventBinMode">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How to bin the time of flight channels:&lt;/p&gt;&lt;p&gt;  Linear: Equally spaced in ToF&lt;/p&gt;&lt;p&gt;  1/x: Equally spaced in Q&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <item>
         <property name="text">
          <string>Linear</string>
@@ -1824,6 +2107,9 @@
     <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
       <widget class="QCheckBox" name="bgToFConstant">
+       <property name="toolTip">
+        <string>Take background to be directly proportional to the incident intensity</string>
+       </property>
        <property name="text">
         <string>BG~I(λ)</string>
        </property>
@@ -1834,8 +2120,8 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open">
-     <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/document-open.png</normaloff>:/General/document-open.png</iconset>
    </property>
    <property name="text">
     <string>Open...</string>
@@ -2045,11 +2331,6 @@
   <action name="actionLoad_Extraction">
    <property name="text">
     <string>Load Extraction...</string>
-   </property>
-  </action>
-  <action name="actionAutomatic_Extraction">
-   <property name="text">
-    <string>Automatic Extraction...</string>
    </property>
   </action>
  </widget>
@@ -2392,22 +2673,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>reduceButton</sender>
-   <signal>pressed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>reduceDatasets()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>853</x>
-     <y>825</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionAdjust_Dirct_Beam</sender>
    <signal>activated()</signal>
    <receiver>MainWindow</receiver>
@@ -2500,38 +2765,6 @@
     <hint type="destinationlabel">
      <x>543</x>
      <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>reductionTable</sender>
-   <signal>itemChanged(QTableWidgetItem*)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>reductionTableChanged(QTableWidgetItem*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>738</x>
-     <y>592</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1015</x>
-     <y>841</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>selectedChannel</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeActiveChannel()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>864</x>
-     <y>456</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>734</x>
-     <y>840</y>
     </hint>
    </hints>
   </connection>
@@ -2848,6 +3081,38 @@
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>787</x>
+     <y>399</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reduceButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduceDatasets()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>581</x>
+     <y>818</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>

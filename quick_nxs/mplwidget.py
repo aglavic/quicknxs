@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import os
+import subprocess
+import tempfile
 from PyQt4 import QtCore, QtGui
 import matplotlib.cm
 import matplotlib.colors
@@ -6,6 +9,7 @@ import matplotlib.colors
 font={
       #'family' : 'sans',
       #  'weight' : 'normal',
+        'variant': 'DejaVuSerif',
         'size': 7,
         }
 savefig={
@@ -20,9 +24,88 @@ cmap=matplotlib.colors.LinearSegmentedColormap.from_list('default',
 matplotlib.cm.register_cmap('default', cmap=cmap)
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
 from matplotlib.colors import LogNorm
 from matplotlib.figure import Figure
+try:
+    import matplotlib.backends.qt4_editor.figureoptions as figureoptions
+except ImportError:
+    figureoptions=None
+
+class NavigationToolbar(NavigationToolbar2QT):
+  '''
+    A small change to the original navigation toolbar.
+  '''
+  def _init_toolbar(self):
+    self.basedir=os.path.join(matplotlib.rcParams[ 'datapath' ], 'images')
+
+    a=self.addAction(self._icon('home.png'), 'Home', self.home)
+    a.setToolTip('Reset original view')
+    a=self.addAction(self._icon('back.png'), 'Back', self.back)
+    a.setToolTip('Back to previous view')
+    a=self.addAction(self._icon('forward.png'), 'Forward', self.forward)
+    a.setToolTip('Forward to next view')
+    self.addSeparator()
+    a=self.addAction(self._icon('move.png'), 'Pan', self.pan)
+    a.setToolTip('Pan axes with left mouse, zoom with right')
+    a=self.addAction(self._icon('zoom_to_rect.png'), 'Zoom', self.zoom)
+    a.setToolTip('Zoom to rectangle')
+    self.addSeparator()
+    a=self.addAction(self._icon('subplots.png'), 'Subplots',
+            self.configure_subplots)
+    a.setToolTip('Configure plot boundaries')
+
+    a=self.addAction(QtGui.QIcon.fromTheme('document-save', self._icon('filesave.png')), 'Save',
+            self.save_figure)
+    a.setToolTip('Save the figure')
+
+    a=self.addAction(QtGui.QIcon.fromTheme('document-print'), 'Print',
+            self.print_figure)
+    a.setToolTip('Print the figure')
+
+
+    self.buttons={}
+
+    # Add the x,y location widget at the right side of the toolbar
+    # The stretch factor is 1 which means any resizing of the toolbar
+    # will resize this label instead of the buttons.
+    if self.coordinates:
+        self.locLabel=QtGui.QLabel("", self)
+        self.locLabel.setAlignment(
+                QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.locLabel.setSizePolicy(
+            QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
+                              QtGui.QSizePolicy.Ignored))
+        labelAction=self.addWidget(self.locLabel)
+        labelAction.setVisible(True)
+
+    # reference holder for subplots_adjust window
+    self.adj_window=None
+
+  def print_figure(self):
+    '''
+      Save the plot to a temporary pdf file and print it using the
+      unix lpr command.
+    '''
+    filetypes=self.canvas.get_supported_filetypes_grouped()
+    sorted_filetypes=filetypes.items()
+    sorted_filetypes.sort()
+
+    filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.pdf")
+    self.canvas.print_figure(filename, dpi=600)
+    # print to default printer
+    proc=subprocess.Popen([u"lpr", u"-T", u"QuickNXS Plot", u'-o', u'landscape', filename],
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    result=proc.communicate()[0]
+    if proc.returncode:
+      QtGui.QMessageBox.warning(self, 'Plot Error',
+                                'Plot could not be printed, output of print command:\n\n%s'%result,
+                                buttons=QtGui.QMessageBox.Close)
+    else:
+      QtGui.QMessageBox.information(self, 'Plot Printed',
+                                    'Plot successfully send to default printer!',
+                                    buttons=QtGui.QMessageBox.Close)
+
 
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={}):
@@ -64,12 +147,15 @@ class MplCanvas(FigureCanvas):
   def minimumSizeHint(self):
     return QtCore.QSize(10, 10)
 
+  def get_default_filetype(self):
+    return 'png'
+
 
 class MPLWidget(QtGui.QWidget):
   cplot=None
   cbar=None
 
-  def __init__(self, parent=None, with_toolbar=True):
+  def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
     self.canvas=MplCanvas()
     self.canvas.ax2=None
@@ -77,6 +163,7 @@ class MPLWidget(QtGui.QWidget):
     self.vbox.addWidget(self.canvas)
     if with_toolbar:
       self.toolbar=NavigationToolbar(self.canvas, self)
+      self.toolbar.coordinates=coordinates
       self.vbox.addWidget(self.toolbar)
     self.setLayout(self.vbox)
 
