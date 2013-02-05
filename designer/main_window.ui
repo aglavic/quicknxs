@@ -2187,10 +2187,10 @@
     <string>Keep Item in List</string>
    </property>
    <property name="toolTip">
-    <string>Add to current dataset to data reduction list (Ctrl+Z)</string>
+    <string>Add to current dataset to data reduction list (Ctrl+Q)</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Z</string>
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionClear">
@@ -2275,9 +2275,6 @@
    </property>
   </action>
   <action name="actionManual">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Manual...</string>
    </property>
@@ -2408,7 +2405,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>294</y>
+     <y>269</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -2424,7 +2421,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>133</x>
-     <y>346</y>
+     <y>321</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -2439,8 +2436,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
-     <y>280</y>
+     <x>263</x>
+     <y>271</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -2456,7 +2453,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>263</x>
-     <y>516</y>
+     <y>492</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -2472,7 +2469,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>176</x>
-     <y>437</y>
+     <y>423</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -2488,7 +2485,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>263</x>
-     <y>447</y>
+     <y>423</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -2504,7 +2501,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>176</x>
-     <y>460</y>
+     <y>446</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -2520,7 +2517,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>263</x>
-     <y>470</y>
+     <y>446</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -2536,7 +2533,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>176</x>
-     <y>483</y>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2552,7 +2549,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>263</x>
-     <y>493</y>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2568,7 +2565,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1064</x>
-     <y>289</y>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2584,7 +2581,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1002</x>
-     <y>288</y>
+     <y>99</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2696,7 +2693,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>136</x>
-     <y>591</y>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2712,7 +2709,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>190</x>
-     <y>618</y>
+     <y>791</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2744,7 +2741,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>176</x>
-     <y>529</y>
+     <y>515</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2760,7 +2757,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>263</x>
-     <y>539</y>
+     <y>515</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2776,7 +2773,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>65</x>
-     <y>643</y>
+     <y>816</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -2808,7 +2805,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>133</x>
-     <y>371</y>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2904,7 +2901,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>81</x>
-     <y>843</y>
+     <y>705</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -2968,7 +2965,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>133</x>
-     <y>321</y>
+     <y>296</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2983,8 +2980,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>247</x>
-     <y>307</y>
+     <x>263</x>
+     <y>296</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3000,7 +2997,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>263</x>
-     <y>346</y>
+     <y>321</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3031,8 +3028,8 @@
    <slot>plot_refl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>934</x>
-     <y>831</y>
+     <x>1079</x>
+     <y>560</y>
     </hint>
     <hint type="destinationlabel">
      <x>946</x>
@@ -3063,8 +3060,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>200</x>
-     <y>361</y>
+     <x>263</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3120,6 +3117,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>itemChanged(QTableWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reductionTableChanged(QTableWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>491</x>
+     <y>623</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>888</x>
+     <y>843</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionManual</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>helpDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3150,5 +3179,6 @@
   <slot>loadExtraction()</slot>
   <slot>aboutDialog()</slot>
   <slot>automaticExtraction()</slot>
+  <slot>helpDialog()</slot>
  </slots>
 </ui>

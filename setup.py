@@ -31,7 +31,7 @@ __py_modules__=[]
 __package_dir__={}
 __packages__=['quick_nxs']
 __package_data__={
-                  'quick_nxs': ['genx_templates/*.gx'],
+                  'quick_nxs': ['genx_templates/*.gx', 'window.pkl', 'htmldoc/*'],
                   }
 __data_files__=[]
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Mon Feb  4 13:13:00 2013
+# Created: Tue Feb  5 16:29:42 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -973,7 +973,6 @@ class Ui_MainWindow(object):
     self.actionRefineX.setIcon(icon11)
     self.actionRefineX.setObjectName(_fromUtf8("actionRefineX"))
     self.actionManual = QtGui.QAction(MainWindow)
-    self.actionManual.setEnabled(False)
     self.actionManual.setObjectName(_fromUtf8("actionManual"))
     self.actionAbout = QtGui.QAction(MainWindow)
     self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
@@ -1088,6 +1087,8 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.aboutDialog)
     QtCore.QObject.connect(self.selectedChannel, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(QString)")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.reduceButton, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.reduceDatasets)
+    QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), MainWindow.reductionTableChanged)
+    QtCore.QObject.connect(self.actionManual, QtCore.SIGNAL(_fromUtf8("activated()")), MainWindow.helpDialog)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
   def retranslateUi(self, MainWindow):
@@ -1326,8 +1327,8 @@ class Ui_MainWindow(object):
     self.actionNorm.setToolTip(QtGui.QApplication.translate("MainWindow", "Take current dataset for wavelength normalization (Ctrl+W)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionNorm.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+W", None, QtGui.QApplication.UnicodeUTF8))
     self.actionAddPlot.setText(QtGui.QApplication.translate("MainWindow", "Keep Item in List", None, QtGui.QApplication.UnicodeUTF8))
-    self.actionAddPlot.setToolTip(QtGui.QApplication.translate("MainWindow", "Add to current dataset to data reduction list (Ctrl+Z)", None, QtGui.QApplication.UnicodeUTF8))
-    self.actionAddPlot.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Z", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAddPlot.setToolTip(QtGui.QApplication.translate("MainWindow", "Add to current dataset to data reduction list (Ctrl+Q)", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAddPlot.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Q", None, QtGui.QApplication.UnicodeUTF8))
     self.actionClear.setText(QtGui.QApplication.translate("MainWindow", "Clear List", None, QtGui.QApplication.UnicodeUTF8))
     self.actionClear.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove all plots from data reduction list", None, QtGui.QApplication.UnicodeUTF8))
     self.actionAdjust_Dirct_Beam.setText(QtGui.QApplication.translate("MainWindow", "Adjust Dirct Beam", None, QtGui.QApplication.UnicodeUTF8))

@@ -61,7 +61,7 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     a=self.addAction(QtGui.QIcon.fromTheme('document-print'), 'Print',
             self.print_figure)
-    a.setToolTip('Print the figure')
+    a.setToolTip('Print the figure with the default printer')
 
 
     self.buttons={}

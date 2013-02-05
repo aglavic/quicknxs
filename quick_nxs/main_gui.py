@@ -9,8 +9,9 @@ from numpy import where, pi, newaxis, arange, exp, log10, array, hstack
 from scipy.stats.mstats import mquantiles
 from cPickle import load, dump
 from matplotlib.lines import Line2D
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, QtWebKit
 
+from .version import str_version
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .error_handling import ErrorHandler
@@ -62,6 +63,7 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
+    self.setWindowTitle(u'QuickNXS   %s'%str_version)
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(80, 100)
@@ -128,6 +130,10 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
     self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
     self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
+    self.ui.xy_overview.canvas.mpl_connect('button_press_event', self.plotPickXY)
+    self.ui.xy_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXY)
+    self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
+    self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
 
   def fileOpen(self, filename, do_plot=True):
     '''
@@ -1286,7 +1292,7 @@ as the ones already in the list:
     '''
       Plot for y-projection has been clicked.
     '''
-    if event.button==1 and self.ui.x_project.toolbar._active is None and \
+    if event.button==1 and self.ui.y_project.toolbar._active is None and \
         event.xdata is not None:
       ypos=self.ui.refYPos.value()
       yw=self.ui.refYWidth.value()
@@ -1302,6 +1308,39 @@ as the ones already in the list:
       self.ui.refYPos.setValue(ypos)
       self.auto_change_active=False
       self.ui.refYWidth.setValue(yw)
+
+  def plotPickXY(self, event):
+    '''
+      Plot for xy-map has been clicked.
+    '''
+    if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
+        event.xdata is not None:
+      self.ui.refXPos.setValue(event.xdata)
+    elif event.button==3 and self.ui.xy_overview.toolbar._active is None and \
+        event.ydata is not None:
+      ypos=self.ui.refYPos.value()
+      yw=self.ui.refYWidth.value()
+      yl=ypos-yw/2.
+      yr=ypos+yw/2.
+      if abs(event.ydata-yl)<abs(event.ydata-yr):
+        yl=event.ydata
+      else:
+        yr=event.ydata
+      ypos=(yr+yl)/2.
+      yw=(yr-yl)
+      self.auto_change_active=True
+      self.ui.refYPos.setValue(ypos)
+      self.auto_change_active=False
+      self.ui.refYWidth.setValue(yw)
+
+  def plotPickXToF(self, event):
+    if event.button==1 and self.ui.xtof_overview.toolbar._active is None and \
+        event.ydata is not None:
+      self.ui.refXPos.setValue(event.ydata)
+    elif event.button==3 and self.ui.xtof_overview.toolbar._active is None and \
+        event.ydata is not None:
+      xpos=self.ui.refXPos.value()
+      self.ui.refXWidth.setValue(abs(xpos-event.ydata)*2.)
 
   def scaleOnPlot(self, event):
     steps=event.step
@@ -1505,25 +1544,27 @@ as the ones already in the list:
     if os.path.exists(path):
       try:
         obj=load(open(path, 'rb'))
-        self.restoreGeometry(obj[0])
-        self.restoreState(obj[1])
-        self.ui.splitter.setSizes(obj[2])
-        self.ui.color_selector.setCurrentIndex(obj[3])
-        self.ui.show_colorbars.setChecked(obj[4])
-        self.ui.normalizeXTof.setChecked(obj[5])
-        for i, fig in enumerate([
-                                self.ui.xy_overview,
-                                self.ui.xtof_overview,
-                                self.ui.refl,
-                                self.ui.x_project,
-                                self.ui.y_project,
-                                ]):
-          fig.set_config(obj[6][i])
       except:
         return
     else:
-      pass
-      #self.ui.splitter.moveSplitter(self.ui.splitter.getRange(0)[1]/2, 0)
+      obj=load(open(os.path.join(os.path.dirname(__file__), 'window.pkl'), 'rb'))
+    try:
+      self.restoreGeometry(obj[0])
+      self.restoreState(obj[1])
+      self.ui.splitter.setSizes(obj[2])
+      self.ui.color_selector.setCurrentIndex(obj[3])
+      self.ui.show_colorbars.setChecked(obj[4])
+      self.ui.normalizeXTof.setChecked(obj[5])
+      for i, fig in enumerate([
+                              self.ui.xy_overview,
+                              self.ui.xtof_overview,
+                              self.ui.refl,
+                              self.ui.x_project,
+                              self.ui.y_project,
+                              ]):
+        fig.set_config(obj[6][i])
+    except:
+      return
 
   def closeEvent(self, event):
     '''
@@ -1555,8 +1596,31 @@ as the ones already in the list:
     dump(obj, open(os.path.join(path, 'window.pkl'), 'wb'))
     QtGui.QMainWindow.closeEvent(self, event)
 
+  def helpDialog(self):
+    '''
+      Open a HTML page with the program documentation and place it on the right
+      side of the current screen.
+    '''
+    dia=QtGui.QDialog(self)
+    dia.setWindowTitle(u'QuickNXS Manual')
+    verticalLayout=QtGui.QVBoxLayout(dia)
+    dia.setLayout(verticalLayout)
+    webview=QtWebKit.QWebView(dia)
+    index_file=os.path.join(os.path.dirname(__file__), u'htmldoc/QuickNXS_Users_Manual.html')
+    webview.load(QtCore.QUrl(index_file))
+    verticalLayout.addWidget(webview)
+    # set width of the page to fit the document and height to the same as the main window
+    dia.resize(700, self.height())
+    pos=-700
+    dw=QtGui.QDesktopWidget()
+    for i in range(dw.screenCount()):
+      pos+=dw.screenGeometry(i).width()
+      if pos>self.pos().x():
+        break
+    dia.move(pos, dia.pos().y())
+    dia.show()
+
   def aboutDialog(self):
-    from .version import str_version
     from numpy.version import full_version as npversion
     from matplotlib import __version__ as mplversion
     from h5py.version import version as h5pyversion

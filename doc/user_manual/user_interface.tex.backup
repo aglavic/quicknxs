@@ -2,45 +2,70 @@
 \label{chap:user_interface}
 
 \section{Overview}
+\def\svgwidth{\textwidth}
+\begin{LARGE}
+\input{overview.pdf_tex} 
+\end{LARGE}
+
+In addition to the default elements of a typical graphical user interface (GUI) like menu-, tool- and statusbar the QuickNXS program has a central area, which can be switch using the tab bar above, and several "Dock Windows" on the left and right side, always visible. Most users will work only with the "Overview" tab visible in the image above as it contains all valuable information about the current loaded dataset and the reduction parameters. 
+The "Dock Window" can be customized as described in the according section and hold parameter entries for the reduction as well as the projection and reflectivity plot, most important for the extraction.
+The other tabs, shown below, allow a parallel view on the 2D maps of all channels in the active dataset as well as an preview of off-specular scattering and motor/controller logs from the current file.
+
+ \includegraphics[width=0.25\textwidth]{screenshots/xymaps.png}
+ \includegraphics[width=0.25\textwidth]{screenshots/xtofmaps.png}
+ \includegraphics[width=0.25\textwidth]{screenshots/offspecmaps.png}
+ \includegraphics[width=0.25\textwidth]{screenshots/daslogs.png}
+ \begin{tabular}{p{0.25\textwidth}p{0.25\textwidth}p{0.25\textwidth}p{0.25\textwidth}}
+ \centering
+  X-Y-Maps & X-ToF-Maps & Off-Specular & DAS Logs
+ \end{tabular}
+
+ Each of the plots has an own toolbar described in the plots section and show one specific aspect of your dataset. Often it is important to look not only on one of these plots to analyze the data, so it is good to familiarize with what you see there.
+ All options available in the toolbar are duplicated somewhere in the menus, to make it easier to find, what you need.
+ The most important actions have \textbf{keystrokes} assigned to them for convenience. 
+ The keys have been chosen to be accessible only with the right hand, so you can use them together with the mouse.
+ \textbf{Most GUI elements have a tool tip} assigned, so you can always position the \textbf{mouse cursor} over \textbf{any element to get a more detailed description}, what it is used for.
+
 
 \section{Menu and toolbar actions}
   
   \begin{description}
-   \item[{\includegraphics[width=0.5cm]{../../icons/document-open.png} File -> Open...}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/listDown.png} File -> Next File}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/listUp.png} File -> Previous File}] 
+   \item[{\icon{document-open} File -> Open... (CTRL+O)}] Shows a dialog to select a file to be loaded. The filename filter depends if "Histogram" or "Event" mode are selected in the Files Dock Window.
+   \item[{\icon{listDown} File -> Next File (CTRL+D)}] Opens the file below the active selection in the Files Dock Window.
+   \item[{\icon{listUp} File -> Previous File (CTRL+SHIFT+O)}] Opens the file above the active selection in the Files Dock Window.
    
-   \item[{\includegraphics[width=0.5cm]{../../icons/extractNormalization.png} Reduction -> Set Normalization}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/totalReflection.png} Reduction -> Set Scaling}] 
+   \item[{\icon{extractNormalization} Reduction -> Set Normalization (CTRL+W)}] Use the data extracted from the current file as a normalization dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate normalization file is selected using the number of time of flight channels in a file and the central wavelength, if this is ambiguous a dialog is shown to the user to select one dataset.
+   \item[{\icon{totalReflection} Reduction -> Set Scaling (CTRL+S)}] For the first dataset it tries to find the edge of total reflection and fit a constant to all points before it to normalize it to one. For the second dataset it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
    
-   \item[{\includegraphics[width=0.5cm]{../../icons/addRef.png} Reduction -> Keep Item in List}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/delRef.png} Reduction -> Remove Line}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/clearRef.png} Reduction -> Clear List}] 
+   \item[{\icon{addRef} Reduction -> Keep Item in List (CTRL+Q)}] Use the reflectivity from the current dataset and add it the the reduction list. Only works for already normalized dataset. The options in the reduction list can still be changed later.
+   \item[{\icon{delRef} Reduction -> Remove Line}] Remove the selected line from the reduction list.
+   \item[{\icon{clearRef} Reduction -> Clear List}] Clear the full reduction list to start a new set of reflectivity.
 
-    \item[{\includegraphics[width=0.5cm]{../../icons/reduce.png} Reduction -> Reduce...}] 
+    \item[{\icon{reduce} Reduction -> Reduce...}] Use the items and options in the reduction table to export a dataset. Shows a dialog to select how the export should be done.
 
-   \item[{\includegraphics[width=0.5cm]{../../icons/findXauto.png} Advanced -> Automatic Peak Finder}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/limitYauto.png} Advanced -> Automatic Y Limits}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/fitXPos.png} Advanced -> Refine X}] 
-   \item[{\includegraphics[width=0.5cm]{../../icons/tthZero.png} Advanced -> Adjust Direct Beam}] 
-   \item[{ Advanced -> Clear Overwrite}] 
+   \item[{\icon{findXauto} Advanced -> Automatic Peak Finder}] If checked, the program runs a peak finder and peak fitting algorithm on the X-projection of the data each time a new dataset is loaded and sets the X-center parameter accordingly.
+   \item[{\icon{limitYauto} Advanced -> Automatic Y Limits}] If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly.
+   \item[{\icon{fitXPos} Advanced -> Refine X}] If checked, each time the user clicks on the X-projection plot to select another X-center position, a Gaussian fit is executed to refine the position.
+   \item[{\icon{tthZero} Advanced -> Adjust Direct Beam}] For datasets where the direct pixel and or DANGLE0 values are not correctly defined, this action can take the current X-position of a direct beam measurement to set overwrite parameters accordingly.
+   \item[{ Advanced -> Clear Overwrite}] This clears the overwrite parameters defined with "Adjust Direct Beam".
   \end{description}
 
-\section{Docked Windows}
+\section{Dock Windows}
   Dock windows are the the regions on the left and right of the window containing e.g. the projection plots and extraction parameters. They are visible on any tab of the main interface.
-  These windows can be positioned by the user anywhere around the center, on top of each other, detached from the main window or completely closed. Closed dock windows can be restored by right clicking any dock window title or the empty region next to the toolbar and menu. You can easily detach and reattach them by clicking the diamod button at the top right.
+  These windows positions can be customized by the user anywhere around the center, on top of each other, detached from the main window or completely closed (will be saved on exit). Closed dock windows can be restored by right clicking any dock window title or the empty region next to the toolbar and menu. You can easily detach and reattach them by clicking the diamod button at the top right.
   Here is a list of available dock windows:
   
   \begin{description}
    \item[Files] A list of all datafile in the current directory together with an entry to search for a file by number and select to extract either histogram or event mode data.
-   \item[X-Projection] A plot with the data of the loaded file projected on the detector X-axis. Green lines indicate the background region defined at the moment. The X-position is marked with a black line and the X-width with two red lines.
-   \item[Y-Projection] An equivalent projection on the detector Y-axis, showing the selected Y-region with red lines.
-   \item[Reflectivity] Show all datasets already added to the reduction list and the currently selected one. For unnormalized datasets it show intensity and background vs. wavelength.
+   \item[X-Projection] A plot with the data of the loaded file projected on the detector X-axis. Green lines indicate the background region defined at the moment. The X-position is marked with a black line and the X-width with two red lines. The mouse can be used to change the background region and X-center using the left mouse button and set the X-width using the right mouse button.
+   \item[Y-Projection] An equivalent projection on the detector Y-axis, showing the selected Y-region with red lines. The mouse can be used to change the Y-region using left clicks.
+   \item[Reflectivity] Show all datasets already added to the reduction list and the currently selected one. For unnormalized datasets it show intensity and background vs. wavelength. Datasets in the reduction list can be scaled with the mouse wheel when at the right x-coordinates (faster scaling when CTRL is pressed while scrolling).
    \item[Reflectivity Extraction] The parameters used to extract the active reflectivity. When adding a dataset to the reduction list, these parameters are stored.
    \item[Plot Options] Global settings for the shown plots, does not effect the data reduction in any way. Here you can also chose to show the 2D datasets in wavelength and angle instead of time of flight and pixel.
    \item[Advanced Background] Additional parameters for the background subtraction, normally not in use.
    \item[Advanced Parameters] Settings to change the extraction method or overwrite parameters otherwise read from the datafile.
    \item[Algorithm Parameters] Settings for the peak finder and curve stitching algorithms.
+   \item[Event Mode Readout] Define the binning to be used when reading event mode data.
   \end{description}
 
 
