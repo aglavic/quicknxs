@@ -2420,7 +2420,7 @@
  <connections>
   <connection>
    <sender>actionOpen</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>fileOpenDialog()</slot>
    <hints>
@@ -2660,7 +2660,7 @@
   </connection>
   <connection>
    <sender>actionNext_File</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>nextFile()</slot>
    <hints>
@@ -2676,7 +2676,7 @@
   </connection>
   <connection>
    <sender>actionPrevious_File</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>prevFile()</slot>
    <hints>
@@ -2692,7 +2692,7 @@
   </connection>
   <connection>
    <sender>actionNorm</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>setNorm()</slot>
    <hints>
@@ -2708,7 +2708,7 @@
   </connection>
   <connection>
    <sender>actionAddPlot</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>addRefList()</slot>
    <hints>
@@ -2724,7 +2724,7 @@
   </connection>
   <connection>
    <sender>actionClear</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>clearRefList()</slot>
    <hints>
@@ -2740,7 +2740,7 @@
   </connection>
   <connection>
    <sender>actionAdjust_Dirct_Beam</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>overwriteDirectBeam()</slot>
    <hints>
@@ -2788,7 +2788,7 @@
   </connection>
   <connection>
    <sender>actionNormalizeScaling</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>normalizeTotalReflection()</slot>
    <hints>
@@ -2852,7 +2852,7 @@
   </connection>
   <connection>
    <sender>actionRemove</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>removeRefList()</slot>
    <hints>
@@ -2932,7 +2932,7 @@
   </connection>
   <connection>
    <sender>actionRefineX</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>refineXpos()</slot>
    <hints>
@@ -2948,7 +2948,7 @@
   </connection>
   <connection>
    <sender>actionReduce</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>reduceDatasets()</slot>
    <hints>
@@ -3012,7 +3012,7 @@
   </connection>
   <connection>
    <sender>actionClear_Overwrite</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>clearOverwrite()</slot>
    <hints>
@@ -3108,7 +3108,7 @@
   </connection>
   <connection>
    <sender>actionLoad_Extraction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>loadExtraction()</slot>
    <hints>
@@ -3140,7 +3140,7 @@
   </connection>
   <connection>
    <sender>actionAbout</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>aboutDialog()</slot>
    <hints>
@@ -3204,7 +3204,7 @@
   </connection>
   <connection>
    <sender>actionManual</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>helpDialog()</slot>
    <hints>
@@ -3220,7 +3220,7 @@
   </connection>
   <connection>
    <sender>actionClear_Normalizations</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>clearNormList()</slot>
    <hints>

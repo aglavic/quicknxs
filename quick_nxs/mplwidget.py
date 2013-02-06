@@ -167,6 +167,15 @@ class MPLWidget(QtGui.QWidget):
       self.vbox.addWidget(self.toolbar)
     self.setLayout(self.vbox)
 
+  def leaveEvent(self, event):
+    '''
+    Make sure the cursor is reset to it's default when leaving the widget.
+    In some cases the zoom cursor does not reset when leaving the plot.
+    '''
+    QtGui.QApplication.restoreOverrideCursor()
+    self.toolbar._lastCursor=None
+    return QtGui.QWidget.leaveEvent(self, event)
+
   def set_config(self, config):
     self.canvas.fig.subplots_adjust(**config)
 

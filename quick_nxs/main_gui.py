@@ -1624,8 +1624,9 @@ as the ones already in the list:
     verticalLayout=QtGui.QVBoxLayout(dia)
     dia.setLayout(verticalLayout)
     webview=QtWebKit.QWebView(dia)
-    index_file=os.path.join(os.path.dirname(__file__), u'htmldoc/QuickNXS_Users_Manual.html')
-    webview.load(QtCore.QUrl(index_file))
+    index_file=os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                            u'htmldoc', u'QuickNXS_Users_Manual.html')
+    webview.load(QtCore.QUrl.fromLocalFile(index_file))
     verticalLayout.addWidget(webview)
     # set width of the page to fit the document and height to the same as the main window
     dia.resize(700, self.height())
@@ -1639,12 +1640,15 @@ as the ones already in the list:
     dia.show()
 
   def aboutDialog(self):
-    from numpy.version import full_version as npversion
+    from numpy.version import version as npversion
     from matplotlib import __version__ as mplversion
     from h5py.version import version as h5pyversion
     from h5py.version import hdf5_version as hdf5version
-    from PyQt4.pyqtconfig import Configuration
-    pyqtversion=Configuration().pyqt_version_str
+    try:
+      from PyQt4.pyqtconfig import Configuration
+      pyqtversion=Configuration().pyqt_version_str
+    except ImportError:
+      pyqtversion='Unknown'
 
     QtGui.QMessageBox.about(self, 'About QuickNXS',
 '''

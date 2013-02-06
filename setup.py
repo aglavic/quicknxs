@@ -6,6 +6,7 @@
 '''
 
 import sys, os
+from glob import glob
 import matplotlib
 try:
   # Use easy setup to ensure dependencies
@@ -37,21 +38,34 @@ __data_files__=[]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
+  import zmq
+  os.environ["PATH"]+=os.path.pathsep+os.path.split(zmq.__file__)[0]
   __data_files__+=matplotlib.get_py2exe_datafiles()
+  __data_files__+=[(r'quick_nxs', [r'quick_nxs\window.pkl']),
+                   (r'quick_nxs\genx_templates', glob(r'quick_nxs\genx_templates\*.gx')),
+                   (r'quick_nxs\htmldoc', glob(r'quick_nxs\htmldoc\*')), ]
+  pexe=os.path.abspath(os.path.join('..\\App'))
+  sys.path.append(pexe)
   __options__={
                 #"setup_requires": ['py2exe'],
                 #"console": [ "__init__.py"], # set the executable for py2exe
                 "windows": [ {
                             "script": "quicknxs",
-                            "icon_resources": [(1, "icons/logo.png")]
+                            "icon_resources": [(1, "icons/logo.ico")],
                             }, ], # executable for py2exe is windows application
                 "options": {  "py2exe": {
-                              "includes": "numpy",
-                              "optimize": 2, # Keep docstring (e.g. Shell usage)
-                              "skip_archive": False, # setting not to move compiled code into library.zip file
-                              'packages': 'PyQt4, sip, matplotlib, scipy',
-                              "dll_excludes": ["MSVCP90.dll"],
-                              'excludes': [ 'pdb', 'doctest', 'tcl', 'tk', 'Tkinter'],
+                              "includes": ["sip", "numpy", "scipy.stats.mstats",
+#                                           "zmq.utils", "zmq.utils.jsonapi", "zmq.utils.strtypes",
+                                           ],
+                              "optimize": 1, # Keep docstring (e.g. Shell usage)
+                              "skip_archive": True, # setting not to move compiled code into library.zip file
+                              'packages': ['PyQt4', 'h5py', 'zmq', 'pygments', 'IPython'],
+                              "dll_excludes": [],
+                              'excludes': [ 'doctest', 'tcl', 'tk', 'Tkinter',
+                                           '_gtkagg', '_tkagg', '_wxagg',
+                                           '_gtk', '_gtkcairo', '_agg2', '_cairo',
+                                           '_cocoaagg', '_fltkagg',
+                                           ],
                              },
                            }
               }
