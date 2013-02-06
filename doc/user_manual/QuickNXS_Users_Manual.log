@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.12.3)  5 FEB 2013 17:42
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.12.3)  6 FEB 2013 09:23
 entering extended mode
  Source specials enabled.
  %&-line parsing enabled.
@@ -687,83 +687,87 @@ File: ../../icons/listUp.png Graphic file (type png)
 File: ../../icons/extractNormalization.png Graphic file (type png)
 
 <use ../../icons/extractNormalization.png>
-<../../icons/totalReflection.png, id=201, 38.544pt x 38.544pt>
+<../../icons/clearNorm.png, id=201, 38.544pt x 38.544pt>
+File: ../../icons/clearNorm.png Graphic file (type png)
+
+<use ../../icons/clearNorm.png> [5 <./screenshots/xymaps.png (PNG copy)> <./scr
+eenshots/xtofmaps.png (PNG copy)> <./screenshots/offspecmaps.png (PNG copy)> <.
+/screenshots/daslogs.png (PNG copy)> <../../icons/document-open.png> <../../ico
+ns/listDown.png> <../../icons/listUp.png> <../../icons/extractNormalization.png
+>] <../../icons/totalReflection.png, id=211, 38.544pt x 38.544pt>
 File: ../../icons/totalReflection.png Graphic file (type png)
 
-<use ../../icons/totalReflection.png> [5 <./screenshots/xymaps.png (PNG copy)> 
-<./screenshots/xtofmaps.png (PNG copy)> <./screenshots/offspecmaps.png (PNG cop
-y)> <./screenshots/daslogs.png (PNG copy)> <../../icons/document-open.png> <../
-../icons/listDown.png> <../../icons/listUp.png> <../../icons/extractNormalizati
-on.png>] <../../icons/addRef.png, id=211, 38.544pt x 38.544pt>
+<use ../../icons/totalReflection.png>
+<../../icons/addRef.png, id=212, 38.544pt x 38.544pt>
 File: ../../icons/addRef.png Graphic file (type png)
 
 <use ../../icons/addRef.png>
-<../../icons/delRef.png, id=212, 38.544pt x 38.544pt>
+<../../icons/delRef.png, id=213, 38.544pt x 38.544pt>
 File: ../../icons/delRef.png Graphic file (type png)
 
 <use ../../icons/delRef.png>
-<../../icons/clearRef.png, id=213, 38.544pt x 38.544pt>
+<../../icons/clearRef.png, id=214, 38.544pt x 38.544pt>
 File: ../../icons/clearRef.png Graphic file (type png)
 
 <use ../../icons/clearRef.png>
-<../../icons/reduce.png, id=214, 38.544pt x 38.544pt>
+<../../icons/reduce.png, id=215, 38.544pt x 38.544pt>
 File: ../../icons/reduce.png Graphic file (type png)
 
 <use ../../icons/reduce.png>
-Overfull \hbox (2.89685pt too wide) in paragraph at lines 43--44
+Overfull \hbox (2.89685pt too wide) in paragraph at lines 44--45
 [][]\T1/ptm/m/n/12 Use the items and op-tions in the re-duc-tion ta-ble to ex-p
 ort a dataset.
  []
 
-<../../icons/findXauto.png, id=215, 38.544pt x 38.544pt>
+<../../icons/findXauto.png, id=216, 38.544pt x 38.544pt>
 File: ../../icons/findXauto.png Graphic file (type png)
 
 <use ../../icons/findXauto.png>
-<../../icons/limitYauto.png, id=216, 38.544pt x 38.544pt>
+<../../icons/limitYauto.png, id=217, 38.544pt x 38.544pt>
 File: ../../icons/limitYauto.png Graphic file (type png)
 
 <use ../../icons/limitYauto.png>
-<../../icons/fitXPos.png, id=217, 38.544pt x 38.544pt>
+<../../icons/fitXPos.png, id=218, 38.544pt x 38.544pt>
 File: ../../icons/fitXPos.png Graphic file (type png)
 
 <use ../../icons/fitXPos.png>
-<../../icons/tthZero.png, id=218, 38.544pt x 38.544pt>
+<../../icons/tthZero.png, id=219, 38.544pt x 38.544pt>
 File: ../../icons/tthZero.png Graphic file (type png)
 
-<use ../../icons/tthZero.png> [6 <../../icons/totalReflection.png> <../../icons
-/addRef.png> <../../icons/delRef.png> <../../icons/clearRef.png> <../../icons/r
-educe.png> <../../icons/findXauto.png> <../../icons/limitYauto.png> <../../icon
-s/fitXPos.png> <../../icons/tthZero.png>] [7]
-<screenshots/plottoolbar.png, id=239, 203.25937pt x 23.33719pt>
+<use ../../icons/tthZero.png> [6 <../../icons/clearNorm.png> <../../icons/total
+Reflection.png> <../../icons/addRef.png> <../../icons/delRef.png> <../../icons/
+clearRef.png> <../../icons/reduce.png> <../../icons/findXauto.png> <../../icons
+/limitYauto.png> <../../icons/fitXPos.png> <../../icons/tthZero.png>] [7]
+<screenshots/plottoolbar.png, id=241, 203.25937pt x 23.33719pt>
 File: screenshots/plottoolbar.png Graphic file (type png)
 
-<use screenshots/plottoolbar.png>
-<screenshots/reductiontable.png, id=240, 365.86688pt x 97.11281pt>
+<use screenshots/plottoolbar.png> [8 <./screenshots/plottoolbar.png (PNG copy)>
+] <screenshots/reductiontable.png, id=246, 365.86688pt x 97.11281pt>
 File: screenshots/reductiontable.png Graphic file (type png)
 
-<use screenshots/reductiontable.png> [8 <./screenshots/plottoolbar.png (PNG cop
-y)>]) [9 <./screenshots/reductiontable.png>]
+<use screenshots/reductiontable.png>) [9 <./screenshots/reductiontable.png>]
 \openout2 = `data_reduction.aux'.
 
- (./data_reduction.tex
+
+(./data_reduction.tex
 Chapter 3.
-<screenshots/normalizemap1.png, id=250, 232.7094pt x 222.5916pt>
+<screenshots/normalizemap1.png, id=252, 232.7094pt x 222.5916pt>
 File: screenshots/normalizemap1.png Graphic file (type png)
 
 <use screenshots/normalizemap1.png>
-<screenshots/normalizemap2.png, id=251, 233.4321pt x 222.5916pt>
+<screenshots/normalizemap2.png, id=253, 233.4321pt x 222.5916pt>
 File: screenshots/normalizemap2.png Graphic file (type png)
 
 <use screenshots/normalizemap2.png>
-<screenshots/normalize1.png, id=252, 224.7597pt x 152.4897pt>
+<screenshots/normalize1.png, id=254, 224.7597pt x 152.4897pt>
 File: screenshots/normalize1.png Graphic file (type png)
 
 <use screenshots/normalize1.png>
-<screenshots/normalize2.png, id=253, 224.7597pt x 92.5056pt>
+<screenshots/normalize2.png, id=255, 224.7597pt x 92.5056pt>
 File: screenshots/normalize2.png Graphic file (type png)
 
 <use screenshots/normalize2.png>
-<screenshots/normalize3.png, id=254, 224.7597pt x 240.6591pt>
+<screenshots/normalize3.png, id=256, 224.7597pt x 240.6591pt>
 File: screenshots/normalize3.png Graphic file (type png)
 
 <use screenshots/normalize3.png>
@@ -778,7 +782,7 @@ Overfull \hbox (17.02585pt too wide) in paragraph at lines 9--18
 
  <./screenshots/normalizemap1.png> <./screenshots/normalizemap2.png> <./screens
 hots/normalize1.png> <./screenshots/normalize2.png> <./screenshots/normalize3.p
-ng>] <screenshots/overview.png, id=265, 956.82469pt x 755.07094pt>
+ng>] <screenshots/overview.png, id=267, 956.82469pt x 755.07094pt>
 File: screenshots/overview.png Graphic file (type png)
 
 <use screenshots/overview.png>
@@ -791,7 +795,7 @@ LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <14.4> not available
 (Font)              Font shape `T1/phv/b/n' tried instead on input line 42.
 File: screenshots/normalize3.png Graphic file (type png)
  <use screenshots/normalize3.png>
-<screenshots/normalize_after.png, id=274, 224.7597pt x 240.6591pt>
+<screenshots/normalize_after.png, id=276, 224.7597pt x 240.6591pt>
 File: screenshots/normalize_after.png Graphic file (type png)
 
 <use screenshots/normalize_after.png>
@@ -801,15 +805,15 @@ Overfull \hbox (0.6019pt too wide) in paragraph at lines 44--48
 
 File: ../../icons/extractNormalization.png Graphic file (type png)
 <use ../../icons/extractNormalization.png>
-<screenshots/background.png, id=276, 224.7597pt x 152.4897pt>
+<screenshots/background.png, id=278, 224.7597pt x 152.4897pt>
 File: screenshots/background.png Graphic file (type png)
 
 <use screenshots/background.png>
-<screenshots/yregion.png, id=277, 224.7597pt x 92.5056pt>
+<screenshots/yregion.png, id=279, 224.7597pt x 92.5056pt>
 File: screenshots/yregion.png Graphic file (type png)
 
 <use screenshots/yregion.png>
-<screenshots/yregionmap.png, id=278, 232.7094pt x 222.5916pt>
+<screenshots/yregionmap.png, id=280, 232.7094pt x 222.5916pt>
 File: screenshots/yregionmap.png Graphic file (type png)
 
 <use screenshots/yregionmap.png>
@@ -824,11 +828,11 @@ Underfull \hbox (badness 1715) in paragraph at lines 67--73
 
 [12 <./screenshots/normalize_after.png> <./screenshots/background.png> <./scree
 nshots/yregion.png> <./screenshots/yregionmap.png>]
-<screenshots/totalreflection.png, id=289, 224.7597pt x 240.6591pt>
+<screenshots/totalreflection.png, id=291, 224.7597pt x 240.6591pt>
 File: screenshots/totalreflection.png Graphic file (type png)
 
 <use screenshots/totalreflection.png>
-<screenshots/cutpoints.png, id=290, 165.61874pt x 17.31468pt>
+<screenshots/cutpoints.png, id=292, 165.61874pt x 17.31468pt>
 File: screenshots/cutpoints.png Graphic file (type png)
 
 <use screenshots/cutpoints.png>
@@ -839,7 +843,7 @@ File: ../../icons/addRef.png Graphic file (type png)
 <use ../../icons/addRef.png>
 File: ../../icons/limitYauto.png Graphic file (type png)
  <use ../../icons/limitYauto.png>
-<screenshots/stitching1.png, id=291, 224.7597pt x 240.6591pt>
+<screenshots/stitching1.png, id=293, 224.7597pt x 240.6591pt>
 File: screenshots/stitching1.png Graphic file (type png)
 
 <use screenshots/stitching1.png>
@@ -849,11 +853,11 @@ File: ../../icons/addRef.png Graphic file (type png)
 
 <use ../../icons/addRef.png> [13 <./screenshots/totalreflection.png> <./screens
 hots/cutpoints.png> <./screenshots/stitching1.png>]
-<screenshots/stitching2.png, id=306, 224.7597pt x 240.6591pt>
+<screenshots/stitching2.png, id=308, 224.7597pt x 240.6591pt>
 File: screenshots/stitching2.png Graphic file (type png)
 
 <use screenshots/stitching2.png>
-<screenshots/cleanpoints.png, id=307, 224.7597pt x 240.6591pt>
+<screenshots/cleanpoints.png, id=309, 224.7597pt x 240.6591pt>
 File: screenshots/cleanpoints.png Graphic file (type png)
 
 <use screenshots/cleanpoints.png>
@@ -861,7 +865,7 @@ Overfull \hbox (5.56442pt too wide) in paragraph at lines 110--115
  [][][] 
  []
 
-<screenshots/reduced.png, id=308, 307.1475pt x 324.46219pt>
+<screenshots/reduced.png, id=310, 307.1475pt x 324.46219pt>
 File: screenshots/reduced.png Graphic file (type png)
 
 <use screenshots/reduced.png>
@@ -881,10 +885,10 @@ Chapter 4.
 ] (./QuickNXS_Users_Manual.aux (./titlepage.aux) (./introduction.aux)
 (./user_interface.aux) (./data_reduction.aux) (./advanced.aux)) ) 
 Here is how much of TeX's memory you used:
- 8727 strings out of 493848
- 131549 string characters out of 1152823
+ 8732 strings out of 493848
+ 131681 string characters out of 1152823
  238274 words of memory out of 3000000
- 11670 multiletter control sequences out of 15000+50000
+ 11674 multiletter control sequences out of 15000+50000
  60312 words of font info for 91 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  49i,11n,52p,552b,358s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -899,9 +903,9 @@ w/symbol/usyr.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmb8a.pfb></
 usr/share/texmf-texlive/fonts/type1/urw/times/utmr8a.pfb></usr/share/texmf-texl
 ive/fonts/type1/urw/times/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/
 times/utmri8a.pfb>
-Output written on QuickNXS_Users_Manual.pdf (16 pages, 11817550 bytes).
+Output written on QuickNXS_Users_Manual.pdf (16 pages, 11704090 bytes).
 PDF statistics:
- 377 PDF objects out of 1000 (max. 8388607)
+ 379 PDF objects out of 1000 (max. 8388607)
  55 named destinations out of 1000 (max. 500000)
- 434 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 439 words of extra memory for PDF output out of 10000 (max. 10000000)
 

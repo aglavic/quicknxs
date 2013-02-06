@@ -1191,8 +1191,9 @@
      <string>Reduction</string>
     </property>
     <addaction name="actionNorm"/>
-    <addaction name="actionNormalizeScaling"/>
+    <addaction name="actionClear_Normalizations"/>
     <addaction name="separator"/>
+    <addaction name="actionNormalizeScaling"/>
     <addaction name="actionAddPlot"/>
     <addaction name="actionRemove"/>
     <addaction name="actionClear"/>
@@ -1793,8 +1794,9 @@
    <addaction name="actionNext_File"/>
    <addaction name="separator"/>
    <addaction name="actionNorm"/>
-   <addaction name="actionNormalizeScaling"/>
+   <addaction name="actionClear_Normalizations"/>
    <addaction name="separator"/>
+   <addaction name="actionNormalizeScaling"/>
    <addaction name="actionAddPlot"/>
    <addaction name="actionRemove"/>
    <addaction name="actionClear"/>
@@ -2202,7 +2204,10 @@
     <string>Clear List</string>
    </property>
    <property name="toolTip">
-    <string>Remove all plots from data reduction list</string>
+    <string>Remove all plots from data reduction list (CTRL+SHIFT+Q)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Q</string>
    </property>
   </action>
   <action name="actionAdjust_Dirct_Beam">
@@ -2330,6 +2335,21 @@
     <string>Load Extraction...</string>
    </property>
   </action>
+  <action name="actionClear_Normalizations">
+   <property name="icon">
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/clearNorm.png</normaloff>:/General/clearNorm.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Normalizations</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all datasets from the normalization list (CTRL+SHIFT+W)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+W</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2345,6 +2365,55 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>numberSearchEntry</tabstop>
+  <tabstop>refYPos</tabstop>
+  <tabstop>refYWidth</tabstop>
+  <tabstop>refXPos</tabstop>
+  <tabstop>refXWidth</tabstop>
+  <tabstop>bgCenter</tabstop>
+  <tabstop>bgWidth</tabstop>
+  <tabstop>refScale</tabstop>
+  <tabstop>rangeStart</tabstop>
+  <tabstop>rangeEnd</tabstop>
+  <tabstop>plotTab</tabstop>
+  <tabstop>selectedChannel</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>reductionTable</tabstop>
+  <tabstop>reduceButton</tabstop>
+  <tabstop>show_colorbars</tabstop>
+  <tabstop>color_selector</tabstop>
+  <tabstop>logarithmic_colorscale</tabstop>
+  <tabstop>logarithmic_y</tabstop>
+  <tabstop>hide_plots</tabstop>
+  <tabstop>xLamda</tabstop>
+  <tabstop>normalizeXTof</tabstop>
+  <tabstop>tthPhi</tabstop>
+  <tabstop>directPixelOverwrite</tabstop>
+  <tabstop>dangle0Overwrite</tabstop>
+  <tabstop>fanReflectivity</tabstop>
+  <tabstop>pfSNR</tabstop>
+  <tabstop>pfMinWidth</tabstop>
+  <tabstop>pfMaxWidth</tabstop>
+  <tabstop>pfRidgeLength</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>addStitchPoints</tabstop>
+  <tabstop>xprojUseQuantiles</tabstop>
+  <tabstop>xprojQuantiles</tabstop>
+  <tabstop>bgToFConstant</tabstop>
+  <tabstop>eventTofBins</tabstop>
+  <tabstop>eventBinMode</tabstop>
+  <tabstop>histogramActive</tabstop>
+  <tabstop>eventActive</tabstop>
+  <tabstop>file_list</tabstop>
+  <tabstop>kizVSkfz</tabstop>
+  <tabstop>kizmkfzVSqz</tabstop>
+  <tabstop>qxVSqz</tabstop>
+  <tabstop>normalizeTable</tabstop>
+  <tabstop>daslogTableBox</tabstop>
+  <tabstop>offspecImax</tabstop>
+  <tabstop>offspecImin</tabstop>
+ </tabstops>
  <resources>
   <include location="../icons/icons.qrc"/>
  </resources>
@@ -3149,6 +3218,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionClear_Normalizations</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearNormList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>435</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3180,5 +3265,6 @@
   <slot>aboutDialog()</slot>
   <slot>automaticExtraction()</slot>
   <slot>helpDialog()</slot>
+  <slot>clearNormList()</slot>
  </slots>
 </ui>

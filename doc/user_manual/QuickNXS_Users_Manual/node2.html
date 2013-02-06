@@ -166,11 +166,18 @@ Menu and toolbar actions</A>
 </DD>
 <DT><STRONG><IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./clearNorm.png"
+ ALT="Image clearNorm"> Reduction -&gt; Clear Normalization (CTRL+SHIFT+W)</STRONG></DT>
+<DD>Use the data extracted from the current file as a normalization dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate normalization file is selected using the number of time of flight channels in a file and the central wavelength, if this is ambiguous a dialog is shown to the user to select one dataset.
+
+<P>
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./totalReflection.png"
  ALT="Image totalReflection"> Reduction -&gt; Set Scaling (CTRL+S)</STRONG></DT>
 <DD>For the first dataset it tries to find the edge of total reflection and fit a constant to all points before it to normalize it to one. For the second dataset it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
-
-<P>
+   
 </DD>
 <DT><STRONG><IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
@@ -189,7 +196,7 @@ Menu and toolbar actions</A>
 <DT><STRONG><IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./clearRef.png"
- ALT="Image clearRef"> Reduction -&gt; Clear List</STRONG></DT>
+ ALT="Image clearRef"> Reduction -&gt; Clear List (CTRL+SHIFT+Q)</STRONG></DT>
 <DD>Clear the full reduction list to start a new set of reflectivity.
 
 <P>
@@ -376,7 +383,7 @@ Each entry created in the reduction table shows all important parameters needed 
 <!--End of Navigation Panel-->
 <ADDRESS>
 Artur Glavic
-2013-02-05
+2013-02-06
 </ADDRESS>
 </BODY>
 </HTML>

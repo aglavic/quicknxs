@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="General">
+    <file>clearNorm.png</file>
     <file>document-open.png</file>
     <file>listUp.png</file>
     <file>listDown.png</file>

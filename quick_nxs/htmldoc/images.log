@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2012.12.3)  5 FEB 2013 17:43
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2012.12.3)  6 FEB 2013 09:24
 entering extended mode
  %&-line parsing enabled.
 **./images.tex
@@ -590,7 +590,7 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
-l2hSize :tex2html_wrap_inline1409:8.09999pt::0.0pt::8.50151pt.
+l2hSize :tex2html_wrap_inline1412:8.09999pt::0.0pt::8.50151pt.
 [1
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -609,7 +609,7 @@ Non-PDF special ignored!
 
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-l2hSize :tex2html_wrap_inline1411:8.79688pt::8.79688pt::8.55013pt.
+l2hSize :tex2html_wrap_inline1414:8.79688pt::8.79688pt::8.55013pt.
 [2
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -618,7 +618,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1413:8.59999pt::8.59999pt::7.90193pt.
+l2hSize :tex2html_wrap_inline1416:8.59999pt::8.59999pt::7.90193pt.
 [3
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -627,7 +627,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1415:8.29688pt::0.0pt::6.61203pt.
+l2hSize :tex2html_wrap_inline1418:8.29688pt::0.0pt::6.61203pt.
 [4
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -636,7 +636,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1417:8.29688pt::0.0pt::7.10141pt.
+l2hSize :tex2html_wrap_inline1420:8.29688pt::0.0pt::7.10141pt.
 [5
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -645,7 +645,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1419:8.09999pt::0.0pt::7.86304pt.
+l2hSize :tex2html_wrap_inline1422:8.09999pt::0.0pt::7.86304pt.
 [6
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -654,7 +654,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1421:8.59999pt::8.59999pt::7.17595pt.
+l2hSize :tex2html_wrap_inline1424:8.59999pt::8.59999pt::7.17595pt.
 [7
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -663,7 +663,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1423:8.29688pt::0.0pt::7.25049pt.
+l2hSize :tex2html_wrap_inline1426:8.29688pt::0.0pt::7.25049pt.
 [8
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -672,7 +672,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1425:8.69586pt::8.69586pt::9.49191pt.
+l2hSize :tex2html_wrap_inline1428:8.69586pt::8.69586pt::9.49191pt.
 [9
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -681,7 +681,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1427:8.09999pt::0.0pt::7.70393pt.
+l2hSize :tex2html_wrap_inline1430:8.09999pt::0.0pt::7.70393pt.
 [10
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -690,7 +690,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1429:8.19586pt::0.0pt::7.94403pt.
+l2hSize :tex2html_wrap_inline1432:8.19586pt::0.0pt::7.94403pt.
 [11
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -699,7 +699,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1431:8.09999pt::0.0pt::7.90842pt.
+l2hSize :tex2html_wrap_inline1434:8.09999pt::0.0pt::7.90842pt.
 [12
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -733,7 +733,7 @@ LaTeX Font Info:    Try loading font information for T1+cmtt on input line 18.
 (/usr/share/texmf-texlive/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 ))
-l2hSize :figure1432:501.65965pt::0.0pt::349.0pt.
+l2hSize :figure1435:501.65965pt::0.0pt::349.0pt.
 [13
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -749,7 +749,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1492:8.76193pt::8.76193pt::14.23187pt.
+l2hSize :tex2html_wrap_inline1496:8.76193pt::8.76193pt::14.23187pt.
 [14
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -758,7 +758,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1506:8.59999pt::8.59999pt::13.2649pt.
+l2hSize :tex2html_wrap_inline1510:8.59999pt::8.59999pt::13.2649pt.
 [15
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -767,7 +767,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1513:10.8768pt::10.8768pt::13.48398pt.
+l2hSize :tex2html_wrap_inline1517:10.8768pt::10.8768pt::13.48398pt.
 [16
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -776,7 +776,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1516:11.47679pt::11.47679pt::40.12003pt.
+l2hSize :tex2html_wrap_indisplay1520:11.47679pt::11.47679pt::40.12003pt.
 [17
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -785,7 +785,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1518:19.23732pt::19.23732pt::256.65932pt.
+l2hSize :tex2html_wrap_indisplay1522:19.23732pt::19.23732pt::256.65932pt.
 [18
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -794,7 +794,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1520:9.5pt::9.5pt::37.46619pt.
+l2hSize :tex2html_wrap_indisplay1524:9.5pt::9.5pt::37.46619pt.
 [19
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -803,7 +803,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1522:11.47679pt::11.47679pt::78.88448pt.
+l2hSize :tex2html_wrap_indisplay1526:11.47679pt::11.47679pt::78.88448pt.
 [20
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -830,7 +830,7 @@ c/amsfonts/euler/eurm10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1
 exmf-texlive/fonts/type1/urw/symbol/usyr.pfb></usr/share/texmf-texlive/fonts/ty
 pe1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmr8a
 .pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri8a.pfb>
-Output written on images.pdf (20 pages, 104846 bytes).
+Output written on images.pdf (20 pages, 105007 bytes).
 PDF statistics:
  109 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

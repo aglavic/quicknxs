@@ -108,6 +108,8 @@ class MainGUI(QtGui.QMainWindow):
           self.trigger('automaticExtraction', argv)
       if argv[0][-4:]=='.dat':
         self.trigger('loadExtraction', argv[0])
+    else:
+      self.ui.numberSearchEntry.setFocus()
 
   def processDelayedTrigger(self, item, args):
     '''
@@ -668,6 +670,7 @@ class MainGUI(QtGui.QMainWindow):
     else:
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
     if search:
+      self.ui.numberSearchEntry.setText('')
       self.fileOpen(search[0])
     else:
       self.ui.statusbar.showMessage('Could not locate %s...'%number, 2500)
@@ -933,21 +936,30 @@ class MainGUI(QtGui.QMainWindow):
       self.ref_norm[number]=self.refl
       idx=sorted(self.ref_norm.keys()).index(number)
       self.ui.normalizeTable.insertRow(idx)
-      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(str(number)))
+      item=QtGui.QTableWidgetItem(number)
+      item.setTextColor(QtGui.QColor(100, 0, 0))
+      item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(item))
       self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(lamda)))
-      self.ui.normalizeTable.setItem(idx, 2, QtGui.QTableWidgetItem(str(opts['x_pos'])))
+      item=QtGui.QTableWidgetItem(str(opts['x_pos']))
+      item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+      self.ui.normalizeTable.setItem(idx, 2, QtGui.QTableWidgetItem(item))
       self.ui.normalizeTable.setItem(idx, 3, QtGui.QTableWidgetItem(str(opts['x_width'])))
-      self.ui.normalizeTable.setItem(idx, 4, QtGui.QTableWidgetItem(str(opts['y_pos'])))
+      item=QtGui.QTableWidgetItem(str(opts['y_pos']))
+      item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+      self.ui.normalizeTable.setItem(idx, 4, QtGui.QTableWidgetItem(item))
       self.ui.normalizeTable.setItem(idx, 5, QtGui.QTableWidgetItem(str(opts['y_width'])))
-      self.ui.normalizeTable.setItem(idx, 6, QtGui.QTableWidgetItem(str(opts['bg_pos'])))
+      item=QtGui.QTableWidgetItem(str(opts['bg_pos']))
+      item.setBackgroundColor(QtGui.QColor(200, 200, 200))
+      self.ui.normalizeTable.setItem(idx, 6, QtGui.QTableWidgetItem(item))
       self.ui.normalizeTable.setItem(idx, 7, QtGui.QTableWidgetItem(str(opts['bg_width'])))
-      self.ui.normalizationLabel.setText(",".join(map(str, sorted(self.ref_norm.keys()))))
+      self.ui.normalizationLabel.setText(u",".join(map(str, sorted(self.ref_norm.keys()))))
     elif do_remove:
       number=str(self.active_data.number)
       idx=sorted(self.ref_norm.keys()).index(number)
       del(self.ref_norm[number])
       self.ui.normalizeTable.removeRow(idx)
-      self.ui.normalizationLabel.setText(",".join(map(str, sorted(self.ref_norm.keys()))))
+      self.ui.normalizationLabel.setText(u",".join(map(str, sorted(self.ref_norm.keys()))))
     if do_plot:
       self.plot_refl()
 
@@ -979,6 +991,13 @@ class MainGUI(QtGui.QMainWindow):
       else:
         return fittings[indices.index(result[0])]
 
+  def clearNormList(self):
+    '''
+      Remove all items from the reduction list.
+    '''
+    self.ui.normalizeTable.setRowCount(0)
+    self.ui.normalizationLabel.setText(u"Unset")
+    self.ref_norm={}
 
   def normalizeTotalReflection(self):
     '''
@@ -1454,10 +1473,9 @@ as the ones already in the list:
       Fit the selected x position to the closest peak.
     '''
     if self.ui.actionRefineX.isChecked():
-      cindex=self.channels.index(self.active_channel)
-      data=self.xydata[cindex]
+      data=self.active_data[self.active_channel].xydata
       if self.ui.xprojUseQuantiles.isChecked():
-        d2=self.xtofdata[cindex]
+        d2=self.active_data[self.active_channel].xtofdata
         xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
       else:
         xproj=data.mean(axis=0)

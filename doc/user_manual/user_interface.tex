@@ -34,11 +34,12 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all channel
    \item[{\icon{listUp} File -> Previous File (CTRL+SHIFT+O)}] Opens the file above the active selection in the Files Dock Window.
    
    \item[{\icon{extractNormalization} Reduction -> Set Normalization (CTRL+W)}] Use the data extracted from the current file as a normalization dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate normalization file is selected using the number of time of flight channels in a file and the central wavelength, if this is ambiguous a dialog is shown to the user to select one dataset.
-   \item[{\icon{totalReflection} Reduction -> Set Scaling (CTRL+S)}] For the first dataset it tries to find the edge of total reflection and fit a constant to all points before it to normalize it to one. For the second dataset it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
+   \item[{\icon{clearNorm} Reduction -> Clear Normalization (CTRL+SHIFT+W)}] Use the data extracted from the current file as a normalization dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate normalization file is selected using the number of time of flight channels in a file and the central wavelength, if this is ambiguous a dialog is shown to the user to select one dataset.
    
+   \item[{\icon{totalReflection} Reduction -> Set Scaling (CTRL+S)}] For the first dataset it tries to find the edge of total reflection and fit a constant to all points before it to normalize it to one. For the second dataset it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
    \item[{\icon{addRef} Reduction -> Keep Item in List (CTRL+Q)}] Use the reflectivity from the current dataset and add it the the reduction list. Only works for already normalized dataset. The options in the reduction list can still be changed later.
    \item[{\icon{delRef} Reduction -> Remove Line}] Remove the selected line from the reduction list.
-   \item[{\icon{clearRef} Reduction -> Clear List}] Clear the full reduction list to start a new set of reflectivity.
+   \item[{\icon{clearRef} Reduction -> Clear List (CTRL+SHIFT+Q)}] Clear the full reduction list to start a new set of reflectivity.
 
     \item[{\icon{reduce} Reduction -> Reduce...}] Use the items and options in the reduction table to export a dataset. Shows a dialog to select how the export should be done.
 
