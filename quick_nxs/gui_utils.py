@@ -38,6 +38,7 @@ class ReduceDialog(QDialog):
                    ['+-', '-V'],
                    ['-+']
                    ]
+  _overwrite_all=False
 
   def __init__(self, parent, channels, refls):
     QDialog.__init__(self, parent)
@@ -223,6 +224,24 @@ class ReduceDialog(QDialog):
     self.output_data['OffSpecSmooth']=output_data
     pb.destroy()
 
+  def check_exists(self, filename):
+    '''
+      If the filename exists, prompt the user if it should be overwritten.
+      :return: If the file should be written or not.
+    '''
+    if self._overwrite_all or not os.path.exists(filename):
+      return True
+    result=QMessageBox.question(self, 'Overwrite file?',
+                                'The file "%s" already exists, overwrite it?'%filename,
+                                buttons=QMessageBox.Yes|QMessageBox.YesToAll|QMessageBox.No)
+    if result==QMessageBox.YesToAll:
+      self._overwrite_all=True
+      return True
+    elif result==QMessageBox.Yes:
+      return True
+    else:
+      return False
+
   def export_data(self):
     '''
       Write all datasets to the selected format output.
@@ -255,6 +274,8 @@ class ReduceDialog(QDialog):
           value=output_data[channel]
           output=ofname.replace('{item}', key).replace('{state}', channel)\
                        .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
+          if not self.check_exists(output):
+            continue
           of=open(output, 'w')
           # write the file header
           of.write(FILE_HEADER%{
@@ -280,45 +301,50 @@ class ReduceDialog(QDialog):
       if self.ui.combinedAscii.isChecked():
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
-        of=open(output, 'w')
-        # write the file header
-        of.write(FILE_HEADER%{
-                              'date': strftime("%Y-%m-%d %H:%M:%S"),
-                              'datatype': key,
-                              'indices': self.ind_str,
-                              'params_lines': plines,
-                                'norm_lines': nlines,
-                              'column_units': "\t".join(output_data['column_units']),
-                              'column_names':  "\t".join(output_data['column_names']),
-                              'channels': ", ".join(self.channels),
-                              })
-        # write all channel data separated by three empty lines and one comment
-        for channel in self.channels:
-          of.write('# Start of channel %s\n'%channel)
-          value=output_data[channel]
-          if type(value) is not list:
-            savetxt(of, value, delimiter='\t')
-          else:
-            for filemap in value:
-              # separate first dimension steps by empty line
-              for scan in filemap:
-                savetxt(of, scan, delimiter='\t')
-                of.write('\n')
-            of.write('\n\n')
-          of.write('# End of channel %s\n\n\n'%channel)
-        of.close()
+        if self.check_exists(output):
+          of=open(output, 'w')
+          # write the file header
+          of.write(FILE_HEADER%{
+                                'date': strftime("%Y-%m-%d %H:%M:%S"),
+                                'datatype': key,
+                                'indices': self.ind_str,
+                                'params_lines': plines,
+                                  'norm_lines': nlines,
+                                'column_units': "\t".join(output_data['column_units']),
+                                'column_names':  "\t".join(output_data['column_names']),
+                                'channels': ", ".join(self.channels),
+                                })
+          # write all channel data separated by three empty lines and one comment
+          for channel in self.channels:
+            of.write('# Start of channel %s\n'%channel)
+            value=output_data[channel]
+            if type(value) is not list:
+              savetxt(of, value, delimiter='\t')
+            else:
+              for filemap in value:
+                # separate first dimension steps by empty line
+                for scan in filemap:
+                  savetxt(of, scan, delimiter='\t')
+                  of.write('\n')
+              of.write('\n\n')
+            of.write('# End of channel %s\n\n\n'%channel)
+          of.close()
     if self.ui.matlab.isChecked():
       from scipy.io import savemat
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
                        .replace('{type}', 'mat').replace('{numbers}', self.ind_str)
+        if not self.check_exists(output):
+          continue
         savemat(output, dictdata, oned_as='column')
     if self.ui.numpy.isChecked():
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
                        .replace('{type}', 'npz').replace('{numbers}', self.ind_str)
+        if not self.check_exists(output):
+          continue
         savez(output, **dictdata)
 
   def dictize_data(self, output_data):
@@ -341,6 +367,8 @@ class ReduceDialog(QDialog):
                         unicode(self.ui.fileNameEntry.text()))
     output=ofname_full.replace('{item}', title).replace('{state}', 'all')\
                  .replace('{type}', 'gp').replace('{numbers}', self.ind_str)
+    if not self.check_exists(output):
+      return
     ofname=unicode(self.ui.fileNameEntry.text())
     if type(output_data[self.channels[0]]) is not list:
       # 2D PLot
@@ -428,6 +456,8 @@ class ReduceDialog(QDialog):
         continue
       output=ofname.replace('{item}', key).replace('{state}', 'all')\
                    .replace('{type}', 'gx').replace('{numbers}', self.ind_str)
+      if not self.check_exists(output):
+        continue
       oz=ZipFile(output, 'w')
       iz=ZipFile(template, 'r')
       for key in ['script', 'parameters', 'fomfunction', 'config', 'optimizer']:
