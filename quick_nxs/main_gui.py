@@ -405,26 +405,18 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.plot(xproj, color='blue')[0]
     self.ui.x_project.set_xlabel(u'x [pix]')
     self.ui.x_project.set_ylabel(u'I$_{max}$')
-    xpos=Line2D([x_peak, x_peak], [xylim[0], xylim[1]], color='black')
-    xleft=Line2D([x_peak-x_width/2., x_peak-x_width/2.], [xylim[0], xylim[1]], color='red')
-    xright=Line2D([x_peak+x_width/2., x_peak+x_width/2.], [xylim[0], xylim[1]], color='red')
-    self.ui.x_project.canvas.ax.add_line(xpos)
-    self.ui.x_project.canvas.ax.add_line(xleft)
-    self.ui.x_project.canvas.ax.add_line(xright)
-    xleft_bg=Line2D([bg_pos-bg_width/2., bg_pos-bg_width/2.], [xylim[0], xylim[1]], color='green')
-    xright_bg=Line2D([bg_pos+bg_width/2., bg_pos+bg_width/2.], [xylim[0], xylim[1]], color='green')
-    self.ui.x_project.canvas.ax.add_line(xleft_bg)
-    self.ui.x_project.canvas.ax.add_line(xright_bg)
+    xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
+    xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
+    xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
+    xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='green')
+    xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='green')
 
     self.ui.y_project.plot(yproj, color='blue')[0]
     self.ui.y_project.set_xlabel(u'y [pix]')
     self.ui.y_project.set_ylabel(u'I$_{max}$')
-    yreg_left=Line2D([y_pos-y_width/2., y_pos-y_width/2.], [yylim[0], yylim[1]], color='red')
-    yreg_right=Line2D([y_pos+y_width/2., y_pos+y_width/2.], [yylim[0], yylim[1]], color='red')
-    self.ui.y_project.canvas.ax.add_line(yreg_left)
-    self.ui.y_project.canvas.ax.add_line(yreg_right)
-    y_bg=Line2D([0, yxlim[1]], [self.y_bg, self.y_bg], color='green')
-    self.ui.y_project.canvas.ax.add_line(y_bg)
+    yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='red')
+    yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='red')
+    self.ui.y_project.canvas.ax.axhline(self.y_bg, color='green')
     if preserve_lim:
       self.ui.x_project.canvas.ax.axis(xview)
       self.ui.y_project.canvas.ax.axis(yview)
@@ -867,7 +859,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.datasetTth.setText(tth)
     self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
     self.ui.datasetDirectPixel.setText(dpix)
-    self.ui.currentChannel.setText('<b>%s</b> (%s)&nbsp;&nbsp;&nbsp;Type: %s&nbsp;&nbsp;&nbsp;Current Channel: <b>%s</b>'%(
+    self.ui.currentChannel.setText('<b>%s</b> (%s)&nbsp;&nbsp;&nbsp;Type: %s&nbsp;&nbsp;&nbsp;Current State: <b>%s</b>'%(
                                                       self.active_data.number,
                                                       self.active_data.experiment,
                                                       self.active_data.measurement_type,
@@ -954,6 +946,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normalizeTable.setItem(idx, 6, QtGui.QTableWidgetItem(item))
       self.ui.normalizeTable.setItem(idx, 7, QtGui.QTableWidgetItem(str(opts['bg_width'])))
       self.ui.normalizationLabel.setText(u",".join(map(str, sorted(self.ref_norm.keys()))))
+      self.ui.normalizeTable.resizeColumnsToContents()
     elif do_remove:
       number=str(self.active_data.number)
       idx=sorted(self.ref_norm.keys()).index(number)

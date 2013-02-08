@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1087</width>
-    <height>871</height>
+    <height>909</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,7 +159,7 @@
                      <string>Two theta value calculated from file, if DANGLE0 overwrite is active, the read value is in brackets</string>
                     </property>
                     <property name="text">
-                     <string>2Θ</string>
+                     <string>ΔDANGLE</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -302,7 +302,7 @@
                         <string>Sample angle calculated from 2Θ and X-center position</string>
                        </property>
                        <property name="text">
-                        <string>αi-calc</string>
+                        <string>SANGLE-calc</string>
                        </property>
                        <property name="alignment">
                         <set>Qt::AlignCenter</set>
@@ -491,7 +491,7 @@
                     </sizepolicy>
                    </property>
                    <property name="toolTip">
-                    <string>Select the channel for the overview. If channel is not in file, the first will be used.</string>
+                    <string>Select the state for the overview. If channel is not in file, the first will be used.</string>
                    </property>
                    <item>
                     <property name="text">
@@ -564,7 +564,7 @@
                      </attribute>
                      <column>
                       <property name="text">
-                       <string>File No.</string>
+                       <string>Run No.</string>
                       </property>
                       <property name="toolTip">
                        <string>File Number</string>
@@ -580,7 +580,7 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>P0</string>
+                       <string>NL</string>
                       </property>
                       <property name="toolTip">
                        <string>Points cut from low Q side</string>
@@ -588,7 +588,7 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>PN</string>
+                       <string>NR</string>
                       </property>
                       <property name="toolTip">
                        <string>Points cut from high Q side</string>
@@ -644,7 +644,7 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>DP</string>
+                       <string>DPix</string>
                       </property>
                       <property name="toolTip">
                        <string>DirectPixel</string>
@@ -660,7 +660,7 @@
                      </column>
                      <column>
                       <property name="text">
-                       <string>Norm</string>
+                       <string>Dir. Run</string>
                       </property>
                       <property name="toolTip">
                        <string>The normalization file used for this dataset</string>
@@ -672,7 +672,7 @@
                  </widget>
                  <widget class="QWidget" name="tab_2">
                   <attribute name="title">
-                   <string>Normalization</string>
+                   <string>Direct Beam</string>
                   </attribute>
                   <attribute name="toolTip">
                    <string>A list of datasets available for wavelength normalization</string>
@@ -697,7 +697,7 @@
                      </attribute>
                      <column>
                       <property name="text">
-                       <string>File No.</string>
+                       <string>Run No.</string>
                       </property>
                       <property name="toolTip">
                        <string>Dataset number</string>
@@ -1216,7 +1216,7 @@
    <property name="minimumSize">
     <size>
      <width>221</width>
-     <height>168</height>
+     <height>194</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -1600,6 +1600,9 @@
        </property>
        <property name="minimum">
         <double>1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>304.000000000000000</double>
        </property>
        <property name="value">
         <double>9.000000000000000</double>

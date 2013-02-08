@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Wed Feb  6 11:11:48 2013
+# Created: Fri Feb  8 08:33:03 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -154,7 +154,7 @@ class Ui_Dialog(object):
     self.exportOffSpecular.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Raw", None, QtGui.QApplication.UnicodeUTF8))
     self.exportOffSpecularSmoothed.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Smoothed", None, QtGui.QApplication.UnicodeUTF8))
     self.exportGISANS.setText(QtGui.QApplication.translate("Dialog", "GISANS", None, QtGui.QApplication.UnicodeUTF8))
-    self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Channels", None, QtGui.QApplication.UnicodeUTF8))
+    self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "States", None, QtGui.QApplication.UnicodeUTF8))
     self.exportUpUp.setText(QtGui.QApplication.translate("Dialog", " X / + / ++/0V", None, QtGui.QApplication.UnicodeUTF8))
     self.exportDownDown.setText(QtGui.QApplication.translate("Dialog", "- / --/+V", None, QtGui.QApplication.UnicodeUTF8))
     self.exportUpDown.setText(QtGui.QApplication.translate("Dialog", "+-/-V", None, QtGui.QApplication.UnicodeUTF8))
@@ -170,6 +170,6 @@ class Ui_Dialog(object):
     self.label.setText(QtGui.QApplication.translate("Dialog", "Directory", None, QtGui.QApplication.UnicodeUTF8))
     self.toolButton.setText(QtGui.QApplication.translate("Dialog", "...", None, QtGui.QApplication.UnicodeUTF8))
     self.label_2.setText(QtGui.QApplication.translate("Dialog", "File Naming", None, QtGui.QApplication.UnicodeUTF8))
-    self.fileNameEntry.setText(QtGui.QApplication.translate("Dialog", "REF_M_{numbers}_{item}_{channel}.{type}", None, QtGui.QApplication.UnicodeUTF8))
+    self.fileNameEntry.setText(QtGui.QApplication.translate("Dialog", "REF_M_{numbers}_{item}_{state}.{type}", None, QtGui.QApplication.UnicodeUTF8))
 
 from . import icons_rc

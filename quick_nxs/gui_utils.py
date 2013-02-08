@@ -8,7 +8,7 @@ import os, sys
 import subprocess
 from zipfile import ZipFile
 from cPickle import loads, dumps
-from PyQt4.QtGui import QDialog, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
+from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
 from PyQt4.QtCore import QThread, pyqtSignal
 from time import sleep, time, strftime
 from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum
@@ -65,6 +65,15 @@ class ReduceDialog(QDialog):
     '''
     global result_folder
     if QDialog.exec_(self):
+      foldername=unicode(self.ui.directoryEntry.text())
+      if not os.path.exists(foldername):
+        result=QMessageBox.question(self, 'Creat Folder?',
+                      'The folder "%s" does not exist. Do you want to create it?'%foldername,
+                      buttons=QMessageBox.Yes|QMessageBox.No)
+        if result==QMessageBox.Yes:
+          os.makedirs(foldername)
+        else:
+          return
       # remove channels not selected
       if not self.ui.exportDownUp.isChecked():
         self.rm_channel(['-+'])
@@ -151,7 +160,7 @@ class ReduceDialog(QDialog):
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     output_data['column_units']=['A^-1', 'A^-1', 'A^-1', 'A^-1', 'A^-1', 'a.u.', 'a.u.']
-    output_data['column_names']=['Qx', 'Qz', 'ki_z', 'kf_z', 'ki_zMkf_z', 'I', 'dI']
+    output_data['column_names']=['Qx', 'Qz', 'ki_z', 'kf_z', 'ki_zMinkf_z', 'I', 'dI']
 
 
     ki_max=0.01
@@ -196,7 +205,7 @@ class ReduceDialog(QDialog):
         x=data[:, :, 4].flatten()
         y=data[:, :, 1].flatten()
         output_data['column_units']=['A^-1', 'A^-1', 'a.u.']
-        output_data['column_names']=['ki_zMkf_z', 'Qz', 'I']
+        output_data['column_names']=['ki_zMinkf_z', 'Qz', 'I']
       elif settings['xy_column']==1:
         x=data[:, :, 0].flatten()
         y=data[:, :, 1].flatten()
@@ -244,7 +253,7 @@ class ReduceDialog(QDialog):
       if self.ui.multiAscii.isChecked():
         for channel in self.channels:
           value=output_data[channel]
-          output=ofname.replace('{item}', key).replace('{channel}', channel)\
+          output=ofname.replace('{item}', key).replace('{state}', channel)\
                        .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
           of=open(output, 'w')
           # write the file header
@@ -269,7 +278,7 @@ class ReduceDialog(QDialog):
                 of.write('\n')
             of.write('\n\n')
       if self.ui.combinedAscii.isChecked():
-        output=ofname.replace('{item}', key).replace('{channel}', 'all')\
+        output=ofname.replace('{item}', key).replace('{state}', 'all')\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
         of=open(output, 'w')
         # write the file header
@@ -302,13 +311,13 @@ class ReduceDialog(QDialog):
       from scipy.io import savemat
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
-        output=ofname.replace('{item}', key).replace('{channel}', 'all')\
+        output=ofname.replace('{item}', key).replace('{state}', 'all')\
                        .replace('{type}', 'mat').replace('{numbers}', self.ind_str)
         savemat(output, dictdata, oned_as='column')
     if self.ui.numpy.isChecked():
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
-        output=ofname.replace('{item}', key).replace('{channel}', 'all')\
+        output=ofname.replace('{item}', key).replace('{state}', 'all')\
                        .replace('{type}', 'npz').replace('{numbers}', self.ind_str)
         savez(output, **dictdata)
 
@@ -330,13 +339,13 @@ class ReduceDialog(QDialog):
   def create_gnuplot_script(self, ind_str, output_data, title):
     ofname_full=os.path.join(unicode(self.ui.directoryEntry.text()),
                         unicode(self.ui.fileNameEntry.text()))
-    output=ofname_full.replace('{item}', title).replace('{channel}', 'all')\
+    output=ofname_full.replace('{item}', title).replace('{state}', 'all')\
                  .replace('{type}', 'gp').replace('{numbers}', self.ind_str)
     ofname=unicode(self.ui.fileNameEntry.text())
     if type(output_data[self.channels[0]]) is not list:
       # 2D PLot
       params=dict(
-                  output=ofname.replace('{item}', title).replace('{channel}', 'all')\
+                  output=ofname.replace('{item}', title).replace('{state}', 'all')\
                          .replace('{type}', '').replace('{numbers}', self.ind_str),
                   xlabel=u"Q_z [Å^{-1}]",
                   ylabel=u"Reflectivity",
@@ -344,7 +353,7 @@ class ReduceDialog(QDialog):
                   )
       plotlines=[]
       for i, channel in enumerate(self.channels):
-        filename=ofname.replace('{item}', title).replace('{channel}', channel)\
+        filename=ofname.replace('{item}', title).replace('{state}', channel)\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
         plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
       params['plot_lines']=GP_SEP.join(plotlines)
@@ -356,7 +365,7 @@ class ReduceDialog(QDialog):
       rows=1+int(len(self.channels)>2)
       cols=1+int(len(self.channels)>1)
       params=dict(
-                  output=ofname.replace('{item}', title).replace('{channel}', 'all')\
+                  output=ofname.replace('{item}', title).replace('{state}', 'all')\
                          .replace('{type}', '').replace('{numbers}', self.ind_str),
                   zlabel=u"I [a.u.]",
                   title=ind_str,
@@ -393,7 +402,7 @@ class ReduceDialog(QDialog):
           params['pix_x']=1400*cols
       plotlines=''
       for channel in self.channels:
-        line_params['file_name']=ofname.replace('{item}', title).replace('{channel}', channel)\
+        line_params['file_name']=ofname.replace('{item}', title).replace('{state}', channel)\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
         plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
       params['plot_lines']=plotlines
@@ -417,7 +426,7 @@ class ReduceDialog(QDialog):
     for key, output_data in self.output_data.items():
       if not key in ['Specular', 'TrueSpecular']:
         continue
-      output=ofname.replace('{item}', key).replace('{channel}', 'all')\
+      output=ofname.replace('{item}', key).replace('{state}', 'all')\
                    .replace('{type}', 'gx').replace('{numbers}', self.ind_str)
       oz=ZipFile(output, 'w')
       iz=ZipFile(template, 'r')

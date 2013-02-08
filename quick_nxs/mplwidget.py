@@ -16,7 +16,8 @@ savefig={
          'dpi': 600,
          }
 
-
+# set the default backend to be compatible with Qt in case someone uses pylab from IPython console
+matplotlib.use('Qt4Agg')
 matplotlib.rc('font', **font)
 matplotlib.rc('savefig', **savefig)
 cmap=matplotlib.colors.LinearSegmentedColormap.from_list('default',
@@ -25,7 +26,7 @@ matplotlib.cm.register_cmap('default', cmap=cmap)
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LogNorm, Normalize
 from matplotlib.figure import Figure
 try:
     import matplotlib.backends.qt4_editor.figureoptions as figureoptions
@@ -55,13 +56,19 @@ class NavigationToolbar(NavigationToolbar2QT):
             self.configure_subplots)
     a.setToolTip('Configure plot boundaries')
 
-    a=self.addAction(QtGui.QIcon.fromTheme('document-save', self._icon('filesave.png')), 'Save',
+    a=self.addAction(QtGui.QIcon.fromTheme('document-save',
+                     self._icon('filesave.png')), 'Save',
             self.save_figure)
     a.setToolTip('Save the figure')
 
     a=self.addAction(QtGui.QIcon.fromTheme('document-print'), 'Print',
             self.print_figure)
     a.setToolTip('Print the figure with the default printer')
+
+    self.addSeparator()
+    a=self.addAction(QtGui.QIcon.fromTheme('go-up'), 'Log',
+            self.toggle_log)
+    a.setToolTip('Toggle logarithmic scale')
 
 
     self.buttons={}
@@ -106,6 +113,49 @@ class NavigationToolbar(NavigationToolbar2QT):
                                     'Plot successfully send to default printer!',
                                     buttons=QtGui.QMessageBox.Close)
 
+  def save_figure(self, *args):
+      filetypes=self.canvas.get_supported_filetypes_grouped()
+      sorted_filetypes=filetypes.items()
+      sorted_filetypes.sort()
+      default_filetype=self.canvas.get_default_filetype()
+
+      start="image."+default_filetype
+      filters=[]
+      for name, exts in sorted_filetypes:
+          exts_list=" ".join(['*.%s'%ext for ext in exts])
+          filter='%s (%s)'%(name, exts_list)
+          if default_filetype in exts:
+            filters.insert(0, filter)
+          else:
+            filters.append(filter)
+      filters=';;'.join(filters)
+
+      fname=QtGui.QFileDialog.getSaveFileName(self, u"Choose a filename to save to", start, filters)
+      if fname:
+          try:
+              self.canvas.print_figure(unicode(fname))
+          except Exception, e:
+              QtGui.QMessageBox.critical(
+                  self, "Error saving file", str(e),
+                  QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+
+  def toggle_log(self, *args):
+    ax=self.canvas.ax
+    if len(ax.lines)>0:
+      logstate=ax.get_yscale()
+      if logstate=='linear':
+        ax.set_yscale('log')
+      else:
+        ax.set_yscale('linear')
+      self.canvas.draw()
+    else:
+      img=ax.images[0]
+      norm=img.norm
+      if norm.__class__ is LogNorm:
+        img.set_norm(Normalize(norm.vmin, norm.vmax))
+      else:
+        img.set_norm(LogNorm(norm.vmin, norm.vmax))
+    self.canvas.draw()
 
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={}):
@@ -145,10 +195,10 @@ class MplCanvas(FigureCanvas):
     return QtCore.QSize(w, h)
 
   def minimumSizeHint(self):
-    return QtCore.QSize(10, 10)
+    return QtCore.QSize(40, 40)
 
   def get_default_filetype(self):
-    return 'png'
+      return 'png'
 
 
 class MPLWidget(QtGui.QWidget):

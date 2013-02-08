@@ -67,7 +67,7 @@ FILE_HEADER=u'''# Datafile created by QuickNXS
 # Date: %(date)s
 # Type: %(datatype)s
 # Input file indices: %(indices)s
-# Extracted channels: %(channels)s
+# Extracted states: %(channels)s
 #
 # Parameters used for extraction of normalization:
 # I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       N. Index  FAN  File

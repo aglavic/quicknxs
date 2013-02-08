@@ -89,7 +89,7 @@
          </sizepolicy>
         </property>
         <property name="title">
-         <string>Channels</string>
+         <string>States</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
@@ -240,7 +240,7 @@
      <item>
       <widget class="QLineEdit" name="fileNameEntry">
        <property name="text">
-        <string>REF_M_{numbers}_{item}_{channel}.{type}</string>
+        <string>REF_M_{numbers}_{item}_{state}.{type}</string>
        </property>
       </widget>
      </item>
