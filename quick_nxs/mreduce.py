@@ -26,13 +26,12 @@ Parameters needed for some calculations.
 '''
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
 
-TOF_DISTANCE=21.2535 # m
-#RAD_PER_PIX=0.0002734242
-#RAD_PER_PIX=0.00027429694 # arctan(212.8mm/2/2550.5mm)/152pix
-RAD_PER_PIX=0.00027445599 # arctan(212.8mm/2/2550.5mm)/152pix
-DETECTOR_X_REGION=(8, 295)
+#TOF_DISTANCE=21.2535 # m
+#RAD_PER_PIX=0.00027445599 # arctan(212.8mm/2/2550.5mm)/152pix
 
-# position and maximum deviation of polarizer and analzer in it's working position
+DETECTOR_X_REGION=(8, 295) # the active area of the detector
+
+# position and maximum deviation of polarizer and analyzer in it's working position
 ANALYZER_IN=(0., 100.)
 POLARIZER_IN=(-348., 50.)
 
@@ -248,13 +247,13 @@ class MRDataset(object):
   proton_charge=0.
   total_counts=0
   tof_edges=None
-  dangle=0.
-  dangle0=0.
-  sangle=0.
+  dangle=0. #°
+  dangle0=0. #°
+  sangle=0. #°
   ai=None
   dpix=0
-  beam_width=0.
-  lambda_center=3.37
+  beam_width=0. #mm
+  lambda_center=3.37 #Å
   xydata=None
   xtofdata=None
   data=None
@@ -263,6 +262,11 @@ class MRDataset(object):
   experiment=''
   number=0
   merge_warnings=''
+  dist_mod_det=21.2535 #m
+  dist_sam_det=2.55505 #m
+  det_size_x=0.2128 #m
+  det_size_y=0.1792 #m
+
   _Q=None
   _I=None
   _dI=None
@@ -319,8 +323,8 @@ class MRDataset(object):
     tof_y=Y[tof_ids]
     lcenter=data['DASlogs/LambdaRequest/value'].value[0]
     # ToF region for this specific central wavelength
-    tmin=TOF_DISTANCE/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
-    tmax=TOF_DISTANCE/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+    tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+    tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
     if bin_type.lower()=='linear':
       tof_edges=linspace(tmin, tmax, bins+1)
     elif bin_type.lower()=='1/x':
@@ -367,14 +371,20 @@ class MRDataset(object):
           self.log_units[motor]=u''
       except:
         continue
-    self.proton_charge=data['proton_charge'].value[0]
-    self.total_counts=data['total_counts'].value[0]
     self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
     self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
     self.sangle=data['sample/SANGLE/value'].value[0]
     self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
+
+    self.proton_charge=data['proton_charge'].value[0]
+    self.total_counts=data['total_counts'].value[0]
     self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
     self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
+
+    self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
+    self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
+    self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
+    self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
 
     self.experiment=str(data['experiment_identifier'].value[0])
     self.number=int(data['run_number'].value[0])
@@ -414,7 +424,7 @@ class MRDataset(object):
 
   @property
   def lamda(self):
-    v_n=TOF_DISTANCE/self.tof*1e6 #m/s
+    v_n=self.dist_mod_det/self.tof*1e6 #m/s
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
@@ -474,7 +484,8 @@ class Reflectivity(object):
     self.read_options=dataset.read_options
     if self.options['x_pos'] is None:
       # if nor x_pos is given, use the value from the dataset
-      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/RAD_PER_PIX
+      rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/rad_per_pixel
     if self.options['tth'] is None:
       self.options['tth']=dataset.dangle-dataset.dangle0
     if self.options['dpix'] is None:
@@ -537,13 +548,14 @@ class Reflectivity(object):
     self._calc_bg(dataset)
 
     # get incident angle of reflected beam
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     relpix=self.options['dpix']-x_pos
-    tth=(self.options['tth']*pi/180.+relpix*RAD_PER_PIX)
+    tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     self.ai=tth/2.
     # set good angular resolution as real resolution not implemented, yet
     dai=0.0001
 
-    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
     # store the ToF as well for comparison etc.
     self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
@@ -599,14 +611,15 @@ class Reflectivity(object):
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
 
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
     x_region=arange(reg[0], reg[1])
     relpix=self.options['dpix']-x_region
-    tth=(self.options['tth']*pi/180.+relpix*RAD_PER_PIX)
+    tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     ai=tth/2.
     self.ai=ai[len(ai)//2]
 
-    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
     self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
     self.lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
@@ -747,7 +760,8 @@ class OffSpecular(Reflectivity):
     self.read_options=dataset.read_options
     if self.options['x_pos'] is None:
       # if nor x_pos is given, use the value from the dataset
-      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/RAD_PER_PIX
+      rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/rad_per_pixel
     if self.options['tth'] is None:
       self.options['tth']=dataset.dangle-dataset.dangle0
     if self.options['dpix'] is None:
@@ -789,13 +803,14 @@ class OffSpecular(Reflectivity):
 
     self._calc_bg(dataset)
 
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
     pix_offset_spec=self.options['dpix']-x_pos
-    tth_spec=self.options['tth']*pi/180.+pix_offset_spec*RAD_PER_PIX
-    af=self.options['tth']*pi/180.+xtth*RAD_PER_PIX-tth_spec/2.
+    tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
+    af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
 
-    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
     # store the ToF as well for comparison etc.
     self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs

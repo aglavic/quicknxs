@@ -15,7 +15,7 @@ from .version import str_version
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .error_handling import ErrorHandler
-from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION, RAD_PER_PIX
+from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
 
@@ -218,10 +218,11 @@ class MainGUI(QtGui.QMainWindow):
     tof_imax=xtof.max()
     # XY plot
     if self.ui.tthPhi.isChecked():
-      phi_range=xy.shape[0]*RAD_PER_PIX*180./pi
-      tth_range=xy.shape[1]*RAD_PER_PIX*180./pi
-      phi0=self.ui.refYPos.value()*RAD_PER_PIX*180./pi
-      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*RAD_PER_PIX*180./pi
+      rad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]
+      phi_range=xy.shape[0]*rad_per_pixel*180./pi
+      tth_range=xy.shape[1]*rad_per_pixel*180./pi
+      phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
+      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*rad_per_pixel*180./pi
       self.ui.xy_overview.clear()
 
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
@@ -289,10 +290,11 @@ class MainGUI(QtGui.QMainWindow):
     for i, datai in enumerate(xynormed):
       if self.ui.tthPhi.isChecked():
         plots[i].clear()
-        phi_range=datai.shape[0]*RAD_PER_PIX*180./pi
-        tth_range=datai.shape[1]*RAD_PER_PIX*180./pi
-        phi0=self.ui.refYPos.value()*RAD_PER_PIX*180./pi
-        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*RAD_PER_PIX*180./pi
+        rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+        phi_range=datai.shape[0]*rad_per_pixel*180./pi
+        tth_range=datai.shape[1]*rad_per_pixel*180./pi
+        phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color,
@@ -1413,7 +1415,8 @@ as the ones already in the list:
       dp=self.ui.directPixelOverwrite.value()
     else:
       dp=data.dpix
-    pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
+    rad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]
+    pix_position=dp-(ai*2-tth_bank)/rad_per_pixel
 
     self.auto_change_active=True
     if self.ui.actionAutomaticXPeak.isChecked():

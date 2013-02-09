@@ -18,8 +18,6 @@ set format y "10^{%%L}"
 set ylabel "%(ylabel)s" offset -1
 set title "%(title)s"
 
-# for nice smooth spline interpolation
-set samples 250
 set log y
 set xrange [0:*]
 set yrange [*:2]
