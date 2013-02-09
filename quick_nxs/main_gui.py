@@ -21,6 +21,7 @@ from .peakfinder import PeakFinder
 
 BASE_FOLDER='/SNS/REF_M'
 BASE_SEARCH='*/data/REF_M_%s_'
+OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
 
 class MainGUI(QtGui.QMainWindow):
   '''
@@ -626,6 +627,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.ui.histogramActive.isChecked():
       filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
+    elif self.ui.oldFormatActive.isChecked():
+      filter_=u'Old Nexus (*.nxs);;All (*.*)'
     else:
       filter_=u'Event Nexus (*event.nxs);;All (*.*)'
     filenames=QtGui.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
@@ -661,6 +664,8 @@ class MainGUI(QtGui.QMainWindow):
     QtGui.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'histo.nxs'))
+    elif self.ui.oldFormatActive.isChecked():
+      search=glob(os.path.join(BASE_FOLDER, (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
     else:
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
     if search:
@@ -830,6 +835,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.ui.histogramActive.isChecked():
       newlist=glob(os.path.join(folder, '*histo.nxs'))
+    elif self.ui.oldFormatActive.isChecked():
+      newlist=glob(os.path.join(folder, '*.nxs'))
     else:
       newlist=glob(os.path.join(folder, '*event.nxs'))
     newlist.sort()

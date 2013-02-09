@@ -1215,7 +1215,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>221</width>
+     <width>262</width>
      <height>194</height>
     </size>
    </property>
@@ -1243,6 +1243,13 @@
         <widget class="QRadioButton" name="eventActive">
          <property name="text">
           <string>Event</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="oldFormatActive">
+         <property name="text">
+          <string>Old</string>
          </property>
         </widget>
        </item>
@@ -2014,9 +2021,6 @@
        </property>
        <property name="maximum">
         <number>20</number>
-       </property>
-       <property name="value">
-        <number>3</number>
        </property>
       </widget>
      </item>

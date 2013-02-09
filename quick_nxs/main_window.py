@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Feb  8 08:33:02 2013
+# Created: Sat Feb  9 10:38:57 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -544,7 +544,7 @@ class Ui_MainWindow(object):
     sizePolicy.setVerticalStretch(1)
     sizePolicy.setHeightForWidth(self.dockWidget.sizePolicy().hasHeightForWidth())
     self.dockWidget.setSizePolicy(sizePolicy)
-    self.dockWidget.setMinimumSize(QtCore.QSize(221, 194))
+    self.dockWidget.setMinimumSize(QtCore.QSize(262, 194))
     self.dockWidget.setObjectName(_fromUtf8("dockWidget"))
     self.dockWidgetContents = QtGui.QWidget()
     self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
@@ -559,6 +559,9 @@ class Ui_MainWindow(object):
     self.eventActive = QtGui.QRadioButton(self.dockWidgetContents)
     self.eventActive.setObjectName(_fromUtf8("eventActive"))
     self.horizontalLayout_11.addWidget(self.eventActive)
+    self.oldFormatActive = QtGui.QRadioButton(self.dockWidgetContents)
+    self.oldFormatActive.setObjectName(_fromUtf8("oldFormatActive"))
+    self.horizontalLayout_11.addWidget(self.oldFormatActive)
     self.verticalLayout.addLayout(self.horizontalLayout_11)
     self.horizontalLayout_12 = QtGui.QHBoxLayout()
     self.horizontalLayout_12.setObjectName(_fromUtf8("horizontalLayout_12"))
@@ -871,7 +874,6 @@ class Ui_MainWindow(object):
     self.gridLayout_7.addWidget(self.label_31, 1, 2, 1, 1)
     self.addStitchPoints = QtGui.QSpinBox(self.dockWidgetContents_8)
     self.addStitchPoints.setMaximum(20)
-    self.addStitchPoints.setProperty("value", 3)
     self.addStitchPoints.setObjectName(_fromUtf8("addStitchPoints"))
     self.gridLayout_7.addWidget(self.addStitchPoints, 1, 3, 1, 1)
     self.dockWidget_8.setWidget(self.dockWidgetContents_8)
@@ -1284,6 +1286,7 @@ class Ui_MainWindow(object):
     self.dockWidget.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Files", None, QtGui.QApplication.UnicodeUTF8))
     self.histogramActive.setText(QtGui.QApplication.translate("MainWindow", "Histogram", None, QtGui.QApplication.UnicodeUTF8))
     self.eventActive.setText(QtGui.QApplication.translate("MainWindow", "Event", None, QtGui.QApplication.UnicodeUTF8))
+    self.oldFormatActive.setText(QtGui.QApplication.translate("MainWindow", "Old", None, QtGui.QApplication.UnicodeUTF8))
     self.label_28.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))
     self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Open Number:", None, QtGui.QApplication.UnicodeUTF8))
     self.numberSearchEntry.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))

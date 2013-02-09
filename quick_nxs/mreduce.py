@@ -15,6 +15,7 @@ storing the result as well as some intermediate data in itself as attributes.
 '''
 
 import os
+from glob import glob
 from numpy import *
 import h5py
 from time import time
@@ -126,6 +127,14 @@ class NXSData(object):
       return False
     # analyze channels
     channels=nxs.keys()
+    if channels==['entry']:
+      # ancient file format with polarizations in different files
+      nxs=self._get_ancient(filename)
+      channels=nxs.keys()
+      channels.sort()
+      is_ancient=True
+    else:
+      is_ancient=False
     for channel in list(channels):
       if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
         channels.remove(channel)
@@ -141,7 +150,7 @@ class NXSData(object):
     elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
       self.measurement_type='Polarized'
       mapping=MAPPING_HALFPOL
-    elif nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None: # is E-field cart connected
+    elif 'DASlogs' in nxs[channels[0]] and nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None: # is E-field cart connected
       self.measurement_type='Electric Field'
       mapping=MAPPING_EFIELD
     elif len(channels)==1:
@@ -149,7 +158,7 @@ class NXSData(object):
       mapping=MAPPING_UNPOL
     else:
       self.measurement_type='Unknown'
-      mapping={}
+      mapping=[(channel, channel) for channel in channels]
 
     progress=0.1
     if self._options['callback']:
@@ -164,8 +173,10 @@ class NXSData(object):
         data=MRDataset.from_event(raw_data, self._options,
                                   callback=self._options['callback'], callback_offset=progress,
                                   callback_scaling=1./len(channels))
-      else:
+      elif filename.endswith('histo.nxs'):
         data=MRDataset.from_histogram(raw_data, self._options)
+      else:
+        data=MRDataset.from_old_format(raw_data, self._options)
       self._channel_data.append(data)
       self._channel_names.append(dest)
       self._channel_origin.append(channel)
@@ -175,8 +186,24 @@ class NXSData(object):
       i+=1
       self._read_times.append(time()-self._read_times[-1]-start)
     #print time()-start
-    nxs.close()
+    if not is_ancient:
+      nxs.close()
     return True
+
+  def _get_ancient(self, filename):
+    '''
+      For the oldest file format, where polarization channels
+      are in different .nxs files, this method reads all files
+      and builds a dictionary of it.
+    '''
+    base_name=filename.rsplit("_p", 1)[0]
+    files=glob(base_name+"*.nxs")
+    nxs={}
+    for name in files:
+      key=name.split(base_name)[1][1:-4]
+      item=h5py.File(name, mode='r')
+      nxs[key]=item['entry']
+    return nxs
 
   def __getitem__(self, item):
     if type(item)==int:
@@ -248,7 +275,7 @@ class MRDataset(object):
   total_counts=0
   tof_edges=None
   dangle=0. #°
-  dangle0=0. #°
+  dangle0=4. #°
   sangle=0. #°
   ai=None
   dpix=0
@@ -292,6 +319,23 @@ class MRDataset(object):
     output.data=data['bank1/data'].value.astype(float) # 3D dataset
     output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
     output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset
+    return output
+
+  @classmethod
+  def from_old_format(cls, data, read_options):
+    '''
+    Create object from a histogram Nexus file.
+    '''
+    output=cls()
+    output.read_options=read_options
+    output._collect_info(data)
+
+    # first ToF edge is 0, prevent that
+    output.tof_edges=data['bank1/time_of_flight'].value[1:]
+    # the data arrays
+    output.data=data['bank1/data'].value.astype(float)[:, :, 1:] # 3D dataset
+    output.xydata=output.data.sum(axis=2).transpose()
+    output.xtofdata=output.data.sum(axis=1)
     return output
 
   @classmethod
@@ -362,24 +406,30 @@ class MRDataset(object):
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
     self.logs={}
     self.log_units={}
-    for motor, item in data['DASlogs'].items():
-      try:
-        self.logs[motor]=item['value'].value[0]
-        if 'units' in item['value'].attrs:
-          self.log_units[motor]=item['value'].attrs['units']
-        else:
-          self.log_units[motor]=u''
-      except:
-        continue
+    if 'DASlogs' in data:
+      # the old format does not include the DAS logs
+      for motor, item in data['DASlogs'].items():
+        try:
+          self.logs[motor]=item['value'].value[0]
+          if 'units' in item['value'].attrs:
+            self.log_units[motor]=item['value'].attrs['units']
+          else:
+            self.log_units[motor]=u''
+        except:
+          continue
+      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
     self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
+    if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
+      self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
+      self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
+      self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
+    else:
+      self.beam_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
+                      data['instrument/aperture3/LSlit3/value'].value[0]
     self.sangle=data['sample/SANGLE/value'].value[0]
-    self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
 
     self.proton_charge=data['proton_charge'].value[0]
     self.total_counts=data['total_counts'].value[0]
-    self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
 
     self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
     self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
