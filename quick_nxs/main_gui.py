@@ -447,10 +447,14 @@ class MainGUI(QtGui.QMainWindow):
       dpix=self.ui.directPixelOverwrite.value()
     else:
       dpix=None
-    try:
-      tth=data.dangle-float(self.ui.dangle0Overwrite.text())
-    except ValueError:
-      tth=None
+    if self.ui.trustDANGLE.isChecked():
+      try:
+        tth=data.dangle-float(self.ui.dangle0Overwrite.text())
+      except ValueError:
+        tth=None
+    else:
+      grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./pi
+      tth=data.sangle*2.-(data.dpix-self.ui.refXPos.value())*grad_per_pixel
     number=str(self.active_data.number)
     options=dict(
                 x_pos=self.ui.refXPos.value(),
