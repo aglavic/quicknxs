@@ -22,20 +22,12 @@ from time import time
 # ignore zero devision error
 #seterr(invalid='ignore')
 
-'''
-Parameters needed for some calculations.
-'''
+### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
-
-#TOF_DISTANCE=21.2535 # m
-#RAD_PER_PIX=0.00027445599 # arctan(212.8mm/2/2550.5mm)/152pix
-
 DETECTOR_X_REGION=(8, 295) # the active area of the detector
-
-# position and maximum deviation of polarizer and analyzer in it's working position
-ANALYZER_IN=(0., 100.)
-POLARIZER_IN=(-348., 50.)
-
+ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
+POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
+# measurement type mapping of states
 MAPPING_FULLPOL=(
                  (u'++', u'entry-Off_Off'),
                  (u'--', u'entry-On_On'),
@@ -55,6 +47,8 @@ MAPPING_EFIELD=(
                 (u'-V', u'entry-Off_On'),
                 )
 
+__all__=['NXSData', 'Reflectivity', 'OffSpecular']
+
 class NXSData(object):
   '''
   Class for readout and evaluation of histogram and event mode .nxs files,
@@ -65,7 +59,7 @@ class NXSData(object):
   
   The generator takes several keyword arguments to control the readout:
   
-    * use_caching=False: If files should be cached for faster future readouts (last 20 files)
+    * use_caching=True: If files should be cached for faster future readouts (last 20 files)
     * bin_type='linear: 'linear'/'1/x' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
@@ -264,7 +258,6 @@ class NXSData(object):
   def dangle0(self): return self[0].dangle0
   @property
   def sangle(self): return self[0].sangle
-
 
 class MRDataset(object):
   '''
@@ -793,6 +786,13 @@ class Reflectivity(object):
     else:
       self.BG=self.BGraw/size_BG*scale
       self.dBG=self.dBGraw/size_BG*scale
+
+  def rescale(self, scaling):
+    old_scale=self.options['scale']
+    rescale=scaling/old_scale
+    self.R*=rescale
+    self.dR*=rescale
+    self.options['scale']=scaling
 
 class OffSpecular(Reflectivity):
   '''
