@@ -347,6 +347,27 @@ class ReduceDialog(QDialog):
           continue
         savez(output, **dictdata)
 
+#  def export_mantid(self):
+#    ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
+#                        unicode(self.ui.fileNameEntry.text()))
+#    #prepare mantid library acess
+#    if not '/opt/Mantid/bin/' in sys.path:
+#      sys.path.append('/opt/Mantid/bin/')
+#    from mantid import simpleapi #@UnresolvedImport
+#    datasets=self.output_data['Specular']
+#    for channel in self.channels:
+#      output=ofname.replace('{item}', 'Specular').replace('{state}', channel)\
+#                     .replace('{type}', 'nxs').replace('{numbers}', self.ind_str)
+#      data=datasets[channel]
+#      # create workspace for each data item
+#      ws=simpleapi.CreateWorkspace(data[:, 0], data[:, 1], data[:, 2],
+#                                   UnitX='A^-1',
+#                                   YUnitLabel='R',
+#                                   WorkspaceTitle=str('%s-%s'%(self.ind_str, channel)),
+#                                   )
+#      simpleapi.SaveNexus(ws, output.encode('utf8'))
+
+
   def dictize_data(self, output_data):
     '''
       Create a dictionary for export of data for e.g. Matlab files.
