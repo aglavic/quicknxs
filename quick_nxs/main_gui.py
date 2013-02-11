@@ -1144,7 +1144,7 @@ as the ones already in the list:
            'x_pos', 'x_width',
            'y_pos', 'y_width',
            'bg_pos', 'bg_width',
-           None, 'dp'][column]
+           'dpix'][column]
       try:
         options[key]=float(item.text())
       except ValueError:
@@ -1168,8 +1168,8 @@ as the ones already in the list:
       except ValueError:
         item.setText(str(options['tth']*180./pi))
       else:
-        Qz, R, dR=self.recalculateReflectivity(refl, options)
-        self.reduction_list[entry][1:]=[Qz, R, dR]
+        refl_new=self.recalculateReflectivity(refl, options)
+        self.reduction_list[entry]=refl_new
     self.ui.reductionTable.resizeColumnsToContents()
     self.plot_refl(preserve_lim=True)
 
