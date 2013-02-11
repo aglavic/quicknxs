@@ -57,6 +57,9 @@ class MainGUI(QtGui.QMainWindow):
     self._refl=value
   ##### for IPython mode, keep namespace up to date ######
 
+  fileLoaded=QtCore.pyqtSignal()
+  initiatePlot=QtCore.pyqtSignal()
+
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
 
@@ -88,6 +91,11 @@ class MainGUI(QtGui.QMainWindow):
     self.connect_plot_events()
     # watch folder for changes
     self.auto_change_active=False
+
+    self.fileLoaded.connect(self.updateLabels)
+    self.fileLoaded.connect(self.calcReflParams)
+    self.initiatePlot.connect(self.plotActiveTab)
+    self.initiatePlot.connect(self.plot_projections)
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -161,14 +169,12 @@ class MainGUI(QtGui.QMainWindow):
         self.active_channel=channel
         break
     self.active_data=data
-
-    self.updateLabels()
-    self.calcReflParams()
-    if do_plot:
-      self.plotActiveTab()
-      self.plot_projections()
     self.last_mtime=os.path.getmtime(filename)
     self.ui.statusbar.showMessage(u"%s loaded"%(filename), 1500)
+
+    self.fileLoaded.emit()
+    if do_plot:
+      self.initiatePlot.emit()
 
 ####### Plot related methods
 
@@ -369,7 +375,8 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].draw()
 
   def plot_projections(self, preserve_lim=False):
-    self.trigger('_plot_projections', preserve_lim)
+    #self.trigger('_plot_projections', preserve_lim)
+    self._plot_projections(preserve_lim)
 
   def _plot_projections(self, preserve_lim):
     '''
