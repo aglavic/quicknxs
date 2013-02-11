@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
 import tempfile
+from multiprocessing import Process, Queue
+from time import sleep
 from PyQt4 import QtCore, QtGui
 import matplotlib.cm
 import matplotlib.colors
@@ -272,6 +274,83 @@ class NavigationToolbar(NavigationToolbar2QT):
           img.set_norm(LogNorm(norm.vmin, norm.vmax))
     self.canvas.draw()
 
+class MplProcess(FigureCanvas, Process):
+  def __init__(self, queue,
+               width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={}):
+    Process.__init__(self)
+    self.queue=queue
+    self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
+    FigureCanvas.__init__(self, self.fig)
+    self.ax=self.fig.add_subplot(111, sharex=sharex, sharey=sharey)
+    self.fig.subplots_adjust(left=0.15, bottom=0.1, right=0.95, top=0.95)
+    self.xtitle=""
+    self.ytitle=""
+    self.PlotTitle=""
+    self.grid_status=True
+    self.xaxis_style='linear'
+    self.yaxis_style='linear'
+    self.ax.hold(True)
+    #self.fc = FigureCanvas(self.fig)
+    FigureCanvas.setSizePolicy(self,
+                              QtGui.QSizePolicy.Expanding,
+                              QtGui.QSizePolicy.Expanding)
+    FigureCanvas.updateGeometry(self)
+
+  draw_scheduled=False
+
+  def run(self):
+    while True:
+      atype, action, args, opts=self.queue.get()
+      if atype=='action':
+        result=getattr(self, action)(*args, **opts)
+      elif atype=='fig':
+        result=getattr(self.fig, action)(*args, **opts)
+      elif atype=='ax':
+        result=getattr(self.ax, action)(*args, **opts)
+      try:
+        self.queue.put(repr(result))
+      except:
+        self.queue.put(None)
+
+
+class MplProcessHolder(QtCore.QThread):
+  drawFinished=QtCore.pyqtSignal()
+
+  def __init__(self, width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={}):
+    QtCore.QThread.__init__(self)
+    self.queue=Queue()
+    self.canvas_process=MplProcess(self.queue,
+                                   width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={})
+    self.stay_alive=True
+    self.scheduled_actions=[]
+    self.canvas_process.start()
+
+  def run(self):
+    while self.stay_alive:
+      if self.scheduled_actions:
+        item=self.scheduled_actions.pop(0)
+        print item
+        self.queue.put(item)
+        print '->', self.queue.get()
+        if item[1]=='draw':
+          self.drawFinished.emit()
+      sleep(.1)
+
+  def draw(self):
+    self.scheduled_actions.append(('action', 'draw', (), {}))
+
+  def plot(self, *args, **opts):
+    self.scheduled_actions.append(('ax', 'plot', args, opts))
+
+
+class MplBGCanvas(QtGui.QWidget):
+  def __init__(self, parent=None, width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={}):
+    QtGui.QWidget.__init__(self)
+    self.draw_process=MplProcessHolder(width, height, dpi, sharex, sharey, adjust)
+    self.draw_process.start()
+
+
+
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
@@ -316,6 +395,47 @@ class MplCanvas(FigureCanvas):
 
   def get_default_filetype(self):
       return 'png'
+
+  def paintEvent(self, e):
+    if self.blitbox is None:
+        # matplotlib is in rgba byte order.  QImage wants to put the bytes
+        # into argb format and is in a 4 byte unsigned int.  Little endian
+        # system is LSB first and expects the bytes in reverse order
+        # (bgra).
+        if QtCore.QSysInfo.ByteOrder==QtCore.QSysInfo.LittleEndian:
+            stringBuffer=self.renderer._renderer.tostring_bgra()
+        else:
+            stringBuffer=self.renderer._renderer.tostring_argb()
+
+        qImage=QtGui.QImage(stringBuffer, self.renderer.width,
+                              self.renderer.height,
+                              QtGui.QImage.Format_ARGB32)
+        p=QtGui.QPainter(self)
+        p.drawPixmap(QtCore.QPoint(0, 0), QtGui.QPixmap.fromImage(qImage))
+
+        # draw the zoom rectangle to the QPainter
+        if self.drawRect:
+            p.setPen(QtGui.QPen(QtCore.Qt.black, 1, QtCore.Qt.DotLine))
+            p.drawRect(self.rect[0], self.rect[1], self.rect[2], self.rect[3])
+        p.end()
+    else:
+        bbox=self.blitbox
+        l, b, r, t=bbox.extents
+        w=int(r)-int(l)
+        h=int(t)-int(b)
+        t=int(b)+h
+        reg=self.copy_from_bbox(bbox)
+        stringBuffer=reg.to_string_argb()
+        qImage=QtGui.QImage(stringBuffer, w, h, QtGui.QImage.Format_ARGB32)
+        pixmap=QtGui.QPixmap.fromImage(qImage)
+        p=QtGui.QPainter(self)
+        p.drawPixmap(QtCore.QPoint(l, self.renderer.height-t), pixmap)
+        p.end()
+        self.blitbox=None
+    self.drawRect=False
+
+  def draw(self):
+    FigureCanvas.draw(self)
 
 
 class MPLWidget(QtGui.QWidget):
