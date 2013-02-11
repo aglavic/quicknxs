@@ -39,6 +39,9 @@ class MainGUI(QtGui.QMainWindow):
   active_channel='x' #: Selected channel for the overview and projection plots
   _control_down=False
   y_bg=0.
+  # plot line storages
+  _x_projection=None
+  _y_projection=None
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -96,6 +99,7 @@ class MainGUI(QtGui.QMainWindow):
     self.fileLoaded.connect(self.calcReflParams)
     self.initiatePlot.connect(self.plotActiveTab)
     self.initiatePlot.connect(self.plot_projections)
+    self.initiatePlot.connect(self.plot_refl)
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -404,24 +408,36 @@ class MainGUI(QtGui.QMainWindow):
     xylim=(xproj[xproj>0].min(), xproj.max()*2)
     yxlim=(0, len(yproj)-1)
     yylim=(yproj[yproj>0].min(), yproj.max()*2)
-    self.ui.x_project.clear()
-    self.ui.y_project.clear()
 
-    self.ui.x_project.plot(xproj, color='blue')[0]
-    self.ui.x_project.set_xlabel(u'x [pix]')
-    self.ui.x_project.set_ylabel(u'I$_{max}$')
-    xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
-    xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
-    xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
-    xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='green')
-    xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='green')
+    if self._x_projection is None:
+      self._x_projection=self.ui.x_project.plot(xproj, color='blue')[0]
+      self.ui.x_project.set_xlabel(u'x [pix]')
+      self.ui.x_project.set_ylabel(u'I$_{max}$')
+      xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
+      xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
+      xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
+      xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='green')
+      xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='green')
 
-    self.ui.y_project.plot(yproj, color='blue')[0]
-    self.ui.y_project.set_xlabel(u'y [pix]')
-    self.ui.y_project.set_ylabel(u'I$_{max}$')
-    yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='red')
-    yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='red')
-    self.ui.y_project.canvas.ax.axhline(self.y_bg, color='green')
+      self._y_projection=self.ui.y_project.plot(yproj, color='blue')[0]
+      self.ui.y_project.set_xlabel(u'y [pix]')
+      self.ui.y_project.set_ylabel(u'I$_{max}$')
+      yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='red')
+      yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='red')
+      ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='green')
+      self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right, ybg)
+    else:
+      self._x_projection.set_ydata(xproj)
+      self._y_projection.set_ydata(yproj)
+      lines=self.proj_lines
+      lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+      lines[1].set_xdata([x_peak, x_peak])
+      lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+      lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+      lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+      lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+      lines[7].set_ydata([self.y_bg, self.y_bg])
     if preserve_lim:
       self.ui.x_project.canvas.ax.axis(xview)
       self.ui.y_project.canvas.ax.axis(yview)
@@ -438,8 +454,6 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ui.x_project.draw()
     self.ui.y_project.draw()
-    self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
-    self.plot_refl()
 
   def calc_refl(self):
     if self.active_data is None:
