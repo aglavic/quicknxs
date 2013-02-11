@@ -15,27 +15,19 @@ storing the result as well as some intermediate data in itself as attributes.
 '''
 
 import os
+from glob import glob
 from numpy import *
 import h5py
 from time import time
 # ignore zero devision error
 #seterr(invalid='ignore')
 
-'''
-Parameters needed for some calculations.
-'''
+### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
-
-TOF_DISTANCE=21.2535 # m
-#RAD_PER_PIX=0.0002734242
-#RAD_PER_PIX=0.00027429694 # arctan(212.8mm/2/2550.5mm)/152pix
-RAD_PER_PIX=0.00027445599 # arctan(212.8mm/2/2550.5mm)/152pix
-DETECTOR_X_REGION=(8, 295)
-
-# position and maximum deviation of polarizer and analzer in it's working position
-ANALYZER_IN=(0., 100.)
-POLARIZER_IN=(-348., 50.)
-
+DETECTOR_X_REGION=(8, 295) # the active area of the detector
+ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
+POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
+# measurement type mapping of states
 MAPPING_FULLPOL=(
                  (u'++', u'entry-Off_Off'),
                  (u'--', u'entry-On_On'),
@@ -55,6 +47,8 @@ MAPPING_EFIELD=(
                 (u'-V', u'entry-Off_On'),
                 )
 
+__all__=['NXSData', 'Reflectivity', 'OffSpecular']
+
 class NXSData(object):
   '''
   Class for readout and evaluation of histogram and event mode .nxs files,
@@ -65,7 +59,7 @@ class NXSData(object):
   
   The generator takes several keyword arguments to control the readout:
   
-    * use_caching=False: If files should be cached for faster future readouts (last 20 files)
+    * use_caching=True: If files should be cached for faster future readouts (last 20 files)
     * bin_type='linear: 'linear'/'1/x' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
@@ -127,6 +121,14 @@ class NXSData(object):
       return False
     # analyze channels
     channels=nxs.keys()
+    if channels==['entry']:
+      # ancient file format with polarizations in different files
+      nxs=self._get_ancient(filename)
+      channels=nxs.keys()
+      channels.sort()
+      is_ancient=True
+    else:
+      is_ancient=False
     for channel in list(channels):
       if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
         channels.remove(channel)
@@ -142,7 +144,7 @@ class NXSData(object):
     elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
       self.measurement_type='Polarized'
       mapping=MAPPING_HALFPOL
-    elif nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None: # is E-field cart connected
+    elif 'DASlogs' in nxs[channels[0]] and nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None: # is E-field cart connected
       self.measurement_type='Electric Field'
       mapping=MAPPING_EFIELD
     elif len(channels)==1:
@@ -150,7 +152,7 @@ class NXSData(object):
       mapping=MAPPING_UNPOL
     else:
       self.measurement_type='Unknown'
-      mapping={}
+      mapping=[(channel, channel) for channel in channels]
 
     progress=0.1
     if self._options['callback']:
@@ -165,8 +167,10 @@ class NXSData(object):
         data=MRDataset.from_event(raw_data, self._options,
                                   callback=self._options['callback'], callback_offset=progress,
                                   callback_scaling=1./len(channels))
-      else:
+      elif filename.endswith('histo.nxs'):
         data=MRDataset.from_histogram(raw_data, self._options)
+      else:
+        data=MRDataset.from_old_format(raw_data, self._options)
       self._channel_data.append(data)
       self._channel_names.append(dest)
       self._channel_origin.append(channel)
@@ -176,8 +180,24 @@ class NXSData(object):
       i+=1
       self._read_times.append(time()-self._read_times[-1]-start)
     #print time()-start
-    nxs.close()
+    if not is_ancient:
+      nxs.close()
     return True
+
+  def _get_ancient(self, filename):
+    '''
+      For the oldest file format, where polarization channels
+      are in different .nxs files, this method reads all files
+      and builds a dictionary of it.
+    '''
+    base_name=filename.rsplit("_p", 1)[0]
+    files=glob(base_name+"*.nxs")
+    nxs={}
+    for name in files:
+      key=name.split(base_name)[1][1:-4]
+      item=h5py.File(name, mode='r')
+      nxs[key]=item['entry']
+    return nxs
 
   def __getitem__(self, item):
     if type(item)==int:
@@ -239,7 +259,6 @@ class NXSData(object):
   @property
   def sangle(self): return self[0].sangle
 
-
 class MRDataset(object):
   '''
   Representation of one measurement channel of the reflectometer
@@ -248,13 +267,13 @@ class MRDataset(object):
   proton_charge=0.
   total_counts=0
   tof_edges=None
-  dangle=0.
-  dangle0=0.
-  sangle=0.
+  dangle=0. #°
+  dangle0=4. #°
+  sangle=0. #°
   ai=None
   dpix=0
-  beam_width=0.
-  lambda_center=3.37
+  beam_width=0. #mm
+  lambda_center=3.37 #Å
   xydata=None
   xtofdata=None
   data=None
@@ -263,6 +282,11 @@ class MRDataset(object):
   experiment=''
   number=0
   merge_warnings=''
+  dist_mod_det=21.2535 #m
+  dist_sam_det=2.55505 #m
+  det_size_x=0.2128 #m
+  det_size_y=0.1792 #m
+
   _Q=None
   _I=None
   _dI=None
@@ -288,6 +312,23 @@ class MRDataset(object):
     output.data=data['bank1/data'].value.astype(float) # 3D dataset
     output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
     output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset
+    return output
+
+  @classmethod
+  def from_old_format(cls, data, read_options):
+    '''
+    Create object from a histogram Nexus file.
+    '''
+    output=cls()
+    output.read_options=read_options
+    output._collect_info(data)
+
+    # first ToF edge is 0, prevent that
+    output.tof_edges=data['bank1/time_of_flight'].value[1:]
+    # the data arrays
+    output.data=data['bank1/data'].value.astype(float)[:, :, 1:] # 3D dataset
+    output.xydata=output.data.sum(axis=2).transpose()
+    output.xtofdata=output.data.sum(axis=1)
     return output
 
   @classmethod
@@ -319,8 +360,8 @@ class MRDataset(object):
     tof_y=Y[tof_ids]
     lcenter=data['DASlogs/LambdaRequest/value'].value[0]
     # ToF region for this specific central wavelength
-    tmin=TOF_DISTANCE/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
-    tmax=TOF_DISTANCE/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+    tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+    tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
     if bin_type.lower()=='linear':
       tof_edges=linspace(tmin, tmax, bins+1)
     elif bin_type.lower()=='1/x':
@@ -358,23 +399,35 @@ class MRDataset(object):
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
     self.logs={}
     self.log_units={}
-    for motor, item in data['DASlogs'].items():
-      try:
-        self.logs[motor]=item['value'].value[0]
-        if 'units' in item['value'].attrs:
-          self.log_units[motor]=item['value'].attrs['units']
-        else:
-          self.log_units[motor]=u''
-      except:
-        continue
+    if 'DASlogs' in data:
+      # the old format does not include the DAS logs
+      for motor, item in data['DASlogs'].items():
+        try:
+          self.logs[motor]=item['value'].value[0]
+          if 'units' in item['value'].attrs:
+            self.log_units[motor]=item['value'].attrs['units']
+          else:
+            self.log_units[motor]=u''
+        except:
+          continue
+      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
+    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
+    if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
+      self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
+      self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
+      self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
+    else:
+      self.beam_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
+                      data['instrument/aperture3/LSlit3/value'].value[0]
+    self.sangle=data['sample/SANGLE/value'].value[0]
+
     self.proton_charge=data['proton_charge'].value[0]
     self.total_counts=data['total_counts'].value[0]
-    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
-    self.sangle=data['sample/SANGLE/value'].value[0]
-    self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-    self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
+
+    self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
+    self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
+    self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
+    self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
 
     self.experiment=str(data['experiment_identifier'].value[0])
     self.number=int(data['run_number'].value[0])
@@ -414,7 +467,7 @@ class MRDataset(object):
 
   @property
   def lamda(self):
-    v_n=TOF_DISTANCE/self.tof*1e6 #m/s
+    v_n=self.dist_mod_det/self.tof*1e6 #m/s
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
@@ -474,7 +527,8 @@ class Reflectivity(object):
     self.read_options=dataset.read_options
     if self.options['x_pos'] is None:
       # if nor x_pos is given, use the value from the dataset
-      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/RAD_PER_PIX
+      rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/rad_per_pixel
     if self.options['tth'] is None:
       self.options['tth']=dataset.dangle-dataset.dangle0
     if self.options['dpix'] is None:
@@ -537,13 +591,14 @@ class Reflectivity(object):
     self._calc_bg(dataset)
 
     # get incident angle of reflected beam
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     relpix=self.options['dpix']-x_pos
-    tth=(self.options['tth']*pi/180.+relpix*RAD_PER_PIX)
+    tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     self.ai=tth/2.
     # set good angular resolution as real resolution not implemented, yet
     dai=0.0001
 
-    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
     # store the ToF as well for comparison etc.
     self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
@@ -599,14 +654,15 @@ class Reflectivity(object):
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
 
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
     x_region=arange(reg[0], reg[1])
     relpix=self.options['dpix']-x_region
-    tth=(self.options['tth']*pi/180.+relpix*RAD_PER_PIX)
+    tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     ai=tth/2.
     self.ai=ai[len(ai)//2]
 
-    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
     self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
     self.lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
@@ -731,6 +787,13 @@ class Reflectivity(object):
       self.BG=self.BGraw/size_BG*scale
       self.dBG=self.dBGraw/size_BG*scale
 
+  def rescale(self, scaling):
+    old_scale=self.options['scale']
+    rescale=scaling/old_scale
+    self.R*=rescale
+    self.dR*=rescale
+    self.options['scale']=scaling
+
 class OffSpecular(Reflectivity):
   '''
     Calculate off-specular scattering similarly as done for reflectivity.
@@ -747,7 +810,8 @@ class OffSpecular(Reflectivity):
     self.read_options=dataset.read_options
     if self.options['x_pos'] is None:
       # if nor x_pos is given, use the value from the dataset
-      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/RAD_PER_PIX
+      rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/rad_per_pixel
     if self.options['tth'] is None:
       self.options['tth']=dataset.dangle-dataset.dangle0
     if self.options['dpix'] is None:
@@ -789,13 +853,14 @@ class OffSpecular(Reflectivity):
 
     self._calc_bg(dataset)
 
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
     pix_offset_spec=self.options['dpix']-x_pos
-    tth_spec=self.options['tth']*pi/180.+pix_offset_spec*RAD_PER_PIX
-    af=self.options['tth']*pi/180.+xtth*RAD_PER_PIX-tth_spec/2.
+    tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
+    af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
 
-    v_edges=TOF_DISTANCE/tof_edges*1e6 #m/s
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
     # store the ToF as well for comparison etc.
     self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs

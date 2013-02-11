@@ -5,8 +5,7 @@
 
 import os, sys
 from glob import glob
-from numpy import where, pi, newaxis, arange, exp, log10, array, hstack
-from scipy.stats.mstats import mquantiles
+from numpy import where, pi, newaxis, log10
 from cPickle import load, dump
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
@@ -15,12 +14,12 @@ from .version import str_version
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .error_handling import ErrorHandler
-from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION, RAD_PER_PIX
-from .mpfit import mpfit
-from .peakfinder import PeakFinder
+from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION
+from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 BASE_FOLDER='/SNS/REF_M'
 BASE_SEARCH='*/data/REF_M_%s_'
+OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
 
 class MainGUI(QtGui.QMainWindow):
   '''
@@ -39,6 +38,10 @@ class MainGUI(QtGui.QMainWindow):
   channels=[] #: Available channels of the active dataset
   active_channel='x' #: Selected channel for the overview and projection plots
   _control_down=False
+  y_bg=0.
+  # plot line storages
+  _x_projection=None
+  _y_projection=None
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -56,6 +59,9 @@ class MainGUI(QtGui.QMainWindow):
       self.ipython.namespace['refl']=value
     self._refl=value
   ##### for IPython mode, keep namespace up to date ######
+
+  fileLoaded=QtCore.pyqtSignal()
+  initiatePlot=QtCore.pyqtSignal()
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -88,6 +94,12 @@ class MainGUI(QtGui.QMainWindow):
     self.connect_plot_events()
     # watch folder for changes
     self.auto_change_active=False
+
+    self.fileLoaded.connect(self.updateLabels)
+    self.fileLoaded.connect(self.calcReflParams)
+    self.initiatePlot.connect(self.plotActiveTab)
+    self.initiatePlot.connect(self.plot_projections)
+    self.initiatePlot.connect(self.plot_refl)
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -161,14 +173,12 @@ class MainGUI(QtGui.QMainWindow):
         self.active_channel=channel
         break
     self.active_data=data
-
-    self.updateLabels()
-    self.calcReflParams()
-    if do_plot:
-      self.plotActiveTab()
-      self.plot_projections()
     self.last_mtime=os.path.getmtime(filename)
     self.ui.statusbar.showMessage(u"%s loaded"%(filename), 1500)
+
+    self.fileLoaded.emit()
+    if do_plot:
+      self.initiatePlot.emit()
 
 ####### Plot related methods
 
@@ -218,10 +228,11 @@ class MainGUI(QtGui.QMainWindow):
     tof_imax=xtof.max()
     # XY plot
     if self.ui.tthPhi.isChecked():
-      phi_range=xy.shape[0]*RAD_PER_PIX*180./pi
-      tth_range=xy.shape[1]*RAD_PER_PIX*180./pi
-      phi0=self.ui.refYPos.value()*RAD_PER_PIX*180./pi
-      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*RAD_PER_PIX*180./pi
+      rad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]
+      phi_range=xy.shape[0]*rad_per_pixel*180./pi
+      tth_range=xy.shape[1]*rad_per_pixel*180./pi
+      phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
+      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*rad_per_pixel*180./pi
       self.ui.xy_overview.clear()
 
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
@@ -289,10 +300,11 @@ class MainGUI(QtGui.QMainWindow):
     for i, datai in enumerate(xynormed):
       if self.ui.tthPhi.isChecked():
         plots[i].clear()
-        phi_range=datai.shape[0]*RAD_PER_PIX*180./pi
-        tth_range=datai.shape[1]*RAD_PER_PIX*180./pi
-        phi0=self.ui.refYPos.value()*RAD_PER_PIX*180./pi
-        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*RAD_PER_PIX*180./pi
+        rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+        phi_range=datai.shape[0]*rad_per_pixel*180./pi
+        tth_range=datai.shape[1]*rad_per_pixel*180./pi
+        phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color,
@@ -367,7 +379,8 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].draw()
 
   def plot_projections(self, preserve_lim=False):
-    self.trigger('_plot_projections', preserve_lim)
+    #self.trigger('_plot_projections', preserve_lim)
+    self._plot_projections(preserve_lim)
 
   def _plot_projections(self, preserve_lim):
     '''
@@ -378,11 +391,7 @@ class MainGUI(QtGui.QMainWindow):
       separate the specular reflection from bragg-sheets
     '''
     data=self.active_data[self.active_channel]
-    if self.ui.xprojUseQuantiles.isChecked():
-      d2=data.xtofdata
-      xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1)
-    else:
-      xproj=data.xdata
+    xproj=data.xdata
     yproj=data.ydata
 
     x_peak=self.ui.refXPos.value()
@@ -399,24 +408,36 @@ class MainGUI(QtGui.QMainWindow):
     xylim=(xproj[xproj>0].min(), xproj.max()*2)
     yxlim=(0, len(yproj)-1)
     yylim=(yproj[yproj>0].min(), yproj.max()*2)
-    self.ui.x_project.clear()
-    self.ui.y_project.clear()
 
-    self.ui.x_project.plot(xproj, color='blue')[0]
-    self.ui.x_project.set_xlabel(u'x [pix]')
-    self.ui.x_project.set_ylabel(u'I$_{max}$')
-    xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
-    xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
-    xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
-    xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='green')
-    xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='green')
+    if self._x_projection is None:
+      self._x_projection=self.ui.x_project.plot(xproj, color='blue')[0]
+      self.ui.x_project.set_xlabel(u'x [pix]')
+      self.ui.x_project.set_ylabel(u'I$_{max}$')
+      xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
+      xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
+      xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
+      xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='green')
+      xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='green')
 
-    self.ui.y_project.plot(yproj, color='blue')[0]
-    self.ui.y_project.set_xlabel(u'y [pix]')
-    self.ui.y_project.set_ylabel(u'I$_{max}$')
-    yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='red')
-    yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='red')
-    self.ui.y_project.canvas.ax.axhline(self.y_bg, color='green')
+      self._y_projection=self.ui.y_project.plot(yproj, color='blue')[0]
+      self.ui.y_project.set_xlabel(u'y [pix]')
+      self.ui.y_project.set_ylabel(u'I$_{max}$')
+      yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='red')
+      yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='red')
+      ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='green')
+      self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right, ybg)
+    else:
+      self._x_projection.set_ydata(xproj)
+      self._y_projection.set_ydata(yproj)
+      lines=self.proj_lines
+      lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+      lines[1].set_xdata([x_peak, x_peak])
+      lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+      lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+      lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+      lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+      lines[7].set_ydata([self.y_bg, self.y_bg])
     if preserve_lim:
       self.ui.x_project.canvas.ax.axis(xview)
       self.ui.y_project.canvas.ax.axis(yview)
@@ -433,8 +454,6 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ui.x_project.draw()
     self.ui.y_project.draw()
-    self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right)
-    self.plot_refl()
 
   def calc_refl(self):
     if self.active_data is None:
@@ -444,10 +463,14 @@ class MainGUI(QtGui.QMainWindow):
       dpix=self.ui.directPixelOverwrite.value()
     else:
       dpix=None
-    try:
-      tth=data.dangle-float(self.ui.dangle0Overwrite.text())
-    except ValueError:
-      tth=None
+    if self.ui.trustDANGLE.isChecked():
+      try:
+        tth=data.dangle-float(self.ui.dangle0Overwrite.text())
+      except ValueError:
+        tth=None
+    else:
+      grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./pi
+      tth=data.sangle*2.-(data.dpix-self.ui.refXPos.value())*grad_per_pixel
     number=str(self.active_data.number)
     options=dict(
                 x_pos=self.ui.refXPos.value(),
@@ -624,6 +647,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.ui.histogramActive.isChecked():
       filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
+    elif self.ui.oldFormatActive.isChecked():
+      filter_=u'Old Nexus (*.nxs);;All (*.*)'
     else:
       filter_=u'Event Nexus (*event.nxs);;All (*.*)'
     filenames=QtGui.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
@@ -659,6 +684,8 @@ class MainGUI(QtGui.QMainWindow):
     QtGui.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'histo.nxs'))
+    elif self.ui.oldFormatActive.isChecked():
+      search=glob(os.path.join(BASE_FOLDER, (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
     else:
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
     if search:
@@ -828,6 +855,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.ui.histogramActive.isChecked():
       newlist=glob(os.path.join(folder, '*histo.nxs'))
+    elif self.ui.oldFormatActive.isChecked():
+      newlist=glob(os.path.join(folder, '*.nxs'))
     else:
       newlist=glob(os.path.join(folder, '*event.nxs'))
     newlist.sort()
@@ -1000,43 +1029,21 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMessageBox.information(self, 'Select other dataset',
             'Please select a dataset with total reflection plateau\nand normalization.')
       return
-    is_first=True
-    first=len(self.refl.R)-self.ui.rangeStart.value()
-    y=self.refl.R[:first]
-    x=self.refl.Q[:first][y>0]
-    dy=self.refl.dR[:first][y>0]
-    y=y[y>0]
-    for refli in self.reduction_list:
-      last=refli.options['PN']
-      y_other=refli.R[last:]
-      dy_other=refli.dR[last:][y_other>0]
-      x_other=refli.Q[last:][y_other>0]
-      y_other=y_other[y_other>0]
-      # try to find overlapping regions
-      if not (x_other.min()<x.min() and x_other.max()>x.min()):
-        continue
-      else:
-        is_first=False
-        break
-    if not is_first:
-      reg_this=max(0, where(x<=x_other.max())[0][0]-self.ui.addStitchPoints.value())
-      reg_other=where(x_other>=x.min())[0][-1]+1+self.ui.addStitchPoints.value()
+    if len(self.reduction_list)>0:
       # try to match both datasets by fitting a polynomiral to the overlapping region
-      rescale, xfit, yfit=self.refineOverlap(x[reg_this:], y[reg_this:], dy[reg_this:],
-                                x_other[:reg_other], y_other[:reg_other], dy_other[:reg_other])
+      rescale, xfit, yfit=get_scaling(self.refl, self.reduction_list[-1],
+                                      self.ui.addStitchPoints.value())
       self.ui.refScale.setValue(self.ui.refScale.value()+log10(rescale)) #change the scaling factor
       self.ui.refl.plot(xfit, yfit)
     else:
       # normalize total reflection plateau
       # Start from low Q and search for the critical edge
-      for i in range(len(y)-5, 0,-1):
-        wmean=(y[i:]/dy[i:]).sum()/(1./dy[i:]).sum()
-        yi=y[i-1]
-        if yi<wmean*0.9:
-          break
-      self.ui.refScale.setValue(self.ui.refScale.value()+log10(1./wmean)) #change the scaling factor
+      wmean, npoints=get_total_reflection(self.refl, return_npoints=True)
+      self.ui.refScale.setValue(self.ui.refScale.value()+log10(wmean)) #change the scaling factor
       # show a line in the plot corresponding to the extraction region
-      totref=Line2D([x.min(), x[i]], [1., 1.], color='red')
+      first=len(self.refl.R)-self.ui.rangeStart.value()
+      Q=self.refl.Q[:first][self.refl.R[:first]>0]
+      totref=Line2D([Q.min(), Q[npoints]], [1., 1.], color='red')
       self.ui.refl.canvas.ax.add_line(totref)
     ymin, ymax=self.ui.refl.canvas.ax.get_ylim()
     ymax=max(ymax, 1.1)
@@ -1396,57 +1403,27 @@ as the ones already in the list:
       entry fields.
     '''
     data=self.active_data[self.active_channel]
-    if self.ui.xprojUseQuantiles.isChecked():
-      d2=data.xtofdata
-      xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
-    else:
-      xproj=data.xdata
-    yproj=data.ydata
-
-    # calculate approximate peak position
-    try:
-      tth_bank=(data.dangle-float(self.ui.dangle0Overwrite.text()))*pi/180.
-    except ValueError:
-      tth_bank=(data.dangle-data.dangle0)*pi/180.
-    ai=data.sangle*pi/180.
-    if self.ui.directPixelOverwrite.value()>=0:
-      dp=self.ui.directPixelOverwrite.value()
-    else:
-      dp=data.dpix
-    pix_position=dp-(ai*2-tth_bank)/RAD_PER_PIX
-
     self.auto_change_active=True
     if self.ui.actionAutomaticXPeak.isChecked():
+      # locate peaks using CWT peak finder algorithm
       try:
-        # locate peaks using CWT peak finder algorithm
-        self.pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
-                            xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
-        # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
-        peaks=self.pf.get_peaks(snr=self.ui.pfSNR.value(),
-                                min_width=self.ui.pfMinWidth.value(),
-                                max_width=self.ui.pfMaxWidth.value(),
-                                ridge_length=self.ui.pfRidgeLength.value())
-        x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
-
-
-        delta_pix=abs(pix_position-x_peaks)
-        x_peak=x_peaks[delta_pix==delta_pix.min()][0]
-      except:
-        # if there was any error finding the peak, use the position from the file
-        x_peak=pix_position
-      # refine gaussian to this peak position
-      x_width=self.ui.refXWidth.value()
-      x_peak=self.refineGauss(xproj, x_peak, x_width)
+        dangle0_overwrite=float(self.ui.dangle0Overwrite.text())
+      except ValueError:
+        dangle0_overwrite=None
+      x_peak, self.pf=get_xpos(data, dangle0_overwrite,
+                               self.ui.directPixelOverwrite.value(),
+                               snr=self.ui.pfSNR.value(),
+                               min_width=self.ui.pfMinWidth.value(),
+                               max_width=self.ui.pfMaxWidth.value(),
+                               ridge_length=self.ui.pfRidgeLength.value(),
+                               return_pf=True)
       self.ui.refXPos.setValue(x_peak)
 
     if self.ui.actionAutoYLimits.isChecked():
       # find the central peak reagion with intensities larger than 10% of maximum
-      y_bg=mquantiles(yproj, 0.5)[0]
-      self.y_bg=y_bg
-      y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
-      yregion=(y_peak_region[0], y_peak_region[-1])
-      self.ui.refYPos.setValue((yregion[0]+yregion[1]+1.)/2.)
-      self.ui.refYWidth.setValue(yregion[1]+1-yregion[0])
+      y_center, y_width, self.y_bg=get_yregion(data)
+      self.ui.refYPos.setValue(y_center)
+      self.ui.refYWidth.setValue(y_width)
     else:
       self.y_bg=0.
     self.auto_change_active=False
@@ -1466,71 +1443,12 @@ as the ones already in the list:
       Fit the selected x position to the closest peak.
     '''
     if self.ui.actionRefineX.isChecked():
-      data=self.active_data[self.active_channel].xydata
-      if self.ui.xprojUseQuantiles.isChecked():
-        d2=self.active_data[self.active_channel].xtofdata
-        xproj=mquantiles(d2, self.ui.xprojQuantiles.value()/100., axis=1).flatten()
-      else:
-        xproj=data.mean(axis=0)
+      xproj=self.active_data[self.active_channel].xdata
       # refine gaussian to this peak position
       x_width=self.ui.refXWidth.value()
       x_peak=self.ui.refXPos.value()
-      x_peak=self.refineGauss(xproj, x_peak, x_width)
+      x_peak=refine_gauss(xproj, x_peak, x_width)
       self.ui.refXPos.setValue(x_peak)
-
-  def refineGauss(self, data, pos, width):
-    '''
-      Fit a gaussian function to a given dataset and return the x0 position.
-    '''
-    p0=[data[int(pos)], pos, width]
-    parinfo=[{'value':0., 'fixed':0, 'limited':[0, 0],
-              'limits':[0., 0.]} for ignore in range(3)]
-    parinfo[0]['limited']=[True, False]
-    parinfo[0]['limits']=[0., None]
-    parinfo[2]['fixed']=True
-    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-    parinfo[2]['fixed']=False
-    parinfo[2]['limited']=[True, True]
-    parinfo[2]['limits']=[1., 4.*width]
-    p0=[data[int(res.params[1])], res.params[1], width]
-    res=mpfit(self.gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-    return res.params[1]
-
-  def gauss_residuals(self, p, fjac=None, data=None, width=1):
-    '''
-      Gaussian of I0, x0 and sigma parameters minus the data.
-    '''
-    xdata=arange(data.shape[0])
-    I0=p[0]
-    x0=p[1]
-    sigma=p[2]/5.
-    G=exp(-0.5*((xdata-x0)/sigma)**2)
-    return 0, data-I0*G
-
-  def refineOverlap(self, x1, y1, dy1, x2, y2, dy2):
-    '''
-      Refine a polynomial to the logarithm of two datasets while
-      scaling the first dataset as well. Return the resulting
-      scaling parameter and the refined function for plotting.
-    '''
-    result=mpfit(self.overlapResiduals, [1., 0.,-40., 0.],
-                 functkw=dict(
-                              x1=x1, y1=y1, dy1=dy1,
-                              x2=x2, y2=y2, dy2=dy2
-                              ),
-                 nprint=0)
-    xfit=hstack([x1, x2])
-    xfit.sort()
-    yscale, a, b, c=result.params
-    yfit=10**(a*xfit**2+b*xfit+c)
-    return yscale, xfit, yfit
-
-  def overlapResiduals(self, p, fjac=None, x1=None, y1=None, dy1=None,
-                                           x2=None, y2=None, dy2=None):
-    yscale, a, b, c=p
-    part1=(log10(yscale*y1)-a*x1**2-b*x1-c)/(dy1/y1)
-    part2=(log10(y2)-a*x2**2-b*x2-c)/(dy2/y2)
-    return 0, hstack([part1, part2])
 
   def recalculateReflectivity(self, old_object, overwrite_options=None):
     '''
