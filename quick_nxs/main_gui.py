@@ -1245,6 +1245,7 @@ as the ones already in the list:
       self.updateLabels()
       self.calcReflParams()
       self.plot_projections(preserve_lim=True)
+      self.trigger('plot_refl', True)
 
   def reduceDatasets(self):
     '''
