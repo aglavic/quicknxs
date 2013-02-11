@@ -74,10 +74,6 @@ class MainGUI(QtGui.QMainWindow):
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(80, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
-    # perhaps use this in the future?
-    self.ui.xprojQuantiles.hide()
-    self.ui.xprojUseQuantiles.hide()
-    self.ui.label_16.hide()
 
     self.toggleHide()
     self.readSettings()
@@ -943,6 +939,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def replotProjections(self):
     self.plot_projections(preserve_lim=True)
+    self.plot_refl(preserve_lim=True)
 
   def setNorm(self, do_plot=True, do_remove=True):
     '''
@@ -1193,6 +1190,7 @@ as the ones already in the list:
     self.updateLabels()
     self.plotActiveTab()
     self.plot_projections()
+    self.plot_refl()
 
   def clearRefList(self, do_plot=True):
     '''

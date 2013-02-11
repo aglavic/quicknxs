@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Sat Feb  9 14:45:56 2013
+# Created: Mon Feb 11 10:38:37 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
   def setupUi(self, MainWindow):
     MainWindow.setObjectName(_fromUtf8("MainWindow"))
-    MainWindow.resize(1087, 909)
+    MainWindow.resize(1087, 932)
     icon = QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     MainWindow.setWindowIcon(icon)
@@ -648,22 +648,6 @@ class Ui_MainWindow(object):
     self.dockWidgetContents_5.setObjectName(_fromUtf8("dockWidgetContents_5"))
     self.verticalLayout_9 = QtGui.QVBoxLayout(self.dockWidgetContents_5)
     self.verticalLayout_9.setObjectName(_fromUtf8("verticalLayout_9"))
-    self.horizontalLayout_4 = QtGui.QHBoxLayout()
-    self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-    self.xprojUseQuantiles = QtGui.QCheckBox(self.dockWidgetContents_5)
-    self.xprojUseQuantiles.setObjectName(_fromUtf8("xprojUseQuantiles"))
-    self.horizontalLayout_4.addWidget(self.xprojUseQuantiles)
-    self.xprojQuantiles = QtGui.QDoubleSpinBox(self.dockWidgetContents_5)
-    self.xprojQuantiles.setMinimum(30.0)
-    self.xprojQuantiles.setSingleStep(5.0)
-    self.xprojQuantiles.setProperty("value", 50.0)
-    self.xprojQuantiles.setObjectName(_fromUtf8("xprojQuantiles"))
-    self.horizontalLayout_4.addWidget(self.xprojQuantiles)
-    self.label_16 = QtGui.QLabel(self.dockWidgetContents_5)
-    self.label_16.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextSelectableByMouse)
-    self.label_16.setObjectName(_fromUtf8("label_16"))
-    self.horizontalLayout_4.addWidget(self.label_16)
-    self.verticalLayout_9.addLayout(self.horizontalLayout_4)
     self.x_project = MPLWidget(self.dockWidgetContents_5)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
@@ -1077,8 +1061,6 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.refXWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.bgCenter, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.bgWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
-    QtCore.QObject.connect(self.xprojQuantiles, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.replotProjections)
-    QtCore.QObject.connect(self.xprojUseQuantiles, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.replotProjections)
     QtCore.QObject.connect(self.actionNext_File, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.nextFile)
     QtCore.QObject.connect(self.actionPrevious_File, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.prevFile)
     QtCore.QObject.connect(self.actionNorm, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.setNorm)
@@ -1145,9 +1127,7 @@ class Ui_MainWindow(object):
     MainWindow.setTabOrder(self.pfMinWidth, self.pfMaxWidth)
     MainWindow.setTabOrder(self.pfMaxWidth, self.pfRidgeLength)
     MainWindow.setTabOrder(self.pfRidgeLength, self.pushButton)
-    MainWindow.setTabOrder(self.pushButton, self.xprojUseQuantiles)
-    MainWindow.setTabOrder(self.xprojUseQuantiles, self.xprojQuantiles)
-    MainWindow.setTabOrder(self.xprojQuantiles, self.bgToFConstant)
+    MainWindow.setTabOrder(self.pushButton, self.bgToFConstant)
     MainWindow.setTabOrder(self.bgToFConstant, self.eventTofBins)
     MainWindow.setTabOrder(self.eventTofBins, self.eventBinMode)
     MainWindow.setTabOrder(self.eventBinMode, self.histogramActive)
@@ -1328,8 +1308,6 @@ class Ui_MainWindow(object):
     self.tthPhi.setText(QtGui.QApplication.translate("MainWindow", "2θ-φ Maps", None, QtGui.QApplication.UnicodeUTF8))
     self.dockWidget_3.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Y-Projection", None, QtGui.QApplication.UnicodeUTF8))
     self.dockWidget_4.setWindowTitle(QtGui.QApplication.translate("MainWindow", "X-Projection", None, QtGui.QApplication.UnicodeUTF8))
-    self.xprojUseQuantiles.setText(QtGui.QApplication.translate("MainWindow", "Use Quantiles", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_16.setText(QtGui.QApplication.translate("MainWindow", "%", None, QtGui.QApplication.UnicodeUTF8))
     self.dockWidget_5.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
     self.dockWidget_6.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Reflectivity Extraction", None, QtGui.QApplication.UnicodeUTF8))
     self.label_3.setToolTip(QtGui.QApplication.translate("MainWindow", "Y Pixel Window", None, QtGui.QApplication.UnicodeUTF8))

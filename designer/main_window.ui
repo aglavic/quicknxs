@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1087</width>
-    <height>909</height>
+    <height>932</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1470,40 +1470,6 @@
    <widget class="QWidget" name="dockWidgetContents_5">
     <layout class="QVBoxLayout" name="verticalLayout_9">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QCheckBox" name="xprojUseQuantiles">
-         <property name="text">
-          <string>Use Quantiles</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="xprojQuantiles">
-         <property name="minimum">
-          <double>30.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>5.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>50.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_16">
-         <property name="text">
-          <string>%</string>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <widget class="MPLWidget" name="x_project" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -2471,8 +2437,6 @@
   <tabstop>pfMaxWidth</tabstop>
   <tabstop>pfRidgeLength</tabstop>
   <tabstop>pushButton</tabstop>
-  <tabstop>xprojUseQuantiles</tabstop>
-  <tabstop>xprojQuantiles</tabstop>
   <tabstop>bgToFConstant</tabstop>
   <tabstop>eventTofBins</tabstop>
   <tabstop>eventBinMode</tabstop>
@@ -2692,38 +2656,6 @@
     <hint type="sourcelabel">
      <x>263</x>
      <y>469</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>xprojQuantiles</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1064</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>xprojUseQuantiles</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1002</x>
-     <y>99</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
