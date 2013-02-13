@@ -77,6 +77,7 @@ class MainGUI(QtGui.QMainWindow):
   y_bg=0.
   # threads
   _foThread=None
+  read_with_thread=False
   _gisansThread=None
   # plot line storages
   _x_projection=None
@@ -198,18 +199,28 @@ class MainGUI(QtGui.QMainWindow):
       self._foThread.wait(100)
       self._foThread=None
     self.ui.statusbar.showMessage(u"Reading file %s..."%(filename))
-    self._foThread=fileOpenThread(self, filename)
-    self._foThread.finished.connect(self._fileOpenDone)
-    self._foThread.updateProgress.connect(self.updateEventReadout)
-    self._foThread.do_plot=do_plot
-    self._foThread.start()
+    if self.read_with_thread:
+      self._foThread=fileOpenThread(self, filename)
+      self._foThread.finished.connect(self._fileOpenDone)
+      self._foThread.updateProgress.connect(self.updateEventReadout)
+      self._foThread.do_plot=do_plot
+      self._foThread.start()
+    else:
+      data=NXSData(filename,
+            bin_type=str(self.ui.eventBinMode.currentText()),
+            bins=self.ui.eventTofBins.value(),
+            callback=self.updateEventReadout)
+      self._fileOpenDone(data, filename, do_plot)
 
-  def _fileOpenDone(self):
-    filename=self._foThread.filename
-    do_plot=self._foThread.do_plot
+
+
+  def _fileOpenDone(self, data=None, filename=None, do_plot=None):
+    if data is None:
+      filename=self._foThread.filename
+      do_plot=self._foThread.do_plot
+      data=self._foThread.data
+      self._foThread=None
     base=os.path.basename(filename)
-    data=self._foThread.data
-    self._foThread=None
     if data is None:
       self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
       return
