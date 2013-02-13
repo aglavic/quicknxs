@@ -373,19 +373,19 @@ class MRDataset(object):
     if callback is not None:
       # create the 3D binning
       Ixyt, D=histogramdd(vstack([tof_x[:5e5], tof_y[:5e5], tof_time[:5e5]]).transpose(),
-                         bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
       steps=int(tof_x.shape[0]/5e5)
       callback(callback_offset+callback_scaling*1/(steps+1))
       for i in range(1, steps+1):
         Ixyti, D=histogramdd(vstack([tof_x[5e5*i:5e5*(i+1)], tof_y[5e5*i:5e5*(i+1)],
                                      tof_time[5e5*i:5e5*(i+1)]]).transpose(),
-                           bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+                           bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
         Ixyt+=Ixyti
         callback(callback_offset+callback_scaling*(i+1)/(steps+1))
     else:
       # create the 3D binning
       Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
-                         bins=(arange(305)-0.5, arange(256)-0.5, tof_edges))
+                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
     # create projections for the 2D datasets
     Ixy=Ixyt.sum(axis=2)
     Ixt=Ixyt.sum(axis=1)
@@ -997,6 +997,10 @@ class GISANS(Reflectivity):
                                    bins=(self.options['gisans_gridy'],
                                          self.options['gisans_gridz']),
                                    weights=self.S.flatten())
+    npoints, ignore, ignore=histogram2d(self.Qy.flatten(), self.Qz.flatten(),
+                                   bins=(self.options['gisans_gridy'],
+                                         self.options['gisans_gridz']))
+    self.SGrid/=npoints
     qy=(qy[:-1]+qy[1:])/2.
     qz=(qz[:-1]+qz[1:])/2.
     self.QyGrid, self.QzGrid=meshgrid(qy, qz)

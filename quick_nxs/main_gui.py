@@ -14,12 +14,48 @@ from .version import str_version
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .error_handling import ErrorHandler
-from .mreduce import NXSData, Reflectivity, OffSpecular, DETECTOR_X_REGION
+from .mreduce import NXSData, Reflectivity, OffSpecular, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 BASE_FOLDER='/SNS/REF_M'
 BASE_SEARCH='*/data/REF_M_%s_'
 OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
+
+class fileOpenThread(QtCore.QThread):
+  updateProgress=QtCore.pyqtSignal(float)
+  data=None
+
+  def __init__(self, parent, filename):
+    QtCore.QThread.__init__(self)
+    self.filename=filename
+    self.bin_type=str(parent.ui.eventBinMode.currentText())
+    self.bins=parent.ui.eventTofBins.value()
+
+  def run(self):
+    self.data=NXSData(self.filename,
+                bin_type=self.bin_type,
+                bins=self.bins,
+                callback=self.progress)
+
+  def progress(self, value):
+    self.updateProgress.emit(value)
+
+class gisansCalcThread(QtCore.QThread):
+  updateProgress=QtCore.pyqtSignal(float)
+  gisans=None
+
+  def __init__(self, dataset, options):
+    QtCore.QThread.__init__(self)
+    self.dataset=dataset
+    self.options=options
+
+  def run(self):
+    gisans=[]
+    for i, dataset in enumerate(self.dataset):
+      gisans.append(GISANS(dataset, **self.options))
+      self.updateProgress.emit(float(i+1)/len(self.dataset))
+    self.gisans=gisans
+
 
 class MainGUI(QtGui.QMainWindow):
   '''
@@ -39,6 +75,9 @@ class MainGUI(QtGui.QMainWindow):
   active_channel='x' #: Selected channel for the overview and projection plots
   _control_down=False
   y_bg=0.
+  # threads
+  _foThread=None
+  _gisansThread=None
   # plot line storages
   _x_projection=None
   _y_projection=None
@@ -153,10 +192,24 @@ class MainGUI(QtGui.QMainWindow):
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     self.active_file=base
-    data=NXSData(filename,
-                bin_type=str(self.ui.eventBinMode.currentText()),
-                bins=self.ui.eventTofBins.value(),
-                callback=self.updateEventReadout)
+    if self._foThread:
+      self._foThread.finished.disconnect()
+      self._foThread.terminate()
+      self._foThread.wait(100)
+      self._foThread=None
+    self.ui.statusbar.showMessage(u"Reading file %s..."%(filename))
+    self._foThread=fileOpenThread(self, filename)
+    self._foThread.finished.connect(self._fileOpenDone)
+    self._foThread.updateProgress.connect(self.updateEventReadout)
+    self._foThread.do_plot=do_plot
+    self._foThread.start()
+
+  def _fileOpenDone(self):
+    filename=self._foThread.filename
+    do_plot=self._foThread.do_plot
+    base=os.path.basename(filename)
+    data=self._foThread.data
+    self._foThread=None
     if data is None:
       self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
       return
@@ -170,7 +223,7 @@ class MainGUI(QtGui.QMainWindow):
         break
     self.active_data=data
     self.last_mtime=os.path.getmtime(filename)
-    self.ui.statusbar.showMessage(u"%s loaded"%(filename), 1500)
+    self.ui.statusbar.showMessage(u"%s loaded"%(filename), 5000)
 
     self.fileLoaded.emit()
     if do_plot:
@@ -194,6 +247,11 @@ class MainGUI(QtGui.QMainWindow):
         plot.clear_fig()
     elif self.color is None:
       self.color=color
+    if self.ui.plotTab.currentIndex()!=4 and self._gisansThread:
+      self._gisansThread.finished.disconnect()
+      self._gisansThread.terminate()
+      self._gisansThread.wait(100)
+      self._gisansThread=None
     if self.ui.plotTab.currentIndex()==0:
       self.plot_overview()
     if self.ui.plotTab.currentIndex()==1:
@@ -203,6 +261,8 @@ class MainGUI(QtGui.QMainWindow):
     if self.ui.plotTab.currentIndex()==3:
       self.plot_offspec()
     if self.ui.plotTab.currentIndex()==4:
+      self.plot_gisans()
+    if self.ui.plotTab.currentIndex()==5:
       self.update_daslog()
 
   def plot_overview(self):
@@ -617,6 +677,80 @@ class MainGUI(QtGui.QMainWindow):
           plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plot.draw()
 
+  def plot_gisans(self):
+    '''
+      Create GISANS plots of the current dataset with Qy-Qz maps.
+    '''
+    plots=[self.ui.gisans_pp, self.ui.gisans_mm, self.ui.gisans_pm, self.ui.gisans_mp]
+    norm=self.getNorm()
+    if norm is None:
+      for plot in plots:
+        plot.clear()
+        plot.draw()
+      return
+    for i, plot in enumerate(plots):
+      if i>=len(self.active_data):
+        if plot.cplot is not None:
+          plot.clear()
+          plot.draw()
+      else:
+        plot.clear()
+        plot.canvas.fig.text(0.3, 0.5, "Pease wait for calculation\nto be finished.")
+        plot.draw()
+    self.ui.statusbar.showMessage('Calculating GISANS projection...')
+    self.updateEventReadout(0.)
+
+    options=dict(self.refl.options)
+    region=where(norm.Rraw>(norm.Rraw.max()*0.1))[0]
+    options['P0']=len(norm.Rraw)-region[-1]
+    options['PN']=region[0]
+    if self._gisansThread:
+      self._gisansThread.finished.disconnect()
+      self._gisansThread.terminate()
+      self._gisansThread.wait(100)
+      self._gisansThread=None
+    self._gisansThread=gisansCalcThread(self.active_data, options)
+    self._gisansThread.updateProgress.connect(self.updateEventReadout)
+    self._gisansThread.finished.connect(self._plot_gisans)
+    self._gisansThread.start()
+
+  def _plot_gisans(self):
+    gisans=self._gisansThread.gisans
+    self._gisansThread=None
+    self.ui.statusbar.showMessage('Calculating GISANS projection, Done.', 1000)
+    plots=[self.ui.gisans_pp, self.ui.gisans_mm, self.ui.gisans_pm, self.ui.gisans_mp]
+    imin=1e20
+    imax=1e-20
+    for d in gisans:
+      imin=min(imin, d.SGrid[d.SGrid>0].min())
+      imax=max(imax, d.SGrid.max())
+
+    if len(gisans)>1:
+      self.ui.frame_gisans_mm.show()
+      if len(gisans)==4:
+        self.ui.frame_gisans_sf.show()
+      else:
+        self.ui.frame_gisans_sf.hide()
+    else:
+      self.ui.frame_xy_mm.hide()
+      self.ui.frame_xy_sf.hide()
+
+    for i, datai in enumerate(gisans):
+      plots[i].clear_fig()
+      plots[i].pcolormesh(datai.QyGrid, datai.QzGrid, datai.SGrid,
+                          log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                          cmap=self.color)
+      plots[i].set_xlabel(u'Q$_y$ [Å⁻¹]')
+      plots[i].set_ylabel(u'Q$_z$ [Å⁻¹]')
+      plots[i].set_title(self.channels[i])
+      if plots[i].cplot is not None:
+        plots[i].cplot.set_clim([imin, imax])
+      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
+        plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+      plots[i].draw()
+
+
+
   def update_daslog(self):
     '''
       Write parameters from all file daslogs to the tables in the 
@@ -901,7 +1035,8 @@ class MainGUI(QtGui.QMainWindow):
       self.plotActiveTab()
 
   def toggleHide(self):
-    plots=[self.ui.frame_xy_mm, self.ui.frame_xy_sf, self.ui.frame_xtof_mm, self.ui.frame_xtof_sf]
+    plots=[self.ui.frame_xy_mm, self.ui.frame_xy_sf, self.ui.frame_xtof_mm, self.ui.frame_xtof_sf,
+           self.ui.frame_gisans_pp, self.ui.frame_gisans_mm, self.ui.frame_gisans_sf]
     if self.ui.hide_plots.isChecked():
       for plot in plots:
         plot.do_hide=True
@@ -1391,8 +1526,8 @@ as the ones already in the list:
       used after each finished channel to indicate the progress.
     '''
     self.eventProgress.setValue(progress*100)
-    app=QtGui.QApplication.instance()
-    app.processEvents()
+#    app=QtGui.QApplication.instance()
+#    app.processEvents()
 
 ####### Calculations and data treatment
 
