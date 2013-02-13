@@ -843,8 +843,6 @@ class OffSpecular(Reflectivity):
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
     scale=self.options['scale']/dataset.proton_charge # scale by user factor
-    if self.options['scale_by_beam']:
-      scale/=dataset.beam_width # scale by beam-size
 
     # Get regions in pixels as integers
     reg=map(lambda item: int(round(item)),
@@ -896,33 +894,3 @@ class OffSpecular(Reflectivity):
       self.S[:, idxs]/=norm.Rraw[idxs][newaxis, :]
       self.S[:, logical_not(idxs)]=0.
       self.dS[:, logical_not(idxs)]=0.
-
-def smooth_data(settings, x, y, I, sigmas=3., callback=None):
-  '''
-    Smooth a irregular spaced dataset onto a regular grid.
-    Takes each intensities with a distance < 3*sigma
-    to a given grid point and averages their intensities
-    weighted by the gaussian of the distance.
-  '''
-  gridx, gridy=settings['grid']
-  sigmax, sigmay=settings['sigma']
-  ssigmax, ssigmay=sigmax**2, sigmay**2
-  x1, x2, y1, y2=settings['region']
-  xout=linspace(x1, x2, gridx)
-  yout=linspace(y1, y2, gridy)
-  Xout, Yout=meshgrid(xout, yout)
-  Iout=zeros_like(Xout)
-  imax=len(Xout)
-  for i in range(imax):
-    if callback is not None and i%5==0:
-      progress=float(i)/imax
-      callback(progress)
-    for j in range(len(Xout[0])):
-      xij=Xout[i, j]
-      yij=Yout[i, j]
-      rij=(x-xij)**2/ssigmax+(y-yij)**2/ssigmay # normalized distance^2
-      take=where(rij<sigmas**2) # take points up to 3 sigma distance
-      Pij=exp(-0.5*rij[take])
-      Pij/=Pij.sum()
-      Iout[i, j]=(Pij*I[take]).sum()
-  return Xout, Yout, Iout

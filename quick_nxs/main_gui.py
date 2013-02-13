@@ -1164,9 +1164,9 @@ as the ones already in the list:
         item.setText(str(options['PN']))
     elif column==11:
       try:
-        options['tth']=float(item.text())*pi/180.
+        options['tth']=float(item.text())
       except ValueError:
-        item.setText(str(options['tth']*180./pi))
+        item.setText(str(options['tth']))
       else:
         refl_new=self.recalculateReflectivity(refl, options)
         self.reduction_list[entry]=refl_new

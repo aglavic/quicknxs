@@ -18,7 +18,8 @@ from matplotlib.patches import Ellipse
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
 from .smooth_dialog import Ui_Dialog as UiSmooth
-from .mreduce import NXSData, Reflectivity, OffSpecular, smooth_data
+from .mreduce import NXSData, Reflectivity, OffSpecular
+from .mrcalc import smooth_data
 from .output_templates import *
 from . import genx_data
 # make sure importing and changing genx templates do only use our
@@ -202,23 +203,31 @@ class ReduceDialog(QDialog):
       pb.info.setText(pbinfo+channel)
       pb.add=100*i
       data=hstack(self.output_data['OffSpec'][channel])
+      I=data[:, :, 5].flatten()
+      Qzmax=data[:, :, 2].max()*2.
       if settings['xy_column']==0:
         x=data[:, :, 4].flatten()
         y=data[:, :, 1].flatten()
         output_data['column_units']=['A^-1', 'A^-1', 'a.u.']
         output_data['column_names']=['ki_zMinkf_z', 'Qz', 'I']
+        axis_sigma_scaling=2
+        xysigma0=Qzmax/3.
       elif settings['xy_column']==1:
         x=data[:, :, 0].flatten()
         y=data[:, :, 1].flatten()
         output_data['column_units']=['A^-1', 'A^-1', 'a.u.']
         output_data['column_names']=['Qx', 'Qz', 'I']
+        axis_sigma_scaling=2
+        xysigma0=Qzmax/3.
       else:
         x=data[:, :, 2].flatten()
         y=data[:, :, 3].flatten()
         output_data['column_units']=['A^-1', 'A^-1', 'a.u.']
         output_data['column_names']=['ki_z', 'kf_z', 'I']
-      I=data[:, :, 5].flatten()
-      x, y, I=smooth_data(settings, x, y, I, callback=pb.progress, sigmas=settings['sigmas'])
+        axis_sigma_scaling=3
+        xysigma0=Qzmax/6.
+      x, y, I=smooth_data(settings, x, y, I, callback=pb.progress, sigmas=settings['sigmas'],
+                          axis_sigma_scaling=axis_sigma_scaling, xysigma0=xysigma0)
       output_data[channel]=[array([x, y, I]).transpose((1, 2, 0))]
     output_data['ki_max']=self.output_data['OffSpec']['ki_max']
     self.output_data['OffSpecSmooth']=output_data
@@ -530,8 +539,9 @@ class ReduceDialog(QDialog):
         ui.setupUi(dialog)
         ui.plot.toolbar.coordinates=True
         for data in output_data[channel]:
-          ui.plot.pcolormesh(data[:, :, x], data[:, :, y], maximum(1e-6, data[:, :, z]), log=True,
-                             imin=1e-6, imax=None, label=channel, cmap='default')
+          ui.plot.pcolormesh(data[:, :, x], data[:, :, y], data[:, :, z], log=True,
+                             imin=maximum(1e-6, data[:, :, z][data[:, :, z]>0].min()), imax=None,
+                             label=channel, cmap='default')
         ui.plot.canvas.fig.colorbar(ui.plot.cplot)
         ui.plot.set_xlabel(xl)
         ui.plot.set_ylabel(yl)
@@ -633,7 +643,7 @@ class SmoothDialog(QDialog):
       x2=Qzmax/2.
       y1=0.
       y2=Qzmax/2.
-      sigma_pos=(Qzmax/4., Qzmax/4.)
+      sigma_pos=(Qzmax/6., Qzmax/6.)
       sigma_ang=0.#-45.
       self.ui.sigmasCoupled.setChecked(True)
       self.ui.sigmaX.setValue(0.0005)

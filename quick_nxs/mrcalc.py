@@ -205,6 +205,48 @@ def refine_gauss(data, pos, width):
   res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
   return res.params[1]
 
+def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=0.06, callback=None):
+  '''
+    Smooth a irregular spaced dataset onto a regular grid.
+    Takes each intensities with a distance < 3*sigma
+    to a given grid point and averages their intensities
+    weighted by the gaussian of the distance.
+  '''
+  gridx, gridy=settings['grid']
+  sigmax, sigmay=settings['sigma']
+  x1, x2, y1, y2=settings['region']
+  xout=linspace(x1, x2, gridx)
+  yout=linspace(y1, y2, gridy)
+  Xout, Yout=meshgrid(xout, yout)
+  Iout=zeros_like(Xout)
+  ssigmax, ssigmay=sigmax**2, sigmay**2
+  imax=len(Xout)
+  for i in range(imax):
+    if callback is not None and i%5==0:
+      progress=float(i)/imax
+      callback(progress)
+    for j in range(len(Xout[0])):
+      xij=Xout[i, j]
+      yij=Yout[i, j]
+      if axis_sigma_scaling:
+        if axis_sigma_scaling==1: xyij=xij
+        elif axis_sigma_scaling==2: xyij=yij
+        elif axis_sigma_scaling==3: xyij=xij+yij
+        if xyij==0:
+          continue
+        ssigmaxi=ssigmax/xysigma0*xyij
+        ssigmayi=ssigmay/xysigma0*xyij
+        rij=(x-xij)**2/ssigmaxi+(y-yij)**2/ssigmayi # normalized distance^2
+      else:
+        rij=(x-xij)**2/ssigmax+(y-yij)**2/ssigmay # normalized distance^2
+      take=where(rij<sigmas**2) # take points up to 3 sigma distance
+      if len(take[0])==0:
+        continue
+      Pij=exp(-0.5*rij[take])
+      Pij/=Pij.sum()
+      Iout[i, j]=(Pij*I[take]).sum()
+  return Xout, Yout, Iout
+
 ######## helper functions ###############
 def _gauss_residuals(p, fjac=None, data=None, width=1):
   '''
