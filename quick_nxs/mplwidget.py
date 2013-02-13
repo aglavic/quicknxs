@@ -123,11 +123,11 @@ class NavigationToolbar(NavigationToolbar2QT):
       filters=[]
       for name, exts in sorted_filetypes:
           exts_list=" ".join(['*.%s'%ext for ext in exts])
-          filter='%s (%s)'%(name, exts_list)
+          filter_='%s (%s)'%(name, exts_list)
           if default_filetype in exts:
-            filters.insert(0, filter)
+            filters.insert(0, filter_)
           else:
-            filters.append(filter)
+            filters.append(filter_)
       filters=';;'.join(filters)
 
       fname=QtGui.QFileDialog.getSaveFileName(self, u"Choose a filename to save to", start, filters)

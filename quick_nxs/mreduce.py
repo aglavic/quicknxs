@@ -25,6 +25,7 @@ from time import time
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
 DETECTOR_X_REGION=(8, 295) # the active area of the detector
+DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 # measurement type mapping of states
@@ -514,6 +515,8 @@ class Reflectivity(object):
        P0=0,
        PN=0,
        number='0',
+       gisans_gridy=100,
+       gisans_gridz=100,
        )
 
   def __init__(self, dataset, **options):
@@ -682,8 +685,8 @@ class Reflectivity(object):
 
     self._calc_bg(dataset)
 
-    R=(I-self.BG[newaxis, :])
-    dR=sqrt(dI**2+(self.dBG**2)[newaxis, :])
+    R=(I-self.BG[newaxis, :]*self.options['scale'])
+    dR=sqrt(dI**2+((self.dBG*self.options['scale'])**2)[newaxis, :])
 
     norm=self.options['normalization']
     normR=where(norm.Rraw>0, norm.Rraw, 1.)
@@ -821,7 +824,7 @@ class OffSpecular(Reflectivity):
     self._calc_offspec(dataset)
 
   def __repr__(self):
-    output='<OffSpecular[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
+    output='<GISANS[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
                                         self.origin[1])
     if self.options['normalization'] is None:
       output+=' NOT normalized'
@@ -894,3 +897,107 @@ class OffSpecular(Reflectivity):
       self.S[:, idxs]/=norm.Rraw[idxs][newaxis, :]
       self.S[:, logical_not(idxs)]=0.
       self.dS[:, logical_not(idxs)]=0.
+
+class GISANS(Reflectivity):
+  '''
+    Calculate GISANS scattering from dataset.
+  '''
+
+  def __init__(self, dataset, **options):
+    all_options=dict(OffSpecular.DEFAULT_OPTIONS)
+    for key, value in options.items():
+      if not key in all_options:
+        raise ValueError, "%s is not a known option parameter"%key
+      all_options[key]=value
+    self.options=all_options
+    self.origin=dataset.origin
+    self.read_options=dataset.read_options
+    if self.options['x_pos'] is None:
+      # if nor x_pos is given, use the value from the dataset
+      rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+      self.options['x_pos']=dataset.dpix-dataset.sangle/180.*pi/rad_per_pixel
+    if self.options['tth'] is None:
+      self.options['tth']=dataset.dangle-dataset.dangle0
+    if self.options['dpix'] is None:
+      self.options['dpix']=dataset.dpix
+    self.lambda_center=dataset.lambda_center
+
+    self._calc_gisans(dataset)
+
+  def __repr__(self):
+    output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), os.path.basename(self.origin[0]),
+                                        self.origin[1])
+    if self.options['normalization'] is None:
+      output+=' NOT normalized'
+    output+='>'
+    return output
+
+  def _calc_gisans(self, dataset):
+    """
+    """
+    tof_edges=dataset.tof_edges
+    data=dataset.data
+    x_pos=self.options['x_pos']
+    y_pos=self.options['y_pos']
+    scale=self.options['scale']/dataset.proton_charge # scale by user factor
+
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+    xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
+    pix_offset_spec=self.options['dpix']-x_pos
+    tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
+    af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
+    ai=ones_like(af)*tth_spec/2.
+    phi=(arange(data.shape[1])[DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1]]-y_pos)*rad_per_pixel
+
+    v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
+    lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
+    # store the ToF as well for comparison etc.
+    self.tof=(tof_edges[:-1]+tof_edges[1:])/2. # µs
+    self.lamda=(lamda_edges[:-1]+lamda_edges[1:])/2.
+    # resolution for lambda is digital range with equal probability
+    # therefore it is the bin size divided by sqrt(12)
+    self.dlamda=abs(lamda_edges[:-1]-lamda_edges[1:])/sqrt(12)
+    k=2.*pi/self.lamda
+
+    # calculate ROI intensities and normalize by number of points
+    P0=len(self.tof)-self.options['P0']
+    PN=self.options['PN']
+    Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1],
+               DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1],
+               PN:P0]
+    # calculate reciprocal space, incident and outgoing perpendicular wave vectors
+    self.Qx=k[newaxis, newaxis, PN:P0]*(cos(phi)[:, newaxis]*cos(af)-cos(ai))[:, :, newaxis]
+    self.Qy=k[newaxis, newaxis, PN:P0]*(sin(phi)[:, newaxis]*cos(af))[:, :, newaxis]
+    self.Qz=k[newaxis, newaxis, PN:P0]*((0*phi)[:, newaxis]+sin(af)+sin(ai))[:, :, newaxis]
+
+    self.Iraw=Idata
+    self.dIraw=sqrt(self.Iraw)
+    # normalize data by width in y and multiply scaling factor
+    self.I=self.Iraw*scale
+    self.dI=self.dIraw*scale
+
+    self.S=array(self.I)
+    self.dS=array(self.dI)
+    if self.options['normalization']:
+      norm=self.options['normalization']
+      normR=norm.Rraw[PN:P0]
+      normdR=norm.dRraw[PN:P0]
+      idxs=normR>0.
+      self.dS[:, :, idxs]=sqrt(
+                   (self.dS[:, :, idxs]/normR[idxs][newaxis, newaxis, :])**2+
+                   (self.S[:, :, idxs]/normR[idxs][newaxis, newaxis, :]**2*
+                    normdR[idxs][newaxis, newaxis, :])**2
+                   )
+      self.S[:, :, idxs]/=normR[idxs][newaxis, newaxis, :]
+      self.S[:, :, logical_not(idxs)]=0.
+      self.dS[:, :, logical_not(idxs)]=0.
+
+    # create grid
+    self.SGrid, qy, qz=histogram2d(self.Qy.flatten(), self.Qz.flatten(),
+                                   bins=(self.options['gisans_gridy'],
+                                         self.options['gisans_gridz']),
+                                   weights=self.S.flatten())
+    qy=(qy[:-1]+qy[1:])/2.
+    qz=(qz[:-1]+qz[1:])/2.
+    self.QyGrid, self.QzGrid=meshgrid(qy, qz)
+
