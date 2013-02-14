@@ -158,7 +158,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     self.canvas.draw()
 
 class MplCanvas(FigureCanvas):
-  def __init__(self, parent=None, width=10, height=12, dpi=100, sharex=None, sharey=None, adjust={}):
+  def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
     self.ax=self.fig.add_subplot(111, sharex=sharex, sharey=sharey)
     self.fig.subplots_adjust(left=0.15, bottom=0.1, right=0.95, top=0.95)
@@ -192,6 +192,8 @@ class MplCanvas(FigureCanvas):
 
   def sizeHint(self):
     w, h=self.get_width_height()
+    w=max(w, self.height())
+    h=max(h, self.width())
     return QtCore.QSize(w, h)
 
   def minimumSizeHint(self):
@@ -215,6 +217,8 @@ class MPLWidget(QtGui.QWidget):
       self.toolbar=NavigationToolbar(self.canvas, self)
       self.toolbar.coordinates=coordinates
       self.vbox.addWidget(self.toolbar)
+    else:
+      self.toolbar=None
     self.setLayout(self.vbox)
 
   def leaveEvent(self, event):
@@ -222,8 +226,9 @@ class MPLWidget(QtGui.QWidget):
     Make sure the cursor is reset to it's default when leaving the widget.
     In some cases the zoom cursor does not reset when leaving the plot.
     '''
-    QtGui.QApplication.restoreOverrideCursor()
-    self.toolbar._lastCursor=None
+    if self.toolbar:
+      QtGui.QApplication.restoreOverrideCursor()
+      self.toolbar._lastCursor=None
     return QtGui.QWidget.leaveEvent(self, event)
 
   def set_config(self, config):

@@ -8,17 +8,20 @@ import os, sys
 import subprocess
 from zipfile import ZipFile
 from cPickle import loads, dumps
-from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, QApplication
+from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, \
+                        QApplication, QSizePolicy
 from PyQt4.QtCore import QThread, pyqtSignal
 from time import sleep, time, strftime
-from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum
+from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum, where, histogram2d
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
+from .mplwidget import MPLWidget
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
+from .gisans_dialog import Ui_Dialog as UiGisans
 from .smooth_dialog import Ui_Dialog as UiSmooth
-from .mreduce import NXSData, Reflectivity, OffSpecular
+from .mreduce import NXSData, Reflectivity, OffSpecular, GISANS
 from .mrcalc import smooth_data
 from .output_templates import *
 from . import genx_data
@@ -99,6 +102,8 @@ class ReduceDialog(QDialog):
         self.smooth_offspec()
         if not self.ui.exportOffSpecular.isChecked():
           del(self.output_data['OffSpec'])
+      if self.ui.exportGISANS.isChecked():
+        self.extract_gisans()
 
       self.export_data()
       if self.ui.gnuplot.isChecked():
@@ -184,6 +189,22 @@ class ReduceDialog(QDialog):
         ki_max=max(ki_max, ki_z.max())
     output_data['ki_max']=ki_max
     self.output_data['OffSpec']=output_data
+
+  def extract_gisans(self):
+    '''
+      Extract the GISANS data for all datasets.
+    '''
+    output_data=dict([(channel, []) for channel in self.channels])
+    for refli in self.refls:
+      opts=refli.options
+      index=opts['number']
+      fdata=self.raw_data[index]
+      for channel in self.channels:
+        gisans=GISANS(fdata[channel], **opts)
+        output_data[channel].append(gisans)
+    dia=GISANSDialog(self, output_data[self.channels[0]])
+    result=dia.exec_()
+    dia.destroy()
 
   def smooth_offspec(self):
     data=self.output_data['OffSpec'][self.channels[0]]
@@ -546,7 +567,7 @@ class ReduceDialog(QDialog):
         ui.plot.set_xlabel(xl)
         ui.plot.set_ylabel(yl)
         ui.plot.set_title(ind_str+' - '+title+' - (%s)'%channel)
-        ui.plot.show()
+        ui.plot.draw()
         dialog.show()
         self.parent().open_plots.append(dialog)
 
@@ -747,6 +768,153 @@ class SmoothDialog(QDialog):
     output['grid']=(gx, gy)
     output['xy_column']=1*self.ui.qxVSqz.isChecked()+2*self.ui.kizVSkfz.isChecked()
     return output
+
+class GISANSCalculation(QThread):
+  '''
+    Perform gisans projection calculation in the background and
+    send a signal aver each subframe has been finished.
+  '''
+  frameFinished=pyqtSignal(int)
+
+  def __init__(self, data, lmin, lmax, lsteps, gridQy=50, gridQz=50):
+    QThread.__init__(self)
+    self.data=data
+    self.lmin=lmin
+    self.lmax=lmax
+    self.lsteps=lsteps
+    self.grid=(gridQy+1, gridQz+1)
+
+  def run(self):
+    self.results=[]
+    for i in range(self.lsteps):
+      result=self.calc_single(i)
+      self.results.append(result)
+      self.frameFinished.emit(i)
+
+  def calc_single(self, i):
+    lsize=(self.lmax-self.lmin)/self.lsteps
+    lmin=self.lmin+i*lsize
+    lmax=self.lmin+(i+1)*lsize
+    data=self.data
+    P0=len(data.lamda)-data.options['P0']
+    PN=data.options['PN']
+    # filter the points
+    region=where((data.lamda[PN:P0]>=lmin)&(data.lamda[PN:P0]<=lmax))
+    I=data.I[:, :, region].flatten()
+    qy=data.Qy[:, :, region].flatten()
+    qz=data.Qz[:, :, region].flatten()
+    Isum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=I)
+    Npoints, Qy, Qz=histogram2d(qy, qz, bins=self.grid)
+    Isum/=Npoints
+    Isum=Isum[:, ::-1].transpose()
+    Qy=(Qy[:-1]+Qy[1:])/2.
+    Qz=(Qz[:-1]+Qz[1:])/2.
+    return Isum, Qy, Qz, lmin, lmax
+
+
+class GISANSDialog(QDialog):
+  '''
+    Dialog to define GISANS extraction parameters.
+  '''
+  drawing=False
+  _calculator=None
+
+  def __init__(self, parent, datasets):
+    QDialog.__init__(self, parent)
+    self.ui=UiGisans()
+    self.ui.setupUi(self)
+    self.datasets=datasets
+    self.ui.splitter.setSizes([350, 250])
+    self.drawLambda()
+
+  def drawLambda(self):
+    self.ui.lambdaPlot.clear()
+    self.ui.lambdaPlot.canvas.ax.set_xlim(1.9, 9.5)
+    drawn_norms=[]
+    for dataset in self.datasets:
+      # draw each normalization
+      norm=dataset.options['normalization']
+      if norm in drawn_norms:
+        continue
+      drawn_norms.append(norm)
+      self.ui.lambdaPlot.semilogy(norm.lamda, norm.Rraw)
+    self.ui.lambdaPlot.canvas.ax.set_ylim(norm.Rraw.max()*0.01, norm.Rraw.max()*1.5)
+    lmin=self.ui.lambdaMin.value()
+    lmax=self.ui.lambdaMax.value()
+    lsteps=(lmax-lmin)/self.ui.numberSlices.value()
+    self.line_left=self.ui.lambdaPlot.canvas.ax.axvline(lmin)
+    self.line_right=self.ui.lambdaPlot.canvas.ax.axvline(lmax)
+    self.step_lines=[]
+    for i in range(self.ui.numberSlices.value()-1):
+      pos=self.ui.lambdaMin.value()+(i+1)*lsteps
+      self.step_lines.append(self.ui.lambdaPlot.canvas.ax.axvline(pos, color='red'))
+
+    self.ui.lambdaPlot.set_xlabel(u'λ [Å]')
+    self.ui.lambdaPlot.set_ylabel(u'I(λ)')
+    self.ui.lambdaPlot.canvas.fig.subplots_adjust(left=0.15, bottom=0.18, right=0.99, top=0.99)
+    self.ui.lambdaPlot.draw()
+
+  def lambdaRangeChanged(self):
+    lmin=self.ui.lambdaMin.value()
+    lmax=self.ui.lambdaMax.value()
+    self.line_left.set_xdata([lmin, lmin])
+    self.line_right.set_xdata([lmax, lmax])
+    lsteps=(lmax-lmin)/self.ui.numberSlices.value()
+    for i, line in enumerate(self.step_lines):
+      line.set_xdata(lmin+(i+1)*lsteps)
+    self.ui.lambdaPlot.draw()
+
+  def numberSlicesChanged(self):
+    old_steps=len(self.step_lines)+1
+    new_steps=self.ui.numberSlices.value()
+    lmin=self.ui.lambdaMin.value()
+    lmax=self.ui.lambdaMax.value()
+    lsteps=(lmax-lmin)/self.ui.numberSlices.value()
+    if old_steps>new_steps:
+      for ignore in range(old_steps-new_steps):
+        line=self.step_lines.pop(0)
+        line.remove()
+      for i, line in enumerate(self.step_lines):
+        line.set_xdata(lmin+(i+1)*lsteps)
+    elif new_steps>old_steps:
+      i=-1
+      for i, line in enumerate(self.step_lines):
+        line.set_xdata(lmin+(i+1)*lsteps)
+      for j in range(new_steps-old_steps):
+        self.step_lines.append(self.ui.lambdaPlot.canvas.ax.axvline(lmin+(i+j+2)*lsteps,
+                                                                    color='red'))
+    self.ui.lambdaPlot.draw()
+
+  def createProjectionPlots(self):
+    for child in self.ui.resultImageArea.children():
+      if not type(child) is MPLWidget:
+        continue
+      child.setParent(None)
+    self.projection_plots=[]
+    self._calculator=GISANSCalculation(self.datasets[0], self.ui.lambdaMin.value(),
+                                       self.ui.lambdaMax.value(), self.ui.numberSlices.value(),
+                                       self.ui.gridQy.value(), self.ui.gridQz.value())
+    self._calculator.frameFinished.connect(self.drawProjectionPlot)
+    self._calculator.start()
+    self._calculator.setPriority(QThread.LowPriority)
+
+  def drawProjectionPlot(self, i):
+    result=self._calculator.results[i]
+    r0=self._calculator.results[0]
+    policy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+    plot=MPLWidget(self.ui.resultImageArea, False)
+    self.ui.resultImageLayout.addWidget(plot, 0)
+    plot.setSizePolicy(policy)
+    plot.canvas.fig.subplots_adjust(left=0.18, bottom=0.12, right=0.99, top=0.92)
+    plot.imshow(result[0], aspect='auto',
+                extent=[result[1].min(), result[1].max(), result[2].min(), result[2].max()],
+                cmap='default', log=True)
+    plot.canvas.ax.set_xlim(r0[1].min(), r0[1].max())
+    plot.canvas.ax.set_ylim(r0[2].min(), r0[2].max())
+    plot.set_xlabel(u'Q$_y$ [Å⁻¹]')
+    plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
+    plot.set_title(u'λ=%.2f-%.2fÅ'%(result[3], result[4]))
+    plot.draw()
 
 class ProgressDialog(QDialog):
 

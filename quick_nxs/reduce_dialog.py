@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Wed Feb 13 16:00:18 2013
+# Created: Thu Feb 14 16:00:23 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -52,7 +52,6 @@ class Ui_Dialog(object):
     self.exportOffSpecularSmoothed.setObjectName(_fromUtf8("exportOffSpecularSmoothed"))
     self.verticalLayout.addWidget(self.exportOffSpecularSmoothed)
     self.exportGISANS = QtGui.QCheckBox(self.groupBox_2)
-    self.exportGISANS.setEnabled(False)
     self.exportGISANS.setObjectName(_fromUtf8("exportGISANS"))
     self.verticalLayout.addWidget(self.exportGISANS)
     self.horizontalLayout.addWidget(self.groupBox_2)

@@ -515,8 +515,8 @@ class Reflectivity(object):
        P0=0,
        PN=0,
        number='0',
-       gisans_gridy=100,
-       gisans_gridz=100,
+       gisans_gridy=50,
+       gisans_gridz=50,
        )
 
   def __init__(self, dataset, **options):
@@ -966,9 +966,9 @@ class GISANS(Reflectivity):
                DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1],
                PN:P0]
     # calculate reciprocal space, incident and outgoing perpendicular wave vectors
-    self.Qx=k[newaxis, newaxis, PN:P0]*(cos(phi)[:, newaxis]*cos(af)-cos(ai))[:, :, newaxis]
-    self.Qy=k[newaxis, newaxis, PN:P0]*(sin(phi)[:, newaxis]*cos(af))[:, :, newaxis]
-    self.Qz=k[newaxis, newaxis, PN:P0]*((0*phi)[:, newaxis]+sin(af)+sin(ai))[:, :, newaxis]
+    self.Qx=k[newaxis, newaxis, PN:P0]*(cos(phi)*cos(af)[:, newaxis]-cos(ai)[:, newaxis])[:, :, newaxis]
+    self.Qy=k[newaxis, newaxis, PN:P0]*(sin(phi)*cos(af)[:, newaxis])[:, :, newaxis]
+    self.Qz=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(af)[:, newaxis]+sin(ai)[:, newaxis])[:, :, newaxis]
 
     self.Iraw=Idata
     self.dIraw=sqrt(self.Iraw)
@@ -1001,6 +1001,7 @@ class GISANS(Reflectivity):
                                    bins=(self.options['gisans_gridy'],
                                          self.options['gisans_gridz']))
     self.SGrid/=npoints
+    self.SGrid=self.SGrid.transpose()
     qy=(qy[:-1]+qy[1:])/2.
     qz=(qz[:-1]+qz[1:])/2.
     self.QyGrid, self.QzGrid=meshgrid(qy, qz)
