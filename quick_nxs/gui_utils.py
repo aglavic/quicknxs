@@ -488,7 +488,7 @@ class ReduceDialog(QDialog):
         line_params=dict(x=1, y=2, z=3)
         if output_data['column_names'][0]=='Qy':
           # GISANS
-          params['ratio']=1.5
+          params['ratio']=1.
           params['ylabel']=u"Q_z [Å^{-1}]"
           params['yrange']="*:*"
           params['xlabel']=u"Q_y [Å^{-1}]"

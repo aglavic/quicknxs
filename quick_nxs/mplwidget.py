@@ -101,7 +101,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.pdf")
     self.canvas.print_figure(filename, dpi=600)
     # print to default printer
-    proc=subprocess.Popen([u"lpr", u"-T", u"QuickNXS Plot", u'-o', u'landscape', filename],
+    proc=subprocess.Popen([u"lpr", u"-T", u"QuickNXS Plot", u'-o', u'landscape', u'-o', u'media=Letter', filename],
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     result=proc.communicate()[0]
     if proc.returncode:
