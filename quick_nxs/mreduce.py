@@ -939,6 +939,7 @@ class GISANS(Reflectivity):
     data=dataset.data
     x_pos=self.options['x_pos']
     y_pos=self.options['y_pos']
+    # create a nicer intensity scale by multiplying with the reflectiviy extraction region
     scale=self.options['scale']/dataset.proton_charge # scale by user factor
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
@@ -1000,7 +1001,7 @@ class GISANS(Reflectivity):
     npoints, ignore, ignore=histogram2d(self.Qy.flatten(), self.Qz.flatten(),
                                    bins=(self.options['gisans_gridy'],
                                          self.options['gisans_gridz']))
-    self.SGrid/=npoints
+    self.SGrid[npoints>0]/=npoints[npoints>0]
     self.SGrid=self.SGrid.transpose()
     qy=(qy[:-1]+qy[1:])/2.
     qz=(qz[:-1]+qz[1:])/2.

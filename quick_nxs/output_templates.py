@@ -41,7 +41,7 @@ set format cb "10^{%%L}"
 
 set xrange [%(xrange)s]
 set yrange [%(yrange)s]
-set cbrange [1e-6:]
+#set cbrange [1e-6:]
 
 set log cb
 set pm3d map interpolate 5,5
@@ -57,7 +57,8 @@ unset multiplot
 
 GP_LINE=u'"%(file_name)s" u 1:2:3 w errorlines t "(%(channel)s)" lw 1.5 pt 7 ps 0.5'
 #GP_LINE=u'"%(file_name)s" u 1:2:4:3 w xyerrorbars t "(%(channel)s)" lw 1.5 lc %(index)i pt 7 ps 0.5, "%(file_name)s" u 1:2 smooth csplines t "" lw 1.5 lc %(index)i'
-GP_LINE_3D=u'splot "%(file_name)s" u %(x)i:%(y)i:(Imin($%(z)i)) w pm3d t ""'
+#GP_LINE_3D=u'splot "%(file_name)s" u %(x)i:%(y)i:(Imin($%(z)i)) w pm3d t ""'
+GP_LINE_3D=u'splot "%(file_name)s" u %(x)i:%(y)i:%(z)i w pm3d t ""'
 GP_SEP=u',\\\n     '
 GP_SEP_3D=u'\nset title "%s"\n'
 

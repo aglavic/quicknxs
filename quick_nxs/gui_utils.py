@@ -9,10 +9,11 @@ import subprocess
 from zipfile import ZipFile
 from cPickle import loads, dumps
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, \
-                        QApplication, QSizePolicy
+                        QApplication, QSizePolicy, QListWidgetItem
 from PyQt4.QtCore import QThread, pyqtSignal
 from time import sleep, time, strftime
-from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum, where, histogram2d
+from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum, where, histogram2d, \
+                  log10, meshgrid
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
@@ -204,7 +205,27 @@ class ReduceDialog(QDialog):
         output_data[channel].append(gisans)
     dia=GISANSDialog(self, output_data[self.channels[0]])
     result=dia.exec_()
+    lmin=dia.ui.lambdaMin.value()
+    lmax=dia.ui.lambdaMax.value()
+    gridQy=dia.ui.gridQy.value()
+    gridQz=dia.ui.gridQz.value()
+    nslices=dia.ui.numberSlices.value()
     dia.destroy()
+    app=QApplication.instance()
+    if result==QDialog.Accepted:
+      for channel in self.channels:
+        thread=GISANSCalculation(output_data[channel], lmin, lmax, nslices, gridQy, gridQz)
+        thread.start()
+        while not thread.isFinished():
+          app.processEvents()
+        output_data[channel]=[]
+        for item in thread.results:
+          output_data[channel].append(array([item[1], item[2], item[0], item[5]]).transpose(1, 2, 0))
+      for i in range(nslices):
+        output=dict([(channel, [output_data[channel][i]]) for channel in self.channels])
+        output['column_units']=['A^-1', 'A^-1', 'a.u.', 'a.u.']
+        output['column_names']=['Qy', 'Qz', 'I', 'dI']
+        self.output_data['GISANS_%i'%i]=output
 
   def smooth_offspec(self):
     data=self.output_data['OffSpec'][self.channels[0]]
@@ -440,7 +461,10 @@ class ReduceDialog(QDialog):
       open(output, 'w').write(script.encode('utf8'))
     else:
       # 3D plot
-      ki_max=output_data['ki_max']
+      if 'ki_max' in output_data:
+        ki_max=output_data['ki_max']
+      else:
+        ki_max=None
       rows=1+int(len(self.channels)>2)
       cols=1+int(len(self.channels)>1)
       params=dict(
@@ -454,7 +478,7 @@ class ReduceDialog(QDialog):
       params['pix_x']=1000*cols
       params['pix_y']=200+1200*rows
       if title=='OffSpec':
-        params['ratio']=1.75
+        params['ratio']=1.5
         params['ylabel']=u"Q_z [Å^{-1}]"
         params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
         params['xrange']="%f:%f"%(-0.025, 0.025)
@@ -462,8 +486,15 @@ class ReduceDialog(QDialog):
         line_params=dict(x=5, y=2, z=6)
       else:
         line_params=dict(x=1, y=2, z=3)
-        if output_data['column_names'][1]=='Qz':
-          params['ratio']=1.75
+        if output_data['column_names'][0]=='Qy':
+          # GISANS
+          params['ratio']=1.5
+          params['ylabel']=u"Q_z [Å^{-1}]"
+          params['yrange']="*:*"
+          params['xlabel']=u"Q_y [Å^{-1}]"
+          params['xrange']="*:*"
+        elif output_data['column_names'][1]=='Qz':
+          params['ratio']=1.5
           params['ylabel']=u"Q_z [Å^{-1}]"
           params['yrange']="%f:%f"%(0.0, 1.413*ki_max)
           if output_data['column_names'][0]=='Qx':
@@ -561,7 +592,7 @@ class ReduceDialog(QDialog):
         ui.plot.toolbar.coordinates=True
         for data in output_data[channel]:
           ui.plot.pcolormesh(data[:, :, x], data[:, :, y], data[:, :, z], log=True,
-                             imin=maximum(1e-6, data[:, :, z][data[:, :, z]>0].min()), imax=None,
+                             imin=data[:, :, z][data[:, :, z]>0].min(), imax=None,
                              label=channel, cmap='default')
         ui.plot.canvas.fig.colorbar(ui.plot.cplot)
         ui.plot.set_xlabel(xl)
@@ -776,9 +807,9 @@ class GISANSCalculation(QThread):
   '''
   frameFinished=pyqtSignal(int)
 
-  def __init__(self, data, lmin, lmax, lsteps, gridQy=50, gridQz=50):
+  def __init__(self, datasets, lmin, lmax, lsteps, gridQy=50, gridQz=50):
     QThread.__init__(self)
-    self.data=data
+    self.datasets=datasets
     self.lmin=lmin
     self.lmax=lmax
     self.lsteps=lsteps
@@ -795,29 +826,46 @@ class GISANSCalculation(QThread):
     lsize=(self.lmax-self.lmin)/self.lsteps
     lmin=self.lmin+i*lsize
     lmax=self.lmin+(i+1)*lsize
-    data=self.data
+
+    data=self.datasets[0]
     P0=len(data.lamda)-data.options['P0']
     PN=data.options['PN']
     # filter the points
     region=where((data.lamda[PN:P0]>=lmin)&(data.lamda[PN:P0]<=lmax))
     I=data.I[:, :, region].flatten()
+    dI=data.dI[:, :, region].flatten()
     qy=data.Qy[:, :, region].flatten()
     qz=data.Qz[:, :, region].flatten()
+    for data in self.datasets[1:]:
+      # add points from all datasets
+      P0=len(data.lamda)-data.options['P0']
+      PN=data.options['PN']
+      # filter the points
+      region=where((data.lamda[PN:P0]>=lmin)&(data.lamda[PN:P0]<=lmax))
+      I=hstack([I, data.I[:, :, region].flatten()])
+      dI=hstack([dI, data.dI[:, :, region].flatten()])
+      qy=hstack([qy, data.Qy[:, :, region].flatten()])
+      qz=hstack([qz, data.Qz[:, :, region].flatten()])
     Isum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=I)
+    dIsum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=dI)
     Npoints, Qy, Qz=histogram2d(qy, qz, bins=self.grid)
-    Isum/=Npoints
-    Isum=Isum[:, ::-1].transpose()
+    Isum[Npoints>0]/=Npoints[Npoints>0]
+    dIsum[Npoints>0]/=Npoints[Npoints>0]
     Qy=(Qy[:-1]+Qy[1:])/2.
     Qz=(Qz[:-1]+Qz[1:])/2.
-    return Isum, Qy, Qz, lmin, lmax
+    Qz, Qy=meshgrid(Qz, Qy)
+    return Isum, Qy, Qz, lmin, lmax, dIsum
 
 
 class GISANSDialog(QDialog):
   '''
-    Dialog to define GISANS extraction parameters.
+  Dialog to define GISANS extraction parameters.
+  Shows a plot of intensity vs. lambda and alows to select different
+  slices to be extractes as Qy,Qz projection with a preview.
   '''
   drawing=False
   _calculator=None
+  _listItems={}
 
   def __init__(self, parent, datasets):
     QDialog.__init__(self, parent)
@@ -826,8 +874,13 @@ class GISANSDialog(QDialog):
     self.datasets=datasets
     self.ui.splitter.setSizes([350, 250])
     self.drawLambda()
+    self.ui.iMax.setValue(log10(datasets[0].I.max()*2.))
+    self.ui.iMin.setValue(log10(datasets[0].I[datasets[0].I>0].min()/40.))
 
   def drawLambda(self):
+    '''
+    Plot intensity vs. lambda.
+    '''
     self.ui.lambdaPlot.clear()
     self.ui.lambdaPlot.canvas.ax.set_xlim(1.9, 9.5)
     drawn_norms=[]
@@ -855,6 +908,9 @@ class GISANSDialog(QDialog):
     self.ui.lambdaPlot.draw()
 
   def lambdaRangeChanged(self):
+    '''
+    Change the vertical lines on the lambda plot.
+    '''
     lmin=self.ui.lambdaMin.value()
     lmax=self.ui.lambdaMax.value()
     self.line_left.set_xdata([lmin, lmin])
@@ -865,6 +921,9 @@ class GISANSDialog(QDialog):
     self.ui.lambdaPlot.draw()
 
   def numberSlicesChanged(self):
+    '''
+    Change the number of lines drawn on the lambda plot.
+    '''
     old_steps=len(self.step_lines)+1
     new_steps=self.ui.numberSlices.value()
     lmin=self.ui.lambdaMin.value()
@@ -886,12 +945,17 @@ class GISANSDialog(QDialog):
     self.ui.lambdaPlot.draw()
 
   def createProjectionPlots(self):
+    '''
+    Start a thread that calculates porjections to be plotted.
+    '''
     for child in self.ui.resultImageArea.children():
       if not type(child) is MPLWidget:
         continue
       child.setParent(None)
+    self._listItems={}
+    self.ui.plotShowList.clear()
     self.projection_plots=[]
-    self._calculator=GISANSCalculation(self.datasets[0], self.ui.lambdaMin.value(),
+    self._calculator=GISANSCalculation(self.datasets, self.ui.lambdaMin.value(),
                                        self.ui.lambdaMax.value(), self.ui.numberSlices.value(),
                                        self.ui.gridQy.value(), self.ui.gridQz.value())
     self._calculator.frameFinished.connect(self.drawProjectionPlot)
@@ -899,6 +963,9 @@ class GISANSDialog(QDialog):
     self._calculator.setPriority(QThread.LowPriority)
 
   def drawProjectionPlot(self, i):
+    '''
+    Plot one projection.
+    '''
     result=self._calculator.results[i]
     r0=self._calculator.results[0]
     policy=QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
@@ -906,15 +973,36 @@ class GISANSDialog(QDialog):
     self.ui.resultImageLayout.addWidget(plot, 0)
     plot.setSizePolicy(policy)
     plot.canvas.fig.subplots_adjust(left=0.18, bottom=0.12, right=0.99, top=0.92)
-    plot.imshow(result[0], aspect='auto',
+    plot.imshow(result[0][:, ::-1].transpose(), aspect='auto',
                 extent=[result[1].min(), result[1].max(), result[2].min(), result[2].max()],
-                cmap='default', log=True)
+                cmap='default', log=True,
+                imin=10**(self.ui.iMin.value()), imax=10**(self.ui.iMax.value()))
     plot.canvas.ax.set_xlim(r0[1].min(), r0[1].max())
     plot.canvas.ax.set_ylim(r0[2].min(), r0[2].max())
     plot.set_xlabel(u'Q$_y$ [Å⁻¹]')
     plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
-    plot.set_title(u'λ=%.2f-%.2fÅ'%(result[3], result[4]))
+    title=u'λ=%.2f-%.2fÅ'%(result[3], result[4])
+    plot.set_title(title)
     plot.draw()
+    item=QListWidgetItem(title)
+    self.ui.plotShowList.addItem(item)
+    self.ui.plotShowList.setItemSelected(item, True)
+    self._listItems[item]=plot
+
+  def changePlotSelection(self):
+    selection=self.ui.plotShowList.selectedItems()
+    for item, plot in self._listItems.items():
+      if item in selection:
+        plot.show()
+      else:
+        plot.hide()
+
+  def changePlotScale(self):
+    from matplotlib.colors import LogNorm
+    norm=LogNorm(10**(self.ui.iMin.value()), 10**(self.ui.iMax.value()))
+    for plot in self._listItems.values():
+      plot.cplot.set_norm(norm)
+      plot.draw()
 
 class ProgressDialog(QDialog):
 
