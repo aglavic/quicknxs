@@ -12,8 +12,8 @@ from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, 
                         QApplication, QSizePolicy, QListWidgetItem
 from PyQt4.QtCore import QThread, pyqtSignal
 from time import sleep, time, strftime
-from numpy import vstack, hstack, argsort, array, savetxt, savez, maximum, where, histogram2d, \
-                  log10, meshgrid
+from numpy import vstack, hstack, argsort, array, savetxt, savez, where, histogram2d, \
+                  log10, meshgrid, sqrt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
@@ -832,8 +832,8 @@ class GISANSCalculation(QThread):
     PN=data.options['PN']
     # filter the points
     region=where((data.lamda[PN:P0]>=lmin)&(data.lamda[PN:P0]<=lmax))
-    I=data.I[:, :, region].flatten()
-    dI=data.dI[:, :, region].flatten()
+    I=data.S[:, :, region].flatten()
+    dI=data.dS[:, :, region].flatten()
     qy=data.Qy[:, :, region].flatten()
     qz=data.Qz[:, :, region].flatten()
     for data in self.datasets[1:]:
@@ -842,14 +842,15 @@ class GISANSCalculation(QThread):
       PN=data.options['PN']
       # filter the points
       region=where((data.lamda[PN:P0]>=lmin)&(data.lamda[PN:P0]<=lmax))
-      I=hstack([I, data.I[:, :, region].flatten()])
-      dI=hstack([dI, data.dI[:, :, region].flatten()])
+      I=hstack([I, data.S[:, :, region].flatten()])
+      dI=hstack([dI, data.dS[:, :, region].flatten()])
       qy=hstack([qy, data.Qy[:, :, region].flatten()])
       qz=hstack([qz, data.Qz[:, :, region].flatten()])
     Isum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=I)
-    dIsum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=dI)
+    dIsum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=dI**2)
     Npoints, Qy, Qz=histogram2d(qy, qz, bins=self.grid)
     Isum[Npoints>0]/=Npoints[Npoints>0]
+    dIsum=sqrt(dIsum)
     dIsum[Npoints>0]/=Npoints[Npoints>0]
     Qy=(Qy[:-1]+Qy[1:])/2.
     Qz=(Qz[:-1]+Qz[1:])/2.
@@ -874,8 +875,8 @@ class GISANSDialog(QDialog):
     self.datasets=datasets
     self.ui.splitter.setSizes([350, 250])
     self.drawLambda()
-    self.ui.iMax.setValue(log10(datasets[0].I.max()*2.))
-    self.ui.iMin.setValue(log10(datasets[0].I[datasets[0].I>0].min()/40.))
+    self.ui.iMax.setValue(log10(datasets[0].S.max()*2.))
+    self.ui.iMin.setValue(log10(datasets[0].S[datasets[0].I>0].min()/40.))
 
   def drawLambda(self):
     '''
