@@ -8,6 +8,7 @@ from glob import glob
 from numpy import where, pi, newaxis, log10
 from cPickle import load, dump
 from matplotlib.lines import Line2D
+from matplotlib.colors import LogNorm, Normalize
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
@@ -217,7 +218,7 @@ class MainGUI(QtGui.QMainWindow):
 
 
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
-    if data is None:
+    if data is None and self._foThread is not None:
       filename=self._foThread.filename
       do_plot=self._foThread.do_plot
       data=self._foThread.data
@@ -691,6 +692,29 @@ class MainGUI(QtGui.QMainWindow):
           plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plot.draw()
 
+  def change_offspec_colorscale(self):
+    plots=[self.ui.offspec_pp, self.ui.offspec_mm,
+           self.ui.offspec_pm, self.ui.offspec_mp]
+    Imin=10**self.ui.offspecImin.value()
+    Imax=10**self.ui.offspecImax.value()
+    for i, ignore in enumerate(self.ref_list_channels):
+      plot=plots[i]
+      if plot.cplot is not None:
+        for item in plot.canvas.ax.collections:
+          item.set_clim(Imin, Imax)
+      plot.draw()
+
+  def change_gisans_colorscale(self):
+    plots=[self.ui.gisans_pp, self.ui.gisans_mm,
+           self.ui.gisans_pm, self.ui.gisans_mp]
+    Imin=10**self.ui.gisansImin.value()
+    Imax=10**self.ui.gisansImax.value()
+    for i, ignore in enumerate(self.ref_list_channels):
+      plot=plots[i]
+      if plot.cplot is not None:
+        plot.cplot.set_clim(Imin, Imax)
+      plot.draw()
+
   def plot_gisans(self):
     '''
       Create GISANS plots of the current dataset with Qy-Qz maps.
@@ -733,11 +757,8 @@ class MainGUI(QtGui.QMainWindow):
     self._gisansThread=None
     self.ui.statusbar.showMessage('Calculating GISANS projection, Done.', 1000)
     plots=[self.ui.gisans_pp, self.ui.gisans_mm, self.ui.gisans_pm, self.ui.gisans_mp]
-    imin=1e20
-    imax=1e-20
-    for d in gisans:
-      imin=min(imin, d.SGrid[d.SGrid>0].min())
-      imax=max(imax, d.SGrid.max())
+    Imin=10**self.ui.gisansImin.value()
+    Imax=10**self.ui.gisansImax.value()
 
     if len(gisans)>1:
       self.ui.frame_gisans_mm.show()
@@ -752,13 +773,13 @@ class MainGUI(QtGui.QMainWindow):
     for i, datai in enumerate(gisans):
       plots[i].clear_fig()
       plots[i].pcolormesh(datai.QyGrid, datai.QzGrid, datai.SGrid,
-                          log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                          log=self.ui.logarithmic_colorscale.isChecked(), imin=Imin, imax=Imax,
                           cmap=self.color)
       plots[i].set_xlabel(u'Q$_y$ [Å⁻¹]')
       plots[i].set_ylabel(u'Q$_z$ [Å⁻¹]')
       plots[i].set_title(self.channels[i])
       if plots[i].cplot is not None:
-        plots[i].cplot.set_clim([imin, imax])
+        plots[i].cplot.set_clim([Imin, Imax])
       if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
         plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plots[i].draw()
@@ -1630,7 +1651,9 @@ as the ones already in the list:
     try:
       self.restoreGeometry(obj[0])
       self.restoreState(obj[1])
-      self.ui.splitter.setSizes(obj[2])
+      self.ui.mainSplitter.setSizes(obj[2][0])
+      self.ui.overviewSplitter.setSizes(obj[2][1])
+      self.ui.plotSplitter.setSizes(obj[2][2])
       self.ui.color_selector.setCurrentIndex(obj[3])
       self.ui.show_colorbars.setChecked(obj[4])
       self.ui.normalizeXTof.setChecked(obj[5])
@@ -1663,7 +1686,7 @@ as the ones already in the list:
                 ]:
       figure_params.append(fig.get_config())
     obj=(self.saveGeometry(), self.saveState(),
-         self.ui.splitter.sizes(),
+         (self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes()),
          self.ui.color_selector.currentIndex(),
          self.ui.show_colorbars.isChecked(),
          self.ui.normalizeXTof.isChecked(),
