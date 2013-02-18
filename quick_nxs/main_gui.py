@@ -581,6 +581,14 @@ class MainGUI(QtGui.QMainWindow):
     if options['normalization']:
       ymin=1e50
       ymax=1e-50
+      ynormed=self.refl.R[PN:P0]
+      try:
+        ymin=min(ymin, ynormed[ynormed>0].min())
+      except ValueError:
+        pass
+      ymax=max(ymax, ynormed.max())
+      self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
+                            yerr=self.refl.dR[PN:P0], label='Active', lw=2, color='black')
       for refli in self.reduction_list:
         #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
         P0i=len(refli.Q)-refli.options['P0']
@@ -593,14 +601,6 @@ class MainGUI(QtGui.QMainWindow):
         ymax=max(ymax, ynormed.max())
         self.ui.refl.errorbar(refli.Q[PNi:P0i], ynormed,
                               yerr=refli.dR[PNi:P0i], label=str(refli.options['number']))
-      ynormed=self.refl.R[PN:P0]
-      try:
-        ymin=min(ymin, ynormed[ynormed>0].min())
-      except ValueError:
-        pass
-      ymax=max(ymax, ynormed.max())
-      self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
-                            yerr=self.refl.dR[PN:P0], label=options['number'])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'Q$_z$ [Å⁻¹]')
@@ -933,7 +933,7 @@ class MainGUI(QtGui.QMainWindow):
         ref=Reflectivity(data[0], **options)
         refs.append(ref)
         self.refl=ref
-        self.addRefList()
+        self.addRefList(do_plot=False)
 
     self.ui.actionAutoYLimits.setChecked(True)
     self.fileOpen(filename)
@@ -967,7 +967,7 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.rangeEnd.setValue(PN)
         # normalize total reflection or stich together adjecent scans
         self.normalizeTotalReflection()
-        self.addRefList()
+        self.addRefList(do_plot=False)
     # rest cut options and show the file, which was added last
     self.ui.rangeStart.setValue(0)
     self.ui.rangeEnd.setValue(0)
@@ -1193,7 +1193,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refl.canvas.ax.set_ylim((ymin, ymax))
     self.ui.refl.draw()
 
-  def addRefList(self):
+  def addRefList(self, do_plot=True):
     '''
       Collect information about the current extraction settings and store them
       in the list of reduction items.
@@ -1266,6 +1266,8 @@ as the ones already in the list:
                                    QtGui.QTableWidgetItem(str(opts['normalization'].options['number'])))
     self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
+    if do_plot:
+      self.plot_refl(preserve_lim=True)
 
   def reductionTableChanged(self, item):
     '''
