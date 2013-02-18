@@ -82,6 +82,8 @@ class MainGUI(QtGui.QMainWindow):
   # plot line storages
   _x_projection=None
   _y_projection=None
+  # colors for the reflecitivy lines
+  _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -589,7 +591,7 @@ class MainGUI(QtGui.QMainWindow):
       ymax=max(ymax, ynormed.max())
       self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
                             yerr=self.refl.dR[PN:P0], label='Active', lw=2, color='black')
-      for refli in self.reduction_list:
+      for i, refli in enumerate(self.reduction_list):
         #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
         P0i=len(refli.Q)-refli.options['P0']
         PNi=refli.options['PN']
@@ -600,7 +602,8 @@ class MainGUI(QtGui.QMainWindow):
           pass
         ymax=max(ymax, ynormed.max())
         self.ui.refl.errorbar(refli.Q[PNi:P0i], ynormed,
-                              yerr=refli.dR[PNi:P0i], label=str(refli.options['number']))
+                              yerr=refli.dR[PNi:P0i], label=str(refli.options['number']),
+                              color=self._refl_color_list[i%len(self._refl_color_list)])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'Q$_z$ [Å⁻¹]')
