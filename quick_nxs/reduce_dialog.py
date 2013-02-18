@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Mon Feb 18 16:22:18 2013
+# Created: Mon Feb 18 17:47:47 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -143,6 +143,7 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
     QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
     QtCore.QObject.connect(self.toolButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.changeDir)
+    QtCore.QObject.connect(self.gnuplot, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.multiAscii.setDisabled)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
 
   def retranslateUi(self, Dialog):

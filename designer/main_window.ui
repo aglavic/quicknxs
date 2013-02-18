@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1106</width>
+    <width>1299</width>
     <height>871</height>
    </rect>
   </property>
@@ -1265,7 +1265,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_3">
+       <widget class="QWidget" name="daslogTab">
         <attribute name="title">
          <string>DAS Logs</string>
         </attribute>
@@ -1318,6 +1318,16 @@
             </item>
            </layout>
           </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="compareTab">
+        <attribute name="title">
+         <string>Compare</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <widget class="CompareWidget" name="widget_5" native="true"/>
          </item>
         </layout>
        </widget>
@@ -1468,7 +1478,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1106</width>
+     <width>1299</width>
      <height>21</height>
     </rect>
    </property>
@@ -2658,6 +2668,12 @@
    <class>PersistentFrame</class>
    <extends>QFrame</extends>
    <header location="global">persistentframe.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CompareWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">compare_plots.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

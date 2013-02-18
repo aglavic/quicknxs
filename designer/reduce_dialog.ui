@@ -266,8 +266,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>252</x>
-     <y>295</y>
+     <x>256</x>
+     <y>395</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -282,8 +282,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>320</x>
-     <y>295</y>
+     <x>324</x>
+     <y>395</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -298,12 +298,28 @@
    <slot>changeDir()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>382</x>
-     <y>225</y>
+     <x>394</x>
+     <y>336</y>
     </hint>
     <hint type="destinationlabel">
      <x>400</x>
      <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gnuplot</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>multiAscii</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>58</x>
+     <y>262</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>219</y>
     </hint>
    </hints>
   </connection>
