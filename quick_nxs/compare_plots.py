@@ -18,7 +18,8 @@ class CompareWidget(QWidget):
     QWidget.__init__(self, parent)
     self.ui=Ui_Form()
     self.ui.setupUi(self)
-    self.ui.compareList.horizontalHeader().sortIndicatorChanged.connect(self.draw)
+    self.ui.compareList.verticalHeader().setMovable(True)
+    self.ui.compareList.verticalHeader().sectionMoved.connect(self.draw)
     self.file_paths={}
 
   def open_file(self):
@@ -30,11 +31,11 @@ class CompareWidget(QWidget):
       self.active_folder=os.path.abspath(os.path.dirname(names[0]))
       for name in names:
         self.read_file(name)
+      self.ui.compareList.resizeColumnToContents(1)
       self.ui.compareList.resizeColumnToContents(2)
       self.draw()
 
   def read_file(self, name):
-    self.ui.compareList.setSortingEnabled(False)
     label=os.path.basename(name)
     idx=self.ui.compareList.rowCount()
     color=self._refl_color_list[idx%len(self._refl_color_list)]
@@ -52,8 +53,6 @@ class CompareWidget(QWidget):
     self.ui.compareList.setItem(idx, 2, QTableWidgetItem(plotlabel))
     self.file_paths[label]=os.path.abspath(name)
     self.changing_table=False
-    self.ui.compareList.setSortingEnabled(True)
-
 
   def clear_plot(self):
     self.ui.compareList.setRowCount(0)
@@ -64,10 +63,12 @@ class CompareWidget(QWidget):
       return
     try:
       self.ui.comparePlot.clear()
+      header=self.ui.compareList.verticalHeader()
       for i in range(self.ui.compareList.rowCount()):
-        name=self.file_paths[self.ui.compareList.item(i, 0).text()]
-        label=self.ui.compareList.item(i, 2).text()
-        color=self.ui.compareList.item(i, 1).text()
+        idx=header.logicalIndex(i)
+        name=self.file_paths[self.ui.compareList.item(idx, 0).text()]
+        label=self.ui.compareList.item(idx, 2).text()
+        color=self.ui.compareList.item(idx, 1).text()
         data=loadtxt(name, comments='#', delimiter='\t').transpose()
         self.ui.comparePlot.errorbar(data[0], data[1], data[2], label=label, color=color)
       if self.ui.compareList.rowCount()>0:

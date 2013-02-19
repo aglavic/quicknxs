@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/compare_widget.ui'
 #
-# Created: Tue Feb 19 09:43:13 2013
+# Created: Tue Feb 19 10:28:49 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,8 +48,8 @@ class Ui_Form(object):
     self.horizontalLayout_15.setMargin(0)
     self.horizontalLayout_15.setObjectName(_fromUtf8("horizontalLayout_15"))
     self.compareList = QtGui.QTableWidget(self.widget_6)
-    self.compareList.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-    self.compareList.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+    self.compareList.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+    self.compareList.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems)
     self.compareList.setObjectName(_fromUtf8("compareList"))
     self.compareList.setColumnCount(3)
     self.compareList.setRowCount(0)
@@ -85,7 +85,6 @@ class Ui_Form(object):
 
   def retranslateUi(self, Form):
     Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
-    self.compareList.setSortingEnabled(True)
     item = self.compareList.horizontalHeaderItem(0)
     item.setText(QtGui.QApplication.translate("Form", "File", None, QtGui.QApplication.UnicodeUTF8))
     item = self.compareList.horizontalHeaderItem(1)

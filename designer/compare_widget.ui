@@ -49,13 +49,10 @@
        <item>
         <widget class="QTableWidget" name="compareList">
          <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
+          <enum>QAbstractItemView::NoSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
+          <enum>QAbstractItemView::SelectItems</enum>
          </property>
          <column>
           <property name="text">
