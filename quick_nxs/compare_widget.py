@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/compare_widget.ui'
 #
-# Created: Mon Feb 18 17:47:47 2013
+# Created: Tue Feb 19 09:43:13 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,6 +80,8 @@ class Ui_Form(object):
     QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("pressed()")), Form.clear_plot)
     QtCore.QObject.connect(self.compareList, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), Form.draw)
     QtCore.QMetaObject.connectSlotsByName(Form)
+    Form.setTabOrder(self.compareList, self.pushButton_2)
+    Form.setTabOrder(self.pushButton_2, self.pushButton)
 
   def retranslateUi(self, Form):
     Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))

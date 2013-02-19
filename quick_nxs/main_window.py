@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Mon Feb 18 17:47:47 2013
+# Created: Tue Feb 19 09:43:13 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
   def setupUi(self, MainWindow):
     MainWindow.setObjectName(_fromUtf8("MainWindow"))
-    MainWindow.resize(1299, 871)
+    MainWindow.resize(1299, 861)
     icon = QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     MainWindow.setWindowIcon(icon)
@@ -628,15 +628,16 @@ class Ui_MainWindow(object):
     self.widget_5.setObjectName(_fromUtf8("widget_5"))
     self.verticalLayout_9.addWidget(self.widget_5)
     self.plotTab.addTab(self.compareTab, _fromUtf8(""))
-    self.rightPlots = QtGui.QWidget(self.mainSplitter)
+    self.rightPlots = QtGui.QFrame(self.mainSplitter)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(1)
     sizePolicy.setVerticalStretch(0)
     sizePolicy.setHeightForWidth(self.rightPlots.sizePolicy().hasHeightForWidth())
     self.rightPlots.setSizePolicy(sizePolicy)
+    self.rightPlots.setFrameShape(QtGui.QFrame.Panel)
+    self.rightPlots.setFrameShadow(QtGui.QFrame.Raised)
     self.rightPlots.setObjectName(_fromUtf8("rightPlots"))
     self.verticalLayout_2 = QtGui.QVBoxLayout(self.rightPlots)
-    self.verticalLayout_2.setMargin(0)
     self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
     self.plotSplitter = QtGui.QSplitter(self.rightPlots)
     self.plotSplitter.setOrientation(QtCore.Qt.Vertical)
@@ -825,7 +826,7 @@ class Ui_MainWindow(object):
     self.tthPhi = QtGui.QCheckBox(self.dockWidgetContents_2)
     self.tthPhi.setObjectName(_fromUtf8("tthPhi"))
     self.gridLayout_6.addWidget(self.tthPhi, 4, 1, 1, 1)
-    spacerItem = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+    spacerItem = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
     self.gridLayout_6.addItem(spacerItem, 5, 0, 1, 1)
     self.dockWidget_2.setWidget(self.dockWidgetContents_2)
     MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget_2)
@@ -879,7 +880,7 @@ class Ui_MainWindow(object):
     self.label.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft)
     self.label.setObjectName(_fromUtf8("label"))
     self.gridLayout_3.addWidget(self.label, 0, 1, 1, 1)
-    spacerItem1 = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+    spacerItem1 = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
     self.gridLayout_3.addItem(spacerItem1, 8, 1, 1, 1)
     self.refXPos = QtGui.QDoubleSpinBox(self.dockWidgetContents_4)
     self.refXPos.setDecimals(1)
@@ -925,7 +926,7 @@ class Ui_MainWindow(object):
     self.mainToolbar.setObjectName(_fromUtf8("mainToolbar"))
     MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolbar)
     self.dockWidget_7 = QtGui.QDockWidget(MainWindow)
-    self.dockWidget_7.setFloating(True)
+    self.dockWidget_7.setFloating(False)
     self.dockWidget_7.setObjectName(_fromUtf8("dockWidget_7"))
     self.dockWidgetContents_7 = QtGui.QWidget()
     self.dockWidgetContents_7.setObjectName(_fromUtf8("dockWidgetContents_7"))
@@ -986,7 +987,7 @@ class Ui_MainWindow(object):
     self.advancedToolbar.setObjectName(_fromUtf8("advancedToolbar"))
     MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.advancedToolbar)
     self.dockWidget_8 = QtGui.QDockWidget(MainWindow)
-    self.dockWidget_8.setFloating(True)
+    self.dockWidget_8.setFloating(False)
     self.dockWidget_8.setObjectName(_fromUtf8("dockWidget_8"))
     self.dockWidgetContents_8 = QtGui.QWidget()
     self.dockWidgetContents_8.setObjectName(_fromUtf8("dockWidgetContents_8"))
@@ -1038,7 +1039,7 @@ class Ui_MainWindow(object):
     MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.autoToolbar)
     self.dockWidget_9 = QtGui.QDockWidget(MainWindow)
     self.dockWidget_9.setEnabled(True)
-    self.dockWidget_9.setFloating(True)
+    self.dockWidget_9.setFloating(False)
     self.dockWidget_9.setObjectName(_fromUtf8("dockWidget_9"))
     self.dockWidgetContents_9 = QtGui.QWidget()
     self.dockWidgetContents_9.setObjectName(_fromUtf8("dockWidgetContents_9"))
@@ -1067,7 +1068,7 @@ class Ui_MainWindow(object):
     self.dockWidget_9.setWidget(self.dockWidgetContents_9)
     MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockWidget_9)
     self.dockWidget_10 = QtGui.QDockWidget(MainWindow)
-    self.dockWidget_10.setFloating(True)
+    self.dockWidget_10.setFloating(False)
     self.dockWidget_10.setObjectName(_fromUtf8("dockWidget_10"))
     self.dockWidgetContents_10 = QtGui.QWidget()
     self.dockWidgetContents_10.setObjectName(_fromUtf8("dockWidgetContents_10"))
@@ -1163,6 +1164,8 @@ class Ui_MainWindow(object):
     icon14.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/clearNorm.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.actionClear_Normalizations.setIcon(icon14)
     self.actionClear_Normalizations.setObjectName(_fromUtf8("actionClear_Normalizations"))
+    self.actionOpen_Compare_Window = QtGui.QAction(MainWindow)
+    self.actionOpen_Compare_Window.setObjectName(_fromUtf8("actionOpen_Compare_Window"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionNext_File)
     self.menuFile.addAction(self.actionPrevious_File)
@@ -1174,6 +1177,8 @@ class Ui_MainWindow(object):
     self.menuAdvanced.addSeparator()
     self.menuAdvanced.addAction(self.actionAdjust_Dirct_Beam)
     self.menuAdvanced.addAction(self.actionClear_Overwrite)
+    self.menuAdvanced.addSeparator()
+    self.menuAdvanced.addAction(self.actionOpen_Compare_Window)
     self.menuHelp.addAction(self.actionManual)
     self.menuHelp.addAction(self.actionAbout)
     self.menuReduction.addAction(self.actionNorm)
@@ -1264,6 +1269,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.offspecImax, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_offspec_colorscale)
     QtCore.QObject.connect(self.gisansImin, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_gisans_colorscale)
     QtCore.QObject.connect(self.gisansImax, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_gisans_colorscale)
+    QtCore.QObject.connect(self.actionOpen_Compare_Window, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_compare_window)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.refYPos)
     MainWindow.setTabOrder(self.refYPos, self.refYWidth)
@@ -1298,7 +1304,8 @@ class Ui_MainWindow(object):
     MainWindow.setTabOrder(self.eventTofBins, self.eventBinMode)
     MainWindow.setTabOrder(self.eventBinMode, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
-    MainWindow.setTabOrder(self.eventActive, self.file_list)
+    MainWindow.setTabOrder(self.eventActive, self.oldFormatActive)
+    MainWindow.setTabOrder(self.oldFormatActive, self.file_list)
     MainWindow.setTabOrder(self.file_list, self.kizVSkfz)
     MainWindow.setTabOrder(self.kizVSkfz, self.kizmkfzVSqz)
     MainWindow.setTabOrder(self.kizmkfzVSqz, self.qxVSqz)
@@ -1306,6 +1313,13 @@ class Ui_MainWindow(object):
     MainWindow.setTabOrder(self.normalizeTable, self.daslogTableBox)
     MainWindow.setTabOrder(self.daslogTableBox, self.offspecImax)
     MainWindow.setTabOrder(self.offspecImax, self.offspecImin)
+    MainWindow.setTabOrder(self.offspecImin, self.gisansImin)
+    MainWindow.setTabOrder(self.gisansImin, self.gisansImax)
+    MainWindow.setTabOrder(self.gisansImax, self.directPixelOverwrite)
+    MainWindow.setTabOrder(self.directPixelOverwrite, self.dangle0Overwrite)
+    MainWindow.setTabOrder(self.dangle0Overwrite, self.trustDANGLE)
+    MainWindow.setTabOrder(self.trustDANGLE, self.trustSANGLE)
+    MainWindow.setTabOrder(self.trustSANGLE, self.addStitchPoints)
 
   def retranslateUi(self, MainWindow):
     MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QuickNXS", None, QtGui.QApplication.UnicodeUTF8))
@@ -1576,6 +1590,7 @@ class Ui_MainWindow(object):
     self.actionClear_Normalizations.setText(QtGui.QApplication.translate("MainWindow", "Clear Normalizations", None, QtGui.QApplication.UnicodeUTF8))
     self.actionClear_Normalizations.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove all datasets from the normalization list (CTRL+SHIFT+W)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionClear_Normalizations.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+W", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionOpen_Compare_Window.setText(QtGui.QApplication.translate("MainWindow", "Open Compare Window...", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import MPLWidget
 from compare_plots import CompareWidget

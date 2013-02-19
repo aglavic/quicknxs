@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1299</width>
-    <height>871</height>
+    <height>861</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1332,12 +1332,18 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="rightPlots" native="true">
+      <widget class="QFrame" name="rightPlots">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -1502,6 +1508,8 @@
     <addaction name="separator"/>
     <addaction name="actionAdjust_Dirct_Beam"/>
     <addaction name="actionClear_Overwrite"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_Compare_Window"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1745,9 +1753,6 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Preferred</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -1891,9 +1896,6 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Preferred</enum>
-       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -2033,7 +2035,7 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_7">
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="windowTitle">
     <string>Advanced Parameters</string>
@@ -2189,7 +2191,7 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_8">
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="windowTitle">
     <string>Algorithm Parameters</string>
@@ -2312,7 +2314,7 @@
     <bool>true</bool>
    </property>
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="windowTitle">
     <string>Event Mode Readout</string>
@@ -2390,7 +2392,7 @@
   </widget>
   <widget class="QDockWidget" name="dockWidget_10">
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="windowTitle">
     <string>Advanced Background</string>
@@ -2656,6 +2658,11 @@
     <string>Ctrl+Shift+W</string>
    </property>
   </action>
+  <action name="actionOpen_Compare_Window">
+   <property name="text">
+    <string>Open Compare Window...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2712,6 +2719,7 @@
   <tabstop>eventBinMode</tabstop>
   <tabstop>histogramActive</tabstop>
   <tabstop>eventActive</tabstop>
+  <tabstop>oldFormatActive</tabstop>
   <tabstop>file_list</tabstop>
   <tabstop>kizVSkfz</tabstop>
   <tabstop>kizmkfzVSqz</tabstop>
@@ -2720,6 +2728,13 @@
   <tabstop>daslogTableBox</tabstop>
   <tabstop>offspecImax</tabstop>
   <tabstop>offspecImin</tabstop>
+  <tabstop>gisansImin</tabstop>
+  <tabstop>gisansImax</tabstop>
+  <tabstop>directPixelOverwrite</tabstop>
+  <tabstop>dangle0Overwrite</tabstop>
+  <tabstop>trustDANGLE</tabstop>
+  <tabstop>trustSANGLE</tabstop>
+  <tabstop>addStitchPoints</tabstop>
  </tabstops>
  <resources>
   <include location="../icons/icons.qrc"/>
@@ -3589,6 +3604,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOpen_Compare_Window</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_compare_window()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>649</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3623,5 +3654,6 @@
   <slot>clearNormList()</slot>
   <slot>change_offspec_colorscale()</slot>
   <slot>change_gisans_colorscale()</slot>
+  <slot>open_compare_window()</slot>
  </slots>
 </ui>

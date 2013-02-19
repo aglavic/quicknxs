@@ -5,7 +5,7 @@
 
 import os
 from numpy import *
-from PyQt4.QtGui import QWidget, QFileDialog, QTableWidgetItem
+from PyQt4.QtGui import QWidget, QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout
 from PyQt4.QtCore import Qt
 from .compare_widget import Ui_Form
 
@@ -30,6 +30,7 @@ class CompareWidget(QWidget):
       self.active_folder=os.path.abspath(os.path.dirname(names[0]))
       for name in names:
         self.read_file(name)
+      self.ui.compareList.resizeColumnToContents(2)
       self.draw()
 
   def read_file(self, name):
@@ -77,3 +78,17 @@ class CompareWidget(QWidget):
       self.ui.comparePlot.draw()
     except:
       pass
+
+class CompareDialog(QDialog):
+  '''
+  A simple dialog window with a CompareWidget.
+  '''
+
+  def __init__(self, *args, **kwargs):
+    QDialog.__init__(self, *args, **kwargs)
+    self.setWindowTitle("QuickNXS reflectiviy compare")
+    self.cw=CompareWidget(self)
+    vbox=QVBoxLayout(self)
+    vbox.addWidget(self.cw)
+    self.setLayout(vbox)
+    self.layout()
