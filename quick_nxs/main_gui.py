@@ -1200,7 +1200,8 @@ class MainGUI(QtGui.QMainWindow):
     if len(self.reduction_list)>0:
       # try to match both datasets by fitting a polynomiral to the overlapping region
       rescale, xfit, yfit=get_scaling(self.refl, self.reduction_list[-1],
-                                      self.ui.addStitchPoints.value())
+                                      self.ui.addStitchPoints.value(),
+                                      polynom=self.ui.polynomOrder.value())
       self.ui.refScale.setValue(self.ui.refScale.value()+log10(rescale)) #change the scaling factor
       self.ui.refl.plot(xfit, yfit)
     else:

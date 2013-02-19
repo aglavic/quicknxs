@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1299</width>
+    <width>1246</width>
     <height>861</height>
    </rect>
   </property>
@@ -1484,7 +1484,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1299</width>
+     <width>1246</width>
      <height>21</height>
     </rect>
    </property>
@@ -2110,14 +2110,14 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
+     <item row="4" column="0" colspan="2">
       <widget class="QLabel" name="label_31">
        <property name="text">
         <string>Stitching Add Points:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="2">
+     <item row="4" column="2">
       <widget class="QSpinBox" name="addStitchPoints">
        <property name="toolTip">
         <string>When Stitching together two scans, add this amount of points from each scan to the overlap area for the fit.</string>
@@ -2127,7 +2127,7 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="2">
+     <item row="6" column="0" colspan="2">
       <widget class="QCheckBox" name="fanReflectivity">
        <property name="toolTip">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Evaluate Q for each X line of the reflectivity and combine these measurements.&lt;/p&gt;&lt;p&gt;Can be used with a large X-width of e.g. 15 for samples scattering to a large 2θ area.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -2160,7 +2160,7 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="7" column="0">
       <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -2172,6 +2172,23 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QLabel" name="label_36">
+       <property name="text">
+        <string>Stitch Polynom Order</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QSpinBox" name="polynomOrder">
+       <property name="maximum">
+        <number>10</number>
+       </property>
+       <property name="value">
+        <number>3</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

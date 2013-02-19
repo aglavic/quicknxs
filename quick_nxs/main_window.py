@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Tue Feb 19 10:28:48 2013
+# Created: Tue Feb 19 15:37:12 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
   def setupUi(self, MainWindow):
     MainWindow.setObjectName(_fromUtf8("MainWindow"))
-    MainWindow.resize(1299, 861)
+    MainWindow.resize(1246, 861)
     icon = QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     MainWindow.setWindowIcon(icon)
@@ -725,7 +725,7 @@ class Ui_MainWindow(object):
     self.verticalLayout_25.addWidget(self.mainSplitter)
     MainWindow.setCentralWidget(self.centralwidget)
     self.menubar = QtGui.QMenuBar(MainWindow)
-    self.menubar.setGeometry(QtCore.QRect(0, 0, 1299, 21))
+    self.menubar.setGeometry(QtCore.QRect(0, 0, 1246, 21))
     self.menubar.setObjectName(_fromUtf8("menubar"))
     self.menuFile = QtGui.QMenu(self.menubar)
     self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -960,14 +960,14 @@ class Ui_MainWindow(object):
     self.gridLayout_12.addWidget(self.trustDANGLE, 2, 1, 1, 1)
     self.label_31 = QtGui.QLabel(self.dockWidgetContents_7)
     self.label_31.setObjectName(_fromUtf8("label_31"))
-    self.gridLayout_12.addWidget(self.label_31, 3, 0, 1, 2)
+    self.gridLayout_12.addWidget(self.label_31, 4, 0, 1, 2)
     self.addStitchPoints = QtGui.QSpinBox(self.dockWidgetContents_7)
     self.addStitchPoints.setMaximum(20)
     self.addStitchPoints.setObjectName(_fromUtf8("addStitchPoints"))
-    self.gridLayout_12.addWidget(self.addStitchPoints, 3, 2, 1, 1)
+    self.gridLayout_12.addWidget(self.addStitchPoints, 4, 2, 1, 1)
     self.fanReflectivity = QtGui.QCheckBox(self.dockWidgetContents_7)
     self.fanReflectivity.setObjectName(_fromUtf8("fanReflectivity"))
-    self.gridLayout_12.addWidget(self.fanReflectivity, 5, 0, 1, 2)
+    self.gridLayout_12.addWidget(self.fanReflectivity, 6, 0, 1, 2)
     self.dangle0Overwrite = QtGui.QLineEdit(self.dockWidgetContents_7)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
     sizePolicy.setHorizontalStretch(0)
@@ -980,7 +980,15 @@ class Ui_MainWindow(object):
     self.trustSANGLE.setObjectName(_fromUtf8("trustSANGLE"))
     self.gridLayout_12.addWidget(self.trustSANGLE, 2, 2, 1, 1)
     spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-    self.gridLayout_12.addItem(spacerItem2, 6, 0, 1, 1)
+    self.gridLayout_12.addItem(spacerItem2, 7, 0, 1, 1)
+    self.label_36 = QtGui.QLabel(self.dockWidgetContents_7)
+    self.label_36.setObjectName(_fromUtf8("label_36"))
+    self.gridLayout_12.addWidget(self.label_36, 3, 0, 1, 2)
+    self.polynomOrder = QtGui.QSpinBox(self.dockWidgetContents_7)
+    self.polynomOrder.setMaximum(10)
+    self.polynomOrder.setProperty("value", 3)
+    self.polynomOrder.setObjectName(_fromUtf8("polynomOrder"))
+    self.gridLayout_12.addWidget(self.polynomOrder, 3, 2, 1, 1)
     self.dockWidget_7.setWidget(self.dockWidgetContents_7)
     MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockWidget_7)
     self.advancedToolbar = QtGui.QToolBar(MainWindow)
@@ -1530,6 +1538,7 @@ class Ui_MainWindow(object):
     self.dangle0Overwrite.setToolTip(QtGui.QApplication.translate("MainWindow", "<html><head/><body><p>Overwrite the DANGLE0 value from the datafile.</p><p>Useful if the values have not been set properly during the measurement.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
     self.dangle0Overwrite.setText(QtGui.QApplication.translate("MainWindow", "None", None, QtGui.QApplication.UnicodeUTF8))
     self.trustSANGLE.setText(QtGui.QApplication.translate("MainWindow", "SANGLE", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_36.setText(QtGui.QApplication.translate("MainWindow", "Stitch Polynom Order", None, QtGui.QApplication.UnicodeUTF8))
     self.advancedToolbar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Advanced Toolbar", None, QtGui.QApplication.UnicodeUTF8))
     self.dockWidget_8.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Algorithm Parameters", None, QtGui.QApplication.UnicodeUTF8))
     self.label_23.setText(QtGui.QApplication.translate("MainWindow", "Ridge Length", None, QtGui.QApplication.UnicodeUTF8))

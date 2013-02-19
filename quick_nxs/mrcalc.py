@@ -96,7 +96,7 @@ def get_total_reflection(refl, return_npoints=False):
   else:
     return 1./wmean
 
-def get_scaling(refl1, refl2, add_points=0):
+def get_scaling(refl1, refl2, add_points=0, polynom=3):
   """
   Calculate the scaling factor needed to stich one dataset to another.
   
@@ -122,7 +122,7 @@ def get_scaling(refl1, refl2, add_points=0):
   reg2=where(Q2>=Q1.min())[0][-1]+1+add_points
   # try to match both datasets by fitting a polynomial to the overlapping region
   return _refineOverlap(Q1[reg1:], R1[reg1:], dR1[reg1:],
-                        Q2[:reg2], R2[:reg2], dR2[:reg2])
+                        Q2[:reg2], R2[:reg2], dR2[:reg2], polynom)
 
 def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
              snr=5, min_width=2, max_width=20, ridge_length=15, return_pf=False, refine=True):
@@ -259,7 +259,43 @@ def _gauss_residuals(p, fjac=None, data=None, width=1):
   G=exp(-0.5*((xdata-x0)/sigma)**2)
   return 0, data-I0*G
 
-def _refineOverlap(x1, y1, dy1, x2, y2, dy2):
+class OverlapFunction(object):
+  def __init__(self, p0, func):
+    self.func=func
+    self.p0=list(p0)
+
+  def __call__(self, p, fjac=None,
+               x1=None, y1=None, dy1=None,
+               x2=None, y2=None, dy2=None):
+    part1=(log10(p[0]*y1)-self.func(p[1:], x1))/(dy1/y1)
+    part2=(log10(y2)-self.func(p[1:], x2))/(dy2/y2)
+    return 0, hstack([part1, part2])
+
+  def plotfunc(self, p, x1, x2):
+    xfit=hstack([x1, x2])
+    xfit.sort()
+    return xfit, 10**self.func(p[1:], xfit)
+
+class OverlapPoly(OverlapFunction):
+  def __init__(self, order=3):
+    self.order=order
+    self.p0=[1.]+[0. for ignore in range(order)]
+
+  def func(self, p, x):
+    result=zeros_like(x)
+    for i in range(self.order):
+      result+=p[-i]*x**i
+    return result
+
+class OverlapGaussian(OverlapFunction):
+  def __init__(self, x0, sigma0, BG0):
+    self.p0=[1., 0.1, x0, sigma0, 0., log10(BG0)]
+
+  def func(self, p, x):
+    result=p[0]*exp(-0.5*(x-p[1])**2/p[2]**2)+p[3]*x+p[4]
+    return result
+
+def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
   '''
     Refine a polynomial to the logarithm of two datasets while
     scaling the first dataset as well. Return the resulting
@@ -267,22 +303,23 @@ def _refineOverlap(x1, y1, dy1, x2, y2, dy2):
     
     :returns: scaling, array of fitted x and y
   '''
-  result=mpfit(_overlapResiduals, [1., 0.,-40., 0.],
+  x1=x1.astype(float64)
+  y1=y1.astype(float64)
+  x2=x2.astype(float64)
+  y2=y2.astype(float64)
+  if polynom>0:
+    # make sure the polynom order is not higher than the number of points
+    polynom=min(len(x1)+len(x2), polynom)
+    func=OverlapPoly(polynom)
+  else:
+    func=OverlapGaussian((x1.mean()+x2.mean())/2., 0.001, y2.mean())
+  result=mpfit(func, func.p0,
                functkw=dict(
                             x1=x1, y1=y1, dy1=dy1,
                             x2=x2, y2=y2, dy2=dy2
                             ),
                nprint=0)
-  xfit=hstack([x1, x2])
-  xfit.sort()
-  yscale, a, b, c=result.params
-  yfit=10**(a*xfit**2+b*xfit+c)
+  xfit, yfit=func.plotfunc(result.params, x1, x2)
+  yscale=result.params[0]
   return yscale, xfit, yfit
-
-def _overlapResiduals(p, fjac=None, x1=None, y1=None, dy1=None,
-                                    x2=None, y2=None, dy2=None):
-  yscale, a, b, c=p
-  part1=(log10(yscale*y1)-a*x1**2-b*x1-c)/(dy1/y1)
-  part2=(log10(y2)-a*x2**2-b*x2-c)/(dy2/y2)
-  return 0, hstack([part1, part2])
 
