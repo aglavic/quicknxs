@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import subprocess
 import tempfile
 from PyQt4 import QtCore, QtGui
 import matplotlib.cm
@@ -156,12 +155,17 @@ class NavigationToolbar(NavigationToolbar2QT):
         ax.set_yscale('linear')
       self.canvas.draw()
     else:
-      img=ax.images[0]
-      norm=img.norm
-      if norm.__class__ is LogNorm:
-        img.set_norm(Normalize(norm.vmin, norm.vmax))
+      if len(ax.images)==0:
+        imgs=ax.collections
       else:
-        img.set_norm(LogNorm(norm.vmin, norm.vmax))
+        imgs=ax.images
+      norm=imgs[0].norm
+      if norm.__class__ is LogNorm:
+        for img in imgs:
+          img.set_norm(Normalize(norm.vmin, norm.vmax))
+      else:
+        for img in imgs:
+          img.set_norm(LogNorm(norm.vmin, norm.vmax))
     self.canvas.draw()
 
 class MplCanvas(FigureCanvas):

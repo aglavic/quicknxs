@@ -8,7 +8,6 @@ from glob import glob
 from numpy import where, pi, newaxis, log10
 from cPickle import load, dump
 from matplotlib.lines import Line2D
-from matplotlib.colors import LogNorm, Normalize
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
@@ -1701,7 +1700,7 @@ as the ones already in the list:
     QtGui.QMainWindow.closeEvent(self, event)
 
   def open_compare_window(self):
-    dia=CompareDialog(size=QtCore.QSize(800, 600))
+    dia=CompareDialog(size=QtCore.QSize(800, 800))
     dia.show()
     self.open_plots.append(dia)
 
