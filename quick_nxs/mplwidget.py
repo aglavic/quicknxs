@@ -91,27 +91,33 @@ class NavigationToolbar(NavigationToolbar2QT):
 
   def print_figure(self):
     '''
-      Save the plot to a temporary pdf file and print it using the
-      unix lpr command.
+      Save the plot to a temporary png file and show a preview dialog also used for printing.
     '''
     filetypes=self.canvas.get_supported_filetypes_grouped()
     sorted_filetypes=filetypes.items()
     sorted_filetypes.sort()
 
-    filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.pdf")
+    filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.png")
     self.canvas.print_figure(filename, dpi=600)
-    # print to default printer
-    proc=subprocess.Popen([u"lpr", u"-T", u"QuickNXS Plot", u'-o', u'landscape', u'-o', u'media=Letter', filename],
-                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    result=proc.communicate()[0]
-    if proc.returncode:
-      QtGui.QMessageBox.warning(self, 'Plot Error',
-                                'Plot could not be printed, output of print command:\n\n%s'%result,
-                                buttons=QtGui.QMessageBox.Close)
-    else:
-      QtGui.QMessageBox.information(self, 'Plot Printed',
-                                    'Plot successfully send to default printer!',
-                                    buttons=QtGui.QMessageBox.Close)
+
+    imgpix=QtGui.QPixmap(filename)
+    imgobj=QtGui.QLabel()
+    imgobj.setPixmap(imgpix)
+    imgobj.setMask(imgpix.mask())
+    imgobj.setGeometry(0, 0, imgpix.width(), imgpix.height())
+
+    def getPrintData(printer):
+      imgobj.render(printer)
+
+
+    printer=QtGui.QPrinter()
+    printer.setPageSize(QtGui.QPrinter.Letter)
+    printer.setResolution(600)
+    printer.setOrientation(QtGui.QPrinter.Landscape)
+
+    pd=QtGui.QPrintPreviewDialog(printer)
+    pd.paintRequested.connect(getPrintData)
+    pd.exec_()
 
   def save_figure(self, *args):
       filetypes=self.canvas.get_supported_filetypes_grouped()
