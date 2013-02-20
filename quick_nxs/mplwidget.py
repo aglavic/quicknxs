@@ -111,6 +111,7 @@ class NavigationToolbar(NavigationToolbar2QT):
 
 
     printer=QtGui.QPrinter()
+    printer.setPrinterName('mrac4a_printer')
     printer.setPageSize(QtGui.QPrinter.Letter)
     printer.setResolution(600)
     printer.setOrientation(QtGui.QPrinter.Landscape)
