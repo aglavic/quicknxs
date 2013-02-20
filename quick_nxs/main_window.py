@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Tue Feb 19 15:37:12 2013
+# Created: Wed Feb 20 17:07:46 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1174,6 +1174,8 @@ class Ui_MainWindow(object):
     self.actionClear_Normalizations.setObjectName(_fromUtf8("actionClear_Normalizations"))
     self.actionOpen_Compare_Window = QtGui.QAction(MainWindow)
     self.actionOpen_Compare_Window.setObjectName(_fromUtf8("actionOpen_Compare_Window"))
+    self.actionAdvanced_Background = QtGui.QAction(MainWindow)
+    self.actionAdvanced_Background.setObjectName(_fromUtf8("actionAdvanced_Background"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionNext_File)
     self.menuFile.addAction(self.actionPrevious_File)
@@ -1183,6 +1185,7 @@ class Ui_MainWindow(object):
     self.menuAdvanced.addAction(self.actionAutoYLimits)
     self.menuAdvanced.addAction(self.actionRefineX)
     self.menuAdvanced.addSeparator()
+    self.menuAdvanced.addAction(self.actionAdvanced_Background)
     self.menuAdvanced.addAction(self.actionAdjust_Dirct_Beam)
     self.menuAdvanced.addAction(self.actionClear_Overwrite)
     self.menuAdvanced.addSeparator()
@@ -1278,6 +1281,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.gisansImin, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_gisans_colorscale)
     QtCore.QObject.connect(self.gisansImax, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_gisans_colorscale)
     QtCore.QObject.connect(self.actionOpen_Compare_Window, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_compare_window)
+    QtCore.QObject.connect(self.actionAdvanced_Background, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_advanced_background)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.refYPos)
     MainWindow.setTabOrder(self.refYPos, self.refYWidth)
@@ -1600,6 +1604,7 @@ class Ui_MainWindow(object):
     self.actionClear_Normalizations.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove all datasets from the normalization list (CTRL+SHIFT+W)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionClear_Normalizations.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+W", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen_Compare_Window.setText(QtGui.QApplication.translate("MainWindow", "Open Compare Window...", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAdvanced_Background.setText(QtGui.QApplication.translate("MainWindow", "Advanced Background...", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import MPLWidget
 from compare_plots import CompareWidget

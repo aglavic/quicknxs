@@ -14,6 +14,7 @@ from .version import str_version
 from .main_window import Ui_MainWindow
 from .gui_utils import ReduceDialog, DelayedTrigger
 from .compare_plots import CompareDialog
+from .advanced_background import BackgroundDialog
 from .error_handling import ErrorHandler
 from .mreduce import NXSData, Reflectivity, OffSpecular, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
@@ -1698,6 +1699,11 @@ as the ones already in the list:
       os.makedirs(path)
     dump(obj, open(os.path.join(path, 'window.pkl'), 'wb'))
     QtGui.QMainWindow.closeEvent(self, event)
+
+  def open_advanced_background(self):
+    dia=BackgroundDialog(self)
+    dia.show()
+    self.open_plots.append(dia)
 
   def open_compare_window(self):
     dia=CompareDialog(size=QtCore.QSize(800, 800))
