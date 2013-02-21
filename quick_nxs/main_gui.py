@@ -77,6 +77,7 @@ class MainGUI(QtGui.QMainWindow):
   active_channel='x' #: Selected channel for the overview and projection plots
   _control_down=False
   y_bg=0.
+  background_dialog=None
   # threads
   _foThread=None
   read_with_thread=False
@@ -105,7 +106,8 @@ class MainGUI(QtGui.QMainWindow):
   ##### for IPython mode, keep namespace up to date ######
 
   fileLoaded=QtCore.pyqtSignal()
-  initiatePlot=QtCore.pyqtSignal()
+  initiateProjectionPlot=QtCore.pyqtSignal(bool)
+  initiateReflectivityPlot=QtCore.pyqtSignal(bool)
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -137,9 +139,9 @@ class MainGUI(QtGui.QMainWindow):
 
     self.fileLoaded.connect(self.updateLabels)
     self.fileLoaded.connect(self.calcReflParams)
-    self.initiatePlot.connect(self.plotActiveTab)
-    self.initiatePlot.connect(self.plot_projections)
-    self.initiatePlot.connect(self.plot_refl)
+    self.fileLoaded.connect(self.plotActiveTab)
+    self.initiateProjectionPlot.connect(self.plot_projections)
+    self.initiateReflectivityPlot.connect(self.plot_refl)
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -168,7 +170,11 @@ class MainGUI(QtGui.QMainWindow):
       Calls private method after delay action was
       triggered.
     '''
-    getattr(self, str(item))(*args)
+    attrib=getattr(self, str(item))
+    if type(attrib) is QtCore.pyqtBoundSignal:
+      attrib.emit(*args)
+    else:
+      attrib(*args)
 
   def connect_plot_events(self):
     '''
@@ -242,7 +248,8 @@ class MainGUI(QtGui.QMainWindow):
 
     self.fileLoaded.emit()
     if do_plot:
-      self.initiatePlot.emit()
+      self.initiateProjectionPlot.emit(False)
+      self.initiateReflectivityPlot.emit(False)
 
 ####### Plot related methods
 
@@ -450,10 +457,6 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].draw()
 
   def plot_projections(self, preserve_lim=False):
-    #self.trigger('_plot_projections', preserve_lim)
-    self._plot_projections(preserve_lim)
-
-  def _plot_projections(self, preserve_lim):
     '''
       Create projections of the data on the x and y axes.
       The x-projection can also be done be means of quantile calculation,
@@ -542,6 +545,10 @@ class MainGUI(QtGui.QMainWindow):
     else:
       grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./pi
       tth=data.sangle*2.-(data.dpix-self.ui.refXPos.value())*grad_per_pixel
+    if self.background_dialog:
+      bg_tof_constant=self.background_dialog.ui.presumeIofLambda.isChecked()
+    else:
+      bg_tof_constant=False
     number=str(self.active_data.number)
     options=dict(
                 x_pos=self.ui.refXPos.value(),
@@ -557,7 +564,7 @@ class MainGUI(QtGui.QMainWindow):
                 number=number,
                 tth=tth,
                 dpix=dpix,
-                bg_tof_constant=self.ui.bgToFConstant.isChecked(),
+                bg_tof_constant=bg_tof_constant,
                 normalization=self.getNorm(),
                   )
 
@@ -1106,11 +1113,11 @@ class MainGUI(QtGui.QMainWindow):
     lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
     self.ui.x_project.draw()
     self.ui.y_project.draw()
-    self.trigger('plot_refl')
+    self.trigger('initiateReflectivityPlot', False)
 
   def replotProjections(self):
-    self.plot_projections(preserve_lim=True)
-    self.plot_refl(preserve_lim=True)
+    self.initiateProjectionPlot.emit(True)
+    self.initiateReflectivityPlot.emit(True)
 
   def setNorm(self, do_plot=True, do_remove=True):
     '''
@@ -1151,7 +1158,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normalizeTable.removeRow(idx)
       self.ui.normalizationLabel.setText(u",".join(map(str, sorted(self.ref_norm.keys()))))
     if do_plot:
-      self.plot_refl()
+      self.initiateReflectivityPlot.emit(False)
 
   def getNorm(self, data=None):
     '''
@@ -1197,26 +1204,27 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMessageBox.information(self, 'Select other dataset',
             'Please select a dataset with total reflection plateau\nand normalization.')
       return
+    self.auto_change_active=True
     if len(self.reduction_list)>0:
       # try to match both datasets by fitting a polynomiral to the overlapping region
       rescale, xfit, yfit=get_scaling(self.refl, self.reduction_list[-1],
                                       self.ui.addStitchPoints.value(),
                                       polynom=self.ui.polynomOrder.value())
       self.ui.refScale.setValue(self.ui.refScale.value()+log10(rescale)) #change the scaling factor
+      self.initiateReflectivityPlot.emit(False)
       self.ui.refl.plot(xfit, yfit)
     else:
       # normalize total reflection plateau
       # Start from low Q and search for the critical edge
       wmean, npoints=get_total_reflection(self.refl, return_npoints=True)
       self.ui.refScale.setValue(self.ui.refScale.value()+log10(wmean)) #change the scaling factor
+      self.initiateReflectivityPlot.emit(False)
       # show a line in the plot corresponding to the extraction region
       first=len(self.refl.R)-self.ui.rangeStart.value()
       Q=self.refl.Q[:first][self.refl.R[:first]>0]
       totref=Line2D([Q.min(), Q[npoints]], [1., 1.], color='red')
       self.ui.refl.canvas.ax.add_line(totref)
-    ymin, ymax=self.ui.refl.canvas.ax.get_ylim()
-    ymax=max(ymax, 1.1)
-    self.ui.refl.canvas.ax.set_ylim((ymin, ymax))
+    self.auto_change_active=False
     self.ui.refl.draw()
 
   def addRefList(self, do_plot=True):
@@ -1293,7 +1301,7 @@ as the ones already in the list:
     self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
     if do_plot:
-      self.plot_refl(preserve_lim=True)
+      self.initiateReflectivityPlot.emit(True)
 
   def reductionTableChanged(self, item):
     '''
@@ -1345,7 +1353,7 @@ as the ones already in the list:
         refl_new=self.recalculateReflectivity(refl, options)
         self.reduction_list[entry]=refl_new
     self.ui.reductionTable.resizeColumnsToContents()
-    self.plot_refl(preserve_lim=True)
+    self.initiateReflectivityPlot.emit(True)
 
   def changeActiveChannel(self):
     '''
@@ -1363,8 +1371,8 @@ as the ones already in the list:
         self.reduction_list[i]=refli
     self.updateLabels()
     self.plotActiveTab()
-    self.plot_projections()
-    self.plot_refl()
+    self.initiateProjectionPlot.emit(False)
+    self.initiateReflectivityPlot.emit(False)
 
   def clearRefList(self, do_plot=True):
     '''
@@ -1374,7 +1382,7 @@ as the ones already in the list:
     self.ui.reductionTable.setRowCount(0)
     self.ui.actionAutoYLimits.setChecked(True)
     if do_plot:
-      self.plot_refl()
+      self.initiateReflectivityPlot.emit(False)
 
   def removeRefList(self):
     '''
@@ -1386,7 +1394,7 @@ as the ones already in the list:
     self.reduction_list.pop(index)
     self.ui.reductionTable.removeRow(index)
     #self.ui.reductionTable.setRowCount(0)
-    self.plot_refl()
+    self.initiateReflectivityPlot.emit(False)
 
   def overwriteDirectBeam(self):
     '''
@@ -1416,8 +1424,8 @@ as the ones already in the list:
     if not self.auto_change_active:
       self.updateLabels()
       self.calcReflParams()
-      self.plot_projections(preserve_lim=True)
-      self.trigger('plot_refl', True)
+      self.initiateProjectionPlot.emit(True)
+      self.initiateReflectivityPlot.emit(True)
 
   def reduceDatasets(self):
     '''
@@ -1701,9 +1709,19 @@ as the ones already in the list:
     QtGui.QMainWindow.closeEvent(self, event)
 
   def open_advanced_background(self):
-    dia=BackgroundDialog(self)
-    dia.show()
-    self.open_plots.append(dia)
+    if self.background_dialog:
+      self.background_dialog.show()
+    else:
+      self.background_dialog=BackgroundDialog(self)
+      self.background_dialog.show()
+      self.background_dialog.resize(self.background_dialog.width(), self.height())
+      self.background_dialog.move(self.background_dialog.pos().x()+self.width(),
+                                  self.pos().y())
+      if self.refl:
+        self.background_dialog.drawXTof()
+        self.background_dialog.drawBG()
+      self.fileLoaded.connect(self.background_dialog.drawXTof)
+      self.initiateReflectivityPlot.connect(self.background_dialog.drawBG)
 
   def open_compare_window(self):
     dia=CompareDialog(size=QtCore.QSize(800, 800))

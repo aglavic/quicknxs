@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/background_dialog.ui'
 #
-# Created: Wed Feb 20 17:07:47 2013
+# Created: Thu Feb 21 16:44:38 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,6 +19,7 @@ class Ui_Dialog(object):
     Dialog.setObjectName(_fromUtf8("Dialog"))
     Dialog.resize(490, 658)
     self.horizontalLayout = QtGui.QHBoxLayout(Dialog)
+    self.horizontalLayout.setMargin(0)
     self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
     self.splitter = QtGui.QSplitter(Dialog)
     self.splitter.setOrientation(QtCore.Qt.Vertical)
@@ -26,17 +27,17 @@ class Ui_Dialog(object):
     self.xTof = MPLWidget(self.splitter)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
-    sizePolicy.setVerticalStretch(2)
+    sizePolicy.setVerticalStretch(1)
     sizePolicy.setHeightForWidth(self.xTof.sizePolicy().hasHeightForWidth())
     self.xTof.setSizePolicy(sizePolicy)
     self.xTof.setObjectName(_fromUtf8("xTof"))
-    self.result = MPLWidget(self.splitter)
+    self.BG = MPLWidget(self.splitter)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(1)
-    sizePolicy.setHeightForWidth(self.result.sizePolicy().hasHeightForWidth())
-    self.result.setSizePolicy(sizePolicy)
-    self.result.setObjectName(_fromUtf8("result"))
+    sizePolicy.setHeightForWidth(self.BG.sizePolicy().hasHeightForWidth())
+    self.BG.setSizePolicy(sizePolicy)
+    self.BG.setObjectName(_fromUtf8("BG"))
     self.frame = QtGui.QFrame(self.splitter)
     self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
     self.frame.setFrameShadow(QtGui.QFrame.Raised)
@@ -96,6 +97,9 @@ class Ui_Dialog(object):
     self.verticalLayout.addWidget(self.widget_2)
     self.polyTable = QtGui.QTableWidget(self.frame)
     self.polyTable.setEnabled(False)
+    self.polyTable.setMinimumSize(QtCore.QSize(0, 50))
+    self.polyTable.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+    self.polyTable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
     self.polyTable.setObjectName(_fromUtf8("polyTable"))
     self.polyTable.setColumnCount(8)
     self.polyTable.setRowCount(0)
@@ -135,6 +139,10 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.delPoly.setEnabled)
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.addPoly.setEnabled)
     QtCore.QObject.connect(self.addPoly, QtCore.SIGNAL(_fromUtf8("pressed()")), Dialog.addPolygon)
+    QtCore.QObject.connect(self.presumeIofLambda, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.optionChanged)
+    QtCore.QObject.connect(self.delPoly, QtCore.SIGNAL(_fromUtf8("pressed()")), Dialog.delPolygon)
+    QtCore.QObject.connect(self.clearPoly, QtCore.SIGNAL(_fromUtf8("pressed()")), Dialog.clearPolygons)
+    QtCore.QObject.connect(self.polyTable, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), Dialog.polygonChanged)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
 
   def retranslateUi(self, Dialog):

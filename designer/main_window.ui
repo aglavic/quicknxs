@@ -2408,44 +2408,6 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_10">
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Advanced Background</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_10">
-    <layout class="QVBoxLayout" name="verticalLayout_5">
-     <item>
-      <widget class="QCheckBox" name="bgToFConstant">
-       <property name="toolTip">
-        <string>Take background to be directly proportional to the incident intensity</string>
-       </property>
-       <property name="text">
-        <string>BG~I(λ)</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_5">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="../icons/icons.qrc">
@@ -2685,6 +2647,9 @@
    <property name="text">
     <string>Advanced Background...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
  </widget>
  <customwidgets>
@@ -2737,7 +2702,6 @@
   <tabstop>pfMaxWidth</tabstop>
   <tabstop>pfRidgeLength</tabstop>
   <tabstop>pushButton</tabstop>
-  <tabstop>bgToFConstant</tabstop>
   <tabstop>eventTofBins</tabstop>
   <tabstop>eventBinMode</tabstop>
   <tabstop>histogramActive</tabstop>
@@ -2863,7 +2827,7 @@
    <sender>refScale</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>plot_refl()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
@@ -3119,7 +3083,7 @@
    <sender>rangeStart</sender>
    <signal>valueChanged(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>plot_refl()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
@@ -3135,7 +3099,7 @@
    <sender>rangeEnd</sender>
    <signal>valueChanged(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>plot_refl()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
@@ -3151,7 +3115,7 @@
    <sender>fanReflectivity</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>plot_refl()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>65</x>
@@ -3404,22 +3368,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>bgToFConstant</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>plot_refl()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1079</x>
-     <y>850</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>946</x>
-     <y>871</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionLoad_Extraction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -3551,7 +3499,7 @@
    <sender>trustDANGLE</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>plot_refl()</slot>
+   <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>175</x>

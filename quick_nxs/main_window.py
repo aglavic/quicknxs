@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Wed Feb 20 17:07:46 2013
+# Created: Thu Feb 21 16:44:38 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1075,20 +1075,6 @@ class Ui_MainWindow(object):
     self.verticalLayout_18.addItem(spacerItem4)
     self.dockWidget_9.setWidget(self.dockWidgetContents_9)
     MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockWidget_9)
-    self.dockWidget_10 = QtGui.QDockWidget(MainWindow)
-    self.dockWidget_10.setFloating(False)
-    self.dockWidget_10.setObjectName(_fromUtf8("dockWidget_10"))
-    self.dockWidgetContents_10 = QtGui.QWidget()
-    self.dockWidgetContents_10.setObjectName(_fromUtf8("dockWidgetContents_10"))
-    self.verticalLayout_5 = QtGui.QVBoxLayout(self.dockWidgetContents_10)
-    self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
-    self.bgToFConstant = QtGui.QCheckBox(self.dockWidgetContents_10)
-    self.bgToFConstant.setObjectName(_fromUtf8("bgToFConstant"))
-    self.verticalLayout_5.addWidget(self.bgToFConstant)
-    spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-    self.verticalLayout_5.addItem(spacerItem5)
-    self.dockWidget_10.setWidget(self.dockWidgetContents_10)
-    MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockWidget_10)
     self.actionOpen = QtGui.QAction(MainWindow)
     icon1 = QtGui.QIcon()
     icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/document-open.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1232,7 +1218,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.show_colorbars, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.hide_plots, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleHide)
     QtCore.QObject.connect(self.color_selector, QtCore.SIGNAL(_fromUtf8("currentIndexChanged(int)")), MainWindow.toggleColorbars)
-    QtCore.QObject.connect(self.refScale, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.plot_refl)
+    QtCore.QObject.connect(self.refScale, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.refYPos, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.refYWidth, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.refXPos, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.changeRegionValues)
@@ -1248,9 +1234,9 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.directPixelOverwrite, QtCore.SIGNAL(_fromUtf8("valueChanged(QString)")), MainWindow.overwriteChanged)
     QtCore.QObject.connect(self.dangle0Overwrite, QtCore.SIGNAL(_fromUtf8("editingFinished()")), MainWindow.overwriteChanged)
     QtCore.QObject.connect(self.actionNormalizeScaling, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.normalizeTotalReflection)
-    QtCore.QObject.connect(self.rangeStart, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), MainWindow.plot_refl)
-    QtCore.QObject.connect(self.rangeEnd, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), MainWindow.plot_refl)
-    QtCore.QObject.connect(self.fanReflectivity, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.plot_refl)
+    QtCore.QObject.connect(self.rangeStart, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.rangeEnd, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.fanReflectivity, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.actionRemove, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.removeRefList)
     QtCore.QObject.connect(self.normalizeXTof, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.kizVSkfz, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.plotActiveTab)
@@ -1266,7 +1252,6 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.logarithmic_y, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.replotProjections)
     QtCore.QObject.connect(self.xLamda, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.numberSearchEntry, QtCore.SIGNAL(_fromUtf8("returnPressed()")), MainWindow.openByNumber)
-    QtCore.QObject.connect(self.bgToFConstant, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.plot_refl)
     QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.loadExtraction)
     QtCore.QObject.connect(self.tthPhi, QtCore.SIGNAL(_fromUtf8("stateChanged(int)")), MainWindow.toggleColorbars)
     QtCore.QObject.connect(self.actionAbout, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.aboutDialog)
@@ -1275,7 +1260,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), MainWindow.reductionTableChanged)
     QtCore.QObject.connect(self.actionManual, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.helpDialog)
     QtCore.QObject.connect(self.actionClear_Normalizations, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.clearNormList)
-    QtCore.QObject.connect(self.trustDANGLE, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.plot_refl)
+    QtCore.QObject.connect(self.trustDANGLE, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.offspecImin, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_offspec_colorscale)
     QtCore.QObject.connect(self.offspecImax, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_offspec_colorscale)
     QtCore.QObject.connect(self.gisansImin, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_gisans_colorscale)
@@ -1311,8 +1296,7 @@ class Ui_MainWindow(object):
     MainWindow.setTabOrder(self.pfMinWidth, self.pfMaxWidth)
     MainWindow.setTabOrder(self.pfMaxWidth, self.pfRidgeLength)
     MainWindow.setTabOrder(self.pfRidgeLength, self.pushButton)
-    MainWindow.setTabOrder(self.pushButton, self.bgToFConstant)
-    MainWindow.setTabOrder(self.bgToFConstant, self.eventTofBins)
+    MainWindow.setTabOrder(self.pushButton, self.eventTofBins)
     MainWindow.setTabOrder(self.eventTofBins, self.eventBinMode)
     MainWindow.setTabOrder(self.eventBinMode, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1559,9 +1543,6 @@ class Ui_MainWindow(object):
     self.eventBinMode.setToolTip(QtGui.QApplication.translate("MainWindow", "<html><head/><body><p>How to bin the time of flight channels:</p><p>  Linear: Equally spaced in ToF</p><p>  1/x: Equally spaced in Q</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
     self.eventBinMode.setItemText(0, QtGui.QApplication.translate("MainWindow", "Linear", None, QtGui.QApplication.UnicodeUTF8))
     self.eventBinMode.setItemText(1, QtGui.QApplication.translate("MainWindow", "1/x", None, QtGui.QApplication.UnicodeUTF8))
-    self.dockWidget_10.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Advanced Background", None, QtGui.QApplication.UnicodeUTF8))
-    self.bgToFConstant.setToolTip(QtGui.QApplication.translate("MainWindow", "Take background to be directly proportional to the incident intensity", None, QtGui.QApplication.UnicodeUTF8))
-    self.bgToFConstant.setText(QtGui.QApplication.translate("MainWindow", "BG~I(λ)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "Open...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setToolTip(QtGui.QApplication.translate("MainWindow", "Open a new file (Ctrl+O)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
@@ -1605,6 +1586,7 @@ class Ui_MainWindow(object):
     self.actionClear_Normalizations.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+W", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen_Compare_Window.setText(QtGui.QApplication.translate("MainWindow", "Open Compare Window...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionAdvanced_Background.setText(QtGui.QApplication.translate("MainWindow", "Advanced Background...", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAdvanced_Background.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+B", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidget import MPLWidget
 from compare_plots import CompareWidget

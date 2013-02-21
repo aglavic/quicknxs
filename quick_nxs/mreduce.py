@@ -573,13 +573,23 @@ class Reflectivity(object):
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
     scale=1./dataset.proton_charge # scale by user factor
-    if self.options['scale_by_beam']:
-      scale/=dataset.beam_width # scale by beam-size
 
     # Get regions in pixels as integers
     reg=map(lambda item: int(round(item)),
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
+
+    # get incident angle of reflected beam
+    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+    relpix=self.options['dpix']-x_pos
+    tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
+    self.ai=tth/2.
+    if self.options['scale_by_beam'] and self.ai>0:
+      scale/=sin(self.ai) # scale by beam-footprint
+    # set good angular resolution as real resolution not implemented, yet
+    dai=0.0001
+
+    self._calc_bg(dataset)
 
     # restrict the intensity and background data to the given regions
     Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
@@ -590,16 +600,6 @@ class Reflectivity(object):
     self.I=self.Iraw/size_I*scale
     self.dIraw=sqrt(self.Iraw)
     self.dI=self.dIraw/size_I*scale
-
-    self._calc_bg(dataset)
-
-    # get incident angle of reflected beam
-    rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
-    relpix=self.options['dpix']-x_pos
-    tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
-    self.ai=tth/2.
-    # set good angular resolution as real resolution not implemented, yet
-    dai=0.0001
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
@@ -649,9 +649,7 @@ class Reflectivity(object):
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
-    scale=self.options['scale']/dataset.proton_charge # scale by user factor
-    if self.options['scale_by_beam']:
-      scale/=dataset.beam_width # scale by beam-size
+    scale=1./dataset.proton_charge # scale by user factor
 
     reg=map(lambda item: int(round(item)),
             [x_pos-x_width/2., x_pos+x_width/2.+1,
@@ -663,7 +661,11 @@ class Reflectivity(object):
     relpix=self.options['dpix']-x_region
     tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     ai=tth/2.
-    self.ai=ai[len(ai)//2]
+    self.ai=ai.mean()
+    if self.options['scale_by_beam'] and self.ai>0:
+      scale/=sin(self.ai) # scale by beam-footprint
+
+    self._calc_bg(dataset)
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
@@ -681,12 +683,10 @@ class Reflectivity(object):
     dI=self.dIraw/(reg[3]-reg[2])*scale
     # For comparison store intensity summed over whole area
     self.I=I.sum(axis=0)/(reg[1]-reg[0])
-    self.dI=dI.sum(axis=0)/(reg[1]-reg[0])
+    self.dI=sqrt((dI**2).sum(axis=0))/(reg[1]-reg[0])
 
-    self._calc_bg(dataset)
-
-    R=(I-self.BG[newaxis, :]*self.options['scale'])
-    dR=sqrt(dI**2+((self.dBG*self.options['scale'])**2)[newaxis, :])
+    R=(I-self.BG[newaxis, :])*self.options['scale']
+    dR=sqrt(dI**2+(self.dBG**2)[newaxis, :])*self.options['scale']
 
     norm=self.options['normalization']
     normR=where(norm.Rraw>0, norm.Rraw, 1.)
@@ -763,8 +763,9 @@ class Reflectivity(object):
     bg_pos=self.options['bg_pos']
     bg_width=self.options['bg_width']
     scale=1./dataset.proton_charge # scale by user factor
-    if self.options['scale_by_beam']:
-      scale/=dataset.beam_width # scale by beam-size
+
+    if self.options['scale_by_beam'] and self.ai>0:
+      scale/=sin(self.ai) # scale by beam-size
 
     # Get regions in pixels as integers
     reg=map(lambda item: int(round(item)),
@@ -777,18 +778,29 @@ class Reflectivity(object):
     size_BG=float((reg[3]-reg[2])*(reg[1]-reg[0]))
     # calculate ROI intensities and normalize by number of points
     self.BGraw=bgdata.sum(axis=0).sum(axis=0)
-    self.dBGraw=sqrt(self.BGraw)
+    self.dBGraw=sqrt(self.BGraw)/size_BG*scale
+    self.BGraw/=size_BG/scale
     if self.options['bg_tof_constant'] and self.options['normalization']:
       norm=self.options['normalization'].R
       reg=(self.dBGraw>0)&(norm>0)
       norm_BG=self.BGraw[reg]/norm[reg]
       norm_dBG=self.dBGraw[reg]/norm[reg]
       wmeanBG=(norm_BG/norm_dBG).sum()/(1./norm_dBG).sum()
-      self.BG=wmeanBG*norm/size_BG*scale
-      self.dBG=0.*norm/size_BG*scale
+      wmeandBG=sqrt(len(norm_BG))/(1./norm_dBG).sum()
+      self.BG=wmeanBG*norm
+      self.dBG=wmeandBG*norm
+      # for the channels with fast neutron contribution just take the raw background
+      fast_n_tof=[i*1.0e6/60. for i in range(3)]
+      tof_edges=dataset.tof_edges
+      for fnt in fast_n_tof:
+        channel=where((tof_edges[1:]>=fnt)&(tof_edges[:-1]<=fnt))[0]
+        if not channel:
+          continue
+        self.BG[channel]=self.BGraw[channel]
+        self.dBG[channel]=self.dBGraw[channel]
     else:
-      self.BG=self.BGraw/size_BG*scale
-      self.dBG=self.dBGraw/size_BG*scale
+      self.BG=self.BGraw
+      self.dBG=self.dBGraw
 
   def rescale(self, scaling):
     old_scale=self.options['scale']
@@ -852,14 +864,15 @@ class OffSpecular(Reflectivity):
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
 
-    self._calc_bg(dataset)
-
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
     pix_offset_spec=self.options['dpix']-x_pos
     tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
+    self.ai=tth_spec/2.
+
+    self._calc_bg(dataset)
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A

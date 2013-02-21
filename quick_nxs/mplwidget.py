@@ -25,6 +25,7 @@ matplotlib.cm.register_cmap('default', cmap=cmap)
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
+from matplotlib.cbook import Stack
 from matplotlib.colors import LogNorm, Normalize
 from matplotlib.figure import Figure
 try:
@@ -301,7 +302,7 @@ class MPLWidget(QtGui.QWidget):
       else:
         self.cplot=self.canvas.ax.imshow(data, **opts)
     else:
-      self.update(data)
+      self.update(data, **opts)
     return self.cplot
 
   def set_title(self, new_title):
@@ -337,8 +338,21 @@ class MPLWidget(QtGui.QWidget):
     if self.canvas.ax2 is not None:
       self.canvas.ax2.clear()
 
-  def update(self, *data):
+  def update(self, *data, **opts):
     self.cplot.set_data(*data)
+    if 'extent' in opts:
+      self.cplot.set_extent(opts['extent'])
+      oldviews=self.toolbar._views
+      if self.toolbar._views:
+        # set the new extent as home for the new data
+        newviews=Stack()
+        newviews.push([tuple(opts['extent'])])
+        for item in oldviews[1:]:
+          newviews.push(item)
+        self.toolbar._views=newviews
+      if not oldviews or oldviews[oldviews._pos]==oldviews[0]:
+        self.canvas.ax.set_xlim(opts['extent'][0], opts['extent'][1])
+        self.canvas.ax.set_ylim(opts['extent'][2], opts['extent'][3])
 
   def legend(self, *args, **opts):
     return self.canvas.ax.legend(*args, **opts)
