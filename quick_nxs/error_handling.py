@@ -16,7 +16,7 @@ DEVELOPER_EMAIL=u'Artur Glavic <glavicag@ornl.gov>'
 # file to write any error report information to
 REPORT_SAVE_PATH=os.path.expanduser(u'~/quicknxs_error.pkl.gz')
 # MainGUI object attributes to collect together with the traceback
-COLLECT_GUI_ATTRIBUTES=['active_file', 'active_channel', 'active_data', 'refl', ]
+COLLECT_GUI_ATTRIBUTES=['active_file', 'active_channel', 'refl', ]
 
 class ErrorHandler(QtGui.QWidget):
   '''
@@ -48,15 +48,15 @@ class ErrorHandler(QtGui.QWidget):
     '''
     Dump error report to gziped file and show an error dialog.
     '''
-#    try:
-#      report={'traceback': self.last_text, 'version': str_version}
-#      for attrib in COLLECT_GUI_ATTRIBUTES:
-#        report[attrib]=getattr(self.parent, attrib, None)
-#      report_dump=dumps(report, 2)
-#      gzip.open(REPORT_SAVE_PATH, 'w').write(report_dump)
-#      written=True
-#    except:
-    written=False
+    try:
+      report={'traceback': self.last_text, 'version': str_version}
+      for attrib in COLLECT_GUI_ATTRIBUTES:
+        report[attrib]=getattr(self.parent, attrib, None)
+      report_dump=dumps(report, 2)
+      gzip.open(REPORT_SAVE_PATH, 'w').write(report_dump)
+      written=True
+    except:
+      written=False
     traceback=self.last_text
     tbl=traceback.splitlines()
     if len(tbl)>15:

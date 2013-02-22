@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+#@PydevCodeAnalysisIgnore
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Feb 22 12:06:41 2013
+# Created: Fri Feb 22 16:30:44 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!

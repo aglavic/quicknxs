@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+#@PydevCodeAnalysisIgnore
+
+# change header created by pyuic4 to ignore the result in Eclipse PyDev
+from PyQt4 import uic
+uic._header = """# -*- coding: utf-8 -*-
+#@PydevCodeAnalysisIgnore
+
+# Form implementation generated from reading ui file '%s'
+#
+# Created: %s
+#      by: PyQt4 UI code generator %s
+#
+# WARNING! All changes made in this file will be lost!
+
+"""
+
+# there's no main function, so just import the module
+import PyQt4.uic.pyuic
