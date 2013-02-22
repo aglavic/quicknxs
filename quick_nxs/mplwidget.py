@@ -20,7 +20,7 @@ matplotlib.use('Qt4Agg')
 matplotlib.rc('font', **font)
 matplotlib.rc('savefig', **savefig)
 cmap=matplotlib.colors.LinearSegmentedColormap.from_list('default',
-                  ['#0000ff', '#00ff00', '#ffff00', '#ff0000', '#ff00ff', '#000000'], N=256)
+                  ['#0000ff', '#00ff00', '#ffff00', '#ff0000', '#bd7efc', '#000000'], N=256)
 matplotlib.cm.register_cmap('default', cmap=cmap)
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas

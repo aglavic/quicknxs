@@ -47,6 +47,7 @@ class ReduceDialog(QDialog):
 
   def __init__(self, parent, channels, refls):
     QDialog.__init__(self, parent)
+    self.cmap=parent.color
     self.ui=UiReduction()
     self.ui.setupUi(self)
     self.norms=[]
@@ -510,6 +511,15 @@ class ReduceDialog(QDialog):
           params['xrange']="%f:%f"%(0., ki_max)
           params['yrange']="%f:%f"%(0., ki_max)
           params['pix_x']=1400*cols
+      zmax=1e-6
+      zmin=1e6
+      for channel in self.channels:
+        for data in output_data[channel]:
+          z=data[:, :, line_params['z']-1]
+          zmax=max(zmax, z.max())
+          zmin=min(zmin, z[z>0].min())
+      params['zmin']="%.1e"%(zmin*0.8)
+      params['zmax']="%.1e"%zmax
       plotlines=''
       for channel in self.channels:
         line_params['file_name']=ofname.replace('{item}', title).replace('{state}', channel)\
@@ -560,19 +570,18 @@ class ReduceDialog(QDialog):
   def plot_result(self, ind_str, output_data, title):
     if type(output_data[self.channels[0]]) is not list:
       # plot the results in a new window
-      dialog=QDialog()
-      ui=UiPlot()
-      ui.setupUi(dialog)
-      ui.plot.toolbar.coordinates=True
+      dialog=PlotDialog()
+      plot=dialog.plot
+      plot.toolbar.coordinates=True
       for channel in self.channels:
         data=output_data[channel]
-        ui.plot.errorbar(data[:, 0], data[:, 1], yerr=data[:, 2], label=channel)
-      ui.plot.legend()
-      ui.plot.set_xlabel(u'Q$_z$ [Å⁻¹]')
-      ui.plot.set_ylabel(u'R [a.u.]')
-      ui.plot.set_yscale('log')
-      ui.plot.set_title(ind_str+' - '+title)
-      ui.plot.show()
+        plot.errorbar(data[:, 0], data[:, 1], yerr=data[:, 2], label=channel)
+      plot.legend()
+      plot.set_xlabel(u'Q$_z$ [Å⁻¹]')
+      plot.set_ylabel(u'R [a.u.]')
+      plot.set_yscale('log')
+      plot.set_title(ind_str+' - '+title)
+      plot.draw()
       dialog.show()
       self.parent().open_plots.append(dialog)
     else:
@@ -584,21 +593,36 @@ class ReduceDialog(QDialog):
         x, y, z=0, 1, 2
         xl=u'%s [Å⁻¹]'%output_data['column_names'][0]
         yl=u'%s [Å⁻¹]'%output_data['column_names'][1]
+      dialogs=[]
       for channel in self.channels:
         # plot the results in a new window
-        dialog=QDialog()
-        ui=UiPlot()
-        ui.setupUi(dialog)
-        ui.plot.toolbar.coordinates=True
+        dialog=PlotDialog()
+        dialog._open_instances=dialogs
+        dialog.show()
+        dialog.resize(450, 450)
+        dialog.move(100+450*(len(dialogs)%2),
+                    50+450*(len(dialogs)//2))
+        dialogs.append(dialog)
+        plot=dialog.plot
+        plot.toolbar.coordinates=True
+        Imin=1.
+        Imax=1e-6
+        cmap=self.cmap
         for data in output_data[channel]:
-          ui.plot.pcolormesh(data[:, :, x], data[:, :, y], data[:, :, z], log=True,
+          Imin=min(Imin, data[:, :, z][data[:, :, z]>0].min())
+          Imax=max(Imax, data[:, :, z].max())
+
+          plot.pcolormesh(data[:, :, x], data[:, :, y], data[:, :, z], log=True,
                              imin=data[:, :, z][data[:, :, z]>0].min(), imax=None,
-                             label=channel, cmap='default')
-        ui.plot.canvas.fig.colorbar(ui.plot.cplot)
-        ui.plot.set_xlabel(xl)
-        ui.plot.set_ylabel(yl)
-        ui.plot.set_title(ind_str+' - '+title+' - (%s)'%channel)
-        ui.plot.draw()
+                             label=channel, cmap=cmap)
+        for item in plot.canvas.ax.collections:
+          item.set_clim(Imin*0.8, Imax)
+        dialog.showMinMax(Imin*0.8, Imax)
+        plot.canvas.fig.colorbar(plot.cplot)
+        plot.set_xlabel(xl)
+        plot.set_ylabel(yl)
+        plot.set_title(ind_str+' - '+title+' - (%s)'%channel)
+        plot.draw()
         dialog.show()
         self.parent().open_plots.append(dialog)
 
@@ -614,6 +638,91 @@ class ReduceDialog(QDialog):
                                           directory=oldd)
     if newd is not None:
       self.ui.directoryEntry.setText(newd)
+
+class PlotDialog(QDialog):
+  '''
+  Dialog to show a single plot.
+  '''
+  _open_instances=[]
+
+  def __init__(self, parent=None):
+    QDialog.__init__(self, parent=parent)
+    self._open_instances.append(self)
+    self.ui=UiPlot()
+    self.ui.setupUi(self)
+    self.hideMinMax()
+    self.plot=self.ui.plot
+
+  def showMinMax(self, Imin=1e-6, Imax=1.):
+    self.ui.Imin.setValue(log10(Imin))
+    self.ui.Imax.setValue(log10(Imax))
+    self.ui.Imin.show()
+    self.ui.Imax.show()
+    self.ui.ImaxLabel.show()
+    self.ui.IminLabel.show()
+    self.ui.clipButton.show()
+
+  def hideMinMax(self):
+    self.ui.Imin.hide()
+    self.ui.Imax.hide()
+    self.ui.ImaxLabel.hide()
+    self.ui.IminLabel.hide()
+    self.ui.clipButton.hide()
+
+  def redrawColorscale(self):
+    plot=self.plot
+    Imin=10**self.ui.Imin.value()
+    Imax=10**self.ui.Imax.value()
+    if plot.cplot is not None and Imin<Imax:
+      for item in plot.canvas.ax.images:
+        item.set_clim(Imin, Imax)
+      for item in plot.canvas.ax.collections:
+        item.set_clim(Imin, Imax)
+      plot.draw()
+
+  def clipData(self):
+    plot=self.plot
+    Imin=1e10
+    if plot.cplot is not None:
+      for item in plot.canvas.ax.images:
+        I=item.get_array()
+        Imin=min(Imin, I[I>0].min())
+      for item in plot.canvas.ax.collections:
+        I=item.get_array()
+        Imin=min(Imin, I[I>0].min())
+      for item in plot.canvas.ax.images:
+        I=item.get_array()
+        I[I<=0]=Imin
+        item.set_array(I)
+      for item in plot.canvas.ax.collections:
+        I=item.get_array()
+        I[I<=0]=Imin
+        item.set_array(I)
+      plot.draw()
+
+  def applyScaling(self):
+    if self.plot.cplot is None:
+      return
+    xlim=self.plot.canvas.ax.get_xlim()
+    ylim=self.plot.canvas.ax.get_ylim()
+    Imin=self.ui.Imin.value()
+    Imax=self.ui.Imax.value()
+    for dialog in self._open_instances:
+      if dialog.plot.cplot is None or dialog is self:
+        continue
+      dialog.plot.canvas.ax.set_xlim(*xlim)
+      dialog.plot.canvas.ax.set_ylim(*ylim)
+      dialog.ui.Imin.setValue(Imin)
+      dialog.ui.Imax.setValue(Imax)
+      for item in dialog.plot.canvas.ax.images:
+        item.set_clim(10**Imin, 10**Imax)
+      for item in dialog.plot.canvas.ax.collections:
+        item.set_clim(10**Imin, 10**Imax)
+      dialog.plot.draw()
+
+  def closeEvent(self, event):
+    self._open_instances.remove(self)
+    return QDialog.closeEvent(self, event)
 
 class SmoothDialog(QDialog):
   '''

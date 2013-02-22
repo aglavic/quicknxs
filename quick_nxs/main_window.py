@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Thu Feb 21 16:44:38 2013
+# Created: Fri Feb 22 12:06:41 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -491,6 +491,14 @@ class Ui_MainWindow(object):
     self.offspecImin.setProperty("value", -6.0)
     self.offspecImin.setObjectName(_fromUtf8("offspecImin"))
     self.horizontalLayout_9.addWidget(self.offspecImin)
+    self.clipOffspec = QtGui.QPushButton(self.OffSpec_Tab)
+    sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+    sizePolicy.setHeightForWidth(self.clipOffspec.sizePolicy().hasHeightForWidth())
+    self.clipOffspec.setSizePolicy(sizePolicy)
+    self.clipOffspec.setObjectName(_fromUtf8("clipOffspec"))
+    self.horizontalLayout_9.addWidget(self.clipOffspec)
     self.label_22 = QtGui.QLabel(self.OffSpec_Tab)
     self.label_22.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
     self.label_22.setObjectName(_fromUtf8("label_22"))
@@ -1267,6 +1275,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.gisansImax, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), MainWindow.change_gisans_colorscale)
     QtCore.QObject.connect(self.actionOpen_Compare_Window, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_compare_window)
     QtCore.QObject.connect(self.actionAdvanced_Background, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_advanced_background)
+    QtCore.QObject.connect(self.clipOffspec, QtCore.SIGNAL(_fromUtf8("pressed()")), MainWindow.clip_offspec_colorscale)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.refYPos)
     MainWindow.setTabOrder(self.refYPos, self.refYWidth)
@@ -1435,6 +1444,7 @@ class Ui_MainWindow(object):
     self.qxVSqz.setText(QtGui.QApplication.translate("MainWindow", "Qx VS. Qz", None, QtGui.QApplication.UnicodeUTF8))
     self.kizVSkfz.setText(QtGui.QApplication.translate("MainWindow", "ki_z VS. kf_z", None, QtGui.QApplication.UnicodeUTF8))
     self.label_21.setText(QtGui.QApplication.translate("MainWindow", "Imin 10^", None, QtGui.QApplication.UnicodeUTF8))
+    self.clipOffspec.setText(QtGui.QApplication.translate("MainWindow", "Clip", None, QtGui.QApplication.UnicodeUTF8))
     self.label_22.setText(QtGui.QApplication.translate("MainWindow", "Imax 10^", None, QtGui.QApplication.UnicodeUTF8))
     self.plotTab.setTabText(self.plotTab.indexOf(self.OffSpec_Tab), QtGui.QApplication.translate("MainWindow", "OffSpec Preview", None, QtGui.QApplication.UnicodeUTF8))
     self.plotTab.setTabToolTip(self.plotTab.indexOf(self.OffSpec_Tab), QtGui.QApplication.translate("MainWindow", "Off-Specular scattering intensity preview for all files in the reduction list", None, QtGui.QApplication.UnicodeUTF8))

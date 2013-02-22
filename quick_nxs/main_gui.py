@@ -171,7 +171,7 @@ class MainGUI(QtGui.QMainWindow):
       triggered.
     '''
     attrib=getattr(self, str(item))
-    if type(attrib) is QtCore.pyqtBoundSignal:
+    if type(attrib) is type(self.initiateProjectionPlot):
       attrib.emit(*args)
     else:
       attrib(*args)
@@ -705,6 +705,8 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.offspec_pm, self.ui.offspec_mp]
     Imin=10**self.ui.offspecImin.value()
     Imax=10**self.ui.offspecImax.value()
+    if Imin>=Imax:
+      return
     for i, ignore in enumerate(self.ref_list_channels):
       plot=plots[i]
       if plot.cplot is not None:
@@ -712,11 +714,32 @@ class MainGUI(QtGui.QMainWindow):
           item.set_clim(Imin, Imax)
       plot.draw()
 
+  def clip_offspec_colorscale(self):
+    plots=[self.ui.offspec_pp, self.ui.offspec_mm,
+           self.ui.offspec_pm, self.ui.offspec_mp]
+    Imin=1e10
+    for i, ignore in enumerate(self.ref_list_channels):
+      plot=plots[i]
+      if plot.cplot is not None:
+        for item in plot.canvas.ax.collections:
+          I=item.get_array()
+          Imin=min(Imin, I[I>0].min())
+    for i, ignore in enumerate(self.ref_list_channels):
+      plot=plots[i]
+      if plot.cplot is not None:
+        for item in plot.canvas.ax.collections:
+          I=item.get_array()
+          I[I<=0]=Imin
+          item.set_array(I)
+      plot.draw()
+
   def change_gisans_colorscale(self):
     plots=[self.ui.gisans_pp, self.ui.gisans_mm,
            self.ui.gisans_pm, self.ui.gisans_mp]
     Imin=10**self.ui.gisansImin.value()
     Imax=10**self.ui.gisansImax.value()
+    if Imin>=Imax:
+      return
     for i, ignore in enumerate(self.ref_list_channels):
       plot=plots[i]
       if plot.cplot is not None:

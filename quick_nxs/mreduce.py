@@ -585,7 +585,7 @@ class Reflectivity(object):
     tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     self.ai=tth/2.
     if self.options['scale_by_beam'] and self.ai>0:
-      scale/=sin(self.ai) # scale by beam-footprint
+      scale/=sin(self.ai)/0.005 # scale by beam-footprint
     # set good angular resolution as real resolution not implemented, yet
     dai=0.0001
 
@@ -663,7 +663,7 @@ class Reflectivity(object):
     ai=tth/2.
     self.ai=ai.mean()
     if self.options['scale_by_beam'] and self.ai>0:
-      scale/=sin(self.ai) # scale by beam-footprint
+      scale/=sin(self.ai)/0.005 # scale by beam-footprint
 
     self._calc_bg(dataset)
 
@@ -765,7 +765,7 @@ class Reflectivity(object):
     scale=1./dataset.proton_charge # scale by user factor
 
     if self.options['scale_by_beam'] and self.ai>0:
-      scale/=sin(self.ai) # scale by beam-size
+      scale/=sin(self.ai)/0.005 # scale by beam-size
 
     # Get regions in pixels as integers
     reg=map(lambda item: int(round(item)),

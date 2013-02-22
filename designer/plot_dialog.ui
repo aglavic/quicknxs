@@ -17,7 +17,10 @@
    <iconset resource="../icons/icons.qrc">
     <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="MPLWidget" name="plot" native="true">
      <property name="sizePolicy">
@@ -27,6 +30,104 @@
       </sizepolicy>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="ImaxLabel">
+       <property name="text">
+        <string>Max
+10^</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="Imax">
+       <property name="minimum">
+        <double>-30.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>30.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="applyButton">
+       <property name="text">
+        <string>Apply
+scales
+to
+all</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="IminLabel">
+       <property name="text">
+        <string>Min
+10^</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="Imin">
+       <property name="minimum">
+        <double>-30.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>30.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+       <property name="value">
+        <double>-6.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clipButton">
+       <property name="text">
+        <string>Clip</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -41,5 +142,75 @@
  <resources>
   <include location="../icons/icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>Imin</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Dialog</receiver>
+   <slot>redrawColorscale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>798</x>
+     <y>570</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>830</x>
+     <y>673</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Imax</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>Dialog</receiver>
+   <slot>redrawColorscale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>798</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>899</x>
+     <y>13</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clipButton</sender>
+   <signal>pressed()</signal>
+   <receiver>Dialog</receiver>
+   <slot>clipData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>798</x>
+     <y>598</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>904</x>
+     <y>681</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>applyButton</sender>
+   <signal>pressed()</signal>
+   <receiver>Dialog</receiver>
+   <slot>applyScaling()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>763</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>804</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>redrawColorscale()</slot>
+  <slot>clipData()</slot>
+  <slot>applyScaling()</slot>
+ </slots>
 </ui>

@@ -1073,6 +1073,19 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="clipOffspec">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Clip</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLabel" name="label_22">
              <property name="text">
               <string>Imax 10^</string>
@@ -2783,7 +2796,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>92</x>
-     <y>295</y>
+     <y>484</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -2799,7 +2812,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>132</x>
-     <y>347</y>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -2815,7 +2828,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>297</y>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -2831,7 +2844,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>518</y>
+     <y>756</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -2847,7 +2860,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>449</y>
+     <y>687</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -2863,7 +2876,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>449</y>
+     <y>687</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -2879,7 +2892,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>472</y>
+     <y>710</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -2895,7 +2908,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>472</y>
+     <y>710</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -2911,7 +2924,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>495</y>
+     <y>733</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -2927,7 +2940,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>495</y>
+     <y>733</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3038,8 +3051,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>191</x>
-     <y>599</y>
+     <x>1238</x>
+     <y>99</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3054,8 +3067,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>245</x>
-     <y>626</y>
+     <x>1238</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3087,7 +3100,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>175</x>
-     <y>541</y>
+     <y>779</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3103,7 +3116,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>541</y>
+     <y>779</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3118,8 +3131,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>703</y>
+     <x>1068</x>
+     <y>230</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -3151,7 +3164,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>132</x>
-     <y>372</y>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3246,8 +3259,8 @@
    <slot>visualizePeakfinding()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>81</x>
-     <y>897</y>
+     <x>1084</x>
+     <y>537</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -3311,7 +3324,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>132</x>
-     <y>322</y>
+     <y>511</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3327,7 +3340,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>322</y>
+     <y>511</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3343,7 +3356,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>347</y>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3391,7 +3404,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>262</x>
-     <y>372</y>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3422,8 +3435,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>899</x>
-     <y>451</y>
+     <x>808</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3438,8 +3451,8 @@
    <slot>reduceDatasets()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>870</x>
-     <y>891</y>
+     <x>808</x>
+     <y>820</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3502,8 +3515,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>651</y>
+     <x>1166</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3550,8 +3563,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>483</x>
-     <y>99</y>
+     <x>324</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3566,8 +3579,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>801</x>
-     <y>97</y>
+     <x>371</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel">
      <x>739</x>
@@ -3607,6 +3620,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>clipOffspec</sender>
+   <signal>pressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clip_offspec_colorscale()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>557</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>862</x>
+     <y>-4</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3643,5 +3672,6 @@
   <slot>change_gisans_colorscale()</slot>
   <slot>open_compare_window()</slot>
   <slot>open_advanced_background()</slot>
+  <slot>clip_offspec_colorscale()</slot>
  </slots>
 </ui>
