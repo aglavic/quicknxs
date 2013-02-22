@@ -661,6 +661,7 @@ class PlotDialog(QDialog):
     self.ui.ImaxLabel.show()
     self.ui.IminLabel.show()
     self.ui.clipButton.show()
+    self.ui.applyButton.show()
 
   def hideMinMax(self):
     self.ui.Imin.hide()
@@ -668,6 +669,7 @@ class PlotDialog(QDialog):
     self.ui.ImaxLabel.hide()
     self.ui.IminLabel.hide()
     self.ui.clipButton.hide()
+    self.ui.applyButton.hide()
 
   def redrawColorscale(self):
     plot=self.plot
