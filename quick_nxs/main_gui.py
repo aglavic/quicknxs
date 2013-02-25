@@ -330,7 +330,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
                                    aspect='auto', cmap=self.color,
                                    extent=[data.lamda[0], data.lamda[-1], 0, data.x.shape[0]-1])
-      self.ui.xtof_overview.set_xlabel(u'λ [Å]')
+      self.ui.xtof_overview.set_xlabel(u'$\\lambda{}$ [Å]')
     else:
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
                                    aspect='auto', cmap=self.color,
@@ -443,7 +443,7 @@ class MainGUI(QtGui.QMainWindow):
       if self.ui.xLamda.isChecked():
         plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, extent=[lamda[0], lamda[-1], 0, datai.shape[0]-1])
-        plots[i].set_xlabel(u'λ [Å]')
+        plots[i].set_xlabel(u'$\\lambda{}$ [Å]')
       else:
         plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, extent=[tof[0]*1e-3, tof[-1]*1e-3, 0, datai.shape[0]-1])
@@ -620,7 +620,7 @@ class MainGUI(QtGui.QMainWindow):
                               color=self._refl_color_list[i%len(self._refl_color_list)])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
-      self.ui.refl.set_xlabel(u'Q$_z$ [Å⁻¹]')
+      self.ui.refl.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
     else:
       ymin=min(self.refl.BG[self.refl.BG>0].min(), self.refl.I[self.refl.I>0].min())
       ymax=max(self.refl.BG.max(), self.refl.I.max())
@@ -628,7 +628,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+options['number'])
       self.ui.refl.set_ylabel(u'I')
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
-      self.ui.refl.set_xlabel(u'λ [Å]')
+      self.ui.refl.set_xlabel(u'$\\lambda{}$ [Å]')
     if self.ui.logarithmic_y.isChecked():
       self.ui.refl.set_yscale('log')
     else:
@@ -686,18 +686,18 @@ class MainGUI(QtGui.QMainWindow):
       if self.ui.kizmkfzVSqz.isChecked():
         plot.canvas.ax.set_xlim([-0.03, 0.03])
         plot.canvas.ax.set_ylim([0., Qzmax])
-        plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [Å⁻¹]')
-        plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
+        plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [Å$^{-1}$]')
+        plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
       elif self.ui.qxVSqz.isChecked():
         plot.canvas.ax.set_xlim([-0.001, 0.001])
         plot.canvas.ax.set_ylim([0., Qzmax])
-        plot.set_xlabel(u'Q$_x$ [Å⁻¹]')
-        plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
+        plot.set_xlabel(u'Q$_x$ [Å$^{-1}$]')
+        plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
       else:
         plot.canvas.ax.set_xlim([0., Qzmax/2.])
         plot.canvas.ax.set_ylim([0., Qzmax/2.])
-        plot.set_xlabel(u'k$_{i,z}$ [Å⁻¹]')
-        plot.set_ylabel(u'k$_{f,z}$ [Å⁻¹]')
+        plot.set_xlabel(u'k$_{i,z}$ [Å$^{-1}$]')
+        plot.set_ylabel(u'k$_{f,z}$ [Å$^{-1}$]')
       plot.set_title(channel)
       if plot.cplot is not None:
         plot.cplot.set_clim([Imin, Imax])
@@ -811,8 +811,8 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].pcolormesh(datai.QyGrid, datai.QzGrid, datai.SGrid,
                           log=self.ui.logarithmic_colorscale.isChecked(), imin=Imin, imax=Imax,
                           cmap=self.color)
-      plots[i].set_xlabel(u'Q$_y$ [Å⁻¹]')
-      plots[i].set_ylabel(u'Q$_z$ [Å⁻¹]')
+      plots[i].set_xlabel(u'Q$_y$ [Å$^{-1}$]')
+      plots[i].set_ylabel(u'Q$_z$ [Å$^{-1}$]')
       plots[i].set_title(self.channels[i])
       if plots[i].cplot is not None:
         plots[i].cplot.set_clim([Imin, Imax])

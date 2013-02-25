@@ -74,7 +74,7 @@ class CompareWidget(QWidget):
       if self.ui.compareList.rowCount()>0:
         self.ui.comparePlot.legend()
         self.ui.comparePlot.canvas.ax.set_yscale('log')
-        self.ui.comparePlot.set_xlabel(u'Q$_z$ [Å⁻¹]')
+        self.ui.comparePlot.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
         self.ui.comparePlot.set_ylabel(u'R')
       self.ui.comparePlot.draw()
     except:

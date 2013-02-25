@@ -577,7 +577,7 @@ class ReduceDialog(QDialog):
         data=output_data[channel]
         plot.errorbar(data[:, 0], data[:, 1], yerr=data[:, 2], label=channel)
       plot.legend()
-      plot.set_xlabel(u'Q$_z$ [Å⁻¹]')
+      plot.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
       plot.set_ylabel(u'R [a.u.]')
       plot.set_yscale('log')
       plot.set_title(ind_str+' - '+title)
@@ -587,12 +587,12 @@ class ReduceDialog(QDialog):
     else:
       if title=='OffSpec':
         x, y, z=4, 1, 5
-        xl=u'k$_{i,z}$-k$_{f,z}$ [Å⁻¹]'
-        yl=u'Q$_z$ [Å⁻¹]'
+        xl=u'k$_{i,z}$-k$_{f,z}$ [Å$^{-1}$]'
+        yl=u'Q$_z$ [Å$^{-1}$]'
       else:
         x, y, z=0, 1, 2
-        xl=u'%s [Å⁻¹]'%output_data['column_names'][0]
-        yl=u'%s [Å⁻¹]'%output_data['column_names'][1]
+        xl=u'%s [Å$^{-1}$]'%output_data['column_names'][0]
+        yl=u'%s [Å$^{-1}$]'%output_data['column_names'][1]
       dialogs=[]
       for channel in self.channels:
         # plot the results in a new window
@@ -770,8 +770,8 @@ class SmoothDialog(QDialog):
     if self.ui.kizmkfzVSqz.isChecked():
       plot.canvas.ax.set_xlim([-0.035, 0.035])
       plot.canvas.ax.set_ylim([0., Qzmax*1.01])
-      plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [Å⁻¹]')
-      plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
+      plot.set_xlabel(u'k$_{i,z}$-k$_{f,z}$ [Å$^{-1}$]')
+      plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
       x1=-0.03
       x2=0.03
       y1=0.
@@ -785,8 +785,8 @@ class SmoothDialog(QDialog):
     elif self.ui.qxVSqz.isChecked():
       plot.canvas.ax.set_xlim([-0.0005, 0.0005])
       plot.canvas.ax.set_ylim([0., Qzmax*1.01])
-      plot.set_xlabel(u'Q$_x$ [Å⁻¹]')
-      plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
+      plot.set_xlabel(u'Q$_x$ [Å$^{-1}$]')
+      plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
       x1=-0.0002
       x2=0.0002
       y1=0.
@@ -800,8 +800,8 @@ class SmoothDialog(QDialog):
     else:
       plot.canvas.ax.set_xlim([0., Qzmax/2.*1.01])
       plot.canvas.ax.set_ylim([0., Qzmax/2.*1.01])
-      plot.set_xlabel(u'k$_{i,z}$ [Å⁻¹]')
-      plot.set_ylabel(u'k$_{f,z}$ [Å⁻¹]')
+      plot.set_xlabel(u'k$_{i,z}$ [Å$^{-1}$]')
+      plot.set_ylabel(u'k$_{f,z}$ [Å$^{-1}$]')
       x1=0.0
       x2=Qzmax/2.
       y1=0.
@@ -1014,8 +1014,8 @@ class GISANSDialog(QDialog):
       pos=self.ui.lambdaMin.value()+(i+1)*lsteps
       self.step_lines.append(self.ui.lambdaPlot.canvas.ax.axvline(pos, color='red'))
 
-    self.ui.lambdaPlot.set_xlabel(u'λ [Å]')
-    self.ui.lambdaPlot.set_ylabel(u'I(λ)')
+    self.ui.lambdaPlot.set_xlabel(u'$\\lambda{}$ [Å]')
+    self.ui.lambdaPlot.set_ylabel(u'I($\\lambda{}$)')
     self.ui.lambdaPlot.canvas.fig.subplots_adjust(left=0.15, bottom=0.18, right=0.99, top=0.99)
     self.ui.lambdaPlot.draw()
 
@@ -1091,9 +1091,9 @@ class GISANSDialog(QDialog):
                 imin=10**(self.ui.iMin.value()), imax=10**(self.ui.iMax.value()))
     plot.canvas.ax.set_xlim(r0[1].min(), r0[1].max())
     plot.canvas.ax.set_ylim(r0[2].min(), r0[2].max())
-    plot.set_xlabel(u'Q$_y$ [Å⁻¹]')
-    plot.set_ylabel(u'Q$_z$ [Å⁻¹]')
-    title=u'λ=%.2f-%.2fÅ'%(result[3], result[4])
+    plot.set_xlabel(u'Q$_y$ [Å$^{-1}$]')
+    plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
+    title=u'$\\lambda{}$=%.2f-%.2fÅ'%(result[3], result[4])
     plot.set_title(title)
     plot.draw()
     item=QListWidgetItem(title)

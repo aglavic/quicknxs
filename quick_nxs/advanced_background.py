@@ -107,7 +107,7 @@ class BackgroundDialog(QDialog):
     self.ui.xTof.imshow(data.xtofdata[::-1], log=True,
                                  aspect='auto', cmap=parent.color,
                                  extent=[data.lamda[0], data.lamda[-1], 0, data.x.shape[0]-1])
-    self.ui.xTof.set_xlabel(u'λ [Å]')
+    self.ui.xTof.set_xlabel(u'$\\lambda{}$ [Å]')
     self.ui.xTof.set_ylabel(u'x [pix]')
     if self.ui.polyregionActive.isChecked():
       for poly in self.polygons:
@@ -152,7 +152,7 @@ class BackgroundDialog(QDialog):
     self.ui.BG.errorbar(lamda, BGraw, yerr=dBGraw, label='BGraw')
     self.ui.BG.errorbar(lamda, BG, yerr=dBG, label='Background')
     self.ui.BG.legend(loc=2)
-    self.ui.BG.set_xlabel(u'λ [Å]')
+    self.ui.BG.set_xlabel(u'$\\lambda{}$ [Å]')
     self.ui.BG.set_ylabel(u'I')
     self.ui.BG.set_yscale('log')
     self.ui.BG.canvas.ax.set_ylim(ymin*0.8, ymax*1.25)
