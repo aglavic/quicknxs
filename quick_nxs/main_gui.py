@@ -316,8 +316,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
                                aspect='auto', cmap=self.color,
                                extent=[tth_range+tth0, tth0, phi0-phi_range, phi0])
-      self.ui.xy_overview.set_xlabel(u'2θ [°]')
-      self.ui.xy_overview.set_ylabel(u'φ [°]')
+      self.ui.xy_overview.set_xlabel(u'2$\\Theta{}$ [°]')
+      self.ui.xy_overview.set_ylabel(u'$\\phi{}$ [°]')
       self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
     else:
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
@@ -387,8 +387,8 @@ class MainGUI(QtGui.QMainWindow):
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color,
                              extent=[tth_range+tth0, tth0, phi0-phi_range, phi0])
-        plots[i].set_xlabel(u'2θ [°]')
-        plots[i].set_ylabel(u'φ [°]')
+        plots[i].set_xlabel(u'2$\\Theta{}$ [°]')
+        plots[i].set_ylabel(u'$\\phi{}$ [°]')
       else:
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color)
