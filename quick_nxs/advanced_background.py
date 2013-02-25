@@ -4,12 +4,18 @@
 '''
 
 from PyQt4.QtGui import QDialog, QTableWidgetItem
-from matplotlib.patches import Polygon
-from matplotlib.nxutils import points_inside_poly
-from numpy import array, meshgrid
+from matplotlib.patches import Polygon, Rectangle
+from numpy import array, sqrt
 from .background_dialog import Ui_Dialog
 
 class BackgroundDialog(QDialog):
+  '''
+  Allow the user to have more control on the background extraction procedure.
+  A list of polygon regions can be defined for the background calculation and
+  the background is shown in a X vs. Lambda map and as normalized intensity
+  plot in comparison to the specular data.
+  '''
+  last_bg=(0., 0.)
 
   def __init__(self, parent):
     QDialog.__init__(self, parent)
@@ -38,10 +44,12 @@ class BackgroundDialog(QDialog):
     self.ui.polyTable.resizeColumnsToContents()
     self.active_poly.append([x, y])
     if len(self.active_poly)==4:
+      # polygon is complete, add it to the list and show it on the plot
       self.ui.polygonDisplay.setText('')
       self.polygons.append(self.active_poly)
       self.active_poly=None
       self.drawXTof()
+      self.optionChanged()
     else:
       self.ui.polygonDisplay.setText('Click point %i'%(len(self.active_poly)+1))
 
@@ -54,20 +62,31 @@ class BackgroundDialog(QDialog):
     self.ui.polyTable.setRowCount(len(self.polygons)+1)
 
   def delPolygon(self):
+    '''
+    Remove one polygon from the list.
+    '''
     idx=self.ui.polyTable.currentRow()
     if idx<0:
       return
     self.ui.polyTable.removeRow(idx)
     self.polygons.pop(idx)
     self.drawXTof()
+    self.optionChanged()
 
   def clearPolygons(self):
+    '''
+    Remove all polygons.
+    '''
     self.ui.polyTable.setRowCount(0)
     self.polygons=[]
     self.active_poly=None
     self.drawXTof()
+    self.optionChanged()
 
   def polygonChanged(self, item):
+    '''
+    Update polygon points.
+    '''
     row, col=item.row(), item.column()
     try:
       val=float(item.text())
@@ -76,6 +95,7 @@ class BackgroundDialog(QDialog):
     if len(self.polygons)>row:
       self.polygons[row][col//2][col%2]=val
       self.drawXTof()
+      self.optionChanged()
 
   def drawXTof(self):
     '''
@@ -95,6 +115,14 @@ class BackgroundDialog(QDialog):
           continue
         polygon=Polygon(array(poly), closed=True, alpha=0.25, color='black')
         self.ui.xTof.canvas.ax.add_patch(polygon)
+
+    if parent.refl:
+      x_pos=parent.refl.options['bg_pos']
+      x_width=parent.refl.options['bg_width']
+      rect=Rectangle((data.lamda[0], x_pos-x_width/2.), data.lamda[-1]-data.lamda[0],
+                     x_width, alpha=0.15, color='red')
+      self.last_bg=(x_pos, x_width)
+      self.ui.xTof.canvas.ax.add_patch(rect)
     self.ui.xTof.draw()
 
   def drawBG(self):
@@ -108,14 +136,16 @@ class BackgroundDialog(QDialog):
     if not options['normalization']:
       return
     norm=options['normalization'].Rraw
+    dnorm=options['normalization'].dRraw
     reg=norm>0
     lamda=refl.lamda[reg]
+    # normalize all intensities by direct beam
     I=refl.I[reg]/norm[reg]
-    dI=refl.dI[reg]/norm[reg]
+    dI=sqrt((refl.dI[reg]/norm[reg])**2+(refl.I[reg]/norm[reg]**2*dnorm[reg])**2)
     BGraw=refl.BGraw[reg]/norm[reg]
-    dBGraw=refl.dBGraw[reg]/norm[reg]
+    dBGraw=sqrt((refl.dBGraw[reg]/norm[reg])**2+(refl.BGraw[reg]/norm[reg]**2*dnorm[reg])**2)
     BG=refl.BG[reg]/norm[reg]
-    dBG=refl.dBG[reg]/norm[reg]
+    dBG=sqrt((refl.dBG[reg]/norm[reg])**2+(refl.BG[reg]/norm[reg]**2*dnorm[reg])**2)
     ymin=min(I[I>0].min(), BG[BG>0].min(), BGraw[BGraw>0].min())
     ymax=max(I.max(), BG.max(), BGraw.max())
     self.ui.BG.errorbar(lamda, I, yerr=dI, label='Specular', color='black')
@@ -127,17 +157,13 @@ class BackgroundDialog(QDialog):
     self.ui.BG.set_yscale('log')
     self.ui.BG.canvas.ax.set_ylim(ymin*0.8, ymax*1.25)
     self.ui.BG.draw()
-
-  def getRegion(self):
-    parent=self.main_window
-    data=parent.active_data[parent.active_channel]
-    X, Lamda=meshgrid(data.x, data.lamda)
-    inside=X.flatten()<0
-    for poly in self.polygons:
-      inside=inside|points_inside_poly(array([Lamda.flatten(), X.flatten()]).transpose(),
-                              array(poly))
-#    lamdas=unique(Lamda.flatten()[inside])
-    return inside.reshape(X.shape)
+    if (options['bg_pos'], options['bg_width'])!=self.last_bg:
+      # update the background region, if necessary
+      self.drawXTof()
 
   def optionChanged(self):
+    '''
+    Recalculate the background and reflectivity when options have been changed.
+    The updates of the dialog plots are triggered automatically.
+    '''
     self.main_window.initiateReflectivityPlot.emit(True)

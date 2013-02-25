@@ -367,6 +367,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>polyregionActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Dialog</receiver>
+   <slot>optionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-3</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>polyregionActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Dialog</receiver>
+   <slot>drawXTof()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>390</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addPolygon()</slot>
@@ -374,5 +406,6 @@
   <slot>delPolygon()</slot>
   <slot>clearPolygons()</slot>
   <slot>polygonChanged(QTableWidgetItem*)</slot>
+  <slot>drawXTof()</slot>
  </slots>
 </ui>

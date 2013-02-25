@@ -545,8 +545,12 @@ class MainGUI(QtGui.QMainWindow):
     else:
       grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./pi
       tth=data.sangle*2.-(data.dpix-self.ui.refXPos.value())*grad_per_pixel
+    bg_poly_regions=None
+    # get additional background options from dialog, if it has been opened
     if self.background_dialog:
       bg_tof_constant=self.background_dialog.ui.presumeIofLambda.isChecked()
+      if self.background_dialog.ui.polyregionActive.isChecked():
+        bg_poly_regions=list(self.background_dialog.polygons)
     else:
       bg_tof_constant=False
     number=str(self.active_data.number)
@@ -565,6 +569,7 @@ class MainGUI(QtGui.QMainWindow):
                 tth=tth,
                 dpix=dpix,
                 bg_tof_constant=bg_tof_constant,
+                bg_poly_regions=bg_poly_regions,
                 normalization=self.getNorm(),
                   )
 
@@ -1732,6 +1737,9 @@ as the ones already in the list:
     QtGui.QMainWindow.closeEvent(self, event)
 
   def open_advanced_background(self):
+    '''
+    Show a dialog to enter additional options for the background calculation.
+    '''
     if self.background_dialog:
       self.background_dialog.show()
     else:

@@ -48,7 +48,8 @@ MAPPING_EFIELD=(
                 (u'-V', u'entry-Off_On'),
                 )
 
-__all__=['NXSData', 'Reflectivity', 'OffSpecular']
+# used for * imports
+__all__=['NXSData', 'Reflectivity', 'OffSpecular', 'GISANS']
 
 class NXSData(object):
   '''
@@ -492,6 +493,7 @@ class MRDataset(object):
       self._autocalc_ref()
     return self._dI
 
+#TODO: Export all options as string for file header and perhaps put option readout here as static method
 class Reflectivity(object):
   """
   Extraction of reflectivity from MRDatatset object storing all data
@@ -511,6 +513,7 @@ class Reflectivity(object):
        normalization=None, # another Reflectivity object used for normalization
        scale_by_beam=True, # use the beam width in the scaling
        bg_tof_constant=False, # treat background to be independent of wavelength for better statistics
+       bg_poly_regions=None, # use polygon regions in x/λ to determine which points to use for the background
        bg_scale_xfit=False, # use a linear fit on x-axes projection to scale the background
        P0=0,
        PN=0,
@@ -762,6 +765,7 @@ class Reflectivity(object):
     y_width=self.options['y_width']
     bg_pos=self.options['bg_pos']
     bg_width=self.options['bg_width']
+    bg_poly=self.options['bg_poly_regions']
     scale=1./dataset.proton_charge # scale by user factor
 
     if self.options['scale_by_beam'] and self.ai>0:
@@ -772,14 +776,40 @@ class Reflectivity(object):
             [bg_pos-bg_width/2., bg_pos+bg_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1 ])
 
-    # restrict the intensity and background data to the given regions
-    bgdata=data[reg[0]:reg[1], reg[2]:reg[3], :]
-    # calculate region size for later use
-    size_BG=float((reg[3]-reg[2])*(reg[1]-reg[0]))
-    # calculate ROI intensities and normalize by number of points
-    self.BGraw=bgdata.sum(axis=0).sum(axis=0)
-    self.dBGraw=sqrt(self.BGraw)/size_BG*scale
-    self.BGraw/=size_BG/scale
+    if bg_poly:
+      # create the background region from given polygons
+      # for ToF channels without polygon region the normal positions are use
+      from matplotlib.nxutils import points_inside_poly
+      x=dataset.x
+      lamda=dataset.lamda
+      X, Lamda=meshgrid(x, lamda)
+      points=vstack([Lamda.flatten(), X.flatten()]).transpose()
+      points_in_region=zeros(X.shape, dtype=bool).flatten()
+      for poly in bg_poly:
+        points_in_region|=points_inside_poly(points, poly)
+      points_in_region=points_in_region.reshape(X.shape)
+      lamda_regions=unique(Lamda[points_in_region].flatten())
+      # add missing lambda items from normal bg region
+      for lamdai in lamda:
+        if not lamdai in lamda_regions:
+          points_in_region[:, reg[0]:reg[1]]|=(Lamda[:, reg[0]:reg[1]]==lamdai)
+      points_in_region=points_in_region.astype(float)
+      # sum over y
+      bgydata=data[:, reg[2]:reg[3], :].sum(axis=1).transpose()
+      # sum over x in the given region and devide by number of x-points used
+      unscaled_bgdata=(bgydata*points_in_region).sum(axis=1)
+      scaling_data=points_in_region.sum(axis=1)*float(reg[3]-reg[2])
+      self.BGraw=unscaled_bgdata/scaling_data*scale
+      self.dBGraw=sqrt(unscaled_bgdata)/scaling_data*scale
+    else:
+      # restrict the intensity and background data to the given regions
+      bgdata=data[reg[0]:reg[1], reg[2]:reg[3], :]
+      # calculate region size for later use
+      size_BG=float((reg[3]-reg[2])*(reg[1]-reg[0]))
+      # calculate ROI intensities and normalize by number of points
+      self.BGraw=bgdata.sum(axis=0).sum(axis=0)
+      self.dBGraw=sqrt(self.BGraw)/size_BG*scale
+      self.BGraw/=size_BG/scale
     if self.options['bg_tof_constant'] and self.options['normalization']:
       norm=self.options['normalization'].R
       reg=(self.dBGraw>0)&(norm>0)

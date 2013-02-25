@@ -9,11 +9,14 @@ from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
 
-__all__=['RefCollection', 'get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion']
+# used for * imports
+__all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',
+         'smooth_data', 'refine_gauss']
 
+#TODO: create a good framework for collections of reflectivities used by GUI and future scripts
 class RefCollection(object):
   '''
-  Representation of a collection of datasets used to calculate
+  Representation of collection of datasets used to calculate
   a full reflectivity pattern.
   If a list or MRDataset objects is given, the normalization and
   scaling is automatically calculated.
