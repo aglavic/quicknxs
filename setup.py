@@ -47,8 +47,6 @@ if "py2exe" in sys.argv:
   pexe=os.path.abspath(os.path.join('..\\App'))
   sys.path.append(pexe)
   __options__={
-                #"setup_requires": ['py2exe'],
-                #"console": [ "__init__.py"], # set the executable for py2exe
                 "windows": [ {
                             "script": "quicknxs",
                             "icon_resources": [(1, "icons/logo.ico")],
