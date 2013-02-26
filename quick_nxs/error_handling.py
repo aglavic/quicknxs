@@ -16,7 +16,7 @@ DEVELOPER_EMAIL=u'Artur Glavic <glavicag@ornl.gov>'
 # file to write any error report information to
 REPORT_SAVE_PATH=os.path.expanduser(u'~/quicknxs_error.pkl.gz')
 # MainGUI object attributes to collect together with the traceback
-COLLECT_GUI_ATTRIBUTES=['active_file', 'active_channel', 'refl', ]
+COLLECT_GUI_ATTRIBUTES=['active_file', 'active_channel', 'refl', 'ref_norm', 'reduction_list', ]
 
 class ErrorHandler(QtGui.QWidget):
   '''
@@ -68,7 +68,7 @@ u'''An unexpected error has occurred, please notify the developer
   (%s).
 
 The traceback (see below) and debug information 
-has been writtern to "%s".
+has been written to "%s".
 
 
 %s'''%(DEVELOPER_EMAIL, REPORT_SAVE_PATH, traceback))
