@@ -252,7 +252,17 @@ class NXSData(object):
     for item in self.values():
       yield item
 
+  @classmethod
+  def get_cachesize(cls):
+    """
+    Return the total amount of memory used by the cached datasets.
+    """
+    return sum([ds.nbytes for ds in cls._cache])
+
   # easy access properties common to all datasets
+  # return the size of the data stored in memory for all states of this file
+  @property
+  def nbytes(self): return sum([ds.nbytes for ds in self])
 
   @property
   def lambda_center(self): return self[0].lambda_center
@@ -516,6 +526,10 @@ class MRDataset(object):
     return output
 
   ################## Properties for easy data access ##########################
+  # return the size of the data stored in memory for this dataset
+  @property
+  def nbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
+
   @property
   def xdata(self): return self.xydata.mean(axis=0)
 

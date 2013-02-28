@@ -116,9 +116,17 @@ class MainGUI(QtGui.QMainWindow):
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
+    self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
+    self.ui.statusbar.addPermanentWidget(self.cache_indicator)
+    button=QtGui.QPushButton('Empty Cache')
+    self.ui.statusbar.addPermanentWidget(button)
+    button.pressed.connect(self.empty_cache)
+    button.setFlat(True)
+    button.setMaximumSize(150, 20)
+
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
-    self.eventProgress.setMaximumSize(80, 100)
+    self.eventProgress.setMaximumSize(140, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
 
     self.toggleHide()
@@ -255,20 +263,32 @@ class MainGUI(QtGui.QMainWindow):
       return
     self.channels=data.keys()
 
-    desiredChannel=self.ui.selectedChannel.currentText().split('/')
-    self.active_channel=self.channels[0]
-    for channel in self.channels:
-      if channel in desiredChannel:
-        self.active_channel=channel
-        break
+    desiredChannel=self.ui.selectedChannel.currentIndex()
+    if desiredChannel<len(self.channels):
+      self.active_channel=self.channels[desiredChannel]
+    else:
+      self.active_channel=self.channels[0]
+      self.ui.selectedChannel.setCurrentIndex(0)
+    for i, channel in enumerate(self.channels):
+      self.ui.selectedChannel.setItemText(i, channel)
+    for i in range(len(self.channels), 4):
+      self.ui.selectedChannel.setItemText(i, 'NONE')
     self.active_data=data
     self.last_mtime=os.path.getmtime(filename)
     self.ui.statusbar.showMessage(u"%s loaded"%(filename), 5000)
+    self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
 
     self.fileLoaded.emit()
     if do_plot:
       self.initiateProjectionPlot.emit(False)
       self.initiateReflectivityPlot.emit(False)
+
+  def empty_cache(self):
+    """
+    Empty the NXSData readout cache.
+    """
+    NXSData._cache=[]
+    self.cache_indicator.setText('Cache Size: 0.0MB')
 
 ####### Plot related methods
 
