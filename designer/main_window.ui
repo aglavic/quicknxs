@@ -1506,6 +1506,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionOpen_Sum"/>
     <addaction name="actionNext_File"/>
     <addaction name="actionPrevious_File"/>
     <addaction name="separator"/>
@@ -2635,6 +2636,9 @@
    <property name="text">
     <string>Load Extraction...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
+   </property>
   </action>
   <action name="actionClear_Normalizations">
    <property name="icon">
@@ -2662,6 +2666,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionOpen_Sum">
+   <property name="text">
+    <string>Open Sum...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
  </widget>
@@ -3636,6 +3648,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOpen_Sum</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>fileOpenSumDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>622</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3673,5 +3701,6 @@
   <slot>open_compare_window()</slot>
   <slot>open_advanced_background()</slot>
   <slot>clip_offspec_colorscale()</slot>
+  <slot>fileOpenSumDialog()</slot>
  </slots>
 </ui>

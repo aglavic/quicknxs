@@ -16,7 +16,7 @@ from .gui_utils import ReduceDialog, DelayedTrigger
 from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .error_handling import ErrorHandler
-from .mreduce import NXSData, Reflectivity, OffSpecular, GISANS, DETECTOR_X_REGION
+from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 BASE_FOLDER='/SNS/REF_M'
@@ -222,6 +222,25 @@ class MainGUI(QtGui.QMainWindow):
             callback=self.updateEventReadout)
       self._fileOpenDone(data, filename, do_plot)
 
+  def fileOpenSum(self, filenames, do_plot=True):
+    '''
+      Open and sum up several datafiles and plot the data.
+    '''
+    folder, base=os.path.split(filenames[0])
+    if folder!=self.active_folder:
+      self.onPathChanged(base, folder)
+    self.active_file=base
+    if self._foThread:
+      self._foThread.finished.disconnect()
+      self._foThread.terminate()
+      self._foThread.wait(100)
+      self._foThread=None
+    self.ui.statusbar.showMessage(u"Reading files %s..."%(filenames[0]))
+    data=NXSMultiData(filenames,
+          bin_type=str(self.ui.eventBinMode.currentText()),
+          bins=self.ui.eventTofBins.value(),
+          callback=None)
+    self._fileOpenDone(data, filenames[0], do_plot)
 
 
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
@@ -553,7 +572,10 @@ class MainGUI(QtGui.QMainWindow):
         bg_poly_regions=list(self.background_dialog.polygons)
     else:
       bg_tof_constant=False
-    number=str(self.active_data.number)
+    if type(self.active_data.number) is list:
+      number='['+",".join(map(str, self.active_data.number))+']'
+    else:
+      number=str(self.active_data.number)
     options=dict(
                 x_pos=self.ui.refXPos.value(),
                 x_width=self.ui.refXWidth.value(),
@@ -862,6 +884,23 @@ class MainGUI(QtGui.QMainWindow):
       else:
         self.automaticExtraction(filenames)
 
+  def fileOpenSumDialog(self):
+    '''
+      Show a dialog to open a set of files and sum them together.
+    '''
+    if self.ui.histogramActive.isChecked():
+      filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
+    elif self.ui.oldFormatActive.isChecked():
+      filter_=u'Old Nexus (*.nxs);;All (*.*)'
+    else:
+      filter_=u'Event Nexus (*event.nxs);;All (*.*)'
+    filenames=QtGui.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
+                                               directory=self.active_folder,
+                                               filter=filter_)
+    if filenames:
+      filenames=map(unicode, filenames)
+      self.fileOpenSum(filenames)
+
   def fileOpenList(self):
     '''
       Called when a new file is selected from the file list.
@@ -917,7 +956,7 @@ class MainGUI(QtGui.QMainWindow):
     if filename!=u'':
       self.clearRefList(do_plot=False)
       text=open(filename, 'r').read()
-      split1='# Parameters used for extraction of normalization:'
+      split1='# Parameters used for extraction of direct beam:'
       split2='# Parameters used for extraction of reflectivity:'
       split3='# Column Units:'
       normdata=text.split(split1)[1].split(split2)[0]
@@ -932,7 +971,7 @@ class MainGUI(QtGui.QMainWindow):
         I0, P0, PN=entry[:3]
         x0, xw, y0, yw, bg0, bgw=entry[3:9]
         dpix, tth, number, nidx=entry[9:13]
-        filename=entry[14]
+        filenames=entry[14].split(';')
         options=dict(
                 x_pos=float(x0),
                 x_width=float(xw),
@@ -950,10 +989,13 @@ class MainGUI(QtGui.QMainWindow):
                 bg_tof_constant=False,
                 normalization=None,
                      )
-        data=NXSData(filename)
+        if len(filenames)==1:
+          data=NXSData(filenames[0])
+        else:
+          data=NXSMultiData(filenames)
         norms[nidx]=Reflectivity(data[0], **options)
         self.refl=norms[nidx]
-        self.active_file=filename
+        self.active_file=filenames[0]
         self.active_data=data
         self.setNorm(do_plot=False, do_remove=False)
       for entry in reflines:
@@ -962,7 +1004,7 @@ class MainGUI(QtGui.QMainWindow):
         I0, P0, PN=entry[:3]
         x0, xw, y0, yw, bg0, bgw=entry[3:9]
         dpix, tth, number, nidx, fan=entry[9:14]
-        filename=entry[14]
+        filenames=entry[14].split(';')
         options=dict(
                 x_pos=float(x0),
                 x_width=float(xw),
@@ -980,7 +1022,10 @@ class MainGUI(QtGui.QMainWindow):
                 bg_tof_constant=False,
                 normalization=norms[nidx],
                      )
-        data=NXSData(filename)
+        if len(filenames)==1:
+          data=NXSData(filenames[0])
+        else:
+          data=NXSMultiData(filenames)
         self.channels=data.keys()
         desiredChannel=self.ui.selectedChannel.currentText().split('/')
         self.active_channel=self.channels[0]
@@ -989,14 +1034,17 @@ class MainGUI(QtGui.QMainWindow):
             self.active_channel=channel
             break
         self.active_data=data
-        self.active_file=filename
+        self.active_file=filenames[0]
         ref=Reflectivity(data[0], **options)
         refs.append(ref)
         self.refl=ref
         self.addRefList(do_plot=False)
 
     self.ui.actionAutoYLimits.setChecked(True)
-    self.fileOpen(filename)
+    if len(filenames)==1:
+      self.fileOpen(filenames[0])
+    else:
+      self.fileOpenSum(filenames)
     self.ui.actionAutoYLimits.setChecked(False)
 
   def automaticExtraction(self, filenames):
@@ -1155,7 +1203,10 @@ class MainGUI(QtGui.QMainWindow):
       return
     if str(self.active_data.number) not in self.ref_norm:
       lamda=self.active_data.lambda_center
-      number=str(self.active_data.number)
+      if type(self.active_data.number) is list:
+        number='['+",".join(map(str, self.active_data.number))+']'
+      else:
+        number=str(self.active_data.number)
       opts=self.refl.options
       self.ref_norm[number]=self.refl
       idx=sorted(self.ref_norm.keys()).index(number)
@@ -1180,7 +1231,10 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normalizationLabel.setText(u",".join(map(str, sorted(self.ref_norm.keys()))))
       self.ui.normalizeTable.resizeColumnsToContents()
     elif do_remove:
-      number=str(self.active_data.number)
+      if type(self.active_data.number) is list:
+        number='['+",".join(map(str, self.active_data.number))+']'
+      else:
+        number=str(self.active_data.number)
       idx=sorted(self.ref_norm.keys()).index(number)
       del(self.ref_norm[number])
       self.ui.normalizeTable.removeRow(idx)
@@ -1664,8 +1718,12 @@ as the ones already in the list:
       Use parameters to calculate and return the reflectivity
       of one file.
     '''
-    filename, _channel=old_object.origin
-    data=NXSData(filename, **old_object.read_options)[self.active_channel]
+    if type(old_object.origin) is list:
+      filenames=[origin[0] for origin in old_object.origin]
+      data=NXSMultiData(filenames, **old_object.read_options)[self.active_channel]
+    else:
+      filename, _channel=old_object.origin
+      data=NXSData(filename, **old_object.read_options)[self.active_channel]
     if overwrite_options:
       refl=Reflectivity(data, **overwrite_options)
     else:

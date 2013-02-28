@@ -17,12 +17,13 @@ from numpy import vstack, hstack, argsort, array, savetxt, savez, where, histogr
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
+from .version import str_version
 from .mplwidget import MPLWidget
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
 from .gisans_dialog import Ui_Dialog as UiGisans
 from .smooth_dialog import Ui_Dialog as UiSmooth
-from .mreduce import NXSData, Reflectivity, OffSpecular, GISANS
+from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, GISANS
 from .mrcalc import smooth_data
 from .output_templates import *
 from . import genx_data
@@ -129,15 +130,20 @@ class ReduceDialog(QDialog):
     self.indices=[]
     self.raw_data={}
     for refli in self.refls:
-      self.raw_data[refli.options['number']]=NXSData(refli.origin[0], **refli.read_options)
-      self.indices.append(refli.options['number'])
+      if type(refli.origin) is list:
+        flist=[origin[0] for origin in refli.origin]
+        self.raw_data[refli.options['number']]=NXSMultiData(flist, **refli.read_options)
+        self.indices.append(refli.options['number'])
+      else:
+        self.raw_data[refli.options['number']]=NXSData(refli.origin[0], **refli.read_options)
+        self.indices.append(refli.options['number'])
 
   def extract_reflectivity(self):
     '''
       Extract the specular reflectivity for all datasets.
     '''
     output_data=dict([(channel, []) for channel in self.channels])
-    output_data['column_units']=['A^-1', 'a.u.', 'a.u.', 'rad']
+    output_data['column_units']=['A^-1', 'a.u.', 'a.u.', 'A^-1', 'rad']
     output_data['column_names']=['Qz', 'R', 'dR', 'dQz', 'ai']
 
     for refli in self.refls:
@@ -304,17 +310,25 @@ class ReduceDialog(QDialog):
     plines=''
     for i, normi in enumerate(self.norms):
       opts=dict(normi.options)
+      if type(normi.origin) is list:
+        fname=u";".join([origin[0] for origin in normi.origin])
+      else:
+        fname=normi.origin[0]
       opts.update({'norm_index': i+1,
-                   'file_number': int(normi.options['number']),
-                   'file_name': normi.origin[0],
+                   'file_number': normi.options['number'],
+                   'file_name': fname,
                    })
       nlines+='# '+FILE_HEADER_PARAMS%opts
       nlines+='\n'
     for refli in self.refls:
       opts=dict(refli.options)
+      if type(refli.origin) is list:
+        fname=u";".join([origin[0] for origin in refli.origin])
+      else:
+        fname=refli.origin[0]
       opts.update({'norm_index': self.norms.index(refli.options['normalization'])+1,
-                   'file_number': int(refli.options['number']),
-                   'file_name': refli.origin[0],
+                   'file_number': refli.options['number'],
+                   'file_name': fname,
                    })
       plines+='# '+FILE_HEADER_PARAMS%opts
       plines+='\n'
@@ -332,6 +346,7 @@ class ReduceDialog(QDialog):
           # write the file header
           of.write(FILE_HEADER%{
                                 'date': strftime("%Y-%m-%d %H:%M:%S"),
+                                'version': str_version,
                                 'datatype': key,
                                 'indices': self.ind_str,
                                 'params_lines': plines,

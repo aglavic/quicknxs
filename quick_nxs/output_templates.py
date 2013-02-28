@@ -62,18 +62,18 @@ GP_LINE_3D=u'splot "%(file_name)s" u %(x)i:%(y)i:(Imin($%(z)i)) w pm3d t ""'
 GP_SEP=u',\\\n     '
 GP_SEP_3D=u'\nset title "%s"\n'
 
-FILE_HEADER=u'''# Datafile created by QuickNXS
+FILE_HEADER=u'''# Datafile created by QuickNXS %(version)s
 # Date: %(date)s
 # Type: %(datatype)s
 # Input file indices: %(indices)s
 # Extracted states: %(channels)s
 #
-# Parameters used for extraction of normalization:
-# I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       N. Index  FAN  File
+# Parameters used for extraction of direct beam:
+# I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       DB Index  FAN  File
 %(norm_lines)s
 #
 # Parameters used for extraction of reflectivity:
-# I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       N. Index  FAN  File
+# I0           P0  PN    x0       xw           y0       yw           bg0      bgw          Direct Pixel TTH          Number       DB Index  FAN  File
 %(params_lines)s
 #
 # Column Units:
@@ -81,7 +81,7 @@ FILE_HEADER=u'''# Datafile created by QuickNXS
 # Column Names:
 # %(column_names)s
 '''
-FILE_HEADER_PARAMS=u'%(scale)-12g %(P0)-3i %(PN)-5i %(x_pos)-8g %(x_width)-12g %(y_pos)-8g %(y_width)-12g %(bg_pos)-8g %(bg_width)-12g %(dpix)-12g %(tth)-12g %(file_number)-12i %(norm_index)-9i %(extract_fan)-4i %(file_name)-12s '
+FILE_HEADER_PARAMS=u'%(scale)-12g %(P0)-3i %(PN)-5i %(x_pos)-8g %(x_width)-12g %(y_pos)-8g %(y_width)-12g %(bg_pos)-8g %(bg_width)-12g %(dpix)-12g %(tth)-12g %(file_number)-12s %(norm_index)-9s %(extract_fan)-4i %(file_name)-12s '
 
 DICTIZE_CHANNELS={
                  'x': 'unpolarized',

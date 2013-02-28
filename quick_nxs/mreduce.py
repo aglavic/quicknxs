@@ -15,6 +15,7 @@ storing the result as well as some intermediate data in itself as attributes.
 '''
 
 import os
+from copy import deepcopy
 from glob import glob
 from numpy import *
 import h5py
@@ -212,6 +213,17 @@ class NXSData(object):
       else:
         raise KeyError, "No such channel: %s"%str(item)
 
+  def __setitem__(self, item, data):
+    if type(item)==int:
+      self._channel_data[item]=data
+    else:
+      if item in self._channel_names:
+        self._channel_data[self._channel_names.index(item)]=data
+      elif item in self._channel_origin:
+        self._channel_data[self._channel_origin.index(item)]=data
+      else:
+        raise KeyError, "No such channel: %s"%str(item)
+
   def __len__(self):
     return len(self._channel_data)
 
@@ -260,6 +272,37 @@ class NXSData(object):
   def dangle0(self): return self[0].dangle0
   @property
   def sangle(self): return self[0].sangle
+
+
+class NXSMultiData(NXSData):
+  '''
+  Summ up data of several nxs files.
+  '''
+
+  def __new__(cls, filenames, **options):
+    if not hasattr(filenames, '__iter__') or len(filenames)==0:
+      raise ValueError, 'File names needs to be an iterable of length > 0'
+    options['use_caching']=False # caching would return NXSData type objects
+    filenames.sort()
+    self=NXSData.__new__(cls, filenames[0], **options)
+    numbers=[self.number]
+    for filename in filenames[1:]:
+      other=NXSData(filename, **options)
+      if len(self._channel_data)!=len(other._channel_data):
+        raise ValueError, 'Files can not be combined due to different number of statess'
+      self._add_data(other)
+      numbers.append(other.number)
+    self.origin=filenames
+    return self
+
+  def _add_data(self, other):
+    '''
+    Add the counts of all channels to this dataset channels 
+    and increase the proton charge equally.
+    '''
+    for key, value in self.items():
+      value+=other[key]
+
 
 class MRDataset(object):
   '''
@@ -437,9 +480,40 @@ class MRDataset(object):
     self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
 
   def __repr__(self):
-    return "<%s '%s' counts: %i>"%(self.__class__.__name__,
-                                   "%s/%s"%(os.path.basename(self.origin[0]), self.origin[1]),
-                                   self.total_counts)
+    if type(self.origin) is tuple:
+      return "<%s '%s' counts: %i>"%(self.__class__.__name__,
+                                     "%s/%s"%(os.path.basename(self.origin[0]), self.origin[1]),
+                                     self.total_counts)
+    else:
+      return "<%s '%s' counts: %i>"%(self.__class__.__name__,
+                                     "SUM"+repr(self.number),
+                                     self.total_counts)
+
+  def __iadd__(self, other):
+    '''
+    Add the data of one dataset to this dataset.
+    '''
+    self.data+=other.data
+    self.xydata+=other.xydata
+    self.xtofdata+=other.xtofdata
+    self.total_counts+=other.total_counts
+    self.proton_charge+=other.proton_charge
+    if type(self.number) is list:
+      self.number.append(other.number)
+      self.origin.append(other.origin)
+    else:
+      self.number=[self.number, other.number]
+      self.origin=[self.origin, other.origin]
+    return self
+    #self.origin.append(other.origin)
+
+  def __add__(self, other):
+    '''
+    Add two datasets.
+    '''
+    output=deepcopy(self)
+    output+=other
+    return output
 
   ################## Properties for easy data access ##########################
   @property
@@ -473,25 +547,26 @@ class MRDataset(object):
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
-  # easy access to automatically extracted reflectivity
-  # could be useful for automatic extraction scripts
-  @property
-  def Q(self):
-    if self._Q is None:
-      self._autocalc_ref()
-    return self._Q
+#  # easy access to automatically extracted reflectivity
+#  # could be useful for automatic extraction scripts
+#  @property
+#  def Q(self):
+#    if self._Q is None:
+#      self._autocalc_ref()
+#    return self._Q
+#
+#  @property
+#  def I(self):
+#    if self._I is None:
+#      self._autocalc_ref()
+#    return self._I
+#
+#  @property
+#  def dI(self):
+#    if self._dI is None:
+#      self._autocalc_ref()
+#    return self._dI
 
-  @property
-  def I(self):
-    if self._I is None:
-      self._autocalc_ref()
-    return self._I
-
-  @property
-  def dI(self):
-    if self._dI is None:
-      self._autocalc_ref()
-    return self._dI
 
 #TODO: Export all options as string for file header and perhaps put option readout here as static method
 class Reflectivity(object):
