@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Tue Apr  2 16:49:59 2013
+# Created: Tue Apr  2 17:13:18 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1382,7 +1382,7 @@ class Ui_MainWindow(object):
     self.label_13.setText(QtGui.QApplication.translate("MainWindow", "SANGLE-calc", None, QtGui.QApplication.UnicodeUTF8))
     self.datasetAi.setToolTip(QtGui.QApplication.translate("MainWindow", "Sample angle calculated from 2Θ and X-center position", None, QtGui.QApplication.UnicodeUTF8))
     self.label_8.setToolTip(QtGui.QApplication.translate("MainWindow", "Read from file", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_8.setText(QtGui.QApplication.translate("MainWindow", "λ-Center", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_8.setText(QtGui.QApplication.translate("MainWindow", "λ", None, QtGui.QApplication.UnicodeUTF8))
     self.datasetLambda.setToolTip(QtGui.QApplication.translate("MainWindow", "Read from file", None, QtGui.QApplication.UnicodeUTF8))
     self.label_10.setToolTip(QtGui.QApplication.translate("MainWindow", "Read from file", None, QtGui.QApplication.UnicodeUTF8))
     self.label_10.setText(QtGui.QApplication.translate("MainWindow", "Total Counts", None, QtGui.QApplication.UnicodeUTF8))
@@ -1391,7 +1391,7 @@ class Ui_MainWindow(object):
     self.label_14.setText(QtGui.QApplication.translate("MainWindow", "Counts ROI", None, QtGui.QApplication.UnicodeUTF8))
     self.datasetROI.setToolTip(QtGui.QApplication.translate("MainWindow", "Counts in the window selected for X and Y", None, QtGui.QApplication.UnicodeUTF8))
     self.label_7.setToolTip(QtGui.QApplication.translate("MainWindow", "A list of files selected fro normalization", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Normalizations:", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Direct Beam Runs:", None, QtGui.QApplication.UnicodeUTF8))
     self.normalizationLabel.setToolTip(QtGui.QApplication.translate("MainWindow", "A list of files selected fro normalization", None, QtGui.QApplication.UnicodeUTF8))
     self.normalizationLabel.setText(QtGui.QApplication.translate("MainWindow", "Unset", None, QtGui.QApplication.UnicodeUTF8))
     self.selectedChannel.setToolTip(QtGui.QApplication.translate("MainWindow", "Select the state for the overview. If channel is not in file, the first will be used.", None, QtGui.QApplication.UnicodeUTF8))
@@ -1413,16 +1413,16 @@ class Ui_MainWindow(object):
     item.setToolTip(QtGui.QApplication.translate("MainWindow", "Points cut from high Q side", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(4)
     item.setText(QtGui.QApplication.translate("MainWindow", "x0", None, QtGui.QApplication.UnicodeUTF8))
-    item.setToolTip(QtGui.QApplication.translate("MainWindow", "X-Position of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
+    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Center X-Pixel of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(5)
     item.setText(QtGui.QApplication.translate("MainWindow", "xw", None, QtGui.QApplication.UnicodeUTF8))
-    item.setToolTip(QtGui.QApplication.translate("MainWindow", "X-Width of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
+    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Width in X-Pixels of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(6)
     item.setText(QtGui.QApplication.translate("MainWindow", "y0", None, QtGui.QApplication.UnicodeUTF8))
-    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Y-Position of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
+    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Center Y-Pixel of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(7)
     item.setText(QtGui.QApplication.translate("MainWindow", "yw", None, QtGui.QApplication.UnicodeUTF8))
-    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Y-Width of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
+    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Width in Y-Pixels of Window for Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(8)
     item.setText(QtGui.QApplication.translate("MainWindow", "bg0", None, QtGui.QApplication.UnicodeUTF8))
     item.setToolTip(QtGui.QApplication.translate("MainWindow", "Background Region Center", None, QtGui.QApplication.UnicodeUTF8))
@@ -1434,7 +1434,7 @@ class Ui_MainWindow(object):
     item.setToolTip(QtGui.QApplication.translate("MainWindow", "DirectPixel", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(11)
     item.setText(QtGui.QApplication.translate("MainWindow", "TTH", None, QtGui.QApplication.UnicodeUTF8))
-    item.setToolTip(QtGui.QApplication.translate("MainWindow", "Two Theta of Detector Arm", None, QtGui.QApplication.UnicodeUTF8))
+    item.setToolTip(QtGui.QApplication.translate("MainWindow", "DANGLE-DANGLE0", None, QtGui.QApplication.UnicodeUTF8))
     item = self.reductionTable.horizontalHeaderItem(12)
     item.setText(QtGui.QApplication.translate("MainWindow", "Dir. Run", None, QtGui.QApplication.UnicodeUTF8))
     item.setToolTip(QtGui.QApplication.translate("MainWindow", "The normalization file used for this dataset", None, QtGui.QApplication.UnicodeUTF8))

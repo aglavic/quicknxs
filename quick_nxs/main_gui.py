@@ -1163,7 +1163,9 @@ class MainGUI(QtGui.QMainWindow):
       dpix=u"%.1f (%.1f)"%(self.ui.directPixelOverwrite.value(), d.dpix)
     else:
       dpix=u"%.1f"%d.dpix
-    self.ui.datasetLambda.setText(u"%.2f Å"%self.active_data.lambda_center)
+    self.ui.datasetLambda.setText(u"%.2f (%.2f-%.2f) Å"%(self.active_data.lambda_center,
+                                                         self.active_data.lambda_center-1.5,
+                                                         self.active_data.lambda_center+1.5))
     self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
     self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
     self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)

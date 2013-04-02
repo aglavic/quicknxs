@@ -1170,7 +1170,7 @@
                       <string>Read from file</string>
                      </property>
                      <property name="text">
-                      <string>λ-Center</string>
+                      <string>λ</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -1283,7 +1283,7 @@
                      <string>A list of files selected fro normalization</string>
                     </property>
                     <property name="text">
-                     <string>Normalizations:</string>
+                     <string>Direct Beam Runs:</string>
                     </property>
                    </widget>
                   </item>
@@ -1423,7 +1423,7 @@
                         <string>x0</string>
                        </property>
                        <property name="toolTip">
-                        <string>X-Position of Window for Reflectivity</string>
+                        <string>Center X-Pixel of Window for Reflectivity</string>
                        </property>
                       </column>
                       <column>
@@ -1431,7 +1431,7 @@
                         <string>xw</string>
                        </property>
                        <property name="toolTip">
-                        <string>X-Width of Window for Reflectivity</string>
+                        <string>Width in X-Pixels of Window for Reflectivity</string>
                        </property>
                       </column>
                       <column>
@@ -1439,7 +1439,7 @@
                         <string>y0</string>
                        </property>
                        <property name="toolTip">
-                        <string>Y-Position of Window for Reflectivity</string>
+                        <string>Center Y-Pixel of Window for Reflectivity</string>
                        </property>
                       </column>
                       <column>
@@ -1447,7 +1447,7 @@
                         <string>yw</string>
                        </property>
                        <property name="toolTip">
-                        <string>Y-Width of Window for Reflectivity</string>
+                        <string>Width in Y-Pixels of Window for Reflectivity</string>
                        </property>
                       </column>
                       <column>
@@ -1479,7 +1479,7 @@
                         <string>TTH</string>
                        </property>
                        <property name="toolTip">
-                        <string>Two Theta of Detector Arm</string>
+                        <string>DANGLE-DANGLE0</string>
                        </property>
                       </column>
                       <column>
