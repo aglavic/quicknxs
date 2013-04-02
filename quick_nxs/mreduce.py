@@ -15,6 +15,7 @@ storing the result as well as some intermediate data in itself as attributes.
 '''
 
 import os
+import sys
 from copy import deepcopy
 from glob import glob
 from numpy import *
@@ -52,6 +53,11 @@ MAPPING_EFIELD=(
 # used for * imports
 __all__=['NXSData', 'Reflectivity', 'OffSpecular', 'GISANS']
 
+if sys.platform.startswith('win'):
+  _caching_available=False
+else:
+  _caching_available=True
+
 class NXSData(object):
   '''
   Class for readout and evaluation of histogram and event mode .nxs files,
@@ -66,7 +72,7 @@ class NXSData(object):
     * bin_type='0: linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
-  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None)
+  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None)
   COUNT_THREASHOLD=100
   MAX_CACHE=20
   _cache=[]
@@ -104,7 +110,8 @@ class NXSData(object):
       if filename in cached_names:
         cache_index=cached_names.index(filename)
         cls._cache.pop(cache_index)
-      if len(cls._cache)>=cls.MAX_CACHE:
+      # make sure cache does not get bigger than MAX_CACHE items or 80% of available memory
+      while len(cls._cache)>=cls.MAX_CACHE or cls.get_cachesize()>(0.8*MAX_RAM):
         cls._cache.pop(0)
       cls._cache.append(self)
     # remove callback function to make the object Pickleable

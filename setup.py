@@ -45,7 +45,11 @@ if "py2exe" in sys.argv:
   __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
   __data_files__+=[(r'quick_nxs', [r'quick_nxs\window.pkl']),
                    (r'quick_nxs\genx_templates', glob(r'quick_nxs\genx_templates\*.gx')),
-                   (r'quick_nxs\htmldoc', glob(r'quick_nxs\htmldoc\*')), ]
+                   (r'quick_nxs\htmldoc', glob(r'quick_nxs\htmldoc\*')),
+                   ("IPython\\config\\profile", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\*.*')+
+                                                glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\README*')),
+                   ("IPython\\config\\profile\\cluster", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\cluster\\*')),
+                   ]
   pexe=os.path.abspath(os.path.join('..\\App'))
   sys.path.append(pexe)
   __options__={
