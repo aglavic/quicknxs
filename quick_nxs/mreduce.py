@@ -111,7 +111,7 @@ class NXSData(object):
         cache_index=cached_names.index(filename)
         cls._cache.pop(cache_index)
       # make sure cache does not get bigger than MAX_CACHE items or 80% of available memory
-      while len(cls._cache)>=cls.MAX_CACHE or cls.get_cachesize()>(0.8*MAX_RAM):
+      while len(cls._cache)>=cls.MAX_CACHE:
         cls._cache.pop(0)
       cls._cache.append(self)
     # remove callback function to make the object Pickleable
