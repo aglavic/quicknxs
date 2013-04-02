@@ -63,10 +63,10 @@ class NXSData(object):
   The generator takes several keyword arguments to control the readout:
   
     * use_caching=True: If files should be cached for faster future readouts (last 20 files)
-    * bin_type='linear: 'linear'/'1/x' - use linear or 1/x spacing for ToF channels in event mode
+    * bin_type='0: linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
-  DEFAULT_OPTIONS=dict(bin_type='linear', bins=40, use_caching=True, callback=None)
+  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None)
   COUNT_THREASHOLD=100
   MAX_CACHE=20
   _cache=[]
@@ -417,12 +417,12 @@ class MRDataset(object):
     # ToF region for this specific central wavelength
     tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
     tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
-    if bin_type.lower()=='linear':
+    if bin_type==0:
       tof_edges=linspace(tmin, tmax, bins+1)
-    elif bin_type.lower()=='1/x':
+    elif bin_type==1:
       tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
     else:
-      raise ValueError, 'Unknown bin type %s'%bin_type
+      raise ValueError, 'Unknown bin type %i'%bin_type
 
     if callback is not None:
       # create the 3D binning

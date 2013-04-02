@@ -123,7 +123,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=125
 mode=LaTeX
-open=true
+open=false
 order=2
 
 [item:header.tex]
@@ -133,7 +133,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=51
 mode=LaTeX
-open=true
+open=false
 order=1
 
 [item:introduction.tex]
@@ -173,7 +173,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=47
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [view-settings,view=0,item:QuickNXS_Users_Manual.tex]

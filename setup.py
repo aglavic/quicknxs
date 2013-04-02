@@ -41,6 +41,8 @@ if "py2exe" in sys.argv:
   import zmq
   os.environ["PATH"]+=os.path.pathsep+os.path.split(zmq.__file__)[0]
   __data_files__+=matplotlib.get_py2exe_datafiles()
+  sys.path.append("..\\App")
+  __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
   __data_files__+=[(r'quick_nxs', [r'quick_nxs\window.pkl']),
                    (r'quick_nxs\genx_templates', glob(r'quick_nxs\genx_templates\*.gx')),
                    (r'quick_nxs\htmldoc', glob(r'quick_nxs\htmldoc\*')), ]

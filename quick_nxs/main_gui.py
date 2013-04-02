@@ -24,13 +24,17 @@ BASE_SEARCH='*/data/REF_M_%s_'
 OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
 
 class fileOpenThread(QtCore.QThread):
+  '''
+  Intended for background file readout to keep GUI responsive. 
+  At the moment deactivated due to issues on some platforms.
+  '''
   updateProgress=QtCore.pyqtSignal(float)
   data=None
 
   def __init__(self, parent, filename):
     QtCore.QThread.__init__(self)
     self.filename=filename
-    self.bin_type=str(parent.ui.eventBinMode.currentText())
+    self.bin_type=parent.ui.eventBinMode.currentIndex()
     self.bins=parent.ui.eventTofBins.value()
 
   def run(self):
@@ -43,6 +47,9 @@ class fileOpenThread(QtCore.QThread):
     self.updateProgress.emit(value)
 
 class gisansCalcThread(QtCore.QThread):
+  '''
+  Perform GISANS scattering calculations in the background.
+  '''
   updateProgress=QtCore.pyqtSignal(float)
   gisans=None
 
@@ -225,7 +232,7 @@ class MainGUI(QtGui.QMainWindow):
       self._foThread.start()
     else:
       data=NXSData(filename,
-            bin_type=str(self.ui.eventBinMode.currentText()),
+            bin_type=self.ui.eventBinMode.currentIndex(),
             bins=self.ui.eventTofBins.value(),
             callback=self.updateEventReadout)
       self._fileOpenDone(data, filename, do_plot)
@@ -245,7 +252,7 @@ class MainGUI(QtGui.QMainWindow):
       self._foThread=None
     self.ui.statusbar.showMessage(u"Reading files %s..."%(filenames[0]))
     data=NXSMultiData(filenames,
-          bin_type=str(self.ui.eventBinMode.currentText()),
+          bin_type=self.ui.eventBinMode.currentIndex(),
           bins=self.ui.eventTofBins.value(),
           callback=None)
     self._fileOpenDone(data, filenames[0], do_plot)
@@ -1124,10 +1131,16 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.ui.histogramActive.isChecked():
       newlist=glob(os.path.join(folder, '*histo.nxs'))
+      self.ui.eventModeEntries.hide()
     elif self.ui.oldFormatActive.isChecked():
       newlist=glob(os.path.join(folder, '*.nxs'))
-    else:
+      self.ui.eventModeEntries.hide()
+    elif self.ui.eventActive.isChecked():
+      self.ui.eventModeEntries.show()
       newlist=glob(os.path.join(folder, '*event.nxs'))
+    else:
+      self.ui.histogramActive.setChecked(True)
+      return self.updateFileList(base, folder)
     newlist.sort()
     newlist=map(lambda name: os.path.basename(name), newlist)
     self.ui.file_list.clear()
@@ -1143,9 +1156,9 @@ class MainGUI(QtGui.QMainWindow):
     d=self.active_data[self.active_channel]
 
     try:
-      tth=u"%.3f° (%.3f°)"%(d.dangle-float(self.ui.dangle0Overwrite.text()), d.dangle-d.dangle0)
+      dangle0=u"%.3f° (%.3f°)"%(float(self.ui.dangle0Overwrite.text()), d.dangle0)
     except ValueError:
-      tth=u"%.3f°"%(d.dangle-d.dangle0)
+      dangle0=u"%.3f°"%(d.dangle0)
     if self.ui.directPixelOverwrite.value()>=0:
       dpix=u"%.1f (%.1f)"%(self.ui.directPixelOverwrite.value(), d.dpix)
     else:
@@ -1154,7 +1167,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
     self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
     self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
-    self.ui.datasetTth.setText(tth)
+    self.ui.datasetDangle0.setText(dangle0)
     self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
     self.ui.datasetDirectPixel.setText(dpix)
     self.ui.currentChannel.setText('<b>%s</b> (%s)&nbsp;&nbsp;&nbsp;Type: %s&nbsp;&nbsp;&nbsp;Current State: <b>%s</b>'%(
@@ -1183,6 +1196,7 @@ class MainGUI(QtGui.QMainWindow):
       for plot in plots:
         plot.show()
         plot.do_hide=False
+    self.ui.eventModeEntries.hide()
 
   def changeRegionValues(self):
     '''
