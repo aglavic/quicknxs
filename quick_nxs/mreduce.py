@@ -72,7 +72,8 @@ class NXSData(object):
     * bin_type='0: linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode
     * bins=40: Number of ToF bins for event mode
   '''
-  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None)
+  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None,
+                       event_split_bins=None, event_split_index=0)
   COUNT_THREASHOLD=100
   MAX_CACHE=20
   _cache=[]
@@ -348,6 +349,7 @@ class MRDataset(object):
   dist_sam_det=2.55505 #m
   det_size_x=0.2128 #m
   det_size_y=0.1792 #m
+  from_event_mode=False
 
   _Q=None
   _I=None
@@ -404,6 +406,7 @@ class MRDataset(object):
     '''
     output=cls()
     output.read_options=read_options
+    output.from_event_mode=True
     bin_type=read_options['bin_type']
     bins=read_options['bins']
     output._collect_info(data)
@@ -418,6 +421,21 @@ class MRDataset(object):
     # create ToF edges for the binning and correlate pixel indices with pixel position
     tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
     tof_time=data['bank1_events/event_time_offset'].value
+    if read_options['event_split_bins']:
+      split_bins=read_options['event_split_bins']
+      split_index=read_options['event_split_index']
+      # read the relative time in seconds from measurement start to event
+      tof_real_time=data['bank1_events/event_time_zero'].value
+      tof_idx_to_id=data['bank1_events/event_index'].value
+      split_step=(tof_real_time[-1]+0.1)/split_bins
+      split_idxs=tof_idx_to_id[((tof_real_time>=(split_index*split_step))&
+                                (tof_real_time<((split_index+1)*split_step)))]
+      start_idx, stop_idx=split_idxs[0], split_idxs[-1]
+      tof_ids=tof_ids[start_idx:stop_idx]
+      tof_time=tof_time[start_idx:stop_idx]
+      # correct the count statistics
+      output.total_counts=tof_time.shape[0]
+      output.proton_charge/=split_step
     tof_x=X[tof_ids]
     tof_y=Y[tof_ids]
     lcenter=data['DASlogs/LambdaRequest/value'].value[0]
@@ -493,7 +511,6 @@ class MRDataset(object):
 
     self.experiment=str(data['experiment_identifier'].value[0])
     self.number=int(data['run_number'].value[0])
-    self.merge_warnings
     self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
 
   def __repr__(self):
