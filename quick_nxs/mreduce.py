@@ -605,6 +605,21 @@ class MRDataset(object):
 #      self._autocalc_ref()
 #    return self._dI
 
+def time_from_header(filename):
+  '''
+  Read just an edf header to get the time of a measurement in seconds.
+  '''
+  try:
+    nxs=h5py.File(filename, mode='r')
+  except IOError:
+    return None
+  maxtime=0
+  for item in nxs.values():
+    maxtime=max(maxtime, item['duration'].value[0])
+  nxs.close()
+  return maxtime
+
+
 
 #TODO: Export all options as string for file header and perhaps put option readout here as static method
 class Reflectivity(object):

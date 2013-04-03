@@ -16,7 +16,7 @@ from . import gui_utils
 from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .error_handling import ErrorHandler
-from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, GISANS, DETECTOR_X_REGION
+from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 BASE_FOLDER='/SNS/REF_M'
@@ -90,6 +90,7 @@ class MainGUI(QtGui.QMainWindow):
   _foThread=None
   read_with_thread=False
   _gisansThread=None
+  _norm_selected=None
   # plot line storages
   _x_projection=None
   _y_projection=None
@@ -221,6 +222,18 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.updateFileList(base, folder)
     self.active_file=base
+
+    if base.endswith('event.nxs'):
+      maxtime=time_from_header(os.path.join(folder, base))
+      self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(maxtime/60))
+    if base.endswith('event.nxs') and self.ui.eventSplit.isChecked():
+      event_split_bins=self.ui.eventSplitItems.value()
+      event_split_index=self.ui.eventSplitIndex.value()
+    else:
+      event_split_bins=None
+      event_split_index=0
+
+    self._norm_selected=None
     if self._foThread:
       self._foThread.finished.disconnect()
       self._foThread.terminate()
@@ -237,7 +250,9 @@ class MainGUI(QtGui.QMainWindow):
       data=NXSData(filename,
             bin_type=self.ui.eventBinMode.currentIndex(),
             bins=self.ui.eventTofBins.value(),
-            callback=self.updateEventReadout)
+            callback=self.updateEventReadout,
+            event_split_bins=event_split_bins,
+            event_split_index=event_split_index)
       self._fileOpenDone(data, filename, do_plot)
 
   def fileOpenSum(self, filenames, do_plot=True):
@@ -259,7 +274,6 @@ class MainGUI(QtGui.QMainWindow):
           bins=self.ui.eventTofBins.value(),
           callback=None)
     self._fileOpenDone(data, filenames[0], do_plot)
-
 
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
     if data is None and self._foThread is not None:
@@ -1136,6 +1150,9 @@ class MainGUI(QtGui.QMainWindow):
     '''
     self.updateFileList(self.active_file, self.active_folder)
 
+  def reloadFile(self):
+      self.fileOpen(os.path.join(self.active_folder, self.active_file))
+
   def updateFileList(self, base, folder):
     '''
       Create a new filelist if the folder has changes.
@@ -1320,13 +1337,15 @@ class MainGUI(QtGui.QMainWindow):
     elif str(self.active_data.number) in indices:
       return fittings[indices.index(str(self.active_data.number))]
     else:
-      result=QtGui.QInputDialog.getItem(self, 'Select Normalization',
-                                        'There are more than one normalizations\nfor this wavelength available,\nplease select one:',
-                                        indices, editable=False)
-      if not result[1]:
-        return None
-      else:
-        return fittings[indices.index(result[0])]
+      if self._norm_selected is None:
+        result=QtGui.QInputDialog.getItem(self, 'Select Normalization',
+                                          'There are more than one normalizations\nfor this wavelength available,\nplease select one:',
+                                          indices, editable=False)
+        if not result[1]:
+          return None
+        else:
+          self._norm_selected=indices.index(result[0])
+      return fittings[self._norm_selected]
 
   def clearNormList(self):
     '''
