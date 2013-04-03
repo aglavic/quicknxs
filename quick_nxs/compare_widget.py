@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/compare_widget.ui'
 #
-# Created: Tue Apr  2 17:13:19 2013
+# Created: Wed Apr  3 09:35:20 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,6 +80,7 @@ class Ui_Form(object):
     QtCore.QObject.connect(self.pushButton_2, QtCore.SIGNAL(_fromUtf8("pressed()")), Form.open_file)
     QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL(_fromUtf8("pressed()")), Form.clear_plot)
     QtCore.QObject.connect(self.compareList, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), Form.draw)
+    QtCore.QObject.connect(self.compareList, QtCore.SIGNAL(_fromUtf8("cellDoubleClicked(int,int)")), Form.edit_cell)
     QtCore.QMetaObject.connectSlotsByName(Form)
     Form.setTabOrder(self.compareList, self.pushButton_2)
     Form.setTabOrder(self.pushButton_2, self.pushButton)

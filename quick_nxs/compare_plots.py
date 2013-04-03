@@ -5,13 +5,13 @@
 
 import os
 from numpy import *
-from PyQt4.QtGui import QWidget, QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout
+from PyQt4.QtGui import QWidget, QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout, QColor, QColorDialog
 from PyQt4.QtCore import Qt
 from .compare_widget import Ui_Form
 
 class CompareWidget(QWidget):
   active_folder='.'
-  _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
+  _refl_color_list=['#0000ff', '#ff0000', '#00ff00', '#8b00ff', '#aaaa00', '#00aaaa']
   changing_table=False
 
   def __init__(self, parent):
@@ -49,7 +49,11 @@ class CompareWidget(QWidget):
     except:
       plotlabel=label
     self.ui.compareList.setItem(idx, 0, item)
-    self.ui.compareList.setItem(idx, 1, QTableWidgetItem(color))
+    item=QTableWidgetItem(color)
+    item.setBackgroundColor(QColor(color))
+    item.setTextColor(QColor('#ffffff'))
+    item.setFlags(Qt.ItemIsEnabled)
+    self.ui.compareList.setItem(idx, 1, item)
     self.ui.compareList.setItem(idx, 2, QTableWidgetItem(plotlabel))
     self.file_paths[label]=os.path.abspath(name)
     self.changing_table=False
@@ -79,6 +83,19 @@ class CompareWidget(QWidget):
       self.ui.comparePlot.draw()
     except:
       pass
+
+  def edit_cell(self, row, column):
+    if column==1:
+      color_item=self.ui.compareList.item(row, column)
+      color=QColor(color_item.text())
+      result=QColorDialog.getColor(initial=color, parent=self)
+      if result.isValid():
+        color_item.setText(result.name())
+        color_item.setBackgroundColor(result)
+
+
+
+
 
 class CompareDialog(QDialog):
   '''

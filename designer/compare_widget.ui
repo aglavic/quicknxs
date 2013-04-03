@@ -166,10 +166,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>compareList</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>Form</receiver>
+   <slot>edit_cell(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>661</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>163</x>
+     <y>716</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open_file()</slot>
   <slot>clear_plot()</slot>
   <slot>draw()</slot>
+  <slot>edit_cell(int,int)</slot>
  </slots>
 </ui>
