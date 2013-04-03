@@ -293,7 +293,7 @@ class NXSData(object):
 
 class NXSMultiData(NXSData):
   '''
-  Summ up data of several nxs files.
+  Sum up data of several nxs files.
   '''
 
   def __new__(cls, filenames, **options):
@@ -643,7 +643,12 @@ class Reflectivity(object):
       self._calc_normal(dataset)
 
   def __repr__(self):
-    output='<Reflectivity[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
+    if type(self.origin) is list:
+      fnames='+'.join([os.path.basename(item[0]) for item in self.origin])
+      output='<Reflectivity[%i] "%s/%s"'%(len(self.Q), fnames,
+                                        self.origin[0][1])
+    else:
+      output='<Reflectivity[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
                                         self.origin[1])
     if self.options['normalization'] is None:
       output+=' NOT normalized'
@@ -962,7 +967,12 @@ class OffSpecular(Reflectivity):
     self._calc_offspec(dataset)
 
   def __repr__(self):
-    output='<GISANS[%i] "%s/%s"'%(len(self.Q), os.path.basename(self.origin[0]),
+    if type(self.origin) is list:
+      fnames='+'.join([os.path.basename(item[0]) for item in self.origin])
+      output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), fnames,
+                                        self.origin[0][1])
+    else:
+      output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), os.path.basename(self.origin[0]),
                                         self.origin[1])
     if self.options['normalization'] is None:
       output+=' NOT normalized'
@@ -983,7 +993,7 @@ class OffSpecular(Reflectivity):
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
-    scale=self.options['scale']/dataset.proton_charge # scale by user factor
+    scale=1./dataset.proton_charge # scale by user factor
 
     # Get regions in pixels as integers
     reg=map(lambda item: int(round(item)),
@@ -1025,6 +1035,8 @@ class OffSpecular(Reflectivity):
     self.dI=self.dIraw/(reg[3]-reg[2])*scale
     self.S=self.I-self.BG[newaxis, :]
     self.dS=sqrt(self.dI**2+(self.dBG**2)[newaxis, :])
+    self.S*=self.options['scale']
+    self.dS*=self.options['scale']
 
     if self.options['normalization']:
       norm=self.options['normalization']
@@ -1064,7 +1076,12 @@ class GISANS(Reflectivity):
     self._calc_gisans(dataset)
 
   def __repr__(self):
-    output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), os.path.basename(self.origin[0]),
+    if type(self.origin) is list:
+      fnames='+'.join([os.path.basename(item[0]) for item in self.origin])
+      output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), fnames,
+                                        self.origin[0][1])
+    else:
+      output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), os.path.basename(self.origin[0]),
                                         self.origin[1])
     if self.options['normalization'] is None:
       output+=' NOT normalized'

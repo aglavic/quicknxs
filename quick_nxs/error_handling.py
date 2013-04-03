@@ -48,15 +48,15 @@ class ErrorHandler(QtGui.QWidget):
     '''
     Dump error report to gziped file and show an error dialog.
     '''
-    try:
-      report={'traceback': self.last_text, 'version': str_version}
-      for attrib in COLLECT_GUI_ATTRIBUTES:
-        report[attrib]=getattr(self.parent, attrib, None)
-      report_dump=dumps(report, 2)
-      gzip.open(REPORT_SAVE_PATH, 'w').write(report_dump)
-      written=True
-    except:
-      written=False
+#    try:
+#      report={'traceback': self.last_text, 'version': str_version}
+#      for attrib in COLLECT_GUI_ATTRIBUTES:
+#        report[attrib]=getattr(self.parent, attrib, None)
+#      report_dump=dumps(report, 2)
+#      gzip.open(REPORT_SAVE_PATH, 'w').write(report_dump)
+#      written=True
+#    except:
+    written=False
     traceback=self.last_text
     tbl=traceback.splitlines()
     if len(tbl)>15:

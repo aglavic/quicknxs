@@ -705,8 +705,12 @@ class MainGUI(QtGui.QMainWindow):
     Imax=10**self.ui.offspecImax.value()
     Qzmax=0.01
     for item in self.reduction_list:
-      fname=item.origin[0]
-      data_all=NXSData(fname, **item.read_options)
+      if type(item.origin) is list:
+        flist=[origin[0] for origin in item.origin]
+        data_all=NXSMultiData(flist, **item.read_options)
+      else:
+        fname=item.origin[0]
+        data_all=NXSData(fname, **item.read_options)
       for i, channel in enumerate(self.ref_list_channels):
         plot=plots[i]
         selected_data=data_all[channel]
