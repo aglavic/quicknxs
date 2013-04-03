@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>400</height>
+    <height>438</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,240 +17,383 @@
    <iconset resource="../icons/icons.qrc">
     <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <widget class="QWidget" name="widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string>Items</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Output Options</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Items</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QCheckBox" name="exportSpecular">
+               <property name="text">
+                <string>Specular</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportTrueSpecular">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>True Specular</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportOffSpecular">
+               <property name="text">
+                <string>Off-Specular Raw</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportOffSpecularSmoothed">
+               <property name="text">
+                <string>Off-Specular Smoothed</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportGISANS">
+               <property name="text">
+                <string>GISANS</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>States</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QCheckBox" name="exportUpUp">
+               <property name="text">
+                <string> X / + / ++/0V</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportDownDown">
+               <property name="text">
+                <string>- / --/+V</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportUpDown">
+               <property name="text">
+                <string>+-/-V</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="exportDownUp">
+               <property name="text">
+                <string>-+</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Output Formats</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="multiAscii">
+            <property name="text">
+             <string>ASCII for each channel</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="combinedAscii">
+            <property name="text">
+             <string>Combined ASCII</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="matlab">
+            <property name="text">
+             <string>Matlab</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="gnuplot">
+            <property name="text">
+             <string>Gnuplot Script</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="plot">
+            <property name="text">
+             <string>Show Plot</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="genx">
+            <property name="text">
+             <string>GenX</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="numpy">
+            <property name="text">
+             <string>Numpy .npz</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QCheckBox" name="exportSpecular">
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>Specular</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>Directory</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="exportTrueSpecular">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>True Specular</string>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="directoryEntry"/>
          </item>
          <item>
-          <widget class="QCheckBox" name="exportOffSpecular">
+          <widget class="QToolButton" name="toolButton">
            <property name="text">
-            <string>Off-Specular Raw</string>
+            <string>...</string>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="exportOffSpecularSmoothed">
-           <property name="text">
-            <string>Off-Specular Smoothed</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="exportGISANS">
-           <property name="text">
-            <string>GISANS</string>
+           <property name="icon">
+            <iconset theme="document-open">
+             <normaloff/>
+            </iconset>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string>States</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QCheckBox" name="exportUpUp">
+          <widget class="QLabel" name="label_2">
            <property name="text">
-            <string> X / + / ++/0V</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>File Naming</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="exportDownDown">
+          <widget class="QLineEdit" name="fileNameEntry">
            <property name="text">
-            <string>- / --/+V</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="exportUpDown">
-           <property name="text">
-            <string>+-/-V</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="exportDownUp">
-           <property name="text">
-            <string>-+</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>REF_M_{numbers}_{item}_{state}.{type}</string>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Output Formats</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="multiAscii">
-        <property name="text">
-         <string>ASCII for each channel</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="combinedAscii">
-        <property name="text">
-         <string>Combined ASCII</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="matlab">
-        <property name="text">
-         <string>Matlab</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="gnuplot">
-        <property name="text">
-         <string>Gnuplot Script</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="plot">
-        <property name="text">
-         <string>Show Plot</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="genx">
-        <property name="text">
-         <string>GenX</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="numpy">
-        <property name="text">
-         <string>Numpy .npz</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Directory</string>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Email Results</string>
+      </attribute>
+      <widget class="QPlainTextEdit" name="emailText">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>165</y>
+         <width>351</width>
+         <height>221</height>
+        </rect>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="directoryEntry"/>
-     </item>
-     <item>
-      <widget class="QToolButton" name="toolButton">
-       <property name="text">
-        <string>...</string>
+      <widget class="QLineEdit" name="emailTo">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>50</y>
+         <width>281</width>
+         <height>23</height>
+        </rect>
        </property>
-       <property name="icon">
-        <iconset theme="document-open">
-         <normaloff/>
-        </iconset>
+       <property name="text">
+        <string>agf@ornl.gov</string>
        </property>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>File Naming</string>
+      <widget class="QLineEdit" name="emailSubject">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>110</y>
+         <width>271</width>
+         <height>23</height>
+        </rect>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="fileNameEntry">
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>110</y>
+         <width>56</width>
+         <height>15</height>
+        </rect>
+       </property>
        <property name="text">
-        <string>REF_M_{numbers}_{item}_{state}.{type}</string>
+        <string>Subject</string>
        </property>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>50</y>
+         <width>21</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>To:</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="emailSend">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>10</y>
+         <width>191</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Send email with result files</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="emailZIP">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>10</y>
+         <width>82</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>ZIP Files</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="emailCC">
+       <property name="geometry">
+        <rect>
+         <x>92</x>
+         <y>80</y>
+         <width>271</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_5">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>80</y>
+         <width>31</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>CC:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>140</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Message Text:</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>
