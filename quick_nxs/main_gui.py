@@ -12,7 +12,7 @@ from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
 from .main_window import Ui_MainWindow
-from .gui_utils import ReduceDialog, DelayedTrigger
+from . import gui_utils
 from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .error_handling import ErrorHandler
@@ -20,6 +20,7 @@ from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, GISANS, D
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 BASE_FOLDER='/SNS/REF_M'
+
 BASE_SEARCH='*/data/REF_M_%s_'
 OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
 
@@ -140,7 +141,7 @@ class MainGUI(QtGui.QMainWindow):
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
-    self.trigger=DelayedTrigger()
+    self.trigger=gui_utils.DelayedTrigger()
     self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
     self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
@@ -986,94 +987,96 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if filename is None:
       filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
-                                               directory=self.active_folder,
+                                               directory=gui_utils.result_folder,
                                                filter=u'Extracted Dataset (*.dat)')
-    if filename!=u'':
-      self.clearRefList(do_plot=False)
-      text=open(filename, 'r').read()
-      split1='# Parameters used for extraction of direct beam:'
-      split2='# Parameters used for extraction of reflectivity:'
-      split3='# Column Units:'
-      normdata=text.split(split1)[1].split(split2)[0]
-      refdata=text.split(split2)[1].split(split3)[0]
-      normlines=[line.strip('# \t').split() for line in normdata.splitlines()]
-      reflines=[line.strip('# \t').split() for line in refdata.splitlines()]
-      norms={}
-      refs=[]
-      for entry in normlines:
-        if len(entry)==0 or entry[0]=='I0':
-          continue
-        I0, P0, PN=entry[:3]
-        x0, xw, y0, yw, bg0, bgw=entry[3:9]
-        dpix, tth, number, nidx=entry[9:13]
-        filenames=entry[14].split(';')
-        options=dict(
-                x_pos=float(x0),
-                x_width=float(xw),
-                y_pos=float(y0),
-                y_width=float(yw),
-                bg_pos=float(bg0),
-                bg_width=float(bgw),
-                scale=float(I0),
-                extract_fan=False,
-                P0=int(P0),
-                PN=int(PN),
-                number=number,
-                tth=float(tth),
-                dpix=float(dpix),
-                bg_tof_constant=False,
-                normalization=None,
-                     )
-        if len(filenames)==1:
-          data=NXSData(filenames[0])
-        else:
-          data=NXSMultiData(filenames)
-        norms[nidx]=Reflectivity(data[0], **options)
-        self.refl=norms[nidx]
-        self.active_file=filenames[0]
-        self.active_data=data
-        self.setNorm(do_plot=False, do_remove=False)
-      for entry in reflines:
-        if len(entry)==0 or entry[0]=='I0':
-          continue
-        I0, P0, PN=entry[:3]
-        x0, xw, y0, yw, bg0, bgw=entry[3:9]
-        dpix, tth, number, nidx, fan=entry[9:14]
-        filenames=entry[14].split(';')
-        options=dict(
-                x_pos=float(x0),
-                x_width=float(xw),
-                y_pos=float(y0),
-                y_width=float(yw),
-                bg_pos=float(bg0),
-                bg_width=float(bgw),
-                scale=float(I0),
-                extract_fan=bool(int(fan)),
-                P0=int(P0),
-                PN=int(PN),
-                number=number,
-                tth=float(tth),
-                dpix=float(dpix),
-                bg_tof_constant=False,
-                normalization=norms[nidx],
-                     )
-        if len(filenames)==1:
-          data=NXSData(filenames[0])
-        else:
-          data=NXSMultiData(filenames)
-        self.channels=data.keys()
-        desiredChannel=self.ui.selectedChannel.currentText().split('/')
-        self.active_channel=self.channels[0]
-        for channel in self.channels:
-          if channel in desiredChannel:
-            self.active_channel=channel
-            break
-        self.active_data=data
-        self.active_file=filenames[0]
-        ref=Reflectivity(data[0], **options)
-        refs.append(ref)
-        self.refl=ref
-        self.addRefList(do_plot=False)
+    if filename==u'':
+      return
+
+    self.clearRefList(do_plot=False)
+    text=open(filename, 'r').read()
+    split1='# Parameters used for extraction of direct beam:'
+    split2='# Parameters used for extraction of reflectivity:'
+    split3='# Column Units:'
+    normdata=text.split(split1)[1].split(split2)[0]
+    refdata=text.split(split2)[1].split(split3)[0]
+    normlines=[line.strip('# \t').split() for line in normdata.splitlines()]
+    reflines=[line.strip('# \t').split() for line in refdata.splitlines()]
+    norms={}
+    refs=[]
+    for entry in normlines:
+      if len(entry)==0 or entry[0]=='I0':
+        continue
+      I0, P0, PN=entry[:3]
+      x0, xw, y0, yw, bg0, bgw=entry[3:9]
+      dpix, tth, number, nidx=entry[9:13]
+      filenames=entry[14].split(';')
+      options=dict(
+              x_pos=float(x0),
+              x_width=float(xw),
+              y_pos=float(y0),
+              y_width=float(yw),
+              bg_pos=float(bg0),
+              bg_width=float(bgw),
+              scale=float(I0),
+              extract_fan=False,
+              P0=int(P0),
+              PN=int(PN),
+              number=number,
+              tth=float(tth),
+              dpix=float(dpix),
+              bg_tof_constant=False,
+              normalization=None,
+                   )
+      if len(filenames)==1:
+        data=NXSData(filenames[0])
+      else:
+        data=NXSMultiData(filenames)
+      norms[nidx]=Reflectivity(data[0], **options)
+      self.refl=norms[nidx]
+      self.active_file=filenames[0]
+      self.active_data=data
+      self.setNorm(do_plot=False, do_remove=False)
+    for entry in reflines:
+      if len(entry)==0 or entry[0]=='I0':
+        continue
+      I0, P0, PN=entry[:3]
+      x0, xw, y0, yw, bg0, bgw=entry[3:9]
+      dpix, tth, number, nidx, fan=entry[9:14]
+      filenames=entry[14].split(';')
+      options=dict(
+              x_pos=float(x0),
+              x_width=float(xw),
+              y_pos=float(y0),
+              y_width=float(yw),
+              bg_pos=float(bg0),
+              bg_width=float(bgw),
+              scale=float(I0),
+              extract_fan=bool(int(fan)),
+              P0=int(P0),
+              PN=int(PN),
+              number=number,
+              tth=float(tth),
+              dpix=float(dpix),
+              bg_tof_constant=False,
+              normalization=norms[nidx],
+                   )
+      if len(filenames)==1:
+        data=NXSData(filenames[0])
+      else:
+        data=NXSMultiData(filenames)
+      self.channels=data.keys()
+      desiredChannel=self.ui.selectedChannel.currentText().split('/')
+      self.active_channel=self.channels[0]
+      for channel in self.channels:
+        if channel in desiredChannel:
+          self.active_channel=channel
+          break
+      self.active_data=data
+      self.active_file=filenames[0]
+      ref=Reflectivity(data[0], **options)
+      refs.append(ref)
+      self.refl=ref
+      self.addRefList(do_plot=False)
 
     self.ui.actionAutoYLimits.setChecked(True)
     if len(filenames)==1:
@@ -1574,7 +1577,7 @@ as the ones already in the list:
                                     u'Please select at least\none dataset to reduce.',
                                     QtGui.QMessageBox.Close)
       return
-    dialog=ReduceDialog(self, self.ref_list_channels, self.reduction_list)
+    dialog=gui_utils.ReduceDialog(self, self.ref_list_channels, self.reduction_list)
     dialog.exec_()
     dialog.destroy()
 
