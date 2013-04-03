@@ -1162,7 +1162,10 @@ class MainGUI(QtGui.QMainWindow):
         if item==base:
           self.ui.file_list.setCurrentItem(listitem)
     else:
-      self.ui.file_list.setCurrentRow(newlist.index(base))
+      try:
+        self.ui.file_list.setCurrentRow(newlist.index(base))
+      except ValueError:
+        pass
     self.auto_change_active=was_active
 
   def updateLabels(self):
