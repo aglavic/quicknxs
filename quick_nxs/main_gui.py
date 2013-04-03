@@ -217,6 +217,8 @@ class MainGUI(QtGui.QMainWindow):
     folder, base=os.path.split(filename)
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
+    else:
+      self.updateFileList(base, folder)
     self.active_file=base
     if self._foThread:
       self._foThread.finished.disconnect()
@@ -936,6 +938,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Called when a new file is selected from the file list.
     '''
+    if self.auto_change_active:
+      return
     item=self.ui.file_list.currentItem()
     name=unicode(item.text())
     try:
@@ -1118,8 +1122,8 @@ class MainGUI(QtGui.QMainWindow):
       created.
     '''
     self._path_watcher.removePath(self.active_folder)
-    self.active_folder=folder
     self.updateFileList(base, folder)
+    self.active_folder=folder
     self._path_watcher.addPath(self.active_folder)
 
   def folderModified(self, flist=None):
@@ -1133,6 +1137,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Create a new filelist if the folder has changes.
     '''
+    was_active=self.auto_change_active
+    self.auto_change_active=True
     if self.ui.histogramActive.isChecked():
       newlist=glob(os.path.join(folder, '*histo.nxs'))
       self.ui.eventModeEntries.hide()
@@ -1147,11 +1153,17 @@ class MainGUI(QtGui.QMainWindow):
       return self.updateFileList(base, folder)
     newlist.sort()
     newlist=map(lambda name: os.path.basename(name), newlist)
-    self.ui.file_list.clear()
-    for item in newlist:
-      listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
-      if item==base:
-        self.ui.file_list.setCurrentItem(listitem)
+    oldlist=[self.ui.file_list.item(i).text() for i in range(self.ui.file_list.count())]
+    if newlist!=oldlist:
+      # only update the list if it has changed
+      self.ui.file_list.clear()
+      for item in newlist:
+        listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
+        if item==base:
+          self.ui.file_list.setCurrentItem(listitem)
+    else:
+      self.ui.file_list.setCurrentRow(newlist.index(base))
+    self.auto_change_active=was_active
 
   def updateLabels(self):
     '''
