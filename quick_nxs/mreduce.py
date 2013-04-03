@@ -16,6 +16,7 @@ storing the result as well as some intermediate data in itself as attributes.
 
 import os
 import sys
+from logging import debug
 from copy import deepcopy
 from glob import glob
 from numpy import *
@@ -23,6 +24,18 @@ import h5py
 from time import time
 # ignore zero devision error
 #seterr(invalid='ignore')
+
+try:
+  from .decorators import log_call, log_input, log_both
+except ImportError:
+  # just in case module is used separately
+  def log_call(func):
+    return func
+  def log_input(func):
+    return func
+  def log_both(func):
+    return func
+  
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -78,6 +91,7 @@ class NXSData(object):
   MAX_CACHE=20
   _cache=[]
 
+  @log_both
   def __new__(cls, filename, **options):
     all_options=dict(cls.DEFAULT_OPTIONS)
     for key, value in options.items():
@@ -363,6 +377,7 @@ class MRDataset(object):
     self.origin=('none', 'none')
 
   @classmethod
+  @log_call
   def from_histogram(cls, data, read_options):
     '''
     Create object from a histogram Nexus file.
@@ -379,6 +394,7 @@ class MRDataset(object):
     return output
 
   @classmethod
+  @log_call
   def from_old_format(cls, data, read_options):
     '''
     Create object from a histogram Nexus file.
@@ -396,6 +412,7 @@ class MRDataset(object):
     return output
 
   @classmethod
+  @log_call
   def from_event(cls, data, read_options,
                  callback=None, callback_offset=0., callback_scaling=1.):
     '''
@@ -650,6 +667,7 @@ class Reflectivity(object):
        gisans_gridz=50,
        )
 
+  @log_input
   def __init__(self, dataset, **options):
     all_options=dict(Reflectivity.DEFAULT_OPTIONS)
     for key, value in options.items():
@@ -690,7 +708,8 @@ class Reflectivity(object):
     return output
 
   #############################################################################
-
+  
+  @log_call
   def _calc_normal(self, dataset):
     """
     Extract reflectivity from 3D dataset I(x,y,ToF).
@@ -714,6 +733,7 @@ class Reflectivity(object):
     reg=map(lambda item: int(round(item)),
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
+    debug('Reflectivity region: %s'%str(reg))
 
     # get incident angle of reflected beam
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
@@ -724,6 +744,7 @@ class Reflectivity(object):
       scale/=sin(self.ai)/0.005 # scale by beam-footprint
     # set good angular resolution as real resolution not implemented, yet
     dai=0.0001
+    debug('alpha_i=%s'%self.ai)
 
     self._calc_bg(dataset)
 
@@ -736,6 +757,7 @@ class Reflectivity(object):
     self.I=self.Iraw/size_I*scale
     self.dIraw=sqrt(self.Iraw)
     self.dI=self.dIraw/size_I*scale
+    debug("Intensity scale is %s/%s=%s"%(scale, size_I, scale/size_I))
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
@@ -751,6 +773,7 @@ class Reflectivity(object):
     # error propagation from lambda and angular resolution
     self.dQ=4*pi*sqrt((self.dlamda/self.lamda**2*sin(self.ai))**2+
                       (cos(self.ai)*dai/self.lamda)**2)
+    debug("Q=%s"%repr(self.Q))
     # finally scale reflectivity by the given factor and beam width
     self.Rraw=(self.I-self.BG) # used for normalization files
     self.dRraw=sqrt(self.dI**2+self.dBG**2)
@@ -759,6 +782,7 @@ class Reflectivity(object):
 
     if self.options['normalization']:
       norm=self.options['normalization']
+      debug("Performing normalization from %s"%norm)
       idxs=norm.Rraw>0.
       self.dR[idxs]=sqrt(
                    (self.dR[idxs]/norm.Rraw[idxs])**2+
@@ -768,6 +792,7 @@ class Reflectivity(object):
       self.R[logical_not(idxs)]=0.
       self.dR[logical_not(idxs)]=0.
 
+  @log_call
   def _calc_fan(self, dataset):
     """
     Extract reflectivity from 4D dataset (x,y,ToF,I).
@@ -790,6 +815,7 @@ class Reflectivity(object):
     reg=map(lambda item: int(round(item)),
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
+    debug('Reflectivity region: %s'%str(reg))
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     Idata=data[reg[0]:reg[1], reg[2]:reg[3], :]
@@ -800,6 +826,8 @@ class Reflectivity(object):
     self.ai=ai.mean()
     if self.options['scale_by_beam'] and self.ai>0:
       scale/=sin(self.ai)/0.005 # scale by beam-footprint
+    debug("Intensity scale is %s"%(scale))
+    debug('alpha_i=%s'%repr(ai))
 
     self._calc_bg(dataset)
 
@@ -885,6 +913,7 @@ class Reflectivity(object):
     self.R=array(Rsum)/len(lines)
     self.dR=sqrt(array(ddRsum))/len(lines)
 
+  @log_call
   def _calc_bg(self, dataset):
     '''
     Calculate the background intensity vs. ToF.
@@ -908,6 +937,9 @@ class Reflectivity(object):
     reg=map(lambda item: int(round(item)),
             [bg_pos-bg_width/2., bg_pos+bg_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1 ])
+    debug('Reflectivity region: %s'%str(reg))
+    debug("Background scale is %s"%(scale))
+
 
     if bg_poly:
       # create the background region from given polygons
@@ -977,6 +1009,7 @@ class OffSpecular(Reflectivity):
     Calculate off-specular scattering similarly as done for reflectivity.
   '''
 
+  @log_input
   def __init__(self, dataset, **options):
     all_options=dict(OffSpecular.DEFAULT_OPTIONS)
     for key, value in options.items():
@@ -1011,6 +1044,7 @@ class OffSpecular(Reflectivity):
     output+='>'
     return output
 
+  @log_call
   def _calc_offspec(self, dataset):
     """
       Extract off-specular scattering from 4D dataset (x,y,ToF,I).
@@ -1086,6 +1120,7 @@ class GISANS(Reflectivity):
     Calculate GISANS scattering from dataset.
   '''
 
+  @log_input
   def __init__(self, dataset, **options):
     all_options=dict(OffSpecular.DEFAULT_OPTIONS)
     for key, value in options.items():
@@ -1120,6 +1155,7 @@ class GISANS(Reflectivity):
     output+='>'
     return output
 
+  @log_call
   def _calc_gisans(self, dataset):
     """
     """
