@@ -8,9 +8,13 @@
 
 import os
 import sys
+import atexit
 import logging
+from .version import str_version
 
 # default options used
+# at the moment everything is logged to the file
+# TODO: change default behavior for production code to only log info level without --debug flag
 CONSOLE_LEVEL=logging.WARNING
 FILE_LEVEL=logging.DEBUG
 GUI_LEVEL=logging.INFO
@@ -23,6 +27,9 @@ if not os.path.exists(USER_DIR):
 def excepthook_overwrite(*exc_info):
   logging.error('unexpected python error', exc_info=exc_info)
 
+def goodby():
+  logging.debug('*** QuickNXS %s Logging ended ***'%str_version)
+  
 def setup_system():
   logger=logging.root#logging.getLogger('quick_nxs')
   logger.setLevel(logging.DEBUG)
@@ -39,4 +46,7 @@ def setup_system():
   logfile.setLevel(FILE_LEVEL)
   logger.addHandler(logfile)
   
+  logging.debug('*** QuickNXS %s Logging started ***'%str_version)
+  
   sys.excepthook=excepthook_overwrite
+  atexit.register(goodby)

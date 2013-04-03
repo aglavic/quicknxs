@@ -9,6 +9,17 @@ from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
 
+try:
+  from .decorators import log_call, log_input, log_both
+except ImportError:
+  # just in case module is used separately
+  def log_call(func):
+    return func
+  def log_input(func):
+    return func
+  def log_both(func):
+    return func
+
 # used for * imports
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',
          'smooth_data', 'refine_gauss']
@@ -69,7 +80,7 @@ class RefCollection(object):
       scale, ignore, ignore=get_scaling(refl1, refl2)
       refl1.rescale(scale)
 
-
+@log_both
 def get_total_reflection(refl, return_npoints=False):
   """
   Calculate the intensity of the total reflection plateau in one dataset.
@@ -99,6 +110,7 @@ def get_total_reflection(refl, return_npoints=False):
   else:
     return 1./wmean
 
+@log_both
 def get_scaling(refl1, refl2, add_points=0, polynom=3):
   """
   Calculate the scaling factor needed to stich one dataset to another.
@@ -127,6 +139,7 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   return _refineOverlap(Q1[reg1:], R1[reg1:], dR1[reg1:],
                         Q2[:reg2], R2[:reg2], dR2[:reg2], polynom)
 
+@log_both
 def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
              snr=5, min_width=2, max_width=20, ridge_length=15, return_pf=False, refine=True):
   """
@@ -172,6 +185,7 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   else:
     return float(x_peak)
 
+@log_both
 def get_yregion(data):
   """
   Calculate the beam y region from data y-projection.
@@ -189,7 +203,7 @@ def get_yregion(data):
   yregion=(y_peak_region[0], y_peak_region[-1])
   return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
 
-
+@log_both
 def refine_gauss(data, pos, width):
   '''
     Fit a gaussian function to a given dataset and return the x0 position.
@@ -208,6 +222,7 @@ def refine_gauss(data, pos, width):
   res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
   return res.params[1]
 
+@log_input
 def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=0.06, callback=None):
   '''
     Smooth a irregular spaced dataset onto a regular grid.
@@ -298,6 +313,7 @@ class OverlapGaussian(OverlapFunction):
     result=p[0]*exp(-0.5*(x-p[1])**2/p[2]**2)+p[3]*x+p[4]
     return result
 
+@log_input
 def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
   '''
     Refine a polynomial to the logarithm of two datasets while

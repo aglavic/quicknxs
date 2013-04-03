@@ -37,6 +37,7 @@ from .gisans_dialog import Ui_Dialog as UiGisans
 from .smooth_dialog import Ui_Dialog as UiSmooth
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, GISANS
 from .mrcalc import smooth_data
+from .decorators import log_call, log_output
 from .output_templates import *
 from . import genx_data
 # make sure importing and changing genx templates do only use our
@@ -92,6 +93,7 @@ class ReduceDialog(QDialog):
         checkbutton.setChecked(False)
     self.tempfiles=[]
 
+  @log_call
   def exec_(self):
     '''
       Run the dialog and perform reflectivity extraction.
@@ -157,6 +159,7 @@ class ReduceDialog(QDialog):
     else:
       return False
 
+  @log_call
   def read_data(self):
     '''
       Read the raw data of all files. This means that for multiple
@@ -173,6 +176,7 @@ class ReduceDialog(QDialog):
         self.raw_data[refli.options['number']]=NXSData(refli.origin[0], **refli.read_options)
         self.indices.append(refli.options['number'])
 
+  @log_call
   def extract_reflectivity(self):
     '''
       Extract the specular reflectivity for all datasets.
@@ -204,6 +208,7 @@ class ReduceDialog(QDialog):
       output_data[channel]=d
     self.output_data['Specular']=output_data
 
+  @log_call
   def extract_offspecular(self):
     '''
       Extract the specular reflectivity for all datasets.
@@ -233,6 +238,7 @@ class ReduceDialog(QDialog):
     output_data['ki_max']=ki_max
     self.output_data['OffSpec']=output_data
 
+  @log_call
   def extract_gisans(self):
     '''
       Extract the GISANS data for all datasets.
@@ -269,6 +275,7 @@ class ReduceDialog(QDialog):
         output['column_names']=['Qy', 'Qz', 'I', 'dI']
         self.output_data['GISANS_%i'%i]=output
 
+  @log_call
   def smooth_offspec(self):
     data=self.output_data['OffSpec'][self.channels[0]]
     dia=SmoothDialog(self.parent(), data)
@@ -317,6 +324,7 @@ class ReduceDialog(QDialog):
     self.output_data['OffSpecSmooth']=output_data
     pb.destroy()
 
+  @log_call
   def check_exists(self, filename):
     '''
       If the filename exists, prompt the user if it should be overwritten.
@@ -335,6 +343,7 @@ class ReduceDialog(QDialog):
     else:
       return False
 
+  @log_call
   def export_data(self):
     '''
       Write all datasets to the selected format output.
@@ -473,7 +482,6 @@ class ReduceDialog(QDialog):
 #                                   )
 #      simpleapi.SaveNexus(ws, output.encode('utf8'))
 
-
   def dictize_data(self, output_data):
     '''
       Create a dictionary for export of data for e.g. Matlab files.
@@ -489,6 +497,7 @@ class ReduceDialog(QDialog):
           output[DICTIZE_CHANNELS[channel]+"_"+str(i)]=plotmap
     return output
 
+  @log_call
   def create_gnuplot_script(self, output_data, title):
     ind_str=self.ind_str
     ofname_full=os.path.join(unicode(self.ui.directoryEntry.text()),
@@ -599,6 +608,7 @@ class ReduceDialog(QDialog):
         output=os.path.join(folder, params['output']+'png')
       self.exported_files_all.append(output);self.exported_files_plots.append(output)
 
+  @log_call
   def create_genx_file(self):
     ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
                         unicode(self.ui.fileNameEntry.text()))
@@ -633,6 +643,7 @@ class ReduceDialog(QDialog):
       self.exported_files_all.append(output)
 
 
+  @log_call
   def plot_result(self, output_data, title):
     ind_str=self.ind_str
     if type(output_data[self.channels[0]]) is not list:
@@ -697,6 +708,7 @@ class ReduceDialog(QDialog):
         if self.ui.emailSend.isChecked() and not self.ui.gnuplot.isChecked():
           self._save_plot(plot)
 
+  @log_call
   def _save_plot(self, plot):
     fname=os.path.join(gettempdir(), 'plot_%i.png'%len(self.tempfiles))
     try:
@@ -713,6 +725,7 @@ class ReduceDialog(QDialog):
         self.channels.remove(name)
         return
 
+  @log_call
   def changeDir(self):
     oldd=self.ui.directoryEntry.text()
     newd=QFileDialog.getExistingDirectory(parent=self, caption=u'Select new folder',
@@ -720,6 +733,7 @@ class ReduceDialog(QDialog):
     if newd is not None:
       self.ui.directoryEntry.setText(newd)
 
+  @log_call
   def set_email_texts(self):
     for name, value in email_options.items():
       entry=getattr(self.ui, 'email'+name)
@@ -730,6 +744,7 @@ class ReduceDialog(QDialog):
       else:
         entry.setChecked(value)
 
+  @log_call
   def save_email_texts(self):
     for name, value in email_options.items():
       entry=getattr(self.ui, 'email'+name)
@@ -744,6 +759,7 @@ class ReduceDialog(QDialog):
   def _email_replace(self, text):
     return text.replace('{ipts}', self.ipts_str).replace('{numbers}', self.ind_str)
 
+  @log_call
   def send_email(self):
     '''
     Collect all files and send them to the user via smtp mail.
@@ -1058,6 +1074,7 @@ class SmoothDialog(QDialog):
       self.drawing=False
       self.updateSettings()
 
+  @log_output
   def getOptions(self):
     output={}
     x1=self.ui.gridXmin.value()
@@ -1153,6 +1170,7 @@ class GISANSDialog(QDialog):
     self.ui.iMax.setValue(log10(datasets[0].S.max()*2.))
     self.ui.iMin.setValue(log10(datasets[0].S[datasets[0].I>0].min()/40.))
 
+  @log_call
   def drawLambda(self):
     '''
     Plot intensity vs. lambda.
@@ -1183,6 +1201,7 @@ class GISANSDialog(QDialog):
     self.ui.lambdaPlot.canvas.fig.subplots_adjust(left=0.15, bottom=0.18, right=0.99, top=0.99)
     self.ui.lambdaPlot.draw()
 
+  @log_call
   def lambdaRangeChanged(self):
     '''
     Change the vertical lines on the lambda plot.
@@ -1196,6 +1215,7 @@ class GISANSDialog(QDialog):
       line.set_xdata(lmin+(i+1)*lsteps)
     self.ui.lambdaPlot.draw()
 
+  @log_call
   def numberSlicesChanged(self):
     '''
     Change the number of lines drawn on the lambda plot.
@@ -1220,6 +1240,7 @@ class GISANSDialog(QDialog):
                                                                     color='red'))
     self.ui.lambdaPlot.draw()
 
+  @log_call
   def createProjectionPlots(self):
     '''
     Start a thread that calculates porjections to be plotted.
@@ -1238,6 +1259,7 @@ class GISANSDialog(QDialog):
     self._calculator.start()
     self._calculator.setPriority(QThread.LowPriority)
 
+  @log_call
   def drawProjectionPlot(self, i):
     '''
     Plot one projection.
@@ -1265,6 +1287,7 @@ class GISANSDialog(QDialog):
     self.ui.plotShowList.setItemSelected(item, True)
     self._listItems[item]=plot
 
+  @log_call
   def changePlotSelection(self):
     selection=self.ui.plotShowList.selectedItems()
     for item, plot in self._listItems.items():
@@ -1273,6 +1296,7 @@ class GISANSDialog(QDialog):
       else:
         plot.hide()
 
+  @log_call
   def changePlotScale(self):
     from matplotlib.colors import LogNorm
     norm=LogNorm(10**(self.ui.iMin.value()), 10**(self.ui.iMax.value()))
