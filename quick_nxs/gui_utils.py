@@ -6,14 +6,26 @@
 
 import os, sys
 import subprocess
-from zipfile import ZipFile
+from tempfile import gettempdir
+from getpass import getuser
+from zipfile import ZipFile, ZIP_DEFLATED
+from cStringIO import StringIO
 from cPickle import loads, dumps
-from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, \
-                        QApplication, QSizePolicy, QListWidgetItem
-from PyQt4.QtCore import QThread, pyqtSignal
 from time import sleep, time, strftime
 from numpy import vstack, hstack, argsort, array, savetxt, savez, where, histogram2d, \
                   log10, meshgrid, sqrt
+
+import smtplib
+from email import encoders
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+
+from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, \
+                        QApplication, QSizePolicy, QListWidgetItem
+from PyQt4.QtCore import QThread, pyqtSignal
+
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
@@ -35,6 +47,17 @@ genx_data.DataSet.__module__='genx.data'
 TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
 
 result_folder=os.path.expanduser(u'~/results')
+email_options={
+               'Send': False,
+               'ZIP': True,
+               'To': '%s@ornl.gov'%getuser(),
+               'CC': '',
+               'Subject': 'SNS BL 4A extraction {ipts}',
+               'Text': 'Dear User,\n\nHere is the data extracted for the files {numbers}.\n\nRegards from BL4A',
+               'All': False,
+               'Plots': False,
+               'Data': True,
+               }
 
 class ReduceDialog(QDialog):
   CHANNEL_NAMINGS=['UpUp', 'DownDown', 'UpDown', 'DownUp']
@@ -61,11 +84,13 @@ class ReduceDialog(QDialog):
       self.ui.directoryEntry.setText(os.path.dirname(refls[0].origin[0]))
     else:
       self.ui.directoryEntry.setText(result_folder)
+    self.set_email_texts()
     for i in range(4):
       if not any(map(lambda item: item in self.CHANNEL_COMPARE[i], channels)):
         checkbutton=getattr(self.ui, 'export'+self.CHANNEL_NAMINGS[i])
         checkbutton.setEnabled(False)
         checkbutton.setChecked(False)
+    self.tempfiles=[]
 
   def exec_(self):
     '''
@@ -73,6 +98,9 @@ class ReduceDialog(QDialog):
     '''
     global result_folder
     if QDialog.exec_(self):
+      self.exported_files_all=[]
+      self.exported_files_plots=[]
+      self.exported_files_data=[]
       foldername=unicode(self.ui.directoryEntry.text())
       if not os.path.exists(foldername):
         result=QMessageBox.question(self, 'Creat Folder?',
@@ -96,6 +124,7 @@ class ReduceDialog(QDialog):
       self.read_data()
       self.indices.sort()
       self.ind_str="+".join(map(str, self.indices))
+      self.ipts_str=self.raw_data.values()[0].experiment
 
       if self.ui.exportSpecular.isChecked():
         self.extract_reflectivity()
@@ -111,13 +140,19 @@ class ReduceDialog(QDialog):
       self.export_data()
       if self.ui.gnuplot.isChecked():
         for title, output_data in self.output_data.items():
-          self.create_gnuplot_script(self.ind_str, output_data, title)
+          self.create_gnuplot_script(output_data, title)
       if self.ui.genx.isChecked():
         self.create_genx_file()
       if self.ui.plot.isChecked():
         for title, output_data in self.output_data.items():
-          self.plot_result(self.ind_str, output_data, title)
+          self.plot_result(output_data, title)
+
       result_folder=unicode(self.ui.directoryEntry.text())
+      self.save_email_texts()
+      if self.ui.emailSend.isChecked():
+        self.send_email()
+      for tmp in self.tempfiles:
+        os.remove(tmp)
       return True
     else:
       return False
@@ -365,6 +400,7 @@ class ReduceDialog(QDialog):
                 savetxt(of, scan, delimiter='\t')
                 of.write('\n')
             of.write('\n\n')
+          self.exported_files_all.append(output);self.exported_files_data.append(output)
       if self.ui.combinedAscii.isChecked():
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
@@ -396,6 +432,7 @@ class ReduceDialog(QDialog):
               of.write('\n\n')
             of.write('# End of channel %s\n\n\n'%channel)
           of.close()
+          self.exported_files_all.append(output);self.exported_files_data.append(output)
     if self.ui.matlab.isChecked():
       from scipy.io import savemat
       for key, output_data in self.output_data.items():
@@ -405,6 +442,7 @@ class ReduceDialog(QDialog):
         if not self.check_exists(output):
           continue
         savemat(output, dictdata, oned_as='column')
+        self.exported_files_all.append(output);self.exported_files_data.append(output)
     if self.ui.numpy.isChecked():
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
@@ -413,6 +451,7 @@ class ReduceDialog(QDialog):
         if not self.check_exists(output):
           continue
         savez(output, **dictdata)
+        self.exported_files_all.append(output);self.exported_files_data.append(output)
 
 #  def export_mantid(self):
 #    ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
@@ -450,11 +489,12 @@ class ReduceDialog(QDialog):
           output[DICTIZE_CHANNELS[channel]+"_"+str(i)]=plotmap
     return output
 
-  def create_gnuplot_script(self, ind_str, output_data, title):
+  def create_gnuplot_script(self, output_data, title):
+    ind_str=self.ind_str
     ofname_full=os.path.join(unicode(self.ui.directoryEntry.text()),
                         unicode(self.ui.fileNameEntry.text()))
     output=ofname_full.replace('{item}', title).replace('{state}', 'all')\
-                 .replace('{type}', 'gp').replace('{numbers}', self.ind_str)
+                 .replace('{type}', 'gp').replace('{numbers}', ind_str)
     if not self.check_exists(output):
       return
     ofname=unicode(self.ui.fileNameEntry.text())
@@ -462,15 +502,17 @@ class ReduceDialog(QDialog):
       # 2D PLot
       params=dict(
                   output=ofname.replace('{item}', title).replace('{state}', 'all')\
-                         .replace('{type}', '').replace('{numbers}', self.ind_str),
+                         .replace('{type}', '').replace('{numbers}', ind_str),
                   xlabel=u"Q_z [Å^{-1}]",
                   ylabel=u"Reflectivity",
+                  pix_x=1600,
+                  pix_y=1200,
                   title=ind_str,
                   )
       plotlines=[]
       for i, channel in enumerate(self.channels):
         filename=ofname.replace('{item}', title).replace('{state}', channel)\
-                     .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
+                     .replace('{type}', 'dat').replace('{numbers}', ind_str)
         plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
       params['plot_lines']=GP_SEP.join(plotlines)
       script=GP_TEMPLATE%params
@@ -485,7 +527,7 @@ class ReduceDialog(QDialog):
       cols=1+int(len(self.channels)>1)
       params=dict(
                   output=ofname.replace('{item}', title).replace('{state}', 'all')\
-                         .replace('{type}', '').replace('{numbers}', self.ind_str),
+                         .replace('{type}', '').replace('{numbers}', ind_str),
                   zlabel=u"I [a.u.]",
                   title=ind_str,
                   rows=rows,
@@ -538,16 +580,24 @@ class ReduceDialog(QDialog):
       plotlines=''
       for channel in self.channels:
         line_params['file_name']=ofname.replace('{item}', title).replace('{state}', channel)\
-                     .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
+                     .replace('{type}', 'dat').replace('{numbers}', ind_str)
         plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
       params['plot_lines']=plotlines
       script=GP_TEMPLATE_3D%params
       open(output, 'w').write(script.encode('utf8'))
+    self.exported_files_all.append(output)
     try:
       subprocess.call(['gnuplot', output], cwd=self.ui.directoryEntry.text(),
                       shell=False)
     except:
       pass
+    else:
+      folder=os.path.dirname(output)
+      if type(output_data[self.channels[0]]) is not list:
+        output=os.path.join(folder, params['output']+'png')
+      else:
+        output=os.path.join(folder, params['output']+'png')
+      self.exported_files_all.append(output);self.exported_files_plots.append(output)
 
   def create_genx_file(self):
     ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
@@ -580,9 +630,11 @@ class ReduceDialog(QDialog):
       oz.writestr('data', dumps(model_data))
       iz.close()
       oz.close()
+      self.exported_files_all.append(output)
 
 
-  def plot_result(self, ind_str, output_data, title):
+  def plot_result(self, output_data, title):
+    ind_str=self.ind_str
     if type(output_data[self.channels[0]]) is not list:
       # plot the results in a new window
       dialog=PlotDialog()
@@ -599,6 +651,8 @@ class ReduceDialog(QDialog):
       plot.draw()
       dialog.show()
       self.parent().open_plots.append(dialog)
+      if self.ui.emailSend.isChecked() and not self.ui.gnuplot.isChecked():
+        self._save_plot(plot)
     else:
       if title=='OffSpec':
         x, y, z=4, 1, 5
@@ -640,6 +694,18 @@ class ReduceDialog(QDialog):
         plot.draw()
         dialog.show()
         self.parent().open_plots.append(dialog)
+        if self.ui.emailSend.isChecked() and not self.ui.gnuplot.isChecked():
+          self._save_plot(plot)
+
+  def _save_plot(self, plot):
+    fname=os.path.join(gettempdir(), 'plot_%i.png'%len(self.tempfiles))
+    try:
+      plot.canvas.print_figure(fname)
+    except:
+      pass
+    else:
+      self.exported_files_plots.append(fname)
+      self.tempfiles.append(fname)
 
   def rm_channel(self, names):
     for name in names:
@@ -653,6 +719,89 @@ class ReduceDialog(QDialog):
                                           directory=oldd)
     if newd is not None:
       self.ui.directoryEntry.setText(newd)
+
+  def set_email_texts(self):
+    for name, value in email_options.items():
+      entry=getattr(self.ui, 'email'+name)
+      if entry.__class__.__name__=='QPlainTextEdit':
+        entry.setPlainText(value)
+      elif entry.__class__.__name__=='QLineEdit':
+        entry.setText(value)
+      else:
+        entry.setChecked(value)
+
+  def save_email_texts(self):
+    for name, value in email_options.items():
+      entry=getattr(self.ui, 'email'+name)
+      if entry.__class__.__name__=='QPlainTextEdit':
+        value=entry.toPlainText()
+      elif entry.__class__.__name__=='QLineEdit':
+        value=entry.text()
+      else:
+        value=entry.isChecked()
+      email_options[name]=value
+
+  def _email_replace(self, text):
+    return text.replace('{ipts}', self.ipts_str).replace('{numbers}', self.ind_str)
+
+  def send_email(self):
+    '''
+    Collect all files and send them to the user via smtp mail.
+    '''
+    msg=MIMEMultipart()
+    msg['Subject']=self._email_replace(email_options['Subject'])
+    msg['From']='BL4A@ornl.gov'
+    msg['To']=email_options['To'].replace(';', ', ')
+    msg['CC']=email_options['CC'].replace(';', ', ')
+    text=self._email_replace(email_options['Text'])
+    msg.preamble=text
+    msg.attach(MIMEText(text))
+
+    if email_options['Data']:
+      exported_files=self.exported_files_data
+    elif email_options['Plots']:
+      exported_files=self.exported_files_plots
+    else:
+      exported_files=self.exported_files_all
+    if email_options['ZIP']:
+      # create an in-memory zip file which gets attached to the mail
+      fobj=StringIO()
+      zipfile=ZipFile(fobj, 'w', ZIP_DEFLATED)
+      for item in exported_files:
+        zipfile.write(item, arcname=os.path.basename(item))
+      zipfile.close()
+      fobj.seek(0)
+      mitem=MIMEBase('application', 'zip')
+      mitem.set_payload(fobj.read())
+      encoders.encode_base64(mitem)
+      mitem.add_header('Content-Disposition', 'attachment',
+                       filename=self._email_replace('results_{numbers}.zip'))
+      msg.attach(mitem)
+    else:
+      # read each file, which was exported and attach it to the mail
+      for item in exported_files:
+        try:
+          if item.endswith('.png'):
+            mitem=MIMEImage(open(item, 'rb').read(), 'png')
+          elif item.endswith('.pdf'):
+            mitem=MIMEText(open(item, 'rb').read(), 'pdf')
+          elif item.endswith('.dat') or item.endswith('.gp'):
+            mitem=MIMEText(open(item, 'rb').read())
+          else:
+            mitem=MIMEBase('application', item[-3:])
+            mitem.set_payload(open(item, 'rb').read())
+            encoders.encode_base64(mitem)
+        except:
+          continue
+        mitem.add_header('Content-Disposition', 'attachment', filename=os.path.basename(item))
+        msg.attach(mitem)
+
+    smtp=smtplib.SMTP('160.91.4.26')
+    smtp.sendmail(msg['From'],
+                  map(unicode.strip, msg['To'].split(',')+msg['CC'].split(',')),
+                  msg.as_string())
+    smtp.quit()
+
 
 class PlotDialog(QDialog):
   '''
