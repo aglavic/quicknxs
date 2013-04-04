@@ -3,7 +3,7 @@
   Module including main GUI class with all signal handling and plot creation.
 '''
 
-import os, sys
+import os
 from glob import glob
 from numpy import where, pi, newaxis, log10
 from cPickle import load, dump
@@ -15,11 +15,12 @@ from .main_window import Ui_MainWindow
 from . import gui_utils
 from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
-from .error_handling import ErrorHandler
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 #from logging import info, debug
+from logging import info, debug, warning
+from .gui_logging import install_gui_handler
 from .decorators import log_call, log_input, log_both
 
 BASE_FOLDER='/SNS/REF_M'
@@ -127,6 +128,7 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
+    install_gui_handler(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
@@ -170,8 +172,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ipython=IPythonConsoleQtWidget(self)
       self.ui.plotTab.addTab(self.ipython, 'IPython')
     else:
-      # catch python errors with error handling from stderr
-      sys.stderr=ErrorHandler(self)
       self.ipython=None
     if len(argv)>0:
       # delay action to be run within event loop, this allows the error handling to work
@@ -184,6 +184,7 @@ class MainGUI(QtGui.QMainWindow):
         self.trigger('loadExtraction', argv[0])
     else:
       self.ui.numberSearchEntry.setFocus()
+      self.auto_change_active=True # prevent exceptions when changing options without file open
 
   @log_input
   def processDelayedTrigger(self, item, args):
@@ -244,7 +245,7 @@ class MainGUI(QtGui.QMainWindow):
       self._foThread.terminate()
       self._foThread.wait(100)
       self._foThread=None
-    self.ui.statusbar.showMessage(u"Reading file %s..."%(filename))
+    info(u"Reading file %s..."%(filename))
     if self.read_with_thread:
       self._foThread=fileOpenThread(self, filename)
       self._foThread.finished.connect(self._fileOpenDone)
@@ -274,7 +275,7 @@ class MainGUI(QtGui.QMainWindow):
       self._foThread.terminate()
       self._foThread.wait(100)
       self._foThread=None
-    self.ui.statusbar.showMessage(u"Reading files %s..."%(filenames[0]))
+    info(u"Reading files %s..."%(filenames[0]))
     data=NXSMultiData(filenames,
           bin_type=self.ui.eventBinMode.currentIndex(),
           bins=self.ui.eventTofBins.value(),
@@ -306,7 +307,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.selectedChannel.setItemText(i, 'NONE')
     self.active_data=data
     self.last_mtime=os.path.getmtime(filename)
-    self.ui.statusbar.showMessage(u"%s loaded"%(filename), 5000)
+    info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
 
     self.fileLoaded.emit()
@@ -859,7 +860,7 @@ class MainGUI(QtGui.QMainWindow):
         plot.clear()
         plot.canvas.fig.text(0.3, 0.5, "Pease wait for calculation\nto be finished.")
         plot.draw()
-    self.ui.statusbar.showMessage('Calculating GISANS projection...')
+    info('Calculating GISANS projection...')
     self.updateEventReadout(0.)
 
     options=dict(self.refl.options)
@@ -880,7 +881,7 @@ class MainGUI(QtGui.QMainWindow):
   def _plot_gisans(self):
     gisans=self._gisansThread.gisans
     self._gisansThread=None
-    self.ui.statusbar.showMessage('Calculating GISANS projection, Done.', 1000)
+    info('Calculating GISANS projection, Done.')
     plots=[self.ui.gisans_pp, self.ui.gisans_mm, self.ui.gisans_pm, self.ui.gisans_mp]
     Imin=10**self.ui.gisansImin.value()
     Imax=10**self.ui.gisansImax.value()
@@ -992,7 +993,7 @@ class MainGUI(QtGui.QMainWindow):
       Search the data folders for a specific file number and open it.
     '''
     number=self.ui.numberSearchEntry.text()
-    self.ui.statusbar.showMessage('Trying to locate file number %s...'%number)
+    info('Trying to locate file number %s...'%number)
     QtGui.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'histo.nxs'))
@@ -1004,7 +1005,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.numberSearchEntry.setText('')
       self.fileOpen(search[0])
     else:
-      self.ui.statusbar.showMessage('Could not locate %s...'%number, 2500)
+      info('Could not locate %s...'%number)
 
   @log_call
   def nextFile(self):
@@ -1142,8 +1143,8 @@ class MainGUI(QtGui.QMainWindow):
       else:
         norm=self.getNorm()
         if norm is None:
-          QtGui.QMessageBox.warning(self, 'Automatic extraction failed',
-            'There is a dataset without fitting normalization, automatic extraction stopped!')
+          warning('There is a dataset without fitting normalization, automatic extraction stopped!',
+               extra={'title': 'Automatic extraction failed'})
           break
         # cut regions where the incident intensity drops below 10% of the maximum
         region=where(norm.Rraw>=(norm.Rraw.max()*0.1))[0]
@@ -1399,8 +1400,8 @@ class MainGUI(QtGui.QMainWindow):
       Extract the scaling factor from the reflectivity curve.
     '''
     if self.refl is None or not self.refl.options['normalization']:
-      QtGui.QMessageBox.information(self, 'Select other dataset',
-            'Please select a dataset with total reflection plateau\nand normalization.')
+      warning('Please select a dataset with total reflection plateau\nand normalization.',
+              extra={'title': 'Select other dataset'})
       return
     self.auto_change_active=True
     if len(self.reduction_list)>0:
@@ -1434,21 +1435,18 @@ class MainGUI(QtGui.QMainWindow):
     if self.refl is None:
       return
     if self.refl.options['normalization'] is None:
-      QtGui.QMessageBox.information(self, u'Data not normalized',
-                                    u"You can only add reflectivities (λ normalized)!",
-                                    QtGui.QMessageBox.Close)
+      warning(u"You can only add reflectivities (λ normalized)!",
+              extra={'title': u'Data not normalized'})
       return
     # collect current settings
     channels=self.channels
     if self.reduction_list==[]:
       self.ref_list_channels=list(channels)
     elif self.ref_list_channels!=channels:
-      QtGui.QMessageBox.information(self, u'Wrong Channels',
-u'''The active dataset has not the same channels 
-as the ones already in the list:
+      warning(u'''The active dataset has not the same channels as the ones already in the list:
 
 %s  ≠  %s'''%(u" / ".join(channels), u' / '.join(self.ref_list_channels)),
-                                    QtGui.QMessageBox.Close)
+             extra={'title': u'Wrong Channels'})
       return
     # options used for the extraction
     opts=self.refl.options
@@ -1640,9 +1638,8 @@ as the ones already in the list:
       reduction items.
     '''
     if len(self.reduction_list)==0:
-      QtGui.QMessageBox.information(self, u'Select a dataset',
-                                    u'Please select at least\none dataset to reduce.',
-                                    QtGui.QMessageBox.Close)
+      warning(u'Please select at least\none dataset to reduce.',
+              extra={'title': u'Select a dataset'})
       return
     dialog=gui_utils.ReduceDialog(self, self.ref_list_channels, self.reduction_list)
     dialog.exec_()
