@@ -103,6 +103,7 @@ class QtHandler(logging.Handler):
     mbox.setInformativeText('Do you want to send the logfile to the developer?')
     mbox.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
     mbox.setDefaultButton(QMessageBox.No)
+    mbox.setWindowTitle('QuickNXS Error')
 
     if record.exc_info:
       tb=traceback.format_exception(*record.exc_info)
