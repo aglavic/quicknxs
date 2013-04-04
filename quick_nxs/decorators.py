@@ -4,6 +4,7 @@
 
 import inspect
 import logging
+from StringIO import StringIO
 
 
 #
@@ -114,7 +115,9 @@ old_class=logging.getLoggerClass()
 logging.setLoggerClass(DecoratorLogger)
 logger=logging.getLogger('deco')
 logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.NullHandler())
+null_handler=logging.StreamHandler(StringIO())
+null_handler.setLevel(logging.CRITICAL)
+logger.addHandler(null_handler)
 logging.setLoggerClass(old_class)
 
 def _logformat(msg, decname, func):
