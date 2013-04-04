@@ -33,7 +33,6 @@ def goodby():
   logging.debug('*** QuickNXS %s Logging ended ***'%str_version)
 
 def setup_system():
-  print 'Start logger'
   logger=logging.getLogger()#logging.getLogger('quick_nxs')
   logger.setLevel(logging.DEBUG)
   console=logging.StreamHandler(sys.__stdout__)
