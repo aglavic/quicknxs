@@ -174,6 +174,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ipython=None
     if len(argv)>0:
+      # if non ascii character in filenames interprete it as utf8
+      argv=[unicode(argi, 'utf8', 'ignore') for argi in argv]
       # delay action to be run within event loop, this allows the error handling to work
       if argv[0][-4:]=='.nxs':
         if len(argv)==1:

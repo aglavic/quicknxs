@@ -350,8 +350,8 @@ class ReduceDialog(QDialog):
     '''
     ofname=os.path.join(unicode(self.ui.directoryEntry.text()),
                         unicode(self.ui.fileNameEntry.text()))
-    nlines=''
-    plines=''
+    nlines=u''
+    plines=u''
     for i, normi in enumerate(self.norms):
       opts=dict(normi.options)
       if type(normi.origin) is list:
@@ -374,7 +374,7 @@ class ReduceDialog(QDialog):
                    'file_number': refli.options['number'],
                    'file_name': fname,
                    })
-      plines+='# '+FILE_HEADER_PARAMS%opts
+      plines+=u'# '+FILE_HEADER_PARAMS%opts
       plines+='\n'
     nlines=nlines[:-1] # remove last newline
     plines=plines[:-1] # remove last newline
@@ -388,17 +388,17 @@ class ReduceDialog(QDialog):
             continue
           of=open(output, 'w')
           # write the file header
-          of.write(FILE_HEADER%{
-                                'date': strftime("%Y-%m-%d %H:%M:%S"),
+          of.write((FILE_HEADER%{
+                                'date': strftime(u"%Y-%m-%d %H:%M:%S"),
                                 'version': str_version,
                                 'datatype': key,
                                 'indices': self.ind_str,
                                 'params_lines': plines,
                                 'norm_lines': nlines,
-                                'column_units': "\t".join(output_data['column_units']),
-                                'column_names':  "\t".join(output_data['column_names']),
+                                'column_units': u"\t".join(output_data['column_units']),
+                                'column_names':  u"\t".join(output_data['column_names']),
                                 'channels': channel,
-                                })
+                                }).encode('utf8'))
           # write the data
           if type(value) is not list:
             savetxt(of, value, delimiter='\t')
@@ -416,16 +416,16 @@ class ReduceDialog(QDialog):
         if self.check_exists(output):
           of=open(output, 'w')
           # write the file header
-          of.write(FILE_HEADER%{
-                                'date': strftime("%Y-%m-%d %H:%M:%S"),
+          of.write((FILE_HEADER%{
+                                'date': strftime(u"%Y-%m-%d %H:%M:%S"),
                                 'datatype': key,
                                 'indices': self.ind_str,
                                 'params_lines': plines,
                                   'norm_lines': nlines,
-                                'column_units': "\t".join(output_data['column_units']),
-                                'column_names':  "\t".join(output_data['column_names']),
-                                'channels': ", ".join(self.channels),
-                                })
+                                'column_units': u"\t".join(output_data['column_units']),
+                                'column_names':  u"\t".join(output_data['column_names']),
+                                'channels': u", ".join(self.channels),
+                                }).encode('utf8'))
           # write all channel data separated by three empty lines and one comment
           for channel in self.channels:
             of.write('# Start of channel %s\n'%channel)
