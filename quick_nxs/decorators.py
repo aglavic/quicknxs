@@ -103,11 +103,11 @@ class DecoratorLogger(logging.getLoggerClass()):
   
   def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
     if extra is None:
-      return super(DecoratorLogger, self).makeRecord(name, lvl, fn, lno, msg, args, exc_info,
+      return logging.getLoggerClass().makeRecord(self, name, lvl, fn, lno, msg, args, exc_info,
                                                      func=func, extra=None)
     else:
       
-      return super(DecoratorLogger, self).makeRecord(name, lvl, extra['name'], extra['lno'],
+      return logging.getLoggerClass().makeRecord(self, name, lvl, extra['name'], extra['lno'],
                                                      msg, args,
                                                      exc_info, func=extra['func'], extra=None)      
 
