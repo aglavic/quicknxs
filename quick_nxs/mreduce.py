@@ -35,7 +35,7 @@ except ImportError:
     return func
   def log_both(func):
     return func
-  
+
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -602,26 +602,6 @@ class MRDataset(object):
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
-#  # easy access to automatically extracted reflectivity
-#  # could be useful for automatic extraction scripts
-#  @property
-#  def Q(self):
-#    if self._Q is None:
-#      self._autocalc_ref()
-#    return self._Q
-#
-#  @property
-#  def I(self):
-#    if self._I is None:
-#      self._autocalc_ref()
-#    return self._I
-#
-#  @property
-#  def dI(self):
-#    if self._dI is None:
-#      self._autocalc_ref()
-#    return self._dI
-
 def time_from_header(filename):
   '''
   Read just an edf header to get the time of a measurement in seconds.
@@ -636,9 +616,6 @@ def time_from_header(filename):
   nxs.close()
   return maxtime
 
-
-
-#TODO: Export all options as string for file header and perhaps put option readout here as static method
 class Reflectivity(object):
   """
   Extraction of reflectivity from MRDatatset object storing all data
@@ -708,7 +685,7 @@ class Reflectivity(object):
     return output
 
   #############################################################################
-  
+
   @log_call
   def _calc_normal(self, dataset):
     """
