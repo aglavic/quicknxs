@@ -13,12 +13,9 @@ try:
   from .decorators import log_call, log_input, log_both
 except ImportError:
   # just in case module is used separately
-  def log_call(func):
-    return func
-  def log_input(func):
-    return func
-  def log_both(func):
-    return func
+  def log_call(func): return func
+  def log_input(func): return func
+  def log_both(func): return func
 
 # used for * imports
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',

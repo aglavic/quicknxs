@@ -29,12 +29,9 @@ try:
   from .decorators import log_call, log_input, log_both
 except ImportError:
   # just in case module is used separately
-  def log_call(func):
-    return func
-  def log_input(func):
-    return func
-  def log_both(func):
-    return func
+  def log_call(func): return func
+  def log_input(func): return func
+  def log_both(func): return func
 
 
 ### Parameters needed for some calculations.

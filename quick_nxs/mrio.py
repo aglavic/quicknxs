@@ -6,10 +6,17 @@
 '''
 
 import os
+from logging import debug
 from time import strftime
 import numpy as np
-from .mreduce import NXSData, NXSMultiData, Reflectivity
-from .version import str_version
+
+try:
+  from .mreduce import NXSData, NXSMultiData, Reflectivity
+  from .version import str_version
+except ImportError:
+  # just in case module is used separately
+  from mreduce import NXSData, NXSMultiData, Reflectivity
+  str_version='?.?.?'
 
 class HeaderCreator(object):
   '''
@@ -18,17 +25,19 @@ class HeaderCreator(object):
   refls=None
   norms=None
   bgs=None
+  bg_polys=None
   evts=None
   sections=None
   direct_beam_options=['P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'x_width',
                        'bg_pos', 'bg_width', 'dpix', 'tth', 'number']
   dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'x_width',
                    'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number']
-  bg_options=['bg_tof_constant', 'bg_poly_regions', 'bg_scale_xfit']
+  bg_options=['bg_tof_constant', 'bg_scale_xfit', 'bg_poly_regions']
   event_options=['bin_type', 'bins', 'event_split_bins', 'event_split_index']
 
   def __init__(self, refls):
     self.refls=refls
+    debug('Start collecting data for header creation.')
     self._collect_norms()
     self._collect_background()
     self._collect_event()
@@ -48,14 +57,25 @@ class HeaderCreator(object):
       Create a list of unique advanced background options used in the reflectivity list.
     '''
     self.bgs=[]
-    for refli in self.refls:
+    self.bg_polys=[]
+    for item in self.norms+self.refls:
       default=True
       for option in self.bg_options:
-        if refli.options[option]!=Reflectivity.DEFAULT_OPTIONS[option]:
+        if item.options[option]!=Reflectivity.DEFAULT_OPTIONS[option]:
           default=False
           break
       if not default:
-        bg=[refli.option[option] for option in self.bg_options]
+        bg=[item.options[option] for option in self.bg_options]
+        if bg[2]:
+          # polygon regions are collected separately as they are lists
+          poly_ids=[]
+          for poly in bg[2]:
+            poly=[poly[0][0], poly[0][1], poly[1][0], poly[1][1],
+                  poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
+            if not poly in self.bg_polys:
+              self.bg_polys.append(poly)
+            poly_ids.append(self.bg_polys.index(poly))              
+          bg[2]=poly_ids
         self.bgs.append(bg)
 
   def _collect_event(self):
@@ -63,14 +83,14 @@ class HeaderCreator(object):
       Collect event mode readout options used to retrieve the reflectivity and normalization files.
     '''
     self.evts=[]
-    for refli in self.refls:
-      if type(refli.origin) is list:
-        if not refli.origin[0][0].endswith('event.nxs'):
+    for item in self.norms+self.refls:
+      if type(item.origin) is list:
+        if not item.origin[0][0].endswith('event.nxs'):
           continue
       else:
-        if not refli.origin[0].endswith('event.nxs'):
+        if not item.origin[0].endswith('event.nxs'):
           continue
-      event_opts=[refli.read_options[option] for option in self.event_options]
+      event_opts=[item.read_options[option] for option in self.event_options]
       if not event_opts in self.evts:
         self.evts.append(event_opts)
 
@@ -80,24 +100,114 @@ class HeaderCreator(object):
     '''
     self.sections=[]
     # direct beam measurements
-    options=self.direct_beam_options
-    section=[u'Direct Beam Runs', options, []]
-
-    self.sections.append(section)
-    options=self.dataset_options
-    section=[u'Data Runs', options, []]
-    self.sections.append(section)
-
+    debug('Direct beam section')
+    options=['DB_ID']+self.direct_beam_options
     if len(self.evts)>0:
-      options=self.event_options
+      options.append('EVT_ID')
+    if len(self.bgs)>0:
+      options.append('BG_ID')
+    data=[]
+    for i, norm in enumerate(self.norms):
+      datai=[i+1]+[norm.options[option] for option in self.direct_beam_options]
+      if len(self.evts)>0:
+        if type(norm.origin) is list and norm.origin[0][0].endswith('event.nxs')\
+           or norm.origin[0].endswith('event.nxs'):
+          event_opts=[norm.read_options[option] for option in self.event_options]
+          datai.append(self.evts.index(event_opts)+1)
+        else:
+          datai.append(None)
+      if len(self.bgs)>0:
+        default=True
+        for option in self.bg_options:
+          if norm.options[option]!=Reflectivity.DEFAULT_OPTIONS[option]:
+            default=False
+            break
+        if default:
+          datai.append(None)
+        else:
+          bg=[norm.options[option] for option in self.bg_options]
+          poly_ids=[]
+          if bg[2]:
+            for poly in bg[2]:
+              poly=[poly[0][0], poly[0][1], poly[1][0], poly[1][1],
+                    poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
+              poly_ids.append(self.bg_polys.index(poly))              
+            bg[2]=poly_ids
+          datai.append(self.bgs.index(bg))
+      data.append(datai)
+    section=[u'Direct Beam Runs', options, [dict(zip(options, item)) for item in data]]
+    self.sections.append(section)
+    
+    # extracted data measurements
+    debug('data section')
+    options=self.dataset_options+['DB_ID']
+    if len(self.evts)>0:
+      options.append('EVT_ID')
+    if len(self.bgs)>0:
+      options.append('BG_ID')
+    data=[]
+    for i, refl in enumerate(self.refls):
+      datai=[refl.options[option] for option in self.dataset_options]
+      datai.append(self.norms.index(refl.options['normalization'])+1)
+      if len(self.evts)>0:
+        if type(refl.origin) is list and refl.origin[0][0].endswith('event.nxs')\
+           or refl.origin[0].endswith('event.nxs'):
+          event_opts=[refl.read_options[option] for option in self.event_options]
+          datai.append(self.evts.index(event_opts)+1)
+        else:
+          datai.append(None)
+      if len(self.bgs)>0:
+        default=True
+        for option in self.bg_options:
+          if refl.options[option]!=Reflectivity.DEFAULT_OPTIONS[option]:
+            default=False
+            break
+        if default:
+          datai.append(None)
+        else:
+          bg=[refl.options[option] for option in self.bg_options]
+          poly_ids=[]
+          if bg[2]:
+            for poly in bg[2]:
+              poly=[poly[0][0], poly[0][1], poly[1][0], poly[1][1],
+                    poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
+              poly_ids.append(self.bg_polys.index(poly))              
+            bg[2]=poly_ids
+          datai.append(self.bgs.index(bg))
+      data.append(datai)
+    section=[u'Data Runs', options, [dict(zip(options, item)) for item in data]]
+    self.sections.append(section)
+
+    debug('Event mode readout section')
+    # optional event mode block
+    if len(self.evts)>0:
+      options=['EVT_ID']+self.event_options
+      data=[]
+      for i, evt in enumerate(self.evts):
+        data.append([i+1]+evt)
       section=[u'Event Mode Options', options,
-               [dict(zip(options, evt)) for evt in self.evts]]
+               [dict(zip(options, item)) for item in data]]
       self.sections.append(section)
 
+    debug('Background section')
+    # optional background block
     if len(self.bgs)>0:
-      options=self.bg_options
+      options=['BG_ID']+self.bg_options
+      data=[]
+      for i, bg in enumerate(self.bgs):
+        data.append([i+1]+bg)
       section=[u'Advanced Background Options', options,
-               [dict(zip(options, bg)) for bg in self.bgs]]
+               [dict(zip(options, item)) for item in data]]
+      self.sections.append(section)
+    
+    #optional background polynom block
+    if len(self.bg_polys)>0:
+      options=['poly_region', 'l1', 'x1', 'l2', 'x2', 'l3', 'x3', 'l4', 'x4']
+      data=[]
+      for i, poly in enumerate(self.bg_polys):
+        data.append([i+1]+poly)
+      section=[u'Background Polygon Regions', options,
+               [dict(zip(options, item)) for item in data]]
       self.sections.append(section)
 
   def _get_general_header(self):
@@ -124,18 +234,17 @@ class HeaderCreator(object):
       column_leni=len(option)
       if type(data[0][option]) in [bool, type(None), str, unicode]:
         item='%s'
-        fstring='%%%%(%s) %%is'%option
+        fstring='%%%%(%s)-%%is'%option
       elif type(data[0][option])  is int:
         item=u'% i'
-        fstring='%%%%(%s) %%ii'%option
+        fstring='%%%%(%s)-%%ii'%option
       else:
         item=u'% g'
-        fstring=u'%%%%(%s) %%ig'%option
+        fstring=u'%%%%(%s)-%%ig'%option
       for di in data:
         column_leni=max(column_leni, len(item%di[option]))
       column_fstrings.append(fstring%column_leni)
-      section_head.append(u'%% %is'%(column_leni)%option)
-      print column_leni, option
+      section_head.append(u'%%-%is'%(column_leni)%option)
     output+=u'  '.join(section_head)+u'\n'
     data_line=u'  '.join(column_fstrings)+u'\n'
     for di in data:
@@ -144,10 +253,11 @@ class HeaderCreator(object):
 
   def __unicode__(self):
     output=self._get_general_header()
+    output+=u'\n'
     for section in self.sections:
-      output+='\n'
+      output+=u'\n'
       output+=self._get_section(*section)
-    output+='\n'
+    output+=u'\n'
     return output
 
   def __str__(self):
@@ -167,6 +277,10 @@ class HeaderParser(object):
   '''
     Use a header written by the HeaderCreator to reconstruct the Reflectivity objects.
   '''
+  
+  def __init__(self, header):
+    self.header=header
+
 
 class Exporter(object):
   '''
