@@ -5,17 +5,11 @@ Module for calculations used in data reduction and automatic algorithms.
 
 from numpy import *
 from scipy.stats.mstats import mquantiles
+from logging import debug
+from .decorators import log_input, log_both
 from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
-
-try:
-  from .decorators import log_call, log_input, log_both
-except ImportError:
-  # just in case module is used separately
-  def log_call(func): return func
-  def log_input(func): return func
-  def log_both(func): return func
 
 # used for * imports
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',
@@ -200,24 +194,23 @@ def get_yregion(data):
   yregion=(y_peak_region[0], y_peak_region[-1])
   return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
 
-@log_both
-def refine_gauss(data, pos, width):
+@log_input
+def refine_gauss(data, pos, width, return_params=False):
   '''
     Fit a gaussian function to a given dataset and return the x0 position.
   '''
-  p0=[data[int(pos)], pos, width]
-  parinfo=[{'value':0., 'fixed':0, 'limited':[0, 0],
-            'limits':[0., 0.]} for ignore in range(3)]
+  p0=[data[int(pos)], pos, 2.0]
+  parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
+            'limits':[0., 0.]} for i in range(3)]
   parinfo[0]['limited']=[True, False]
-  parinfo[0]['limits']=[0., None]
-  parinfo[2]['fixed']=True
+  parinfo[0]['limits']=[0., None] # limit to positive intensities
+  parinfo[2]['fixed']=not return_params
   res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-  parinfo[2]['fixed']=False
-  parinfo[2]['limited']=[True, True]
-  parinfo[2]['limits']=[1., 4.*width]
-  p0=[data[int(res.params[1])], res.params[1], width]
-  res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-  return res.params[1]
+  debug('Result: I=%g  x0=%g'%(res.params[0], res.params[1]))
+  if return_params:
+    return res.params
+  else:
+    return res.params[1]
 
 @log_input
 def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=0.06, callback=None):
@@ -338,4 +331,62 @@ def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
   xfit, yfit=func.plotfunc(result.params, x1, x2)
   yscale=result.params[0]
   return yscale, xfit, yfit
+
+######################## Data correction algorithms ###########################
+
+#class DetectorTailCorrector(object):
+#  '''
+#    Try to remove tails of strong peaks from detector xy data using a shape
+#    function deduced from a direct beam measurement and simulating real
+#    data convoluted with the shape function until the measured data is found.
+#  '''
+#  
+#  def __init__(self, detector_I, x0=206):
+#    self.det_I=detector_I
+#    self.mshape=self.det_I.shape[0]
+#    self.fshape=2*self.mshape
+#    self._start_params=refine_gauss(self.det_I, x0, 1.5, return_params=True)
+#    self._create_shape()
+#  
+#  def _create_shape(self):
+#    self.shape_function=zeros(self.fshape)
+#    x0=int(round(self._start_params[1]))-self.mshape/2
+#    self.shape_function[self.mshape/2-x0:-self.mshape/2-x0]=self.det_I
+#    # make shape function symmetric
+#    self._mirror_shape()
+#
+#    self._gauss_data=self.det_I.max()*exp(-0.5*(arange(self.mshape)-
+#                                                     self._start_params[1])**2/
+#                                              1.5**2)
+#    
+#  def _compare_shape(self):
+#    gauss_data=self._gauss_data.copy()
+#    gauss_data/=gauss_data.sum()
+#    gconv=self.convole_data(gauss_data)
+#    gdiff=(self.det_I-gconv)
+#    return gdiff
+#
+#  def _correct_shape(self, gdiff):
+#    x0=int(round(self._start_params[1]))-self.mshape/2
+#    self.shape_function[self.mshape/2-x0:-self.mshape/2-x0]+=gdiff
+#    self.shape_function=abs(self.shape_function)
+#    # make shape function symmetric
+#    self._mirror_shape()
+#    # normalize the shape function
+#    #self.shape_function/=self.shape_function.sum()    
+#
+#  def _mirror_shape(self):
+#    '''
+#      Make the shape function mirror symmetric around the center.
+#    '''
+#    sf=self.shape_function
+#    ms=self.mshape
+#    sfmax=maximum(sf[:ms], sf[::-1][:ms])
+#    sf[:ms]=sfmax
+#    sf[-ms:]=sfmax[::-1]
+#  
+#  def convole_data(self, data):
+#    conv=convolve(data, self.shape_function, mode='same')
+#    return conv[self.mshape/2:-self.mshape/2]
+  
 
