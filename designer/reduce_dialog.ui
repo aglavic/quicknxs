@@ -77,6 +77,13 @@
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="exportOffSpecularCorr">
+               <property name="text">
+                <string>Off-Specular Corrected</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QCheckBox" name="exportOffSpecularSmoothed">
                <property name="text">
                 <string>Off-Specular Smoothed</string>

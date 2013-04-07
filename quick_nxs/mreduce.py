@@ -911,8 +911,7 @@ class Reflectivity(object):
     reg=map(lambda item: int(round(item)),
             [bg_pos-bg_width/2., bg_pos+bg_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1 ])
-    debug('Reflectivity region: %s'%str(reg))
-    debug("Background scale is %s"%(scale))
+    debug('Background region: %s'%str(reg))
 
 
     if bg_poly:
@@ -940,6 +939,7 @@ class Reflectivity(object):
       scaling_data=points_in_region.sum(axis=1)*float(reg[3]-reg[2])
       self.BGraw=unscaled_bgdata/scaling_data*scale
       self.dBGraw=sqrt(unscaled_bgdata)/scaling_data*scale
+      debug("Background scale is %s"%(scale/scaling_data))
     else:
       # restrict the intensity and background data to the given regions
       bgdata=data[reg[0]:reg[1], reg[2]:reg[3], :]
@@ -949,6 +949,7 @@ class Reflectivity(object):
       self.BGraw=bgdata.sum(axis=0).sum(axis=0)
       self.dBGraw=sqrt(self.BGraw)/size_BG*scale
       self.BGraw/=size_BG/scale
+      debug("Background scale is %s"%(scale/size_BG))
     if self.options['bg_tof_constant'] and self.options['normalization']:
       norm=self.options['normalization'].R
       reg=(self.dBGraw>0)&(norm>0)
@@ -1002,6 +1003,7 @@ class OffSpecular(Reflectivity):
     if self.options['dpix'] is None:
       self.options['dpix']=dataset.dpix
     self.lambda_center=dataset.lambda_center
+    self.options['scale_by_beam']=False
 
     self._calc_offspec(dataset)
 
@@ -1039,6 +1041,7 @@ class OffSpecular(Reflectivity):
     reg=map(lambda item: int(round(item)),
             [x_pos-x_width/2., x_pos+x_width/2.+1,
              y_pos-y_width/2., y_pos+y_width/2.+1])
+    debug('Off-Specular region: %s'%str(reg))
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
     xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
@@ -1047,6 +1050,7 @@ class OffSpecular(Reflectivity):
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
     self.ai=tth_spec/2.
+    debug('alpha_i=%s'%self.ai)
 
     self._calc_bg(dataset)
 
@@ -1071,6 +1075,9 @@ class OffSpecular(Reflectivity):
     self.Iraw=Idata.sum(axis=1)
     self.dIraw=sqrt(self.Iraw)
     # normalize data by width in y and multiply scaling factor
+    debug("Intensity scale is %s*%s=%s"%(scale/(reg[3]-reg[2]),
+                                        self.options['scale'],
+                                        self.options['scale']*scale/(reg[3]-reg[2])))
     self.I=self.Iraw/(reg[3]-reg[2])*scale
     self.dI=self.dIraw/(reg[3]-reg[2])*scale
     self.S=self.I-self.BG[newaxis, :]
@@ -1080,6 +1087,7 @@ class OffSpecular(Reflectivity):
 
     if self.options['normalization']:
       norm=self.options['normalization']
+      debug("Performing normalization from %s"%norm)
       idxs=norm.Rraw>0.
       self.dS[:, idxs]=sqrt(
                    (self.dS[:, idxs]/norm.Rraw[idxs][newaxis, :])**2+

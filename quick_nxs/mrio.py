@@ -15,7 +15,7 @@ from zipfile import ZipFile
 from cPickle import loads, dumps
 from .decorators import log_call
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
-from .mrcalc import smooth_data
+from .mrcalc import smooth_data, DetectorTailCorrector
 from .version import str_version
 from .output_templates import *
 
@@ -382,7 +382,7 @@ class Exporter(object):
   @log_call
   def extract_offspecular(self):
     '''
-      Extract the oof-specular scattering for all datasets.
+      Extract the off-specular scattering for all datasets.
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     output_data['column_units']=[u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', 'a.u.', 'a.u.']
@@ -408,6 +408,47 @@ class Exporter(object):
         ki_max=max(ki_max, ki_z.max())
     output_data['ki_max']=ki_max
     self.output_data['OffSpec']=output_data
+
+  @log_call
+  def extract_offspecular_corr(self):
+    '''
+      Extract the off-specular scattering for all datasets and correct it
+      for the tails produced by the detector in x-direction.
+    '''
+    output_data=dict([(channel, []) for channel in self.channels])
+    output_data['column_units']=[u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', 'a.u.', 'a.u.']
+    output_data['column_names']=['Qx', 'Qz', 'ki_z', 'kf_z', 'ki_z-kf_z', 'I', 'dI']
+
+    corr_ds=self.norms[0]
+    if type(corr_ds.origin) is list:
+      flist=[origin[0] for origin in corr_ds.origin]
+      corr_data=NXSMultiData(flist, **corr_ds.read_options)[0]
+    else:
+      corr_data=NXSData(corr_ds.origin[0], **corr_ds.read_options)[0]
+    debug('Correction from normalization '+repr(corr_data))
+    corrector=DetectorTailCorrector(corr_data.xdata, x0=corr_ds.options['x_pos'])
+
+    ki_max=0.01
+    for refli in self.refls:
+      opts=refli.options
+      index=opts['number']
+      fdata=self.raw_data[index]
+      P0=len(fdata[channel].tof)-opts['P0']
+      PN=opts['PN']
+      for channel in self.channels:
+        offspec=OffSpecular(fdata[channel], **opts)
+        Qx, Qz, ki_z, kf_z, S, dS=(offspec.Qx, offspec.Qz, offspec.ki_z, offspec.kf_z,
+                                   offspec.S, offspec.dS)
+        debug('sum(S) before '+repr(S.sum()))
+        S=corrector(S)
+        debug('sum(S) after '+repr(S.sum()))
+        rdata=np.array([Qx[:, PN:P0], Qz[:, PN:P0], ki_z[:, PN:P0], kf_z[:, PN:P0],
+                      ki_z[:, PN:P0]-kf_z[:, PN:P0], S[:, PN:P0], dS[:, PN:P0]],
+                    copy=False).transpose((1, 2, 0))
+        output_data[channel].append(rdata)
+        ki_max=max(ki_max, ki_z.max())
+    output_data['ki_max']=ki_max
+    self.output_data['OffSpecCorr']=output_data
 
   @log_call
   def smooth_offspec(self, settings, pb=None):
@@ -617,7 +658,7 @@ class Exporter(object):
                   )
       params['pix_x']=1000*cols
       params['pix_y']=200+1200*rows
-      if title=='OffSpec':
+      if title in ['OffSpec', 'OffSpecCorr']:
         params['ratio']=1.5
         params['ylabel']=u"Q_z [Å^{-1}]"
         params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"

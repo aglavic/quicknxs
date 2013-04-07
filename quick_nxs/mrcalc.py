@@ -334,59 +334,111 @@ def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
 
 ######################## Data correction algorithms ###########################
 
-#class DetectorTailCorrector(object):
-#  '''
-#    Try to remove tails of strong peaks from detector xy data using a shape
-#    function deduced from a direct beam measurement and simulating real
-#    data convoluted with the shape function until the measured data is found.
-#  '''
-#  
-#  def __init__(self, detector_I, x0=206):
-#    self.det_I=detector_I
-#    self.mshape=self.det_I.shape[0]
-#    self.fshape=2*self.mshape
-#    self._start_params=refine_gauss(self.det_I, x0, 1.5, return_params=True)
-#    self._create_shape()
-#  
-#  def _create_shape(self):
-#    self.shape_function=zeros(self.fshape)
-#    x0=int(round(self._start_params[1]))-self.mshape/2
-#    self.shape_function[self.mshape/2-x0:-self.mshape/2-x0]=self.det_I
-#    # make shape function symmetric
-#    self._mirror_shape()
-#
-#    self._gauss_data=self.det_I.max()*exp(-0.5*(arange(self.mshape)-
-#                                                     self._start_params[1])**2/
-#                                              1.5**2)
-#    
-#  def _compare_shape(self):
-#    gauss_data=self._gauss_data.copy()
-#    gauss_data/=gauss_data.sum()
-#    gconv=self.convole_data(gauss_data)
-#    gdiff=(self.det_I-gconv)
-#    return gdiff
-#
-#  def _correct_shape(self, gdiff):
-#    x0=int(round(self._start_params[1]))-self.mshape/2
-#    self.shape_function[self.mshape/2-x0:-self.mshape/2-x0]+=gdiff
-#    self.shape_function=abs(self.shape_function)
-#    # make shape function symmetric
-#    self._mirror_shape()
-#    # normalize the shape function
-#    #self.shape_function/=self.shape_function.sum()    
-#
-#  def _mirror_shape(self):
-#    '''
-#      Make the shape function mirror symmetric around the center.
-#    '''
-#    sf=self.shape_function
-#    ms=self.mshape
-#    sfmax=maximum(sf[:ms], sf[::-1][:ms])
-#    sf[:ms]=sfmax
-#    sf[-ms:]=sfmax[::-1]
-#  
-#  def convole_data(self, data):
-#    conv=convolve(data, self.shape_function, mode='same')
-#    return conv[self.mshape/2:-self.mshape/2]
+class DetectorTailCorrector(object):
+  '''
+    Try to remove tails of strong peaks from detector xy data using a shape
+    function deduced from a direct beam measurement and simulating real
+    data convoluted with the shape function until the measured data is found.
+  '''
+  gamma=12.
+  peak_scale=150.
+  _epsilon=1e-4
   
+  def __init__(self, detector_I, x0=206):
+    self.det_I=detector_I
+    self.mshape=self.det_I.shape[0]
+    self.fshape=2*self.mshape
+    self._gauss_params=[detector_I.max(), refine_gauss(detector_I, x0, 1.5), 1.5, 0.]
+    self._fit_shape()
+  
+  def _create_shape(self):
+    self.shape_function=1./(1.+((arange(self.fshape)-self.mshape-0.5)**2/self.gamma**2))
+    self.shape_function[self.mshape]=self.peak_scale
+    self.shape_function/=self.shape_function.sum()
+  
+  def _compare_shape(self):
+    # Used to define a shape function with the assumption that
+    # the read direct beam has a gaussian shape
+    G=self._gauss_params[0]*exp(-0.5*(arange(self.mshape)-
+                                      self._gauss_params[1])**2/
+                                      self._gauss_params[2]**2)+self._gauss_params[3]
+    Gconv=self.convole_data(G)
+    return Gconv, self.det_I-Gconv
 
+  def _compare_residuals(self, p, fjac=None):
+    # Function used to fit the shape function and Gauss parameters
+    self.gamma=p[0]
+    self.peak_scale=p[1]
+    self._gauss_params=p[2:]
+    self._create_shape()
+    Gconv, ignore=self._compare_shape()
+    return 0, log(self.det_I[self.det_I>0])-log(Gconv[self.det_I>0])
+
+  def _fit_shape(self):
+    '''
+      Get the shape function parameters by fitting it to a direct beam measurement.
+    '''
+    debug('correction parameters before fit gamma=%g  peak_scale=%g'%
+                                              (self.gamma, self.peak_scale))
+    p0=[self.gamma, self.peak_scale]+self._gauss_params
+    parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
+              'limits':[0., 0.]} for i in range(6)]
+    parinfo[5]['limited']=[1, 0]
+    result=mpfit(self._compare_residuals, p0, nprint=0, parinfo=parinfo)
+    debug('fit exited with message %s after %i iterations'%(repr(result.errmsg), result.niter))
+    debug('correction parameters before fit gamma=%g  peak_scale=%g'%
+                                              (self.gamma, self.peak_scale))
+    return result
+                                    
+  def correct_shape(self, data):
+    if (data==0.).all():
+      debug('data is zero, nothing to do')
+      return data.copy()
+    outshape=data.shape[0]
+    if data.shape[0]==self.mshape:
+      result=data.copy()
+      lendiff=0
+    else:
+      result=zeros(self.mshape)
+      lendiff=self.mshape-data.shape[0]
+      result[lendiff/2:data.shape[0]+lendiff/2]=data
+      data=result.copy()
+    rdiff=data-self.convole_data(result)
+    last_diff=abs(rdiff).sum()
+    debug('difference at start %g'%last_diff)
+    result+=rdiff
+    result*=data.sum()/result.sum()
+    for ignore in range(20):
+      rdiff=data-self.convole_data(result)
+      abs_diff=abs(rdiff).sum()
+      result+=rdiff
+      result*=data.sum()/result.sum()
+      if (last_diff-abs_diff)<self._epsilon:
+        break
+      else:
+        last_diff=abs_diff
+    debug('difference at end %g'%last_diff)
+    return result[lendiff/2:outshape+lendiff/2]
+
+  def correct_shape_set(self, data):
+    output=[]
+    for line in data:
+      output.append(self.correct_shape(line))
+    return array(output)
+
+  def _mirror_shape(self):
+    '''
+      Make the shape function mirror symmetric around the center.
+    '''
+    sf=self.shape_function
+    ms=self.mshape
+    sfmax=maximum(sf[:ms], sf[::-1][:ms])
+    sf[:ms]=sfmax
+    sf[-ms:]=sfmax[::-1]
+  
+  def convole_data(self, data):
+    conv=convolve(data, self.shape_function, mode='same')
+    return conv[self.mshape/2+1:-self.mshape/2+1]
+  
+  def __call__(self, data):
+    return self.correct_shape_set(data.transpose()).transpose()

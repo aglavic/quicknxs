@@ -19,7 +19,7 @@ from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
 
 #from logging import info, debug
-from logging import info, debug, warning
+from logging import info, warning
 from .gui_logging import install_gui_handler
 from .decorators import log_call, log_input, log_both
 
@@ -128,7 +128,8 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
-    install_gui_handler(self)
+    if not '-ipython' in argv:
+      install_gui_handler(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)

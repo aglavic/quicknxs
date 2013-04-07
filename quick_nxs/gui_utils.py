@@ -122,6 +122,8 @@ class ReduceDialog(QDialog):
         self.exporter.extract_reflectivity()
       if self.ui.exportOffSpecular.isChecked() or self.ui.exportOffSpecularSmoothed.isChecked():
         self.exporter.extract_offspecular()
+      if self.ui.exportOffSpecularCorr.isChecked():
+        self.exporter.extract_offspecular_corr()
       if self.ui.exportOffSpecularSmoothed.isChecked():
         self.smooth_offspec()
         if not self.ui.exportOffSpecular.isChecked():
@@ -252,7 +254,7 @@ class ReduceDialog(QDialog):
       if self.ui.emailSend.isChecked() and not self.ui.gnuplot.isChecked():
         self._save_plot(plot)
     else:
-      if title=='OffSpec':
+      if title in ['OffSpec', 'OffSpecCorr']:
         x, y, z=4, 1, 5
         xl=u'k$_{i,z}$-k$_{f,z}$ [Å$^{-1}$]'
         yl=u'Q$_z$ [Å$^{-1}$]'
