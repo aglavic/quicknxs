@@ -17,6 +17,7 @@ from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
+from .mrio import HeaderParser
 
 #from logging import info, debug
 from logging import info, warning
@@ -1036,97 +1037,42 @@ class MainGUI(QtGui.QMainWindow):
       return
 
     self.clearRefList(do_plot=False)
-    text=open(filename, 'r').read()
-    split1='# Parameters used for extraction of direct beam:'
-    split2='# Parameters used for extraction of reflectivity:'
-    split3='# Column Units:'
-    normdata=text.split(split1)[1].split(split2)[0]
-    refdata=text.split(split2)[1].split(split3)[0]
-    normlines=[line.strip('# \t').split() for line in normdata.splitlines()]
-    reflines=[line.strip('# \t').split() for line in refdata.splitlines()]
-    norms={}
-    refs=[]
-    for entry in normlines:
-      if len(entry)==0 or entry[0]=='I0':
-        continue
-      I0, P0, PN=entry[:3]
-      x0, xw, y0, yw, bg0, bgw=entry[3:9]
-      dpix, tth, number, nidx=entry[9:13]
-      filenames=entry[14].split(';')
-      options=dict(
-              x_pos=float(x0),
-              x_width=float(xw),
-              y_pos=float(y0),
-              y_width=float(yw),
-              bg_pos=float(bg0),
-              bg_width=float(bgw),
-              scale=float(I0),
-              extract_fan=False,
-              P0=int(P0),
-              PN=int(PN),
-              number=number,
-              tth=float(tth),
-              dpix=float(dpix),
-              bg_tof_constant=False,
-              normalization=None,
-                   )
-      if len(filenames)==1:
-        data=NXSData(filenames[0])
-      else:
-        data=NXSMultiData(filenames)
-      norms[nidx]=Reflectivity(data[0], **options)
-      self.refl=norms[nidx]
-      self.active_file=filenames[0]
-      self.active_data=data
+    text=unicode(open(filename, 'r').read(), 'utf8')
+    header=[]
+    for line in text.splitlines():
+      if not line.startswith('#'):
+        break
+      header.append(line)
+    header='\n'.join(header)
+    parser=HeaderParser(header)
+    info('Reloading data from information in file header...')
+    parser.parse(callback=self.updateEventReadout)
+    info('Data loaded')
+    # updating GUI and attributes
+    for norm, norm_data in zip(parser.norms, parser.norm_data):
+      self.refl=norm
+      self.active_data=norm_data
       self.setNorm(do_plot=False, do_remove=False)
-    for entry in reflines:
-      if len(entry)==0 or entry[0]=='I0':
-        continue
-      I0, P0, PN=entry[:3]
-      x0, xw, y0, yw, bg0, bgw=entry[3:9]
-      dpix, tth, number, nidx, fan=entry[9:14]
-      filenames=entry[14].split(';')
-      options=dict(
-              x_pos=float(x0),
-              x_width=float(xw),
-              y_pos=float(y0),
-              y_width=float(yw),
-              bg_pos=float(bg0),
-              bg_width=float(bgw),
-              scale=float(I0),
-              extract_fan=bool(int(fan)),
-              P0=int(P0),
-              PN=int(PN),
-              number=number,
-              tth=float(tth),
-              dpix=float(dpix),
-              bg_tof_constant=False,
-              normalization=norms[nidx],
-                   )
-      if len(filenames)==1:
-        data=NXSData(filenames[0])
-      else:
-        data=NXSMultiData(filenames)
-      self.channels=data.keys()
-      desiredChannel=self.ui.selectedChannel.currentText().split('/')
-      self.active_channel=self.channels[0]
-      for channel in self.channels:
-        if channel in desiredChannel:
-          self.active_channel=channel
-          break
-      self.active_data=data
-      self.active_file=filenames[0]
-      ref=Reflectivity(data[0], **options)
-      refs.append(ref)
-      self.refl=ref
+    for refl in parser.refls:
+      self.refl=refl
       self.addRefList(do_plot=False)
-
-    self.ui.actionAutoYLimits.setChecked(True)
-    if len(filenames)==1:
-      self.fileOpen(filenames[0])
+    # set settings for the dataset added last
+    self.auto_change_active=True
+    self.ui.refXPos.setValue(refl.options['x_pos'])
+    self.ui.refXWidth.setValue(refl.options['x_width'])
+    self.ui.refYPos.setValue(refl.options['y_pos'])
+    self.ui.refYWidth.setValue(refl.options['y_width'])
+    self.ui.bgCenter.setValue(refl.options['bg_pos'])
+    self.ui.bgWidth.setValue(refl.options['bg_width'])
+    self.ui.refScale.setValue(log10(refl.options['scale']))
+    self.auto_change_active=False
+    # load the last file in the list to be in the right directory and trigger plotting
+    if type(refl.origin) is list:
+      self.fileOpenSum([item[0] for item in refl.origin])
     else:
-      self.fileOpenSum(filenames)
-    self.ui.actionAutoYLimits.setChecked(False)
+      self.fileOpen(refl.origin[0])
+    self.ref_list_channels=list(self.active_data.keys())
+    
 
   @log_input
   def automaticExtraction(self, filenames):

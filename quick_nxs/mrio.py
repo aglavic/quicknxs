@@ -9,7 +9,7 @@ import os
 import sys
 import subprocess
 import numpy as np
-from logging import debug
+from logging import debug, info
 from time import strftime
 from zipfile import ZipFile
 from cPickle import loads, dumps
@@ -39,9 +39,9 @@ class HeaderCreator(object):
   bg_polys=None
   evts=None
   sections=None
-  direct_beam_options=['P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'x_width',
+  direct_beam_options=['P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                        'bg_pos', 'bg_width', 'dpix', 'tth', 'number']
-  dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'x_width',
+  dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                    'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number']
   bg_options=['bg_tof_constant', 'bg_scale_xfit', 'bg_poly_regions']
   event_options=['bin_type', 'bins', 'event_split_bins', 'event_split_index']
@@ -85,7 +85,7 @@ class HeaderCreator(object):
                   poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
             if not poly in self.bg_polys:
               self.bg_polys.append(poly)
-            poly_ids.append(self.bg_polys.index(poly))              
+            poly_ids.append(self.bg_polys.index(poly)+1)              
           bg[2]=poly_ids
         self.bgs.append(bg)
 
@@ -117,6 +117,7 @@ class HeaderCreator(object):
       options.append('EVT_ID')
     if len(self.bgs)>0:
       options.append('BG_ID')
+    options.append('File')
     data=[]
     for i, norm in enumerate(self.norms):
       datai=[i+1]+[norm.options[option] for option in self.direct_beam_options]
@@ -145,6 +146,10 @@ class HeaderCreator(object):
               poly_ids.append(self.bg_polys.index(poly))              
             bg[2]=poly_ids
           datai.append(self.bgs.index(bg))
+      if type(norm.origin) is list:
+        datai.append(repr([item[0] for item in norm.origin]))
+      else:
+        datai.append(norm.origin[0])
       data.append(datai)
     section=[u'Direct Beam Runs', options, [dict(zip(options, item)) for item in data]]
     self.sections.append(section)
@@ -156,6 +161,7 @@ class HeaderCreator(object):
       options.append('EVT_ID')
     if len(self.bgs)>0:
       options.append('BG_ID')
+    options.append('File')
     data=[]
     for i, refl in enumerate(self.refls):
       datai=[refl.options[option] for option in self.dataset_options]
@@ -182,9 +188,13 @@ class HeaderCreator(object):
             for poly in bg[2]:
               poly=[poly[0][0], poly[0][1], poly[1][0], poly[1][1],
                     poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
-              poly_ids.append(self.bg_polys.index(poly))              
+              poly_ids.append(self.bg_polys.index(poly)+1)              
             bg[2]=poly_ids
           datai.append(self.bgs.index(bg))
+      if type(refl.origin) is list:
+        datai.append(repr([item[0] for item in refl.origin]))
+      else:
+        datai.append(refl.origin[0])
       data.append(datai)
     section=[u'Data Runs', options, [dict(zip(options, item)) for item in data]]
     self.sections.append(section)
@@ -243,12 +253,12 @@ class HeaderCreator(object):
     # first run through all data and headers to determine each column widths
     for option in options:
       column_leni=len(option)
-      if type(data[0][option]) in [bool, type(None), str, unicode]:
-        item='%s'
-        fstring='%%%%(%s)-%%is'%option
+      if type(data[0][option]) in [bool, type(None), str, unicode, list]:
+        item=u'%s'
+        fstring=u'%%%%(%s)-%%is'%option
       elif type(data[0][option])  is int:
         item=u'% i'
-        fstring='%%%%(%s)-%%ii'%option
+        fstring=u'%%%%(%s)-%%ii'%option
       else:
         item=u'% g'
         fstring=u'%%%%(%s)-%%ig'%option
@@ -301,10 +311,179 @@ class HeaderParser(object):
   '''
     Use a header written by the HeaderCreator to reconstruct the Reflectivity objects.
   '''
+  direct_beam_defaults=dict(DB_ID=0, EVT_ID=None, BG_ID=None, P0=0, PN=0, x_pos=206., x_width=9.,
+                            y_pos=120., y_width=120., bg_pos=80., bg_width=40.,
+                            dpix=206., tth=0., number=u'', File=None)
+  dataset_defaults=dict(DB_ID=0, EVT_ID=None, BG_ID=None, scale=1., extract_fan=False,
+                        P0=0, PN=0, x_pos=206., x_width=9.,
+                        y_pos=120., y_width=120., bg_pos=80., bg_width=40.,
+                        dpix=206., tth=0., number=u'', File=None)
+  bg_defaults=dict(BG_ID=0, bg_tof_constant=False, bg_scale_xfit=False, bg_poly_regions=None)
+  event_defaults=dict(EVT_ID=0, bin_type=0, bins=40, event_split_bins=10, event_split_index=0)
+  poly_defaults=dict(poly_region=0, l1=0., l2=0., l3=0., l4=0.,
+                                    x1=0., x2=0., x3=0., x4=0.)
+  callback=None
   
   def __init__(self, header):
+    if type(header) is not unicode:
+      header=unicode(header, 'utf8', 'ignore')
     self.header=header
+    self.sections={}
+    self._collect_sections()
+    self._evaluate()
+  
+  def parse(self, callback=None):
+    self.callback=callback
+    self._read_direct_beam()
+    self._read_datasets()
+  
+  def _collect_sections(self):
+    '''
+      Go through the header lines and locate section data.
+      This is then stored in a dictionary.
+    '''
+    hlines=self.header.splitlines()
+    hlines=map(lambda line: line.lstrip('#'), hlines)
+    current_section=None
+    for line in hlines:
+      line=line.strip()
+      if line.startswith('[') and line.endswith(']'):
+        current_section=line[1:-1]
+        self.sections[current_section]=[]
+      elif line.strip()=='':
+        current_section=None
+      elif current_section is not None:
+        self.sections[current_section].append(line)
+  
+  def _evaluate_section(self, section, defaults):
+    '''
+      Convert section data to python types and create a dictionary
+      for each line in a section. Default values can be supplied
+      to overwrite undefined values or supply integer type conversion.
+    '''
+    sitems=[item.strip() for item in self.sections[section][0].split(u'  ') if item.strip()!=u'']    
+    sdata=[[item.strip() for item in line.split(u'  ') if item.strip()!=u'']
+                                for line in self.sections[section][1:]]
+    output=[]
+    for item in sdata:
+      idata=dict(defaults)
+      for i, key in enumerate(sitems):
+        value=item[i]
+        if key in defaults and type(defaults[key]) in [str, unicode]:
+          idata[key]=value
+        elif value in ['True', 'False', 'None'] or ',' in value:
+          idata[key]=eval(value)
+        else:
+          try:
+            value=float(value)
+          except ValueError:
+            idata[key]=unicode(value)
+          else:
+            if key in defaults and type(defaults[key]) is int:
+              idata[key]=int(value)
+            else:
+              idata[key]=value
+      output.append(idata)
+    return output
 
+  def _evaluate(self):
+    '''
+      Evaluate given sections with their default values.
+    '''
+    self.section_data={}
+    self.section_data['Direct Beam Runs']=self._evaluate_section('Direct Beam Runs',
+                                                                 self.direct_beam_defaults)
+    self.section_data['Data Runs']=self._evaluate_section('Data Runs',
+                                                          self.dataset_defaults)
+    if 'Event Mode Options' in self.sections:
+      self.section_data['Event Mode Options']=self._evaluate_section(
+                        'Event Mode Options', self.event_defaults)
+    if 'Advanced Background Options' in self.sections:
+      self.section_data['Advanced Background Options']=self._evaluate_section(
+                        'Advanced Background Options', self.bg_defaults)
+    if 'Background Polygon Regions' in self.sections:
+      self.section_data['Background Polygon Regions']=self._evaluate_section(
+                        'Background Polygon Regions', self.poly_defaults)
+    self._collect_background_options()
+  
+  def _get_dataset(self, options):
+    fname=options['File']
+    read_opts=dict(NXSData.DEFAULT_OPTIONS)
+    if options['EVT_ID'] is not None:
+      if not "Event Mode Options" in self.section_data:
+        raise ValueError, 'No "Event Mode Options" section defined but EVT_ID is set'
+      evt_opts=self.section_data["Event Mode Options"][int(options['EVT_ID'])-1]
+      for key in ['bin_type', 'bins', 'event_split_bins', 'event_split_index']:
+        read_opts[key]=evt_opts[key]
+    info('Reading %s'%fname)
+    if type(fname) is list:
+      return NXSMultiData(fname, **read_opts)
+    else:
+      return NXSData(fname, **read_opts)
+  
+  def _collect_background_options(self):
+    if not 'Advanced Background Options' in self.section_data:
+      return
+    self._bg_options=[]
+    for item in self.section_data['Advanced Background Options']:
+      opt_item={}
+      for key in ['bg_tof_constant', 'bg_scale_xfit']:
+        opt_item[key]=item[key]
+      if item['bg_poly_regions'] is not None:
+        if not 'Background Polygon Regions' in self.section_data:
+          raise ValueError, 'No "Background Polygon Regions" section defined but bg_poly_regions is set'
+        opt_item['bg_poly_regions']=[]
+        for index in item['bg_poly_regions']:
+          poly=self.section_data['Background Polygon Regions'][index-1]
+          opt_item['bg_poly_regions'].append([
+                                              [poly['l1'], poly['x1']],
+                                              [poly['l2'], poly['x2']],
+                                              [poly['l3'], poly['x3']],
+                                              [poly['l4'], poly['x4']],
+                                              ])
+      else:
+        opt_item['bg_poly_regions']=None
+      self._bg_options.append(opt_item)
+  
+  def _read_direct_beam(self):
+    self.norms=[]
+    self.norm_data=[]
+    ilen=float(len(self.section_data['Direct Beam Runs'])+len(self.section_data['Data Runs']))
+    for i, db in enumerate(self.section_data['Direct Beam Runs']):
+      if self.callback:
+        self.callback((i+1)/ilen)
+      data=self._get_dataset(db)
+      calc_opts={}
+      for key in Reflectivity.DEFAULT_OPTIONS.keys():
+        if key in db:
+          calc_opts[key]=db[key]
+      if db['BG_ID'] is not None:
+        if not 'Advanced Background Options' in self.section_data:
+          raise ValueError, 'No "Advanced Background Options" section defined but BG_ID is set'
+        calc_opts.update(self._bg_options[int(db['BG_ID'])-1])
+      norm=Reflectivity(data[0], **calc_opts)
+      self.norms.append(norm)
+      self.norm_data.append(data)
+
+  def _read_datasets(self):
+    self.refls=[]
+    ilen=float(len(self.section_data['Direct Beam Runs'])+len(self.section_data['Data Runs']))
+    dblen=len(self.section_data['Direct Beam Runs'])
+    for i, db in enumerate(self.section_data['Data Runs']):
+      if self.callback:
+        self.callback((i+1+dblen)/ilen)
+      data=self._get_dataset(db)
+      calc_opts={}
+      for key in Reflectivity.DEFAULT_OPTIONS.keys():
+        if key in db:
+          calc_opts[key]=db[key]
+      if db['BG_ID'] is not None:
+        if not 'Advanced Background Options' in self.section_data:
+          raise ValueError, 'No "Advanced Background Options" section defined but BG_ID is set'
+        calc_opts.update(self._bg_options[int(db['BG_ID'])-1])
+      calc_opts['normalization']=self.norms[int(db['DB_ID'])-1]
+      refl=Reflectivity(data[0], **calc_opts)
+      self.refls.append(refl)      
 
 class Exporter(object):
   '''
@@ -360,7 +539,7 @@ class Exporter(object):
       opts=refli.options
       index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[channel].tof)-opts['P0']
+      P0=len(fdata[0].tof)-opts['P0']
       PN=opts['PN']
       for channel in self.channels:
         res=Reflectivity(fdata[channel], **opts)
@@ -457,11 +636,15 @@ class Exporter(object):
     '''
     output_data={}
     pbinfo="Smoothing Channel "
+    if 'OffSpecCorr' in self.output_data:
+      odata=self.output_data['OffSpecCorr']
+    else:
+      odata=self.output_data['OffSpec']
     for i, channel in enumerate(self.channels):
       if pb is not None:
         pb.info.setText(pbinfo+channel)
         pb.add=100*i
-      data=np.hstack(self.output_data['OffSpec'][channel])
+      data=np.hstack(odata[channel])
       I=data[:, :, 5].flatten()
       Qzmax=data[:, :, 2].max()*2.
       if settings['xy_column']==0:
