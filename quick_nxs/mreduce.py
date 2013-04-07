@@ -1155,6 +1155,7 @@ class GISANS(Reflectivity):
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
     phi=(arange(data.shape[1])[DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1]]-y_pos)*rad_per_pixel
+    debug('alpha_i=%s'%(tth_spec/2.))
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
     lamda_edges=H_OVER_M_NEUTRON/v_edges*1e10 #A
@@ -1182,11 +1183,13 @@ class GISANS(Reflectivity):
     # normalize data by width in y and multiply scaling factor
     self.I=self.Iraw*scale
     self.dI=self.dIraw*scale
+    debug("Intensity scale is %s"%(scale))
 
     self.S=array(self.I)
     self.dS=array(self.dI)
     if self.options['normalization']:
       norm=self.options['normalization']
+      debug("Performing normalization from %s"%norm)
       normR=norm.Rraw[PN:P0]
       normdR=norm.dRraw[PN:P0]
       idxs=normR>0.
