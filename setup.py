@@ -35,8 +35,9 @@ __package_data__={
                   'quick_nxs': ['genx_templates/*.gx', 'window.pkl', 'htmldoc/*'],
                   }
 if sys.version_info[1]<7: # python <2.7 does not support the package_data keyword
-  __data_files__=glob('quick_nxs/genx_templates/*.gx')+glob('quick_nxs/window.pkl')
-  __data_files__+=glob('quick_nxs/htmldoc/*')
+  __data_files__=[('quick_nxs', glob('quick_nxs/window.pkl')),
+                  ('quick_nxs/htmldoc', glob('quick_nxs/htmldoc/*')),
+                  ('quick_nxs/genx_templates', glob('quick_nxs/genx_templates/*.gx'))]
 else:
   __data_files__=[]
 
