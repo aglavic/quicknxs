@@ -31,11 +31,9 @@ __scripts__=['quicknxs']
 __py_modules__=[]
 __package_dir__={}
 __packages__=['quick_nxs']
-__package_data__={}
+__package_data__={'quick_nxs': ['window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
 
-__data_files__=[('quick_nxs', glob('quick_nxs/window.pkl')),
-                ('quick_nxs/htmldoc', glob('quick_nxs/htmldoc/*')),
-                ('quick_nxs/genx_templates', glob('quick_nxs/genx_templates/*.gx'))]
+__data_files__=[]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
