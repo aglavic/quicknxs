@@ -11,7 +11,9 @@ Contents of the quick_nxs Package:
 .. toctree::
    :maxdepth: 2
    
-   quick_nxs
+   gui
+   analysis
+   other
 
 
 
