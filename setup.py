@@ -31,15 +31,11 @@ __scripts__=['quicknxs']
 __py_modules__=[]
 __package_dir__={}
 __packages__=['quick_nxs']
-__package_data__={
-                  'quick_nxs': ['genx_templates/*.gx', 'window.pkl', 'htmldoc/*'],
-                  }
-if sys.version_info[1]<7: # python <2.7 does not support the package_data keyword
-  __data_files__=[('quick_nxs', glob('quick_nxs/window.pkl')),
-                  ('quick_nxs/htmldoc', glob('quick_nxs/htmldoc/*')),
-                  ('quick_nxs/genx_templates', glob('quick_nxs/genx_templates/*.gx'))]
-else:
-  __data_files__=[]
+__package_data__={}
+
+__data_files__=[('quick_nxs', glob('quick_nxs/window.pkl')),
+                ('quick_nxs/htmldoc', glob('quick_nxs/htmldoc/*')),
+                ('quick_nxs/genx_templates', glob('quick_nxs/genx_templates/*.gx'))]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
