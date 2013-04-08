@@ -34,7 +34,11 @@ __packages__=['quick_nxs']
 __package_data__={
                   'quick_nxs': ['genx_templates/*.gx', 'window.pkl', 'htmldoc/*'],
                   }
-__data_files__=[]
+if sys.version_info[1]<7: # python <2.7 does not support the package_data keyword
+  __data_files__=glob('quick_nxs/genx_templates/*.gx')+glob('quick_nxs/window.pkl')
+  __data_files__+=glob('quick_nxs/htmldoc/*')
+else:
+  __data_files__=[]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
