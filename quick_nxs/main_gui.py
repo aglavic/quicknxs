@@ -283,7 +283,7 @@ class MainGUI(QtGui.QMainWindow):
     data=NXSMultiData(filenames,
           bin_type=self.ui.eventBinMode.currentIndex(),
           bins=self.ui.eventTofBins.value(),
-          callback=None)
+          callback=self.updateEventReadout)
     self._fileOpenDone(data, filenames[0], do_plot)
 
   @log_call
@@ -1072,7 +1072,7 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.fileOpen(refl.origin[0])
     self.ref_list_channels=list(self.active_data.keys())
-    
+
 
   @log_input
   def automaticExtraction(self, filenames):
@@ -1726,8 +1726,8 @@ class MainGUI(QtGui.QMainWindow):
       used after each finished channel to indicate the progress.
     '''
     self.eventProgress.setValue(progress*100)
-#    app=QtGui.QApplication.instance()
-#    app.processEvents()
+    # make sure the update is shown in the interface
+    self.eventProgress.update()
 
 ####### Calculations and data treatment
 

@@ -187,8 +187,9 @@ class NXSData(object):
       raw_data=nxs[channel]
       if filename.endswith('event.nxs'):
         data=MRDataset.from_event(raw_data, self._options,
-                                  callback=self._options['callback'], callback_offset=progress,
-                                  callback_scaling=1./len(channels))
+                                  callback=self._options['callback'],
+                                  callback_offset=progress,
+                                  callback_scaling=0.9/len(channels))
       elif filename.endswith('histo.nxs'):
         data=MRDataset.from_histogram(raw_data, self._options)
       else:
@@ -196,7 +197,7 @@ class NXSData(object):
       self._channel_data.append(data)
       self._channel_names.append(dest)
       self._channel_origin.append(channel)
-      progress=float(i)/len(channels)
+      progress=0.1+0.9*float(i)/len(channels)
       if self._options['callback']:
         self._options['callback'](progress)
       i+=1
@@ -307,15 +308,24 @@ class NXSMultiData(NXSData):
   '''
   Sum up data of several nxs files.
   '''
+  _progress=0.
+  _progress_items=1
+  _callback=None
 
   def __new__(cls, filenames, **options):
     if not hasattr(filenames, '__iter__') or len(filenames)==0:
       raise ValueError, 'File names needs to be an iterable of length > 0'
     options['use_caching']=False # caching would return NXSData type objects
     filenames.sort()
+    if 'callback' in options:
+      cls._callback=options['callback']
+      cls._progress_items=len(filenames)
+      cls._progress=0.
+      options['callback']=cls._callback_sum
     self=NXSData.__new__(cls, filenames[0], **options)
     numbers=[self.number]
-    for filename in filenames[1:]:
+    for i, filename in enumerate(filenames[1:]):
+      cls._progress=(i+1.)/cls._progress_items
       other=NXSData(filename, **options)
       if len(self._channel_data)!=len(other._channel_data):
         raise ValueError, 'Files can not be combined due to different number of statess'
@@ -331,6 +341,10 @@ class NXSMultiData(NXSData):
     '''
     for key, value in self.items():
       value+=other[key]
+
+  @classmethod
+  def _callback_sum(cls, progress):
+    cls._callback(cls._progress+progress/cls._progress_items)
 
 
 class MRDataset(object):
@@ -465,13 +479,14 @@ class MRDataset(object):
 
     if callback is not None:
       # create the 3D binning
-      Ixyt, D=histogramdd(vstack([tof_x[:5e5], tof_y[:5e5], tof_time[:5e5]]).transpose(),
+      ssize=1e5
+      Ixyt, D=histogramdd(vstack([tof_x[:ssize], tof_y[:ssize], tof_time[:ssize]]).transpose(),
                          bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
-      steps=int(tof_x.shape[0]/5e5)
+      steps=int(tof_x.shape[0]/ssize)
       callback(callback_offset+callback_scaling*1/(steps+1))
       for i in range(1, steps+1):
-        Ixyti, D=histogramdd(vstack([tof_x[5e5*i:5e5*(i+1)], tof_y[5e5*i:5e5*(i+1)],
-                                     tof_time[5e5*i:5e5*(i+1)]]).transpose(),
+        Ixyti, D=histogramdd(vstack([tof_x[ssize*i:ssize*(i+1)], tof_y[ssize*i:ssize*(i+1)],
+                                     tof_time[ssize*i:ssize*(i+1)]]).transpose(),
                            bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
         Ixyt+=Ixyti
         callback(callback_offset+callback_scaling*(i+1)/(steps+1))

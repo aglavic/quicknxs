@@ -83,6 +83,8 @@ class QtHandler(logging.Handler):
     if record.levelno!=logging.INFO:
       msg=record.levelname+': '+msg
     self.main_window.ui.statusbar.showMessage(msg, 5000.)
+    # make sure the message gets displayed during method executions
+    self.main_window.ui.statusbar.update()
 
   def show_warning(self, record):
     '''

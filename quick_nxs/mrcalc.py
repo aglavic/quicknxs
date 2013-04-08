@@ -199,14 +199,23 @@ def refine_gauss(data, pos, width, return_params=False):
   '''
     Fit a gaussian function to a given dataset and return the x0 position.
   '''
-  p0=[data[int(pos)], pos, 2.0]
+  p0=[data[int(pos)], pos, width]
   parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
             'limits':[0., 0.]} for i in range(3)]
   parinfo[0]['limited']=[True, False]
   parinfo[0]['limits']=[0., None] # limit to positive intensities
-  parinfo[2]['fixed']=not return_params
+  parinfo[2]['fixed']=True
   res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-  debug('Result: I=%g  x0=%g'%(res.params[0], res.params[1]))
+  debug('Result: I=%g  x0=%g niter=%i msg="%s"'%(res.params[0], res.params[1], res.niter,
+                                                res.errmsg))
+  parinfo[2]['fixed']=False
+  parinfo[2]['limited']=[True, True]
+  parinfo[2]['limits']=[1., 4.*width]
+  p0=[data[int(res.params[1])], res.params[1], width]
+  res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
+  debug('Result 2: I=%g  x0=%g w=%g niter=%i msg="%s"'%(res.params[0], res.params[1],
+                                                res.params[2], res.niter,
+                                                res.errmsg))
   if return_params:
     return res.params
   else:
@@ -343,19 +352,19 @@ class DetectorTailCorrector(object):
   gamma=12.
   peak_scale=150.
   _epsilon=1e-4
-  
+
   def __init__(self, detector_I, x0=206):
     self.det_I=detector_I
     self.mshape=self.det_I.shape[0]
     self.fshape=2*self.mshape
     self._gauss_params=[detector_I.max(), refine_gauss(detector_I, x0, 1.5), 1.5, 0.]
     self._fit_shape()
-  
+
   def _create_shape(self):
     self.shape_function=1./(1.+((arange(self.fshape)-self.mshape-0.5)**2/self.gamma**2))
     self.shape_function[self.mshape]=self.peak_scale
     self.shape_function/=self.shape_function.sum()
-  
+
   def _compare_shape(self):
     # Used to define a shape function with the assumption that
     # the read direct beam has a gaussian shape
@@ -385,11 +394,13 @@ class DetectorTailCorrector(object):
               'limits':[0., 0.]} for i in range(6)]
     parinfo[5]['limited']=[1, 0]
     result=mpfit(self._compare_residuals, p0, nprint=0, parinfo=parinfo)
+    # make sure the shape function is using the resulting parameters
+    self._compare_residuals(result.params)
     debug('fit exited with message %s after %i iterations'%(repr(result.errmsg), result.niter))
     debug('correction parameters before fit gamma=%g  peak_scale=%g'%
                                               (self.gamma, self.peak_scale))
     return result
-                                    
+
   def correct_shape(self, data):
     if (data==0.).all():
       debug('data is zero, nothing to do')
@@ -435,10 +446,10 @@ class DetectorTailCorrector(object):
     sfmax=maximum(sf[:ms], sf[::-1][:ms])
     sf[:ms]=sfmax
     sf[-ms:]=sfmax[::-1]
-  
+
   def convole_data(self, data):
     conv=convolve(data, self.shape_function, mode='same')
     return conv[self.mshape/2+1:-self.mshape/2+1]
-  
+
   def __call__(self, data):
     return self.correct_shape_set(data.transpose()).transpose()

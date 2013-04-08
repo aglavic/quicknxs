@@ -11,7 +11,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from cStringIO import StringIO
 from time import sleep, time
 from numpy import hstack, array, where, histogram2d, log10, meshgrid, sqrt
-from logging import warning, debug
+from logging import warning, debug, info
 
 import smtplib
 from email import encoders
@@ -116,13 +116,17 @@ class ReduceDialog(QDialog):
         self.rm_channel(['x', '+', '++', '0V'])
       # calculate and collect reflectivities
       self.exporter=Exporter(self.channels, self.refls)
+      info('Re-reading all datasets...')
       self.exporter.read_data()
 
       if self.ui.exportSpecular.isChecked():
+        info('Extracting reflectivity...')
         self.exporter.extract_reflectivity()
       if self.ui.exportOffSpecular.isChecked() or self.ui.exportOffSpecularSmoothed.isChecked():
+        info('Extracting off-specular data...')
         self.exporter.extract_offspecular()
       if self.ui.exportOffSpecularCorr.isChecked():
+        info('Extracting corrected off-specular data...')
         self.exporter.extract_offspecular_corr()
       if self.ui.exportOffSpecularSmoothed.isChecked():
         self.smooth_offspec()
@@ -142,10 +146,13 @@ class ReduceDialog(QDialog):
                                 check_exists=self.check_exists,
                                 )
       if self.ui.gnuplot.isChecked():
+        info('Creating gnuplot scripts...')
         self.exporter.create_gnuplot_scripts(directory, naming)
       if self.ui.genx.isChecked():
+        info('Creating genx file...')
         self.exporter.create_genx_file(directory, naming)
       if self.ui.plot.isChecked():
+        info('Plotting...')
         for title, output_data in self.exporter.output_data.items():
           self.plot_result(output_data, title)
 
@@ -156,6 +163,7 @@ class ReduceDialog(QDialog):
       for tmp in self.tempfiles:
         os.remove(tmp)
       return True
+      info('Finished')
     else:
       return False
 
@@ -401,7 +409,7 @@ class ReduceDialog(QDialog):
           continue
         mitem.add_header('Content-Disposition', 'attachment', filename=os.path.basename(item))
         msg.attach(mitem)
-    
+
     try:
       debug('Trying to send data via smtp.ornl.gov')
       smtp=smtplib.SMTP('160.91.4.26', timeout=10)
