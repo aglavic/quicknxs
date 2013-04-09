@@ -13,9 +13,7 @@ import logging
 import traceback
 from .version import str_version
 
-# default options used
-# at the moment everything is logged to the file
-# TODO: change default behavior for production code to only log info level without --debug flag
+# default options used for logging
 CONSOLE_LEVEL=logging.WARNING
 if '--debug' in sys.argv:
   sys.argv.remove('--debug')
