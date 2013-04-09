@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Sun Apr  7 10:53:09 2013
+# Created: Tue Apr  9 09:02:57 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -89,7 +89,8 @@ class Ui_MainWindow(object):
     self.verticalLayout.addLayout(self.horizontalLayout_10)
     self.gridLayout_6 = QtGui.QGridLayout()
     self.gridLayout_6.setObjectName(_fromUtf8("gridLayout_6"))
-    self.eventSplitIndex = QtGui.QSpinBox(self.eventModeEntries)
+    self.eventSplitIndex = LimitingSpinBox(self.eventModeEntries)
+    self.eventSplitIndex.setMinimum(1)
     self.eventSplitIndex.setObjectName(_fromUtf8("eventSplitIndex"))
     self.gridLayout_6.addWidget(self.eventSplitIndex, 2, 3, 1, 1)
     self.eventSplitItems = QtGui.QSpinBox(self.eventModeEntries)
@@ -1289,6 +1290,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.trustDANGLE, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.oldFormatActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.folderModified)
     QtCore.QObject.connect(self.pushButton_2, QtCore.SIGNAL(_fromUtf8("pressed()")), MainWindow.reloadFile)
+    QtCore.QObject.connect(self.eventSplitItems, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.eventSplitIndex.setMaxValue)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.plotTab)
     MainWindow.setTabOrder(self.plotTab, self.selectedChannel)
@@ -1589,4 +1591,5 @@ class Ui_MainWindow(object):
 from mplwidget import MPLWidget
 from compare_plots import CompareWidget
 from persistentframe import PersistentFrame
+from help_widgets import LimitingSpinBox
 from . import icons_rc

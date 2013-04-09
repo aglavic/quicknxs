@@ -149,7 +149,11 @@
            <item>
             <layout class="QGridLayout" name="gridLayout_6">
              <item row="2" column="3">
-              <widget class="QSpinBox" name="eventSplitIndex"/>
+              <widget class="LimitingSpinBox" name="eventSplitIndex">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+              </widget>
              </item>
              <item row="2" column="1">
               <widget class="QSpinBox" name="eventSplitItems">
@@ -196,7 +200,6 @@
            </item>
           </layout>
           <zorder></zorder>
-          <zorder>gridLayoutWidget</zorder>
          </widget>
         </item>
         <item>
@@ -2747,6 +2750,15 @@
    <header location="global">compare_plots.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LimitingSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">help_widgets.h</header>
+   <slots>
+    <slot>setMaxValue(int)</slot>
+    <slot>setMinValue(int)</slot>
+   </slots>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>numberSearchEntry</tabstop>
@@ -2939,7 +2951,7 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>809</x>
+     <x>736</x>
      <y>105</y>
     </hint>
     <hint type="destinationlabel">
@@ -2955,7 +2967,7 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>632</x>
+     <x>558</x>
      <y>105</y>
     </hint>
     <hint type="destinationlabel">
@@ -2971,7 +2983,7 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>387</x>
+     <x>381</x>
      <y>105</y>
     </hint>
     <hint type="destinationlabel">
@@ -3147,7 +3159,7 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>518</x>
+     <x>501</x>
      <y>134</y>
     </hint>
     <hint type="destinationlabel">
@@ -3163,7 +3175,7 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>809</x>
+     <x>793</x>
      <y>134</y>
     </hint>
     <hint type="destinationlabel">
@@ -3179,7 +3191,7 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>543</x>
+     <x>514</x>
      <y>107</y>
     </hint>
     <hint type="destinationlabel">
@@ -3195,7 +3207,7 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>809</x>
+     <x>780</x>
      <y>107</y>
     </hint>
     <hint type="destinationlabel">
@@ -3713,6 +3725,22 @@
     <hint type="destinationlabel">
      <x>3</x>
      <y>453</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eventSplitItems</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>eventSplitIndex</receiver>
+   <slot>setMaxValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>219</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>

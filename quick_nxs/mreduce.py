@@ -463,7 +463,7 @@ class MRDataset(object):
       tof_time=tof_time[start_idx:stop_idx]
       # correct the count statistics
       output.total_counts=tof_time.shape[0]
-      output.proton_charge/=split_step
+      output.proton_charge/=split_bins
     tof_x=X[tof_ids]
     tof_y=Y[tof_ids]
     lcenter=data['DASlogs/LambdaRequest/value'].value[0]
@@ -622,11 +622,11 @@ def time_from_header(filename):
     nxs=h5py.File(filename, mode='r')
   except IOError:
     return None
-  maxtime=0
+  sumtime=0
   for item in nxs.values():
-    maxtime=max(maxtime, item['duration'].value[0])
+    sumtime+=item['duration'].value[0]
   nxs.close()
-  return maxtime
+  return sumtime
 
 class Reflectivity(object):
   """

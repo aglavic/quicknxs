@@ -29,29 +29,6 @@ BASE_FOLDER='/SNS/REF_M'
 BASE_SEARCH='*/data/REF_M_%s_'
 OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
 
-class fileOpenThread(QtCore.QThread):
-  '''
-  Intended for background file readout to keep GUI responsive. 
-  At the moment deactivated due to issues on some platforms.
-  '''
-  updateProgress=QtCore.pyqtSignal(float)
-  data=None
-
-  def __init__(self, parent, filename):
-    QtCore.QThread.__init__(self)
-    self.filename=filename
-    self.bin_type=parent.ui.eventBinMode.currentIndex()
-    self.bins=parent.ui.eventTofBins.value()
-
-  def run(self):
-    self.data=NXSData(self.filename,
-                bin_type=self.bin_type,
-                bins=self.bins,
-                callback=self.progress)
-
-  def progress(self, value):
-    self.updateProgress.emit(value)
-
 class gisansCalcThread(QtCore.QThread):
   '''
   Perform GISANS scattering calculations in the background.
@@ -92,9 +69,8 @@ class MainGUI(QtGui.QMainWindow):
   y_bg=0.
   background_dialog=None
   # threads
-  _foThread=None
-  read_with_thread=False
   _gisansThread=None
+  # keep the direct beam selection for one file here
   _norm_selected=None
   # plot line storages
   _x_projection=None
@@ -238,32 +214,20 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(maxtime/60))
     if base.endswith('event.nxs') and self.ui.eventSplit.isChecked():
       event_split_bins=self.ui.eventSplitItems.value()
-      event_split_index=self.ui.eventSplitIndex.value()
+      event_split_index=self.ui.eventSplitIndex.value()-1
     else:
       event_split_bins=None
       event_split_index=0
 
     self._norm_selected=None
-    if self._foThread:
-      self._foThread.finished.disconnect()
-      self._foThread.terminate()
-      self._foThread.wait(100)
-      self._foThread=None
     info(u"Reading file %s..."%(filename))
-    if self.read_with_thread:
-      self._foThread=fileOpenThread(self, filename)
-      self._foThread.finished.connect(self._fileOpenDone)
-      self._foThread.updateProgress.connect(self.updateEventReadout)
-      self._foThread.do_plot=do_plot
-      self._foThread.start()
-    else:
-      data=NXSData(filename,
-            bin_type=self.ui.eventBinMode.currentIndex(),
-            bins=self.ui.eventTofBins.value(),
-            callback=self.updateEventReadout,
-            event_split_bins=event_split_bins,
-            event_split_index=event_split_index)
-      self._fileOpenDone(data, filename, do_plot)
+    data=NXSData(filename,
+          bin_type=self.ui.eventBinMode.currentIndex(),
+          bins=self.ui.eventTofBins.value(),
+          callback=self.updateEventReadout,
+          event_split_bins=event_split_bins,
+          event_split_index=event_split_index)
+    self._fileOpenDone(data, filename, do_plot)
 
   @log_input
   def fileOpenSum(self, filenames, do_plot=True):
@@ -274,11 +238,6 @@ class MainGUI(QtGui.QMainWindow):
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     self.active_file=base
-    if self._foThread:
-      self._foThread.finished.disconnect()
-      self._foThread.terminate()
-      self._foThread.wait(100)
-      self._foThread=None
     info(u"Reading files %s..."%(filenames[0]))
     data=NXSMultiData(filenames,
           bin_type=self.ui.eventBinMode.currentIndex(),
@@ -288,11 +247,6 @@ class MainGUI(QtGui.QMainWindow):
 
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
-    if data is None and self._foThread is not None:
-      filename=self._foThread.filename
-      do_plot=self._foThread.do_plot
-      data=self._foThread.data
-      self._foThread=None
     base=os.path.basename(filename)
     if data is None:
       self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
