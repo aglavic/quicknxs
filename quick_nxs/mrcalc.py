@@ -318,7 +318,7 @@ class DetectorTailCorrector(object):
                                       self._gauss_params[1])**2/
                                       self._gauss_params[2]**2)+self._gauss_params[3]
     Gconv=self.convole_data(G)
-    return Gconv, self.det_I-Gconv
+    return Gconv
 
   def _compare_residuals(self, p, fjac=None):
     # Function used to fit the shape function and Gauss parameters
@@ -326,7 +326,7 @@ class DetectorTailCorrector(object):
     self.peak_scale=p[1]
     self._gauss_params=p[2:]
     self._create_shape()
-    Gconv, ignore=self._compare_shape()
+    Gconv=self._compare_shape()
     return 0, log(self.det_I[self.det_I>0])-log(Gconv[self.det_I>0])
 
   def _fit_shape(self):
