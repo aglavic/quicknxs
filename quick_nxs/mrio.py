@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
 '''
-  Classes to create output files from reduced datasets,
-  create according file headers and reload datasets from
-  such headers.
+Classes to create output files from reduced datasets,
+create according file headers and reload datasets from
+such headers.
 '''
 
 import os
@@ -31,7 +31,7 @@ result_folder=os.path.expanduser(u'~/results')
 
 class HeaderCreator(object):
   '''
-    Class to create file headers from a set of Reflectivity objects.
+  Class to create file headers from a set of Reflectivity objects.
   '''
   refls=None
   norms=None
@@ -56,7 +56,7 @@ class HeaderCreator(object):
 
   def _collect_norms(self):
     '''
-      Create a list of unique normalization datasets needed for the reflectivity list.
+    Create a list of unique normalization datasets needed for the reflectivity list.
     '''
     self.norms=[]
     for refli in self.refls:
@@ -65,7 +65,7 @@ class HeaderCreator(object):
 
   def _collect_background(self):
     '''
-      Create a list of unique advanced background options used in the reflectivity list.
+    Create a list of unique advanced background options used in the reflectivity list.
     '''
     self.bgs=[]
     self.bg_polys=[]
@@ -91,7 +91,7 @@ class HeaderCreator(object):
 
   def _collect_event(self):
     '''
-      Collect event mode readout options used to retrieve the reflectivity and normalization files.
+    Collect event mode readout options used to retrieve the reflectivity and normalization files.
     '''
     self.evts=[]
     for item in self.norms+self.refls:
@@ -107,7 +107,7 @@ class HeaderCreator(object):
 
   def _collect_data(self):
     '''
-      Create actual data to be used in the output.
+    Create actual data to be used in the output.
     '''
     self.sections=[]
     # direct beam measurements
@@ -233,7 +233,7 @@ class HeaderCreator(object):
 
   def _get_general_header(self):
     '''
-      Return header lines present in any file, indipendent of datasets.
+    Return header lines present in any file, indipendent of datasets.
     '''
     output=[u'Datafile created by QuickNXS %s'%str_version]
     output.append(u'Date: %s'%strftime(u"%Y-%m-%d %H:%M:%S"))
@@ -244,8 +244,8 @@ class HeaderCreator(object):
 
   def _get_section(self, section, options, data):
     '''
-      Return one section from given data. Format each column so
-      it does not get different size.
+    Return one section from given data. Format each column so
+    it does not get different size.
     '''
     output=u'[%s]\n'%section
     section_head=[]
@@ -287,7 +287,7 @@ class HeaderCreator(object):
   @classmethod
   def get_data_header(cls, names, units):
     '''
-      Return the lines used directly before the data to indicate units and dimensions.
+    Return the lines used directly before the data to indicate units and dimensions.
     '''
     output=u'[Data]\n'
     output+=u'\t'.join([u'%-20s'%(u'%s [%s]'%(name, unit)) for name, unit in zip(names, units)])
@@ -296,7 +296,7 @@ class HeaderCreator(object):
   @classmethod
   def get_data_comment(cls, names, units):
     '''
-      Return the lines used directly before the data to indicate units and dimensions.
+    Return the lines used directly before the data to indicate units and dimensions.
     '''
     output=u'# [Data]\n'
     output+=u'# '+u'\t'.join([u'%-20s'%(u'%s [%s]'%(name, unit)) for name, unit in zip(names, units)])
@@ -309,7 +309,7 @@ class HeaderCreator(object):
 
 class HeaderParser(object):
   '''
-    Use a header written by the HeaderCreator to reconstruct the Reflectivity objects.
+  Use a header written by the HeaderCreator to reconstruct the Reflectivity objects.
   '''
   direct_beam_defaults=dict(DB_ID=0, EVT_ID=None, BG_ID=None, P0=0, PN=0, x_pos=206., x_width=9.,
                             y_pos=120., y_width=120., bg_pos=80., bg_width=40.,
@@ -339,8 +339,8 @@ class HeaderParser(object):
   
   def _collect_sections(self):
     '''
-      Go through the header lines and locate section data.
-      This is then stored in a dictionary.
+    Go through the header lines and locate section data.
+    This is then stored in a dictionary.
     '''
     hlines=self.header.splitlines()
     hlines=map(lambda line: line.lstrip('#'), hlines)
@@ -357,9 +357,9 @@ class HeaderParser(object):
   
   def _evaluate_section(self, section, defaults):
     '''
-      Convert section data to python types and create a dictionary
-      for each line in a section. Default values can be supplied
-      to overwrite undefined values or supply integer type conversion.
+    Convert section data to python types and create a dictionary
+    for each line in a section. Default values can be supplied
+    to overwrite undefined values or supply integer type conversion.
     '''
     sitems=[item.strip() for item in self.sections[section][0].split(u'  ') if item.strip()!=u'']    
     sdata=[[item.strip() for item in line.split(u'  ') if item.strip()!=u'']
@@ -388,7 +388,7 @@ class HeaderParser(object):
 
   def _evaluate(self):
     '''
-      Evaluate given sections with their default values.
+    Evaluate given sections with their default values.
     '''
     self.section_data={}
     self.section_data['Direct Beam Runs']=self._evaluate_section('Direct Beam Runs',
@@ -487,9 +487,9 @@ class HeaderParser(object):
 
 class Exporter(object):
   '''
-    Export data for reflectivity, offspecular or gisans to
-    different file types. Mostly intended for use in the ReduceDialog
-    but can also be helpful for scripts which export data.
+  Export data for reflectivity, offspecular or gisans to
+  different file types. Mostly intended for use in the ReduceDialog
+  but can also be helpful for scripts which export data.
   '''
 
   def __init__(self, channels, refls):
@@ -509,8 +509,8 @@ class Exporter(object):
   @log_call
   def read_data(self):
     '''
-      Read the raw data of all files. This means that for multiple
-      extraction routines the data is only read once.
+    Read the raw data of all files. This means that for multiple
+    extraction routines the data is only read once.
     '''
     self.indices=[]
     self.raw_data={}
@@ -529,7 +529,7 @@ class Exporter(object):
   @log_call
   def extract_reflectivity(self):
     '''
-      Extract the specular reflectivity for all datasets.
+    Extract the specular reflectivity for all datasets.
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     output_data['column_units']=[u'Å⁻¹', 'a.u.', 'a.u.', u'Å⁻¹', 'rad']
@@ -561,7 +561,7 @@ class Exporter(object):
   @log_call
   def extract_offspecular(self):
     '''
-      Extract the off-specular scattering for all datasets.
+    Extract the off-specular scattering for all datasets.
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     output_data['column_units']=[u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', 'a.u.', 'a.u.']
@@ -591,8 +591,8 @@ class Exporter(object):
   @log_call
   def extract_offspecular_corr(self):
     '''
-      Extract the off-specular scattering for all datasets and correct it
-      for the tails produced by the detector in x-direction.
+    Extract the off-specular scattering for all datasets and correct it
+    for the tails produced by the detector in x-direction.
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     output_data['column_units']=[u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', u'Å⁻¹', 'a.u.', 'a.u.']
@@ -632,7 +632,7 @@ class Exporter(object):
   @log_call
   def smooth_offspec(self, settings, pb=None):
     '''
-      Create a smoothed dataset from the offspecular scattering.
+    Create a smoothed dataset from the offspecular scattering.
     '''
     output_data={}
     pbinfo="Smoothing Channel "
@@ -684,7 +684,7 @@ class Exporter(object):
                   check_exists=lambda ignore: True,
                   ):
     '''
-      Write all datasets to the selected format output.
+    Write all datasets to the selected format output.
     '''
     ofname=os.path.join(directory, naming)
     for key, output_data in self.output_data.items():
@@ -772,7 +772,7 @@ class Exporter(object):
 
   def dictize_data(self, output_data):
     '''
-      Create a dictionary for export of data for e.g. Matlab files.
+    Create a dictionary for export of data for e.g. Matlab files.
     '''
     output={}
     # items containing information on the saved columns
@@ -792,7 +792,7 @@ class Exporter(object):
                   naming=u'REF_M_{numbers}_{item}_{state}.{type}',
                   check_exists=lambda ignore: True):
     '''
-      Create gnuplot scripts in images for all exported datasets.
+    Create gnuplot scripts in images for all exported datasets.
     '''
     for title, output_data in self.output_data.items():
         self._create_gnuplot_script(output_data, title, directory, naming, check_exists)
@@ -909,8 +909,8 @@ class Exporter(object):
                        naming=u'REF_M_{numbers}_{item}_{state}.{type}',
                        check_exists=lambda ignore: True):
     '''
-      Create a Genx .gx model file with the right polarization states
-      and the reflectivity data already included for convenience.
+    Create a Genx .gx model file with the right polarization states
+    and the reflectivity data already included for convenience.
     '''
     ofname=os.path.join(directory, naming)
     if 'x' in self.channels:

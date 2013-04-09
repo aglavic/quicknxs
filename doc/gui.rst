@@ -10,7 +10,7 @@ GUI Modules
     :show-inheritance:
 
 :mod:`advanced_background` Module
-----------------------
+---------------------------------
 
 .. automodule:: quick_nxs.advanced_background
     :members:
@@ -18,7 +18,7 @@ GUI Modules
     :show-inheritance:
 
 :mod:`compare_plots` Module
-----------------------
+---------------------------
 
 .. automodule:: quick_nxs.compare_plots
     :members:
@@ -26,7 +26,7 @@ GUI Modules
     :show-inheritance:
 
 :mod:`gui_logging` Module
------------------------
+-------------------------
 
 .. automodule:: quick_nxs.gui_logging
     :members:
@@ -42,7 +42,7 @@ GUI Modules
     :show-inheritance:
 
 :mod:`ipython_widget` Module
------------------------
+----------------------------
 
 .. automodule:: quick_nxs.ipython_widget
     :members:

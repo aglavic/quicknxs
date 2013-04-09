@@ -15,62 +15,6 @@ from .peakfinder import PeakFinder
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',
          'smooth_data', 'refine_gauss']
 
-#TODO: create a good framework for collections of reflectivities used by GUI and future scripts
-class RefCollection(object):
-  '''
-  Representation of collection of datasets used to calculate
-  a full reflectivity pattern.
-  If a list or MRDataset objects is given, the normalization and
-  scaling is automatically calculated.
-  '''
-
-  def __init__(self, datasets=None):
-    self.norm=[]
-    self.refl=[]
-    if datasets is not None:
-      for ds in datasets:
-        self.autoadd(ds)
-      self.scale()
-
-  def autoadd(self, ds):
-    '''
-    Add a dataset, automatically selecting normalization or
-    reflectivity.
-    '''
-    norm=self.getNorm(ds)
-    if norm:
-      region=where(norm.Rraw>=(norm.Rraw.max()*0.1))[0]
-      P0=len(norm.Rraw)-region[-1]
-      PN=region[0]
-    else:
-      P0=0
-      PN=0
-    x_pos=get_xpos(ds)
-    y_pos, y_width, ignore=get_yregion(ds)
-    refl=Reflectivity(ds, normalization=norm, P0=P0, PN=PN,
-                      x_pos=x_pos, y_pos=y_pos, y_width=y_width)
-    if (refl.ai*180./pi)<0.05:
-      self.norm.append(refl)
-    else:
-      self.refl.append(refl)
-
-  def getNorm(self, ds):
-    for norm in self.norm:
-      if len(norm.Rraw)==len(ds.tof) and norm.lambda_center==ds.lambda_center:
-        return norm
-    return None
-
-  def scale(self):
-    '''
-    Scale all reflectivities by total reflection or stitching to previous dataset.
-    '''
-    s1=get_total_reflection(self.refl[0])
-    self.refl[0].rescale(s1)
-    for i, refl1 in enumerate(self.refl[1:]):
-      refl2=self.refl[i]
-      scale, ignore, ignore=get_scaling(refl1, refl2)
-      refl1.rescale(scale)
-
 @log_both
 def get_total_reflection(refl, return_npoints=False):
   """
@@ -107,6 +51,8 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   Calculate the scaling factor needed to stich one dataset to another.
   
   :param refl1/2: Reflectivity objects
+  :param add_points: Number of points of both datasets considered outside the overlapping region
+  :param polynom: Degree of polynom to use for fitting, 0 is Gaussian
   
   :returns: scaling, array of fitted x and y
   """
@@ -197,7 +143,7 @@ def get_yregion(data):
 @log_input
 def refine_gauss(data, pos, width, return_params=False):
   '''
-    Fit a gaussian function to a given dataset and return the x0 position.
+  Fit a gaussian function to a given dataset and return the x0 position.
   '''
   p0=[data[int(pos)], pos, width]
   parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
@@ -224,10 +170,10 @@ def refine_gauss(data, pos, width, return_params=False):
 @log_input
 def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=0.06, callback=None):
   '''
-    Smooth a irregular spaced dataset onto a regular grid.
-    Takes each intensities with a distance < 3*sigma
-    to a given grid point and averages their intensities
-    weighted by the gaussian of the distance.
+  Smooth a irregular spaced dataset onto a regular grid.
+  Takes each intensities with a distance < 3*sigma
+  to a given grid point and averages their intensities
+  weighted by the gaussian of the distance.
   '''
   gridx, gridy=settings['grid']
   sigmax, sigmay=settings['sigma']
@@ -267,7 +213,7 @@ def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=
 ######## helper functions ###############
 def _gauss_residuals(p, fjac=None, data=None, width=1):
   '''
-    Gaussian of I0, x0 and sigma parameters minus the data.
+  Gaussian of I0, x0 and sigma parameters minus the data.
   '''
   xdata=arange(data.shape[0])
   I0=p[0]
@@ -315,11 +261,11 @@ class OverlapGaussian(OverlapFunction):
 @log_input
 def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
   '''
-    Refine a polynomial to the logarithm of two datasets while
-    scaling the first dataset as well. Return the resulting
-    scaling parameter and the refined function for plotting.
-    
-    :returns: scaling, array of fitted x and y
+  Refine a polynomial to the logarithm of two datasets while
+  scaling the first dataset as well. Return the resulting
+  scaling parameter and the refined function for plotting.
+  
+  :returns: scaling, array of fitted x and y
   '''
   x1=x1.astype(float64)
   y1=y1.astype(float64)
@@ -345,9 +291,9 @@ def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
 
 class DetectorTailCorrector(object):
   '''
-    Try to remove tails of strong peaks from detector xy data using a shape
-    function deduced from a direct beam measurement and simulating real
-    data convoluted with the shape function until the measured data is found.
+  Try to remove tails of strong peaks from detector xy data using a shape
+  function deduced from a direct beam measurement and simulating real
+  data convoluted with the shape function until the measured data is found.
   '''
   gamma=12.
   peak_scale=150.
@@ -385,7 +331,7 @@ class DetectorTailCorrector(object):
 
   def _fit_shape(self):
     '''
-      Get the shape function parameters by fitting it to a direct beam measurement.
+    Get the shape function parameters by fitting it to a direct beam measurement.
     '''
     debug('correction parameters before fit gamma=%g  peak_scale=%g'%
                                               (self.gamma, self.peak_scale))
@@ -439,7 +385,7 @@ class DetectorTailCorrector(object):
 
   def _mirror_shape(self):
     '''
-      Make the shape function mirror symmetric around the center.
+    Make the shape function mirror symmetric around the center.
     '''
     sf=self.shape_function
     ms=self.mshape

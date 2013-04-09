@@ -51,7 +51,7 @@ class gisansCalcThread(QtCore.QThread):
 
 class MainGUI(QtGui.QMainWindow):
   '''
-    The program top level window with all direct event handling.
+  The program top level window with all direct event handling.
   '''
   active_folder=BASE_FOLDER
   active_file=u''
@@ -169,8 +169,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_input
   def processDelayedTrigger(self, item, args):
     '''
-      Calls private method after delay action was
-      triggered.
+    Calls private method after delay action was
+    triggered.
     '''
     attrib=getattr(self, str(item))
     if type(attrib) is type(self.initiateProjectionPlot):
@@ -180,7 +180,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def connect_plot_events(self):
     '''
-      Connect matplotlib mouse events.
+    Connect matplotlib mouse events.
     '''
     for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
            self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
@@ -200,7 +200,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_input
   def fileOpen(self, filename, do_plot=True):
     '''
-      Open a new datafile and plot the data.
+    Open a new datafile and plot the data.
     '''
     folder, base=os.path.split(filename)
     if folder!=self.active_folder:
@@ -232,7 +232,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_input
   def fileOpenSum(self, filenames, do_plot=True):
     '''
-      Open and sum up several datafiles and plot the data.
+    Open and sum up several datafiles and plot the data.
     '''
     folder, base=os.path.split(filenames[0])
     if folder!=self.active_folder:
@@ -284,7 +284,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plotActiveTab(self):
     '''
-      Select the appropriate function to plot all visible images.
+    Select the appropriate function to plot all visible images.
     '''
     if self.auto_change_active or not self.active_data:
       return
@@ -319,7 +319,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_overview(self):
     '''
-      X vs. Y and X vs. Tof for main channel.
+    X vs. Y and X vs. Tof for main channel.
     '''
     data=self.active_data[self.active_channel]
     xy=data.xydata
@@ -380,7 +380,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_xy(self):
     '''
-      X vs. Y plots for all channels.
+    X vs. Y plots for all channels.
     '''
     plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_pm, self.ui.xy_mp]
     for i in range(len(self.active_data), 4):
@@ -435,7 +435,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_xtof(self):
     '''
-      X vs. ToF plots for all channels.
+    X vs. ToF plots for all channels.
     '''
     imin=1e20
     imax=1e-20
@@ -491,11 +491,11 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_projections(self, preserve_lim=False):
     '''
-      Create projections of the data on the x and y axes.
-      The x-projection can also be done be means of quantile calculation,
-      which means that the ToF intensities are calculation which are
-      exceeded by a certain number of points. This can be helpful to better
-      separate the specular reflection from bragg-sheets
+    Create projections of the data on the x and y axes.
+    The x-projection can also be done be means of quantile calculation,
+    which means that the ToF intensities are calculation which are
+    exceeded by a certain number of points. This can be helpful to better
+    separate the specular reflection from bragg-sheets
     '''
     data=self.active_data[self.active_channel]
     xproj=data.xdata
@@ -618,9 +618,9 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_refl(self, preserve_lim=False):
     '''
-      Calculate and display the reflectivity from the current dataset
-      and any dataset stored. Intensities from direct beam
-      measurements can be used for normalization.
+    Calculate and display the reflectivity from the current dataset
+    and any dataset stored. Intensities from direct beam
+    measurements can be used for normalization.
     '''
     if not self.calc_refl():
       return
@@ -679,10 +679,10 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_offspec(self):
     '''
-      Create an offspecular plot for all channels of the datasets in the
-      reduction list. The user can define upper and lower bounds for the 
-      plotted intensity and select the coordinates to be ither kiz-kfz vs. Qz,
-      Qx vs. Qz or kiz vs. kfz.
+    Create an offspecular plot for all channels of the datasets in the
+    reduction list. The user can define upper and lower bounds for the 
+    plotted intensity and select the coordinates to be ither kiz-kfz vs. Qz,
+    Qx vs. Qz or kiz vs. kfz.
     '''
     plots=[self.ui.offspec_pp, self.ui.offspec_mm,
            self.ui.offspec_pm, self.ui.offspec_mp]
@@ -800,7 +800,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_gisans(self):
     '''
-      Create GISANS plots of the current dataset with Qy-Qz maps.
+    Create GISANS plots of the current dataset with Qy-Qz maps.
     '''
     plots=[self.ui.gisans_pp, self.ui.gisans_mm, self.ui.gisans_pm, self.ui.gisans_mp]
     norm=self.getNorm()
@@ -871,8 +871,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def update_daslog(self):
     '''
-      Write parameters from all file daslogs to the tables in the 
-      daslog tab.
+    Write parameters from all file daslogs to the tables in the 
+    daslog tab.
     '''
     table=self.ui.daslogTableBox
     table.setRowCount(0)
@@ -892,7 +892,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def fileOpenDialog(self):
     '''
-      Show a dialog to open a new file.
+    Show a dialog to open a new file.
     '''
     if self.ui.histogramActive.isChecked():
       filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
@@ -913,7 +913,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def fileOpenSumDialog(self):
     '''
-      Show a dialog to open a set of files and sum them together.
+    Show a dialog to open a set of files and sum them together.
     '''
     if self.ui.histogramActive.isChecked():
       filter_=u'Histo Nexus (*histo.nxs);;All (*.*)'
@@ -931,7 +931,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def fileOpenList(self):
     '''
-      Called when a new file is selected from the file list.
+    Called when a new file is selected from the file list.
     '''
     if self.auto_change_active:
       return
@@ -948,7 +948,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def openByNumber(self):
     '''
-      Search the data folders for a specific file number and open it.
+    Search the data folders for a specific file number and open it.
     '''
     number=self.ui.numberSearchEntry.text()
     info('Trying to locate file number %s...'%number)
@@ -980,8 +980,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def loadExtraction(self, filename=None):
     '''
-      Analyse an already extracted dataset header to reload all settings
-      used for this extraction for further processing.
+    Analyse an already extracted dataset header to reload all settings
+    used for this extraction for further processing.
     '''
     if filename is None:
       filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
@@ -1031,10 +1031,10 @@ class MainGUI(QtGui.QMainWindow):
   @log_input
   def automaticExtraction(self, filenames):
     '''
-      Make use of all automatic algorithms to reduce a full set of data in one run.
-      Normalization files are detected by the tth angle to the selected peak position.
-      
-      The result is shown in the table and can be modified by the user.
+    Make use of all automatic algorithms to reduce a full set of data in one run.
+    Normalization files are detected by the tth angle to the selected peak position.
+    
+    The result is shown in the table and can be modified by the user.
     '''
     self.clearRefList(do_plot=False)
     for filename in sorted(filenames):
@@ -1066,8 +1066,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def onPathChanged(self, base, folder):
     '''
-      Update the file list and create a watcher to update the list again if a new file was
-      created.
+    Update the file list and create a watcher to update the list again if a new file was
+    created.
     '''
     self._path_watcher.removePath(self.active_folder)
     self.updateFileList(base, folder)
@@ -1077,8 +1077,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def folderModified(self, flist=None):
     '''
-      Called by the path watcher to update the file list when the folder
-      has been modified.
+    Called by the path watcher to update the file list when the folder
+    has been modified.
     '''
     self.updateFileList(self.active_file, self.active_folder)
 
@@ -1089,7 +1089,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def updateFileList(self, base, folder):
     '''
-      Create a new filelist if the folder has changes.
+    Create a new filelist if the folder has changes.
     '''
     was_active=self.auto_change_active
     self.auto_change_active=True
@@ -1125,7 +1125,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def updateLabels(self):
     '''
-      Write file metadata to the labels in the overview tab.
+    Write file metadata to the labels in the overview tab.
     '''
     d=self.active_data[self.active_channel]
 
@@ -1179,9 +1179,9 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def changeRegionValues(self):
     '''
-      Called when the reflectivity extraction region has been changed.
-      Sets up a trigger to replot the reflectivity with a delay so
-      a subsequent change can occur without several replots.
+    Called when the reflectivity extraction region has been changed.
+    Sets up a trigger to replot the reflectivity with a delay so
+    a subsequent change can occur without several replots.
     '''
     if self.auto_change_active:
       return
@@ -1212,7 +1212,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def setNorm(self, do_plot=True, do_remove=True):
     '''
-      Add dataset to the available normalizations or clear the normalization list.
+    Add dataset to the available normalizations or clear the normalization list.
     '''
     if self.refl is None:
       return
@@ -1260,8 +1260,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_both
   def getNorm(self, data=None):
     '''
-      Return a fitting normalization (same ToF channels and wavelength) for 
-      a dataset.
+    Return a fitting normalization (same ToF channels and wavelength) for 
+    a dataset.
     '''
     fittings=[]
     indices=[]
@@ -1291,7 +1291,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def clearNormList(self):
     '''
-      Remove all items from the reduction list.
+    Remove all items from the reduction list.
     '''
     self.ui.normalizeTable.setRowCount(0)
     self.ui.normalizationLabel.setText(u"Unset")
@@ -1300,7 +1300,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def normalizeTotalReflection(self):
     '''
-      Extract the scaling factor from the reflectivity curve.
+    Extract the scaling factor from the reflectivity curve.
     '''
     if self.refl is None or not self.refl.options['normalization']:
       warning('Please select a dataset with total reflection plateau\nand normalization.',
@@ -1332,8 +1332,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def addRefList(self, do_plot=True):
     '''
-      Collect information about the current extraction settings and store them
-      in the list of reduction items.
+    Collect information about the current extraction settings and store them
+    in the list of reduction items.
     '''
     if self.refl is None:
       return
@@ -1406,7 +1406,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_input
   def reductionTableChanged(self, item):
     '''
-      Perform action upon change in data reduction list.
+    Perform action upon change in data reduction list.
     '''
     if self.auto_change_active:
       return
@@ -1459,8 +1459,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def changeActiveChannel(self):
     '''
-      The overview and reflectivity channel was changed. This
-      recalculates already extracted reflectivities.
+    The overview and reflectivity channel was changed. This
+    recalculates already extracted reflectivities.
     '''
     desiredChannel=self.ui.selectedChannel.currentText().split('/')
     for channel in self.channels:
@@ -1479,7 +1479,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def clearRefList(self, do_plot=True):
     '''
-      Remove all items from the reduction list.
+    Remove all items from the reduction list.
     '''
     self.reduction_list=[]
     self.ui.reductionTable.setRowCount(0)
@@ -1490,7 +1490,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def removeRefList(self):
     '''
-      Remove one item from the reduction list.
+    Remove one item from the reduction list.
     '''
     index=self.ui.reductionTable.currentRow()
     if index<0:
@@ -1503,8 +1503,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def overwriteDirectBeam(self):
     '''
-      Take the active x0 and Dangle values as overwrite parameters
-      to be used with other datasets as well.
+    Take the active x0 and Dangle values as overwrite parameters
+    to be used with other datasets as well.
     '''
     self.auto_change_active=True
     self.ui.directPixelOverwrite.setValue(self.ui.refXPos.value())
@@ -1515,7 +1515,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def clearOverwrite(self):
     '''
-      Reset overwrite to use values from the .nxs files.
+    Reset overwrite to use values from the .nxs files.
     '''
     self.auto_change_active=True
     self.ui.directPixelOverwrite.setValue(-1)
@@ -1526,7 +1526,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def overwriteChanged(self):
     '''
-      Recalculate reflectivity based on changed overwrite parameters.
+    Recalculate reflectivity based on changed overwrite parameters.
     '''
     if not self.auto_change_active:
       self.updateLabels()
@@ -1537,8 +1537,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def reduceDatasets(self):
     '''
-      Open a dialog to select reduction options for the current list of
-      reduction items.
+    Open a dialog to select reduction options for the current list of
+    reduction items.
     '''
     if len(self.reduction_list)==0:
       warning(u'Please select at least\none dataset to reduce.',
@@ -1550,9 +1550,9 @@ class MainGUI(QtGui.QMainWindow):
 
   def plotMouseEvent(self, event):
     '''
-      Show the mouse position of any plot in the main window
-      status bar, as the single plot status indicator is only
-      visible for larger plot toolbars.
+    Show the mouse position of any plot in the main window
+    status bar, as the single plot status indicator is only
+    visible for larger plot toolbars.
     '''
     if event.inaxes is None:
       return
@@ -1560,7 +1560,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def plotPickX(self, event):
     '''
-      Plot for x-projection has been clicked.
+    Plot for x-projection has been clicked.
     '''
     if event.button is not None and self.ui.x_project.toolbar._active is None and \
         event.xdata is not None:
@@ -1597,7 +1597,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def plotPickY(self, event):
     '''
-      Plot for y-projection has been clicked.
+    Plot for y-projection has been clicked.
     '''
     if event.button==1 and self.ui.y_project.toolbar._active is None and \
         event.xdata is not None:
@@ -1618,7 +1618,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def plotPickXY(self, event):
     '''
-      Plot for xy-map has been clicked.
+    Plot for xy-map has been clicked.
     '''
     if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
         event.xdata is not None:
@@ -1676,8 +1676,8 @@ class MainGUI(QtGui.QMainWindow):
 
   def updateEventReadout(self, progress):
     '''
-      When reading event mode data this is the callback
-      used after each finished channel to indicate the progress.
+    When reading event mode data this is the callback
+    used after each finished channel to indicate the progress.
     '''
     self.eventProgress.setValue(progress*100)
     # make sure the update is shown in the interface
@@ -1688,8 +1688,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def calcReflParams(self):
     '''
-      Calculate x and y regions for reflectivity extraction and put them in the
-      entry fields.
+    Calculate x and y regions for reflectivity extraction and put them in the
+    entry fields.
     '''
     data=self.active_data[self.active_channel]
     self.auto_change_active=True
@@ -1719,7 +1719,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def visualizePeakfinding(self):
     '''
-      Show a graphical representation of the peakfinder process.
+    Show a graphical representation of the peakfinder process.
     '''
     self.pf.visualize(snr=self.ui.pfSNR.value(),
                       min_width=self.ui.pfMinWidth.value(),
@@ -1730,7 +1730,7 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def refineXpos(self):
     '''
-      Fit the selected x position to the closest peak.
+    Fit the selected x position to the closest peak.
     '''
     if self.ui.actionRefineX.isChecked():
       xproj=self.active_data[self.active_channel].xdata
@@ -1742,8 +1742,8 @@ class MainGUI(QtGui.QMainWindow):
 
   def recalculateReflectivity(self, old_object, overwrite_options=None):
     '''
-      Use parameters to calculate and return the reflectivity
-      of one file.
+    Use parameters to calculate and return the reflectivity
+    of one file.
     '''
     if type(old_object.origin) is list:
       filenames=[origin[0] for origin in old_object.origin]
@@ -1761,7 +1761,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def readSettings(self):
     '''
-      Restore window and dock geometry.
+    Restore window and dock geometry.
     '''
     path=os.path.join(os.path.expanduser('~/.quicknxs'), 'window.pkl')
     if os.path.exists(path):
@@ -1793,7 +1793,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def closeEvent(self, event):
     '''
-      Save window and dock geometry.
+    Save window and dock geometry.
     '''
     # join delay thread
     self.trigger.stay_alive=False
@@ -1849,8 +1849,8 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def helpDialog(self):
     '''
-      Open a HTML page with the program documentation and place it on the right
-      side of the current screen.
+    Open a HTML page with the program documentation and place it on the right
+    side of the current screen.
     '''
     dia=QtGui.QDialog(self)
     dia.setWindowTitle(u'QuickNXS Manual')

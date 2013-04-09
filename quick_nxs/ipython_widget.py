@@ -2,8 +2,8 @@
 '''
 Updated for IPython 0.13
 Created on 18-03-2012
-Updated:   11-09-2012
-@author: Paweł Jarosz
+Updated:   2012
+author: Paweł Jarosz, Artur Glavic
 '''
 
 import atexit
@@ -26,7 +26,7 @@ class IPythonLocalKernelApp(IPKernelApp):
     @catch_config_error
     def initialize(self, argv=DEFAULT_INSTANCE_ARGS):
         """
-        argv: IPython args
+        :param argv: IPython args
 
         example:
 
@@ -91,36 +91,34 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
 
     def connect_kernel(self, connection_file, heartbeat=False):
         """
-        connection_file: str - is the connection file name, for example 'kernel-16098.json'
-        heartbeat: bool - workaround, needed for right click/save as ... errors ... i don't know how to 
+        :param connection_file: str - is the connection file name, for example 'kernel-16098.json'
+        :param heartbeat: bool - workaround, needed for right click/save as ... errors ... i don't know how to 
                           fix this issue. Anyone knows? Anyway it needs more testing
-            example1 (standalone):
+                          
+        example1 (standalone):
+                app = QtGui.QApplication([])
+                widget = IPythonConsoleQtWidget()
+                widget.set_default_style(colors='linux')
 
-                    app = QtGui.QApplication([])
-                    widget = IPythonConsoleQtWidget()
-                    widget.set_default_style(colors='linux')
 
+                widget.connect_kernel(connection_file='some connection file name')
 
-                    widget.connect_kernel(connection_file='some connection file name')
+                app.exec_()
 
-                    app.exec_()
+        example2 (IPythonLocalKernelApp):
+                app = QtGui.QApplication([])
 
-            example2 (IPythonLocalKernelApp):
+                kernelapp = IPythonLocalKernelApp.instance()
+                kernelapp.initialize()
 
-                    app = QtGui.QApplication([])
+                widget = IPythonConsoleQtWidget()
 
-                    kernelapp = IPythonLocalKernelApp.instance()
-                    kernelapp.initialize()
+                # Green text, black background ;)
+                widget.set_default_style(colors='linux')
 
-                    widget = IPythonConsoleQtWidget()
+                widget.connect_kernel(connection_file='kernelapp.get_connection_file())
 
-                    # Green text, black background ;)
-                    widget.set_default_style(colors='linux')
-
-                    widget.connect_kernel(connection_file='kernelapp.get_connection_file())
-
-                    app.exec_()
-
+                app.exec_()
         """
         km=QtKernelManager(connection_file=find_connection_file(connection_file), config=self.config)
         km.load_connection_file()

@@ -209,9 +209,9 @@ class NXSData(object):
 
   def _get_ancient(self, filename):
     '''
-      For the oldest file format, where polarization channels
-      are in different .nxs files, this method reads all files
-      and builds a dictionary of it.
+    For the oldest file format, where polarization channels
+    are in different .nxs files, this method reads all files
+    and builds a dictionary of it.
     '''
     base_name=filename.rsplit("_p", 1)[0]
     files=glob(base_name+"*.nxs")
@@ -996,7 +996,7 @@ class Reflectivity(object):
 
 class OffSpecular(Reflectivity):
   '''
-    Calculate off-specular scattering similarly as done for reflectivity.
+  Calculate off-specular scattering similarly as done for reflectivity.
   '''
 
   @log_input
@@ -1038,11 +1038,11 @@ class OffSpecular(Reflectivity):
   @log_call
   def _calc_offspec(self, dataset):
     """
-      Extract off-specular scattering from 4D dataset (x,y,ToF,I).
-      Uses a window in y to filter the 4D data
-      and than sums all I values for each ToF and x channel.
-      Qz,Qx,kiz,kfz is calculated using the x and ToF positions
-      together with the tth-bank and direct pixel values.
+    Extract off-specular scattering from 4D dataset (x,y,ToF,I).
+    Uses a window in y to filter the 4D data
+    and than sums all I values for each ToF and x channel.
+    Qz,Qx,kiz,kfz is calculated using the x and ToF positions
+    together with the tth-bank and direct pixel values.
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1114,7 +1114,7 @@ class OffSpecular(Reflectivity):
 
 class GISANS(Reflectivity):
   '''
-    Calculate GISANS scattering from dataset.
+  Calculate GISANS scattering from dataset.
   '''
 
   @log_input

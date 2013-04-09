@@ -1,6 +1,7 @@
 """
 Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
-
+"""
+"""
                                                                    AUTHORS
   The original version of this software, called LMFIT, was written in FORTRAN
   as part of the MINPACK-1 package by XXX.

@@ -2,7 +2,7 @@ Analysis Modules
 ================
 
 :mod:`mreduce` Module
-----------------------------
+---------------------
 
 .. automodule:: quick_nxs.mreduce
     :members:
@@ -10,7 +10,7 @@ Analysis Modules
     :show-inheritance:
 
 :mod:`mrio` Module
-----------------------------
+------------------
 
 .. automodule:: quick_nxs.mrio
     :members:
@@ -18,7 +18,7 @@ Analysis Modules
     :show-inheritance:
 
 :mod:`mrcalc` Module
-----------------------------
+--------------------
 
 .. automodule:: quick_nxs.mrcalc
     :members:
@@ -26,7 +26,7 @@ Analysis Modules
     :show-inheritance:
 
 :mod:`decorators` Module
-----------------------------
+------------------------
 
 .. automodule:: quick_nxs.decorators
     :members:
