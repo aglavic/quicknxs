@@ -17,7 +17,11 @@ from .version import str_version
 # at the moment everything is logged to the file
 # TODO: change default behavior for production code to only log info level without --debug flag
 CONSOLE_LEVEL=logging.WARNING
-FILE_LEVEL=logging.DEBUG
+if '--debug' in sys.argv:
+  sys.argv.remove('--debug')
+  FILE_LEVEL=logging.DEBUG
+else:
+  FILE_LEVEL=logging.INFO
 GUI_LEVEL=logging.INFO
 
 USER_DIR=os.path.expanduser('~/.quicknxs')
@@ -34,7 +38,7 @@ def goodby():
 
 def setup_system():
   logger=logging.getLogger()#logging.getLogger('quick_nxs')
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(min(FILE_LEVEL, CONSOLE_LEVEL, GUI_LEVEL))
   console=logging.StreamHandler(sys.__stdout__)
   formatter=logging.Formatter('%(levelname) 7s: %(message)s')
   console.setFormatter(formatter)
