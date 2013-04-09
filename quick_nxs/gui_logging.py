@@ -33,6 +33,9 @@ ADMIN_MAIL='agf@ornl.gov'
 def excepthook_overwrite(*exc_info):
   logging.critical('python error', exc_info=exc_info)
 
+def ip_excepthook_overwrite(self, etype, value, tb, tb_offset=None):
+  logging.critical('python error', exc_info=(etype, value, tb))
+
 def goodby():
   logging.debug('*** QuickNXS %s Logging ended ***'%str_version)
 

@@ -8,10 +8,6 @@ author: Paweł Jarosz, Artur Glavic
 
 import atexit
 
-import sip
-sip.setapi('QString', 2)
-sip.setapi('QVariant', 2)
-
 from PyQt4 import QtCore, QtGui
 
 from IPython.zmq.ipkernel import IPKernelApp

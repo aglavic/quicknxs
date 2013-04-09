@@ -4,6 +4,7 @@
 '''
 
 import os
+import sys
 from glob import glob
 from numpy import where, pi, newaxis, log10
 from cPickle import load, dump
@@ -20,8 +21,8 @@ from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, re
 from .mrio import HeaderParser
 
 #from logging import info, debug
-from logging import info, warning
-from .gui_logging import install_gui_handler
+from logging import info, warning, debug
+from .gui_logging import install_gui_handler, ip_excepthook_overwrite, excepthook_overwrite
 from .decorators import log_call, log_input, log_both
 
 BASE_FOLDER='/SNS/REF_M'
@@ -149,6 +150,15 @@ class MainGUI(QtGui.QMainWindow):
       from .ipython_widget import IPythonConsoleQtWidget
       self.ipython=IPythonConsoleQtWidget(self)
       self.ui.plotTab.addTab(self.ipython, 'IPython')
+
+      # install logging magic within ipython ZMQ
+      import IPython.core.ipapi
+      install_gui_handler(self)
+      # console process excepions (IPython controlled)
+      ip=IPython.core.ipapi.get()
+      ip.set_custom_exc((Exception,), ip_excepthook_overwrite)
+      # exceptions within GUI thread, must be installed by method within that process
+      self.trigger('_install_exc')
     else:
       self.ipython=None
     if len(argv)>0:
@@ -165,6 +175,13 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.numberSearchEntry.setFocus()
       self.auto_change_active=True # prevent exceptions when changing options without file open
+
+  def _install_exc(self):
+    '''
+    Installs excepthook overwrite in GUI process for IPython.
+    '''
+    sys.excepthook=excepthook_overwrite
+    debug('Installed excepthook overwrite')
 
   @log_input
   def processDelayedTrigger(self, item, args):
