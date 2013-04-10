@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 
 import os
 import unittest
@@ -25,6 +26,13 @@ class GeneralClassTest(unittest.TestCase):
     self.assertEqual(obj.origin, TEST_DATASET, 'make sure right file name is saved')
     self._attr_check(obj, 'measurement_type')
     self.assertEqual(len(obj), 1)
+
+  def test_caching(self):
+    obj=mreduce.NXSData(TEST_DATASET, use_caching=True)
+    obj2=mreduce.NXSData(TEST_DATASET, use_caching=True)
+    self.assertTrue(obj is obj2)
+    obj2=mreduce.NXSData(TEST_DATASET, use_caching=False)
+    self.assertFalse(obj is obj2)
 
   def _attr_check(self, obj, attr, msg=None):
     result=getattr(obj, attr, None)
@@ -99,7 +107,7 @@ class DataReductionTests(unittest.TestCase):
     res=mreduce.Reflectivity(d)
     self.assertEqual(res.read_options, d.read_options)
     self.assertEqual(res.origin, d.origin)
-  
+
   def test_shapes(self):
     res=mreduce.Reflectivity(self.data[0])
     res=mreduce.Reflectivity(self.data[0], normalization=res, tth=0.5, x_pos=206., dpix=206.)
@@ -119,8 +127,8 @@ class DataReductionTests(unittest.TestCase):
     res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
                                             bg_pos=206., bg_width=10.)
     self.assertTrue((res.R==0.).all())
-  
-  def test_angle_calculation(self):    
+
+  def test_angle_calculation(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
                                             bg_pos=206., bg_width=10.,
                                             tth=0., dpix=206.)
