@@ -94,7 +94,7 @@ if 'bdist' in sys.argv:
   runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
   suite=unittest.TestSuite(test_suites.values())
   result=runner.run(suite)
-  if len(result.errors+result.failures+result.skipped):
+  if len(result.errors+result.failures):
     print "Not all tests were successfull, stop building distribution!"
     exit()
 
