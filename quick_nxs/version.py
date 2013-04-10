@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 # the minor version and change date gets automatically updated on a git commit
-version=(0, 6, 14)
-last_changes="2013-04-10 13:26"
+version=(0, 6, 15)
+last_changes="2013-04-10 18:27"
 
 str_version=".".join(map(str, version))

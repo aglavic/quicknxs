@@ -52,8 +52,12 @@ class NavigationToolbar(NavigationToolbar2QT):
     self.addSeparator()
     a=self.addAction(self._icon('move.png'), 'Pan', self.pan)
     a.setToolTip('Pan axes with left mouse, zoom with right')
+    if hasattr(self, '_actions'):
+      self._actions['pan']=a
     a=self.addAction(self._icon('zoom_to_rect.png'), 'Zoom', self.zoom)
     a.setToolTip('Zoom to rectangle')
+    if hasattr(self, '_actions'):
+      self._actions['zoom']=a
     self.addSeparator()
     a=self.addAction(self._icon('subplots.png'), 'Subplots',
             self.configure_subplots)
