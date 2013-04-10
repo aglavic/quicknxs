@@ -17,8 +17,11 @@ savefig={
 
 # set the default backend to be compatible with Qt in case someone uses pylab from IPython console
 matplotlib.use('Qt4Agg')
-matplotlib.rc('font', **font)
-matplotlib.rc('savefig', **savefig)
+def _set_default_rc():
+  matplotlib.rc('font', **font)
+  matplotlib.rc('savefig', **savefig)
+_set_default_rc()
+
 cmap=matplotlib.colors.LinearSegmentedColormap.from_list('default',
                   ['#0000ff', '#00ff00', '#ffff00', '#ff0000', '#bd7efc', '#000000'], N=256)
 matplotlib.cm.register_cmap('default', cmap=cmap)

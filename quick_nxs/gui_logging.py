@@ -7,6 +7,7 @@
 '''
 
 import os
+import errno
 import sys
 import atexit
 import logging
@@ -36,6 +37,31 @@ def ip_excepthook_overwrite(self, etype, value, tb, tb_offset=None):
 
 def goodby():
   logging.debug('*** QuickNXS %s Logging ended ***'%str_version)
+
+
+def pid_exists(pid):
+    """Check whether pid exists in the current process table."""
+    if pid<0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except OSError, e:
+        return e.errno==errno.EPERM
+    else:
+        return True
+
+def check_runstate():
+  '''
+  Check for running application by this user.
+  '''
+  usr_path=os.path.expanduser('~/.quicknxs')
+  statepath=os.path.join(usr_path, 'run_state.dat')
+  if os.path.exists(statepath):
+    pid=int(open(statepath).readline().split()[-1])
+    running=pid_exists(pid)
+    return running
+  else:
+    return False
 
 def setup_system():
   logger=logging.getLogger()#logging.getLogger('quick_nxs')

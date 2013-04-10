@@ -18,7 +18,7 @@ from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
-from .mrio import HeaderParser
+from .mrio import HeaderParser, HeaderCreator
 
 #from logging import info, debug
 from logging import info, warning, debug
@@ -71,6 +71,7 @@ class MainGUI(QtGui.QMainWindow):
   background_dialog=None
   # threads
   _gisansThread=None
+  _pending_header=None
   # keep the direct beam selection for one file here
   _norm_selected=None
   # plot line storages
@@ -143,6 +144,7 @@ class MainGUI(QtGui.QMainWindow):
     self.fileLoaded.connect(self.plotActiveTab)
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
+    self.initiateReflectivityPlot.connect(self.updateStateFile)
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -182,6 +184,9 @@ class MainGUI(QtGui.QMainWindow):
     '''
     sys.excepthook=excepthook_overwrite
     debug('Installed excepthook overwrite')
+    # set matplotlib fonts back to default
+    from mplwidget import _set_default_rc
+    _set_default_rc()
 
   @log_input
   def processDelayedTrigger(self, item, args):
@@ -1000,7 +1005,7 @@ class MainGUI(QtGui.QMainWindow):
     Analyse an already extracted dataset header to reload all settings
     used for this extraction for further processing.
     '''
-    if filename is None:
+    if filename is None and self._pending_header is None:
       filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
                                                directory=gui_utils.result_folder,
                                                filter=u'Extracted Dataset (*.dat)')
@@ -1008,13 +1013,17 @@ class MainGUI(QtGui.QMainWindow):
       return
 
     self.clearRefList(do_plot=False)
-    text=unicode(open(filename, 'r').read(), 'utf8')
-    header=[]
-    for line in text.splitlines():
-      if not line.startswith('#'):
-        break
-      header.append(line)
-    header='\n'.join(header)
+    if self._pending_header is None:
+      text=unicode(open(filename, 'r').read(), 'utf8')
+      header=[]
+      for line in text.splitlines():
+        if not line.startswith('#'):
+          break
+        header.append(line)
+      header='\n'.join(header)
+    else:
+      header=self._pending_header
+      self._pending_header=None
     parser=HeaderParser(header)
     info('Reloading data from information in file header...')
     parser.parse(callback=self.updateEventReadout)
@@ -1702,6 +1711,13 @@ class MainGUI(QtGui.QMainWindow):
 
 ####### Calculations and data treatment
 
+  def updateStateFile(self, ignore):
+    sfile=open(self.statefile, 'w')
+    sfile.write('Running PID %i\n'%os.getpid())
+    if len(self.reduction_list)>0:
+      sfile.write(unicode(HeaderCreator(self.reduction_list)))
+    sfile.close()
+
   @log_call
   def calcReflParams(self):
     '''
@@ -1780,7 +1796,10 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Restore window and dock geometry.
     '''
-    path=os.path.join(os.path.expanduser('~/.quicknxs'), 'window.pkl')
+    usr_path=os.path.expanduser('~/.quicknxs')
+    if not os.path.exists(usr_path):
+      os.makedirs(usr_path)
+    path=os.path.join(usr_path, 'window.pkl')
     if os.path.exists(path):
       try:
         obj=load(open(path, 'rb'))
@@ -1806,7 +1825,22 @@ class MainGUI(QtGui.QMainWindow):
                               ]):
         fig.set_config(obj[6][i])
     except:
-      return
+      pass
+    # setup a file in the users directroy making sure the application is not run twice
+    # the file also stores the current working state for reload after a crash (reduced data)
+    statepath=os.path.join(usr_path, 'run_state.dat')
+    self.statefile=statepath
+    if os.path.exists(self.statefile):
+      _result=QtGui.QMessageBox.warning(self, "Previous Crash",
+"""There is a state file but no running process for it, 
+this could indicate a previous crash.
+
+Do you want to try to restore the working reduction list?""",
+          buttons=QtGui.QMessageBox.Yes|QtGui.QMessageBox.No)
+      if _result==QtGui.QMessageBox.Yes:
+        self._pending_header=open(self.statefile, 'r').read()
+        QtCore.QTimer.singleShot(1500, self.loadExtraction)
+    open(self.statefile, 'w').write('Running PID %i\n'%os.getpid())
 
   def closeEvent(self, event):
     '''
@@ -1832,10 +1866,10 @@ class MainGUI(QtGui.QMainWindow):
          self.ui.normalizeXTof.isChecked(),
          figure_params,
          )
-    path=os.path.expanduser('~/.quicknxs')
-    if not os.path.exists(path):
-      os.makedirs(path)
-    dump(obj, open(os.path.join(path, 'window.pkl'), 'wb'))
+    usr_path=os.path.expanduser('~/.quicknxs')
+    dump(obj, open(os.path.join(usr_path, 'window.pkl'), 'wb'))
+    # remove the state file on normal exit
+    os.remove(self.statefile)
     QtGui.QMainWindow.closeEvent(self, event)
 
   @log_call
@@ -1903,7 +1937,7 @@ class MainGUI(QtGui.QMainWindow):
     QtGui.QMessageBox.about(self, 'About QuickNXS',
 '''
 QuickNXS - SNS Magnetism Reflectometer data reduction program
-  Version %s
+  Version %s on Python %s
 
 Library Versions:
   Numpy %s
@@ -1912,4 +1946,5 @@ Library Versions:
   PyQt4 %s
   H5py %s
   HDF5 %s
-'''%(str_version, npversion, mplversion, QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
+'''%(str_version, sys.version, npversion, mplversion,
+     QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
