@@ -1,6 +1,7 @@
 
 import os
 import unittest
+from math import pi
 from quick_nxs import mreduce
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
@@ -89,9 +90,25 @@ class DataReductionTests(unittest.TestCase):
     self.data=mreduce.NXSData(TEST_DATASET)
     self.assertFalse(self.data is None, 'setting up data object')
 
-  def test_reflectivity(self):
+  def test_1reflectivity(self):
     res=mreduce.Reflectivity(self.data[0])
     self.assertTrue(isinstance(res, mreduce.Reflectivity))
+
+  def test_metadata(self):
+    d=self.data[0]
+    res=mreduce.Reflectivity(d)
+    self.assertEqual(res.read_options, d.read_options)
+    self.assertEqual(res.origin, d.origin)
+  
+  def test_shapes(self):
+    res=mreduce.Reflectivity(self.data[0])
+    res=mreduce.Reflectivity(self.data[0], normalization=res, tth=0.5, x_pos=206., dpix=206.)
+    rshape=len(self.data[0].tof_edges)-1
+    # as Q and R are calculated from tof/lamda/I etc., there is no need to test each one
+    self.assertEqual(res.Q.shape[0], rshape)
+    self.assertEqual(res.R.shape[0], rshape)
+    self.assertEqual(res.dR.shape[0], rshape)
+    self.assertEqual(res.dQ.shape[0], rshape)
 
   def test_self_normalization(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206.)
@@ -102,6 +119,16 @@ class DataReductionTests(unittest.TestCase):
     res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
                                             bg_pos=206., bg_width=10.)
     self.assertTrue((res.R==0.).all())
+  
+  def test_angle_calculation(self):    
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
+                                            bg_pos=206., bg_width=10.,
+                                            tth=0., dpix=206.)
+    self.assertEqual(res.ai, 0.)
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
+                                            bg_pos=206., bg_width=10.,
+                                            tth=1., dpix=206.)
+    self.assertEqual(res.ai, 0.5/180.*pi)
 
   def test_offspec(self):
     res=mreduce.OffSpecular(self.data[0])
