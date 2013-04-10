@@ -87,6 +87,17 @@ if 'install' not in sys.argv:
   if os.path.exists('MANIFEST'):
     os.remove('MANIFEST')
 
+if 'bdist' in sys.argv:
+  print "Running unit test before compiling build distribution."
+  from test_all import test_suites
+  import unittest
+  runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
+  suite=unittest.TestSuite(test_suites)
+  result=runner.run(suite)
+  if len(result.errors+result.failures+result.skipped):
+    print "Not all tests were successfull, stop building distribution!"
+    exit()
+
 #### Run the setup command with the selected parameters ####
 setup(name=__package_name__,
       version=__version__,
