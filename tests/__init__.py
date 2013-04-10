@@ -11,9 +11,6 @@ test_suites=[]
 
 # read all test modules and collect their test suites
 for module_name in test_modules:
-  try:
-    test_module=__import__('tests.'+module_name, fromlist=[module_name])
-  except:
-    continue
+  test_module=__import__('tests.'+module_name, fromlist=[module_name])
   if 'suite' in test_module.__dict__:
     test_suites.append(test_module.suite)

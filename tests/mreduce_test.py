@@ -1,8 +1,9 @@
 
+import os
 import unittest
 from quick_nxs import mreduce
 
-TEST_DATASET=u'/SNS/REF_M/2013_1_4a_CAL/data/REF_M_12547_histo.nxs'
+TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
 
 class GeneralClassTest(unittest.TestCase):
 
@@ -15,23 +16,24 @@ class GeneralClassTest(unittest.TestCase):
     self.assertRaises(ValueError, mreduce.GISANS, None, blabli=12)
 
   def test_no_file(self):
-    self.assertIsNone(mreduce.NXSData('nonexisting'))
+    self.assertTrue(mreduce.NXSData('nonexisting') is None)
 
   def test_read_file(self):
     obj=mreduce.NXSData(TEST_DATASET)
-    self.assertIsInstance(obj, mreduce.NXSData, 'NXS file readout')
+    self.assertTrue(isinstance(obj, mreduce.NXSData), 'NXS file readout')
     self.assertEqual(obj.origin, TEST_DATASET, 'make sure right file name is saved')
     self._attr_check(obj, 'measurement_type')
     self.assertEqual(len(obj), 1)
 
   def _attr_check(self, obj, attr, msg=None):
     result=getattr(obj, attr, None)
-    self.assertIsNotNone(result, msg=msg)
+    self.assertFalse(result is None, msg=msg)
 
 class DataConsistencyChecks(unittest.TestCase):
 
   def setUp(self):
     self.data=mreduce.NXSData(TEST_DATASET)
+    self.assertFalse(self.data is None, 'setting up data object')
 
   def test_origin(self):
     self.assertEqual(self.data.origin, self.data[0].origin[0])
@@ -85,28 +87,29 @@ class DataConsistencyChecks(unittest.TestCase):
 class DataReductionTests(unittest.TestCase):
   def setUp(self):
     self.data=mreduce.NXSData(TEST_DATASET)
+    self.assertFalse(self.data is None, 'setting up data object')
 
   def test_reflectivity(self):
     res=mreduce.Reflectivity(self.data[0])
-    self.assertIsInstance(res, mreduce.Reflectivity)
+    self.assertTrue(isinstance(res, mreduce.Reflectivity))
 
   def test_self_normalization(self):
-    res=mreduce.Reflectivity(self.data[0])
-    res2=mreduce.Reflectivity(self.data[0], normalization=res)
-    self.assertTrue((res2.R[res.Rraw>0]==1.).all())
+    res=mreduce.Reflectivity(self.data[0], x_pos=206.)
+    res2=mreduce.Reflectivity(self.data[0], x_pos=206., normalization=res, scale=0.5)
+    self.assertTrue((res2.R[res.Rraw>0]==0.5).all())
 
   def test_background(self):
-    res=mreduce.Reflectivity(self.data[0], x_pos=150., x_width=10.,
-                                            bg_pos=150., bg_width=10.)
-    self.assertTrue((res.R<1e-30).all())
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
+                                            bg_pos=206., bg_width=10.)
+    self.assertTrue((res.R==0.).all())
 
   def test_offspec(self):
     res=mreduce.OffSpecular(self.data[0])
-    self.assertIsInstance(res, mreduce.Reflectivity)
+    self.assertTrue(isinstance(res, mreduce.Reflectivity))
 
   def test_gisans(self):
     res=mreduce.GISANS(self.data[0])
-    self.assertIsInstance(res, mreduce.Reflectivity)
+    self.assertTrue(isinstance(res, mreduce.Reflectivity))
 
 
 suite=unittest.TestLoader().loadTestsFromTestCase(GeneralClassTest)

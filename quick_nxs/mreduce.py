@@ -743,9 +743,9 @@ class Reflectivity(object):
     size_I=float((reg[3]-reg[2])*(reg[1]-reg[0]))
     # calculate ROI intensities and normalize by number of points
     self.Iraw=Idata.sum(axis=0).sum(axis=0)
-    self.I=self.Iraw/size_I*scale
+    self.I=self.Iraw/(size_I/scale)
     self.dIraw=sqrt(self.Iraw)
-    self.dI=self.dIraw/size_I*scale
+    self.dI=self.dIraw/(size_I/scale)
     debug("Intensity scale is %s/%s=%s"%(scale, size_I, scale/size_I))
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
@@ -962,7 +962,7 @@ class Reflectivity(object):
       size_BG=float((reg[3]-reg[2])*(reg[1]-reg[0]))
       # calculate ROI intensities and normalize by number of points
       self.BGraw=bgdata.sum(axis=0).sum(axis=0)
-      self.dBGraw=sqrt(self.BGraw)/size_BG*scale
+      self.dBGraw=sqrt(self.BGraw)/(size_BG/scale)
       self.BGraw/=size_BG/scale
       debug("Background scale is %s"%(scale/size_BG))
     if self.options['bg_tof_constant'] and self.options['normalization']:
