@@ -176,7 +176,7 @@ class ReduceDialog(QDialog):
     for refli in self.refls:
       opts=refli.options
       index=opts['number']
-      fdata=self.raw_data[index]
+      fdata=self.exporter.raw_data[index]
       for channel in self.channels:
         gisans=GISANS(fdata[channel], **opts)
         output_data[channel].append(gisans)
@@ -202,7 +202,7 @@ class ReduceDialog(QDialog):
         output=dict([(channel, [output_data[channel][i]]) for channel in self.channels])
         output['column_units']=['A^-1', 'A^-1', 'a.u.', 'a.u.']
         output['column_names']=['Qy', 'Qz', 'I', 'dI']
-        self.output_data['GISANS_%i'%i]=output
+        self.exporter.output_data['GISANS_%i'%i]=output
 
   @log_call
   def smooth_offspec(self):
