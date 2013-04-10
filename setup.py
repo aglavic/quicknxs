@@ -91,7 +91,7 @@ if 'bdist' in sys.argv:
   print "Running unit test before compiling build distribution."
   from test_all import test_suites
   import unittest
-  runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2, failfast=True)
+  runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
   suite=unittest.TestSuite(test_suites.values())
   result=runner.run(suite)
   if len(result.errors+result.failures+result.skipped):
