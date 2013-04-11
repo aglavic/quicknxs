@@ -10,7 +10,7 @@ from quick_nxs.main_gui import MainGUI
 from quick_nxs.mreduce import NXSData, Reflectivity
 
 dot=QLocale().decimalPoint()
-if type(dot) is not str:
+if not isinstance(dot, basestring):
   dot=dot.toAscii()
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
