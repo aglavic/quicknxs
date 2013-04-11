@@ -75,6 +75,7 @@ class MainGUIActions(unittest.TestCase):
   def test_change(self):
     self.assertFalse(self.gui.auto_change_active)
 
+    self.gui.auto_change_active=True
     self.gui.ui.refXPos.selectAll()
     QTest.keyClicks(self.gui.ui.refXPos, "200"+dot+"5")
     self.gui.ui.refXWidth.selectAll()
@@ -96,6 +97,7 @@ class MainGUIActions(unittest.TestCase):
     self.assertEqual(self.gui.ui.bgCenter.value(), 20.)
     self.assertEqual(self.gui.ui.bgWidth.value(), 30.)
     self.assertEqual(self.gui.ui.refScale.value(), 2.)
+    self.gui.auto_change_active=False
 
     # make sure reflectivity got extracted with new params
     self.gui.ui.actionNorm.trigger()
