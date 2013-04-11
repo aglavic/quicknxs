@@ -2,7 +2,6 @@
 
 import os
 import unittest
-from time import sleep
 from PyQt4.QtGui import QApplication, QMainWindow
 from PyQt4.QtTest import QTest
 from PyQt4.QtCore import QLocale#, Qt
@@ -11,17 +10,23 @@ from quick_nxs.main_gui import MainGUI
 from quick_nxs.mreduce import NXSData, Reflectivity
 
 dot=QLocale().decimalPoint()
+if type(dot) is not str:
+  dot=dot.toAscii()
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
+statepath=os.path.join(os.path.expanduser('~/.quicknxs'), 'run_state.dat')
 
 class MainGUIGeneral(unittest.TestCase):
   def setUp(self):
     self.app=QApplication([])
     self.gui=MainGUI([])
-
-  def tearDown(self):
+    # switch of delay triggering
     self.gui.trigger.stay_alive=False
     self.gui.trigger.wait()
+    self.gui.trigger=lambda action, *args: self.gui.processDelayedTrigger(action, args)
+
+  def tearDown(self):
+    os.remove(statepath)
 
   def test_1startup(self):
     self.assertTrue(isinstance(self.gui, QMainWindow))
@@ -53,19 +58,17 @@ class MainGUIActions(unittest.TestCase):
   def setUp(self):
     self.app=QApplication([])
     self.gui=MainGUI([])
-    self.gui.fileOpen(TEST_DATASET, do_plot=True)
-
-  def waitTrigger(self):
-    # make sure the trigger got called
-    sleep(self.gui.trigger.delay*2.5)
-
-  def tearDown(self):
+    # switch of delay triggering
     self.gui.trigger.stay_alive=False
     self.gui.trigger.wait()
+    self.gui.trigger=lambda action, *args: self.gui.processDelayedTrigger(action, args)
+    self.gui.fileOpen(TEST_DATASET, do_plot=True)
+
+  def tearDown(self):
+    os.remove(statepath)
 
   def test_1normalization(self):
     self.gui.ui.actionNorm.trigger()
-    self.waitTrigger()
     self.assertTrue((self.gui.refl.R[self.gui.refl.R>0]==1.).all(),
                     'reflectivity self normalized %s'%repr(self.gui.refl))
 
@@ -96,7 +99,6 @@ class MainGUIActions(unittest.TestCase):
 
     # make sure reflectivity got extracted with new params
     self.gui.ui.actionNorm.trigger()
-    self.waitTrigger()
     self.assertEqual(self.gui.refl.options['x_pos'], 200.5)
     self.assertEqual(self.gui.refl.options['x_width'], 20.)
     self.assertEqual(self.gui.refl.options['y_pos'], 150.)
