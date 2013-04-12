@@ -46,10 +46,10 @@ class FakeData():
 class StitchTest(FakeData, unittest.TestCase):
   def test_linear(self):
     yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=2)
-    self.assertAlmostEqual(yscale, 1., delta=0.0001)
+    self.assertAlmostEqual(yscale, 1., places=4)
     self.ref2.R/=2
     yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=2)
-    self.assertAlmostEqual(yscale, 2., delta=0.0001)
+    self.assertAlmostEqual(yscale, 2., places=4)
 
   def test_degrees(self):
     yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=2)
