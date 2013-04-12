@@ -1799,6 +1799,22 @@ class MainGUI(QtGui.QMainWindow):
     usr_path=os.path.expanduser('~/.quicknxs')
     if not os.path.exists(usr_path):
       os.makedirs(usr_path)
+    # setup a file in the users directroy making sure the application is not run twice
+    # the file also stores the current working state for reload after a crash (reduced data)
+    statepath=os.path.join(usr_path, 'run_state.dat')
+    self.statefile=statepath
+    if os.path.exists(self.statefile):
+      _result=QtGui.QMessageBox.warning(self, "Previous Crash",
+"""There is a state file but no running process for it, 
+this could indicate a previous crash.
+
+Do you want to try to restore the working reduction list?""",
+          buttons=QtGui.QMessageBox.Yes|QtGui.QMessageBox.No)
+      if _result==QtGui.QMessageBox.Yes:
+        self._pending_header=open(self.statefile, 'r').read()
+        QtCore.QTimer.singleShot(1500, self.loadExtraction)
+    open(self.statefile, 'w').write('Running PID %i\n'%os.getpid())
+    # read window settings
     path=os.path.join(usr_path, 'window.pkl')
     if os.path.exists(path):
       try:
@@ -1826,21 +1842,6 @@ class MainGUI(QtGui.QMainWindow):
         fig.set_config(obj[6][i])
     except:
       pass
-    # setup a file in the users directroy making sure the application is not run twice
-    # the file also stores the current working state for reload after a crash (reduced data)
-    statepath=os.path.join(usr_path, 'run_state.dat')
-    self.statefile=statepath
-    if os.path.exists(self.statefile):
-      _result=QtGui.QMessageBox.warning(self, "Previous Crash",
-"""There is a state file but no running process for it, 
-this could indicate a previous crash.
-
-Do you want to try to restore the working reduction list?""",
-          buttons=QtGui.QMessageBox.Yes|QtGui.QMessageBox.No)
-      if _result==QtGui.QMessageBox.Yes:
-        self._pending_header=open(self.statefile, 'r').read()
-        QtCore.QTimer.singleShot(1500, self.loadExtraction)
-    open(self.statefile, 'w').write('Running PID %i\n'%os.getpid())
 
   def closeEvent(self, event):
     '''
