@@ -34,6 +34,6 @@ install:
   - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then pip install h5py --use-mirrors; fi'
 # #  - "pip install scipy --use-mirrors"
   - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then pip install matplotlib --use-mirrors; fi'
-  - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then 2to3 -w quicknxs quick_nxs; fi'
+  - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then 2to3 -w quicknxs quick_nxs tests; fi'
 # command to run tests
 script: python -m unittest test_all

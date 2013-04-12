@@ -3,7 +3,7 @@ __all__=['test_suites']
 import os
 from glob import glob
 
-test_modules=map(os.path.basename, glob(os.path.join(os.path.dirname(__file__), '*.py')))
+test_modules=list(map(os.path.basename, glob(os.path.join(os.path.dirname(__file__), '*.py'))))
 test_modules.remove('__init__.py')
 test_modules=[test[:-3] for test in test_modules]
 
