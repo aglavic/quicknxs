@@ -4,13 +4,28 @@ python:
   - "2.7"
 # command to install dependencies
 before_install:
-  - sudo  apt-get install libicu-dev libphonon-dev libqtassistantclient-dev libdbus-1-dev swig sharutils libblas-dev
+  - cd ..
+  - curl -O http://www.riverbankcomputing.co.uk/static/Downloads/sip4/sip-4.13.3.tar.gz
+  - tar -xvf sip-4.13.3.tar.gz
+  - cd sip-4.13.3
+  - python configure.py
+  - make -j 4
+  - sudo make install
+  - cd ..
+  - curl -O http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-x11-gpl-4.9.4.tar.gz
+  - tar -xvf PyQt-x11-gpl-4.9.4.tar.gz
+  - cd PyQt-x11-gpl-4.9.4
+  - python configure.py --confirm-license
+  - make -j 4
+  - sudo make install
+  - cd ../TravisRamblings
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
 install: 
   - 'if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then pip install http://sourceforge.net/projects/pyparsing/files/pyparsing/pyparsing-1.5.7/pyparsing-1.5.7.tar.gz; fi'
   - "pip install numpy --use-mirrors"
 #  - "pip install scipy --use-mirrors"
   - "pip install matplotlib --use-mirrors"
-  - "pip install sip --use-mirrors"
-  - "pip install pyqt4 --use-mirrors"
 # command to run tests
 script: python test_all.py
