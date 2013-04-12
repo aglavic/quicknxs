@@ -43,7 +43,6 @@ class FakeData():
     self.ref1=Reflectivity(self.ds, x_pos=200, dpix=210, tth=0., bg_pos=2, bg_width=4)
     self.ref2=Reflectivity(self.ds, x_pos=190, dpix=210, tth=0., bg_pos=2, bg_width=4)
 
-
 class StitchTest(FakeData, unittest.TestCase):
   def test_linear(self):
     yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=2)

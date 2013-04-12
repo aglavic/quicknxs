@@ -371,7 +371,8 @@ class HeaderParser(object):
         value=item[i]
         if key in defaults and type(defaults[key]) in [str, unicode]:
           idata[key]=value
-        elif value in ['True', 'False', 'None'] or ',' in value:
+        elif value in ['True', 'False', 'None'] or ',' in value or \
+              ('[' in value and ']' in value):
           idata[key]=eval(value)
         else:
           try:
