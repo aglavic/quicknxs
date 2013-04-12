@@ -24,9 +24,9 @@ before_install:
 #   - make -j 4
 #   - sudo make install
 #   - cd ../quicknxs
-# before_script:
-#   - "export DISPLAY=:99.0"
-#   - "sh -e /etc/init.d/xvfb start"
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
 install: 
 #   - 'if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then pip install http://sourceforge.net/projects/pyparsing/files/pyparsing/pyparsing-1.5.7/pyparsing-1.5.7.tar.gz; fi'
 #   - "pip install numpy --use-mirrors"
