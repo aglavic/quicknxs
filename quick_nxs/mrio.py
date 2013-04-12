@@ -549,7 +549,7 @@ class Exporter(object):
                       0.*Qz[PN:P0]+res.ai]).transpose()
         output_data[channel].append(rdata)
     for channel in self.channels:
-      d=np.vstack(output_data[channel])
+      d=np.array(np.vstack(output_data[channel]))
       # sort dataset for alpha i and Qz
       order=np.argsort(d.view([('Qz', d.dtype), ('R', d.dtype),
                             ('dR', d.dtype), ('dQz', d.dtype), ('ai', d.dtype)
