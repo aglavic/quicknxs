@@ -36,4 +36,4 @@ install:
   - "pip install matplotlib --use-mirrors"
   - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then 2to3 -w quicknxs quick_nxs; fi'
 # command to run tests
-script: python test_all.py
+script: python -m unittest test_all
