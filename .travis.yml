@@ -26,6 +26,7 @@ before_script:
 install: 
   - 'if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then pip install http://sourceforge.net/projects/pyparsing/files/pyparsing/pyparsing-1.5.7/pyparsing-1.5.7.tar.gz; fi'
   - "pip install numpy --use-mirrors"
+  - "pip install h5py --use-mirrors"
 #  - "pip install scipy --use-mirrors"
   - "pip install matplotlib --use-mirrors"
   - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then 2to3 -w quicknxs quick_nxs; fi'
