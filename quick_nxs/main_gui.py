@@ -1715,7 +1715,7 @@ class MainGUI(QtGui.QMainWindow):
     sfile=open(self.statefile, 'w')
     sfile.write('Running PID %i\n'%os.getpid())
     if len(self.reduction_list)>0:
-      sfile.write(unicode(HeaderCreator(self.reduction_list)))
+      sfile.write(unicode(HeaderCreator(self.reduction_list)).encode('utf8'))
     sfile.close()
 
   @log_call
