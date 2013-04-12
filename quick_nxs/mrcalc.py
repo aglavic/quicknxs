@@ -218,7 +218,7 @@ def _gauss_residuals(p, fjac=None, data=None, width=1):
   xdata=arange(data.shape[0])
   I0=p[0]
   x0=p[1]
-  sigma=p[2]/5.
+  sigma=p[2]
   G=exp(-0.5*((xdata-x0)/sigma)**2)
   return 0, data-I0*G
 
