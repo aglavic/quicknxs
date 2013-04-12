@@ -7,4 +7,4 @@
 ./pyuic4 --from-imports -i 2 designer/gisans_dialog.ui -o quick_nxs/gisans_dialog.py
 ./pyuic4 --from-imports -i 2 designer/background_dialog.ui -o quick_nxs/background_dialog.py
 ./pyuic4 --from-imports -i 2 designer/compare_widget.ui -o quick_nxs/compare_widget.py
-pyrcc4 icons/icons.qrc -o quick_nxs/icons_rc.py
+pyrcc4 -py3 icons/icons.qrc -o quick_nxs/icons_rc.py
