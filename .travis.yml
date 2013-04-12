@@ -5,16 +5,16 @@ python:
 # command to install dependencies
 before_install:
   - cd ..
-  - curl -O http://www.riverbankcomputing.co.uk/static/Downloads/sip4/sip-4.13.3.tar.gz
-  - tar -xvf sip-4.13.3.tar.gz
-  - cd sip-4.13.3
+  - curl -O http://sourceforge.net/projects/pyqt/files/sip/sip-4.14.5/sip-4.14.5.tar.gz
+  - tar -xvf sip-4.14.5.tar.gz
+  - cd sip-4.14.5
   - python configure.py
   - make -j 4
   - sudo make install
   - cd ..
-  - curl -O http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-x11-gpl-4.9.4.tar.gz
-  - tar -xvf PyQt-x11-gpl-4.9.4.tar.gz
-  - cd PyQt-x11-gpl-4.9.4
+  - curl -O http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.10/PyQt-x11-gpl-4.10.tar.gz
+  - tar -xvf PyQt-x11-gpl-4.10.tar.gz
+  - cd PyQt-x11-gpl-4.10
   - python configure.py --confirm-license
   - make -j 4
   - sudo make install
