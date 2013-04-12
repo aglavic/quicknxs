@@ -475,7 +475,7 @@
   <customwidget>
    <class>MPLWidget</class>
    <extends>QWidget</extends>
-   <header location="global">mplwidget.h</header>
+   <header location="global">.mplwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

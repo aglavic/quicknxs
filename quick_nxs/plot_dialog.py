@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot_dialog.ui'
 #
-# Created: Tue Apr  9 09:02:57 2013
+# Created: Fri Apr 12 14:44:07 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -87,5 +87,5 @@ class Ui_Dialog(object):
 "10^", None, QtGui.QApplication.UnicodeUTF8))
     self.clipButton.setText(QtGui.QApplication.translate("Dialog", "Clip", None, QtGui.QApplication.UnicodeUTF8))
 
-from mplwidget import MPLWidget
+from .mplwidget import MPLWidget
 from . import icons_rc

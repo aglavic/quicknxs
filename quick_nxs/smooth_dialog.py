@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/smooth_dialog.ui'
 #
-# Created: Tue Apr  9 09:02:58 2013
+# Created: Fri Apr 12 14:44:07 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -238,5 +238,5 @@ class Ui_Dialog(object):
     self.label_6.setText(QtGui.QApplication.translate("Dialog", "X", None, QtGui.QApplication.UnicodeUTF8))
     self.label_14.setText(QtGui.QApplication.translate("Dialog", "R [Sigmas]", None, QtGui.QApplication.UnicodeUTF8))
 
-from mplwidget import MPLWidget
+from .mplwidget import MPLWidget
 from . import icons_rc

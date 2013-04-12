@@ -2735,25 +2735,25 @@
   <customwidget>
    <class>MPLWidget</class>
    <extends>QWidget</extends>
-   <header location="global">mplwidget.h</header>
+   <header location="global">.mplwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PersistentFrame</class>
    <extends>QFrame</extends>
-   <header location="global">persistentframe.h</header>
+   <header location="global">.persistentframe.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CompareWidget</class>
    <extends>QWidget</extends>
-   <header location="global">compare_plots.h</header>
+   <header location="global">.compare_plots.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>LimitingSpinBox</class>
    <extends>QSpinBox</extends>
-   <header location="global">help_widgets.h</header>
+   <header location="global">.help_widgets.h</header>
    <slots>
     <slot>setMaxValue(int)</slot>
     <slot>setMinValue(int)</slot>

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Tue Apr  9 09:02:57 2013
+# Created: Fri Apr 12 14:44:07 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -1588,8 +1588,8 @@ class Ui_MainWindow(object):
     self.actionOpen_Sum.setText(QtGui.QApplication.translate("MainWindow", "Open Sum...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen_Sum.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+O", None, QtGui.QApplication.UnicodeUTF8))
 
-from mplwidget import MPLWidget
-from compare_plots import CompareWidget
-from persistentframe import PersistentFrame
-from help_widgets import LimitingSpinBox
+from .compare_plots import CompareWidget
+from .mplwidget import MPLWidget
+from .help_widgets import LimitingSpinBox
+from .persistentframe import PersistentFrame
 from . import icons_rc

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/background_dialog.ui'
 #
-# Created: Tue Apr  9 09:02:58 2013
+# Created: Fri Apr 12 14:44:08 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -172,4 +172,4 @@ class Ui_Dialog(object):
     item.setText(QtGui.QApplication.translate("Dialog", "x4", None, QtGui.QApplication.UnicodeUTF8))
     self.presumeIofLambda.setText(QtGui.QApplication.translate("Dialog", "Presume BG~I(λ)", None, QtGui.QApplication.UnicodeUTF8))
 
-from mplwidget import MPLWidget
+from .mplwidget import MPLWidget
