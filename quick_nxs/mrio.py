@@ -281,8 +281,12 @@ class HeaderCreator(object):
     output+=u'\n'
     return output
 
-  def __str__(self):
-    return unicode(self).encode('utf8', 'ignore')
+  if sys.version_info[0]>=3:
+    def __str__(self):
+      return self.__unicode__()
+  else:
+    def __str__(self):
+      return self.__unicode__().encode('utf8', 'ignore')
 
   @classmethod
   def get_data_header(cls, names, units):
