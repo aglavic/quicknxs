@@ -4,11 +4,11 @@ python:
   - "2.7"
 # command to install dependencies
 before_install:
-  - sudo  apt-get build-dep python-qt4 python-sip python-numpy python-scipy python-matplotlib
+  - sudo  apt-get build-dep python-qt4 python-sip python-numpy python-scipy python-matplotlib --fix-missing
 install: 
   - 'if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then pip install http://sourceforge.net/projects/pyparsing/files/pyparsing/pyparsing-1.5.7/pyparsing-1.5.7.tar.gz; fi'
   - "pip install numpy --use-mirrors"
-  - "pip install git+http://github.com/scipy/scipy/"
+  - "pip install scipy --use-mirrors"
   - "pip install matplotlib --use-mirrors"
   - "pip install sip --use-mirrors"
   - "pip install pyqt4 --use-mirrors"
