@@ -1,18 +1,19 @@
 language: python
 python:
   - "2.6"
-  - "2.7"
+#  - "2.7"
+#  - "3.2"
 # command to install dependencies
 before_install:
   - cd ..
-  - curl -O http://sourceforge.net/projects/pyqt/files/sip/sip-4.14.5/sip-4.14.5.tar.gz
+  - wget http://sourceforge.net/projects/pyqt/files/sip/sip-4.14.5/sip-4.14.5.tar.gz
   - tar -xvf sip-4.14.5.tar.gz
   - cd sip-4.14.5
   - python configure.py
   - make -j 4
   - sudo make install
   - cd ..
-  - curl -O http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.10/PyQt-x11-gpl-4.10.tar.gz
+  - wget http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.10/PyQt-x11-gpl-4.10.tar.gz
   - tar -xvf PyQt-x11-gpl-4.10.tar.gz
   - cd PyQt-x11-gpl-4.10
   - python configure.py --confirm-license
@@ -27,5 +28,6 @@ install:
   - "pip install numpy --use-mirrors"
 #  - "pip install scipy --use-mirrors"
   - "pip install matplotlib --use-mirrors"
+  - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then 2to3 -w quicknxs quick_nxs; fi'
 # command to run tests
 script: python test_all.py
