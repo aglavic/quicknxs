@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-import os
+import os, sys
 import unittest
 import tempfile
 
@@ -71,7 +71,10 @@ class ExportTest(FakeData, unittest.TestCase):
                       multi_ascii=True, combined_ascii=False,
                       matlab_data=False, numpy_data=False)
     tdata=array([self.ref1.Q, self.ref1.R, self.ref1.dR]).transpose()[::-1]
-    rdata=loadtxt(expfile)
+    if sys.version_info[0]>=3:
+      rdata=loadtxt(open(expfile, 'rb'))
+    else:
+      rdata=loadtxt(expfile)
     self.assertEqual(self.ref1.Q.shape[0], rdata.shape[0])
     testing.assert_allclose(rdata[:, 0], tdata[:, 0], rtol=1e-6, atol=1e-20, verbose=True)
     testing.assert_allclose(rdata[:, 1], tdata[:, 1], rtol=1e-6, atol=1e-20, verbose=True)

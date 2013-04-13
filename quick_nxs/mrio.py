@@ -576,7 +576,7 @@ class Exporter(object):
       opts=refli.options
       index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[channel].tof)-opts['P0']
+      P0=len(fdata[0].tof)-opts['P0']
       PN=opts['PN']
       for channel in self.channels:
         offspec=OffSpecular(fdata[channel], **opts)
@@ -615,7 +615,7 @@ class Exporter(object):
       opts=refli.options
       index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[channel].tof)-opts['P0']
+      P0=len(fdata[0].tof)-opts['P0']
       PN=opts['PN']
       for channel in self.channels:
         offspec=OffSpecular(fdata[channel], **opts)
@@ -699,7 +699,7 @@ class Exporter(object):
                        .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
           if not check_exists(output):
             continue
-          of=open(output, 'w')
+          of=open(output, 'wb')
           # write the file header
           of.write((self.file_header.as_comments()%{
                                 'datatype': key,
@@ -725,7 +725,7 @@ class Exporter(object):
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
         if check_exists(output):
-          of=open(output, 'w')
+          of=open(output, 'wb')
           # write the file header
           of.write((self.file_header.as_comments()%{
                                 'datatype': key,
@@ -734,7 +734,7 @@ class Exporter(object):
                                 }).encode('utf8'))
           # write all channel data separated by three empty lines and one comment
           for channel in self.channels:
-            of.write('# Start of channel %s\n'%channel)
+            of.write((u'# Start of channel %s\n'%channel).encode('utf8'))
             of.write((self.file_header.get_data_comment(output_data['column_names'],
                                                        output_data['column_units'])
                       ).encode('utf8'))
@@ -748,7 +748,7 @@ class Exporter(object):
                   np.savetxt(of, scan, delimiter='\t', fmt='%-18e')
                   of.write('\n')
               of.write('\n\n')
-            of.write('# End of channel %s\n\n\n'%channel)
+            of.write((u'# End of channel %s\n\n\n'%channel).encode('utf8'))
           of.close()
           self.exported_files_all.append(output);self.exported_files_data.append(output)
     if matlab_data:
