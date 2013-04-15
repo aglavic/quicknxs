@@ -884,9 +884,10 @@ class GISANSDialog(QDialog):
     plot.set_xlabel(u'Q$_y$ [Å$^{-1}$]')
     plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
     title=u'$\\lambda{}$=%.2f-%.2fÅ'%(result[3], result[4])
+    list_title=u'λ=%.2f-%.2fÅ'%(result[3], result[4])
     plot.set_title(title)
     plot.draw()
-    item=QListWidgetItem(title)
+    item=QListWidgetItem(list_title)
     self.ui.plotShowList.addItem(item)
     self.ui.plotShowList.setItemSelected(item, True)
     self._listItems[item]=plot
