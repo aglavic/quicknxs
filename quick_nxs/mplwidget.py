@@ -341,6 +341,8 @@ class MPLWidget(QtGui.QWidget):
 
   def clear(self):
     self.cplot=None
+    self.toolbar._views.clear()
+    self.toolbar._positions.clear()
     self.canvas.ax.clear()
     if self.canvas.ax2 is not None:
       self.canvas.ax2.clear()

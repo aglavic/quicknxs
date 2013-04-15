@@ -650,21 +650,30 @@ class MainGUI(QtGui.QMainWindow):
     P0=len(self.refl.Q)-self.ui.rangeStart.value()
     PN=self.ui.rangeEnd.value()
 
-    if preserve_lim:
-      view=self.ui.refl.canvas.ax.axis()
+    if len(self.ui.refl.toolbar._views)>0:
+      spos=self.ui.refl.toolbar._views._pos
+      view=self.ui.refl.toolbar._views[spos]
+      position=self.ui.refl.toolbar._positions[spos]
+    else:
+      view=None
 
     self.ui.refl.clear()
     if options['normalization']:
       ymin=1e50
       ymax=1e-50
       ynormed=self.refl.R[PN:P0]
-      try:
+      if len(ynormed[ynormed>0])>=2:
         ymin=min(ymin, ynormed[ynormed>0].min())
-      except ValueError:
-        pass
-      ymax=max(ymax, ynormed.max())
-      self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
-                            yerr=self.refl.dR[PN:P0], label='Active', lw=2, color='black')
+        ymax=max(ymax, ynormed.max())
+        self.ui.refl.errorbar(self.refl.Q[PN:P0], ynormed,
+                              yerr=self.refl.dR[PN:P0], label='Active', lw=2, color='black')
+      else:
+        self.ui.refl.canvas.ax.text(0.5, 0.5,
+                                    u'No points to show\nin active dataset!',
+                                    horizontalalignment='center',
+                                    verticalalignment='center',
+                                    fontsize=14,
+                                    transform=self.ui.refl.canvas.ax.transAxes)
       for i, refli in enumerate(self.reduction_list):
         #self.ui.refl.semilogy(x, y/self.ref_norm, label=str(settings['index']))
         P0i=len(refli.Q)-refli.options['P0']
@@ -694,9 +703,18 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.refl.set_yscale('linear')
     self.ui.refl.legend()
+    if view is not None:
+      self.ui.refl.toolbar.push_current()
+      self.ui.refl.toolbar._views.push(view)
+      self.ui.refl.toolbar._positions.push(position)
     if preserve_lim:
-      self.ui.refl.canvas.ax.axis(view)
-    self.ui.refl.draw()
+      # reset the last zoom position
+      self.ui.refl.toolbar._update_view()
+    else:
+      self.ui.refl.toolbar._views._pos=0
+      self.ui.refl.toolbar._positions._pos=0
+      self.ui.refl.draw()
+    self.ui.refl.toolbar.set_history_buttons()
 
   @log_call
   def plot_offspec(self):
