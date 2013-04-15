@@ -713,7 +713,7 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.refl.toolbar._views._pos=0
       self.ui.refl.toolbar._positions._pos=0
-      self.ui.refl.draw()
+    self.ui.refl.draw()
     self.ui.refl.toolbar.set_history_buttons()
 
   @log_call
