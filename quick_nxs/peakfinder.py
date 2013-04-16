@@ -100,7 +100,7 @@ class PeakFinder(object):
       for rs, rx in ridge:
         ridge_intensity.append(cwt[rs, rx])
       ridge_intensity=numpy.array(ridge_intensity)
-      max_idx=numpy.where(ridge_intensity==ridge_intensity.max())[0][0]
+      max_idx=numpy.argmax(ridge_intensity)
       # scale of maximum coefficient on the ridge line
       #info.append(ridge[max_idx][0])
       info.append(scales[ridge[max_idx][0]])
