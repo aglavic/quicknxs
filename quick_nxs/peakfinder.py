@@ -116,7 +116,7 @@ class PeakFinder(object):
 
   def _SNR(self, minimum_noise_level=0.05):
     '''
-      Calculate signal to nois ratio. Signal is the highest
+      Calculate signal to noise ratio. Signal is the highest
       CWT intensity of all scales, noise is the 95% quantile
       of the lowest scale WT, which is dominated by noise.
     '''
@@ -128,7 +128,6 @@ class PeakFinder(object):
                         noise_cwt,
                         0.95,
                         3./8., 3./8.))
-#    minimum_noise=minimum_noise_level*abs(noise_cwt).mean() # use average of high frequency noise for minimum
     for info in ridge_info:
       scale=min(5, info[2])
       signal=info[3]
