@@ -247,8 +247,8 @@ class PeakFinder(object):
         else:
           info.append(xdata[item[1]])
         # width corresponding to index width
-        i_low=int(item[1]-item[2]/2)
-        i_high=int(item[1]+item[2]/2)
+        i_low=int(round(item[1]-item[2]/2.))
+        i_high=int(round(item[1]+item[2]/2.))
         if i_low<0:
           i_low=0
         elif i_low==item[1]:
@@ -274,8 +274,9 @@ class PeakFinder(object):
         # all peaks in SNR/2-sigmas range are used
         # this way peaks close to stronger peaks are found
         adjecent_peaks+=[item for item in double_peak_info if
-                        (item[0]>=(peaki[0]-peaki[3]/2.*peaki[1]))&(item[0]<=(peaki[0]+peaki[3]/2.*peaki[1]))
-                       #&((item[0]<=(peaki[0]-0.2*peaki[1]))|(item[0]>=(peaki[0]+0.2*peaki[1])))
+                        (item[0]>=(peaki[0]-peaki[3]/2.*peaki[1]))
+                        and (item[0]<=(peaki[0]+peaki[3]/2.*peaki[1]))
+                        and not item in adjecent_peaks
                         ]
       peak_info+=adjecent_peaks
     if analyze:
@@ -393,8 +394,8 @@ class Cwt:
         # effects in the convolution
         scaled_data=numpy.zeros(ndata*2)
         scaled_data[ndata/2:ndata/2+ndata]=data
-        scaled_data[ndata/2+ndata:]=data[-1]
-        scaled_data[:ndata/2]=data[0]
+        scaled_data[ndata/2+ndata:]=data[-10:].mean()
+        scaled_data[:ndata/2]=data[:10].mean()
         datahat=numpy.fft.rfft(scaled_data)
         self.fftdata=datahat
         #self.psihat0=self.wf(omega*self.scales[3*self.nscale/4])
