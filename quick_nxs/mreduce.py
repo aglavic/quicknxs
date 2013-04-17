@@ -507,16 +507,19 @@ class MRDataset(object):
   def _collect_info(self, data):
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
     self.logs={}
+    self.log_minmax={}
     self.log_units={}
     if 'DASlogs' in data:
       # the old format does not include the DAS logs
       for motor, item in data['DASlogs'].items():
         try:
-          self.logs[motor]=item['value'].value[0]
-          if 'units' in item['value'].attrs:
-            self.log_units[motor]=item['value'].attrs['units']
+          self.logs[motor]=item['average_value'].value[0]
+          if 'units' in item['average_value'].attrs:
+            self.log_units[motor]=item['average_value'].attrs['units']
           else:
             self.log_units[motor]=u''
+          self.log_minmax[motor]=(item['minimum_value'].value[0],
+                                  item['maximum_value'].value[0])
         except:
           continue
       self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
