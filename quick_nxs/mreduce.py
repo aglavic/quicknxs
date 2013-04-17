@@ -645,7 +645,6 @@ class Reflectivity(object):
        scale=1.,
        extract_fan=False, # Treat every x-pixel separately and join the data afterwards
        normalization=None, # another Reflectivity object used for normalization
-       scale_by_beam=True, # use the beam width in the scaling
        bg_tof_constant=False, # treat background to be independent of wavelength for better statistics
        bg_poly_regions=None, # use polygon regions in x/λ to determine which points to use for the background
        bg_scale_xfit=False, # use a linear fit on x-axes projection to scale the background
@@ -729,8 +728,6 @@ class Reflectivity(object):
     relpix=self.options['dpix']-x_pos
     tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     self.ai=tth/2.
-    if self.options['scale_by_beam'] and self.ai>0:
-      scale/=sin(self.ai)/0.005 # scale by beam-footprint
     # set good angular resolution as real resolution not implemented, yet
     dai=0.0001
     debug('alpha_i=%s'%self.ai)
@@ -766,8 +763,12 @@ class Reflectivity(object):
     # finally scale reflectivity by the given factor and beam width
     self.Rraw=(self.I-self.BG) # used for normalization files
     self.dRraw=sqrt(self.dI**2+self.dBG**2)
-    self.R=self.options['scale']*self.Rraw
-    self.dR=self.options['scale']*self.dRraw
+    if self.ai>0.0002:
+      sin_scale=0.005/sin(self.ai) # scale by beam-footprint
+    else:
+      sin_scale=1.
+    self.R=sin_scale*self.options['scale']*self.Rraw
+    self.dR=sin_scale*self.options['scale']*self.dRraw
 
     if self.options['normalization']:
       norm=self.options['normalization']
@@ -813,8 +814,6 @@ class Reflectivity(object):
     tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     ai=tth/2.
     self.ai=ai.mean()
-    if self.options['scale_by_beam'] and self.ai>0:
-      scale/=sin(self.ai)/0.005 # scale by beam-footprint
     debug("Intensity scale is %s"%(scale))
     debug('alpha_i=%s'%repr(ai))
 
@@ -840,6 +839,10 @@ class Reflectivity(object):
 
     R=(I-self.BG[newaxis, :])*self.options['scale']
     dR=sqrt(dI**2+(self.dBG**2)[newaxis, :])*self.options['scale']
+    if self.ai>0.0002:
+      sin_scale=0.005/sin(self.ai) # scale by beam-footprint
+      R*=sin_scale
+      dR*=sin_scale
 
     norm=self.options['normalization']
     normR=where(norm.Rraw>0, norm.Rraw, 1.)
@@ -918,9 +921,6 @@ class Reflectivity(object):
     bg_width=self.options['bg_width']
     bg_poly=self.options['bg_poly_regions']
     scale=1./dataset.proton_charge # scale by user factor
-
-    if self.options['scale_by_beam'] and self.ai>0:
-      scale/=sin(self.ai)/0.005 # scale by beam-size
 
     # Get regions in pixels as integers
     reg=map(lambda item: int(round(item)),
@@ -1018,7 +1018,6 @@ class OffSpecular(Reflectivity):
     if self.options['dpix'] is None:
       self.options['dpix']=dataset.dpix
     self.lambda_center=dataset.lambda_center
-    self.options['scale_by_beam']=False
 
     self._calc_offspec(dataset)
 
