@@ -66,15 +66,16 @@ def check_runstate():
 def setup_system():
   logger=logging.getLogger()#logging.getLogger('quick_nxs')
   logger.setLevel(min(FILE_LEVEL, CONSOLE_LEVEL, GUI_LEVEL))
-  console=logging.StreamHandler(sys.__stdout__)
-  formatter=logging.Formatter('%(levelname) 7s: %(message)s')
-  console.setFormatter(formatter)
-  console.setLevel(CONSOLE_LEVEL)
+  if not sys.platform.startswith('win'):
+    # no console logger for windows (py2exe)
+    console=logging.StreamHandler(sys.__stdout__)
+    formatter=logging.Formatter('%(levelname) 7s: %(message)s')
+    console.setFormatter(formatter)
+    console.setLevel(CONSOLE_LEVEL)
+    logger.addHandler(console)
 
-  logger.addHandler(console)
   logfile=logging.FileHandler(LOG_DIR, 'w')
-  formatter=logging.Formatter('[%(levelname)s] - %(asctime)s - %(filename)s:%(lineno)i:%(funcName)s %(message)s',
-                              '')
+  formatter=logging.Formatter('[%(levelname)s] - %(asctime)s - %(filename)s:%(lineno)i:%(funcName)s %(message)s', '')
   logfile.setFormatter(formatter)
   logfile.setLevel(FILE_LEVEL)
   logger.addHandler(logfile)
