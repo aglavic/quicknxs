@@ -5,3 +5,4 @@ include compile_gui.sh
 include MANIFEST.in
 include quick_nxs/window.pkl quick_nxs/genx_templates/*.gx quick_nxs/htmldoc/*
 include test_all.py tests/*.py tests/*.nxs
+include dist_data/*

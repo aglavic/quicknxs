@@ -120,7 +120,7 @@ class DataReductionTests(unittest.TestCase):
 
   def test_self_normalization(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206.)
-    res2=mreduce.Reflectivity(self.data[0], x_pos=206., normalization=res, scale=0.5)
+    res2=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., normalization=res, scale=0.5)
     self.assertTrue((res2.R[res.Rraw>0]==0.5).all())
 
   def test_background(self):

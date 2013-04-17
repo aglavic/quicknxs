@@ -68,6 +68,8 @@ class MainGUIActions(unittest.TestCase):
     os.remove(statepath)
 
   def test_1normalization(self):
+    self.gui.ui.dangle0Overwrite.setText(str(self.gui.active_data[0].dangle))
+    self.gui.ui.refXPos.setValue(self.gui.active_data[0].dpix)
     self.gui.ui.actionNorm.trigger()
     self.assertTrue((self.gui.refl.R[self.gui.refl.R>0]==1.).all(),
                     'reflectivity self normalized %s'%repr(self.gui.refl))

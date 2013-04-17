@@ -33,7 +33,9 @@ __package_dir__={}
 __packages__=['quick_nxs']
 __package_data__={'quick_nxs': ['window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
 
-__data_files__=[]
+__data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
+                ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png']),
+                ('/usr/share/mime/packages', ['dist_data/x-quicknxs-dat.xml', 'dist_data/x-quicknxs-nxs.xml'])]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
