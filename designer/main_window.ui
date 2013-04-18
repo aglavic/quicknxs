@@ -2762,23 +2762,60 @@
  </customwidgets>
  <tabstops>
   <tabstop>numberSearchEntry</tabstop>
-  <tabstop>plotTab</tabstop>
-  <tabstop>selectedChannel</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>reductionTable</tabstop>
-  <tabstop>reduceButton</tabstop>
   <tabstop>histogramActive</tabstop>
   <tabstop>eventActive</tabstop>
   <tabstop>oldFormatActive</tabstop>
-  <tabstop>kizVSkfz</tabstop>
+  <tabstop>eventTofBins</tabstop>
+  <tabstop>eventBinMode</tabstop>
+  <tabstop>eventSplit</tabstop>
+  <tabstop>eventSplitItems</tabstop>
+  <tabstop>eventSplitIndex</tabstop>
+  <tabstop>file_list</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>refYPos</tabstop>
+  <tabstop>refYWidth</tabstop>
+  <tabstop>refXPos</tabstop>
+  <tabstop>refXWidth</tabstop>
+  <tabstop>bgCenter</tabstop>
+  <tabstop>bgWidth</tabstop>
+  <tabstop>refScale</tabstop>
+  <tabstop>rangeStart</tabstop>
+  <tabstop>rangeEnd</tabstop>
+  <tabstop>directPixelOverwrite</tabstop>
+  <tabstop>dangle0Overwrite</tabstop>
+  <tabstop>trustDANGLE</tabstop>
+  <tabstop>trustSANGLE</tabstop>
+  <tabstop>polynomOrder</tabstop>
+  <tabstop>addStitchPoints</tabstop>
+  <tabstop>fanReflectivity</tabstop>
+  <tabstop>pfSNR</tabstop>
+  <tabstop>pfMinWidth</tabstop>
+  <tabstop>pfMaxWidth</tabstop>
+  <tabstop>pfRidgeLength</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>show_colorbars</tabstop>
+  <tabstop>color_selector</tabstop>
+  <tabstop>logarithmic_colorscale</tabstop>
+  <tabstop>logarithmic_y</tabstop>
+  <tabstop>hide_plots</tabstop>
+  <tabstop>xLamda</tabstop>
+  <tabstop>normalizeXTof</tabstop>
+  <tabstop>tthPhi</tabstop>
+  <tabstop>plotTab</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>selectedChannel</tabstop>
+  <tabstop>reductionTable</tabstop>
+  <tabstop>reduceButton</tabstop>
+  <tabstop>normalizeTable</tabstop>
   <tabstop>kizmkfzVSqz</tabstop>
   <tabstop>qxVSqz</tabstop>
-  <tabstop>normalizeTable</tabstop>
-  <tabstop>daslogTableBox</tabstop>
-  <tabstop>offspecImax</tabstop>
+  <tabstop>kizVSkfz</tabstop>
   <tabstop>offspecImin</tabstop>
+  <tabstop>offspecImax</tabstop>
+  <tabstop>clipOffspec</tabstop>
   <tabstop>gisansImin</tabstop>
   <tabstop>gisansImax</tabstop>
+  <tabstop>daslogTableBox</tabstop>
  </tabstops>
  <resources>
   <include location="../icons/icons.qrc"/>

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Fri Apr 12 14:49:51 2013
+# Created: Thu Apr 18 09:26:54 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ except AttributeError:
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
     Dialog.setObjectName(_fromUtf8("Dialog"))
-    Dialog.resize(400, 438)
+    Dialog.resize(400, 458)
     icon = QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     Dialog.setWindowIcon(icon)
@@ -213,6 +213,36 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.toolButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.changeDir)
     QtCore.QObject.connect(self.gnuplot, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.multiAscii.setDisabled)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
+    Dialog.setTabOrder(self.directoryEntry, self.fileNameEntry)
+    Dialog.setTabOrder(self.fileNameEntry, self.buttonBox)
+    Dialog.setTabOrder(self.buttonBox, self.exportSpecular)
+    Dialog.setTabOrder(self.exportSpecular, self.exportTrueSpecular)
+    Dialog.setTabOrder(self.exportTrueSpecular, self.exportOffSpecular)
+    Dialog.setTabOrder(self.exportOffSpecular, self.exportOffSpecularCorr)
+    Dialog.setTabOrder(self.exportOffSpecularCorr, self.exportOffSpecularSmoothed)
+    Dialog.setTabOrder(self.exportOffSpecularSmoothed, self.exportGISANS)
+    Dialog.setTabOrder(self.exportGISANS, self.exportUpUp)
+    Dialog.setTabOrder(self.exportUpUp, self.exportDownDown)
+    Dialog.setTabOrder(self.exportDownDown, self.exportUpDown)
+    Dialog.setTabOrder(self.exportUpDown, self.exportDownUp)
+    Dialog.setTabOrder(self.exportDownUp, self.multiAscii)
+    Dialog.setTabOrder(self.multiAscii, self.combinedAscii)
+    Dialog.setTabOrder(self.combinedAscii, self.matlab)
+    Dialog.setTabOrder(self.matlab, self.numpy)
+    Dialog.setTabOrder(self.numpy, self.gnuplot)
+    Dialog.setTabOrder(self.gnuplot, self.plot)
+    Dialog.setTabOrder(self.plot, self.genx)
+    Dialog.setTabOrder(self.genx, self.toolButton)
+    Dialog.setTabOrder(self.toolButton, self.tabWidget)
+    Dialog.setTabOrder(self.tabWidget, self.emailSend)
+    Dialog.setTabOrder(self.emailSend, self.emailZIP)
+    Dialog.setTabOrder(self.emailZIP, self.emailAll)
+    Dialog.setTabOrder(self.emailAll, self.emailPlots)
+    Dialog.setTabOrder(self.emailPlots, self.emailData)
+    Dialog.setTabOrder(self.emailData, self.emailTo)
+    Dialog.setTabOrder(self.emailTo, self.emailCC)
+    Dialog.setTabOrder(self.emailCC, self.emailSubject)
+    Dialog.setTabOrder(self.emailSubject, self.emailText)
 
   def retranslateUi(self, Dialog):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Reduction Options", None, QtGui.QApplication.UnicodeUTF8))

@@ -450,6 +450,23 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>gridXmin</tabstop>
+  <tabstop>gridXmax</tabstop>
+  <tabstop>gridYmin</tabstop>
+  <tabstop>gridYmax</tabstop>
+  <tabstop>gridSizeX</tabstop>
+  <tabstop>gridSizeY</tabstop>
+  <tabstop>sigmaX</tabstop>
+  <tabstop>sigmaY</tabstop>
+  <tabstop>rSigmas</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>kizmkfzVSqz</tabstop>
+  <tabstop>qxVSqz</tabstop>
+  <tabstop>kizVSkfz</tabstop>
+  <tabstop>gridSizeCoupled</tabstop>
+  <tabstop>sigmasCoupled</tabstop>
+ </tabstops>
  <resources>
   <include location="../icons/icons.qrc"/>
  </resources>

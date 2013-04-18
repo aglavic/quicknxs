@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/gisans_dialog.ui'
 #
-# Created: Fri Apr 12 14:49:51 2013
+# Created: Thu Apr 18 09:26:54 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -114,7 +114,7 @@ class Ui_Dialog(object):
     self.scrollArea.setWidgetResizable(True)
     self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
     self.resultImageArea = QtGui.QWidget()
-    self.resultImageArea.setGeometry(QtCore.QRect(0, 0, 476, 287))
+    self.resultImageArea.setGeometry(QtCore.QRect(0, 0, 476, 295))
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(0)
@@ -301,6 +301,17 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.iMin, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), Dialog.changePlotScale)
     QtCore.QObject.connect(self.iMax, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), Dialog.changePlotScale)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
+    Dialog.setTabOrder(self.gridQy, self.gridQz)
+    Dialog.setTabOrder(self.gridQz, self.lambdaMin)
+    Dialog.setTabOrder(self.lambdaMin, self.lambdaMax)
+    Dialog.setTabOrder(self.lambdaMax, self.numberSlices)
+    Dialog.setTabOrder(self.numberSlices, self.projectionMethod)
+    Dialog.setTabOrder(self.projectionMethod, self.pushButton)
+    Dialog.setTabOrder(self.pushButton, self.buttonBox)
+    Dialog.setTabOrder(self.buttonBox, self.iMax)
+    Dialog.setTabOrder(self.iMax, self.iMin)
+    Dialog.setTabOrder(self.iMin, self.plotShowList)
+    Dialog.setTabOrder(self.plotShowList, self.scrollArea)
 
   def retranslateUi(self, Dialog):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))

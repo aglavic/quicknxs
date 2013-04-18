@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/smooth_dialog.ui'
 #
-# Created: Fri Apr 12 14:49:51 2013
+# Created: Thu Apr 18 09:26:54 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -217,6 +217,20 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.sigmasCoupled, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.updateSettings)
     QtCore.QObject.connect(self.gridSizeCoupled, QtCore.SIGNAL(_fromUtf8("clicked(bool)")), self.gridSizeX.setDisabled)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
+    Dialog.setTabOrder(self.gridXmin, self.gridXmax)
+    Dialog.setTabOrder(self.gridXmax, self.gridYmin)
+    Dialog.setTabOrder(self.gridYmin, self.gridYmax)
+    Dialog.setTabOrder(self.gridYmax, self.gridSizeX)
+    Dialog.setTabOrder(self.gridSizeX, self.gridSizeY)
+    Dialog.setTabOrder(self.gridSizeY, self.sigmaX)
+    Dialog.setTabOrder(self.sigmaX, self.sigmaY)
+    Dialog.setTabOrder(self.sigmaY, self.rSigmas)
+    Dialog.setTabOrder(self.rSigmas, self.buttonBox)
+    Dialog.setTabOrder(self.buttonBox, self.kizmkfzVSqz)
+    Dialog.setTabOrder(self.kizmkfzVSqz, self.qxVSqz)
+    Dialog.setTabOrder(self.qxVSqz, self.kizVSkfz)
+    Dialog.setTabOrder(self.kizVSkfz, self.gridSizeCoupled)
+    Dialog.setTabOrder(self.gridSizeCoupled, self.sigmasCoupled)
 
   def retranslateUi(self, Dialog):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Smooth Off-Specular", None, QtGui.QApplication.UnicodeUTF8))

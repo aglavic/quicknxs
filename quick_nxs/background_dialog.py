@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/background_dialog.ui'
 #
-# Created: Fri Apr 12 14:49:51 2013
+# Created: Thu Apr 18 09:26:54 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -147,6 +147,11 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.optionChanged)
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.drawXTof)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
+    Dialog.setTabOrder(self.polyregionActive, self.addPoly)
+    Dialog.setTabOrder(self.addPoly, self.delPoly)
+    Dialog.setTabOrder(self.delPoly, self.clearPoly)
+    Dialog.setTabOrder(self.clearPoly, self.polyTable)
+    Dialog.setTabOrder(self.polyTable, self.presumeIofLambda)
 
   def retranslateUi(self, Dialog):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))

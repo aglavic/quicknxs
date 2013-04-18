@@ -221,6 +221,14 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>polyregionActive</tabstop>
+  <tabstop>addPoly</tabstop>
+  <tabstop>delPoly</tabstop>
+  <tabstop>clearPoly</tabstop>
+  <tabstop>polyTable</tabstop>
+  <tabstop>presumeIofLambda</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

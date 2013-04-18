@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>438</height>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -394,6 +394,39 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>directoryEntry</tabstop>
+  <tabstop>fileNameEntry</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>exportSpecular</tabstop>
+  <tabstop>exportTrueSpecular</tabstop>
+  <tabstop>exportOffSpecular</tabstop>
+  <tabstop>exportOffSpecularCorr</tabstop>
+  <tabstop>exportOffSpecularSmoothed</tabstop>
+  <tabstop>exportGISANS</tabstop>
+  <tabstop>exportUpUp</tabstop>
+  <tabstop>exportDownDown</tabstop>
+  <tabstop>exportUpDown</tabstop>
+  <tabstop>exportDownUp</tabstop>
+  <tabstop>multiAscii</tabstop>
+  <tabstop>combinedAscii</tabstop>
+  <tabstop>matlab</tabstop>
+  <tabstop>numpy</tabstop>
+  <tabstop>gnuplot</tabstop>
+  <tabstop>plot</tabstop>
+  <tabstop>genx</tabstop>
+  <tabstop>toolButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>emailSend</tabstop>
+  <tabstop>emailZIP</tabstop>
+  <tabstop>emailAll</tabstop>
+  <tabstop>emailPlots</tabstop>
+  <tabstop>emailData</tabstop>
+  <tabstop>emailTo</tabstop>
+  <tabstop>emailCC</tabstop>
+  <tabstop>emailSubject</tabstop>
+  <tabstop>emailText</tabstop>
+ </tabstops>
  <resources>
   <include location="../icons/icons.qrc"/>
  </resources>
