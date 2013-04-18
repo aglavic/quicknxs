@@ -6,6 +6,7 @@ from math import pi
 from quick_nxs import mreduce
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
+TEST_EVENT=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_event.nxs')
 
 class GeneralClassTest(unittest.TestCase):
 
@@ -26,17 +27,50 @@ class GeneralClassTest(unittest.TestCase):
     self.assertEqual(obj.origin, TEST_DATASET, 'make sure right file name is saved')
     self._attr_check(obj, 'measurement_type')
     self.assertEqual(len(obj), 1)
+    repr(obj)
+
+  def test_read_file_event(self):
+    obj=mreduce.NXSData(TEST_EVENT, bins=40)
+    self.assertTrue(isinstance(obj, mreduce.NXSData), 'NXS file readout')
+    self.assertEqual(obj.origin, TEST_EVENT, 'make sure right file name is saved')
+    self._attr_check(obj, 'measurement_type')
+    self.assertEqual(len(obj), 1)
+    self.assertEqual(len(obj[0].tof), 40)
 
   def test_caching(self):
-    obj=mreduce.NXSData(TEST_DATASET, use_caching=True)
-    obj2=mreduce.NXSData(TEST_DATASET, use_caching=True)
+    obj=mreduce.NXSData(TEST_DATASET, use_caching=True, bins=40)
+    obj2=mreduce.NXSData(TEST_DATASET, use_caching=True, bins=40)
+    # make sure changing options triggers reload
+    obj3=mreduce.NXSData(TEST_DATASET, use_caching=True, bins=50)
     self.assertTrue(obj is obj2)
-    obj2=mreduce.NXSData(TEST_DATASET, use_caching=False)
+    self.assertFalse(obj is obj3)
+    # make sure non cached reads dont lead to the same object
+    obj=mreduce.NXSData(TEST_DATASET, use_caching=False, bins=50)
+    obj2=mreduce.NXSData(TEST_DATASET, use_caching=False, bins=50)
     self.assertFalse(obj is obj2)
+
+  def test_callback(self):
+    self._progress=None
+    mreduce.NXSData(TEST_DATASET, use_caching=False, bins=40, callback=self._cbtest)
+    self.assertFalse(self._progress is None)
+    self._progress=None
+    mreduce.NXSData(TEST_EVENT, use_caching=False, bins=40, callback=self._cbtest)
+    self.assertFalse(self._progress is None)
+    self._progress=None
+    obj=mreduce.NXSMultiData([TEST_DATASET, TEST_DATASET], use_caching=False,
+                             bins=40, callback=self._cbtest)
+    self.assertFalse(self._progress is None)
+    repr(obj)
+
+  def _cbtest(self, progress):
+    self._progress=progress
 
   def _attr_check(self, obj, attr, msg=None):
     result=getattr(obj, attr, None)
     self.assertFalse(result is None, msg=msg)
+
+  def test_functions(self):
+    mreduce.time_from_header(TEST_DATASET)
 
 class DataConsistencyChecks(unittest.TestCase):
 
@@ -49,6 +83,22 @@ class DataConsistencyChecks(unittest.TestCase):
 
   def test_options(self):
     self.assertEqual(self.data._options, self.data[0].read_options)
+
+  def test_itemize(self):
+    item0=self.data[0]
+    ch0=self.data._channel_names[0]
+    cho0=self.data._channel_origin[0]
+    self.assertTrue(item0 is self.data[ch0])
+    self.assertTrue(item0 is self.data[cho0])
+    self.assertRaises(KeyError, self.data.__getitem__, 'not_there')
+    self.assertRaises(IndexError, self.data.__getitem__, 100)
+    self.data[0]=item0
+    self.data[ch0]=item0
+    self.data[cho0]=item0
+    self.assertRaises(KeyError, self.data.__setitem__, 'not_there', item0)
+    self.data.numitems()
+    for ignore in self.data:
+      pass
 
   def test_data_shape(self):
     d=self.data[0]
@@ -78,6 +128,10 @@ class DataConsistencyChecks(unittest.TestCase):
     v_n=d.dist_mod_det/d.tof*1e6 #m/s
     lamda_n=mreduce.H_OVER_M_NEUTRON/v_n*1e10 #A
     self.assertTrue((lamda_n==d.lamda).all())
+    for item in ['lambda_center', 'experiment', 'merge_warnings', 'beam_width',
+                 'dpix', 'dangle', 'dangle0', 'sangle']:
+      self.assertEqual(getattr(self.data, item), getattr(d, item))
+    mreduce.NXSData.get_cachesize()
 
   def test_addition(self):
     d=self.data[0]
@@ -92,6 +146,23 @@ class DataConsistencyChecks(unittest.TestCase):
     self.assertEqual(d.total_counts, d2.total_counts)
     self.assertTrue((d.data==d2.data).all())
 
+class EventModeTests(unittest.TestCase):
+  def test_data(self):
+    full_ds=mreduce.NXSData(TEST_EVENT, event_split_bins=None)
+    self.assertEqual(full_ds[0].total_counts, full_ds[0].xydata.sum())
+    full_ds=mreduce.NXSData(TEST_EVENT, event_split_bins=None, bin_type=1)
+    self.assertEqual(full_ds[0].total_counts, full_ds[0].xydata.sum())
+
+  def test_splitting(self):
+    full_ds=mreduce.NXSData(TEST_EVENT, event_split_bins=None)
+    split_ds=[]
+    for i in range(10):
+      split_ds.append(mreduce.NXSData(TEST_EVENT, event_split_bins=10,
+                                      event_split_index=i))
+    self.assertEqual(full_ds[0].total_counts,
+                     sum([d[0].total_counts for d in split_ds]))
+    self.assertEqual(full_ds[0].proton_charge,
+                     sum([d[0].proton_charge for d in split_ds]))
 
 class DataReductionTests(unittest.TestCase):
   def setUp(self):
@@ -102,11 +173,19 @@ class DataReductionTests(unittest.TestCase):
     res=mreduce.Reflectivity(self.data[0])
     self.assertTrue(isinstance(res, mreduce.Reflectivity))
 
+  def test_2reflectivity_fan(self):
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., dpix=206.)
+    res2=mreduce.Reflectivity(self.data[0], extract_fan=True, normalization=res,
+                              tth=0.5, dpix=206.)
+    self.assertTrue(isinstance(res2, mreduce.Reflectivity))
+    repr(res2)
+
   def test_metadata(self):
     d=self.data[0]
     res=mreduce.Reflectivity(d)
     self.assertEqual(res.read_options, d.read_options)
     self.assertEqual(res.origin, d.origin)
+    repr(res)
 
   def test_shapes(self):
     res=mreduce.Reflectivity(self.data[0])
@@ -128,6 +207,14 @@ class DataReductionTests(unittest.TestCase):
                                             bg_pos=206., bg_width=10.)
     self.assertTrue((res.R==0.).all())
 
+  def test_background_advanced(self):
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., dpix=206.)
+    ignore=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
+                                normalization=res, bg_pos=206., bg_width=10.,
+                                bg_tof_constant=True,
+                                bg_poly_regions=[[(2., 100), (2., 120), (4., 120), (4., 100)]])
+
+
   def test_angle_calculation(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
                                             bg_pos=206., bg_width=10.,
@@ -139,14 +226,19 @@ class DataReductionTests(unittest.TestCase):
     self.assertEqual(res.ai, 0.5/180.*pi)
 
   def test_offspec(self):
-    res=mreduce.OffSpecular(self.data[0])
-    self.assertTrue(isinstance(res, mreduce.Reflectivity))
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., dpix=206.)
+    res2=mreduce.OffSpecular(self.data[0], normalization=res)
+    self.assertTrue(isinstance(res2, mreduce.OffSpecular))
+    repr(res2)
 
   def test_gisans(self):
-    res=mreduce.GISANS(self.data[0])
-    self.assertTrue(isinstance(res, mreduce.Reflectivity))
+    res=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., dpix=206.)
+    res2=mreduce.GISANS(self.data[0], normalization=res)
+    self.assertTrue(isinstance(res2, mreduce.GISANS))
+    repr(res2)
 
 
 suite=unittest.TestLoader().loadTestsFromTestCase(GeneralClassTest)
 suite.addTest(unittest.TestLoader().loadTestsFromTestCase(DataConsistencyChecks))
 suite.addTest(unittest.TestLoader().loadTestsFromTestCase(DataReductionTests))
+suite.addTest(unittest.TestLoader().loadTestsFromTestCase(EventModeTests))

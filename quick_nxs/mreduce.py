@@ -83,7 +83,8 @@ class NXSData(object):
     * bins=40: Number of ToF bins for event mode
   '''
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None,
-                       event_split_bins=None, event_split_index=0)
+                       event_split_bins=None, event_split_index=0,
+                       event_tof_overwrite=None)
   COUNT_THREASHOLD=100
   MAX_CACHE=20
   _cache=[]
@@ -189,7 +190,8 @@ class NXSData(object):
         data=MRDataset.from_event(raw_data, self._options,
                                   callback=self._options['callback'],
                                   callback_offset=progress,
-                                  callback_scaling=0.9/len(channels))
+                                  callback_scaling=0.9/len(channels),
+                                  tof_overwrite=self._options['event_tof_overwrite'])
       elif filename.endswith('histo.nxs'):
         data=MRDataset.from_histogram(raw_data, self._options)
       else:
@@ -425,7 +427,8 @@ class MRDataset(object):
   @classmethod
   @log_call
   def from_event(cls, data, read_options,
-                 callback=None, callback_offset=0., callback_scaling=1.):
+                 callback=None, callback_offset=0., callback_scaling=1.,
+                 tof_overwrite=None):
     '''
     Load data from a Nexus file containing event information.
     Creates 3D histogram with ither linear or 1/t spaced 
@@ -455,10 +458,14 @@ class MRDataset(object):
       # read the relative time in seconds from measurement start to event
       tof_real_time=data['bank1_events/event_time_zero'].value
       tof_idx_to_id=data['bank1_events/event_index'].value
-      split_step=(tof_real_time[-1]+0.1)/split_bins
-      split_idxs=tof_idx_to_id[((tof_real_time>=(split_index*split_step))&
-                                (tof_real_time<((split_index+1)*split_step)))]
-      start_idx, stop_idx=split_idxs[0], split_idxs[-1]
+      split_step=float(tof_real_time[-1])/split_bins
+      start_id, stop_id=where(((tof_real_time>=(split_index*split_step))&
+                               (tof_real_time<=((split_index+1)*split_step))))[0][[0,-1]]
+      start_idx=tof_idx_to_id[start_id]
+      if (split_index+1)==split_bins:
+        stop_idx=None
+      else:
+        stop_idx=tof_idx_to_id[stop_id+1]
       tof_ids=tof_ids[start_idx:stop_idx]
       tof_time=tof_time[start_idx:stop_idx]
       # correct the count statistics
@@ -466,16 +473,19 @@ class MRDataset(object):
       output.proton_charge/=split_bins
     tof_x=X[tof_ids]
     tof_y=Y[tof_ids]
-    lcenter=data['DASlogs/LambdaRequest/value'].value[0]
-    # ToF region for this specific central wavelength
-    tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
-    tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
-    if bin_type==0:
-      tof_edges=linspace(tmin, tmax, bins+1)
-    elif bin_type==1:
-      tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+    if tof_overwrite is None:
+      lcenter=data['DASlogs/LambdaRequest/value'].value[0]
+      # ToF region for this specific central wavelength
+      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+      if bin_type==0:
+        tof_edges=linspace(tmin, tmax, bins+1)
+      elif bin_type==1:
+        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      else:
+        raise ValueError, 'Unknown bin type %i'%bin_type
     else:
-      raise ValueError, 'Unknown bin type %i'%bin_type
+      tof_edges=tof_overwrite
 
     if callback is not None:
       # create the 3D binning
