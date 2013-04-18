@@ -3,6 +3,9 @@
   <mime-type type="text/x-quicknxs-dat">
     <comment>QuickNXS ASCII output</comment>
     <sub-class-of type="text/plain"/>
+    <magic priority="100">
+      <match type="string" offset="0" value="# Datafile created by QuickNXS"/>
+    </magic>
     <glob pattern="*.dat"/>
   </mime-type>
 </mime-info>

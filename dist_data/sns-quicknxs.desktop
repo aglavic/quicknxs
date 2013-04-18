@@ -1,10 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=QuickNXS (Magnetism Reflectometer)
-Exec=quicknxs
+Exec=quicknxs %F
 Icon=/usr/share/icons/gnome/128x128/apps/quicknxs.png
 StartupNotify=true
 Terminal=false
 Type=Application
 Categories=Application;Analysis;Science;
-MimeType=text/x-quicknxs-dat;application/x-quicknxs-nexus
+MimeType=text/x-quicknxs-dat;application/x-quicknxs-nexus;application/x-hdf

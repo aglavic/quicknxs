@@ -25,10 +25,10 @@ from logging import info, warning, debug
 from .gui_logging import install_gui_handler, ip_excepthook_overwrite, excepthook_overwrite
 from .decorators import log_call, log_input, log_both
 
-BASE_FOLDER='/SNS/REF_M'
+BASE_FOLDER=u'/SNS/REF_M'
 
-BASE_SEARCH='*/data/REF_M_%s_'
-OLD_BASE_SEARCH='*/*/%s/NeXus/REF_M_%s*'
+BASE_SEARCH=u'*/data/REF_M_%s_'
+OLD_BASE_SEARCH=u'*/*/%s/NeXus/REF_M_%s*'
 
 class gisansCalcThread(QtCore.QThread):
   '''
@@ -77,6 +77,7 @@ class MainGUI(QtGui.QMainWindow):
   # plot line storages
   _x_projection=None
   _y_projection=None
+  proj_lines=None
   # colors for the reflecitivy lines
   _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
 
@@ -167,13 +168,15 @@ class MainGUI(QtGui.QMainWindow):
       # if non ascii character in filenames interprete it as utf8
       argv=[unicode(argi, 'utf8', 'ignore') for argi in argv]
       # delay action to be run within event loop, this allows the error handling to work
-      if argv[0][-4:]=='.nxs':
-        if len(argv)==1:
-          self.trigger('fileOpen', argv[0])
-        else:
-          self.trigger('automaticExtraction', argv)
       if argv[0][-4:]=='.dat':
         self.trigger('loadExtraction', argv[0])
+      elif len(argv)==1:
+        if argv[0][-4:]=='.nxs':
+          self.trigger('fileOpen', argv[0])
+        else:
+          self.trigger('openByNumber', argv[0])
+      else:
+        self.trigger('automaticExtraction', argv)
     else:
       self.ui.numberSearchEntry.setFocus()
       self.auto_change_active=True # prevent exceptions when changing options without file open
@@ -988,11 +991,12 @@ class MainGUI(QtGui.QMainWindow):
       self.fileOpen(os.path.join(self.active_folder, name))
 
   @log_call
-  def openByNumber(self):
+  def openByNumber(self, number=None, do_plot=True):
     '''
     Search the data folders for a specific file number and open it.
     '''
-    number=self.ui.numberSearchEntry.text()
+    if number is None:
+      number=self.ui.numberSearchEntry.text()
     info('Trying to locate file number %s...'%number)
     QtGui.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
@@ -1003,9 +1007,11 @@ class MainGUI(QtGui.QMainWindow):
       search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
     if search:
       self.ui.numberSearchEntry.setText('')
-      self.fileOpen(search[0])
+      self.fileOpen(os.path.abspath(search[0]), do_plot=do_plot)
+      return True
     else:
       info('Could not locate %s...'%number)
+      return False
 
   @log_call
   def nextFile(self):
@@ -1085,7 +1091,12 @@ class MainGUI(QtGui.QMainWindow):
     self.clearRefList(do_plot=False)
     for filename in sorted(filenames):
       # read files data and extract reflectivity
-      self.fileOpen(filename, do_plot=False)
+      if filename[-4:]=='.nxs':
+        self.fileOpen(filename, do_plot=False)
+      else:
+        if not self.openByNumber(filename, do_plot=False):
+          continue
+      last_file=filename
       self.calc_refl()
       if (self.refl.ai*180./pi)<0.05:
         self.setNorm(do_plot=False, do_remove=False)
@@ -1107,7 +1118,10 @@ class MainGUI(QtGui.QMainWindow):
     # rest cut options and show the file, which was added last
     self.ui.rangeStart.setValue(0)
     self.ui.rangeEnd.setValue(0)
-    self.fileOpen(filename)
+    if last_file[-4:]=='.nxs':
+      self.fileOpen(last_file, do_plot=True)
+    else:
+      self.openByNumber(last_file, do_plot=True)
 
   @log_call
   def onPathChanged(self, base, folder):
@@ -1229,7 +1243,7 @@ class MainGUI(QtGui.QMainWindow):
     Sets up a trigger to replot the reflectivity with a delay so
     a subsequent change can occur without several replots.
     '''
-    if self.auto_change_active:
+    if self.auto_change_active or self.proj_lines is None:
       return
     lines=self.proj_lines
     x_peak=self.ui.refXPos.value()

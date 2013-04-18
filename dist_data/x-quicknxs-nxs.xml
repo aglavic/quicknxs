@@ -2,6 +2,10 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/x-quicknxs-nexus">
     <comment>NeXus raw data</comment>
+    <magic priority="40">
+        <!--see: HDF5 File Format Specification Version 2.0 Chapter II -->
+        <match type="string" offset="0" value="\211HDF\r\n\032\n"/>
+    </magic>
     <glob pattern="*.nxs"/>
   </mime-type>
 </mime-info>
