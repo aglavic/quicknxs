@@ -932,9 +932,8 @@ class Exporter(object):
       iz=ZipFile(template, 'r')
       oz=ZipFile(output, 'w', iz.compression)
       for key in ['script', 'parameters', 'fomfunction', 'config', 'optimizer']:
-        bdata=iz.read(key)
-        oz.writestr(key, bdata)
-      model_data=loads(iz.read('data'))
+        oz.writestr(key, iz.read(key))
+      model_data=loads(iz.read('data').encode('utf8'))
       for i, channel in enumerate(self.channels):
         model_data[i].x_raw=output_data[channel][:, 0]
         model_data[i].y_raw=output_data[channel][:, 1]
