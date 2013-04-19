@@ -825,7 +825,7 @@ class Exporter(object):
         plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
       params['plot_lines']=GP_SEP.join(plotlines)
       script=GP_TEMPLATE%params
-      open(output, 'w').write(script.encode('utf8'))
+      open(output, 'wb').write(script.encode('utf8'))
     else:
       # 3D plot
       if 'ki_max' in output_data:
@@ -893,7 +893,7 @@ class Exporter(object):
         plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
       params['plot_lines']=plotlines
       script=GP_TEMPLATE_3D%params
-      open(output, 'w').write(script.encode('utf8'))
+      open(output, 'wb').write(script.encode('utf8'))
     self.exported_files_all.append(output)
     try:
       subprocess.call(['gnuplot', output], cwd=directory, shell=False)
