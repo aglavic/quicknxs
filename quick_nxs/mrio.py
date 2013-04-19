@@ -934,7 +934,7 @@ class Exporter(object):
       for key in ['script', 'parameters', 'fomfunction', 'config', 'optimizer']:
         oz.writestr(key, iz.read(key))
       if sys.version_info[0]>=3:
-        model_data=loads(iz.read('data'), encoding='utf8')
+        model_data=loads(str(iz.read('data'), 'utf8', 'ignore'), encoding='utf8')
       else:
         model_data=loads(iz.read('data'))
       for i, channel in enumerate(self.channels):
