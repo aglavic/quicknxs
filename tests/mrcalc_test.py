@@ -2,7 +2,8 @@
 
 import unittest
 from numpy import *
-from quick_nxs.mrcalc import refine_gauss, get_scaling, get_xpos, get_yregion, get_total_reflection
+from quick_nxs.mrcalc import refine_gauss, get_scaling, get_xpos, get_yregion, \
+                             get_total_reflection, smooth_data, DetectorTailCorrector
 from quick_nxs.mreduce import MRDataset, Reflectivity
 
 class FitTest(unittest.TestCase):
@@ -38,6 +39,7 @@ class FakeData():
     self.ds.data[:, :80]=0.
     self.ds.data[:,-80:]=0.
     self.ds.xydata=self.ds.data.sum(axis=2).transpose()
+    self.ds.xtofdata=self.ds.data.sum(axis=1)
     self.ds.read_options=None
     # create two dummi reflectivities
     self.ref1=Reflectivity(self.ds, x_pos=200, dpix=210, tth=0., bg_pos=2, bg_width=4)
@@ -50,6 +52,13 @@ class StitchTest(FakeData, unittest.TestCase):
     self.ref2.R/=2
     yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=2)
     self.assertAlmostEqual(yscale, 2., places=3)
+
+  def test_gauss(self):
+    yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=0)
+    self.assertAlmostEqual(yscale, 1., places=3)
+
+  def test_wrong_call(self):
+    self.assertRaises(ValueError, get_scaling, [0, 1, 2], [1, 2, 3])
 
   def test_degrees(self):
     yscale, ignore, ignore=get_scaling(self.ref2, self.ref1, polynom=2)
@@ -66,6 +75,10 @@ class StitchTest(FakeData, unittest.TestCase):
     self.assertEqual(npoints, 20)
 
 class PositionTest(FakeData, unittest.TestCase):
+  def test_wrong_call(self):
+    self.assertRaises(ValueError, get_xpos, [1, 2, 3])
+    self.assertRaises(ValueError, get_yregion, [1, 2, 3])
+
   def test_xpos(self):
     self.ds.dpix=220.
     self.ds.dangle=self.ds.dangle0
@@ -80,6 +93,47 @@ class PositionTest(FakeData, unittest.TestCase):
     self.assertEqual(y_width, 96.)
     self.assertEqual(bg, 0.)
 
+class SmoothTest(unittest.TestCase):
+  def setUp(self):
+    self._progress=None
+    self.x, self.y=meshgrid(arange(100), arange(100))
+    self.I=(self.x-50.)**2+(self.y-50.)**2+random.randn(1e4).reshape((100, 100))
+    self.settings={
+                   'grid': (20, 20),
+                   'sigma': (3., 3.),
+                   'region': (10, 90, 5 , 95),
+                   }
+
+  def test_smooth(self):
+    Xout, Yout, Iout=smooth_data(self.settings, self.x, self.y, self.I, callback=self._cb_test)
+    self.assertFalse(self._progress is None)
+    self.assertEqual(Xout.min(), 10)
+    self.assertEqual(Xout.max(), 90)
+    self.assertEqual(Yout.min(), 5)
+    self.assertEqual(Yout.max(), 95)
+    self.assertEqual(Xout.shape, (20, 20))
+    self.assertEqual(Yout.shape, (20, 20))
+    self.assertEqual(Iout.shape, (20, 20))
+
+  def test_smooth2(self):
+    smooth_data(self.settings, self.x, self.y, self.I, callback=self._cb_test,
+                axis_sigma_scaling=1)
+    smooth_data(self.settings, self.x, self.y, self.I, callback=self._cb_test,
+                axis_sigma_scaling=2)
+    smooth_data(self.settings, self.x, self.y, self.I, callback=self._cb_test,
+                axis_sigma_scaling=3)
+    self.assertFalse(self._progress is None)
+
+  def _cb_test(self, progress):
+    self._progress=progress
+
+class DetectorCorrTest(FakeData, unittest.TestCase):
+  def test_corr(self):
+    c=DetectorTailCorrector(self.ds.xdata)
+    ignore=c(self.ds.xtofdata)
+
 suite=unittest.TestLoader().loadTestsFromTestCase(FitTest)
 suite.addTest(unittest.TestLoader().loadTestsFromTestCase(StitchTest))
 suite.addTest(unittest.TestLoader().loadTestsFromTestCase(PositionTest))
+suite.addTest(unittest.TestLoader().loadTestsFromTestCase(SmoothTest))
+suite.addTest(unittest.TestLoader().loadTestsFromTestCase(DetectorCorrTest))

@@ -131,9 +131,9 @@ def get_yregion(data):
   
   :returns: y_center, y_width, y_bg
   """
-  yproj=data.ydata
   if type(data) is not MRDataset:
     raise ValueError, "'data' needs to be a MRDataset object"
+  yproj=data.ydata
   # find the central peak reagion with intensities larger than 10% of maximum
   y_bg=mquantiles(yproj, 0.5)[0]
   y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
