@@ -944,7 +944,7 @@ class Exporter(object):
         model_data[i].xerror_raw=output_data[channel][:, 3]
         model_data[i].name=channel
         model_data[i].run_command()
-      oz.writestr('data', dumps(model_data))
+      oz.writestr('data', dumps(model_data, 2)) # dup as version 2 pickle
       iz.close()
       oz.close()
       self.exported_files_all.append(output)
