@@ -4,6 +4,7 @@ import os
 import unittest
 from math import pi
 from quick_nxs import mreduce
+from numpy.testing import assert_array_equal
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
 TEST_EVENT=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_event.nxs')
@@ -118,16 +119,16 @@ class DataConsistencyChecks(unittest.TestCase):
     self.assertEqual(d.total_counts, d.xtofdata.sum())
     self.assertEqual(d.total_counts, d.data.sum())
     # compare sum over full data axes with combined arrays
-    self.assertTrue((d.data.sum(axis=1)==d.xtofdata).all())
-    self.assertTrue((d.data.sum(axis=2)==d.xydata.transpose()).all())
+    assert_array_equal(d.data.sum(axis=1), d.xtofdata, verbose=True)
+    assert_array_equal(d.data.sum(axis=2), d.xydata.transpose(), verbose=True)
 
   def test_properies(self):
     d=self.data[0]
 
-    self.assertTrue(((d.tof_edges[:-1]+d.tof_edges[1:])/2.==d.tof).all())
+    assert_array_equal((d.tof_edges[:-1]+d.tof_edges[1:])/2., d.tof, verbose=True)
     v_n=d.dist_mod_det/d.tof*1e6 #m/s
     lamda_n=mreduce.H_OVER_M_NEUTRON/v_n*1e10 #A
-    self.assertTrue((lamda_n==d.lamda).all())
+    assert_array_equal(lamda_n, d.lamda, verbose=True)
     for item in ['lambda_center', 'experiment', 'merge_warnings', 'beam_width',
                  'dpix', 'dangle', 'dangle0', 'sangle']:
       self.assertEqual(getattr(self.data, item), getattr(d, item))
@@ -137,14 +138,14 @@ class DataConsistencyChecks(unittest.TestCase):
     d=self.data[0]
     d2=d+d
     self.assertEqual(d.total_counts*2, d2.total_counts)
-    self.assertTrue((d.data*2==d2.data).all())
+    assert_array_equal(d.data*2, d2.data, verbose=True)
 
   def test_multi(self):
     d=self.data[0]
     d2=mreduce.NXSMultiData([TEST_DATASET])[0]
     self.assertEqual(d.origin, d2.origin)
     self.assertEqual(d.total_counts, d2.total_counts)
-    self.assertTrue((d.data==d2.data).all())
+    assert_array_equal(d.data, d2.data, verbose=True)
 
 class EventModeTests(unittest.TestCase):
   def test_data(self):
@@ -163,6 +164,12 @@ class EventModeTests(unittest.TestCase):
                      sum([d[0].total_counts for d in split_ds]))
     self.assertEqual(full_ds[0].proton_charge,
                      sum([d[0].proton_charge for d in split_ds]))
+
+  def test_direct_compare(self):
+    histo=mreduce.NXSData(TEST_DATASET)
+    evnt=mreduce.NXSData(TEST_EVENT, event_tof_overwrite=histo[0].tof_edges)
+    assert_array_equal(evnt[0].data, histo[0].data, verbose=True)
+
 
 class DataReductionTests(unittest.TestCase):
   def setUp(self):
@@ -200,12 +207,12 @@ class DataReductionTests(unittest.TestCase):
   def test_self_normalization(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206.)
     res2=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., normalization=res, scale=0.5)
-    self.assertTrue((res2.R[res.Rraw>0]==0.5).all())
+    assert_array_equal(res2.R[res.Rraw>0], 0.5, verbose=True)
 
   def test_background(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206., x_width=10.,
                                             bg_pos=206., bg_width=10.)
-    self.assertTrue((res.R==0.).all())
+    assert_array_equal(res.R, 0., verbose=True)
 
   def test_background_advanced(self):
     res=mreduce.Reflectivity(self.data[0], x_pos=206., tth=0., dpix=206.)
