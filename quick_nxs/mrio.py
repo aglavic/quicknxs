@@ -143,7 +143,7 @@ class HeaderCreator(object):
             for poly in bg[2]:
               poly=[poly[0][0], poly[0][1], poly[1][0], poly[1][1],
                     poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
-              poly_ids.append(self.bg_polys.index(poly))              
+              poly_ids.append(self.bg_polys.index(poly)+1)
             bg[2]=poly_ids
           datai.append(self.bgs.index(bg))
       if type(norm.origin) is list:
@@ -253,7 +253,7 @@ class HeaderCreator(object):
     # first run through all data and headers to determine each column widths
     for option in options:
       column_leni=len(option)
-      if type(data[0][option]) in [bool, type(None), str, unicode, list]:
+      if any([type(di[option]) in [bool, type(None), str, unicode, list] for di in data]):
         item=u'%s'
         fstring=u'%%%%(%s)-%%is'%option
       elif type(data[0][option])  is int:
@@ -671,7 +671,7 @@ class Exporter(object):
         output_data['column_names']=['ki_z', 'kf_z', 'I']
         axis_sigma_scaling=3
         xysigma0=Qzmax/6.
-      x, y, I=smooth_data(settings, x, y, I, callback=pb.progress, sigmas=settings['sigmas'],
+      x, y, I=smooth_data(settings, x, y, I, callback=(pb and pb.progress), sigmas=settings['sigmas'],
                           axis_sigma_scaling=axis_sigma_scaling, xysigma0=xysigma0)
       output_data[channel]=[np.array([x, y, I]).transpose((1, 2, 0))]
     output_data['ki_max']=self.output_data['OffSpec']['ki_max']
