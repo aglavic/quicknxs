@@ -929,8 +929,8 @@ class Exporter(object):
                    .replace('{type}', 'gx').replace('{numbers}', self.ind_str)
       if not check_exists(output):
         continue
-      oz=ZipFile(output, 'w')
-      iz=ZipFile(template, 'r')
+      oz=ZipFile(output, 'wb')
+      iz=ZipFile(template, 'rb')
       for key in ['script', 'parameters', 'fomfunction', 'config', 'optimizer']:
         oz.writestr(key, iz.read(key))
       model_data=loads(iz.read('data'))
