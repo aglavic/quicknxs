@@ -717,8 +717,8 @@ class Exporter(object):
               # separate first dimension steps by empty line
               for scan in filemap:
                 np.savetxt(of, scan, delimiter='\t', fmt='%-18e')
-                of.write('\n')
-            of.write('\n\n')
+                of.write(u'\n'.encode('utf8'))
+            of.write(u'\n\n'.encode('utf8'))
           self.exported_files_all.append(output);self.exported_files_data.append(output)
       if combined_ascii:
         debug('Export multi_ascii')
@@ -746,8 +746,8 @@ class Exporter(object):
                 # separate first dimension steps by empty line
                 for scan in filemap:
                   np.savetxt(of, scan, delimiter='\t', fmt='%-18e')
-                  of.write('\n')
-              of.write('\n\n')
+                  of.write(u'\n'.encode('utf8'))
+              of.write(u'\n\n'.encode('utf8'))
             of.write((u'# End of channel %s\n\n\n'%channel).encode('utf8'))
           of.close()
           self.exported_files_all.append(output);self.exported_files_data.append(output)
