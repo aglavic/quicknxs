@@ -934,7 +934,9 @@ class Exporter(object):
       for key in ['script', 'parameters', 'fomfunction', 'config', 'optimizer']:
         oz.writestr(key, iz.read(key))
       if sys.version_info[0]>=3:
-        model_data=loads(iz.read('data'), encoding='utf8', errors='ignore')
+        # FIXME: dont know how to fix this here with python 3.2
+#        model_data=loads(iz.read('data'), encoding='utf8', errors='ignore')
+        return
       else:
         model_data=loads(iz.read('data'))
       for i, channel in enumerate(self.channels):
