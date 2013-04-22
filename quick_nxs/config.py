@@ -5,17 +5,22 @@
 '''
 
 import os
+import sys
 import atexit
 from collections import OrderedDict
 from ConfigParser import SafeConfigParser
 from getpass import getuser
 
 # define global path variables usable in config strings or other modules
-USER=unicode(getuser(), 'utf8')
 HOME=os.path.expanduser(u'~')
 CFG_PATH=os.path.join(HOME, u'.quicknxs')
 CFG_FILE=os.path.join(CFG_PATH, u'config.cfg')
-PACKAGE=unicode(os.path.abspath(os.path.dirname(__file__)), 'utf8')
+if sys.version_info[0]>=3:
+  USER=getuser()
+  PACKAGE=os.path.abspath(os.path.dirname(__file__))
+else:
+  USER=unicode(getuser(), 'utf8')
+  PACKAGE=unicode(os.path.abspath(os.path.dirname(__file__)), 'utf8')
 if not os.path.exists(CFG_PATH):
   os.makedirs(CFG_PATH)
 
