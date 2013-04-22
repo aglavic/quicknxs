@@ -7,7 +7,6 @@
 import os
 import sys
 import atexit
-from collections import OrderedDict
 from ConfigParser import SafeConfigParser
 from getpass import getuser
 
@@ -27,9 +26,8 @@ if not os.path.exists(CFG_PATH):
 class UnicodeConfigParser(SafeConfigParser):
   # make config use case sensitive strings
   optionxform=str
-  def __init__(self, defaults=None, dict_type=OrderedDict, allow_no_value=False,
-               encoding='utf8'):
-    SafeConfigParser.__init__(self, defaults, dict_type, allow_no_value)
+  def __init__(self, encoding='utf8', **opts):
+    SafeConfigParser.__init__(self, **opts)
     self.encoding=encoding
 
   def get(self, section, option, raw=False, vars=None): #@ReservedAssignment
