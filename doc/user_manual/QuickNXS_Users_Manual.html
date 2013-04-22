@@ -1,0 +1,466 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+           "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<meta name="GENERATOR" content="TtH 4.01">
+ <style type="text/css"> div.p { margin-top: 7pt;}</style>
+ <style type="text/css"><!--
+ td div.comp { margin-top: -0.6ex; margin-bottom: -1ex;}
+ td div.comb { margin-top: -0.6ex; margin-bottom: -.6ex;}
+ td div.hrcomp { line-height: 0.9; margin-top: -0.8ex; margin-bottom: -1ex;}
+ td div.norm {line-height:normal;}
+ span.roman {font-family: serif; font-style: normal; font-weight: normal;} 
+ span.overacc2 {position: relative;  left: .8em; top: -1.2ex;}
+ span.overacc1 {position: relative;  left: .6em; top: -1.2ex;} --></style>
+
+                                                                                                          
+<title>No Title</title>
+
+       <br />
+<center>      <b>QuickNXS Users Manual</b>
+  
+
+<div class="p"><!----></div>
+  <br /><br />        Version 0.6
+  
+
+<div class="p"><!----></div>
+  <br /><br /><br />  <a href="../../icons/logo.pdf">Figure</a>
+
+<div class="p"><!----></div>
+  <br /><br /><br />          Extraction software<br />
+    of the <br />
+    SNS Magnetism Reflectometer<br />
+    Beamline - 4A.
+      
+    <br />
+
+<div class="p"><!----></div>
+      Last updated Apr 22, 2013
+
+
+</center>
+
+<div class="p"><!----></div>
+        <h1><a name="tth_chAp1">
+Chapter 1 </a><br />Introduction and Background</h1>
+<a name="chap:introduction">
+</a>
+
+<div class="p"><!----></div>
+   <h2><a name="tth_sEc1.1">
+1.1</a>&nbsp;&nbsp;The data recorded at Beamline 4A</h2>
+
+<div class="p"><!----></div>
+   <h2><a name="tth_sEc1.2">
+1.2</a>&nbsp;&nbsp;What does QuickNXS data reduction do?</h2>
+
+  
+ <h1><a name="tth_chAp2">
+Chapter 2 </a><br />User Interface</h1>
+<a name="chap:user_interface">
+</a>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.1">
+2.1</a>&nbsp;&nbsp;Overview</h2>
+
+
+<a href="screenshots/overview_labels.png">Figure</a> 
+
+
+<div class="p"><!----></div>
+In addition to the default elements of a typical graphical user interface (GUI) like menu-, tool- and statusbar the QuickNXS program has a central area, which can be switch using the tab bar above, and several plot and option areas on the left and right side, always visible. Most users will work only with the &#214;verview" tab visible in the image above as it contains all valuable information about the current loaded dataset and the reduction parameters. 
+The on the left and right areas can be customized in size and hold parameter entries for the reduction as well as the projection and reflectivity plot, most important for the extraction.
+The other tabs, shown below, allow a parallel view on the 2D maps of all channels in the active dataset as well as an preview of off-specular scattering and motor/controller logs from the current file.
+
+<div class="p"><!----></div>
+ 
+<table>
+<tr><td align="center"><a href="screenshots/xymaps.png">Figure</a></td><td align="center"><a href="screenshots/xtofmaps.png">Figure</a></td><td align="center"><a href="screenshots/offspecmaps.png">Figure</a></td><td align="center"><a href="screenshots/daslogs.png">Figure</a></td></tr>
+<tr><td align="center">X-Y-Maps </td><td align="center">X-ToF-Maps </td><td align="center">Off-Specular </td><td align="center">DAS Logs
+ </td></tr></table>
+
+
+<div class="p"><!----></div>
+ Each of the plots has an own toolbar described in the plots section and show one specific aspect of your dataset. Often it is important to look not only on one of these plots to analyze the data, so it is good to familiarize with what you see there.
+ All options available in the toolbar are duplicated somewhere in the menus, to make it easier to find, what you need.
+ The most important actions have <b>keystrokes</b> assigned to them for convenience. 
+ The keys have been chosen to be accessible only with the right hand, so you can use them together with the mouse.
+ <b>Most GUI elements have a tool tip</b> assigned, so you can always position the <b>mouse cursor</b> over <b>any element to get a more detailed description</b>, what it is used for.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.2">
+2.2</a>&nbsp;&nbsp;Menu and toolbar actions</h2>
+
+<div class="p"><!----></div>
+  
+<dl compact="compact">
+ <dt><b><a href="../../icons/document-open.png">Figure</a> File -&#62; Open... (CTRL+O)</b></dt>
+	<dd> Shows a dialog to select a file to be loaded. The filename filter depends if "Histogram" or &#203;vent" mode are selected in the Files area.</dd>
+ <dt><b>File -&#62; Open Sum... (CTRL+SHIFT+O)</b></dt>
+	<dd> Allows to open several files to sum up their intensities</dd>
+ <dt><b><a href="../../icons/listDown.png">Figure</a> File -&#62; Next File (CTRL+D)</b></dt>
+	<dd> Opens the file below the active selection in the Files area.</dd>
+ <dt><b><a href="../../icons/listUp.png">Figure</a> File -&#62; Previous File (CTRL+SHIFT+D)</b></dt>
+	<dd> Opens the file above the active selection in the Files area.</dd>
+ <dt><b><a href="../../icons/extractNormalization.png">Figure</a> Reduction -&#62; Set Normalization (CTRL+W)</b></dt>
+	<dd> Use the data extracted from the current file as a normalization dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate normalization file is selected using the number of time of flight channels in a file and the central wavelength, if this is ambiguous a dialog is shown to the user to select one dataset.</dd>
+ <dt><b><a href="../../icons/clearNorm.png">Figure</a> Reduction -&#62; Clear Normalization (CTRL+SHIFT+W)</b></dt>
+	<dd> Use the data extracted from the current file as a normalization dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate normalization file is selected using the number of time of flight channels in a file and the central wavelength, if this is ambiguous a dialog is shown to the user to select one dataset.</dd>
+ <dt><b><a href="../../icons/totalReflection.png">Figure</a> Reduction -&#62; Set Scaling (CTRL+S)</b></dt>
+	<dd> For the first dataset it tries to find the edge of total reflection and fit a constant to all points before it to normalize it to one. For the second dataset it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.</dd>
+ <dt><b><a href="../../icons/cutPoints.png">Figure</a> Reduction -&#62; Cut Points (L/R) (CTRL+SHIFT+C)</b></dt>
+	<dd> Tries to select good cut points for the given wavelength band based on the corresponding direct beam measurement</dd>
+ <dt><b><a href="../../icons/addRef.png">Figure</a> Reduction -&#62; Keep Item in List (CTRL+Q)</b></dt>
+	<dd> Use the reflectivity from the current dataset and add it the the reduction list. Only works for already normalized dataset. The options in the reduction list can still be changed later.</dd>
+ <dt><b><a href="../../icons/delRef.png">Figure</a> Reduction -&#62; Remove Line</b></dt>
+	<dd> Remove the selected line from the reduction list.</dd>
+ <dt><b><a href="../../icons/clearRef.png">Figure</a> Reduction -&#62; Clear List (CTRL+SHIFT+Q)</b></dt>
+	<dd> Clear the full reduction list to start a new set of reflectivity.</dd>
+ <dt><b><a href="../../icons/reduce.png">Figure</a> Reduction -&#62; Reduce...</b></dt>
+	<dd> Use the items and options in the reduction table to export a dataset. Shows a dialog to select how the export should be done.</dd>
+ <dt><b><a href="../../icons/findXauto.png">Figure</a> Advanced -&#62; Automatic Peak Finder</b></dt>
+	<dd> If checked, the program runs a peak finder and peak fitting algorithm on the X-projection of the data each time a new dataset is loaded and sets the X-center parameter accordingly.</dd>
+ <dt><b><a href="../../icons/limitYauto.png">Figure</a> Advanced -&#62; Automatic Y Limits</b></dt>
+	<dd> If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly. After adding the first dataset to the reduction table the option is switched off automatically.</dd>
+ <dt><b><a href="../../icons/fitXPos.png">Figure</a> Advanced -&#62; Refine X</b></dt>
+	<dd> If checked, each time the user clicks on the X-projection plot to select another X-center position, a Gaussian fit is executed to refine the position.</dd>
+ <dt><b>Advanced -&#62; Advanced Background ...</b></dt>
+	<dd> Open a dialog with additional options for the background subtraction.</dd>
+ <dt><b><a href="../../icons/tthZero.png">Figure</a> Advanced -&#62; Adjust Direct Beam</b></dt>
+	<dd> For datasets where the direct pixel and or DANGLE0 values are not correctly defined, this action can take the current X-position of a direct beam measurement to set overwrite parameters accordingly.</dd>
+ <dt><b> Advanced -&#62; Clear Overwrite</b></dt>
+	<dd> This clears the overwrite parameters defined with &#196;djust Direct Beam".</dd>
+ <dt><b> Advanced -&#62; Open Compare Window...</b></dt>
+	<dd> Open a dialog which allows the direct comparison of different reflectivity measurements, can be used several times and is equivalent to the Compare tab of the main window.</dd>
+</dl>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.3">
+2.3</a>&nbsp;&nbsp;The Overview Tab</h2>
+  This central tab shows information on the current dataset and the data reduction. A label at the top indicates the current file number, experiment ID, measurement type and the currently selected channel.
+  The two map plots below the label show the projected intensities on the horizontal and vertical detector axes (left) and on the time of flight and horizontal detector axes (right), in the same way as it is show during data acquisition.
+  In the center some important parameters, extracted from the datafile header, are displayed. The αi, 2Θ and Counts ROI parameter also depends on the selected X- and Y- region and is thus not directly read from the file.
+  The mouse can be used to define the X- and Y-region in this plots similar as in the projection areas described below.
+
+<div class="p"><!----></div>
+  At the bottom you can find the reduction table and an additional tab with a list of defined normalization datasets.
+  These tables show the parameters used for the respective intensity extractions.
+  These parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity area.
+  Directly above the table is a label showing the numbers of all defined normalization files and a drop-down selection for the current dataset channel shown in the Overview, projections and reflectivity plots.
+  Selecting a channel not present in the current file will result in a fallback to the first channel.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.4">
+2.4</a>&nbsp;&nbsp;Plots and Options</h2>
+  The areas on the left and right of the window contain e.g. the projection plots and extraction parameters and are visible on any tab of the main interface. The left side contains option fields for the extraction parameters and file readout while the right side is dedicated for important plots.
+  Here is a list of the available areas from top to bottom, first on the left and than on the right hand side.
+
+<div class="p"><!----></div>
+  
+<dl compact="compact">
+ <dt><b>Files</b></dt>
+	<dd> A list of all datafile in the current directory together with an entry to search for a file by number and select to extract either histogram or event mode data. In the event mode setting additional options will be displayed.</dd>
+ <dt><b>Reflectivity Extraction (Basic)</b></dt>
+	<dd> The parameters used to extract the active reflectivity. When adding a dataset to the reduction list, these parameters are stored.</dd>
+ <dt><b>Reflectivity Extraction (Advanced)</b></dt>
+	<dd> Settings to change the extraction method or overwrite parameters otherwise read from the datafile. Options for the stitching algorithm can be found here as well.</dd>
+ <dt><b>Algorithm Parameters</b></dt>
+	<dd> Settings for the peak finder algorithm not important for normal user operation.</dd>
+ <dt><b>Plot Options</b></dt>
+	<dd> Global settings for the shown plots, does not effect the data reduction in any way. Here you can also chose to show the 2D datasets in wavelength and angle instead of time of flight and pixel.</dd>
+ <dt><b>X-Projection</b></dt>
+	<dd> A plot with the data of the loaded file projected on the detector X-axis. Green lines indicate the background region defined at the moment. The X-position is marked with a black line and the X-width with two red lines. The mouse can be used to change the background region and X-center using the left mouse button and set the X-width using the right mouse button.</dd>
+ <dt><b>Y-Projection</b></dt>
+	<dd> An equivalent projection on the detector Y-axis, showing the selected Y-region with red lines. The mouse can be used to change the Y-region using left clicks.</dd>
+ <dt><b>Reflectivity</b></dt>
+	<dd> Show all datasets already added to the reduction list and the currently selected one. For unnormalized datasets it show intensity and background vs. wavelength. Datasets in the reduction list can be scaled with the mouse wheel when at the right x-coordinates (faster scaling when CTRL is pressed while scrolling).</dd>
+</dl>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.5">
+2.5</a>&nbsp;&nbsp;Convenient Parameter Alteration with the Mouse Wheel</h2>
+  You can use the mouse wheel when you cursor is on top of a value entry to increase or decrease the according parameter. 
+  This can be very convenient to see the result of e.g. changing the scaling factor for the current reflectivity. Holding down the CTRL key while scrolling increases the speed of the parameter changes.
+  The same method can also be used to scale datasets in the reduction table, simply by moving the mouse at the curve in the reflectivity plot and scrolling with the mouse wheel.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.6">
+2.6</a>&nbsp;&nbsp;Plots</h2>
+  Each of the plots described above are created with the same framework and have a toolbar below them:<br />
+  <a href="screenshots/plottoolbar.png">Figure</a><br />
+  The first 5 items allow the navigation on the plot, like zooming in and out or moving the current view position.
+  The third icon from the left opens a dialog, which can be used to change the amount of freespace around the plot to fit the current window scaling.
+  The last two icons can be used to save or print the plot.
+  <b>Keep in mind that the X- and Y-projection as well as the overview maps can be used to select the extraction parameters.</b>
+  This will only work when no scaling tool is selected from the plot toolbar.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2.7">
+2.7</a>&nbsp;&nbsp;Data reduction table</h2>
+  <a href="screenshots/reductiontable.png">Figure</a>
+
+<div class="p"><!----></div>
+  Each entry created in the reduction table shows all important parameters needed for reflectivity extraction.
+  In addition to the parameters found in the Reflectivity Extraction area there is a value for the direct pixel (DPix) and relative detector arm position DANGLE-DANGLE0 (TTH) as well as the dataset and normalization file number.
+  <b>Changing any of the reduction parameters</b> (except for the two file number columns) immediately recalculates the extracted reflectivity.
+  All lines present in the reduction table are plotted together with the current dataset in the Reflectivity Extraction area.
+
+<div class="p"><!----></div>
+   <h1><a name="tth_chAp3">
+Chapter 3 </a><br />Data Reduction</h1>
+<a name="chap:data_reduction">
+</a>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3.1">
+3.1</a>&nbsp;&nbsp;Open and view a dataset</h2>
+<a name="sec:open_file">
+</a>
+  The first step to start with is to enter the number of a normalization dataset in the &#214;pen Number:" entry of the Files area and press enter. The program will now locate the file and open it.
+  The Files area list will be populated with all files in your current proposal data folder and the plot windows should look similar to this:
+
+<div class="p"><!----></div>
+  
+<table>
+<tr><td align="center"><a href="screenshots/normalizemap1.png">Figure</a> </td><td align="center"><a href="screenshots/normalizemap2.png">Figure</a> </td><td align="center"></td></tr>
+<tr><td align="center">Overview X-Y </td><td align="center">Overview ToF-X </td><td align="center"></td></tr>
+<tr><td align="center"><a href="screenshots/normalize1.png">Figure</a> </td><td align="center"><a href="screenshots/normalize2.png">Figure</a> </td><td align="center"><a href="screenshots/normalize3.png">Figure</a> </td></tr>
+<tr><td align="center">X-Projection </td><td align="center">Y-Projection </td><td align="center">Reflectivity
+  </td></tr></table>
+
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3.2">
+3.2</a>&nbsp;&nbsp;Go full-automatic: Reduction for dummies</h2>
+  For good quality data (enough intensity and narrow reflection) the program supports a fully automatized mode, where all reduction parameters are automatically calculated.
+  This mode will be applied automatically when more than one dataset is selected at the File Open Dialog.
+  The direct beam measurement have to have lower scan numbers than the actual measurements or need to be set in advance for this method to work.
+
+<div class="p"><!----></div>
+  The automatic algorithm performs the same steps as described in section <a href="#sec:quick_start">3.3</a>, while trying to guess the best parameters.
+  The datasets are read one-by-one and, depending on the reflection angle, they are either set as normalization or reflectivity data in the reduction list.
+  Here is an example how the interface might look after the algorithm has finished:
+
+<div class="p"><!----></div>
+  <a href="screenshots/overview.png">Figure</a>
+
+<div class="p"><!----></div>
+    You can now scale individual datasets as described in <a href="#sec:scaling">3.3.5</a>, if the stitching was not performed optimally.
+  When satisfied with the result, you can save the data as described in the export section <a href="#sec:export">3.3.6</a>.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3.3">
+3.3</a>&nbsp;&nbsp;Quick start: Step-by-step standard reduction</h2>
+<a name="sec:quick_start">
+</a>
+  For most datasets the reduction is done very similar to the fully automatized method but with more control of the user.
+  Every dataset is examined by the operator to select the best extraction parameters.
+
+<div class="p"><!----></div>
+       <h3><a name="tth_sEc3.3.1">
+3.3.1</a>&nbsp;&nbsp;Step 1: Set wavelength normalization from direct beam</h3>
+    [11]r0.55
+    
+<table>
+<tr><td align="center">Reflectivity before </td><td align="center">Reflectivity after </td></tr>
+<tr><td align="center"><a href="screenshots/normalize3.png">Figure</a> </td><td align="center"><a href="screenshots/normalize_after.png">Figure</a>
+    </td></tr></table>
+     
+    
+
+<div class="p"><!----></div>
+        <b>Open your normalization file</b> as described in section <a href="#sec:open_file">3.1</a>. 
+      Make sure the SANGLE-calc value shown in the overview tab is close to zero and that the X- and Y-projections show the correct regions with the red indicators.
+      Activate the <b>Set Normalization action</b> <a href="../../icons/extractNormalization.png">Figure</a>, this will add the current dataset to the "Normalization" list, the "Direct Beam Runs:" label will show the number of the dataset and the reflectivity will show the normalized intensities, which should all be one.
+      Repeat this step for each direct beam measurement needed for your dataset.
+
+<div class="p"><!----></div>
+         <h3><a name="tth_sEc3.3.2">
+3.3.2</a>&nbsp;&nbsp;Step 2: Define a suitable background- and y-region</h3>
+    [15]r0.55
+    <center>
+      X-projection with background region (green)<br />
+      <a href="screenshots/background.png">Figure</a>
+    
+<table>
+<tr><td align="center">Y-projection of small sample </td><td align="center">X-Y map </td></tr>
+<tr><td align="center"><a href="screenshots/yregion.png">Figure</a> </td><td align="center"><a href="screenshots/yregionmap.png">Figure</a>
+    </td></tr></table>
+     
+    </center>
+
+<div class="p"><!----></div>
+    Although it is in principle possible to define the extraction and background region for each dataset separately, it is recommended to use the same parameters for all files.
+    From this perspective it is often a good idea to start with the dataset with the highest incident angle, as there the signal to background ration is the lowest.
+    To produce the best results you should select a large region (statistics), keeping enough distance from the reflected beam (especially when off-specular Bragg-sheets are present) and to not include regions where the background drops (shadowed by the right detector slit for example).
+    The Y-region, shown in the Y-projection of the first (low Q) dataset, is often detected very well automatically.
+    Just check that it fits to the reflected intensity area. 
+    For very small samples it can sometimes make sense to manually restrain the area to the sample reflection.
+
+<div class="p"><!----></div>
+       <h3><a name="tth_sEc3.3.3">
+3.3.3</a>&nbsp;&nbsp;Step 3: Normalize to total reflection and add the first dataset</h3>
+    [13]r0.4
+     <a href="screenshots/totalreflection.png">Figure</a> 
+    
+    Go to your dataset starting at the lowest Q<sub>z</sub>value, remove points from the low Q<sub>z</sub>region, which are not reasonable with the <b>Cut Pts parameters</b>:
+    <a href="screenshots/cutpoints.png">Figure</a> (can be done automatically with the <b>Cut Points (L/R)</b> <a href="../../icons/cutPoints.png">Figure</a> action). Than activate the <b>Set Scaling action</b> <a href="../../icons/totalReflection.png">Figure</a> to normalize the total reflection to one.
+    This should now look like the image on the right.
+    Next add the dataset to the refinement list using the <b>Keep Item in List action</b> <a href="../../icons/addRef.png">Figure</a> to add the dataset with the current parameters in the list.
+    This will automatically switch off the <b>Automatic Y Limits</b> <a href="../../icons/limitYauto.png">Figure</a>, so all datasets will be reduced with the same Y-range.
+    This is important for the high Q<sub>z</sub>region as the background often inhibits a good automatic detection of the Y-region.
+
+<div class="p"><!----></div>
+         <h3><a name="tth_sEc3.3.4">
+3.3.4</a>&nbsp;&nbsp;Step 4: Add additional datasets and stitch them together</h3>
+    [12]r0.4
+    <center>
+     <a href="screenshots/stitching1.png">Figure</a> 
+    </center>
+    Now you can continue adding each subsequent dataset one after another.
+    If nothing goes wrong, the only thing that needs to be changed from dataset are the <b>Cut Pts</b> and <b>Scaling</b> values.
+    If the scaling of subsequent datasets does not fit, activate the <b>Set Scaling action</b> <a href="../../icons/totalReflection.png">Figure</a> again. 
+    This fits a polynomial to the logarithmic data of both adjacent datasets including a scaling factor for the second, which is than used for the scaling after the fit.
+    The error weighted &#967;<sup>2</sup> used for this refinement is:
+    
+<br clear="all" /><table border="0" width="100%"><tr><td>
+<table border="0" cellspacing="0" cellpadding="0">
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+ &#967;<sub>stitch</sub><sup>2</sup> = </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+\undersetDS1</td><td nowrap="nowrap" align="center">
+<font size="+3">&#8721;<br />
+</font></td><td nowrap="nowrap"></td><td nowrap="nowrap" align="center">
+(log(I<sub>i</sub>)&#8722;p(Q<sub>i</sub>))<sup>2</sup>
+<div class="hrcomp"><hr noshade="noshade" size="1"/></div>(&#948;I<sub>i</sub>/I<sub>i</sub>)<sup>2</sup><br /></td><td nowrap="nowrap" align="center">
++ \undersetDS2</td><td nowrap="nowrap" align="center">
+<font size="+3">&#8721;<br />
+</font></td><td nowrap="nowrap"></td><td nowrap="nowrap" align="center">
+(log(I<sub>j</sub>&#183;scale)&#8722;p(Q<sub>j</sub>))<sup>2</sup>
+<div class="hrcomp"><hr noshade="noshade" size="1"/></div>(&#948;I<sub>j</sub>/I<sub>j</sub>)<sup>2</sup><br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+ <span class="roman">with</span>  p(Q) = </td></tr></table></td><td nowrap="nowrap" align="left">
+<table><tr><td nowrap="nowrap" align="right" colspan="1">a&#183;Q<sup>2</sup> + b&#183;Q +c  <span class="roman">for</span> <span class="roman">polynom</span> <span class="roman">order</span> <span class="roman">3</span> </td></tr></table></td><td width="50%"></td></tr></table>
+</td></tr></table>
+
+
+    The resulting fit function is shown in the reflectivity plot together with the scaled data as can be seen in the figure on the right.
+    For some datasets with very sharp features like multilayer Bragg-peaks this method will not work, in those cases you need to change the <b>Scale 10^</b> parameter manually until the datasets fit together nicely.
+    For polarized measurements it can sometimes be helpful to switch back and forth between different polarization channels as the variation in contrast can lead to smooth transitions, where the other channel has a sharp feature.
+    Now add the dataset to the reduction list with <b>Keep Item in List action</b> <a href="../../icons/addRef.png">Figure</a> again and repeat the procedure for all datasets belonging to this measurement.
+
+<div class="p"><!----></div>
+       <h3><a name="tth_sEc3.3.5">
+3.3.5</a>&nbsp;&nbsp;Step 5: Refine the reflectivity scaling and cutting</h3>
+  <a name="sec:scaling">
+</a>
+    [10]r0.6
+    <center>
+    
+<table>
+<tr><td align="center">As added to reduction list</td><td align="center">With changed cut points</td></tr>
+<tr><td align="center"><a href="screenshots/stitching2.png">Figure</a> </td><td align="center"><a href="screenshots/cleanpoints.png">Figure</a> 
+    </td></tr></table>
+
+    </center>
+    When all datasets of one measurement have been added, as can be seen in the image on the right, you can try to improve the scaling of the different parts, if needed, and change the cutting parameters.
+    To change the scaling of one dataset you can either change the value of the <b>I0 column</b> entry in the reduction list or move the mouse <b>cursor on top of the curve</b> you want to scale and <b>move the mouse wheel</b>.
+    To remove unwanted point you need to change the values of the <b>NL</b> and <b>NR column</b> entries as they define the number of points cut from the low- and hight-Q side respectively.
+    If the number of time of flight channels in the histogram dataset is larger than the wavelength window used for the measurement it is possible that large values are needed (&lt;=60) to see changes in the dataset.
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.3.6">
+3.3.6</a>&nbsp;&nbsp;Step 6: Export your data</h3>
+  <a name="sec:export">
+</a>
+    [14]r0.35
+    <center>
+     <a href="screenshots/reduced.png">Figure</a>
+    </center>
+    Now you are ready to export you reflectivity! 
+    Activate the <b>Reduce... action</b> <a href="../../icons/reduce.png">Figure</a> from the menu, toolbar or the button below the reduction list.
+    The reduce dialog has several options for the export of the dataset.
+    You can select which reductions should be stored, choose the channels to export and define which data formats should be created.
+    As a default, the specular reflectivity of all available channels will be exported to separate ASCII files and a dialog with a plot of the resulting data will be shown afterwards.
+    Additional output options are a combined ASCII file containing all channels, a matlab or numpy datafile for later processing, a Gnuplot script and image file to plot the ASCII data and a GenX reflectivity modeling template already containing the measured data.
+    If you want to send the resulting data to your email address you can use the <b>Email Results</b> tab to enter your address and select which and if the data should be send after the export.
+
+<div class="p"><!----></div>
+     <h2><a name="tth_sEc3.4">
+3.4</a>&nbsp;&nbsp;Examples</h2>
+  This section will give three example datasets, which you can use to try the reduction yourself and compare the result with the images in this manual.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3.5">
+3.5</a>&nbsp;&nbsp;Common problems to be aware of</h2>
+
+  
+ <h1><a name="tth_chAp4">
+Chapter 4 </a><br />Advanced Usage</h1>
+<a name="chap:advanced_usage">
+</a>
+  
+ <h2><a name="tth_sEc4.1">
+4.1</a>&nbsp;&nbsp;Event mode data</h2>
+    When the event mode is selected for file import additional options for the desired binning are shown. You can define the number of <b>Bins</b>, the bin steps (constant ToF or Q steps) and split datasets in time.
+
+<div class="p"><!----></div>
+   <h2><a name="tth_sEc4.2">
+4.2</a>&nbsp;&nbsp;Re-reduction of already exported data</h2>
+    You can read all datasets and options from an already exported reflectivity using the <b>File-&#62;Load Extraction...</b> menu and select a ASCII file. 
+    Afterwards the options in the reduction table can be changed as desired.
+
+<div class="p"><!----></div>
+   <h2><a name="tth_sEc4.3">
+4.3</a>&nbsp;&nbsp;Overwrite direct beam parameters</h2>
+    If the the direct beam position was not saved correctly during instrument alignment all calculated Q<sub>z</sub>-values for the reflectivity will be wrong.
+    To correct this there are two parameters to overwrite it in the <b>Reflectivity Extraction (Advanced)</b> area, Direct Pixel and Dangle0.
+    These parameters are ignored if they have the values -1 and None.
+    To overwrite the correct values you can open a direct beam dataset and activate the  <b>Adjust Direct Beam</b> <a href="../../icons/tthZero.png">Figure</a> to save the current DANGLE as <b>Dangle0</b> and the fitted x-position as <b>Direct Pixel</b>.
+
+<div class="p"><!----></div>
+     <h2><a name="tth_sEc4.4">
+4.4</a>&nbsp;&nbsp;Advanced background subtraction</h2>
+    [16]r0.3
+    <center> 
+    <a href="screenshots/advancedBackground.png">Figure</a>
+    </center>
+    There are a few cases where you could need additional control over the subtracted background, for this case you can use the <b>Advance Background...</b> action to open a dialog with more options.
+    An example is shown on the right. 
+    The upper plot shows the X vs. λ plot of the current dataset, indicating the areas taken to calculate the background data.
+    The lower plot shows the extracted data and background as wavelength vs. intensity plot.
+    You can use Polygons to define the extraction area for the background precisely, these polygons are than shown in the X vs. λ plot as gray areas. 
+    The normal extraction region defined by the main window parameters is shown in red. 
+    For each λ channel the average value of all pixels in the gray areas is taken as background. 
+    If for a given value of λ no points are defined with a polygon the red area is taken.
+    As an additional option it is possible to presume a background that is directly dependent on the incident intensity to reduce the error bars.
+
+<div class="p"><!----></div>
+   <h2><a name="tth_sEc4.5">
+4.5</a>&nbsp;&nbsp;"Fan"-Reflectivity</h2>
+    Some samples have a weavy or bent surface and reflect the neutron beam into different angles. 
+    Treating these as one reflection will destroy the Q<sub>z</sub>resolution of you measurement or needs to be restricted to a small X-region, which reduces the statistics.
+    For these cases the <b>Reflectivity Extraction (Advanced)</b> area has a <b>"Fan"-Reflectivity</b> option, which treats each pixel on the detector separately to calculate I(Q<sub>z</sub>) and combines these reflectivity afterwards to get better statistics. 
+    In this case you can widen the red area on the X-projection plot to take into account your full reflectivity.
+    The underlying algorithm reduces the total width of a selected dataset in Q<sub>z</sub>so it can be possible that for lower angles you do not get overlapping areas to stitch the data together.
+    In this case you should select a smaller area for the lower angle measurements and/or extract two regions in X for one dataset.
+
+<div class="p"><!----></div>
+   <h2><a name="tth_sEc4.6">
+4.6</a>&nbsp;&nbsp;Off-specular and GISANS scattering</h2>
+    Off-specular scattering can easily be extracted when the specular reflectivity is already defined in the reduction table. You can take a look at the <b>OffSpec Preview</b> tab to take a look in advance (does not show the active dataset, only the reduction table entries).
+    The reduction dialog as a separate option to export the off-specular data, where <i>Raw</i> refers to the data as extractec, <i>Corrected</i> applies an algorithm to reduce detector artifacts from high intensity areas and <i>Smoothed</i> will interpolate the data to a regular grid with Q<sub>z</sub>-dependent Gaussian smoothing (parameters are defined in a separate dialog when exporting).
+
+<div class="p"><!----></div>
+    For GISANS measurements another dialog appears when exporting, where you can define the wavelength bands, which will be combined in one image.
+
+<div class="p"><!----></div>
+  
+<br /><br /><hr /><small>File translated from
+T<sub><font size="-1">E</font></sub>X
+by <a href="http://hutchinson.belmont.ma.us/tth/">
+T<sub><font size="-1">T</font></sub>H</a>,
+version 4.01.<br />On 22 Apr 2013, 19:47.</small>
+</html>

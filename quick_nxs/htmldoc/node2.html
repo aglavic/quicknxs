@@ -27,24 +27,24 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <BODY >
 
 <DIV CLASS="navigation"><!--Navigation Panel-->
-<A NAME="tex2html55"
+<A NAME="tex2html54"
   HREF="node3.html">
 <IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
  SRC="/usr/share/latex2html/icons/next.png"></A> 
-<A NAME="tex2html53"
+<A NAME="tex2html52"
   HREF="QuickNXS_Users_Manual.html">
 <IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
  SRC="/usr/share/latex2html/icons/up.png"></A> 
-<A NAME="tex2html47"
+<A NAME="tex2html46"
   HREF="node1.html">
 <IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
  SRC="/usr/share/latex2html/icons/prev.png"></A>   
 <BR>
-<B> Next:</B> <A NAME="tex2html56"
+<B> Next:</B> <A NAME="tex2html55"
   HREF="node3.html">Data Reduction</A>
-<B> Up:</B> <A NAME="tex2html54"
+<B> Up:</B> <A NAME="tex2html53"
   HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
-<B> Previous:</B> <A NAME="tex2html48"
+<B> Previous:</B> <A NAME="tex2html47"
   HREF="node1.html">Introduction and Background</A>
 <BR>
 <BR></DIV>
@@ -53,19 +53,19 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
 
 <UL CLASS="ChildLinks">
-<LI><A NAME="tex2html57"
+<LI><A NAME="tex2html56"
   HREF="node2.html#SECTION00210000000000000000">Overview</A>
-<LI><A NAME="tex2html58"
+<LI><A NAME="tex2html57"
   HREF="node2.html#SECTION00220000000000000000">Menu and toolbar actions</A>
-<LI><A NAME="tex2html59"
+<LI><A NAME="tex2html58"
   HREF="node2.html#SECTION00230000000000000000">The Overview Tab</A>
+<LI><A NAME="tex2html59"
+  HREF="node2.html#SECTION00240000000000000000">Plots and Options</A>
 <LI><A NAME="tex2html60"
-  HREF="node2.html#SECTION00240000000000000000">Dock Windows</A>
-<LI><A NAME="tex2html61"
   HREF="node2.html#SECTION00250000000000000000">Convenient Parameter Alteration with the Mouse Wheel</A>
-<LI><A NAME="tex2html62"
+<LI><A NAME="tex2html61"
   HREF="node2.html#SECTION00260000000000000000">Plots</A>
-<LI><A NAME="tex2html63"
+<LI><A NAME="tex2html62"
   HREF="node2.html#SECTION00270000000000000000">Data reduction table</A>
 </UL>
 <!--End of Table of Child-Links-->
@@ -90,8 +90,8 @@ Overview</A>
 </BIG>
 
 <P>
-In addition to the default elements of a typical graphical user interface (GUI) like menu-, tool- and statusbar the QuickNXS program has a central area, which can be switch using the tab bar above, and several "Dock Windows" on the left and right side, always visible. Most users will work only with the "Overview" tab visible in the image above as it contains all valuable information about the current loaded dataset and the reduction parameters. 
-The "Dock Window" can be customized as described in the according section and hold parameter entries for the reduction as well as the projection and reflectivity plot, most important for the extraction.
+In addition to the default elements of a typical graphical user interface (GUI) like menu-, tool- and statusbar the QuickNXS program has a central area, which can be switch using the tab bar above, and several plot and option areas on the left and right side, always visible. Most users will work only with the "Overview" tab visible in the image above as it contains all valuable information about the current loaded dataset and the reduction parameters. 
+The on the left and right areas can be customized in size and hold parameter entries for the reduction as well as the projection and reflectivity plot, most important for the extraction.
 The other tabs, shown below, allow a parallel view on the 2D maps of all channels in the active dataset as well as an preview of off-specular scattering and motor/controller logs from the current file.
 
 <P>
@@ -105,7 +105,7 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all channel
  SRC="./xtofmaps.png"
  ALT="Image xtofmaps"></TD>
 <TD ALIGN="CENTER"><IMG
-  WIDTH="143" HEIGHT="185" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="143" HEIGHT="180" ALIGN="BOTTOM" BORDER="0"
  SRC="./offspecmaps.png"
  ALT="Image offspecmaps"></TD>
 <TD ALIGN="CENTER"><IMG
@@ -139,21 +139,25 @@ Menu and toolbar actions</A>
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./document-open.png"
  ALT="Image document-open"> File -&gt; Open... (CTRL+O)</STRONG></DT>
-<DD>Shows a dialog to select a file to be loaded. The filename filter depends if "Histogram" or "Event" mode are selected in the Files Dock Window.
+<DD>Shows a dialog to select a file to be loaded. The filename filter depends if "Histogram" or "Event" mode are selected in the Files area.
+   
+</DD>
+<DT><STRONG>File -&gt; Open Sum... (CTRL+SHIFT+O)</STRONG></DT>
+<DD>Allows to open several files to sum up their intensities
    
 </DD>
 <DT><STRONG><IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./listDown.png"
  ALT="Image listDown"> File -&gt; Next File (CTRL+D)</STRONG></DT>
-<DD>Opens the file below the active selection in the Files Dock Window.
+<DD>Opens the file below the active selection in the Files area.
    
 </DD>
 <DT><STRONG><IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./listUp.png"
- ALT="Image listUp"> File -&gt; Previous File (CTRL+SHIFT+O)</STRONG></DT>
-<DD>Opens the file above the active selection in the Files Dock Window.
+ ALT="Image listUp"> File -&gt; Previous File (CTRL+SHIFT+D)</STRONG></DT>
+<DD>Opens the file above the active selection in the Files area.
 
 <P>
 </DD>
@@ -177,6 +181,13 @@ Menu and toolbar actions</A>
  SRC="./totalReflection.png"
  ALT="Image totalReflection"> Reduction -&gt; Set Scaling (CTRL+S)</STRONG></DT>
 <DD>For the first dataset it tries to find the edge of total reflection and fit a constant to all points before it to normalize it to one. For the second dataset it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
+   
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="./cutPoints.png"
+ ALT="Image cutPoints"> Reduction -&gt; Cut Points (L/R) (CTRL+SHIFT+C)</STRONG></DT>
+<DD>Tries to select good cut points for the given wavelength band based on the corresponding direct beam measurement
    
 </DD>
 <DT><STRONG><IMG
@@ -220,7 +231,7 @@ Menu and toolbar actions</A>
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./limitYauto.png"
  ALT="Image limitYauto"> Advanced -&gt; Automatic Y Limits</STRONG></DT>
-<DD>If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly.
+<DD>If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly. After adding the first dataset to the reduction table the option is switched off automatically.
    
 </DD>
 <DT><STRONG><IMG
@@ -228,6 +239,10 @@ Menu and toolbar actions</A>
  SRC="./fitXPos.png"
  ALT="Image fitXPos"> Advanced -&gt; Refine X</STRONG></DT>
 <DD>If checked, each time the user clicks on the X-projection plot to select another X-center position, a Gaussian fit is executed to refine the position.
+   
+</DD>
+<DT><STRONG>Advanced -&gt; Advanced Background ...</STRONG></DT>
+<DD>Open a dialog with additional options for the background subtraction.
    
 </DD>
 <DT><STRONG><IMG
@@ -239,6 +254,10 @@ Menu and toolbar actions</A>
 </DD>
 <DT><STRONG> Advanced -&gt; Clear Overwrite</STRONG></DT>
 <DD>This clears the overwrite parameters defined with "Adjust Direct Beam".
+   
+</DD>
+<DT><STRONG> Advanced -&gt; Open Compare Window...</STRONG></DT>
+<DD>Open a dialog which allows the direct comparison of different reflectivity measurements, can be used several times and is equivalent to the Compare tab of the main window.
   
 </DD>
 </DL>
@@ -251,28 +270,44 @@ The Overview Tab</A>
   This central tab shows information on the current dataset and the data reduction. A label at the top indicates the current file number, experiment ID, measurement type and the currently selected channel.
   The two map plots below the label show the projected intensities on the horizontal and vertical detector axes (left) and on the time of flight and horizontal detector axes (right), in the same way as it is show during data acquisition.
   In the center some important parameters, extracted from the datafile header, are displayed. The αi, 2Θ and Counts ROI parameter also depends on the selected X- and Y- region and is thus not directly read from the file.
-  The mouse can be used to define the X- and Y-region in this plots similar as in the projection Dock Windows described below.
+  The mouse can be used to define the X- and Y-region in this plots similar as in the projection areas described below.
 
 <P>
 At the bottom you can find the reduction table and an additional tab with a list of defined normalization datasets.
   These tables show the parameters used for the respective intensity extractions.
-  These parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity Dock Window.
+  These parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity area.
   Directly above the table is a label showing the numbers of all defined normalization files and a drop-down selection for the current dataset channel shown in the Overview, projections and reflectivity plots.
   Selecting a channel not present in the current file will result in a fallback to the first channel.
 
 <P>
 
 <H1><A NAME="SECTION00240000000000000000">
-Dock Windows</A>
+Plots and Options</A>
 </H1>
-  Dock windows are the the regions on the left and right of the window containing e.g. the projection plots and extraction parameters. They are visible on any tab of the main interface.
-  These windows positions can be customized by the user anywhere around the center, on top of each other, detached from the main window or completely closed (will be saved on exit). Closed dock windows can be restored by right clicking any dock window title or the empty region next to the toolbar and menu. You can easily detach and reattach them by clicking the diamod button at the top right.
-  Here is a list of available dock windows:
+  The areas on the left and right of the window contain e.g. the projection plots and extraction parameters and are visible on any tab of the main interface. The left side contains option fields for the extraction parameters and file readout while the right side is dedicated for important plots.
+  Here is a list of the available areas from top to bottom, first on the left and than on the right hand side.
 
 <P>
 <DL>
 <DT><STRONG>Files</STRONG></DT>
-<DD>A list of all datafile in the current directory together with an entry to search for a file by number and select to extract either histogram or event mode data.
+<DD>A list of all datafile in the current directory together with an entry to search for a file by number and select to extract either histogram or event mode data. In the event mode setting additional options will be displayed.
+
+<P>
+</DD>
+<DT><STRONG>Reflectivity Extraction (Basic)</STRONG></DT>
+<DD>The parameters used to extract the active reflectivity. When adding a dataset to the reduction list, these parameters are stored.
+   
+</DD>
+<DT><STRONG>Reflectivity Extraction (Advanced)</STRONG></DT>
+<DD>Settings to change the extraction method or overwrite parameters otherwise read from the datafile. Options for the stitching algorithm can be found here as well.
+   
+</DD>
+<DT><STRONG>Algorithm Parameters</STRONG></DT>
+<DD>Settings for the peak finder algorithm not important for normal user operation.
+   
+</DD>
+<DT><STRONG>Plot Options</STRONG></DT>
+<DD>Global settings for the shown plots, does not effect the data reduction in any way. Here you can also chose to show the 2D datasets in wavelength and angle instead of time of flight and pixel.
 
 <P>
 </DD>
@@ -287,33 +322,6 @@ Dock Windows</A>
 </DD>
 <DT><STRONG>Reflectivity</STRONG></DT>
 <DD>Show all datasets already added to the reduction list and the currently selected one. For unnormalized datasets it show intensity and background vs. wavelength. Datasets in the reduction list can be scaled with the mouse wheel when at the right x-coordinates (faster scaling when CTRL is pressed while scrolling).
-
-<P>
-</DD>
-<DT><STRONG>Reflectivity Extraction</STRONG></DT>
-<DD>The parameters used to extract the active reflectivity. When adding a dataset to the reduction list, these parameters are stored.
-   
-</DD>
-<DT><STRONG>Plot Options</STRONG></DT>
-<DD>Global settings for the shown plots, does not effect the data reduction in any way. Here you can also chose to show the 2D datasets in wavelength and angle instead of time of flight and pixel.
-
-<P>
-</DD>
-<DT><STRONG>Advanced Background</STRONG></DT>
-<DD>Additional parameters for the background subtraction, normally not in use.
-   
-</DD>
-<DT><STRONG>Advanced Parameters</STRONG></DT>
-<DD>Settings to change the extraction method or overwrite parameters otherwise read from the datafile.
-   
-</DD>
-<DT><STRONG>Algorithm Parameters</STRONG></DT>
-<DD>Settings for the peak finder and curve stitching algorithms.
-   
-</DD>
-<DT><STRONG>Event Mode Readout</STRONG></DT>
-<DD>Define the binning to be used when reading event mode data.
-  
 </DD>
 </DL>
 
@@ -333,7 +341,7 @@ Plots</A>
 </H1>
   Each of the plots described above are created with the same framework and have a toolbar below them:
 <BR>  <IMG
-  WIDTH="237" HEIGHT="28" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="237" HEIGHT="26" ALIGN="BOTTOM" BORDER="0"
  SRC="./plottoolbar.png"
  ALT="Image plottoolbar">
 <BR>
@@ -349,41 +357,41 @@ The first 5 items allow the navigation on the plot, like zooming in and out or m
 Data reduction table</A>
 </H1>
   <IMG
-  WIDTH="486" HEIGHT="129" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="506" HEIGHT="115" ALIGN="BOTTOM" BORDER="0"
  SRC="./reductiontable.png"
  ALT="Image reductiontable">
 
 <P>
 Each entry created in the reduction table shows all important parameters needed for reflectivity extraction.
-  In addition to the parameters found in the Reflectivity Extraction Dock Window there is a value for the direct pixel (DP) and detector arm position (TTH) as well as the dataset and normalization file number.
+  In addition to the parameters found in the Reflectivity Extraction area there is a value for the direct pixel (DPix) and relative detector arm position DANGLE-DANGLE0 (TTH) as well as the dataset and normalization file number.
   <SPAN  CLASS="textbf">Changing any of the reduction parameters</SPAN> (except for the two file number columns) immediately recalculates the extracted reflectivity.
-  All lines present in the reduction table are plotted together with the current dataset in the Reflectivity Dock Window.
+  All lines present in the reduction table are plotted together with the current dataset in the Reflectivity Extraction area.
   
 <DIV CLASS="navigation"><HR>
 <!--Navigation Panel-->
-<A NAME="tex2html55"
+<A NAME="tex2html54"
   HREF="node3.html">
 <IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
  SRC="/usr/share/latex2html/icons/next.png"></A> 
-<A NAME="tex2html53"
+<A NAME="tex2html52"
   HREF="QuickNXS_Users_Manual.html">
 <IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
  SRC="/usr/share/latex2html/icons/up.png"></A> 
-<A NAME="tex2html47"
+<A NAME="tex2html46"
   HREF="node1.html">
 <IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
  SRC="/usr/share/latex2html/icons/prev.png"></A>   
 <BR>
-<B> Next:</B> <A NAME="tex2html56"
+<B> Next:</B> <A NAME="tex2html55"
   HREF="node3.html">Data Reduction</A>
-<B> Up:</B> <A NAME="tex2html54"
+<B> Up:</B> <A NAME="tex2html53"
   HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
-<B> Previous:</B> <A NAME="tex2html48"
+<B> Previous:</B> <A NAME="tex2html47"
   HREF="node1.html">Introduction and Background</A></DIV>
 <!--End of Navigation Panel-->
 <ADDRESS>
 Artur Glavic
-2013-02-06
+2013-04-22
 </ADDRESS>
 </BODY>
 </HTML>

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2012.12.3)  6 FEB 2013 09:24
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2012.12.3)  22 APR 2013 19:48
 entering extended mode
  %&-line parsing enabled.
 **./images.tex
@@ -326,87 +326,56 @@ If that doesn't work, type  X <return>  to quit.
 \WF@box=\box28
 \WF@everypar=\toks24
 Package: wrapfig 2003/01/31  v 3.6
-) (/usr/share/texmf-texlive/tex/latex/subfig/subfig.sty
-Package: subfig 2005/06/28 ver: 1.3 subfig package
-(/usr/share/texmf-texlive/tex/latex/caption/caption.sty
-Package: caption 2009/10/09 v3.1k Customizing captions (AR)
-(/usr/share/texmf-texlive/tex/latex/caption/caption3.sty
-Package: caption3 2009/10/09 v3.1k caption3 kernel (AR)
-\captionmargin=\dimen110
-\captionmargin@=\dimen111
-\captionwidth=\dimen112
-\caption@indent=\dimen113
-\caption@parindent=\dimen114
-\caption@hangindent=\dimen115
-)
-Package caption Info: KOMA-Script document class.
-\c@ContinuedFloat=\count98
-Package caption Info: hyperref package is loaded.
-Package caption Info: wrapfig package is loaded.
-)
-\c@KVtest=\count99
-\sf@farskip=\skip47
-\sf@captopadj=\dimen116
-\sf@capskip=\skip48
-\sf@nearskip=\skip49
-\c@subfigure=\count100
-\c@subfigure@save=\count101
-\c@lofdepth=\count102
-\c@subtable=\count103
-\c@subtable@save=\count104
-\c@lotdepth=\count105
-\sf@top=\skip50
-\sf@bottom=\skip51
 ) (/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2000/07/18 v2.13 AMS math features
-\@mathmargin=\skip52
+\@mathmargin=\skip47
 For additional information on amsmath, use the `?' option.
 (/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01
 (/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
 \@emptytoks=\toks25
-\ex@=\dimen117
+\ex@=\dimen110
 )) (/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
-\pmbraise@=\dimen118
+\pmbraise@=\dimen111
 ) (/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
-\inf@bad=\count106
+\inf@bad=\count98
 LaTeX Info: Redefining \frac on input line 211.
-\uproot@=\count107
-\leftroot@=\count108
+\uproot@=\count99
+\leftroot@=\count100
 LaTeX Info: Redefining \overline on input line 307.
-\classnum@=\count109
-\DOTSCASE@=\count110
+\classnum@=\count101
+\DOTSCASE@=\count102
 LaTeX Info: Redefining \ldots on input line 379.
 LaTeX Info: Redefining \dots on input line 382.
 LaTeX Info: Redefining \cdots on input line 467.
 \Mathstrutbox@=\box29
 \strutbox@=\box30
-\big@size=\dimen119
+\big@size=\dimen112
 LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
-\macc@depth=\count111
-\c@MaxMatrixCols=\count112
+\macc@depth=\count103
+\c@MaxMatrixCols=\count104
 \dotsspace@=\muskip11
-\c@parentequation=\count113
-\dspbrk@lvl=\count114
+\c@parentequation=\count105
+\dspbrk@lvl=\count106
 \tag@help=\toks26
-\row@=\count115
-\column@=\count116
-\maxfields@=\count117
+\row@=\count107
+\column@=\count108
+\maxfields@=\count109
 \andhelp@=\toks27
-\eqnshift@=\dimen120
-\alignsep@=\dimen121
-\tagshift@=\dimen122
-\tagwidth@=\dimen123
-\totwidth@=\dimen124
-\lineht@=\dimen125
+\eqnshift@=\dimen113
+\alignsep@=\dimen114
+\tagshift@=\dimen115
+\tagwidth@=\dimen116
+\totwidth@=\dimen117
+\lineht@=\dimen118
 \@envbody=\toks28
-\multlinegap=\skip53
-\multlinetaggap=\skip54
+\multlinegap=\skip48
+\multlinetaggap=\skip49
 \mathdisplay@stack=\toks29
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
@@ -428,20 +397,20 @@ LaTeX Font Info:    Overwriting symbol font `ugrf@m' in version `bold'
 Package: units 1998/08/04 v0.9b Typesetting units
 (/usr/share/texmf-texlive/tex/latex/units/nicefrac.sty
 Package: nicefrac 1998/08/04 v0.9b Nice fractions
-\L@UnitsRaiseDisplaystyle=\skip55
-\L@UnitsRaiseTextstyle=\skip56
-\L@UnitsRaiseScriptstyle=\skip57
+\L@UnitsRaiseDisplaystyle=\skip50
+\L@UnitsRaiseTextstyle=\skip51
+\L@UnitsRaiseScriptstyle=\skip52
 )) (/usr/share/texmf/tex/latex/html/html.sty
 Package: html 1999/07/19 v1.38 hypertext commands for latex2html (nd, hws, rrm)
 
-\c@lpart=\count118
-\c@lchapter=\count119
-\c@lsection=\count120
-\c@lsubsection=\count121
-\c@lsubsubsection=\count122
-\c@lparagraph=\count123
-\c@lsubparagraph=\count124
-\c@lsubsubparagraph=\count125
+\c@lpart=\count110
+\c@lchapter=\count111
+\c@lsection=\count112
+\c@lsubsection=\count113
+\c@lsubsubsection=\count114
+\c@lparagraph=\count115
+\c@lsubparagraph=\count116
+\c@lsubsubparagraph=\count117
 \ptrfile=\write3
 ) (/usr/share/texmf-texlive/tex/latex/tools/xspace.sty
 Package: xspace 2006/05/08 v1.12 Space after command names (DPC,MH)
@@ -462,7 +431,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.76 
+l.75 
      
 The package inputenc has already been loaded with options:
   [utf8x]
@@ -482,36 +451,36 @@ Software/Scripte/QuickNXS/doc/user_manual/data_reduction.aux) (/home/agf/Softwa
 re/Scripte/QuickNXS/doc/user_manual/advanced.aux))
 \openout1 = `images.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Try loading font information for T1+ptm on input line 189.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 188.
+LaTeX Font Info:    ... okay on input line 188.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 188.
 (/usr/share/texmf-texlive/tex/latex/psnfss/t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 ) (/usr/share/texmf-texlive/tex/latex/ucs/ucsencs.def
 File: ucsencs.def 2003/11/29 Fixes to fontencodings LGR, T3
 )
-Package hyperref Info: Link coloring ON on input line 189.
+Package hyperref Info: Link coloring ON on input line 188.
 (/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
 Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 (/usr/share/texmf-texlive/tex/latex/oberdiek/refcount.sty
 Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
-\c@section@level=\count126
+\c@section@level=\count118
 )
-LaTeX Info: Redefining \ref on input line 189.
-LaTeX Info: Redefining \pageref on input line 189.
+LaTeX Info: Redefining \ref on input line 188.
+LaTeX Info: Redefining \pageref on input line 188.
 \@outlinefile=\write5
 \openout5 = `images.out'.
 
@@ -521,21 +490,17 @@ Package hyperref Warning: Rerun to get /PageLabels entry.
 
 (/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count127
-\scratchdimen=\dimen126
+\scratchcounter=\count119
+\scratchdimen=\dimen119
 \scratchbox=\box34
-\nofMPsegments=\count128
-\nofMParguments=\count129
+\nofMPsegments=\count120
+\nofMParguments=\count121
 \everyMPshowfont=\toks30
-\MPscratchCnt=\count130
-\MPscratchDim=\dimen127
-\MPnumerator=\count131
+\MPscratchCnt=\count122
+\MPscratchDim=\dimen120
+\MPnumerator=\count123
 \everyMPtoPDFconversion=\toks31
 )
-Package caption Info: Begin \AtBeginDocument code.
-Package caption3 Info: subfig package 1.2 or 1.3 is loaded.
-LaTeX Info: Redefining \subref on input line 189.
-Package caption Info: End \AtBeginDocument code.
 
 latex2htmlLength hsize=349.0pt
 
@@ -560,37 +525,37 @@ latex2htmlLength oddsidemargin=4.51686pt
 latex2htmlLength evensidemargin=4.51686pt
 
 LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 21
-3.
+2.
 (/usr/share/texmf-texlive/tex/latex/psnfss/ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 21
-3.
+2.
 (/usr/share/texmf-texlive/tex/latex/psnfss/omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 21
-3.
+2.
 (/usr/share/texmf-texlive/tex/latex/psnfss/omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 21
-3.
+2.
 (/usr/share/texmf-texlive/tex/latex/psnfss/omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 213.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 212.
 
 (/usr/share/texmf-texlive/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 212.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 212.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
-l2hSize :tex2html_wrap_inline1412:8.09999pt::0.0pt::8.50151pt.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 212.
+l2hSize :tex2html_wrap_inline1361:8.09999pt::0.0pt::8.50151pt.
 [1
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -609,7 +574,7 @@ Non-PDF special ignored!
 
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-l2hSize :tex2html_wrap_inline1414:8.79688pt::8.79688pt::8.55013pt.
+l2hSize :tex2html_wrap_inline1363:8.79688pt::8.79688pt::8.55013pt.
 [2
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -618,7 +583,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1416:8.59999pt::8.59999pt::7.90193pt.
+l2hSize :tex2html_wrap_inline1365:8.59999pt::8.59999pt::7.90193pt.
 [3
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -627,7 +592,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1418:8.29688pt::0.0pt::6.61203pt.
+l2hSize :tex2html_wrap_inline1367:8.29688pt::0.0pt::6.61203pt.
 [4
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -636,7 +601,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1420:8.29688pt::0.0pt::7.10141pt.
+l2hSize :tex2html_wrap_inline1369:8.29688pt::0.0pt::7.10141pt.
 [5
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -645,7 +610,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1422:8.09999pt::0.0pt::7.86304pt.
+l2hSize :tex2html_wrap_inline1371:8.09999pt::0.0pt::7.86304pt.
 [6
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -654,7 +619,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1424:8.59999pt::8.59999pt::7.17595pt.
+l2hSize :tex2html_wrap_inline1373:8.59999pt::8.59999pt::7.17595pt.
 [7
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -663,7 +628,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1426:8.29688pt::0.0pt::7.25049pt.
+l2hSize :tex2html_wrap_inline1375:8.29688pt::0.0pt::7.25049pt.
 [8
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -672,7 +637,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1428:8.69586pt::8.69586pt::9.49191pt.
+l2hSize :tex2html_wrap_inline1377:8.69586pt::8.69586pt::9.49191pt.
 [9
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -681,7 +646,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1430:8.09999pt::0.0pt::7.70393pt.
+l2hSize :tex2html_wrap_inline1379:8.09999pt::0.0pt::7.70393pt.
 [10
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -690,7 +655,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1432:8.19586pt::0.0pt::7.94403pt.
+l2hSize :tex2html_wrap_inline1381:8.19586pt::0.0pt::7.94403pt.
 [11
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -699,7 +664,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1434:8.09999pt::0.0pt::7.90842pt.
+l2hSize :tex2html_wrap_inline1383:8.09999pt::0.0pt::7.90842pt.
 [12
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -733,7 +698,7 @@ LaTeX Font Info:    Try loading font information for T1+cmtt on input line 18.
 (/usr/share/texmf-texlive/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 ))
-l2hSize :figure1435:501.65965pt::0.0pt::349.0pt.
+l2hSize :figure1384:501.65965pt::0.0pt::349.0pt.
 [13
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -741,15 +706,12 @@ Non-PDF special ignored!
 Non-PDF special ignored!
 
 
-Non-PDF special ignored!
-Non-PDF special ignored!
-Non-PDF special ignored!
 
 
 
 
 ]
-l2hSize :tex2html_wrap_inline1496:8.76193pt::8.76193pt::14.23187pt.
+l2hSize :tex2html_wrap_inline1459:8.59999pt::8.59999pt::13.2649pt.
 [14
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -758,7 +720,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1510:8.59999pt::8.59999pt::13.2649pt.
+l2hSize :tex2html_wrap_inline1466:10.8768pt::10.8768pt::13.48398pt.
 [15
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -767,7 +729,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_inline1517:10.8768pt::10.8768pt::13.48398pt.
+l2hSize :tex2html_wrap_indisplay1469:11.47679pt::11.47679pt::40.12003pt.
 [16
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -776,7 +738,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1520:11.47679pt::11.47679pt::40.12003pt.
+l2hSize :tex2html_wrap_indisplay1471:19.23732pt::19.23732pt::256.65932pt.
 [17
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -785,7 +747,7 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1522:19.23732pt::19.23732pt::256.65932pt.
+l2hSize :tex2html_wrap_indisplay1473:9.5pt::9.5pt::37.46619pt.
 [18
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -794,17 +756,8 @@ Non-PDF special ignored!
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1524:9.5pt::9.5pt::37.46619pt.
+l2hSize :tex2html_wrap_indisplay1475:11.47679pt::11.47679pt::78.88448pt.
 [19
-Non-PDF special ignored!
-Non-PDF special ignored!
-Non-PDF special ignored!
-Non-PDF special ignored!
-
-
-]
-l2hSize :tex2html_wrap_indisplay1526:11.47679pt::11.47679pt::78.88448pt.
-[20
 Non-PDF special ignored!
 Non-PDF special ignored!
 Non-PDF special ignored!
@@ -813,13 +766,13 @@ Non-PDF special ignored!
 
 ] (./images.aux (./titlepage.aux)) ) 
 Here is how much of TeX's memory you used:
- 8575 strings out of 493849
- 128239 string characters out of 1152846
- 235340 words of memory out of 3000000
- 11649 multiletter control sequences out of 15000+50000
+ 7554 strings out of 493849
+ 109779 string characters out of 1152846
+ 208144 words of memory out of 3000000
+ 10638 multiletter control sequences out of 15000+50000
  35097 words of font info for 69 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 47i,7n,52p,491b,420s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,7n,52p,491b,394s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/share/texmf-texlive/fonts/enc/dvips/b
 ase/8r.enc}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/sha
 re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-te
@@ -830,9 +783,9 @@ c/amsfonts/euler/eurm10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1
 exmf-texlive/fonts/type1/urw/symbol/usyr.pfb></usr/share/texmf-texlive/fonts/ty
 pe1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmr8a
 .pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri8a.pfb>
-Output written on images.pdf (20 pages, 105007 bytes).
+Output written on images.pdf (19 pages, 103616 bytes).
 PDF statistics:
- 109 PDF objects out of 1000 (max. 8388607)
+ 106 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

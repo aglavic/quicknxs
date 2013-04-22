@@ -1418,7 +1418,7 @@ class MainGUI(QtGui.QMainWindow):
                                       polynom=self.ui.polynomOrder.value())
       self.ui.refScale.setValue(self.ui.refScale.value()+log10(rescale)) #change the scaling factor
       self.initiateReflectivityPlot.emit(False)
-      self.ui.refl.plot(xfit, yfit)
+      self.ui.refl.plot(xfit, yfit, '-r', lw=2)
     else:
       # normalize total reflection plateau
       # Start from low Q and search for the critical edge

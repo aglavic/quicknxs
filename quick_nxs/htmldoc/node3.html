@@ -27,24 +27,24 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <BODY >
 
 <DIV CLASS="navigation"><!--Navigation Panel-->
-<A NAME="tex2html72"
+<A NAME="tex2html71"
   HREF="node4.html">
 <IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
  SRC="/usr/share/latex2html/icons/next.png"></A> 
-<A NAME="tex2html70"
+<A NAME="tex2html69"
   HREF="QuickNXS_Users_Manual.html">
 <IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
  SRC="/usr/share/latex2html/icons/up.png"></A> 
-<A NAME="tex2html64"
+<A NAME="tex2html63"
   HREF="node2.html">
 <IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
  SRC="/usr/share/latex2html/icons/prev.png"></A>   
 <BR>
-<B> Next:</B> <A NAME="tex2html73"
+<B> Next:</B> <A NAME="tex2html72"
   HREF="node4.html">Advanced Usage</A>
-<B> Up:</B> <A NAME="tex2html71"
+<B> Up:</B> <A NAME="tex2html70"
   HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
-<B> Previous:</B> <A NAME="tex2html65"
+<B> Previous:</B> <A NAME="tex2html64"
   HREF="node2.html">User Interface</A>
 <BR>
 <BR></DIV>
@@ -53,30 +53,30 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
 
 <UL CLASS="ChildLinks">
-<LI><A NAME="tex2html74"
+<LI><A NAME="tex2html73"
   HREF="node3.html#SECTION00310000000000000000">Open and view a dataset</A>
-<LI><A NAME="tex2html75"
+<LI><A NAME="tex2html74"
   HREF="node3.html#SECTION00320000000000000000">Go full-automatic: Reduction for dummies</A>
-<LI><A NAME="tex2html76"
+<LI><A NAME="tex2html75"
   HREF="node3.html#SECTION00330000000000000000">Quick start: Step-by-step standard reduction</A>
 <UL>
-<LI><A NAME="tex2html77"
+<LI><A NAME="tex2html76"
   HREF="node3.html#SECTION00331000000000000000">Step 1: Set wavelength normalization from direct beam</A>
-<LI><A NAME="tex2html78"
+<LI><A NAME="tex2html77"
   HREF="node3.html#SECTION00332000000000000000">Step 2: Define a suitable background- and y-region</A>
+<LI><A NAME="tex2html78"
+  HREF="node3.html#SECTION00333000000000000000">Step 3: Normalize to total reflection and add the first dataset</A>
 <LI><A NAME="tex2html79"
-  HREF="node3.html#SECTION00333000000000000000">Step 3: Normalize total reflection and add the first dataset</A>
-<LI><A NAME="tex2html80"
   HREF="node3.html#SECTION00334000000000000000">Step 4: Add additional datasets and stitch them together</A>
+<LI><A NAME="tex2html80"
+  HREF="node3.html#SECTION00335000000000000000">Step 5: Refine the reflectivity scaling and cutting</A>
 <LI><A NAME="tex2html81"
-  HREF="node3.html#SECTION00335000000000000000">Step 5: Refine the dataset scaling and cutting</A>
-<LI><A NAME="tex2html82"
   HREF="node3.html#SECTION00336000000000000000">Step 6: Export your data</A>
 </UL>
 <BR>
-<LI><A NAME="tex2html83"
+<LI><A NAME="tex2html82"
   HREF="node3.html#SECTION00340000000000000000">Examples</A>
-<LI><A NAME="tex2html84"
+<LI><A NAME="tex2html83"
   HREF="node3.html#SECTION00350000000000000000">Common problems to be aware of</A>
 </UL>
 <!--End of Table of Child-Links-->
@@ -95,8 +95,8 @@ Data Reduction
 <BR>
 Open and view a dataset
 </H1>
-  The easiest way to start with is to enter the number of a normalization dataset in the "Open Numbers:" entry of the Files Dock Window and press enter. The program will now locate the file and open it.
-  The Files Dock Window list will be populated with all files in your current proposal data folder and the plot windows should look similar to this:
+  The first step to start with is to enter the number of a normalization dataset in the "Open Number:" entry of the Files area and press enter. The program will now locate the file and open it.
+  The Files area list will be populated with all files in your current proposal data folder and the plot windows should look similar to this:
 
 <P>
 <TABLE CELLPADDING=3>
@@ -138,18 +138,18 @@ Open and view a dataset
 <H1><A NAME="SECTION00320000000000000000">
 Go full-automatic: Reduction for dummies</A>
 </H1>
-  For good quality data the program supports a fully automatized mode, where all reduction parameters are automatically calculated.
+  For good quality data (enough intensity and narrow reflection) the program supports a fully automatized mode, where all reduction parameters are automatically calculated.
   This mode will be applied automatically when more than one dataset is selected at the File Open Dialog.
   The direct beam measurement have to have lower scan numbers than the actual measurements or need to be set in advance for this method to work.
 
 <P>
 The automatic algorithm performs the same steps as described in section <A HREF="#sec:quick_start">3.3</A>, while trying to guess the best parameters.
-  The datasets are read one-by-one and, depending on the <SPAN CLASS="MATH"></SPAN>-angle, they are either set as normalization or reflectivity data in the reduction list.
+  The datasets are read one-by-one and, depending on the reflection angle, they are either set as normalization or reflectivity data in the reduction list.
   Here is an example how the interface might look after the algorithm has finished:
 
 <P>
 <IMG
-  WIDTH="637" HEIGHT="503" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="637" HEIGHT="452" ALIGN="BOTTOM" BORDER="0"
  SRC="./overview.png"
  ALT="Image overview">
 
@@ -193,12 +193,12 @@ r0.55
 
 <P>
 <SPAN  CLASS="textbf">Open your normalization file</SPAN> as described in section <A HREF="#sec:open_file">3.1</A>. 
-      Make sure the αi-calc value shown in the overview tab is close to zero the X- and Y-projections show the correct regions with the red indicators.
+      Make sure the SANGLE-calc value shown in the overview tab is close to zero and that the X- and Y-projections show the correct regions with the red indicators.
       Activate the <SPAN  CLASS="textbf">Set Normalization action</SPAN> <IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./extractNormalization.png"
- ALT="Image extractNormalization"> will add the current dataset to the "Normalization" list, the "Normalizations:" label will show the number of the dataset and the reflectivity will show the normalized intensities, which should all be one.
-      Repeat this step for each normalization file needed for your dataset.
+ ALT="Image extractNormalization">, this will add the current dataset to the "Normalization" list, the "Direct Beam Runs:" label will show the number of the dataset and the reflectivity will show the normalized intensities, which should all be one.
+      Repeat this step for each direct beam measurement needed for your dataset.
 
 <P>
 
@@ -243,7 +243,7 @@ Although it is in principle possible to define the extraction and background reg
 <P>
 
 <H2><A NAME="SECTION00333000000000000000">
-Step 3: Normalize total reflection and add the first dataset</A>
+Step 3: Normalize to total reflection and add the first dataset</A>
 </H2>
     
 <DIV ALIGN="CENTER">
@@ -254,11 +254,14 @@ r0.4
  ALT="Image totalreflection"> 
     
 </DIV>
-Go to your datasets starting at the lowest <SPAN CLASS="MATH"></SPAN> value, remove points from the low <SPAN CLASS="MATH"></SPAN> region, which are not reasonable (not always needed) with the <SPAN  CLASS="textbf">Cut Pts parameters</SPAN>:
+Go to your dataset starting at the lowest <SPAN CLASS="MATH"></SPAN> value, remove points from the low <SPAN CLASS="MATH"></SPAN> region, which are not reasonable with the <SPAN  CLASS="textbf">Cut Pts parameters</SPAN>:
     <IMG
   WIDTH="160" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
  SRC="./cutpoints.png"
- ALT="Image cutpoints"> Than activate the <SPAN  CLASS="textbf">Set Scaling action</SPAN> <IMG
+ ALT="Image cutpoints"> (can be done automatically with the <SPAN  CLASS="textbf">Cut Points (L/R)</SPAN> <IMG
+  WIDTH="16" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="./cutPoints.png"
+ ALT="Image cutPoints"> action). Than activate the <SPAN  CLASS="textbf">Set Scaling action</SPAN> <IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./totalReflection.png"
  ALT="Image totalReflection"> to normalize the total reflection to one.
@@ -280,11 +283,11 @@ Step 4: Add additional datasets and stitch them together</A>
 </H2>
     
 <DIV ALIGN="CENTER">
-r0.3
+r0.4
     <DIV ALIGN="CENTER">
 
 </DIV>     <IMG
-  WIDTH="191" HEIGHT="205" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="243" HEIGHT="205" ALIGN="BOTTOM" BORDER="0"
  SRC="./stitching1.png"
  ALT="Image stitching1"> 
     
@@ -295,14 +298,14 @@ Now you can continue adding each subsequent dataset one after another.
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./totalReflection.png"
  ALT="Image totalReflection"> again. 
-    This fits a parabola to the logarithmic data of both adjacent datasets including a scaling factor for the second, which is than used for the scaling after the fit.
+    This fits a polynomial to the logarithmic data of both adjacent datasets including a scaling factor for the second, which is than used for the scaling after the fit.
     The error weighted <SPAN CLASS="MATH"></SPAN> used for this refinement is:
     <BR>
 <DIV ALIGN="CENTER" CLASS="mathdisplay">
 <!-- MATH
  \begin{eqnarray*}
 \chi_{stitch}^2 =& \underset{DS1}{\sum} \frac{(\log(I_i)-p(Q_i))^2}{(\delta{}I_i/I_i)^2} + \underset{DS2}{\sum} \frac{(\log(I_j\cdot scale)-p(Q_j))^2}{(\delta{}I_j/I_j)^2} \\
-      \text{with } p(Q) =& a\cdot Q^2 + b\cdot Q +c
+      \text{with } p(Q) =& a\cdot Q^2 + b\cdot Q +c \text{ for polynom order 3}
 \end{eqnarray*}
  -->
 <TABLE CELLPADDING="0" ALIGN="CENTER" WIDTH="100%">
@@ -313,26 +316,26 @@ Now you can continue adding each subsequent dataset one after another.
 &nbsp;</TD></TR>
 <TR VALIGN="MIDDLE"><TD NOWRAP WIDTH="50%" ALIGN="RIGHT">with&nbsp;</TD>
 <TD>&nbsp;</TD>
-<TD></TD>
+<TD ALIGN="LEFT" NOWRAP WIDTH="50%">&nbsp; &nbsp; for polynom order 3</TD>
 <TD CLASS="eqno" WIDTH=10 ALIGN="RIGHT">
 &nbsp;</TD></TR>
 </TABLE></DIV>
 <BR CLEAR="ALL">
 
-    The resulting fit function is shown in the reflectivity plot together with the scaled data as can be seen in the two figures on the right..
+    The resulting fit function is shown in the reflectivity plot together with the scaled data as can be seen in the figure on the right.
     For some datasets with very sharp features like multilayer Bragg-peaks this method will not work, in those cases you need to change the <SPAN  CLASS="textbf">Scale 10^</SPAN> parameter manually until the datasets fit together nicely.
     For polarized measurements it can sometimes be helpful to switch back and forth between different polarization channels as the variation in contrast can lead to smooth transitions, where the other channel has a sharp feature.
     Now add the dataset to the reduction list with <SPAN  CLASS="textbf">Keep Item in List action</SPAN> <IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./addRef.png"
- ALT="Image addRef"> again and repeat the procedure for all datasets of belonging to this measurement.
+ ALT="Image addRef"> again and repeat the procedure for all datasets belonging to this measurement.
 
 <P>
 
 <H2><A NAME="SECTION00335000000000000000"></A>
   <A NAME="sec:scaling"></A>
 <BR>
-Step 5: Refine the dataset scaling and cutting
+Step 5: Refine the reflectivity scaling and cutting
 </H2>
     
 <DIV ALIGN="CENTER">
@@ -344,11 +347,11 @@ r0.6
 <TD ALIGN="CENTER">With changed cut points</TD>
 </TR>
 <TR><TD ALIGN="CENTER"><IMG
-  WIDTH="179" HEIGHT="192" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="179" HEIGHT="151" ALIGN="BOTTOM" BORDER="0"
  SRC="./stitching2.png"
  ALT="Image stitching2"></TD>
 <TD ALIGN="CENTER"><IMG
-  WIDTH="179" HEIGHT="192" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="179" HEIGHT="151" ALIGN="BOTTOM" BORDER="0"
  SRC="./cleanpoints.png"
  ALT="Image cleanpoints"></TD>
 </TR>
@@ -356,7 +359,7 @@ r0.6
 </DIV>
 When all datasets of one measurement have been added, as can be seen in the image on the right, you can try to improve the scaling of the different parts, if needed, and change the cutting parameters.
     To change the scaling of one dataset you can either change the value of the <SPAN  CLASS="textbf">I0 column</SPAN> entry in the reduction list or move the mouse <SPAN  CLASS="textbf">cursor on top of the curve</SPAN> you want to scale and <SPAN  CLASS="textbf">move the mouse wheel</SPAN>.
-    To remove unwanted point you need to change the values of the <SPAN  CLASS="textbf">P0</SPAN> and <SPAN  CLASS="textbf">PN column</SPAN> entries as they define the number of points cut from the low- and hight-Q side respectively.
+    To remove unwanted point you need to change the values of the <SPAN  CLASS="textbf">NL</SPAN> and <SPAN  CLASS="textbf">NR column</SPAN> entries as they define the number of points cut from the low- and hight-Q side respectively.
     If the number of time of flight channels in the histogram dataset is larger than the wavelength window used for the measurement it is possible that large values are needed (&lt;=60) to see changes in the dataset.
 
 <P>
@@ -368,11 +371,11 @@ Step 6: Export your data
 </H2>
     
 <DIV ALIGN="CENTER">
-r0.4
+r0.35
     <DIV ALIGN="CENTER">
 
 </DIV>     <IMG
-  WIDTH="243" HEIGHT="256" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="208" HEIGHT="250" ALIGN="BOTTOM" BORDER="0"
  SRC="./reduced.png"
  ALT="Image reduced">
     
@@ -382,10 +385,11 @@ Now you are ready to export you reflectivity!
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./reduce.png"
  ALT="Image reduce"> from the menu, toolbar or the button below the reduction list.
-    The reduce dialog as several options for the export of the dataset.
+    The reduce dialog has several options for the export of the dataset.
     You can select which reductions should be stored, choose the channels to export and define which data formats should be created.
     As a default, the specular reflectivity of all available channels will be exported to separate ASCII files and a dialog with a plot of the resulting data will be shown afterwards.
     Additional output options are a combined ASCII file containing all channels, a matlab or numpy datafile for later processing, a Gnuplot script and image file to plot the ASCII data and a GenX reflectivity modeling template already containing the measured data.
+    If you want to send the resulting data to your email address you can use the <SPAN  CLASS="textbf">Email Results</SPAN> tab to enter your address and select which and if the data should be send after the export.
 
 <P>
 
@@ -402,29 +406,29 @@ Common problems to be aware of</A>
   
 <DIV CLASS="navigation"><HR>
 <!--Navigation Panel-->
-<A NAME="tex2html72"
+<A NAME="tex2html71"
   HREF="node4.html">
 <IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
  SRC="/usr/share/latex2html/icons/next.png"></A> 
-<A NAME="tex2html70"
+<A NAME="tex2html69"
   HREF="QuickNXS_Users_Manual.html">
 <IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
  SRC="/usr/share/latex2html/icons/up.png"></A> 
-<A NAME="tex2html64"
+<A NAME="tex2html63"
   HREF="node2.html">
 <IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
  SRC="/usr/share/latex2html/icons/prev.png"></A>   
 <BR>
-<B> Next:</B> <A NAME="tex2html73"
+<B> Next:</B> <A NAME="tex2html72"
   HREF="node4.html">Advanced Usage</A>
-<B> Up:</B> <A NAME="tex2html71"
+<B> Up:</B> <A NAME="tex2html70"
   HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
-<B> Previous:</B> <A NAME="tex2html65"
+<B> Previous:</B> <A NAME="tex2html64"
   HREF="node2.html">User Interface</A></DIV>
 <!--End of Navigation Panel-->
 <ADDRESS>
 Artur Glavic
-2013-02-06
+2013-04-22
 </ADDRESS>
 </BODY>
 </HTML>

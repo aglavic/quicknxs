@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.1.0
-lastDocument=data_reduction.tex
+lastDocument=user_interface.tex
 masterDocument=QuickNXS_Users_Manual.tex
 name=QuickNXS Users Manual
 pkg_extIsRegExp=false
@@ -93,8 +93,8 @@ encoding=UTF-8
 highlight=LaTeX
 line=9
 mode=LaTeX
-open=false
-order=0
+open=true
+order=5
 
 [item:advanced.tex]
 archive=true
@@ -103,8 +103,8 @@ encoding=UTF-8
 highlight=LaTeX
 line=7
 mode=LaTeX
-open=false
-order=-1
+open=true
+order=4
 
 [item:chartable.tex]
 archive=true
@@ -121,9 +121,9 @@ archive=true
 column=20
 encoding=UTF-8
 highlight=LaTeX
-line=125
+line=121
 mode=LaTeX
-open=false
+open=true
 order=2
 
 [item:header.tex]
@@ -133,8 +133,8 @@ encoding=UTF-8
 highlight=LaTeX
 line=51
 mode=LaTeX
-open=false
-order=1
+open=true
+order=0
 
 [item:introduction.tex]
 archive=true
@@ -143,7 +143,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=6
 mode=LaTeX
-open=false
+open=true
 order=1
 
 [item:quicknxsusersmanual.kilepr]
@@ -163,18 +163,18 @@ encoding=UTF-8
 highlight=LaTeX
 line=17
 mode=LaTeX
-open=false
-order=3
+open=true
+order=6
 
 [item:user_interface.tex]
 archive=true
-column=66
+column=85
 encoding=UTF-8
 highlight=LaTeX
-line=47
+line=60
 mode=LaTeX
-open=false
-order=0
+open=true
+order=3
 
 [view-settings,view=0,item:QuickNXS_Users_Manual.tex]
 CursorColumn=0
@@ -190,7 +190,7 @@ ViMarks=
 
 [view-settings,view=0,item:data_reduction.tex]
 CursorColumn=20
-CursorLine=125
+CursorLine=121
 JumpList=
 ViMarks=
 
@@ -213,7 +213,7 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:user_interface.tex]
-CursorColumn=66
-CursorLine=47
+CursorColumn=85
+CursorLine=60
 JumpList=
 ViMarks=

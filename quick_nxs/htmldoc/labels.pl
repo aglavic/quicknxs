@@ -10,11 +10,11 @@ $key = q/chap:user_interface/;
 $external_labels{$key} = "$URL/" . q|node2.html|; 
 $noresave{$key} = "$nosave";
 
-$key = q/sec:export/;
+$key = q/chap:data_reduction/;
 $external_labels{$key} = "$URL/" . q|node3.html|; 
 $noresave{$key} = "$nosave";
 
-$key = q/chap:data_reduction/;
+$key = q/sec:export/;
 $external_labels{$key} = "$URL/" . q|node3.html|; 
 $noresave{$key} = "$nosave";
 
@@ -26,12 +26,12 @@ $key = q/chap:advanced_usage/;
 $external_labels{$key} = "$URL/" . q|node4.html|; 
 $noresave{$key} = "$nosave";
 
-$key = q/sec:quick_start/;
-$external_labels{$key} = "$URL/" . q|node3.html|; 
-$noresave{$key} = "$nosave";
-
 $key = q/chap:introduction/;
 $external_labels{$key} = "$URL/" . q|node1.html|; 
+$noresave{$key} = "$nosave";
+
+$key = q/sec:quick_start/;
+$external_labels{$key} = "$URL/" . q|node3.html|; 
 $noresave{$key} = "$nosave";
 
 1;
@@ -49,12 +49,12 @@ $key = q/chap:user_interface/;
 $external_latex_labels{$key} = q|2|; 
 $noresave{$key} = "$nosave";
 
-$key = q/sec:export/;
-$external_latex_labels{$key} = q|3.3.6|; 
-$noresave{$key} = "$nosave";
-
 $key = q/chap:data_reduction/;
 $external_latex_labels{$key} = q|3|; 
+$noresave{$key} = "$nosave";
+
+$key = q/sec:export/;
+$external_latex_labels{$key} = q|3.3.6|; 
 $noresave{$key} = "$nosave";
 
 $key = q/sec:scaling/;
@@ -65,12 +65,12 @@ $key = q/chap:advanced_usage/;
 $external_latex_labels{$key} = q|4|; 
 $noresave{$key} = "$nosave";
 
-$key = q/sec:quick_start/;
-$external_latex_labels{$key} = q|3.3|; 
-$noresave{$key} = "$nosave";
-
 $key = q/chap:introduction/;
 $external_latex_labels{$key} = q|1|; 
+$noresave{$key} = "$nosave";
+
+$key = q/sec:quick_start/;
+$external_latex_labels{$key} = q|3.3|; 
 $noresave{$key} = "$nosave";
 
 1;

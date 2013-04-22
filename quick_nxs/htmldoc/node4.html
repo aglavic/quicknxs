@@ -27,24 +27,24 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <BODY >
 
 <DIV CLASS="navigation"><!--Navigation Panel-->
-<A NAME="tex2html93"
+<A NAME="tex2html92"
   HREF="node5.html">
 <IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
  SRC="/usr/share/latex2html/icons/next.png"></A> 
-<A NAME="tex2html91"
+<A NAME="tex2html90"
   HREF="QuickNXS_Users_Manual.html">
 <IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
  SRC="/usr/share/latex2html/icons/up.png"></A> 
-<A NAME="tex2html85"
+<A NAME="tex2html84"
   HREF="node3.html">
 <IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
  SRC="/usr/share/latex2html/icons/prev.png"></A>   
 <BR>
-<B> Next:</B> <A NAME="tex2html94"
+<B> Next:</B> <A NAME="tex2html93"
   HREF="node5.html">About this document ...</A>
-<B> Up:</B> <A NAME="tex2html92"
+<B> Up:</B> <A NAME="tex2html91"
   HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
-<B> Previous:</B> <A NAME="tex2html86"
+<B> Previous:</B> <A NAME="tex2html85"
   HREF="node3.html">Data Reduction</A>
 <BR>
 <BR></DIV>
@@ -53,20 +53,18 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
 
 <UL CLASS="ChildLinks">
+<LI><A NAME="tex2html94"
+  HREF="node4.html#SECTION00410000000000000000">Event mode data</A>
 <LI><A NAME="tex2html95"
-  HREF="node4.html#SECTION00410000000000000000">GUI Customization</A>
+  HREF="node4.html#SECTION00420000000000000000">Re-reduction of already exported data</A>
 <LI><A NAME="tex2html96"
-  HREF="node4.html#SECTION00420000000000000000">Event mode data</A>
+  HREF="node4.html#SECTION00430000000000000000">Overwrite direct beam parameters</A>
 <LI><A NAME="tex2html97"
-  HREF="node4.html#SECTION00430000000000000000">Re-reduction of already exported data</A>
+  HREF="node4.html#SECTION00440000000000000000">Advanced background subtraction</A>
 <LI><A NAME="tex2html98"
-  HREF="node4.html#SECTION00440000000000000000">Overwrite direct beam parameters</A>
+  HREF="node4.html#SECTION00450000000000000000">"Fan"-Reflectivity</A>
 <LI><A NAME="tex2html99"
-  HREF="node4.html#SECTION00450000000000000000">Advanced background subtraction</A>
-<LI><A NAME="tex2html100"
-  HREF="node4.html#SECTION00460000000000000000">"Fan"-Reflectivity</A>
-<LI><A NAME="tex2html101"
-  HREF="node4.html#SECTION00470000000000000000">Off-specular scattering</A>
+  HREF="node4.html#SECTION00460000000000000000">Off-specular and GISANS scattering</A>
 </UL>
 <!--End of Table of Child-Links-->
 <HR>
@@ -78,52 +76,109 @@ Advanced Usage
 </H1>
   
 <H1><A NAME="SECTION00410000000000000000">
-GUI Customization</A>
+Event mode data</A>
 </H1>
+    When the event mode is selected for file import additional options for the desired binning are shown. You can define the number of <SPAN  CLASS="textbf">Bins</SPAN>, the bin steps (constant ToF or Q steps) and split datasets in time.
 
 <P>
 
 <H1><A NAME="SECTION00420000000000000000">
-Event mode data</A>
+Re-reduction of already exported data</A>
 </H1>
+    You can read all datasets and options from an already exported reflectivity using the <SPAN  CLASS="textbf">File-&gt;Load Extraction...</SPAN> menu and select a ASCII file. 
+    Afterwards the options in the reduction table can be changed as desired.
 
 <P>
 
 <H1><A NAME="SECTION00430000000000000000">
-Re-reduction of already exported data</A>
+Overwrite direct beam parameters</A>
 </H1>
+    If the the direct beam position was not saved correctly during instrument alignment all calculated <SPAN CLASS="MATH"></SPAN>-values for the reflectivity will be wrong.
+    To correct this there are two parameters to overwrite it in the <SPAN  CLASS="textbf">Reflectivity Extraction (Advanced)</SPAN> area, Direct Pixel and Dangle0.
+    These parameters are ignored if they have the values -1 and None.
+    To overwrite the correct values you can open a direct beam dataset and activate the  <SPAN  CLASS="textbf">Adjust Direct Beam</SPAN> <IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./tthZero.png"
+ ALT="Image tthZero"> to save the current DANGLE as <SPAN  CLASS="textbf">Dangle0</SPAN> and the fitted x-position as <SPAN  CLASS="textbf">Direct Pixel</SPAN>.
 
 <P>
 
 <H1><A NAME="SECTION00440000000000000000">
-Overwrite direct beam parameters</A>
+Advanced background subtraction</A>
 </H1>
+    
+<DIV ALIGN="CENTER">
+r0.3
+    <DIV ALIGN="CENTER">
+
+</DIV>    <IMG
+  WIDTH="153" HEIGHT="307" ALIGN="BOTTOM" BORDER="0"
+ SRC="./advancedBackground.png"
+ ALT="Image advancedBackground">
+    
+</DIV>
+There are a few cases where you could need additional control over the subtracted background, for this case you can use the <SPAN  CLASS="textbf">Advance Background...</SPAN> action to open a dialog with more options.
+    An example is shown on the right. 
+    The upper plot shows the X vs. λ plot of the current dataset, indicating the areas taken to calculate the background data.
+    The lower plot shows the extracted data and background as wavelength vs. intensity plot.
+    You can use Polygons to define the extraction area for the background precisely, these polygons are than shown in the X vs. λ plot as gray areas. 
+    The normal extraction region defined by the main window parameters is shown in red. 
+    For each λ channel the average value of all pixels in the gray areas is taken as background. 
+    If for a given value of λ no points are defined with a polygon the red area is taken.
+    As an additional option it is possible to presume a background that is directly dependent on the incident intensity to reduce the error bars.
 
 <P>
 
 <H1><A NAME="SECTION00450000000000000000">
-Advanced background subtraction</A>
+"Fan"-Reflectivity</A>
 </H1>
+    Some samples have a weavy or bent surface and reflect the neutron beam into different angles. 
+    Treating these as one reflection will destroy the <SPAN CLASS="MATH"></SPAN> resolution of you measurement or needs to be restricted to a small X-region, which reduces the statistics.
+    For these cases the <SPAN  CLASS="textbf">Reflectivity Extraction (Advanced)</SPAN> area has a <SPAN  CLASS="textbf">"Fan"-Reflectivity</SPAN> option, which treats each pixel on the detector separately to calculate I(<SPAN CLASS="MATH"></SPAN>) and combines these reflectivity afterwards to get better statistics. 
+    In this case you can widen the red area on the X-projection plot to take into account your full reflectivity.
+    The underlying algorithm reduces the total width of a selected dataset in <SPAN CLASS="MATH"></SPAN> so it can be possible that for lower angles you do not get overlapping areas to stitch the data together.
+    In this case you should select a smaller area for the lower angle measurements and/or extract two regions in X for one dataset.
 
 <P>
 
 <H1><A NAME="SECTION00460000000000000000">
-"Fan"-Reflectivity</A>
+Off-specular and GISANS scattering</A>
 </H1>
+    Off-specular scattering can easily be extracted when the specular reflectivity is already defined in the reduction table. You can take a look at the <SPAN  CLASS="textbf">OffSpec Preview</SPAN> tab to take a look in advance (does not show the active dataset, only the reduction table entries).
+    The reduction dialog as a separate option to export the off-specular data, where <SPAN  CLASS="textit">Raw</SPAN> refers to the data as extractec, <SPAN  CLASS="textit">Corrected</SPAN> applies an algorithm to reduce detector artifacts from high intensity areas and <SPAN  CLASS="textit">Smoothed</SPAN> will interpolate the data to a regular grid with <SPAN CLASS="MATH"></SPAN>-dependent Gaussian smoothing (parameters are defined in a separate dialog when exporting).
+
+<P>
+For GISANS measurements another dialog appears when exporting, where you can define the wavelength bands, which will be combined in one image.
 
 <P>
 
-<H1><A NAME="SECTION00470000000000000000">
-Off-specular scattering</A>
-</H1>
-
 <P>
 
-<P>
-<BR><HR>
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html92"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html90"
+  HREF="QuickNXS_Users_Manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html84"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="/usr/share/latex2html/icons/prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html93"
+  HREF="node5.html">About this document ...</A>
+<B> Up:</B> <A NAME="tex2html91"
+  HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
+<B> Previous:</B> <A NAME="tex2html85"
+  HREF="node3.html">Data Reduction</A></DIV>
+<!--End of Navigation Panel-->
 <ADDRESS>
 Artur Glavic
-2013-02-06
+2013-04-22
 </ADDRESS>
 </BODY>
 </HTML>

@@ -10,11 +10,11 @@ $key = q/chap:user_interface/;
 $ref_files{$key} = "$dir".q|node2.html|; 
 $noresave{$key} = "$nosave";
 
-$key = q/sec:export/;
+$key = q/chap:data_reduction/;
 $ref_files{$key} = "$dir".q|node3.html|; 
 $noresave{$key} = "$nosave";
 
-$key = q/chap:data_reduction/;
+$key = q/sec:export/;
 $ref_files{$key} = "$dir".q|node3.html|; 
 $noresave{$key} = "$nosave";
 
@@ -26,12 +26,12 @@ $key = q/chap:advanced_usage/;
 $ref_files{$key} = "$dir".q|node4.html|; 
 $noresave{$key} = "$nosave";
 
-$key = q/sec:quick_start/;
-$ref_files{$key} = "$dir".q|node3.html|; 
-$noresave{$key} = "$nosave";
-
 $key = q/chap:introduction/;
 $ref_files{$key} = "$dir".q|node1.html|; 
+$noresave{$key} = "$nosave";
+
+$key = q/sec:quick_start/;
+$ref_files{$key} = "$dir".q|node3.html|; 
 $noresave{$key} = "$nosave";
 
 1;

@@ -650,7 +650,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
+             <width>141</width>
              <height>135</height>
             </rect>
            </property>
@@ -2414,13 +2414,13 @@
     <addaction name="actionClear_Normalizations"/>
     <addaction name="separator"/>
     <addaction name="actionNormalizeScaling"/>
+    <addaction name="actionCut_Points"/>
     <addaction name="separator"/>
     <addaction name="actionAddPlot"/>
     <addaction name="actionRemove"/>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
     <addaction name="actionReduce"/>
-    <addaction name="actionCut_Points"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>

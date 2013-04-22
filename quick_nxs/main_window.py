@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Mon Apr 22 16:00:46 2013
+# Created: Mon Apr 22 17:32:36 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -278,7 +278,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 246, 135))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 141, 135))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1205,13 +1205,13 @@ class Ui_MainWindow(object):
     self.menuReduction.addAction(self.actionClear_Normalizations)
     self.menuReduction.addSeparator()
     self.menuReduction.addAction(self.actionNormalizeScaling)
+    self.menuReduction.addAction(self.actionCut_Points)
     self.menuReduction.addSeparator()
     self.menuReduction.addAction(self.actionAddPlot)
     self.menuReduction.addAction(self.actionRemove)
     self.menuReduction.addAction(self.actionClear)
     self.menuReduction.addSeparator()
     self.menuReduction.addAction(self.actionReduce)
-    self.menuReduction.addAction(self.actionCut_Points)
     self.menubar.addAction(self.menuFile.menuAction())
     self.menubar.addAction(self.menuReduction.menuAction())
     self.menubar.addAction(self.menuAdvanced.menuAction())
