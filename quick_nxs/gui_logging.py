@@ -36,7 +36,7 @@ def ip_excepthook_overwrite(self, etype, value, tb, tb_offset=None):
   logging.critical('python error', exc_info=(etype, value, tb))
 
 def goodby():
-  logging.debug('*** QuickNXS %s Logging ended ***'%str_version)
+  logging.info('*** QuickNXS %s Logging ended ***'%str_version)
 
 
 def pid_exists(pid):
@@ -80,7 +80,7 @@ def setup_system():
   logfile.setLevel(FILE_LEVEL)
   logger.addHandler(logfile)
 
-  logging.debug('*** QuickNXS %s Logging started ***'%str_version)
+  logging.info('*** QuickNXS %s Logging started ***'%str_version)
 
   sys.excepthook=excepthook_overwrite
   atexit.register(goodby)
@@ -96,6 +96,7 @@ class QtHandler(logging.Handler):
   def __init__(self, main_window):
     logging.Handler.__init__(self, level=GUI_LEVEL)
     self.logged_items=[]
+    self.reported_bugs=[]
     self.main_window=main_window
 
   def emit(self, record):
@@ -134,7 +135,7 @@ class QtHandler(logging.Handler):
     mbox=QMessageBox(self.main_window)
     mbox.setIcon(QMessageBox.Critical)
     mbox.setTextFormat(Qt.RichText)
-    mbox.setInformativeText('Do you want to send the logfile to the developer?')
+    mbox.setInformativeText('Do you want to send the logfile to software support?')
     mbox.setStandardButtons(QMessageBox.Yes|QMessageBox.No)
     mbox.setDefaultButton(QMessageBox.No)
     mbox.setWindowTitle('QuickNXS Error')
@@ -147,7 +148,11 @@ class QtHandler(logging.Handler):
                                     record.msg,
                                     record.exc_info[0].__name__,
                                     record.exc_info[1]))
+      if message in self.reported_bugs:
+        mbox.setStandardButtons(QMessageBox.Close)
+        mbox.setInformativeText('This error has already been reported to the support team.')
     else:
+      message=''
       mbox.setText(u'An unexpected error has occurred: <br />&nbsp;&nbsp;<b>%s</b>'%record.msg)
     result=mbox.exec_()
     if result==QMessageBox.Yes:
@@ -179,6 +184,9 @@ class QtHandler(logging.Handler):
         logging.info('Mail sent')
       except:
         logging.warning('problem sending the mail', exc_info=True)
+      else:
+        # after successful email notification the same error is not reported twice
+        self.reported_bugs.append(message)
 
 def install_gui_handler(main_window):
   logging.root.addHandler(QtHandler(main_window))
