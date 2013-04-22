@@ -433,6 +433,7 @@ class PlotDialog(QDialog):
 
   def __init__(self, parent=None):
     QDialog.__init__(self, parent=parent)
+    self.setWindowModality(False)
     self._open_instances.append(self)
     self.ui=UiPlot()
     self.ui.setupUi(self)

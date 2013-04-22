@@ -718,7 +718,7 @@
                <double>500.000000000000000</double>
               </property>
               <property name="value">
-               <double>300.000000000000000</double>
+               <double>100.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -2414,11 +2414,13 @@
     <addaction name="actionClear_Normalizations"/>
     <addaction name="separator"/>
     <addaction name="actionNormalizeScaling"/>
+    <addaction name="separator"/>
     <addaction name="actionAddPlot"/>
     <addaction name="actionRemove"/>
     <addaction name="actionClear"/>
     <addaction name="separator"/>
     <addaction name="actionReduce"/>
+    <addaction name="actionCut_Points"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
@@ -2444,6 +2446,8 @@
    <addaction name="actionClear_Normalizations"/>
    <addaction name="separator"/>
    <addaction name="actionNormalizeScaling"/>
+   <addaction name="actionCut_Points"/>
+   <addaction name="separator"/>
    <addaction name="actionAddPlot"/>
    <addaction name="actionRemove"/>
    <addaction name="actionClear"/>
@@ -2728,6 +2732,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="actionCut_Points">
+   <property name="icon">
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/cutPoints.png</normaloff>:/General/cutPoints.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut Points (L/R)</string>
+   </property>
+   <property name="toolTip">
+    <string>Change the left and right cutoff (Cut Pts) values for the active file from the normalization intensity (Ctrl+Shift+C)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
    </property>
   </action>
  </widget>
@@ -3781,6 +3800,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCut_Points</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>cutPoints()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3820,5 +3855,6 @@
   <slot>clip_offspec_colorscale()</slot>
   <slot>fileOpenSumDialog()</slot>
   <slot>reloadFile()</slot>
+  <slot>cutPoints()</slot>
  </slots>
 </ui>

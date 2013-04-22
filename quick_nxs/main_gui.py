@@ -59,6 +59,7 @@ class MainGUI(QtGui.QMainWindow):
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
   ref_norm={} #: Store normalization data with extraction information
+  cut_areas={'fan': (0, 0)} #: store cut points options for each normalization file used
   auto_change_active=False
   reduction_list=[] #: Store information and data of reflectivities from different files
   color=None
@@ -291,6 +292,19 @@ class MainGUI(QtGui.QMainWindow):
     self.last_mtime=os.path.getmtime(filename)
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
+
+    norm=self.getNorm()
+    self.auto_change_active=True
+    if self.ui.fanReflectivity.isChecked():
+      self.ui.rangeStart.setValue(self.cut_areas['fan'][0])
+      self.ui.rangeEnd.setValue(self.cut_areas['fan'][1])
+    elif norm in self.cut_areas:
+      self.ui.rangeStart.setValue(self.cut_areas[norm][0])
+      self.ui.rangeEnd.setValue(self.cut_areas[norm][1])
+    else:
+      self.ui.rangeStart.setValue(0)
+      self.ui.rangeEnd.setValue(0)
+    self.auto_change_active=False
 
     self.fileLoaded.emit()
     if do_plot:
@@ -615,6 +629,7 @@ class MainGUI(QtGui.QMainWindow):
       number='['+",".join(map(str, self.active_data.number))+']'
     else:
       number=str(self.active_data.number)
+    normalization=self.getNorm()
     options=dict(
                 x_pos=self.ui.refXPos.value(),
                 x_width=self.ui.refXWidth.value(),
@@ -631,12 +646,17 @@ class MainGUI(QtGui.QMainWindow):
                 dpix=dpix,
                 bg_tof_constant=bg_tof_constant,
                 bg_poly_regions=bg_poly_regions,
-                normalization=self.getNorm(),
+                normalization=normalization,
                   )
 
     self.refl=Reflectivity(data, **options)
     self.ui.datasetAi.setText(u"%.3f°"%(self.refl.ai*180./pi))
     self.ui.datasetROI.setText(u"%.4g"%(self.refl.Iraw.sum()))
+    if normalization is not None:
+      if self.ui.fanReflectivity.isChecked():
+        self.cut_areas['fan']=(self.ui.rangeStart.value(), self.ui.rangeEnd.value())
+      else:
+        self.cut_areas[normalization]=(self.ui.rangeStart.value(), self.ui.rangeEnd.value())
     return True
 
   @log_call
@@ -1078,6 +1098,17 @@ class MainGUI(QtGui.QMainWindow):
       self.fileOpen(refl.origin[0])
     self.ref_list_channels=list(self.active_data.keys())
 
+  @log_input
+  def cutPoints(self):
+    norm=self.getNorm()
+    if norm is None:
+      return
+    region=where(norm.Rraw>=(norm.Rraw.max()*0.05))[0]
+    P0=len(norm.Rraw)-region[-1]
+    PN=region[0]
+    self.ui.rangeStart.setValue(P0)
+    self.ui.rangeEnd.setValue(PN)
+    info('Changed Cut Points to area with at least 5% of maximum incident intensity')
 
   @log_input
   def automaticExtraction(self, filenames):
@@ -1261,6 +1292,20 @@ class MainGUI(QtGui.QMainWindow):
     lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
     self.ui.x_project.draw()
     self.ui.y_project.draw()
+    if self.ui.fanReflectivity.isChecked() and self.refl and not self.refl.options['extract_fan']:
+      old_aca=self.auto_change_active
+      self.auto_change_active=False
+      self.ui.rangeStart.setValue(self.cut_areas['fan'][0])
+      self.ui.rangeEnd.setValue(self.cut_areas['fan'][1])
+      self.auto_change_active=old_aca
+    elif not self.ui.fanReflectivity.isChecked() and self.refl and self.refl.options['extract_fan']:
+      norm=self.getNorm()
+      if norm in self.cut_areas:
+        old_aca=self.auto_change_active
+        self.auto_change_active=False
+        self.ui.rangeStart.setValue(self.cut_areas[norm][0])
+        self.ui.rangeEnd.setValue(self.cut_areas[norm][1])
+        self.auto_change_active=old_aca
     self.trigger('initiateReflectivityPlot', False)
 
   @log_call

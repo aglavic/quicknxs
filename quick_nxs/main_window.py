@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Thu Apr 18 09:26:53 2013
+# Created: Mon Apr 22 16:00:46 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -308,7 +308,7 @@ class Ui_MainWindow(object):
     self.pfMaxWidth = QtGui.QDoubleSpinBox(self.page_3)
     self.pfMaxWidth.setDecimals(1)
     self.pfMaxWidth.setMaximum(500.0)
-    self.pfMaxWidth.setProperty("value", 300.0)
+    self.pfMaxWidth.setProperty("value", 100.0)
     self.pfMaxWidth.setObjectName(_fromUtf8("pfMaxWidth"))
     self.gridLayout_17.addWidget(self.pfMaxWidth, 3, 1, 1, 1)
     self.label_23 = QtGui.QLabel(self.page_3)
@@ -1179,6 +1179,11 @@ class Ui_MainWindow(object):
     self.actionAdvanced_Background.setObjectName(_fromUtf8("actionAdvanced_Background"))
     self.actionOpen_Sum = QtGui.QAction(MainWindow)
     self.actionOpen_Sum.setObjectName(_fromUtf8("actionOpen_Sum"))
+    self.actionCut_Points = QtGui.QAction(MainWindow)
+    icon15 = QtGui.QIcon()
+    icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/cutPoints.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionCut_Points.setIcon(icon15)
+    self.actionCut_Points.setObjectName(_fromUtf8("actionCut_Points"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1200,11 +1205,13 @@ class Ui_MainWindow(object):
     self.menuReduction.addAction(self.actionClear_Normalizations)
     self.menuReduction.addSeparator()
     self.menuReduction.addAction(self.actionNormalizeScaling)
+    self.menuReduction.addSeparator()
     self.menuReduction.addAction(self.actionAddPlot)
     self.menuReduction.addAction(self.actionRemove)
     self.menuReduction.addAction(self.actionClear)
     self.menuReduction.addSeparator()
     self.menuReduction.addAction(self.actionReduce)
+    self.menuReduction.addAction(self.actionCut_Points)
     self.menubar.addAction(self.menuFile.menuAction())
     self.menubar.addAction(self.menuReduction.menuAction())
     self.menubar.addAction(self.menuAdvanced.menuAction())
@@ -1217,6 +1224,8 @@ class Ui_MainWindow(object):
     self.mainToolbar.addAction(self.actionClear_Normalizations)
     self.mainToolbar.addSeparator()
     self.mainToolbar.addAction(self.actionNormalizeScaling)
+    self.mainToolbar.addAction(self.actionCut_Points)
+    self.mainToolbar.addSeparator()
     self.mainToolbar.addAction(self.actionAddPlot)
     self.mainToolbar.addAction(self.actionRemove)
     self.mainToolbar.addAction(self.actionClear)
@@ -1291,6 +1300,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.oldFormatActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), MainWindow.folderModified)
     QtCore.QObject.connect(self.pushButton_2, QtCore.SIGNAL(_fromUtf8("pressed()")), MainWindow.reloadFile)
     QtCore.QObject.connect(self.eventSplitItems, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.eventSplitIndex.setMaxValue)
+    QtCore.QObject.connect(self.actionCut_Points, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.cutPoints)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1624,6 +1634,9 @@ class Ui_MainWindow(object):
     self.actionAdvanced_Background.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+B", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen_Sum.setText(QtGui.QApplication.translate("MainWindow", "Open Sum...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen_Sum.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+O", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionCut_Points.setText(QtGui.QApplication.translate("MainWindow", "Cut Points (L/R)", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionCut_Points.setToolTip(QtGui.QApplication.translate("MainWindow", "Change the left and right cutoff (Cut Pts) values for the active file from the normalization intensity (Ctrl+Shift+C)", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionCut_Points.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+C", None, QtGui.QApplication.UnicodeUTF8))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

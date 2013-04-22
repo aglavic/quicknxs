@@ -4,7 +4,6 @@ Module for calculations used in data reduction and automatic algorithms.
 '''
 
 from numpy import *
-from scipy.stats.mstats import mquantiles
 from logging import debug
 from .decorators import log_input, log_both
 from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
@@ -78,7 +77,7 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
 
 @log_both
 def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
-             snr=5, min_width=2, max_width=20, ridge_length=15, return_pf=False, refine=True):
+             snr=5, min_width=1, max_width=20, ridge_length=15, return_pf=False, refine=True):
   """
   Calculate the specular or direct beam peak position from data x-projection.
   
@@ -110,13 +109,16 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
                      ridge_length=ridge_length)
   try:
     x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
+    wpeaks=array([p[1] for p in peaks])
     delta_pix=abs(pix_position-x_peaks)
     x_peak=x_peaks[delta_pix==delta_pix.min()][0]
+    wpeak=wpeaks[delta_pix==delta_pix.min()][0]
   except:
     x_peak=pix_position
+    wpeak=min_width
   if refine:
-    # refine position with gaussian
-    x_peak=refine_gauss(xproj, x_peak, 6.)
+    # refine position with gaussian after background subtraction, FWHM=2.355*sigma
+    x_peak=refine_gauss(xproj-median(xproj), x_peak, wpeak)
   if return_pf:
     return float(x_peak), pf
   else:
@@ -134,8 +136,8 @@ def get_yregion(data):
   if type(data) is not MRDataset:
     raise ValueError, "'data' needs to be a MRDataset object"
   yproj=data.ydata
-  # find the central peak reagion with intensities larger than 10% of maximum
-  y_bg=mquantiles(yproj, 0.5)[0]
+  # find the central peak reagion with intensities larger than the median
+  y_bg=median(yproj)
   y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
   yregion=(y_peak_region[0], y_peak_region[-1])
   return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg

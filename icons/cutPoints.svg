@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,7 +64,7 @@
      id="layer1"
      transform="translate(0,-1004.3622)">
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       style="fill:none;stroke:#999999;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
        d="m 6,1014.3622 11,0 c 0,0 0.440232,5.8298 1,8 0.559768,2.1702 0.463577,4.1677 2,5 1.536423,0.8323 3.509862,-1.4512 5,-1 1.490138,0.4512 2.026082,1.3448 3,3 0.973918,1.6552 0.117399,5.81 2,7 1.882601,1.19 4.421237,-1.3389 6,-1 1.578763,0.3389 2.150163,1.1502 3,2 0.849837,0.8498 0.69882,2.6545 2,3 1.30118,0.3455 4,-2 4,-2"
        id="path2999"
        inkscape:connector-curvature="0"
@@ -82,24 +82,17 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot3792"
-       style="font-size:26px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(-2.703125,995.80143)"><flowRegion
+       style="font-size:26px;font-style:normal;font-weight:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(-8.1875,997.05222)"><flowRegion
          id="flowRegion3794"><rect
            id="rect3796"
            width="27.053572"
            height="41.42857"
            x="25.178572"
            y="2.3749998"
-           style="font-size:26px;text-align:center;text-anchor:middle" /></flowRegion><flowPara
+           style="font-size:26px;text-align:start;text-anchor:start" /></flowRegion><flowPara
          id="flowPara3798"
-         style="font-family:Sans;-inkscape-font-specification:Sans Bold;font-weight:bold">1</flowPara></flowRoot>    <path
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 10,10 13,0"
-       id="path3790"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       transform="translate(0,1004.3622)" />
-    <path
+         style="font-size:20px;font-weight:bold;text-align:start;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans Bold">L</flowPara></flowRoot>    <path
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
        inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/totalReflection.png"
@@ -109,7 +102,7 @@
        d="m 20,1027.3622 c 1.536423,0.8323 3.509862,-1.4512 5,-1 1.490138,0.4512 2.026082,1.3448 3,3 0.973918,1.6552 0.117399,5.81 2,7 1.882601,1.19 4.421237,-1.3389 6,-1 1.578763,0.3389 2.150163,1.1502 3,2 0.849837,0.8498 0.69882,2.6545 2,3 1.30118,0.3455 4,-2 4,-2"
        style="fill:none;stroke:#008000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
     <path
-       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       style="fill:none;stroke:#999999;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
        d="m 36,1035.3622 c 1.578763,0.3389 2.150163,1.1502 3,2 0.849837,0.8498 0.69882,2.6545 2,3 1.30118,0.3455 4,-2 4,-2"
        id="path3760"
        inkscape:connector-curvature="0"
@@ -117,5 +110,30 @@
        inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/totalReflection.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
-  </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 20,1034.3622 0,-13"
+       id="path3790"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path2992"
+       d="m 35,1041.3622 0,-13"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <flowRoot
+       transform="translate(6.8125,1004.0522)"
+       style="font-size:26px;font-style:normal;font-weight:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot2994"
+       xml:space="preserve"><flowRegion
+         id="flowRegion2996"><rect
+           style="font-size:26px;text-align:start;text-anchor:start"
+           y="2.3749998"
+           x="25.178572"
+           height="41.42857"
+           width="27.053572"
+           id="rect2998" /></flowRegion><flowPara
+         style="font-size:20px;font-weight:bold;text-align:start;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         id="flowPara3000">R</flowPara></flowRoot>  </g>
 </svg>
