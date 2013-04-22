@@ -6,7 +6,6 @@
 
 import os, sys
 from tempfile import gettempdir
-from getpass import getuser
 from zipfile import ZipFile, ZIP_DEFLATED
 from cStringIO import StringIO
 from time import sleep, time
@@ -27,6 +26,7 @@ from PyQt4.QtCore import QThread, pyqtSignal
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
+from .config import PATHS, EMAIL, EXPORT
 from .mplwidget import MPLWidget
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
@@ -42,20 +42,6 @@ from . import genx_data
 sys.modules['genx.data']=genx_data
 genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
-TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
-
-result_folder=os.path.expanduser(u'~/results')
-email_options={
-               'Send': False,
-               'ZIP': True,
-               'To': '%s@ornl.gov'%getuser(),
-               'CC': '',
-               'Subject': 'SNS BL 4A extraction {ipts}',
-               'Text': 'Dear User,\n\nHere is the data extracted for the files {numbers}.\n\nRegards from BL4A',
-               'All': False,
-               'Plots': False,
-               'Data': True,
-               }
 
 class ReduceDialog(QDialog):
   CHANNEL_NAMINGS=['UpUp', 'DownDown', 'UpDown', 'DownUp']
@@ -74,16 +60,23 @@ class ReduceDialog(QDialog):
     self.ui.setupUi(self)
     self.channels=list(channels) # make sure we don't alter the original list
     self.refls=refls
-    if not os.path.exists(result_folder):
+    if not os.path.exists(PATHS['results']):
       self.ui.directoryEntry.setText(os.path.dirname(refls[0].origin[0]))
     else:
-      self.ui.directoryEntry.setText(result_folder)
+      self.ui.directoryEntry.setText(PATHS['results'])
+    self.ui.fileNameEntry.setText(PATHS['export_name'])
     self.set_email_texts()
     for i in range(4):
       if not any(map(lambda item: item in self.CHANNEL_COMPARE[i], channels)):
         checkbutton=getattr(self.ui, 'export'+self.CHANNEL_NAMINGS[i])
         checkbutton.setEnabled(False)
         checkbutton.setChecked(False)
+    for key, value in EXPORT.items():
+      option=getattr(self.ui, key)
+      if hasattr(option, 'setChecked'):
+        option.setChecked(value)
+      else:
+        option.setText(value)
     self.tempfiles=[]
 
   @log_call
@@ -91,7 +84,6 @@ class ReduceDialog(QDialog):
     '''
       Run the dialog and perform reflectivity extraction.
     '''
-    global result_folder
     if QDialog.exec_(self):
       self.exported_files_all=[]
       self.exported_files_plots=[]
@@ -105,6 +97,7 @@ class ReduceDialog(QDialog):
           os.makedirs(foldername)
         else:
           return
+      self.save_settings()
       # remove channels not selected
       if not self.ui.exportDownUp.isChecked():
         self.rm_channel(['-+'])
@@ -156,8 +149,6 @@ class ReduceDialog(QDialog):
         for title, output_data in self.exporter.output_data.items():
           self.plot_result(output_data, title)
 
-      result_folder=unicode(self.ui.directoryEntry.text())
-      self.save_email_texts()
       if self.ui.emailSend.isChecked():
         self.send_email()
       for tmp in self.tempfiles:
@@ -332,7 +323,7 @@ class ReduceDialog(QDialog):
 
   @log_call
   def set_email_texts(self):
-    for name, value in email_options.items():
+    for name, value in EMAIL.items():
       entry=getattr(self.ui, 'email'+name)
       if entry.__class__.__name__=='QPlainTextEdit':
         entry.setPlainText(value)
@@ -341,9 +332,20 @@ class ReduceDialog(QDialog):
       else:
         entry.setChecked(value)
 
+  def save_settings(self):
+    PATHS['results']=unicode(self.ui.directoryEntry.text())
+    PATHS['export_name']=unicode(self.ui.fileNameEntry.text())
+    for key in EXPORT.keys():
+      option=getattr(self.ui, key)
+      if hasattr(option, 'setChecked'):
+        EXPORT[key]=option.isChecked()
+      else:
+        EXPORT[key]=unicode(option.text())
+    self.save_email_texts()
+
   @log_call
   def save_email_texts(self):
-    for name, value in email_options.items():
+    for name, value in EMAIL.items():
       entry=getattr(self.ui, 'email'+name)
       if entry.__class__.__name__=='QPlainTextEdit':
         value=entry.toPlainText()
@@ -351,7 +353,7 @@ class ReduceDialog(QDialog):
         value=entry.text()
       else:
         value=entry.isChecked()
-      email_options[name]=value
+      EMAIL[name]=value
 
   def _email_replace(self, text):
     return text.replace('{ipts}', self.exporter.ipts_str).replace('{numbers}',
@@ -363,21 +365,21 @@ class ReduceDialog(QDialog):
     Collect all files and send them to the user via smtp mail.
     '''
     msg=MIMEMultipart()
-    msg['Subject']=self._email_replace(email_options['Subject'])
+    msg['Subject']=self._email_replace(EMAIL['Subject'])
     msg['From']='BL4A@ornl.gov'
-    msg['To']=email_options['To'].replace(';', ', ')
-    msg['CC']=email_options['CC'].replace(';', ', ')
-    text=self._email_replace(email_options['Text'])
+    msg['To']=EMAIL['To'].replace(';', ', ')
+    msg['CC']=EMAIL['CC'].replace(';', ', ')
+    text=self._email_replace(EMAIL['Text'])
     msg.preamble=text
     msg.attach(MIMEText(text))
 
-    if email_options['Data']:
+    if EMAIL['Data']:
       exported_files=self.exporter.exported_files_data
-    elif email_options['Plots']:
+    elif EMAIL['Plots']:
       exported_files=self.exporter.exported_files_plots
     else:
       exported_files=self.exporter.exported_files_all
-    if email_options['ZIP']:
+    if EMAIL['ZIP']:
       # create an in-memory zip file which gets attached to the mail
       fobj=StringIO()
       zipfile=ZipFile(fobj, 'w', ZIP_DEFLATED)

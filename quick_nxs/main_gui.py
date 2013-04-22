@@ -12,8 +12,9 @@ from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
+from .config import PATHS
 from .main_window import Ui_MainWindow
-from . import gui_utils
+from .gui_utils import DelayedTrigger, ReduceDialog
 from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
@@ -24,8 +25,6 @@ from .mrio import HeaderParser, HeaderCreator
 from logging import info, warning, debug
 from .gui_logging import install_gui_handler, ip_excepthook_overwrite, excepthook_overwrite
 from .decorators import log_call, log_input, log_both
-
-BASE_FOLDER=u'/SNS/REF_M'
 
 BASE_SEARCH=u'*/data/REF_M_%s_'
 OLD_BASE_SEARCH=u'*/*/%s/NeXus/REF_M_%s*'
@@ -54,7 +53,7 @@ class MainGUI(QtGui.QMainWindow):
   '''
   The program top level window with all direct event handling.
   '''
-  active_folder=BASE_FOLDER
+  active_folder=PATHS['data_base']
   active_file=u''
   _active_data=None
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
@@ -128,7 +127,7 @@ class MainGUI(QtGui.QMainWindow):
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
-    self.trigger=gui_utils.DelayedTrigger()
+    self.trigger=DelayedTrigger()
     self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
     self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
@@ -1000,11 +999,11 @@ class MainGUI(QtGui.QMainWindow):
     info('Trying to locate file number %s...'%number)
     QtGui.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
-      search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'histo.nxs'))
+      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'histo.nxs'))
     elif self.ui.oldFormatActive.isChecked():
-      search=glob(os.path.join(BASE_FOLDER, (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
+      search=glob(os.path.join(PATHS['data_base'], (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
     else:
-      search=glob(os.path.join(BASE_FOLDER, (BASE_SEARCH%number)+u'event.nxs'))
+      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'event.nxs'))
     if search:
       self.ui.numberSearchEntry.setText('')
       self.fileOpen(os.path.abspath(search[0]), do_plot=do_plot)
@@ -1033,7 +1032,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if filename is None and self._pending_header is None:
       filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
-                                               directory=gui_utils.result_folder,
+                                               directory=PATHS['results'],
                                                filter=u'Extracted Dataset (*.dat)')
     if filename==u'':
       return
@@ -1604,7 +1603,7 @@ class MainGUI(QtGui.QMainWindow):
       warning(u'Please select at least\none dataset to reduce.',
               extra={'title': u'Select a dataset'})
       return
-    dialog=gui_utils.ReduceDialog(self, self.ref_list_channels, self.reduction_list)
+    dialog=ReduceDialog(self, self.ref_list_channels, self.reduction_list)
     dialog.exec_()
     dialog.destroy()
 
@@ -1746,7 +1745,7 @@ class MainGUI(QtGui.QMainWindow):
 ####### Calculations and data treatment
 
   def updateStateFile(self, ignore):
-    sfile=open(self.statefile, 'w')
+    sfile=open(PATHS['state_file'], 'w')
     sfile.write('Running PID %i\n'%os.getpid())
     if len(self.reduction_list)>0:
       sfile.write(unicode(HeaderCreator(self.reduction_list)).encode('utf8'))
@@ -1830,14 +1829,9 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Restore window and dock geometry.
     '''
-    usr_path=os.path.expanduser('~/.quicknxs')
-    if not os.path.exists(usr_path):
-      os.makedirs(usr_path)
     # setup a file in the users directroy making sure the application is not run twice
     # the file also stores the current working state for reload after a crash (reduced data)
-    statepath=os.path.join(usr_path, 'run_state.dat')
-    self.statefile=statepath
-    if os.path.exists(self.statefile):
+    if os.path.exists(PATHS['state_file']):
       _result=QtGui.QMessageBox.warning(self, "Previous Crash",
 """There is a state file but no running process for it, 
 this could indicate a previous crash.
@@ -1845,18 +1839,17 @@ this could indicate a previous crash.
 Do you want to try to restore the working reduction list?""",
           buttons=QtGui.QMessageBox.Yes|QtGui.QMessageBox.No)
       if _result==QtGui.QMessageBox.Yes:
-        self._pending_header=open(self.statefile, 'r').read()
+        self._pending_header=open(PATHS['state_file'], 'r').read()
         QtCore.QTimer.singleShot(1500, self.loadExtraction)
-    open(self.statefile, 'w').write('Running PID %i\n'%os.getpid())
+    open(PATHS['state_file'], 'w').write('Running PID %i\n'%os.getpid())
     # read window settings
-    path=os.path.join(usr_path, 'window.pkl')
-    if os.path.exists(path):
+    if os.path.exists(PATHS['window']):
       try:
-        obj=load(open(path, 'rb'))
+        obj=load(open(PATHS['window'], 'rb'))
       except:
         return
     else:
-      obj=load(open(os.path.join(os.path.dirname(__file__), 'window.pkl'), 'rb'))
+      obj=load(open(PATHS['window_default'], 'rb'))
     try:
       self.restoreGeometry(obj[0])
       self.restoreState(obj[1])
@@ -1901,10 +1894,9 @@ Do you want to try to restore the working reduction list?""",
          self.ui.normalizeXTof.isChecked(),
          figure_params,
          )
-    usr_path=os.path.expanduser('~/.quicknxs')
-    dump(obj, open(os.path.join(usr_path, 'window.pkl'), 'wb'))
+    dump(obj, open(PATHS['window'], 'wb'))
     # remove the state file on normal exit
-    os.remove(self.statefile)
+    os.remove(PATHS['state_file'])
     QtGui.QMainWindow.closeEvent(self, event)
 
   @log_call
@@ -1943,9 +1935,7 @@ Do you want to try to restore the working reduction list?""",
     verticalLayout=QtGui.QVBoxLayout(dia)
     dia.setLayout(verticalLayout)
     webview=QtWebKit.QWebView(dia)
-    index_file=os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                            u'htmldoc', u'QuickNXS_Users_Manual.html')
-    webview.load(QtCore.QUrl.fromLocalFile(index_file))
+    webview.load(QtCore.QUrl.fromLocalFile(PATHS['doc_index']))
     verticalLayout.addWidget(webview)
     # set width of the page to fit the document and height to the same as the main window
     dia.resize(700, self.height())

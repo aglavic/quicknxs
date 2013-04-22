@@ -13,6 +13,7 @@ import atexit
 import logging
 import traceback
 from .version import str_version
+from .config import PATHS, ADMIN_MAIL
 
 # default options used for logging
 CONSOLE_LEVEL=logging.WARNING
@@ -22,12 +23,6 @@ if '--debug' in sys.argv:
 else:
   FILE_LEVEL=logging.INFO
 GUI_LEVEL=logging.INFO
-
-USER_DIR=os.path.expanduser('~/.quicknxs')
-LOG_DIR=os.path.join(USER_DIR, 'debug.log')
-if not os.path.exists(USER_DIR):
-  os.makedirs(USER_DIR)
-ADMIN_MAIL='agf@ornl.gov'
 
 def excepthook_overwrite(*exc_info):
   logging.critical('python error', exc_info=exc_info)
@@ -54,10 +49,8 @@ def check_runstate():
   '''
   Check for running application by this user.
   '''
-  usr_path=os.path.expanduser('~/.quicknxs')
-  statepath=os.path.join(usr_path, 'run_state.dat')
-  if os.path.exists(statepath):
-    pid=int(open(statepath).readline().split()[-1])
+  if os.path.exists(PATHS['state_file']):
+    pid=int(open(PATHS['state_file']).readline().split()[-1])
     running=pid_exists(pid)
     return running
   else:
@@ -74,7 +67,7 @@ def setup_system():
     console.setLevel(CONSOLE_LEVEL)
     logger.addHandler(console)
 
-  logfile=logging.FileHandler(LOG_DIR, 'w')
+  logfile=logging.FileHandler(PATHS['log_file'], 'w')
   formatter=logging.Formatter('[%(levelname)s] - %(asctime)s - %(filename)s:%(lineno)i:%(funcName)s %(message)s', '')
   logfile.setFormatter(formatter)
   logfile.setLevel(FILE_LEVEL)
@@ -174,7 +167,7 @@ class QtHandler(logging.Handler):
         msg.preamble=text
         msg.attach(MIMEText(text))
 
-        mitem=MIMEText(open(LOG_DIR, 'r').read(), 'log')
+        mitem=MIMEText(open(PATHS['log_file'], 'r').read(), 'log')
         mitem.add_header('Content-Disposition', 'attachment', filename='debug.log')
         msg.attach(mitem)
 

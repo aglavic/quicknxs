@@ -14,6 +14,7 @@ from time import strftime
 from zipfile import ZipFile
 from cPickle import loads, dumps
 from .decorators import log_call
+from .config import PATHS
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
 from .mrcalc import smooth_data, DetectorTailCorrector
 from .version import str_version
@@ -25,7 +26,6 @@ from . import genx_data
 sys.modules['genx.data']=genx_data
 genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
-TEMPLATE_PATH=os.path.join(os.path.dirname(__file__), 'genx_templates')
 
 result_folder=os.path.expanduser(u'~/results')
 
@@ -917,11 +917,11 @@ class Exporter(object):
     '''
     ofname=os.path.join(directory, naming)
     if 'x' in self.channels:
-      template=os.path.join(TEMPLATE_PATH, 'unpolarized.gx')
+      template=os.path.join(PATHS['genx_templates'], 'unpolarized.gx')
     elif '+' in self.channels or '-' in self.channels:
-      template=os.path.join(TEMPLATE_PATH, 'polarized.gx')
+      template=os.path.join(PATHS['genx_templates'], 'polarized.gx')
     else:
-      template=os.path.join(TEMPLATE_PATH, 'spinflip.gx')
+      template=os.path.join(PATHS['genx_templates'], 'spinflip.gx')
     for key, output_data in self.output_data.items():
       if not key in ['Specular', 'TrueSpecular']:
         continue
