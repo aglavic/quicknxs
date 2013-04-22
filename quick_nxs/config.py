@@ -30,17 +30,26 @@ class UnicodeConfigParser(SafeConfigParser):
     SafeConfigParser.__init__(self, **opts)
     self.encoding=encoding
 
-  def get(self, section, option, raw=False, vars=None): #@ReservedAssignment
-    value=SafeConfigParser.get(self, section, option, raw=raw, vars=vars)
-    if type(value) is str:
-      value=unicode(value, self.encoding)
-    return value.replace(u'\\n', u'\n').replace(u'\\t', u'\t')
+  if sys.version_info[0]>=3:
+    def get(self, section, option, raw=False, vars=None): #@ReservedAssignment
+      value=SafeConfigParser.get(self, section, option, raw=raw, vars=vars)
+      return value.replace(u'\\n', u'\n').replace(u'\\t', u'\t')
 
-  def set(self, section, option, value=None):
-    if type(value) is unicode:
-      value=value.encode(self.encoding)
-    return SafeConfigParser.set(self, section, option,
-                                value.replace('\n', '\\n').replace('\t', '\\t'))
+    def set(self, section, option, value=None):
+      return SafeConfigParser.set(self, section, option,
+                                  value.replace('\n', '\\n').replace('\t', '\\t'))
+  else:
+    def get(self, section, option, raw=False, vars=None): #@ReservedAssignment
+      value=SafeConfigParser.get(self, section, option, raw=raw, vars=vars)
+      if type(value) is str:
+        value=unicode(value, self.encoding)
+      return value.replace(u'\\n', u'\n').replace(u'\\t', u'\t')
+
+    def set(self, section, option, value=None):
+      if type(value) is unicode:
+        value=value.encode(self.encoding)
+      return SafeConfigParser.set(self, section, option,
+                                  value.replace('\n', '\\n').replace('\t', '\\t'))
 
 
 cfg=UnicodeConfigParser()
