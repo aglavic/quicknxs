@@ -650,7 +650,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>141</width>
+             <width>246</width>
              <height>135</height>
             </rect>
            </property>
@@ -2392,6 +2392,9 @@
     <addaction name="actionAutomaticXPeak"/>
     <addaction name="actionAutoYLimits"/>
     <addaction name="actionRefineX"/>
+    <addaction name="actionAuto_Reflectivity"/>
+    <addaction name="actionStrip_Overlap"/>
+    <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionAdvanced_Background"/>
     <addaction name="actionAdjust_Dirct_Beam"/>
@@ -2479,6 +2482,8 @@
    </attribute>
    <addaction name="actionAutomaticXPeak"/>
    <addaction name="actionAutoYLimits"/>
+   <addaction name="actionAuto_Reflectivity"/>
+   <addaction name="actionStrip_Overlap"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -2747,6 +2752,36 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionAuto_Reflectivity">
+   <property name="icon">
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/autoRef.png</normaloff>:/General/autoRef.png</iconset>
+   </property>
+   <property name="text">
+    <string>Auto Reflectivity</string>
+   </property>
+   <property name="toolTip">
+    <string>Start with active dataset as total reflectivity region an continue adding datasets until the incident angle get lower than for the last dataset (Ctrl+Shift+A)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionStrip_Overlap">
+   <property name="icon">
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/stripOverlap.png</normaloff>:/General/stripOverlap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Strip Overlap</string>
+   </property>
+   <property name="toolTip">
+    <string>Strip points from datasets that overlap with the subsequent dataset in the reflectivity (Ctrl+Shift+S)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>
@@ -3816,6 +3851,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAuto_Reflectivity</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>autoRef()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStrip_Overlap</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>stripOverlap()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3856,5 +3923,7 @@
   <slot>fileOpenSumDialog()</slot>
   <slot>reloadFile()</slot>
   <slot>cutPoints()</slot>
+  <slot>autoRef()</slot>
+  <slot>stripOverlap()</slot>
  </slots>
 </ui>

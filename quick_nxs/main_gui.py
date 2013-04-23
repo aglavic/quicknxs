@@ -1154,6 +1154,44 @@ class MainGUI(QtGui.QMainWindow):
       self.openByNumber(last_file, do_plot=True)
 
   @log_call
+  def autoRef(self):
+    '''
+    Starting of the active dataset continue to add all subsequent datasets until the incident
+    angle get smaller again. Quick method to create a full reflectivity automatically.
+    '''
+    if self.getNorm() is None:
+      warning('Can only use Auto Reflectivity on normalized total reflection dataset')
+      return
+    self.clearRefList(do_plot=False)
+    self.normalizeTotalReflection()
+    self.addRefList(do_plot=False)
+    for ignore in range(10):
+      last_ai=self.refl.ai
+      self.nextFile()
+      if self.refl.ai<(last_ai-0.001):
+        break
+      self.normalizeTotalReflection()
+      self.addRefList(do_plot=False)
+    self.stripOverlap()
+    self.prevFile()
+
+  @log_call
+  def stripOverlap(self):
+    '''
+    Remove overlapping points in the reflecitviy, cutting always from the lower Qz
+    measurements.
+    '''
+    if len(self.reduction_list)<2:
+      warning('You need to have at least two datasets in the reduction table')
+      return
+    for idx, item in enumerate(self.reduction_list[:-1]):
+      next_item=self.reduction_list[idx+1]
+      end_idx=next_item.Q.shape[0]-next_item.options['P0']
+      overlap_idx=where(item.Q>=next_item.Q[end_idx-1])[0][-1]
+      self.ui.reductionTable.setItem(idx, 3,
+                       QtGui.QTableWidgetItem(str(overlap_idx)))
+
+  @log_call
   def onPathChanged(self, base, folder):
     '''
     Update the file list and create a watcher to update the list again if a new file was
@@ -1367,6 +1405,8 @@ class MainGUI(QtGui.QMainWindow):
     Return a fitting normalization (same ToF channels and wavelength) for 
     a dataset.
     '''
+    if self.active_data is None:
+      return None
     fittings=[]
     indices=[]
     if data is None:

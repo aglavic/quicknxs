@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="General">
+    <file>autoRef.png</file>
+    <file>stripOverlap.png</file>
     <file>cutPoints.png</file>
     <file>clearNorm.png</file>
     <file>document-open.png</file>

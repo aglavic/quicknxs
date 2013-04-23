@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Mon Apr 22 17:32:36 2013
+# Created: Tue Apr 23 11:11:50 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -278,7 +278,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 141, 135))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 246, 135))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1184,6 +1184,16 @@ class Ui_MainWindow(object):
     icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/cutPoints.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.actionCut_Points.setIcon(icon15)
     self.actionCut_Points.setObjectName(_fromUtf8("actionCut_Points"))
+    self.actionAuto_Reflectivity = QtGui.QAction(MainWindow)
+    icon16 = QtGui.QIcon()
+    icon16.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/autoRef.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionAuto_Reflectivity.setIcon(icon16)
+    self.actionAuto_Reflectivity.setObjectName(_fromUtf8("actionAuto_Reflectivity"))
+    self.actionStrip_Overlap = QtGui.QAction(MainWindow)
+    icon17 = QtGui.QIcon()
+    icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/stripOverlap.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionStrip_Overlap.setIcon(icon17)
+    self.actionStrip_Overlap.setObjectName(_fromUtf8("actionStrip_Overlap"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1193,6 +1203,9 @@ class Ui_MainWindow(object):
     self.menuAdvanced.addAction(self.actionAutomaticXPeak)
     self.menuAdvanced.addAction(self.actionAutoYLimits)
     self.menuAdvanced.addAction(self.actionRefineX)
+    self.menuAdvanced.addAction(self.actionAuto_Reflectivity)
+    self.menuAdvanced.addAction(self.actionStrip_Overlap)
+    self.menuAdvanced.addSeparator()
     self.menuAdvanced.addSeparator()
     self.menuAdvanced.addAction(self.actionAdvanced_Background)
     self.menuAdvanced.addAction(self.actionAdjust_Dirct_Beam)
@@ -1235,6 +1248,8 @@ class Ui_MainWindow(object):
     self.advancedToolbar.addAction(self.actionAdjust_Dirct_Beam)
     self.autoToolbar.addAction(self.actionAutomaticXPeak)
     self.autoToolbar.addAction(self.actionAutoYLimits)
+    self.autoToolbar.addAction(self.actionAuto_Reflectivity)
+    self.autoToolbar.addAction(self.actionStrip_Overlap)
 
     self.retranslateUi(MainWindow)
     self.toolBox.setCurrentIndex(0)
@@ -1301,6 +1316,8 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.pushButton_2, QtCore.SIGNAL(_fromUtf8("pressed()")), MainWindow.reloadFile)
     QtCore.QObject.connect(self.eventSplitItems, QtCore.SIGNAL(_fromUtf8("valueChanged(int)")), self.eventSplitIndex.setMaxValue)
     QtCore.QObject.connect(self.actionCut_Points, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.cutPoints)
+    QtCore.QObject.connect(self.actionAuto_Reflectivity, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.autoRef)
+    QtCore.QObject.connect(self.actionStrip_Overlap, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.stripOverlap)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1637,6 +1654,12 @@ class Ui_MainWindow(object):
     self.actionCut_Points.setText(QtGui.QApplication.translate("MainWindow", "Cut Points (L/R)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionCut_Points.setToolTip(QtGui.QApplication.translate("MainWindow", "Change the left and right cutoff (Cut Pts) values for the active file from the normalization intensity (Ctrl+Shift+C)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionCut_Points.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+C", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAuto_Reflectivity.setText(QtGui.QApplication.translate("MainWindow", "Auto Reflectivity", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAuto_Reflectivity.setToolTip(QtGui.QApplication.translate("MainWindow", "Start with active dataset as total reflectivity region an continue adding datasets until the incident angle get lower than for the last dataset (Ctrl+Shift+A)", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionAuto_Reflectivity.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+A", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionStrip_Overlap.setText(QtGui.QApplication.translate("MainWindow", "Strip Overlap", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionStrip_Overlap.setToolTip(QtGui.QApplication.translate("MainWindow", "Strip points from datasets that overlap with the subsequent dataset in the reflectivity (Ctrl+Shift+S)", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionStrip_Overlap.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+S", None, QtGui.QApplication.UnicodeUTF8))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget
