@@ -31,7 +31,7 @@ __scripts__=['quicknxs']
 __py_modules__=[]
 __package_dir__={}
 __packages__=['quick_nxs']
-__package_data__={'quick_nxs': ['window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
+__package_data__={'quick_nxs': ['default_config.cfg', 'window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
                 ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png']),
