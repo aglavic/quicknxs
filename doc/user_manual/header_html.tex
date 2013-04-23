@@ -1,0 +1,57 @@
+\usepackage{html}
+\documentclass[
+            letterpaper,
+            oneside,
+            parskip=half,%        European paragraphs with spaces in between
+%             headsepline,%         Linie nach Kopfzeile
+%             footsepline,%         Linie vor Fusszeile
+            numbers=noenddot,%    Remove dot aver figure numberings
+            12pt                          
+                          ]{book}
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathptmx}            % Times + passende Mathefonts
+\usepackage{helvet}  % skalierte Helvetica als \sfdefault
+
+\usepackage[T1]{fontenc}
+\input{chartable.tex}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+% \usepackage[labelformat=parens,labelsep=space,listofformat=subsimple]{subfig}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{upgreek} % Grichische Buchstaben in standard textstil
+\usepackage{units} % Nicefaction etc.
+
+\newcommand{\icon}[1]{\includegraphics[width=11pt]{../../icons/#1.png}}
+
+
+% some new commands for simplification
+\usepackage{xspace}
+\newcommand{\outmath}[1]{\ifmmode\text{#1}\else{#1}\fi} % If in math mode use normal text
+\def\unitspacer{\,} % Defines how units are spaced to the adjacent values
+% Units
+\def\m{\unitspacer{}\outmath{m}\xspace}                     % m
+\def\cm{\unitspacer{}\outmath{cm}\xspace}                     % cm
+\def\A{\unitspacer{}\outmath{\AA{}}\xspace}                       % Angstrom
+\def\rA{\unitspacer{}\ensuremath{\text{\AA}^\text{-1}}\xspace}    % Angstrom^{-1}
+\def\mus{\unitspacer{}\ensuremath{\upmu{}}\outmath{s}\xspace} % µs with upright µ-symbol for the unit
+
+% Constants
+\def\muB{\ensuremath{\mu_B}\xspace} % Bohr magnetron
+\def\mun{\ensuremath{\vec{\mu}_n}\xspace} %Neutron magnetic moment
+\def\mn{\ensuremath{m_n}\xspace} %Neutron mass
+
+% Misc
+\def\tth{\ensuremath{2\theta}\xspace}
+\def\Q{\ensuremath{\vec{Q}}\xspace}
+\def\Qx{\ensuremath{Q_x}\xspace}
+\def\Qy{\ensuremath{Q_y}\xspace}
+\def\Qz{\ensuremath{Q_z}\xspace}
+\def\ki{\ensuremath{\vec{k}_i}\xspace}
+\def\kf{\ensuremath{\vec{k}_f}\xspace}
+\def\kiz{\ensuremath{k_{i,z}}\xspace}
+\def\kfz{\ensuremath{k_{f,z}}\xspace}
+
+
