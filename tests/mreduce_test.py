@@ -129,7 +129,7 @@ class DataConsistencyChecks(unittest.TestCase):
     v_n=d.dist_mod_det/d.tof*1e6 #m/s
     lamda_n=mreduce.H_OVER_M_NEUTRON/v_n*1e10 #A
     assert_array_equal(lamda_n, d.lamda, verbose=True)
-    for item in ['lambda_center', 'experiment', 'merge_warnings', 'beam_width',
+    for item in ['lambda_center', 'experiment', 'merge_warnings',
                  'dpix', 'dangle', 'dangle0', 'sangle']:
       self.assertEqual(getattr(self.data, item), getattr(d, item))
     mreduce.NXSData.get_cachesize()
