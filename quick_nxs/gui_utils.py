@@ -108,7 +108,8 @@ class ReduceDialog(QDialog):
       if not self.ui.exportUpUp.isChecked():
         self.rm_channel(['x', '+', '++', '0V'])
       # calculate and collect reflectivities
-      self.exporter=Exporter(self.channels, self.refls)
+      self.exporter=Exporter(self.channels, self.refls,
+                             sample_length=self.ui.sampleSize.value())
       info('Re-reading all datasets...')
       self.exporter.read_data()
 

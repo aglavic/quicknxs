@@ -16,10 +16,10 @@ storing the result as well as some intermediate data in itself as attributes.
 
 import os
 import sys
-from logging import debug
 from copy import deepcopy
 from glob import glob
 from numpy import *
+from logging import debug, info #@Reimport
 import h5py
 from time import time
 # ignore zero devision error
@@ -27,8 +27,11 @@ from time import time
 
 try:
   from .decorators import log_call, log_input, log_both
+  from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
 except ImportError:
   # just in case module is used separately
+  BASE_SEARCH, OLD_BASE_SEARCH='', ''
+  PATHS={}
   def log_call(func): return func
   def log_input(func): return func
   def log_both(func): return func
@@ -295,8 +298,6 @@ class NXSData(object):
   @property
   def merge_warnings(self): return self[0].merge_warnings
   @property
-  def beam_width(self): return self[0].beam_width
-  @property
   def dpix(self): return self[0].dpix
   @property
   def dangle(self): return self[0].dangle
@@ -360,9 +361,17 @@ class MRDataset(object):
   dangle=0. #°
   dangle0=4. #°
   sangle=0. #°
+
+  # for resolution calculation
+  slit1_width=3. # mm
+  slit1_dist=2600. # mm
+  slit2_width=2. # mm
+  slit2_dist=2019. #mm
+  slit3_width=0.05 # mm
+  slit3_dist=714. # mm
+
   ai=None
   dpix=0
-  beam_width=0. #mm
   lambda_center=3.37 #Å
   xydata=None
   xtofdata=None
@@ -537,10 +546,20 @@ class MRDataset(object):
     if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
       self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
       self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-      self.beam_width=data['instrument/aperture3/S3HWidth/value'].value[0]
+      self.slit1_width=data['instrument/aperture1/S1HWidth/value'].value[0]
+      self.slit2_width=data['instrument/aperture2/S2HWidth/value'].value[0]
+      self.slit3_width=data['instrument/aperture3/S3HWidth/value'].value[0]
     else:
-      self.beam_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
+      self.slit1_width=data['instrument/aperture1/RSlit1/value'].value[0]-\
+                      data['instrument/aperture1/LSlit1/value'].value[0]
+      self.slit2_width=data['instrument/aperture2/RSlit2/value'].value[0]-\
+                      data['instrument/aperture2/LSlit2/value'].value[0]
+      self.slit3_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
                       data['instrument/aperture3/LSlit3/value'].value[0]
+    self.slit1_dist=-data['instrument/aperture1/distance'].value[0]*1000.
+    self.slit2_dist=-data['instrument/aperture2/distance'].value[0]*1000.
+    self.slit3_dist=-data['instrument/aperture3/distance'].value[0]*1000.
+
     self.sangle=data['sample/SANGLE/value'].value[0]
 
     self.proton_charge=data['proton_charge'].value[0]
@@ -641,6 +660,22 @@ def time_from_header(filename):
   nxs.close()
   return sumtime
 
+def locate_file(number, histogram=True, old_format=False):
+    '''
+    Search the data folders for a specific file number and open it.
+    '''
+    info('Trying to locate file number %s...'%number)
+    if histogram:
+      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'histo.nxs'))
+    elif old_format:
+      search=glob(os.path.join(PATHS['data_base'], (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
+    else:
+      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'event.nxs'))
+    if search:
+      return search[0]
+    else:
+      return None
+
 class Reflectivity(object):
   """
   Extraction of reflectivity from MRDatatset object storing all data
@@ -656,6 +691,7 @@ class Reflectivity(object):
        tth=None,
        dpix=None,
        scale=1.,
+       sample_length=10., # mm - used to calculate the angular resolution
        extract_fan=False, # Treat every x-pixel separately and join the data afterwards
        normalization=None, # another Reflectivity object used for normalization
        bg_tof_constant=False, # treat background to be independent of wavelength for better statistics
@@ -687,6 +723,9 @@ class Reflectivity(object):
     if self.options['dpix'] is None:
       self.options['dpix']=dataset.dpix
     self.lambda_center=dataset.lambda_center
+    self.slits=[(dataset.slit1_width, dataset.slit1_dist),
+                (dataset.slit2_width, dataset.slit2_dist),
+                (dataset.slit3_width, dataset.slit3_dist)]
 
     if all_options['extract_fan'] and all_options['normalization'] is not None:
       self._calc_fan(dataset)
@@ -741,9 +780,9 @@ class Reflectivity(object):
     relpix=self.options['dpix']-x_pos
     tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     self.ai=tth/2.
-    # set good angular resolution as real resolution not implemented, yet
-    dai=0.0001
-    debug('alpha_i=%s'%self.ai)
+    # calculate resolution from slits, sample size and incident angle
+    dai=self.get_resolution()
+    debug('alpha_i=%s+/-%s'%(self.ai, dai))
 
     self._calc_bg(dataset)
 
@@ -827,6 +866,7 @@ class Reflectivity(object):
     tth=(self.options['tth']*pi/180.+relpix*rad_per_pixel)
     ai=tth/2.
     self.ai=ai.mean()
+    dai_rel=self.get_resolution()/self.ai
     debug("Intensity scale is %s"%(scale))
     debug('alpha_i=%s'%repr(ai))
 
@@ -892,8 +932,9 @@ class Reflectivity(object):
       except IndexError:
         break
       Q.append((Qz_bin_high+Qz_bin_low)/2.)
-      # error is assumed to be dominated by the large binning
-      dQ.append((Qz_bin_high-Qz_bin_low)/sqrt(12.))
+      # error is calculated from the relative binning size and angle resolutions
+      dQ_rel=(Qz_bin_high-Qz_bin_low)/sqrt(12.)/Q[-1]
+      dQ.append(sqrt(dQ_rel**2+dai_rel**2)*Q[-1])
       Rsumi=[]
       ddRsumi=[]
       for line in lines:
@@ -1007,6 +1048,20 @@ class Reflectivity(object):
     self.dR*=rescale
     self.options['scale']=scaling
 
+  def get_resolution(self):
+    '''
+    Calculate the angular resolution given by all slits together with the sample size
+    and return the smallest one.
+    '''
+    res=[]
+    s_width=self.options['sample_length']*sin(self.ai)
+    for width, dist in self.slits:
+      # calculate the maximum opening angle dTheta
+      dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
+      # standard deviation for a triangle shaped beam intensity distribution is dTheta / sqrt(6)
+      res.append(dTheta*0.408)
+    return min(res)
+
 class OffSpecular(Reflectivity):
   '''
   Calculate off-specular scattering similarly as done for reflectivity.
@@ -1031,6 +1086,9 @@ class OffSpecular(Reflectivity):
     if self.options['dpix'] is None:
       self.options['dpix']=dataset.dpix
     self.lambda_center=dataset.lambda_center
+    self.slits=[(dataset.slit1_width, dataset.slit1_dist),
+                (dataset.slit2_width, dataset.slit2_dist),
+                (dataset.slit3_width, dataset.slit3_dist)]
 
     self._calc_offspec(dataset)
 
@@ -1148,6 +1206,9 @@ class GISANS(Reflectivity):
     if self.options['dpix'] is None:
       self.options['dpix']=dataset.dpix
     self.lambda_center=dataset.lambda_center
+    self.slits=[(dataset.slit1_width, dataset.slit1_dist),
+                (dataset.slit2_width, dataset.slit2_dist),
+                (dataset.slit3_width, dataset.slit3_dist)]
 
     self._calc_gisans(dataset)
 

@@ -27,8 +27,6 @@ sys.modules['genx.data']=genx_data
 genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 
-result_folder=os.path.expanduser(u'~/results')
-
 class HeaderCreator(object):
   '''
   Class to create file headers from a set of Reflectivity objects.
@@ -85,7 +83,7 @@ class HeaderCreator(object):
                   poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
             if not poly in self.bg_polys:
               self.bg_polys.append(poly)
-            poly_ids.append(self.bg_polys.index(poly)+1)              
+            poly_ids.append(self.bg_polys.index(poly)+1)
           bg[2]=poly_ids
         self.bgs.append(bg)
 
@@ -153,7 +151,7 @@ class HeaderCreator(object):
       data.append(datai)
     section=[u'Direct Beam Runs', options, [dict(zip(options, item)) for item in data]]
     self.sections.append(section)
-    
+
     # extracted data measurements
     debug('data section')
     options=self.dataset_options+['DB_ID']
@@ -188,7 +186,7 @@ class HeaderCreator(object):
             for poly in bg[2]:
               poly=[poly[0][0], poly[0][1], poly[1][0], poly[1][1],
                     poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
-              poly_ids.append(self.bg_polys.index(poly)+1)              
+              poly_ids.append(self.bg_polys.index(poly)+1)
             bg[2]=poly_ids
           datai.append(self.bgs.index(bg))
       if type(refl.origin) is list:
@@ -220,7 +218,7 @@ class HeaderCreator(object):
       section=[u'Advanced Background Options', options,
                [dict(zip(options, item)) for item in data]]
       self.sections.append(section)
-    
+
     #optional background polynom block
     if len(self.bg_polys)>0:
       options=['poly_region', 'l1', 'x1', 'l2', 'x2', 'l3', 'x3', 'l4', 'x4']
@@ -296,7 +294,7 @@ class HeaderCreator(object):
     output=u'[Data]\n'
     output+=u'\t'.join([u'%-20s'%(u'%s [%s]'%(name, unit)) for name, unit in zip(names, units)])
     return output+u'\n'
-  
+
   @classmethod
   def get_data_comment(cls, names, units):
     '''
@@ -305,7 +303,7 @@ class HeaderCreator(object):
     output=u'# [Data]\n'
     output+=u'# '+u'\t'.join([u'%-20s'%(u'%s [%s]'%(name, unit)) for name, unit in zip(names, units)])
     return output+u'\n'
-  
+
   def as_comments(self):
     output=unicode(self)
     return u'# '+u'\n# '.join([line for line in output.splitlines()])+'\n'
@@ -327,7 +325,7 @@ class HeaderParser(object):
   poly_defaults=dict(poly_region=0, l1=0., l2=0., l3=0., l4=0.,
                                     x1=0., x2=0., x3=0., x4=0.)
   callback=None
-  
+
   def __init__(self, header):
     if type(header) is not unicode:
       header=unicode(header, 'utf8', 'ignore')
@@ -335,12 +333,12 @@ class HeaderParser(object):
     self.sections={}
     self._collect_sections()
     self._evaluate()
-  
+
   def parse(self, callback=None):
     self.callback=callback
     self._read_direct_beam()
     self._read_datasets()
-  
+
   def _collect_sections(self):
     '''
     Go through the header lines and locate section data.
@@ -358,14 +356,14 @@ class HeaderParser(object):
         current_section=None
       elif current_section is not None:
         self.sections[current_section].append(line)
-  
+
   def _evaluate_section(self, section, defaults):
     '''
     Convert section data to python types and create a dictionary
     for each line in a section. Default values can be supplied
     to overwrite undefined values or supply integer type conversion.
     '''
-    sitems=[item.strip() for item in self.sections[section][0].split(u'  ') if item.strip()!=u'']    
+    sitems=[item.strip() for item in self.sections[section][0].split(u'  ') if item.strip()!=u'']
     sdata=[[item.strip() for item in line.split(u'  ') if item.strip()!=u'']
                                 for line in self.sections[section][1:]]
     output=[]
@@ -410,7 +408,7 @@ class HeaderParser(object):
       self.section_data['Background Polygon Regions']=self._evaluate_section(
                         'Background Polygon Regions', self.poly_defaults)
     self._collect_background_options()
-  
+
   def _get_dataset(self, options):
     fname=options['File']
     read_opts=dict(NXSData.DEFAULT_OPTIONS)
@@ -425,7 +423,7 @@ class HeaderParser(object):
       return NXSMultiData(fname, **read_opts)
     else:
       return NXSData(fname, **read_opts)
-  
+
   def _collect_background_options(self):
     if not 'Advanced Background Options' in self.section_data:
       return
@@ -449,7 +447,7 @@ class HeaderParser(object):
       else:
         opt_item['bg_poly_regions']=None
       self._bg_options.append(opt_item)
-  
+
   def _read_direct_beam(self):
     self.norms=[]
     self.norm_data=[]
@@ -488,7 +486,7 @@ class HeaderParser(object):
         calc_opts.update(self._bg_options[int(db['BG_ID'])-1])
       calc_opts['normalization']=self.norms[int(db['DB_ID'])-1]
       refl=Reflectivity(data[0], **calc_opts)
-      self.refls.append(refl)      
+      self.refls.append(refl)
 
 class Exporter(object):
   '''
@@ -497,13 +495,16 @@ class Exporter(object):
   but can also be helpful for scripts which export data.
   '''
 
-  def __init__(self, channels, refls):
+  def __init__(self, channels, refls, sample_length=10.):
     self.norms=[]
     for refli in refls:
       if refli.options['normalization'] not in self.norms:
         self.norms.append(refli.options['normalization'])
     self.channels=list(channels) # make sure we don't alter the original list
+    self.additional_options=dict(sample_length=sample_length)
     self.refls=refls
+    for ref in self.refls:
+      ref.options.update(self.additional_options)
     self.file_header=HeaderCreator(self.refls)
     self.read_data()
     self.output_data={}
@@ -678,7 +679,7 @@ class Exporter(object):
     self.output_data['OffSpecSmooth']=output_data
 
   @log_call
-  def export_data(self, directory=result_folder,
+  def export_data(self, directory=PATHS['results'],
                   naming=u'REF_M_{numbers}_{item}_{state}.{type}',
                   multi_ascii=True,
                   combined_ascii=False,
@@ -791,7 +792,7 @@ class Exporter(object):
     return output
 
   @log_call
-  def create_gnuplot_scripts(self, directory=result_folder,
+  def create_gnuplot_scripts(self, directory=PATHS['results'],
                   naming=u'REF_M_{numbers}_{item}_{state}.{type}',
                   check_exists=lambda ignore: True):
     '''
@@ -799,7 +800,7 @@ class Exporter(object):
     '''
     for title, output_data in self.output_data.items():
         self._create_gnuplot_script(output_data, title, directory, naming, check_exists)
-    
+
   def _create_gnuplot_script(self, output_data, title, directory, naming, check_exists):
     ind_str=self.ind_str
     ofname_full=os.path.join(directory, naming)
@@ -908,7 +909,7 @@ class Exporter(object):
       self.exported_files_all.append(output);self.exported_files_plots.append(output)
 
   @log_call
-  def create_genx_file(self, directory=result_folder,
+  def create_genx_file(self, directory=PATHS['results'],
                        naming=u'REF_M_{numbers}_{item}_{state}.{type}',
                        check_exists=lambda ignore: True):
     '''

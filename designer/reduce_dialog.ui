@@ -164,38 +164,47 @@
           <string>Output Formats</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="multiAscii">
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="genx">
             <property name="text">
-             <string>ASCII for each channel</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>GenX</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="2" colspan="2">
+           <widget class="QCheckBox" name="numpy">
+            <property name="text">
+             <string>Numpy .npz</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QDoubleSpinBox" name="sampleSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="suffix">
+             <string>mm</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <double>10.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" colspan="2">
            <widget class="QCheckBox" name="combinedAscii">
             <property name="text">
              <string>Combined ASCII</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="matlab">
-            <property name="text">
-             <string>Matlab</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="gnuplot">
-            <property name="text">
-             <string>Gnuplot Script</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
+          <item row="2" column="2" colspan="2">
            <widget class="QCheckBox" name="plot">
             <property name="text">
              <string>Show Plot</string>
@@ -205,17 +214,50 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="genx">
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>GenX</string>
+             <string>Sample Size</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="numpy">
+          <item row="3" column="1">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="gnuplot">
             <property name="text">
-             <string>Numpy .npz</string>
+             <string>Gnuplot Script</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="matlab">
+            <property name="text">
+             <string>Matlab</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="multiAscii">
+            <property name="text">
+             <string>ASCII for each channel</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

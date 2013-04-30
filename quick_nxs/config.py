@@ -23,6 +23,11 @@ else:
 if not os.path.exists(CFG_PATH):
   os.makedirs(CFG_PATH)
 
+# for the search of files by number
+BASE_SEARCH=u'*/data/REF_M_%s_'
+OLD_BASE_SEARCH=u'*/*/%s/NeXus/REF_M_%s*'
+
+
 class UnicodeConfigParser(SafeConfigParser):
   # make config use case sensitive strings
   optionxform=str

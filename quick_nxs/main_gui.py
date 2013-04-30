@@ -12,7 +12,7 @@ from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
-from .config import PATHS
+from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
 from .main_window import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog
 from .compare_plots import CompareDialog
@@ -25,9 +25,6 @@ from .mrio import HeaderParser, HeaderCreator
 from logging import info, warning, debug
 from .gui_logging import install_gui_handler, ip_excepthook_overwrite, excepthook_overwrite
 from .decorators import log_call, log_input, log_both
-
-BASE_SEARCH=u'*/data/REF_M_%s_'
-OLD_BASE_SEARCH=u'*/*/%s/NeXus/REF_M_%s*'
 
 class gisansCalcThread(QtCore.QThread):
   '''
