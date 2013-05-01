@@ -75,10 +75,9 @@ if "py2exe" in sys.argv:
                            }
               }
 else:
-  __options__={#"setup_requires":[],
-                }
+  __options__={}
 
-__requires__=['numpy', 'PyQt4']
+__requires__=['numpy', 'matplotlib', 'pyqt4']
 from distutils.core import setup
 
 # extensions modules written in C
