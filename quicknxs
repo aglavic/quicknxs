@@ -7,20 +7,20 @@
 import sys
 # first thing to do is starting the logging system
 from quick_nxs.gui_logging import setup_system, check_runstate
-from quick_nxs.main_gui import MainGUI
-from PyQt4.QtGui import QApplication
 
 def _run(argv=[]):
-  if check_runstate():
-    # make sure the debug.log is not overwritten and only one version
-    # of the program per user is running
-    print "Another instance is already running"
-    return
-  setup_system()
   app=QApplication(argv)
   window=MainGUI(argv)
   window.show()
   return app.exec_()
 
 if __name__=='__main__':
+  if check_runstate():
+    # make sure the debug.log is not overwritten and only one version
+    # of the program per user is running
+    print "Another instance is already running"
+    sys.exit(0)
+  setup_system()
+  from quick_nxs.main_gui import MainGUI
+  from PyQt4.QtGui import QApplication
   sys.exit(_run(sys.argv[1:]))

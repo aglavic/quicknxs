@@ -275,16 +275,21 @@ class MainGUI(QtGui.QMainWindow):
       return
     self.channels=data.keys()
 
-    desiredChannel=self.ui.selectedChannel.currentIndex()
-    if desiredChannel<len(self.channels):
-      self.active_channel=self.channels[desiredChannel]
+    currentChannel=0
+    for i in range(4):
+      if getattr(self.ui, 'selectedChannel%i'%i).isChecked():
+        currentChannel=i
+
+    if currentChannel<len(self.channels):
+      self.active_channel=self.channels[currentChannel]
     else:
       self.active_channel=self.channels[0]
-      self.ui.selectedChannel.setCurrentIndex(0)
+      self.ui.selectedChannel0.setChecked(True)
     for i, channel in enumerate(self.channels):
-      self.ui.selectedChannel.setItemText(i, channel)
+      getattr(self.ui, 'selectedChannel%i'%i).show()
+      getattr(self.ui, 'selectedChannel%i'%i).setText(channel)
     for i in range(len(self.channels), 4):
-      self.ui.selectedChannel.setItemText(i, 'NONE')
+      getattr(self.ui, 'selectedChannel%i'%i).hide()
     self.active_data=data
     self.last_mtime=os.path.getmtime(filename)
     info(u"%s loaded"%(filename))
@@ -1603,11 +1608,13 @@ class MainGUI(QtGui.QMainWindow):
     The overview and reflectivity channel was changed. This
     recalculates already extracted reflectivities.
     '''
-    desiredChannel=self.ui.selectedChannel.currentText().split('/')
-    for channel in self.channels:
-      if channel in desiredChannel:
-        self.active_channel=channel
-        break
+    selection=0
+    for i in range(4):
+      if getattr(self.ui, 'selectedChannel%i'%i).isChecked():
+        selection=i
+    if selection>=len(self.channels):
+      return
+    self.active_channel=self.channels[selection]
     if self.active_channel in self.ref_list_channels:
       for i, refli in enumerate(self.reduction_list):
         refli=self.recalculateReflectivity(refli)

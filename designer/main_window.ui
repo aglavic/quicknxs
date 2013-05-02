@@ -1366,36 +1366,34 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="selectedChannel">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>1</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
+                   <widget class="QRadioButton" name="selectedChannel0">
+                    <property name="text">
+                     <string>++</string>
                     </property>
-                    <property name="toolTip">
-                     <string>Select the state for the overview. If channel is not in file, the first will be used.</string>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>x/+/++/0V</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>-/--/+V</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>+-/-V</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>-+</string>
-                     </property>
-                    </item>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="selectedChannel1">
+                    <property name="text">
+                     <string>--</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="selectedChannel2">
+                    <property name="text">
+                     <string>+-</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="selectedChannel3">
+                    <property name="text">
+                     <string>-+</string>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -2857,7 +2855,6 @@
   <tabstop>tthPhi</tabstop>
   <tabstop>plotTab</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>selectedChannel</tabstop>
   <tabstop>reductionTable</tabstop>
   <tabstop>reduceButton</tabstop>
   <tabstop>normalizeTable</tabstop>
@@ -3156,22 +3153,6 @@
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>435</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>selectedChannel</sender>
-   <signal>currentIndexChanged(QString)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeActiveChannel()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>798</x>
-     <y>429</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3880,6 +3861,70 @@
     <hint type="destinationlabel">
      <x>494</x>
      <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel0</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>569</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>797</x>
+     <y>839</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel1</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>598</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>765</x>
+     <y>861</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel2</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>651</x>
+     <y>417</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>782</x>
+     <y>-8</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel3</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>686</x>
+     <y>419</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>762</x>
+     <y>-15</y>
     </hint>
    </hints>
   </connection>
