@@ -697,6 +697,7 @@ class Reflectivity(object):
        bg_tof_constant=False, # treat background to be independent of wavelength for better statistics
        bg_poly_regions=None, # use polygon regions in x/λ to determine which points to use for the background
        bg_scale_xfit=False, # use a linear fit on x-axes projection to scale the background
+       bg_scale_factor=1.,
        P0=0,
        PN=0,
        number='0',
@@ -1040,6 +1041,8 @@ class Reflectivity(object):
     else:
       self.BG=self.BGraw
       self.dBG=self.dBGraw
+    self.BG*=self.options['bg_scale_factor']
+    self.dBG*=self.options['bg_scale_factor']
 
   def rescale(self, scaling):
     old_scale=self.options['scale']

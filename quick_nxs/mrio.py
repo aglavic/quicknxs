@@ -41,7 +41,7 @@ class HeaderCreator(object):
                        'bg_pos', 'bg_width', 'dpix', 'tth', 'number']
   dataset_options=['scale', 'P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                    'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number']
-  bg_options=['bg_tof_constant', 'bg_scale_xfit', 'bg_poly_regions']
+  bg_options=['bg_tof_constant', 'bg_scale_xfit', 'bg_poly_regions', 'bg_scale_factor']
   event_options=['bin_type', 'bins', 'event_split_bins', 'event_split_index']
 
   def __init__(self, refls):
@@ -143,7 +143,7 @@ class HeaderCreator(object):
                     poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
               poly_ids.append(self.bg_polys.index(poly)+1)
             bg[2]=poly_ids
-          datai.append(self.bgs.index(bg))
+          datai.append(self.bgs.index(bg)+1)
       if type(norm.origin) is list:
         datai.append(repr([item[0] for item in norm.origin]))
       else:
@@ -188,7 +188,7 @@ class HeaderCreator(object):
                     poly[2][0], poly[2][1], poly[3][0], poly[3][1]]
               poly_ids.append(self.bg_polys.index(poly)+1)
             bg[2]=poly_ids
-          datai.append(self.bgs.index(bg))
+          datai.append(self.bgs.index(bg)+1)
       if type(refl.origin) is list:
         datai.append(repr([item[0] for item in refl.origin]))
       else:
@@ -320,7 +320,8 @@ class HeaderParser(object):
                         P0=0, PN=0, x_pos=206., x_width=9.,
                         y_pos=120., y_width=120., bg_pos=80., bg_width=40.,
                         dpix=206., tth=0., number=u'', File=None)
-  bg_defaults=dict(BG_ID=0, bg_tof_constant=False, bg_scale_xfit=False, bg_poly_regions=None)
+  bg_defaults=dict(BG_ID=0, bg_tof_constant=False, bg_scale_xfit=False, bg_poly_regions=None,
+                   bg_scale_factor=1.)
   event_defaults=dict(EVT_ID=0, bin_type=0, bins=40, event_split_bins=10, event_split_index=0)
   poly_defaults=dict(poly_region=0, l1=0., l2=0., l3=0., l4=0.,
                                     x1=0., x2=0., x3=0., x4=0.)
@@ -430,7 +431,7 @@ class HeaderParser(object):
     self._bg_options=[]
     for item in self.section_data['Advanced Background Options']:
       opt_item={}
-      for key in ['bg_tof_constant', 'bg_scale_xfit']:
+      for key in ['bg_tof_constant', 'bg_scale_xfit', 'bg_scale_factor']:
         opt_item[key]=item[key]
       if item['bg_poly_regions'] is not None:
         if not 'Background Polygon Regions' in self.section_data:

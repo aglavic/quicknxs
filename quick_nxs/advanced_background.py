@@ -146,7 +146,10 @@ class BackgroundDialog(QDialog):
     dBGraw=sqrt((refl.dBGraw[reg]/norm[reg])**2+(refl.BGraw[reg]/norm[reg]**2*dnorm[reg])**2)
     BG=refl.BG[reg]/norm[reg]
     dBG=sqrt((refl.dBG[reg]/norm[reg])**2+(refl.BG[reg]/norm[reg]**2*dnorm[reg])**2)
-    ymin=min(I[I>0].min(), BG[BG>0].min(), BGraw[BGraw>0].min())
+    if (BG<=0).all():
+      ymin=1e-10
+    else:
+      ymin=min(I[I>0].min(), BG[BG>0].min(), BGraw[BGraw>0].min())
     ymax=max(I.max(), BG.max(), BGraw.max())
     self.ui.BG.errorbar(lamda, I, yerr=dI, label='Specular', color='black')
     self.ui.BG.errorbar(lamda, BGraw, yerr=dBGraw, label='BGraw')

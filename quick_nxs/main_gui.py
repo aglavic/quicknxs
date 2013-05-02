@@ -625,8 +625,10 @@ class MainGUI(QtGui.QMainWindow):
       bg_tof_constant=self.background_dialog.ui.presumeIofLambda.isChecked()
       if self.background_dialog.ui.polyregionActive.isChecked():
         bg_poly_regions=list(self.background_dialog.polygons)
+      bg_scale=self.background_dialog.ui.scaleFactor.value()
     else:
       bg_tof_constant=False
+      bg_scale=1.
     if type(self.active_data.number) is list:
       number='['+",".join(map(str, self.active_data.number))+']'
     else:
@@ -648,6 +650,8 @@ class MainGUI(QtGui.QMainWindow):
                 dpix=dpix,
                 bg_tof_constant=bg_tof_constant,
                 bg_poly_regions=bg_poly_regions,
+                # scale background by 0. if BG box not checked
+                bg_scale_factor=(bg_scale*self.ui.bgActive.isChecked()),
                 normalization=normalization,
                   )
 

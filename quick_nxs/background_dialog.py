@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/background_dialog.ui'
 #
-# Created: Thu May  2 17:12:50 2013
+# Created: Thu May  2 17:36:50 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -128,9 +128,28 @@ class Ui_Dialog(object):
     self.gridLayout = QtGui.QGridLayout(self.widget)
     self.gridLayout.setMargin(0)
     self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+    self.horizontalLayout_3 = QtGui.QHBoxLayout()
+    self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
     self.presumeIofLambda = QtGui.QCheckBox(self.widget)
     self.presumeIofLambda.setObjectName(_fromUtf8("presumeIofLambda"))
-    self.gridLayout.addWidget(self.presumeIofLambda, 0, 0, 1, 1)
+    self.horizontalLayout_3.addWidget(self.presumeIofLambda)
+    self.label = QtGui.QLabel(self.widget)
+    self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+    self.label.setObjectName(_fromUtf8("label"))
+    self.horizontalLayout_3.addWidget(self.label)
+    self.scaleFactor = QtGui.QDoubleSpinBox(self.widget)
+    sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+    sizePolicy.setHeightForWidth(self.scaleFactor.sizePolicy().hasHeightForWidth())
+    self.scaleFactor.setSizePolicy(sizePolicy)
+    self.scaleFactor.setDecimals(4)
+    self.scaleFactor.setMaximum(100.0)
+    self.scaleFactor.setSingleStep(0.05)
+    self.scaleFactor.setProperty("value", 1.0)
+    self.scaleFactor.setObjectName(_fromUtf8("scaleFactor"))
+    self.horizontalLayout_3.addWidget(self.scaleFactor)
+    self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 1)
     self.verticalLayout.addWidget(self.widget)
     self.horizontalLayout.addWidget(self.splitter)
 
@@ -146,12 +165,12 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.polyTable, QtCore.SIGNAL(_fromUtf8("itemChanged(QTableWidgetItem*)")), Dialog.polygonChanged)
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.optionChanged)
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.drawXTof)
+    QtCore.QObject.connect(self.scaleFactor, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), Dialog.optionChanged)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
     Dialog.setTabOrder(self.polyregionActive, self.addPoly)
     Dialog.setTabOrder(self.addPoly, self.delPoly)
     Dialog.setTabOrder(self.delPoly, self.clearPoly)
     Dialog.setTabOrder(self.clearPoly, self.polyTable)
-    Dialog.setTabOrder(self.polyTable, self.presumeIofLambda)
 
   def retranslateUi(self, Dialog):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
@@ -176,5 +195,6 @@ class Ui_Dialog(object):
     item = self.polyTable.horizontalHeaderItem(7)
     item.setText(QtGui.QApplication.translate("Dialog", "x4", None, QtGui.QApplication.UnicodeUTF8))
     self.presumeIofLambda.setText(QtGui.QApplication.translate("Dialog", "Presume BG~I(λ)", None, QtGui.QApplication.UnicodeUTF8))
+    self.label.setText(QtGui.QApplication.translate("Dialog", "Scale Backgound", None, QtGui.QApplication.UnicodeUTF8))
 
 from .mplwidget import MPLWidget
