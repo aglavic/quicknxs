@@ -60,10 +60,7 @@ class ReduceDialog(QDialog):
     self.ui.setupUi(self)
     self.channels=list(channels) # make sure we don't alter the original list
     self.refls=refls
-    if not os.path.exists(PATHS['results']):
-      self.ui.directoryEntry.setText(os.path.dirname(refls[0].origin[0]))
-    else:
-      self.ui.directoryEntry.setText(PATHS['results'])
+    self.ui.directoryEntry.setText(PATHS['results'])
     self.ui.fileNameEntry.setText(PATHS['export_name'])
     self.set_email_texts()
     for i in range(4):

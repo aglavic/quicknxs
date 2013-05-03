@@ -1039,8 +1039,8 @@ class Reflectivity(object):
         self.BG[channel]=self.BGraw[channel]
         self.dBG[channel]=self.dBGraw[channel]
     else:
-      self.BG=self.BGraw
-      self.dBG=self.dBGraw
+      self.BG=self.BGraw.copy()
+      self.dBG=self.dBGraw.copy()
     self.BG*=self.options['bg_scale_factor']
     self.dBG*=self.options['bg_scale_factor']
 
