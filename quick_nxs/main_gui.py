@@ -75,6 +75,7 @@ class MainGUI(QtGui.QMainWindow):
   _x_projection=None
   _y_projection=None
   proj_lines=None
+  overview_lines=None
   # colors for the reflecitivy lines
   _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
 
@@ -374,6 +375,13 @@ class MainGUI(QtGui.QMainWindow):
     xy_imax=xy.max()
     tof_imin=xtof[xtof>0].min()
     tof_imax=xtof.max()
+
+    # for lines of the current extraction area
+    x_peak=self.ui.refXPos.value()
+    x_width=self.ui.refXWidth.value()
+    y_pos=self.ui.refYPos.value()
+    y_width=self.ui.refYWidth.value()
+
     # XY plot
     if self.ui.tthPhi.isChecked():
       rad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]
@@ -382,19 +390,38 @@ class MainGUI(QtGui.QMainWindow):
       phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
       tth0=(data.dangle-data.dangle0)-(304-data.dpix)*rad_per_pixel*180./pi
       self.ui.xy_overview.clear()
+      if self.overview_lines is None:
+        self.overview_lines=[]
+      else:
+        self.overview_lines=self.overview_lines[-2:]
 
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
-                               aspect='auto', cmap=self.color,
-                               extent=[tth_range+tth0, tth0, phi0-phi_range, phi0])
+                               aspect='auto', cmap=self.color, origin='lower',
+                               extent=[tth_range+tth0, tth0, phi0, phi0-phi_range])
       self.ui.xy_overview.set_xlabel(u'2$\\Theta{}$ [°]')
       self.ui.xy_overview.set_ylabel(u'$\\phi{}$ [°]')
       self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
     else:
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
-                               aspect='auto', cmap=self.color)
+                               aspect='auto', cmap=self.color, origin='lower')
       self.ui.xy_overview.set_xlabel(u'x [pix]')
       self.ui.xy_overview.set_ylabel(u'y [pix]')
       self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
+
+      if self.overview_lines is None or len(self.overview_lines)==2:
+        x1=self.ui.xy_overview.canvas.ax.axvline(x_peak-x_width/2., color='#aa0000')
+        x2=self.ui.xy_overview.canvas.ax.axvline(x_peak+x_width/2., color='#aa0000')
+        y1=self.ui.xy_overview.canvas.ax.axhline(y_pos-y_width/2., color='#00aa00')
+        y2=self.ui.xy_overview.canvas.ax.axhline(y_pos+y_width/2., color='#00aa00')
+        if self.overview_lines is not None:
+          self.overview_lines=[x1, x2, y1, y2]+self.overview_lines
+        else:
+          self.overview_lines=[x1, x2, y1, y2]
+      else:
+        self.overview_lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+        self.overview_lines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+        self.overview_lines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
+        self.overview_lines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
     # XToF plot
     if self.ui.xLamda.isChecked():
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
@@ -407,10 +434,15 @@ class MainGUI(QtGui.QMainWindow):
                                    extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
       self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
+    if len(self.overview_lines) in [0, 4]:
+      x3=self.ui.xtof_overview.canvas.ax.axhline(x_peak-x_width/2., color='#aa0000')
+      x4=self.ui.xtof_overview.canvas.ax.axhline(x_peak+x_width/2., color='#aa0000')
+      self.overview_lines+=[x3, x4]
+    else:
+      self.overview_lines[-2].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.overview_lines[-1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
-#    if self.tline is None:
-#      self.tline=Line2D([20, 20], [0, 300], color='red')
-#      self.ui.xy_overview.canvas.ax.add_line(self.tline)
+
     if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
       self.ui.xy_overview.cbar=self.ui.xy_overview.canvas.fig.colorbar(self.ui.xy_overview.cplot)
       self.ui.xtof_overview.cbar=self.ui.xtof_overview.canvas.fig.colorbar(self.ui.xtof_overview.cplot)
@@ -456,13 +488,13 @@ class MainGUI(QtGui.QMainWindow):
         tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                             aspect='auto', cmap=self.color,
-                             extent=[tth_range+tth0, tth0, phi0-phi_range, phi0])
+                             aspect='auto', cmap=self.color, origin='lower',
+                             extent=[tth_range+tth0, tth0, phi0, phi0-phi_range])
         plots[i].set_xlabel(u'2$\\Theta{}$ [°]')
         plots[i].set_ylabel(u'$\\phi{}$ [°]')
       else:
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                             aspect='auto', cmap=self.color)
+                             aspect='auto', cmap=self.color, origin='lower')
         plots[i].set_xlabel(u'x [pix]')
         plots[i].set_ylabel(u'y [pix]')
       plots[i].set_title(self.channels[i])
@@ -563,15 +595,15 @@ class MainGUI(QtGui.QMainWindow):
       xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
       xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
       xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
-      xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='green')
-      xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='green')
+      xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='black')
+      xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='black')
 
       self._y_projection=self.ui.y_project.plot(yproj, color='blue')[0]
       self.ui.y_project.set_xlabel(u'y [pix]')
       self.ui.y_project.set_ylabel(u'I$_{max}$')
-      yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='red')
-      yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='red')
-      ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='green')
+      yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='green')
+      yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='green')
+      ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='black')
       self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right, ybg)
     else:
       self._x_projection.set_ydata(xproj)
@@ -1295,6 +1327,7 @@ class MainGUI(QtGui.QMainWindow):
              self.ui.offspec_pp, self.ui.offspec_mp, self.ui.offspec_pm, self.ui.offspec_mm]
       for plot in plots:
         plot.clear_fig()
+      self.overview_lines=None
       self.plotActiveTab()
 
   @log_call
@@ -1320,6 +1353,7 @@ class MainGUI(QtGui.QMainWindow):
     if self.auto_change_active or self.proj_lines is None:
       return
     lines=self.proj_lines
+    olines=self.overview_lines
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
     y_pos=self.ui.refYPos.value()
@@ -1336,6 +1370,17 @@ class MainGUI(QtGui.QMainWindow):
     lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
     self.ui.x_project.draw()
     self.ui.y_project.draw()
+
+    if len(olines)>2:
+      olines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+      olines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+      olines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
+      olines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
+    olines[-2].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+    olines[-1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+    self.ui.xy_overview.draw()
+    self.ui.xtof_overview.draw()
+
     if self.ui.fanReflectivity.isChecked() and self.refl and not self.refl.options['extract_fan']:
       old_aca=self.auto_change_active
       self.auto_change_active=False

@@ -4,7 +4,7 @@ Module for calculations used in data reduction and automatic algorithms.
 '''
 
 from numpy import *
-from logging import debug
+from logging import debug, info #@Reimport
 from .decorators import log_input, log_both
 from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
@@ -69,8 +69,13 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   dR2=refl2.dR[last:first][R2>0]
   Q2=refl2.Q[last:first][R2>0]
   R2=R2[R2>0]
-  reg1=max(0, where(Q1<=Q2.max())[0][0]-add_points)
-  reg2=where(Q2>=Q1.min())[0][-1]+1+add_points
+  try:
+    reg1=max(0, where(Q1<=Q2.max())[0][0]-add_points)
+    reg2=where(Q2>=Q1.min())[0][-1]+1+add_points
+  except IndexError:
+    # take at least one point, if no overlap
+    reg1=len(Q1)-1-add_points
+    reg2=add_points+1
   # try to match both datasets by fitting a polynomial to the overlapping region
   return _refineOverlap(Q1[reg1:], R1[reg1:], dR1[reg1:],
                         Q2[:reg2], R2[:reg2], dR2[:reg2], polynom)
@@ -275,7 +280,10 @@ def _refineOverlap(x1, y1, dy1, x2, y2, dy2, polynom):
   y2=y2.astype(float64)
   if polynom>0:
     # make sure the polynom order is not higher than the number of points
-    polynom=min(len(x1)+len(x2), polynom)
+    if (len(x1)+len(x2)-1)<polynom:
+      polynom=len(x1)+len(x2)-1
+      info('Reducing polynomial order to %i, as the number of points is %i'%
+           (polynom, len(x1)+len(x2)))
     func=OverlapPoly(polynom)
   else:
     func=OverlapGaussian((x1.mean()+x2.mean())/2., 0.001, y2.mean())
