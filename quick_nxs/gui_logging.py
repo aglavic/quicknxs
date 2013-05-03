@@ -12,6 +12,9 @@ import sys
 import atexit
 import logging
 import traceback
+import inspect
+from cStringIO import StringIO
+from numpy import seterr, seterrcall
 from .version import str_version
 from .config import PATHS, ADMIN_MAIL
 
@@ -33,6 +36,24 @@ def ip_excepthook_overwrite(self, etype, value, tb, tb_offset=None):
 def goodby():
   logging.info('*** QuickNXS %s Logging ended ***'%str_version)
 
+class NumpyLogger(logging.getLoggerClass()):
+  '''
+    A logger that makes sure the actual function definition filename, lineno and function name
+    is used for logging numpy floating point errors, not the numpy_logger function.
+  '''
+
+  def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
+    curframe=inspect.currentframe()
+    calframes=inspect.getouterframes(curframe, 2)
+    # stack starts with:
+    # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
+    ignore, fname, lineno, func, ignore, ignore=calframes[4]
+    return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
+                                                   msg, args,
+                                                   exc_info, func=func, extra=extra)
+nplogger=None
+def numpy_logger(err, flag):
+  nplogger.debug('numpy floating point error encountered (%s)'%err)
 
 def pid_exists(pid):
     """Check whether pid exists in the current process table."""
@@ -75,6 +96,23 @@ def setup_system():
 
   logging.info('*** QuickNXS %s Logging started ***'%str_version)
 
+  # define numpy warning behavior
+  if logger.level>logging.DEBUG:
+    seterr(all='ignore')
+  else:
+    global nplogger
+    old_class=logging.getLoggerClass()
+    logging.setLoggerClass(NumpyLogger)
+    nplogger=logging.getLogger('numpy')
+    nplogger.setLevel(logging.DEBUG)
+    null_handler=logging.StreamHandler(StringIO())
+    null_handler.setLevel(logging.CRITICAL)
+    nplogger.addHandler(null_handler)
+    logging.setLoggerClass(old_class)
+    seterr(divide='call', over='call', under='ignore', invalid='call')
+    seterrcall(numpy_logger)
+
+  # write information on program exit
   sys.excepthook=excepthook_overwrite
   atexit.register(goodby)
 

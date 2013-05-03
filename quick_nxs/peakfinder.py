@@ -405,7 +405,8 @@ class Cwt:
             self.currentscale=currentscale  # for internal use
             s_omega=omega*currentscale
             psihat=self.wf(s_omega)
-            psihat*=numpy.sqrt(2.0*numpy.pi*currentscale)
+            # TODO: need to check the math behind it, seems to work better without factor
+            #psihat*=numpy.sqrt(2.0*numpy.pi*currentscale)
             convhat=psihat*datahat
             W=numpy.fft.irfft(convhat)
             self.cwt[scaleindex, :]=W[ndata/2:ndata/2+ndata]

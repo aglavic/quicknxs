@@ -152,7 +152,7 @@ def refine_gauss(data, pos, width, return_params=False):
   '''
   Fit a gaussian function to a given dataset and return the x0 position.
   '''
-  p0=[data[int(pos)], pos, width]
+  p0=[data[int(pos)], pos, max(1., width)]
   parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
             'limits':[0., 0.]} for i in range(3)]
   parinfo[0]['limited']=[True, False]
