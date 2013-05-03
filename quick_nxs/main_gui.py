@@ -1852,7 +1852,7 @@ class MainGUI(QtGui.QMainWindow):
     if xpos is None:
       return
     for i, refl in enumerate(self.reduction_list):
-      if (refl.Q[len(refl.Q)-refl.options['P0']]<xpos) and (refl.Q[refl.options['PN']]>xpos):
+      if (refl.Q[refl.options['PN']]>xpos):
         Ival=refl.options['scale']
         if self._control_down:
           Inew=Ival*10**(0.05*steps)
@@ -1860,7 +1860,6 @@ class MainGUI(QtGui.QMainWindow):
           Inew=Ival*10**(0.01*steps)
         self.ui.reductionTable.setItem(i, 1,
                                    QtGui.QTableWidgetItem("%.4f"%(Inew)))
-        return
 
   def keyPressEvent(self, event):
     if event.modifiers()==QtCore.Qt.ControlModifier:
