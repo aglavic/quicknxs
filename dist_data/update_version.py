@@ -11,7 +11,7 @@ last_change=Popen(['git', 'show', '-s', '--format=%ci'], stdout=PIPE).communicat
 
 versiontxt=open("quick_nxs/version.py",'r').readlines()
 
-output=open("quick_nxs/version.py",'w')
+output=''
 for line in versiontxt:
   if line.startswith('version='):
     old_revision=line.rsplit(',',1)[1].split(')',1)[0].strip()
@@ -20,5 +20,5 @@ for line in versiontxt:
     line=line.rsplit(',',1)[0]+', '+revision+')'+line.rsplit(',',1)[1].split(')',1)[1]
   if line.startswith('last_changes='):
     line='last_changes="%s"\n'%last_change
-  output.write(line)
-output.close()
+  output+=line
+open("quick_nxs/version.py",'w').write(output)
