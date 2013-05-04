@@ -15,13 +15,11 @@ try:
 except ImportError:
   pass
 
-from quick_nxs.version import str_version
 
 __package_name__='QuickNXS'
 __author__="Artur Glavic"
 __copyright__="Copyright 2012-2013"
 __license__="GPL v3"
-__version__=str_version
 __email__="glavicag@ornl.gov"
 __author_email__=__email__
 __url__="http://"
@@ -102,6 +100,8 @@ if 'bdist' in sys.argv:
   from subprocess import call
   call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
 
+from quick_nxs.version import str_version
+__version__=str_version
 
 #### Run the setup command with the selected parameters ####
 setup(name=__package_name__,
