@@ -155,7 +155,7 @@ class NavigationToolbar(NavigationToolbar2QT):
 
   def toggle_log(self, *args):
     ax=self.canvas.ax
-    if len(ax.lines)>0:
+    if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
       logstate=ax.get_yscale()
       if logstate=='linear':
         ax.set_yscale('log')
@@ -163,10 +163,7 @@ class NavigationToolbar(NavigationToolbar2QT):
         ax.set_yscale('linear')
       self.canvas.draw()
     else:
-      if len(ax.images)==0:
-        imgs=ax.collections
-      else:
-        imgs=ax.images
+      imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
       norm=imgs[0].norm
       if norm.__class__ is LogNorm:
         for img in imgs:
