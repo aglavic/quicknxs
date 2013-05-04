@@ -283,7 +283,7 @@ The background plotting canvas uses a three object model:
     this widget has to implement all functionalities normally provided by the Qt4Add
     backend of matplotlib.
 '''
-class MplProcess(FigureCanvasAgg, Process):
+class MPLProcess(FigureCanvasAgg, Process):
   '''
   Separate process carrying out plots with matplotlib in memory.
   Communication is done via two pipes. The first receives the
@@ -297,6 +297,7 @@ class MplProcess(FigureCanvasAgg, Process):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
     FigureCanvasAgg.__init__(self, self.fig)
     self.ax=self.fig.add_subplot(111, sharex=sharex, sharey=sharey)
+    self.ax2=None
     self.fig.subplots_adjust(left=0.15, bottom=0.1, right=0.95, top=0.95)
     self.xtitle=""
     self.ytitle=""
@@ -324,6 +325,8 @@ class MplProcess(FigureCanvasAgg, Process):
     # send a signal to process to finish the loop
     self.exit_set.send(True)
     Process.join(self, timeout)
+  
+  ######### plotting related methods
 
   def getPaintData(self):
     if QtCore.QSysInfo.ByteOrder==QtCore.QSysInfo.LittleEndian:
@@ -335,14 +338,23 @@ class MplProcess(FigureCanvasAgg, Process):
   def plot(self, *args, **opts):
     self._plots.append(self.ax.plot(*args, **opts))
 
+  def errorbar(self, *args, **opts):
+    self._plots.append(self.ax.plot(*args, **opts))
+
   def draw(self):
     FigureCanvasAgg.draw(self)
+  
+  def clear(self):
+    self.cplot=None
+    self.ax.clear()
+    if self.ax2 is not None:
+      self.ax2.clear()
 
   def set_size_inches(self, w, h):
     self.fig.set_size_inches(w, h)
   
 
-class MplProcessHolder(QtCore.QThread, QtCore.QObject):
+class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
   '''
   Interface between the MplBGCanvas and MplProcess objects. Mostly just runs
   in the background to send method calls to the process and emit signals
@@ -355,7 +367,7 @@ class MplProcessHolder(QtCore.QThread, QtCore.QObject):
     QtCore.QThread.__init__(self)
     self.pipe_in, pipe_in=Pipe()
     pipe_out, self.pipe_out=Pipe()
-    self.canvas_process=MplProcess(pipe_in, pipe_out, width, height, dpi,
+    self.canvas_process=MPLProcess(pipe_in, pipe_out, width, height, dpi,
                                    sharex, sharey, adjust={})
     self.stay_alive=True
     self.scheduled_actions=[]
@@ -379,8 +391,20 @@ class MplProcessHolder(QtCore.QThread, QtCore.QObject):
         result=self.pipe_out.recv()
         if item[0]=='getPaintData':
           self.paintFinished.emit(result)
+  
+  # Makes interfacing to the process convenient by passing
+  # all methods available in the process class on access.
+  # This means that thread.draw() will append ('draw', (), {}) to the process.
+  def __getattr__(self, name):
+    if not name.startswith("_") and not name in self.__dict__ and name in MPLProcess.__dict__:
+      self.next_action=name
+      return self
+    return QtCore.QThread.__getattr__(self, name)
+  
+  def __call__(self, *args, **opts):
+    self.scheduled_actions.append((self.next_action, args, opts))
       
-class MplBGCanvas(QtGui.QWidget):
+class MPLBackgroundWidget(QtGui.QWidget):
   _running_threads=[]
 
   def __init__(self, parent=None, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
@@ -388,7 +412,7 @@ class MplBGCanvas(QtGui.QWidget):
     self.dpi=dpi
     self.width=width
     self.height=height
-    self.draw_process=MplProcessHolder(width, height, dpi, sharex, sharey, adjust)
+    self.draw_process=MPLProcessHolder(width, height, dpi, sharex, sharey, adjust)
     self.draw_process.paintFinished.connect(self.paintFinished)
     self.draw_process.start()
     self.drawRect=False
@@ -413,7 +437,7 @@ class MplBGCanvas(QtGui.QWidget):
     hinch=h/self.dpi
     self.width=w
     self.height=h
-    self.draw_process.scheduled_actions.append(('set_size_inches', (winch, hinch), {}))
+    self.draw_process.set_size_inches(winch, hinch)
     self.draw()
 
   def sizeHint(self):
@@ -439,13 +463,17 @@ class MplBGCanvas(QtGui.QWidget):
     self.drawRect=False
 
   def draw(self):
-    self.draw_process.scheduled_actions.append(('draw', (), {}))
-    self.draw_process.scheduled_actions.append(('getPaintData', (), {}))
+    self.draw_process.draw()
+    self.draw_process.getPaintData()
 
-  def plot(self, *args, **opts):
-    self.draw_process.scheduled_actions.append(('plot', args, opts))
+  # Makes interfacing to the process convenient by passing
+  # all methods available in the process class on access.
+  # This means that thread.draw() will append ('draw', (), {}) to the process.
+  def __getattr__(self, name):
+    if not name.startswith("_") and not name in self.__dict__ and name in MPLProcess.__dict__:
+      return getattr(self.draw_process, name)
+    return QtGui.QWidget.__getattr__(self, name)
   
-
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
@@ -648,11 +676,13 @@ if __name__=='__main__':
   dia=QtGui.QDialog()
   dia.resize(800, 600)
   hbox=QtGui.QHBoxLayout(dia)
+  import numpy as np
   for i in range(4):
     # start 4 processes with plots
-    plot=MplBGCanvas(dia)
+    plot=MPLBackgroundWidget(dia)
     hbox.addWidget(plot)
-    plot.plot(range(100))
+    for j in range(50):
+      plot.plot(np.arange(100)*j)
     plot.draw()
   dia.show()
   exit(app.exec_())
