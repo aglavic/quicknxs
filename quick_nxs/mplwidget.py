@@ -4,7 +4,7 @@ import tempfile
 from PyQt4 import QtCore, QtGui
 import matplotlib.cm
 import matplotlib.colors
-from . import icons_rc
+from . import icons_rc #@UnusedImport
 
 font={
       #'family' : 'sans',

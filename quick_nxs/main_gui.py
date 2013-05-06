@@ -381,6 +381,8 @@ class MainGUI(QtGui.QMainWindow):
     x_width=self.ui.refXWidth.value()
     y_pos=self.ui.refYPos.value()
     y_width=self.ui.refYWidth.value()
+    bg_pos=self.ui.bgCenter.value()
+    bg_width=self.ui.bgWidth.value()
 
     # XY plot
     if self.ui.tthPhi.isChecked():
@@ -437,10 +439,14 @@ class MainGUI(QtGui.QMainWindow):
     if len(self.overview_lines) in [0, 4]:
       x3=self.ui.xtof_overview.canvas.ax.axhline(x_peak-x_width/2., color='#aa0000')
       x4=self.ui.xtof_overview.canvas.ax.axhline(x_peak+x_width/2., color='#aa0000')
-      self.overview_lines+=[x3, x4]
+      x5=self.ui.xtof_overview.canvas.ax.axhline(bg_pos-bg_width/2., color='black')
+      x6=self.ui.xtof_overview.canvas.ax.axhline(bg_pos+bg_width/2., color='black')
+      self.overview_lines+=[x3, x4, x5, x6]
     else:
-      self.overview_lines[-2].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
-      self.overview_lines[-1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.overview_lines[-4].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.overview_lines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.overview_lines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      self.overview_lines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 
     if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
@@ -1354,6 +1360,7 @@ class MainGUI(QtGui.QMainWindow):
       return
     lines=self.proj_lines
     olines=self.overview_lines
+
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
     y_pos=self.ui.refYPos.value()
@@ -1371,14 +1378,16 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.x_project.draw()
     self.ui.y_project.draw()
 
-    if len(olines)>2:
+    if len(olines)>4:
       olines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
       olines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
       olines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
       olines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
-    olines[-2].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
-    olines[-1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
-    self.ui.xy_overview.draw()
+      self.ui.xy_overview.draw()
+    olines[-4].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+    olines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+    olines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+    olines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.draw()
 
     if self.ui.fanReflectivity.isChecked() and self.refl and not self.refl.options['extract_fan']:
