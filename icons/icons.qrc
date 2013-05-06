@@ -19,4 +19,16 @@
     <file>tthZero.png</file>
     <file>extractNormalization.png</file>
   </qresource>
+  <qresource prefix="MPL Toolbar">
+    <file>toggle-log.png</file>
+    <file>edit-guides.png</file>
+    <file>go-home.png</file>
+    <file>zoom-original.png</file>
+    <file>zoom-next.png</file>
+    <file>zoom-previous.png</file>
+    <file>zoom-select.png</file>
+    <file>transform-move.png</file>
+    <file>document-save.png</file>
+    <file>document-print.png</file>
+  </qresource>
 </RCC>

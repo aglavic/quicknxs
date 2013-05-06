@@ -18,7 +18,7 @@ from .gui_utils import DelayedTrigger, ReduceDialog
 from .compare_plots import CompareDialog
 from .advanced_background import BackgroundDialog
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
-from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion, refine_gauss
+from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .mrio import HeaderParser, HeaderCreator
 
 #from logging import info, debug
@@ -1787,8 +1787,6 @@ class MainGUI(QtGui.QMainWindow):
           self.ui.bgWidth.setValue(bgw)
         else:
           self.ui.refXPos.setValue(event.xdata)
-          if self.ui.actionRefineX.isChecked():
-            self.refineXpos()
       elif event.button==3:
         self.ui.refXWidth.setValue(abs(self.ui.refXPos.value()-event.xdata)*2.)
 
@@ -1929,19 +1927,6 @@ class MainGUI(QtGui.QMainWindow):
                       max_width=self.ui.pfMaxWidth.value(),
                       ridge_length=self.ui.pfRidgeLength.value())
 
-
-  @log_call
-  def refineXpos(self):
-    '''
-    Fit the selected x position to the closest peak.
-    '''
-    if self.ui.actionRefineX.isChecked():
-      xproj=self.active_data[self.active_channel].xdata
-      # refine gaussian to this peak position
-      x_width=self.ui.refXWidth.value()
-      x_peak=self.ui.refXPos.value()
-      x_peak=refine_gauss(xproj, x_peak, x_width)
-      self.ui.refXPos.setValue(x_peak)
 
   def recalculateReflectivity(self, old_object, overwrite_options=None):
     '''

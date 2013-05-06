@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="limitYauto.svg"
-   inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/tthZero.png"
+   inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/limitYauto.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -32,11 +32,11 @@
      inkscape:cy="24.689844"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="1565"
-     inkscape:window-height="982"
-     inkscape:window-x="111"
-     inkscape:window-y="-4"
+     showgrid="false"
+     inkscape:window-width="1818"
+     inkscape:window-height="1005"
+     inkscape:window-x="98"
+     inkscape:window-y="-6"
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,8 +64,8 @@
      id="layer1"
      transform="translate(0,-1004.3622)">
     <path
-       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
-       d="m 6.75,1050.3622 0.25,-2 4,-2 4,2 3,-15 3,-3 10,-1 3,3 1,14 6,1 0.25,3"
+       style="fill:none;stroke:#0000ff;stroke-width:2.26400709;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+       d="m 2.8228203,1051.4852 0.2940122,-2.1792 4.704196,-2.1792 4.7041955,2.1792 3.528147,-16.3442 3.528147,-3.2687 11.76049,-1.0897 3.528147,3.2689 1.17605,15.2545 7.056293,1.0895 0.294012,3.2689"
        id="path2999"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccc" />
@@ -73,7 +73,7 @@
        xml:space="preserve"
        id="flowRoot2989"
        style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
-       transform="translate(-6,994.11379)"><flowRegion
+       transform="matrix(1.176049,0,0,1.0896077,-12.171805,990.1965)"><flowRegion
          id="flowRegion2991"><rect
            id="rect2993"
            width="62"
@@ -82,21 +82,20 @@
            y="8"
            style="font-size:24px;text-align:center;text-anchor:middle;font-family:Times New Roman;-inkscape-font-specification:Times New Roman" /></flowRegion><flowPara
          id="flowPara2995">Y</flowPara></flowRoot>    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 45,46 5,46 5,3"
+       style="fill:none;stroke:#000000;stroke-width:1.13200355px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 47.806694,1051.4852 -47.04195945,0 0,-46.8531"
        id="path3001"
        inkscape:connector-curvature="0"
-       transform="translate(0,1004.3622)"
        sodipodi:nodetypes="ccc" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 15,1007.3622 0,43"
+       style="fill:none;stroke:#008000;stroke-width:2.26400709;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 12.525224,1004.6321 0,46.8531"
        id="path4496"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path3111"
-       d="m 35,1007.3622 0,43"
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="m 36.046205,1004.6321 0,46.8531"
+       style="fill:none;stroke:#008000;stroke-width:2.26400709;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
   </g>
 </svg>

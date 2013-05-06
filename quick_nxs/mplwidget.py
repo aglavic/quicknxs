@@ -4,6 +4,7 @@ import tempfile
 from PyQt4 import QtCore, QtGui
 import matplotlib.cm
 import matplotlib.colors
+from . import icons_rc
 
 font={
       #'family' : 'sans',
@@ -40,41 +41,58 @@ class NavigationToolbar(NavigationToolbar2QT):
   '''
     A small change to the original navigation toolbar.
   '''
+  _auto_toggle=False
+
   def _init_toolbar(self):
+    if not hasattr(self, '_actions'):
+      self._actions={}
     self.basedir=os.path.join(matplotlib.rcParams[ 'datapath' ], 'images')
 
-    a=self.addAction(self._icon('home.png'), 'Home', self.home)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/go-home.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Home', self.home)
     a.setToolTip('Reset original view')
-    a=self.addAction(self._icon('back.png'), 'Back', self.back)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/zoom-previous.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Back', self.back)
     a.setToolTip('Back to previous view')
-    a=self.addAction(self._icon('forward.png'), 'Forward', self.forward)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/zoom-next.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Forward', self.forward)
     a.setToolTip('Forward to next view')
     self.addSeparator()
-    a=self.addAction(self._icon('move.png'), 'Pan', self.pan)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/transform-move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Pan', self.pan)
     a.setToolTip('Pan axes with left mouse, zoom with right')
-    if hasattr(self, '_actions'):
-      self._actions['pan']=a
-    a=self.addAction(self._icon('zoom_to_rect.png'), 'Zoom', self.zoom)
+    a.setCheckable(True)
+    self._actions['pan']=a
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/zoom-select.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Zoom', self.zoom)
     a.setToolTip('Zoom to rectangle')
-    if hasattr(self, '_actions'):
-      self._actions['zoom']=a
+    a.setCheckable(True)
+    self._actions['zoom']=a
     self.addSeparator()
-    a=self.addAction(self._icon('subplots.png'), 'Subplots',
-            self.configure_subplots)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/edit-guides.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Subplots', self.configure_subplots)
     a.setToolTip('Configure plot boundaries')
 
-    a=self.addAction(QtGui.QIcon.fromTheme('document-save',
-                     self._icon('filesave.png')), 'Save',
-            self.save_figure)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/document-save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Save', self.save_figure)
     a.setToolTip('Save the figure')
 
-    a=self.addAction(QtGui.QIcon.fromTheme('document-print'), 'Print',
-            self.print_figure)
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/document-print.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Print', self.print_figure)
     a.setToolTip('Print the figure with the default printer')
 
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-log.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.addSeparator()
-    a=self.addAction(QtGui.QIcon.fromTheme('go-up'), 'Log',
-            self.toggle_log)
+    a=self.addAction(icon, 'Log', self.toggle_log)
     a.setToolTip('Toggle logarithmic scale')
 
 
@@ -95,6 +113,80 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     # reference holder for subplots_adjust window
     self.adj_window=None
+
+  if matplotlib.__version__<'1.2':
+    def pan(self, *args):
+      'Activate the pan/zoom tool. pan with left button, zoom with right'
+      # set the pointer icon and button press funcs to the
+      # appropriate callbacks
+      if self._auto_toggle:
+        return
+      if self._active=='ZOOM':
+        self._auto_toggle=True
+        self._actions['zoom'].setChecked(False)
+        self._auto_toggle=False
+
+      if self._active=='PAN':
+        self._active=None
+      else:
+        self._active='PAN'
+      if self._idPress is not None:
+        self._idPress=self.canvas.mpl_disconnect(self._idPress)
+        self.mode=''
+
+      if self._idRelease is not None:
+        self._idRelease=self.canvas.mpl_disconnect(self._idRelease)
+        self.mode=''
+
+      if self._active:
+        self._idPress=self.canvas.mpl_connect(
+            'button_press_event', self.press_pan)
+        self._idRelease=self.canvas.mpl_connect(
+            'button_release_event', self.release_pan)
+        self.mode='pan/zoom'
+        self.canvas.widgetlock(self)
+      else:
+        self.canvas.widgetlock.release(self)
+
+      for a in self.canvas.figure.get_axes():
+        a.set_navigate_mode(self._active)
+
+      self.set_message(self.mode)
+
+    def zoom(self, *args):
+      'activate zoom to rect mode'
+      if self._auto_toggle:
+        return
+      if self._active=='PAN':
+        self._auto_toggle=True
+        self._actions['pan'].setChecked(False)
+        self._auto_toggle=False
+
+      if self._active=='ZOOM':
+        self._active=None
+      else:
+        self._active='ZOOM'
+
+      if self._idPress is not None:
+        self._idPress=self.canvas.mpl_disconnect(self._idPress)
+        self.mode=''
+
+      if self._idRelease is not None:
+        self._idRelease=self.canvas.mpl_disconnect(self._idRelease)
+        self.mode=''
+
+      if  self._active:
+        self._idPress=self.canvas.mpl_connect('button_press_event', self.press_zoom)
+        self._idRelease=self.canvas.mpl_connect('button_release_event', self.release_zoom)
+        self.mode='zoom rect'
+        self.canvas.widgetlock(self)
+      else:
+        self.canvas.widgetlock.release(self)
+
+      for a in self.canvas.figure.get_axes():
+        a.set_navigate_mode(self._active)
+
+      self.set_message(self.mode)
 
   def print_figure(self):
     '''

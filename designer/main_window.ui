@@ -17,11 +17,14 @@
    <iconset resource="../icons/icons.qrc">
     <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
   </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
   <property name="dockNestingEnabled">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks</set>
+   <set>QMainWindow::AllowTabbedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -2399,13 +2402,6 @@
     <property name="title">
      <string>Advanced</string>
     </property>
-    <addaction name="actionAutomaticXPeak"/>
-    <addaction name="actionAutoYLimits"/>
-    <addaction name="actionRefineX"/>
-    <addaction name="actionAuto_Reflectivity"/>
-    <addaction name="actionStrip_Overlap"/>
-    <addaction name="separator"/>
-    <addaction name="separator"/>
     <addaction name="actionAdvanced_Background"/>
     <addaction name="actionAdjust_Dirct_Beam"/>
     <addaction name="actionClear_Overwrite"/>
@@ -2435,9 +2431,21 @@
     <addaction name="separator"/>
     <addaction name="actionReduce"/>
    </widget>
+   <widget class="QMenu" name="menuAutomatics">
+    <property name="title">
+     <string>Automatics</string>
+    </property>
+    <addaction name="actionAutomaticXPeak"/>
+    <addaction name="actionAutoYLimits"/>
+    <addaction name="separator"/>
+    <addaction name="actionAuto_Reflectivity"/>
+    <addaction name="separator"/>
+    <addaction name="actionStrip_Overlap"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
    <addaction name="menuAdvanced"/>
+   <addaction name="menuAutomatics"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -2445,55 +2453,43 @@
    <property name="windowTitle">
     <string>Main Toolbar</string>
    </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionPrevious_File"/>
    <addaction name="actionNext_File"/>
+   <addaction name="actionReduce"/>
+   <addaction name="separator"/>
    <addaction name="separator"/>
    <addaction name="actionNorm"/>
    <addaction name="actionClear_Normalizations"/>
-   <addaction name="separator"/>
-   <addaction name="actionNormalizeScaling"/>
-   <addaction name="actionCut_Points"/>
    <addaction name="separator"/>
    <addaction name="actionAddPlot"/>
    <addaction name="actionRemove"/>
    <addaction name="actionClear"/>
    <addaction name="separator"/>
-   <addaction name="actionReduce"/>
-  </widget>
-  <widget class="QToolBar" name="advancedToolbar">
-   <property name="windowTitle">
-    <string>Advanced Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionRefineX"/>
-   <addaction name="actionAdjust_Dirct_Beam"/>
-  </widget>
-  <widget class="QToolBar" name="autoToolbar">
-   <property name="windowTitle">
-    <string>Automatic Options</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
+   <addaction name="separator"/>
+   <addaction name="actionNormalizeScaling"/>
+   <addaction name="actionCut_Points"/>
+   <addaction name="actionStrip_Overlap"/>
+   <addaction name="separator"/>
+   <addaction name="separator"/>
    <addaction name="actionAutomaticXPeak"/>
    <addaction name="actionAutoYLimits"/>
+   <addaction name="separator"/>
    <addaction name="actionAuto_Reflectivity"/>
-   <addaction name="actionStrip_Overlap"/>
+   <addaction name="separator"/>
+   <addaction name="actionAdjust_Dirct_Beam"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -2549,7 +2545,7 @@
     <string>Set Normalization</string>
    </property>
    <property name="toolTip">
-    <string>Take current dataset for wavelength normalization (Ctrl+W)</string>
+    <string>Take current dataset as direct beam for wavelength normalization (Ctrl+W)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -2564,7 +2560,7 @@
     <string>Keep Item in List</string>
    </property>
    <property name="toolTip">
-    <string>Add to current dataset to data reduction list (Ctrl+Q)</string>
+    <string>Add current dataset to data reduction list (Ctrl+Q)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -2606,7 +2602,7 @@
     <string>Set Scaling</string>
    </property>
    <property name="toolTip">
-    <string>Get normalization scale from total reflection (Ctrl+S)</string>
+    <string>Scale total reflection to 1/fit overlap to previous run (Ctrl+S)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -2621,7 +2617,7 @@
     <string>Remove Line</string>
    </property>
    <property name="toolTip">
-    <string>Remove one plots from data reduction list</string>
+    <string>Remove selected plots from data reduction list</string>
    </property>
   </action>
   <action name="actionReduce">
@@ -2634,24 +2630,6 @@
    </property>
    <property name="toolTip">
     <string>Use the active table to extrac reduced datasets and save them</string>
-   </property>
-  </action>
-  <action name="actionRefineX">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/fitXPos.png</normaloff>:/General/fitXPos.png</iconset>
-   </property>
-   <property name="text">
-    <string>Refine X</string>
-   </property>
-   <property name="toolTip">
-    <string>Fit the x-position with a Gaussian after each change (Ctrl+F)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="actionManual">
@@ -2691,7 +2669,7 @@
    </property>
    <property name="icon">
     <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/findXauto.png</normaloff>:/General/findXauto.png</iconset>
+     <normaloff>:/General/fitXPos.png</normaloff>:/General/fitXPos.png</iconset>
    </property>
    <property name="text">
     <string>Automatic Peak Finder</string>
@@ -2722,7 +2700,7 @@
     <string>Clear Normalizations</string>
    </property>
    <property name="toolTip">
-    <string>Remove all datasets from the normalization list (CTRL+SHIFT+W)</string>
+    <string>Remove all datasets from the direct beam list (CTRL+SHIFT+W)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+W</string>
@@ -2773,7 +2751,7 @@
     <string>Auto Reflectivity</string>
    </property>
    <property name="toolTip">
-    <string>Start with active dataset as total reflectivity region an continue adding datasets until the incident angle get lower than for the last dataset (Ctrl+Shift+A)</string>
+    <string>Start with active dataset as total reflectivity region and continue adding datasets until the incident angle gets lower than for the last dataset (Ctrl+Shift+A)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -3085,22 +3063,6 @@
     <hint type="sourcelabel">
      <x>381</x>
      <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionRefineX</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>refineXpos()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>

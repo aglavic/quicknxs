@@ -28,16 +28,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.2"
-     inkscape:cx="11.699949"
+     inkscape:cx="26.446429"
      inkscape:cy="24.689844"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="1519"
-     inkscape:window-height="910"
-     inkscape:window-x="1876"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0">
+     showgrid="false"
+     inkscape:window-width="1818"
+     inkscape:window-height="1005"
+     inkscape:window-x="98"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -54,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,8 +64,8 @@
      id="layer1"
      transform="translate(0,-1004.3622)">
     <path
-       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
-       d="m 6.75,1050.3622 1.5,-3.4871 2.75,-2.5129 4,-3 5,-3 4,-5 5,-23 1,2 2,20 5,1 4.25,17"
+       style="fill:none;stroke:#0000ff;stroke-width:2.2702148;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+       d="m 2.919351,1051.4836 1.7671473,-3.8139 3.23977,-2.7482 4.7123927,-3.2811 5.890491,-3.281 4.712393,-5.4684 5.89049,-25.1548 1.178099,2.1873 2.356197,21.8738 5.89049,1.0937 5.006917,18.5926"
        id="path2999"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccc" />
@@ -73,7 +73,7 @@
        xml:space="preserve"
        id="flowRoot2989"
        style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
-       transform="translate(-16,997.11379)"><flowRegion
+       transform="matrix(1.1780982,0,0,1.0936854,-23.882383,993.24657)"><flowRegion
          id="flowRegion2991"><rect
            id="rect2993"
            width="62"
@@ -82,17 +82,15 @@
            y="8"
            style="font-size:24px;text-align:center;text-anchor:middle;font-family:Times New Roman;-inkscape-font-specification:Times New Roman" /></flowRegion><flowPara
          id="flowPara2995">0</flowPara></flowRoot>    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 45,46 5,46 5,3"
+       style="fill:none;stroke:#000000;stroke-width:1.1351074px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 47.981607,1051.4836 -47.12392783,0 0,-47.0285"
        id="path3001"
        inkscape:connector-curvature="0"
-       transform="translate(0,1004.3622)"
        sodipodi:nodetypes="ccc" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 29,3 0,43"
+       style="fill:none;stroke:#000000;stroke-width:2.2702148;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 29.132035,1004.4551 0,47.0285"
        id="path4496"
-       inkscape:connector-curvature="0"
-       transform="translate(0,1004.3622)" />
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
