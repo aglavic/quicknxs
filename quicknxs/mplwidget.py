@@ -6,7 +6,10 @@ from multiprocessing import Process, Pipe
 from PyQt4 import QtCore, QtGui
 import matplotlib.cm
 import matplotlib.colors
-from . import icons_rc #@UnusedImport
+try:
+  from . import icons_rc #@UnusedImport
+except ValueError:
+  pass
 
 font={
       #'family' : 'sans',
@@ -41,6 +44,8 @@ try:
     import matplotlib.backends.qt4_editor.figureoptions as figureoptions
 except ImportError:
     figureoptions=None
+
+from time import time
 
 class NavigationToolbar(NavigationToolbar2QT):
   '''
@@ -290,12 +295,12 @@ class DummyAxes(object):
   def __init__(self, x, y):
     self.x=x
     self.y=y
-    
+
   def format_coord(self, x, y):
     return 'x=%12g y=%12g'%(x, y)
-  
+
   def get_navigate(self): return True
-    
+
 class DummyEvent(object):
   def __init__(self, event, ax=None):
     for attr in self._attrs:
@@ -312,7 +317,7 @@ class DummyKeyEvent(DummyEvent):
 
 DummyEvents={MouseEvent: DummyMouseEvent,
              KeyEvent: DummyKeyEvent}
-    
+
 class MPLProcess(FigureCanvasAgg, Process):
   '''
   Separate process carrying out plots with matplotlib in memory.
@@ -340,7 +345,7 @@ class MPLProcess(FigureCanvasAgg, Process):
     self.ax.hold(True)
     self._plots=[]
     self.exit_set, self.exit_get=Pipe()
-  
+
   def _connect_events(self):
     for name in ['button_press_event', 'button_release_event',
                   'key_press_event', 'key_release_event', 'motion_notify_event',
@@ -352,14 +357,14 @@ class MPLProcess(FigureCanvasAgg, Process):
                   'axes_leave_event']:
       callback=partial(self._event_callback, name)
       self.mpl_connect(name, callback)
-  
+
   def _event_callback(self, s, event):
     try:
       event=DummyEvents[event.__class__](event, ax=self.ax)
       self.event_pipe.send((s, event))
     except:
       pass
-    
+
   def run(self):
     self._connect_events()
     while True:
@@ -372,12 +377,12 @@ class MPLProcess(FigureCanvasAgg, Process):
         return
       result=getattr(self, action)(*args, **opts)
       self.pipe_out.send(result)
-  
+
   def join(self, timeout=None):
     # send a signal to process to finish the loop
     self.exit_set.send(True)
     Process.join(self, timeout)
-  
+
   ######### plotting related methods
 
   def getPaintData(self):
@@ -395,7 +400,7 @@ class MPLProcess(FigureCanvasAgg, Process):
 
   def draw(self):
     FigureCanvasAgg.draw(self)
-  
+
   def clear(self):
     self.cplot=None
     self.ax.clear()
@@ -404,15 +409,15 @@ class MPLProcess(FigureCanvasAgg, Process):
 
   def set_size_inches(self, w, h):
     self.fig.set_size_inches(w, h)
-  
+
   ######### event related mehods
-  
+
 class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
   '''
   Interface between the MplBGCanvas and MplProcess objects. Mostly just runs
   in the background to send method calls to the process and emit signals
   depending on the result.
-  '''  
+  '''
   drawFinished=QtCore.pyqtSignal()
   paintFinished=QtCore.pyqtSignal(object)
   eventEmitted=QtCore.pyqtSignal(object, object)
@@ -427,6 +432,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
                                    sharex, sharey, adjust={})
     self.stay_alive=True
     self.scheduled_actions=[]
+    self.scheduled_receives=[]
 
   def run(self):
     # start the plot process
@@ -434,23 +440,24 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     # create a timer to regularly communicate with the process
     self.timer=QtCore.QTimer()
     self.timer.timeout.connect(self.checkit)
-    self.timer.start(50)
+    self.timer.start(10)
     self.exec_()
-  
+
   def checkit(self):
     if self.scheduled_actions:
       actions=list(self.scheduled_actions)
       self.scheduled_actions=[]
       for item in actions:
         self.pipe_in.send(item)
-      # emit only event for last paint
-      paint_data=None
-      for item in actions:
-        result=self.pipe_out.recv()
-        if item[0]=='getPaintData':
-          paint_data=result
-      if paint_data:
-        self.paintFinished.emit(paint_data)
+      self.scheduled_receives+=actions
+    paint_result=None
+    while self.scheduled_receives and self.pipe_out.poll():
+      item=self.scheduled_receives.pop(0)
+      result=self.pipe_out.recv()
+      if item[0]=='getPaintData':
+        paint_result=result
+    if paint_result:
+        self.paintFinished.emit(paint_result)
     if self.event_pipe.poll():
       # process only last event of specific type
       evnts={}
@@ -459,7 +466,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
         evnts[s]=event
       for s, event in evnts.items():
         self.eventEmitted.emit(s, event)
-  
+
   # Makes interfacing to the process convenient by passing
   # all methods available in the process class on access.
   # This means that thread.draw() will append ('draw', (), {}) to the process.
@@ -469,7 +476,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
       self.next_action=name
       return self
     return QtCore.QThread.__getattr__(self, name)
-  
+
   def __call__(self, *args, **opts):
     self.scheduled_actions.append((self.next_action, args, opts))
 
@@ -484,7 +491,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     QtGui.QWidget.__init__(self, parent)
     self.callbacks=CallbackRegistry()
     self.setMouseTracking(True)
-    
+
     self.dpi=dpi
     self.width=width
     self.height=height
@@ -499,7 +506,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
 
   def update(self):
     QtGui.QWidget.update(self)
-  
+
   def paintFinished(self, data):
     self.stringBuffer=data[0]
     self.buffer_width=data[1]
@@ -547,7 +554,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.rect=rect
     self.drawRect=True
     self.repaint()
-  
+
   ###### user interaction events similar to matplotlib default but with process interaction ##
   def mousePressEvent(self, event):
     x=event.pos().x()
@@ -571,7 +578,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     y=self.height-event.y()
     # communicate position to canvas to produce MPL event
     self.draw_process.motion_notify_event(x, y)
-  
+
   def mouseReleaseEvent(self, event):
     x=event.x()
     # flipy so y=0 is bottom of canvas
@@ -600,9 +607,9 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     if key is None:
         return
     self.draw_process.key_release_event(key)
-      
+
   def _event_callback(self, s, event):
-    self.callbacks.process(s, event)    
+    self.callbacks.process(s, event)
 
   # Makes interfacing to the process convenient by passing
   # all methods available in the process class on access.
@@ -616,7 +623,7 @@ class BackgroundNavigationToolbar(NavigationToolbar, QtGui.QToolBar):
   def __init__(self, canvas, parent, coordinates=True):
     NavigationToolbar.__init__(self, canvas, parent, coordinates)
     self.draw_rubberband(None, 10, 200, 40, 500)
-    
+
   def draw_rubberband(self, event, x0, y0, x1, y1):
     height=self.canvas.height
     y1=height-y1
@@ -627,10 +634,10 @@ class BackgroundNavigationToolbar(NavigationToolbar, QtGui.QToolBar):
 
     rect=[int(val) for val in (min(x0, x1), min(y0, y1), w, h)]
     self.canvas.drawRectangle(rect)
-  
+
   # TODO: make actions work
-  
-  
+
+
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
