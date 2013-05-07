@@ -1388,6 +1388,7 @@ class MainGUI(QtGui.QMainWindow):
     olines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
     olines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
     olines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+
     self.ui.xtof_overview.draw()
 
     if self.ui.fanReflectivity.isChecked() and self.refl and not self.refl.options['extract_fan']:

@@ -4,6 +4,7 @@
 
 import inspect
 import logging
+from time import time
 from StringIO import StringIO
 
 
@@ -258,12 +259,30 @@ if logging.root.getEffectiveLevel()<=logging.DEBUG:
     logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
     _logformat(logstr, 'log_output', func)
     return output
+
+  timings={}
+  @decorator
+  def time_call(func, *args, **kw):
+    '''
+      Decorator to log just the method call.
+    '''
+    name=func.__name__
+    start=time()
+    output=func(*args, **kw)
+    runtime=time()-start
+    if not name in timings:
+      timings[name]=(0., 0.)
+    avg, calls=timings[name]
+    timings[name]=((avg*calls+runtime)/(calls+1), calls+1)
+    return output
+
 else:
   # if logging level is higher than DEBUG remove overhead from string format creation
   def log_call(funct): return funct
   def log_input(funct): return funct
   def log_output(funct): return funct
   def log_both(funct): return funct
+  def time_call(funct): return funct
 
 ########################## General decorators ###############################
 
