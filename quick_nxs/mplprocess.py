@@ -23,6 +23,8 @@ from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
 from matplotlib.lines import Line2D
 from matplotlib.image import AxesImage
 from matplotlib.collections import QuadMesh
+from matplotlib import widgets
+from matplotlib.transforms import Affine2D, CompositeGenericTransform
 
 # objects used to represent objects present in the other process
 class ConnectedObject(object):
@@ -85,36 +87,83 @@ class FixedConnectedObject(object):
   def _recall(self, name, result):
     # subclasses can overwrite to act on special method results
     if name=='_init_me':
-      self.__dict__.update(result)
+      self._init(result)
+
+  def _init(self, result):
+    self.__dict__.update(result)
+
+  def _update(self, result):
+    self._init(result)
 
   @classmethod
   def _do_init(cls, obj):
     return {}
 
+  @classmethod
+  def _do_update(cls, obj):
+    return cls._do_init(obj)
+
 class ConnectedFigure(FixedConnectedObject):
   _type=Figure
   pass
 
+class BBox(object):
+  extents=[0., 0., 0., 0.]
+
 class ConnectedAxes(FixedConnectedObject):
   _type=Axes
+  viewLim=None
+  transData=None
+  bbox=BBox()
+
+  def _init(self, result):
+    self.__dict__.update(result)
+#    self.transData=Affine2D(self.transData_data)
 
   @classmethod
   def _do_init(cls, obj):
     xlim=obj.get_xlim()
     ylim=obj.get_ylim()
-    return dict(xlim=xlim, ylim=ylim)
+    pos=obj.get_position()
+    bbox=BBox()
+    bbox.extents=obj.bbox.extents
+    viewLim=BBox()
+    viewLim.extents=obj.viewLim.extents
+    transData=obj.transData.frozen().to_values()
+
+    return dict(xlim=xlim, ylim=ylim,
+                points=pos._points,
+                points_orig=pos._points_orig,
+                bbox=bbox, viewLim=viewLim,
+                transData=transData)
 
   def set_xlim(self, *lim):
+    if len(lim)==1:
+      lim=lim[0]
     self.xlim=lim
     self._caller('set_xlim', *lim)
 
-  def set_ylim(self, lim):
+  def set_ylim(self, *lim):
+    if len(lim)==1:
+      lim=lim[0]
     self.ylim=lim
     self._caller('set_ylim', *lim)
 
   def get_xlim(self): return self.xlim
 
   def get_ylim(self): return self.ylim
+
+  def get_position(self, orig=False):
+    if orig:
+      return self.points_orig
+    else:
+      return self.points
+
+  def can_zoom(self):
+    return True
+
+  def get_navigate(self):
+    return True
 
 # objects used to mimic matplotlib classes that cannot be pickled as e.g. events
 class TransferredAxes(object):
@@ -174,6 +223,7 @@ class MPLProcess(FigureCanvasAgg, Process):
     self.yaxis_style='linear'
     self.ax.hold(True)
     self._connect_objects={}
+    self._fixed_connect_objects={}
     self.exit_set, self.exit_get=Pipe()
 
   def _connect_events(self):
@@ -256,6 +306,7 @@ class MPLProcess(FigureCanvasAgg, Process):
 
   def draw(self):
     FigureCanvasAgg.draw(self)
+    self._update_fixed_objects()
     return self._getPaintData()
 
   def clear(self):
@@ -277,14 +328,21 @@ class MPLProcess(FigureCanvasAgg, Process):
     self._object_index+=1
     self._connect_objects[idx]=item
     citem=get_connected_object(item, idx)
+    self._update_fixed_objects()
     return citem
 
   def _object_call(self, index, name, args, opts):
     return index, getattr(self._connect_objects[index], name)(*args, **opts)
 
+  def _update_fixed_objects(self):
+    for attr, cls in self._fixed_connect_objects.items():
+      result=cls._do_update(getattr(self, attr))
+      self.event_pipe.send((attr, result))
+
   def _fixed_object_call(self, attr, name, args, opts):
     if name=='_init_me':
       # use the classes own method to create initialization parameters to be returned
+      self._fixed_connect_objects[attr]=args[0]
       return args[0]._do_init(getattr(self, attr))
     return getattr(getattr(self, attr), name)(*args, **opts)
 
@@ -371,7 +429,10 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
       evnts={}
       while self.event_pipe.poll():
         s, event=self.event_pipe.recv()
-        evnts[s]=event
+        if s in ['fig', 'ax']:
+          getattr(self, s)._update(event)
+        else:
+          evnts[s]=event
       for s, event in evnts.items():
         self.eventEmitted.emit(s, event)
 
@@ -399,6 +460,8 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     QtGui.QWidget.__init__(self, parent)
     self.callbacks=CallbackRegistry()
     self.setMouseTracking(True)
+    self.widgetlock=widgets.LockDraw()
+
 
     self.dpi=dpi
     self.width=width
@@ -529,7 +592,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
 class BackgroundNavigationToolbar(NavigationToolbar2QT, QtGui.QToolBar):
   def __init__(self, canvas, parent, coordinates=True):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
-    self.draw_rubberband(None, 10, 200, 40, 500)
+    self.draw_process=canvas.draw_process
 
   def draw_rubberband(self, event, x0, y0, x1, y1):
     height=self.canvas.height
@@ -541,6 +604,198 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT, QtGui.QToolBar):
 
     rect=[int(val) for val in (min(x0, x1), min(y0, y1), w, h)]
     self.canvas.drawRectangle(rect)
+
+  def zoom(self, *args):
+    'activate zoom to rect mode'
+    if self._active=='ZOOM':
+      self._active=None
+    else:
+      self._active='ZOOM'
+
+    if self._idPress is not None:
+      self._idPress=self.canvas.mpl_disconnect(self._idPress)
+      self.mode=''
+
+    if self._idRelease is not None:
+      self._idRelease=self.canvas.mpl_disconnect(self._idRelease)
+      self.mode=''
+
+    if  self._active:
+      self._idPress=self.canvas.mpl_connect('button_press_event', self.press_zoom)
+      self._idRelease=self.canvas.mpl_connect('button_release_event', self.release_zoom)
+      self.mode='zoom rect'
+      self.canvas.widgetlock(self)
+    else:
+        self.canvas.widgetlock.release(self)
+
+    self.draw_process.ax.set_navigate_mode(self._active)
+
+    self.set_message(self.mode)
+
+  def press_zoom(self, event):
+    'the press mouse button in zoom to rect mode callback'
+    if event.button==1:
+      self._button_pressed=1
+    elif  event.button==3:
+      self._button_pressed=3
+    else:
+      self._button_pressed=None
+      return
+
+    x, y, xdata, ydata=event.x, event.y, event.xdata, event.ydata
+
+    # push the current view to define home if stack is empty
+    if self._views.empty(): self.push_current()
+
+    self._xypress=[]
+    i, a=0, self.draw_process.ax
+    if (x is not None and y is not None and event.inaxes and
+      a.get_navigate() and a.can_zoom()) :
+      self._xypress.append((x, y, a, i, a.viewLim,
+                             [xdata, ydata]))
+
+    id1=self.canvas.mpl_connect('motion_notify_event', self.drag_zoom)
+
+    id2=self.canvas.mpl_connect('key_press_event',
+                                  self._switch_on_zoom_mode)
+    id3=self.canvas.mpl_connect('key_release_event',
+                                  self._switch_off_zoom_mode)
+
+    self._ids_zoom=id1, id2, id3
+
+    self._zoom_mode=None
+
+
+    self.press(event)
+
+  def release_zoom(self, event):
+    'the release mouse button callback in zoom to rect mode'
+    for zoom_id in self._ids_zoom:
+        self.canvas.mpl_disconnect(zoom_id)
+    self._ids_zoom=[]
+
+    if not self._xypress: return
+
+    last_a=[]
+
+    for cur_xypress in self._xypress:
+      x, y=event.x, event.y
+      lastx, lasty, a, ind, lim, trans=cur_xypress
+      # ignore singular clicks - 5 pixels is a threshold
+      if abs(x-lastx)<5 or abs(y-lasty)<5:
+          self._xypress=None
+          self.release(event)
+          self.draw()
+          return
+
+      x0, y0, x1, y1=lim.extents
+
+      # zoom to rect
+#      inverse=a.transData.inverted()
+#      lastx, lasty=inverse.transform_point((lastx, lasty))
+#      x, y=inverse.transform_point((x, y))
+      lastx, lasty=trans
+      x, y=event.xdata, event.ydata
+      Xmin, Xmax=a.get_xlim()
+      Ymin, Ymax=a.get_ylim()
+
+      # detect twinx,y axes and avoid double zooming
+      twinx, twiny=False, False
+      if last_a:
+          for la in last_a:
+              if a.get_shared_x_axes().joined(a, la): twinx=True
+              if a.get_shared_y_axes().joined(a, la): twiny=True
+      last_a.append(a)
+
+      if twinx:
+          x0, x1=Xmin, Xmax
+      else:
+          if Xmin<Xmax:
+              if x<lastx:  x0, x1=x, lastx
+              else: x0, x1=lastx, x
+              if x0<Xmin: x0=Xmin
+              if x1>Xmax: x1=Xmax
+          else:
+              if x>lastx:  x0, x1=x, lastx
+              else: x0, x1=lastx, x
+              if x0>Xmin: x0=Xmin
+              if x1<Xmax: x1=Xmax
+
+      if twiny:
+          y0, y1=Ymin, Ymax
+      else:
+          if Ymin<Ymax:
+              if y<lasty:  y0, y1=y, lasty
+              else: y0, y1=lasty, y
+              if y0<Ymin: y0=Ymin
+              if y1>Ymax: y1=Ymax
+          else:
+              if y>lasty:  y0, y1=y, lasty
+              else: y0, y1=lasty, y
+              if y0>Ymin: y0=Ymin
+              if y1<Ymax: y1=Ymax
+
+      if self._button_pressed==1:
+          if self._zoom_mode=="x":
+              a.set_xlim((x0, x1))
+          elif self._zoom_mode=="y":
+              a.set_ylim((y0, y1))
+          else:
+              a.set_xlim((x0, x1))
+              a.set_ylim((y0, y1))
+      elif self._button_pressed==3:
+          if a.get_xscale()=='log':
+              alpha=np.log(Xmax/Xmin)/np.log(x1/x0)
+              rx1=pow(Xmin/x0, alpha)*Xmin
+              rx2=pow(Xmax/x0, alpha)*Xmin
+          else:
+              alpha=(Xmax-Xmin)/(x1-x0)
+              rx1=alpha*(Xmin-x0)+Xmin
+              rx2=alpha*(Xmax-x0)+Xmin
+          if a.get_yscale()=='log':
+              alpha=np.log(Ymax/Ymin)/np.log(y1/y0)
+              ry1=pow(Ymin/y0, alpha)*Ymin
+              ry2=pow(Ymax/y0, alpha)*Ymin
+          else:
+              alpha=(Ymax-Ymin)/(y1-y0)
+              ry1=alpha*(Ymin-y0)+Ymin
+              ry2=alpha*(Ymax-y0)+Ymin
+
+          if self._zoom_mode=="x":
+              a.set_xlim((rx1, rx2))
+          elif self._zoom_mode=="y":
+              a.set_ylim((ry1, ry2))
+          else:
+              a.set_xlim((rx1, rx2))
+              a.set_ylim((ry1, ry2))
+
+    self.draw()
+    self._xypress=None
+    self._button_pressed=None
+
+    self._zoom_mode=None
+
+    self.push_current()
+    self.release(event)
+
+  def push_current(self):
+    'push the current view limits and position onto the stack'
+    lims=[]; pos=[]
+    a=self.draw_process.ax
+    print a.get_xlim(), a.get_ylim()
+    xmin, xmax=a.get_xlim()
+    ymin, ymax=a.get_ylim()
+    lims.append((xmin, xmax, ymin, ymax))
+    # Store both the original and modified positions
+    pos.append((a.get_position(True), a.get_position()))
+    self._views.push(lims)
+    self._positions.push(pos)
+    self.set_history_buttons()
+
+  def draw(self):
+    self.canvas.draw()
+
+
 
 if __name__=='__main__':
   app=QtGui.QApplication([])
@@ -583,11 +838,14 @@ if __name__=='__main__':
   z=-(x-100)**2-(y-100)**2
   implot.imshow(z, extent=[0, 200, 200, 0])
   implot.draw()
+  rect_1=[0., 0.]
   def follow_pos(event):
     if not event.inaxes:
       return
     if event.button==1:
       z=-(x-event.xdata)**2-(y-event.ydata)**2
+      rect_1[0]=event.x
+      rect_1[1]=event.y
     else:
       z=(x-event.xdata)**2+(y-event.ydata)**2-20000
     implot.draw_process._imgs[0].set_data(z)
