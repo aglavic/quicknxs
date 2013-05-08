@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Mon May  6 16:55:01 2013
+# Created: Wed May  8 15:57:19 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -284,7 +284,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 246, 135))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 141, 135))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1095,7 +1095,6 @@ class Ui_MainWindow(object):
     self.mainToolbar.setFloatable(False)
     self.mainToolbar.setObjectName(_fromUtf8("mainToolbar"))
     MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolbar)
-    MainWindow.insertToolBarBreak(self.mainToolbar)
     self.actionOpen = QtGui.QAction(MainWindow)
     icon1 = QtGui.QIcon()
     icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/document-open.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1194,6 +1193,8 @@ class Ui_MainWindow(object):
     icon16.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/stripOverlap.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.actionStrip_Overlap.setIcon(icon16)
     self.actionStrip_Overlap.setObjectName(_fromUtf8("actionStrip_Overlap"))
+    self.actionPolarization = QtGui.QAction(MainWindow)
+    self.actionPolarization.setObjectName(_fromUtf8("actionPolarization"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1203,6 +1204,8 @@ class Ui_MainWindow(object):
     self.menuAdvanced.addAction(self.actionAdvanced_Background)
     self.menuAdvanced.addAction(self.actionAdjust_Dirct_Beam)
     self.menuAdvanced.addAction(self.actionClear_Overwrite)
+    self.menuAdvanced.addSeparator()
+    self.menuAdvanced.addAction(self.actionPolarization)
     self.menuAdvanced.addSeparator()
     self.menuAdvanced.addAction(self.actionOpen_Compare_Window)
     self.menuHelp.addAction(self.actionManual)
@@ -1325,6 +1328,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.selectedChannel2, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.selectedChannel3, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.bgActive, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeRegionValues)
+    QtCore.QObject.connect(self.actionPolarization, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_polarization_window)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1660,6 +1664,7 @@ class Ui_MainWindow(object):
     self.actionStrip_Overlap.setText(QtGui.QApplication.translate("MainWindow", "Strip Overlap", None, QtGui.QApplication.UnicodeUTF8))
     self.actionStrip_Overlap.setToolTip(QtGui.QApplication.translate("MainWindow", "Strip points from datasets that overlap with the subsequent dataset in the reflectivity (Ctrl+Shift+S)", None, QtGui.QApplication.UnicodeUTF8))
     self.actionStrip_Overlap.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+S", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionPolarization.setText(QtGui.QApplication.translate("MainWindow", "Polarization...", None, QtGui.QApplication.UnicodeUTF8))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

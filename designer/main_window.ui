@@ -665,7 +665,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
+             <width>141</width>
              <height>135</height>
             </rect>
            </property>
@@ -2406,6 +2406,8 @@
     <addaction name="actionAdjust_Dirct_Beam"/>
     <addaction name="actionClear_Overwrite"/>
     <addaction name="separator"/>
+    <addaction name="actionPolarization"/>
+    <addaction name="separator"/>
     <addaction name="actionOpen_Compare_Window"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -2463,7 +2465,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionPrevious_File"/>
@@ -2770,6 +2772,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionPolarization">
+   <property name="text">
+    <string>Polarization...</string>
    </property>
   </action>
  </widget>
@@ -3918,6 +3925,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionPolarization</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_polarization_window()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3960,5 +3983,6 @@
   <slot>cutPoints()</slot>
   <slot>autoRef()</slot>
   <slot>stripOverlap()</slot>
+  <slot>open_polarization_window()</slot>
  </slots>
 </ui>

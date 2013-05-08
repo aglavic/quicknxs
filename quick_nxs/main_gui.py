@@ -16,6 +16,7 @@ from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
 from .main_window import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog
 from .compare_plots import CompareDialog
+from .polarization_gui import PolarizationDialog
 from .advanced_background import BackgroundDialog
 from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
@@ -2053,6 +2054,12 @@ Do you want to try to restore the working reduction list?""",
   @log_call
   def open_compare_window(self):
     dia=CompareDialog(size=QtCore.QSize(800, 800))
+    dia.show()
+    self.open_plots.append(dia)
+
+  @log_call
+  def open_polarization_window(self):
+    dia=PolarizationDialog(self)
     dia.show()
     self.open_plots.append(dia)
 
