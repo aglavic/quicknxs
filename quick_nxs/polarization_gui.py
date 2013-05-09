@@ -40,22 +40,31 @@ class PolarizationDialog(QDialog):
     if '++' in channels and '-+' in channels:
       p=Reflectivity(data['++'], **opts)
       m=Reflectivity(data['-+'], **opts)
-      I['++']=p;I['-+']=m
+      I['++']=p.Rraw;I['-+']=m.Rraw
       reg=where((p.Rraw>0)&(m.Rraw>0))
       fr=p.Rraw/m.Rraw
-      FR1=p.Rraw[reg].sum()/m.Rraw[reg].sum()
-      self.ui.flippingRatios.plot(p.lamda[reg], fr[reg], label=u'SF1')
+      FR1=fr[reg].mean()
+      self.ui.flippingRatios.plot(p.lamda[reg], fr[reg], label=u'SF$_1$')
     if '++' in channels and '+-' in channels:
       p=Reflectivity(data['++'], **opts)
       m=Reflectivity(data['+-'], **opts)
-      I['++']=p;I['+-']=m
+      I['++']=p.Rraw;I['+-']=m.Rraw
       reg=where((p.Rraw>0)&(m.Rraw>0))
       fr=p.Rraw/m.Rraw
-      FR2=p.Rraw[reg].sum()/m.Rraw[reg].sum()
-      self.ui.flippingRatios.plot(p.lamda[reg], fr[reg], label=u'SF2')
+      FR2=fr[reg].mean()
+      self.ui.flippingRatios.plot(p.lamda[reg], fr[reg], label=u'SF$_2$')
     if len(channels)==4:
-      I['--']=Reflectivity(data['--'], **opts)
-      p0, p1, phi=self.calc_pols(I)
+      I['--']=Reflectivity(data['--'], **opts).Rraw
+      reg=where((I['++']>0)&(I['+-']>0)&(I['-+']>0)&(I['--']>0))
+      phi, Fp, Fa=self.calc_pols(I)
+      self.ui.wavelengthPol.clear()
+      self.ui.wavelengthPol.plot(p.lamda[reg], phi[reg], label=u'φ')
+      self.ui.wavelengthPol.plot(p.lamda[reg], Fp[reg], label=u'F$_1$')
+      self.ui.wavelengthPol.plot(p.lamda[reg], Fa[reg], label=u'F$_2$')
+      self.ui.wavelengthPol.legend()
+      self.ui.wavelengthPol.set_xlabel(u'λ [Å]')
+      self.ui.wavelengthPol.set_ylabel(u'Efficiency')
+      self.ui.wavelengthPol.draw()
     self.ui.flippingRatios.legend()
     self.ui.flippingRatios.set_xlabel(u'λ [Å]')
     self.ui.flippingRatios.set_ylabel(u'Flipping Ratio')
@@ -64,5 +73,18 @@ class PolarizationDialog(QDialog):
     self.ui.FR2.setText("%.1f"%FR2)
 
   def calc_pols(self, I):
-    return 0, 0, 0
+    '''
+    Calculate efficiency parameters from intensities using the
+    nomenclature given in:
+    A.R. Wildes, Neutron Polarization Analysis Corrections Made Easy, 
+                 Neutron News 17:2, 17-25 (2007)
+    '''
+    I00=I['++'];I01=I['+-'];I10=I['-+'];I11=I['--']
+    # combined polarizer/analyzer efficiency
+    phi=((I00-I01)*(I00-I10))/(I00*I11-I01*I10)
+    # flipper 1 efficiency
+    Fp=(I00-I01-I10+I11)/2./(I00-I01)
+    # flipper 2 efficiency
+    Fa=(I00-I01-I10+I11)/2./(I00-I10)
+    return phi, Fp, Fa
 
