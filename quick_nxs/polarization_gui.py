@@ -71,6 +71,8 @@ class PolarizationDialog(QDialog):
       I['--']=Reflectivity(data['--'], **opts).Rraw
       reg=where((I['++']>0)&(I['+-']>0)&(I['-+']>0)&(I['--']>0)&(p.lamda>=lmin)&(p.lamda<=lmax))
       phi, Fp, Fa=self.calc_pols(I)
+      self.ui.PolLabel.setText(u'φ=%.3f F1=%.3f F2=%.3f'%(phi[reg].mean(), Fp[reg].mean(),
+                                                          Fa[reg].mean()))
       self.ui.wavelengthPol.clear()
       self.ui.wavelengthPol.plot(p.lamda[reg], phi[reg], label=u'φ')
       self.ui.wavelengthPol.plot(p.lamda[reg], Fp[reg], label=u'F$_1$')
@@ -79,6 +81,8 @@ class PolarizationDialog(QDialog):
       self.ui.wavelengthPol.set_xlabel(u'λ [Å]')
       self.ui.wavelengthPol.set_ylabel(u'Efficiency')
       self.ui.wavelengthPol.draw()
+    else:
+      self.ui.PolLabel.setText('')
     self.ui.flippingRatios.legend()
     self.ui.flippingRatios.set_xlabel(u'λ [Å]')
     self.ui.flippingRatios.set_ylabel(u'Flipping Ratio')

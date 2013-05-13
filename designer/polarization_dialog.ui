@@ -55,7 +55,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Integrated:</string>
+             <string>Mean:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -117,6 +117,13 @@
             </property>
             <property name="text">
              <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="PolLabel">
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>

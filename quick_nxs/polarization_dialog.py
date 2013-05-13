@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/polarization_dialog.ui'
 #
-# Created: Thu May  9 10:27:33 2013
+# Created: Mon May 13 11:25:50 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -89,6 +89,10 @@ class Ui_Dialog(object):
     self.FR2.setSizePolicy(sizePolicy)
     self.FR2.setObjectName(_fromUtf8("FR2"))
     self.horizontalLayout.addWidget(self.FR2)
+    self.PolLabel = QtGui.QLabel(self.groupBox)
+    self.PolLabel.setText(_fromUtf8(""))
+    self.PolLabel.setObjectName(_fromUtf8("PolLabel"))
+    self.horizontalLayout.addWidget(self.PolLabel)
     self.verticalLayout.addLayout(self.horizontalLayout)
     self.groupBox1 = QtGui.QGroupBox(self.splitter)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
@@ -188,7 +192,7 @@ class Ui_Dialog(object):
   def retranslateUi(self, Dialog):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
     self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Flipping Ratios (Current Run)", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_2.setText(QtGui.QApplication.translate("Dialog", "Integrated:", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_2.setText(QtGui.QApplication.translate("Dialog", "Mean:", None, QtGui.QApplication.UnicodeUTF8))
     self.label_3.setText(QtGui.QApplication.translate("Dialog", "SF1", None, QtGui.QApplication.UnicodeUTF8))
     self.FR1.setText(QtGui.QApplication.translate("Dialog", "0", None, QtGui.QApplication.UnicodeUTF8))
     self.label_5.setText(QtGui.QApplication.translate("Dialog", "SF2", None, QtGui.QApplication.UnicodeUTF8))
