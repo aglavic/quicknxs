@@ -320,7 +320,7 @@ class NXSMultiData(NXSData):
       raise ValueError, 'File names needs to be an iterable of length > 0'
     options['use_caching']=False # caching would return NXSData type objects
     filenames.sort()
-    if 'callback' in options:
+    if options['callback']:
       cls._callback=options['callback']
       cls._progress_items=len(filenames)
       cls._progress=0.
