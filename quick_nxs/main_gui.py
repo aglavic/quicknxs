@@ -758,7 +758,13 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
     else:
-      ymin=min(self.refl.BG[self.refl.BG>0].min(), self.refl.I[self.refl.I>0].min())
+      try:
+        ymin=min(self.refl.BG[self.refl.BG>0].min(), self.refl.I[self.refl.I>0].min())
+      except ValueError:
+        try:
+          ymin=self.refl.I[self.refl.I>0].min()
+        except ValueError:
+          ymin=1e-10
       ymax=max(self.refl.BG.max(), self.refl.I.max())
       self.ui.refl.errorbar(self.refl.lamda, self.refl.I, yerr=self.refl.dI, label='I-'+options['number'])
       self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+options['number'])
