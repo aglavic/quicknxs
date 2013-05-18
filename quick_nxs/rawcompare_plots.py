@@ -31,9 +31,12 @@ class RawCompare(QDialog):
     
     imax=1e-10
     imin=1e10
+    lmin=gui.refl.lamda.min()
+    lmax=gui.refl.lamda.max()
     
     if self.ui.showNorm.isChecked() and gui.refl.options['normalization']:
       norm=gui.refl.options['normalization']
+      lmin=norm.lamda[norm.I>0].min();lmax=norm.lamda[norm.I>0].max()
       imax=max(imax, norm.I.max()); imin=min(imin, norm.I[norm.I>0].min())
       plot.errorbar(norm.lamda, norm.I, norm.dI, color='#666666', label='Direct Beam')
       if self.ui.showNormBG.isChecked():
@@ -64,6 +67,7 @@ class RawCompare(QDialog):
       plot.set_yscale('log')
     else:
       plot.set_ylabel('linear')
+    plot.canvas.ax.set_xlim(lmin, lmax)
     plot.canvas.ax.set_ylim(imin, imax*1.5)
     plot.legend()
     plot.draw()
