@@ -2015,8 +2015,11 @@ Do you want to try to restore the working reduction list?""",
     Save window and dock geometry.
     '''
     # join delay thread
+    debug('Shutting down delay trigger')
     self.trigger.stay_alive=False
     self.trigger.wait()
+    del(self.trigger)
+    debug('Delay trigger closed')
     # store geometry and setting parameters
     figure_params=[]
     for fig in [

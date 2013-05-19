@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/background_dialog.ui'
 #
-# Created: Mon May 13 11:25:50 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Sun May 19 11:19:19 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,16 @@ from PyQt4 import QtCore, QtGui
 try:
   _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-  _fromUtf8 = lambda s: s
+  def _fromUtf8(s):
+    return s
+
+try:
+  _encoding = QtGui.QApplication.UnicodeUTF8
+  def _translate(context, text, disambig):
+    return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+  def _translate(context, text, disambig):
+    return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
@@ -173,28 +182,28 @@ class Ui_Dialog(object):
     Dialog.setTabOrder(self.clearPoly, self.polyTable)
 
   def retranslateUi(self, Dialog):
-    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-    self.polyregionActive.setText(QtGui.QApplication.translate("Dialog", "Polygon regions", None, QtGui.QApplication.UnicodeUTF8))
-    self.addPoly.setText(QtGui.QApplication.translate("Dialog", "Add", None, QtGui.QApplication.UnicodeUTF8))
-    self.delPoly.setText(QtGui.QApplication.translate("Dialog", "Delete", None, QtGui.QApplication.UnicodeUTF8))
-    self.clearPoly.setText(QtGui.QApplication.translate("Dialog", "Clear", None, QtGui.QApplication.UnicodeUTF8))
+    Dialog.setWindowTitle(_translate("Dialog", "QuickNXS - Advanced Background", None))
+    self.polyregionActive.setText(_translate("Dialog", "Polygon regions", None))
+    self.addPoly.setText(_translate("Dialog", "Add", None))
+    self.delPoly.setText(_translate("Dialog", "Delete", None))
+    self.clearPoly.setText(_translate("Dialog", "Clear", None))
     item = self.polyTable.horizontalHeaderItem(0)
-    item.setText(QtGui.QApplication.translate("Dialog", "λ1", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "λ1", None))
     item = self.polyTable.horizontalHeaderItem(1)
-    item.setText(QtGui.QApplication.translate("Dialog", "x1", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "x1", None))
     item = self.polyTable.horizontalHeaderItem(2)
-    item.setText(QtGui.QApplication.translate("Dialog", "λ2", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "λ2", None))
     item = self.polyTable.horizontalHeaderItem(3)
-    item.setText(QtGui.QApplication.translate("Dialog", "x2", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "x2", None))
     item = self.polyTable.horizontalHeaderItem(4)
-    item.setText(QtGui.QApplication.translate("Dialog", "λ3", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "λ3", None))
     item = self.polyTable.horizontalHeaderItem(5)
-    item.setText(QtGui.QApplication.translate("Dialog", "x3", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "x3", None))
     item = self.polyTable.horizontalHeaderItem(6)
-    item.setText(QtGui.QApplication.translate("Dialog", "λ4", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "λ4", None))
     item = self.polyTable.horizontalHeaderItem(7)
-    item.setText(QtGui.QApplication.translate("Dialog", "x4", None, QtGui.QApplication.UnicodeUTF8))
-    self.presumeIofLambda.setText(QtGui.QApplication.translate("Dialog", "Presume BG~I(λ)", None, QtGui.QApplication.UnicodeUTF8))
-    self.label.setText(QtGui.QApplication.translate("Dialog", "Scale Backgound", None, QtGui.QApplication.UnicodeUTF8))
+    item.setText(_translate("Dialog", "x4", None))
+    self.presumeIofLambda.setText(_translate("Dialog", "Presume BG~I(λ)", None))
+    self.label.setText(_translate("Dialog", "Scale Backgound", None))
 
 from .mplwidget import MPLWidget

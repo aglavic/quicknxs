@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/rawcompare_dialog.ui'
 #
-# Created: Sat May 18 14:54:55 2013
+# Created: Sun May 19 11:19:19 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -75,7 +75,7 @@ class Ui_RawDat(object):
     QtCore.QMetaObject.connectSlotsByName(RawDat)
 
   def retranslateUi(self, RawDat):
-    RawDat.setWindowTitle(_translate("RawDat", "Raw Data Comparison", None))
+    RawDat.setWindowTitle(_translate("RawDat", "QuickNXS - Raw Data Comparison", None))
     self.showNorm.setText(_translate("RawDat", "Direct Beam", None))
     self.label.setText(_translate("RawDat", "Show Plots for:", None))
     self.showNormBG.setText(_translate("RawDat", "Dir. Beam BG", None))

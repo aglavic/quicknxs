@@ -14,11 +14,11 @@
    height="128"
    id="svg2998"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/logo.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/glavic/Software/Scripte/QuickNXS/icons/logo_hq.png"
+   inkscape:export-xdpi="300.29123"
+   inkscape:export-ydpi="300.29123">
   <defs
      id="defs3000">
     <linearGradient
@@ -73,17 +73,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="48.920336"
-     inkscape:cy="35.319914"
+     inkscape:zoom="5.6"
+     inkscape:cx="71.545266"
+     inkscape:cy="51.720197"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      width="128px"
      inkscape:window-width="1920"
-     inkscape:window-height="1012"
-     inkscape:window-x="1676"
-     inkscape:window-y="-4"
+     inkscape:window-height="1023"
+     inkscape:window-x="1916"
+     inkscape:window-y="-6"
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
@@ -150,5 +150,12 @@
        height="128.54192"
        x="0"
        y="924.63501" />
+    <path
+       style="fill:#ffffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m -1.5133703,128.25254 0,21.46574 130.5287903,0 0,-21.46574"
+       id="path2999"
+       inkscape:connector-curvature="0"
+       transform="translate(0,924.3622)"
+       sodipodi:nodetypes="cccc" />
   </g>
 </svg>

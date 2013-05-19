@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/smooth_dialog.ui'
 #
-# Created: Mon May 13 11:25:50 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Sun May 19 11:19:19 2013
+#      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,16 @@ from PyQt4 import QtCore, QtGui
 try:
   _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-  _fromUtf8 = lambda s: s
+  def _fromUtf8(s):
+    return s
+
+try:
+  _encoding = QtGui.QApplication.UnicodeUTF8
+  def _translate(context, text, disambig):
+    return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+  def _translate(context, text, disambig):
+    return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
@@ -233,24 +242,24 @@ class Ui_Dialog(object):
     Dialog.setTabOrder(self.gridSizeCoupled, self.sigmasCoupled)
 
   def retranslateUi(self, Dialog):
-    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Smooth Off-Specular", None, QtGui.QApplication.UnicodeUTF8))
-    self.label.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Preview", None, QtGui.QApplication.UnicodeUTF8))
-    self.kizmkfzVSqz.setText(QtGui.QApplication.translate("Dialog", "(ki_z-kf_z) VS. Qz", None, QtGui.QApplication.UnicodeUTF8))
-    self.qxVSqz.setText(QtGui.QApplication.translate("Dialog", "Qx VS. Qz", None, QtGui.QApplication.UnicodeUTF8))
-    self.kizVSkfz.setText(QtGui.QApplication.translate("Dialog", "ki_z VS. kf_z", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_12.setText(QtGui.QApplication.translate("Dialog", "Y2", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_10.setText(QtGui.QApplication.translate("Dialog", "X2", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_2.setText(QtGui.QApplication.translate("Dialog", "Sigma", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_11.setText(QtGui.QApplication.translate("Dialog", "Y1", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_8.setText(QtGui.QApplication.translate("Dialog", "Y", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_5.setText(QtGui.QApplication.translate("Dialog", "Grid Region", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_7.setText(QtGui.QApplication.translate("Dialog", "X", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_13.setText(QtGui.QApplication.translate("Dialog", "Smoothing Parameters", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_9.setText(QtGui.QApplication.translate("Dialog", "X1", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_3.setText(QtGui.QApplication.translate("Dialog", "Grid Size", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_4.setText(QtGui.QApplication.translate("Dialog", "Y", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_6.setText(QtGui.QApplication.translate("Dialog", "X", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_14.setText(QtGui.QApplication.translate("Dialog", "R [Sigmas]", None, QtGui.QApplication.UnicodeUTF8))
+    Dialog.setWindowTitle(_translate("Dialog", "QuickNXS - Smooth Off-Specular", None))
+    self.label.setText(_translate("Dialog", "Off-Specular Preview", None))
+    self.kizmkfzVSqz.setText(_translate("Dialog", "(ki_z-kf_z) VS. Qz", None))
+    self.qxVSqz.setText(_translate("Dialog", "Qx VS. Qz", None))
+    self.kizVSkfz.setText(_translate("Dialog", "ki_z VS. kf_z", None))
+    self.label_12.setText(_translate("Dialog", "Y2", None))
+    self.label_10.setText(_translate("Dialog", "X2", None))
+    self.label_2.setText(_translate("Dialog", "Sigma", None))
+    self.label_11.setText(_translate("Dialog", "Y1", None))
+    self.label_8.setText(_translate("Dialog", "Y", None))
+    self.label_5.setText(_translate("Dialog", "Grid Region", None))
+    self.label_7.setText(_translate("Dialog", "X", None))
+    self.label_13.setText(_translate("Dialog", "Smoothing Parameters", None))
+    self.label_9.setText(_translate("Dialog", "X1", None))
+    self.label_3.setText(_translate("Dialog", "Grid Size", None))
+    self.label_4.setText(_translate("Dialog", "Y", None))
+    self.label_6.setText(_translate("Dialog", "X", None))
+    self.label_14.setText(_translate("Dialog", "R [Sigmas]", None))
 
 from .mplwidget import MPLWidget
 from . import icons_rc

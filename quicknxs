@@ -10,9 +10,19 @@ from quick_nxs.gui_logging import setup_system, check_runstate
 
 def _run(argv=[]):
   from PyQt4.QtGui import QApplication, QSplashScreen, QPixmap
+  from PyQt4.QtCore import Qt
   app=QApplication(argv)
-  from quick_nxs import icons_rc  #@UnusedImport
+  from quick_nxs import icons_rc, version  #@UnusedImport
   splash=QSplashScreen(QPixmap(u':/General/logo_hq.png'))
+  #splash.setStyleSheet("qproperty-alignment: AlignBottom;")
+  splash.showMessage(u"""<html>
+                          <div style="margin-bottom: 420;"> &nbsp;</div>
+                          <div style="font-size: 12pt; margin-bottom: 15;">
+                            <b>QuickNXS</b> Version %s
+                          </div>
+                          <div>Starting up...</div>
+                        </html>"""%version.str_version,
+                     alignment=Qt.AlignBottom|Qt.AlignHCenter)
   splash.show()
   from quick_nxs.main_gui import MainGUI
   window=MainGUI(argv)

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Smooth Off-Specular</string>
+   <string>QuickNXS - Smooth Off-Specular</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../icons/icons.qrc">
