@@ -37,31 +37,14 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0">
-      <widget class="QCheckBox" name="showNorm">
+     <item row="1" column="3">
+      <widget class="QCheckBox" name="showAll">
        <property name="text">
-        <string>Direct Beam</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
+        <string>All States</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Show Plots for:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="showNormBG">
-       <property name="text">
-        <string>Dir. Beam BG</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
+     <item row="1" column="4">
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -74,17 +57,37 @@
        </property>
       </spacer>
      </item>
-     <item row="1" column="3">
-      <widget class="QCheckBox" name="showBG">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="showNorm">
        <property name="text">
-        <string>Background</string>
+        <string>Show Direct Beam:</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="4">
-      <widget class="QCheckBox" name="showAll">
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="showNormBG">
        <property name="text">
-        <string>All States</string>
+        <string>With Background</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="showActive">
+       <property name="text">
+        <string>Show Active Run</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="showBG">
+       <property name="text">
+        <string>Width Background</string>
        </property>
       </widget>
      </item>
@@ -109,8 +112,8 @@
    <slot>draw_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>36</x>
-     <y>635</y>
+     <x>41</x>
+     <y>622</y>
     </hint>
     <hint type="destinationlabel">
      <x>236</x>
@@ -125,8 +128,8 @@
    <slot>draw_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>633</y>
+     <x>262</x>
+     <y>622</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
@@ -141,8 +144,8 @@
    <slot>draw_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>518</x>
-     <y>631</y>
+     <x>232</x>
+     <y>647</y>
     </hint>
     <hint type="destinationlabel">
      <x>435</x>
@@ -157,12 +160,76 @@
    <slot>draw_plot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>613</x>
-     <y>643</y>
+     <x>351</x>
+     <y>647</y>
     </hint>
     <hint type="destinationlabel">
      <x>578</x>
      <y>652</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showNorm</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showNormBG</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>93</x>
+     <y>613</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>613</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showBG</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>638</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>640</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showAll</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>29</x>
+     <y>639</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>313</x>
+     <y>637</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showActive</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>RawDat</receiver>
+   <slot>draw_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>31</x>
+     <y>640</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>648</y>
     </hint>
    </hints>
   </connection>

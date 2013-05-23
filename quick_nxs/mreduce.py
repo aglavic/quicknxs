@@ -361,6 +361,7 @@ class MRDataset(object):
   dangle=0. #°
   dangle0=4. #°
   sangle=0. #°
+  mon_data=None
 
   # for resolution calculation
   slit1_width=3. # mm
@@ -413,6 +414,13 @@ class MRDataset(object):
     output.data=data['bank1/data'].value.astype(float) # 3D dataset
     output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
     output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset
+
+    mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
+                                          output.dist_mod_det/output.dist_mod_mon
+    mon_I_from=data['monitor1']['data'].value.astype(float)
+    mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
+                       weights=mon_I_from)[0]
+    output.mon_data=mod_data
     return output
 
   @classmethod
@@ -567,6 +575,7 @@ class MRDataset(object):
 
     self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
     self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
+    self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
     self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
     self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
 

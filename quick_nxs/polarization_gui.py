@@ -162,15 +162,15 @@ class PolarizationDialog(QDialog):
            (lamda<=float(self.ui.wlTable.item(i, 2).text())))
       if '++' in I and '+-' in I:
         fr, dfr=self.calc_fr(I['++'], I['+-'])
-        self.ui.flippingRatios.errorbar(lamda[reg], fr[reg], yerr=dfr[reg], fmt='-b')
+        self.ui.flippingRatios.errorbar(lamda[reg], fr[reg], yerr=dfr[reg], fmt='-b', label=None)
       if '++' in I and '-+' in I:
         fr, dfr=self.calc_fr(I['++'], I['-+'])
-        self.ui.flippingRatios.errorbar(lamda[reg], fr[reg], yerr=dfr[reg], fmt='-r')
+        self.ui.flippingRatios.errorbar(lamda[reg], fr[reg], yerr=dfr[reg], fmt='-r', label=None)
       if len(I)==4:
         phi, dphi, Fp, dFp, Fa, dFa=self.calc_pols(I)
-        self.ui.wavelengthPol.errorbar(lamda[reg], phi[reg], yerr=dphi[reg], fmt='-b')
-        self.ui.wavelengthPol.errorbar(lamda[reg], Fp[reg], yerr=dFp[reg], fmt='-r')
-        self.ui.wavelengthPol.errorbar(lamda[reg], Fa[reg], yerr=dFa[reg], fmt='-g')
+        self.ui.wavelengthPol.errorbar(lamda[reg], phi[reg], yerr=dphi[reg], fmt='-b', label=None)
+        self.ui.wavelengthPol.errorbar(lamda[reg], Fp[reg], yerr=dFp[reg], fmt='-r', label=None)
+        self.ui.wavelengthPol.errorbar(lamda[reg], Fa[reg], yerr=dFa[reg], fmt='-g', label=None)
 
 
   def addX(self):
