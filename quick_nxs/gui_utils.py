@@ -75,6 +75,7 @@ class ReduceDialog(QDialog):
       else:
         option.setText(value)
     self.tempfiles=[]
+    self._gisans_plots=[]
 
   @log_call
   def exec_(self):
@@ -191,7 +192,9 @@ class ReduceDialog(QDialog):
         output=dict([(channel, [output_data[channel][i]]) for channel in self.channels])
         output['column_units']=['A^-1', 'A^-1', 'a.u.', 'a.u.']
         output['column_names']=['Qy', 'Qz', 'I', 'dI']
-        self.exporter.output_data['GISANS_%i'%i]=output
+        lmin_i=lmin+(lmax-lmin)/nslices*i
+        lmax_i=lmin+(lmax-lmin)/nslices*(i+1)
+        self.exporter.output_data['GISANS_%.3f-%.3f'%(lmin_i, lmax_i)]=output
 
   @log_call
   def smooth_offspec(self):
@@ -259,15 +262,23 @@ class ReduceDialog(QDialog):
         x, y, z=0, 1, 2
         xl=u'%s [Å$^{-1}$]'%output_data['column_names'][0]
         yl=u'%s [Å$^{-1}$]'%output_data['column_names'][1]
-      dialogs=[]
+      if title.startswith('GISANS'):
+        dialogs=self._gisans_plots
+      else:
+        dialogs=[]
       for channel in self.channels:
         # plot the results in a new window
         dialog=PlotDialog()
         dialog._open_instances=dialogs
         dialog.show()
-        dialog.resize(450, 450)
-        dialog.move(100+450*(len(dialogs)%2),
-                    50+450*(len(dialogs)//2))
+        if title.startswith('GISANS'):
+          dialog.resize(600, 450)
+          dialog.move(100+600*(len(dialogs)%3),
+                      50+450*(len(dialogs)//3))
+        else:
+          dialog.resize(450, 450)
+          dialog.move(100+450*(len(dialogs)%2),
+                      50+450*(len(dialogs)//2))
         dialogs.append(dialog)
         plot=dialog.plot
         plot.toolbar.coordinates=True
