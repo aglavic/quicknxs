@@ -212,6 +212,10 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.xy_overview, self.ui.xtof_overview,
            self.ui.x_project, self.ui.y_project, self.ui.refl]:
       plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
+    for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
+                 self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
+                 self.ui.xy_overview, self.ui.xtof_overview]:
+      plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
     self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
     self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
     self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
@@ -1876,6 +1880,32 @@ class MainGUI(QtGui.QMainWindow):
           Inew=Ival*10**(0.01*steps)
         self.ui.reductionTable.setItem(i, 1,
                                    QtGui.QTableWidgetItem("%.4f"%(Inew)))
+  
+  def changeColorScale(self, event):
+    '''
+      Change the intensity limits of a map plot with the mouse wheel.
+    '''
+    canvas=None
+    for plot in [self.ui.xy_overview, self.ui.xtof_overview]:
+      if plot.canvas is event.canvas:
+        canvas=[plot]
+    if event.canvas in [self.ui.xy_pp.canvas, self.ui.xy_mp.canvas,
+                        self.ui.xy_pm.canvas, self.ui.xy_mm.canvas]:
+      canvas=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm]
+    if event.canvas in [self.ui.xtof_pp.canvas, self.ui.xtof_mp.canvas,
+                        self.ui.xtof_pm.canvas, self.ui.xtof_mm.canvas]:
+      canvas=[self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm]
+    if not (canvas and canvas[0].cplot):
+      return
+    clim=canvas[0].cplot.get_clim()
+    for canv in canvas:
+      if canv.cplot is None:
+        continue
+      if self._control_down:
+        canv.cplot.set_clim(min(clim[1]*0.9, clim[0]*10**(0.05*event.step)), clim[1])
+      else:
+        canv.cplot.set_clim(clim[0], max(clim[0]*1.1, clim[1]*10**(0.05*event.step)))
+      canv.draw()
 
   def keyPressEvent(self, event):
     if event.modifiers()==QtCore.Qt.ControlModifier:
