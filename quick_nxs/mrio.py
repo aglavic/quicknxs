@@ -900,7 +900,7 @@ class Exporter(object):
         plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
       params['plot_lines']=plotlines
       script=GP_TEMPLATE_3D%params
-      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
+      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1'))
     self.exported_files_all.append(output)
     try:
       subprocess.call(['gnuplot', output], cwd=directory, shell=False)
