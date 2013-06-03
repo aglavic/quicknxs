@@ -198,8 +198,9 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.png")
     self.canvas.print_figure(filename, dpi=600)
-
     imgpix=QtGui.QPixmap(filename)
+    os.remove(filename)
+
     imgobj=QtGui.QLabel()
     imgobj.setPixmap(imgpix)
     imgobj.setMask(imgpix.mask())

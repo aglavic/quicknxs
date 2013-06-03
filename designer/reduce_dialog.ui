@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>458</height>
+    <height>438</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,16 +60,6 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="exportTrueSpecular">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>True Specular</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QCheckBox" name="exportOffSpecular">
                <property name="text">
                 <string>Off-Specular Raw</string>
@@ -109,11 +99,14 @@
              </sizepolicy>
             </property>
             <property name="title">
-             <string>States</string>
+             <string>States to Extract</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>10</number>
+             </property>
              <item>
-              <widget class="QCheckBox" name="exportUpUp">
+              <widget class="QCheckBox" name="export_0">
                <property name="text">
                 <string> X / + / ++/0V</string>
                </property>
@@ -123,7 +116,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="exportDownDown">
+              <widget class="QCheckBox" name="export_3">
                <property name="text">
                 <string>- / --/+V</string>
                </property>
@@ -133,7 +126,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="exportUpDown">
+              <widget class="QCheckBox" name="export_1">
                <property name="text">
                 <string>+-/-V</string>
                </property>
@@ -143,7 +136,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="exportDownUp">
+              <widget class="QCheckBox" name="export_2">
                <property name="text">
                 <string>-+</string>
                </property>
@@ -151,6 +144,19 @@
                 <bool>true</bool>
                </property>
               </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </widget>
@@ -234,6 +240,12 @@
             </property>
             <property name="sizeType">
              <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
             </property>
            </spacer>
           </item>
@@ -441,15 +453,14 @@
   <tabstop>fileNameEntry</tabstop>
   <tabstop>buttonBox</tabstop>
   <tabstop>exportSpecular</tabstop>
-  <tabstop>exportTrueSpecular</tabstop>
   <tabstop>exportOffSpecular</tabstop>
   <tabstop>exportOffSpecularCorr</tabstop>
   <tabstop>exportOffSpecularSmoothed</tabstop>
   <tabstop>exportGISANS</tabstop>
-  <tabstop>exportUpUp</tabstop>
-  <tabstop>exportDownDown</tabstop>
-  <tabstop>exportUpDown</tabstop>
-  <tabstop>exportDownUp</tabstop>
+  <tabstop>export_0</tabstop>
+  <tabstop>export_3</tabstop>
+  <tabstop>export_1</tabstop>
+  <tabstop>export_2</tabstop>
   <tabstop>multiAscii</tabstop>
   <tabstop>combinedAscii</tabstop>
   <tabstop>matlab</tabstop>

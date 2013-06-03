@@ -44,13 +44,6 @@ genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 
 class ReduceDialog(QDialog):
-  CHANNEL_NAMINGS=['UpUp', 'DownDown', 'UpDown', 'DownUp']
-  CHANNEL_COMPARE=[
-                   ['x', '+', '++', '0V'],
-                   ['-', '--', '+V'],
-                   ['+-', '-V'],
-                   ['-+']
-                   ]
   _overwrite_all=False
 
   def __init__(self, parent, channels, refls):
@@ -64,10 +57,12 @@ class ReduceDialog(QDialog):
     self.ui.fileNameEntry.setText(PATHS['export_name'])
     self.set_email_texts()
     for i in range(4):
-      if not any(map(lambda item: item in self.CHANNEL_COMPARE[i], channels)):
-        checkbutton=getattr(self.ui, 'export'+self.CHANNEL_NAMINGS[i])
+      checkbutton=getattr(self.ui, 'export_'+str(i))
+      if len(self.channels)>i:
+        checkbutton.setText(self.channels[i])
+      else:
         checkbutton.setEnabled(False)
-        checkbutton.setChecked(False)
+        checkbutton.hide()
     for key, value in EXPORT.items():
       option=getattr(self.ui, key)
       if hasattr(option, 'setChecked'):
@@ -97,14 +92,10 @@ class ReduceDialog(QDialog):
           return
       self.save_settings()
       # remove channels not selected
-      if not self.ui.exportDownUp.isChecked():
-        self.rm_channel(['-+'])
-      if not self.ui.exportUpDown.isChecked():
-        self.rm_channel(['+-', '-V'])
-      if not self.ui.exportDownDown.isChecked():
-        self.rm_channel(['-', '--', '+V'])
-      if not self.ui.exportUpUp.isChecked():
-        self.rm_channel(['x', '+', '++', '0V'])
+      for i in reversed(list(range(len(self.channels)))):
+        checkbutton=getattr(self.ui, 'export_'+str(i))
+        if not checkbutton.isChecked():
+          self.channels.pop(i)
       # calculate and collect reflectivities
       self.exporter=Exporter(self.channels, self.refls,
                              sample_length=self.ui.sampleSize.value())
@@ -316,12 +307,6 @@ class ReduceDialog(QDialog):
       self.exported_files_plots.append(fname)
       self.tempfiles.append(fname)
 
-  def rm_channel(self, names):
-    for name in names:
-      if name in self.channels:
-        self.channels.remove(name)
-        return
-
   @log_call
   def changeDir(self):
     oldd=self.ui.directoryEntry.text()
@@ -343,7 +328,6 @@ class ReduceDialog(QDialog):
 
   def save_settings(self):
     PATHS['results']=unicode(self.ui.directoryEntry.text())
-    PATHS['export_name']=unicode(self.ui.fileNameEntry.text())
     for key in EXPORT.keys():
       option=getattr(self.ui, key)
       if hasattr(option, 'setChecked'):

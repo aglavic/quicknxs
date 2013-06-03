@@ -25,6 +25,8 @@ class BackgroundDialog(QDialog):
     self.polygons=[]
     self.active_poly=None
     self.ui.xTof.canvas.mpl_connect('button_press_event', self.mouseClicked)
+    parent.fileLoaded.connect(self.drawXTof)
+    parent.initiateReflectivityPlot.connect(self.drawBG)
 
   def mouseClicked(self, event):
     '''
@@ -170,3 +172,10 @@ class BackgroundDialog(QDialog):
     The updates of the dialog plots are triggered automatically.
     '''
     self.main_window.initiateReflectivityPlot.emit(True)
+
+  def closeEvent(self, *args, **kwargs):
+    # disconnect when closed as object is not actually destroyed and will slow down plots
+    self.main_window.fileLoaded.disconnect(self.drawXTof)
+    self.main_window.initiateReflectivityPlot.disconnect(self.drawBG)
+    self.main_window.background_dialog=None
+    return QDialog.closeEvent(self, *args, **kwargs)

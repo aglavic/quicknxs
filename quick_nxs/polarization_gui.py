@@ -205,3 +205,9 @@ class PolarizationDialog(QDialog):
   def clearX(self):
     self._Xitems=[]
     self.ui.xTable.setRowCount(0)
+
+  def closeEvent(self, *args, **kwargs):
+    # disconnect when closed as object is not actually destroyed and will slow down plots
+    self.parent_window.initiateReflectivityPlot.disconnect(self.update_fr)
+    return QDialog.closeEvent(self, *args, **kwargs)
+

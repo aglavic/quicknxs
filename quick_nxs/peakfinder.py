@@ -222,8 +222,8 @@ class PeakFinder(object):
       w_high=xdata[i_high]
       w=w_high-w_low
       info.append(float(abs(w))) # estimated peak FWHM
-      # intensity assuming a Gaussian peak shape
-      info.append(item[3]*1.41/numpy.sqrt(item[2]))
+      # intensity from ridge value (empirical from application to Gauss peak)
+      info.append(item[3]*3.)
       # ridge length
       info.append(item[0])
       # SNR
@@ -261,7 +261,7 @@ class PeakFinder(object):
         w=w_high-w_low
         info.append(float(abs(w))/1.6) # estimated peak width
         # intensity
-        info.append(item[3]*1.41/numpy.sqrt(item[2]))
+        info.append(item[3]*3.)
         # ridge length
         info.append(item[0])
         # SNR

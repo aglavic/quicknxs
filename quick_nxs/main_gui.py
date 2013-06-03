@@ -1880,7 +1880,7 @@ class MainGUI(QtGui.QMainWindow):
           Inew=Ival*10**(0.01*steps)
         self.ui.reductionTable.setItem(i, 1,
                                    QtGui.QTableWidgetItem("%.4f"%(Inew)))
-  
+
   def changeColorScale(self, event):
     '''
       Change the intensity limits of a map plot with the mouse wheel.
@@ -2088,8 +2088,6 @@ Do you want to try to restore the working reduction list?""",
       if self.refl:
         self.background_dialog.drawXTof()
         self.background_dialog.drawBG()
-      self.fileLoaded.connect(self.background_dialog.drawXTof)
-      self.initiateReflectivityPlot.connect(self.background_dialog.drawBG)
 
   @log_call
   def open_compare_window(self):
@@ -2101,13 +2099,11 @@ Do you want to try to restore the working reduction list?""",
   def open_rawdata_dialog(self):
     dia=RawCompare(self)
     dia.show()
-    self.open_plots.append(dia)
 
   @log_call
   def open_polarization_window(self):
     dia=PolarizationDialog(self)
     dia.show()
-    self.open_plots.append(dia)
 
   @log_call
   def helpDialog(self):

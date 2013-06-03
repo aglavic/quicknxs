@@ -16,13 +16,13 @@ class RawCompare(QDialog):
     QDialog.__init__(self, parent)
     self.ui=Ui_RawDat()
     self.ui.setupUi(self)
-    self.parent=parent
-    self.parent.initiateReflectivityPlot.connect(self.draw_plot)
+    self.parent_window=parent
+    self.parent_window.initiateReflectivityPlot.connect(self.draw_plot)
     self.draw_plot()
 
   def draw_plot(self):
     plot=self.ui.plot
-    gui=self.parent
+    gui=self.parent_window
     if not gui.refl:
       return
     plot.clear()
@@ -74,3 +74,8 @@ class RawCompare(QDialog):
     plot.canvas.ax.set_ylim(imin, imax*1.5)
     plot.legend(loc=8)
     plot.draw()
+
+  def closeEvent(self, *args, **kwargs):
+    # disconnect when closed as object is not actually destroyed and will slow down plots
+    self.parent_window.initiateReflectivityPlot.disconnect(self.draw_plot)
+    return QDialog.closeEvent(self, *args, **kwargs)

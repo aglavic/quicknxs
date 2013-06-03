@@ -170,7 +170,9 @@ class NXSData(object):
     elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
       self.measurement_type='Polarized'
       mapping=MAPPING_HALFPOL
-    elif 'DASlogs' in nxs[channels[0]] and nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None: # is E-field cart connected
+    elif 'DASlogs' in nxs[channels[0]] and \
+          nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
+          channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
       self.measurement_type='Electric Field'
       mapping=MAPPING_EFIELD
     elif len(channels)==1:
