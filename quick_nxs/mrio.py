@@ -819,7 +819,7 @@ class Exporter(object):
       params=dict(
                   output=naming.replace('{item}', title).replace('{state}', 'all')\
                          .replace('{type}', '').replace('{numbers}', ind_str),
-                  xlabel=u"Q_z [Å^{-1}]",
+                  xlabel=u"Q_z [Å^{-1}]",
                   ylabel=u"Reflectivity",
                   pix_x=1600,
                   pix_y=1200,
@@ -853,8 +853,8 @@ class Exporter(object):
       params['pix_y']=200+1200*rows
       if title in ['OffSpec', 'OffSpecCorr']:
         params['ratio']=1.5
-        params['ylabel']=u"Q_z [Å^{-1}]"
-        params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
+        params['ylabel']=u"Q_z [Å^{-1}]"
+        params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
         params['xrange']="%f:%f"%(-0.025, 0.025)
         params['yrange']="%f:%f"%(0.0, 1.413*ki_max)
         line_params=dict(x=5, y=2, z=6)
@@ -863,24 +863,24 @@ class Exporter(object):
         if output_data['column_names'][0]=='Qy':
           # GISANS
           params['ratio']=1.
-          params['ylabel']=u"Q_z [Å^{-1}]"
+          params['ylabel']=u"Q_z [Å^{-1}]"
           params['yrange']="*:*"
-          params['xlabel']=u"Q_y [Å^{-1}]"
+          params['xlabel']=u"Q_y [Å^{-1}]"
           params['xrange']="*:*"
         elif output_data['column_names'][1]=='Qz':
           params['ratio']=1.5
-          params['ylabel']=u"Q_z [Å^{-1}]"
+          params['ylabel']=u"Q_z [Å^{-1}]"
           params['yrange']="%f:%f"%(0.0, 1.413*ki_max)
           if output_data['column_names'][0]=='Qx':
-            params['xlabel']=u"Q_x [Å^{-1}]"
+            params['xlabel']=u"Q_x [Å^{-1}]"
             params['xrange']="%f:%f"%(-0.0005, 0.0005)
           else:
-            params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
+            params['xlabel']=u"k_{i,z}-k_{f,z} [Å^{-1}]"
             params['xrange']="%f:%f"%(-0.025, 0.025)
         else:
           params['ratio']=1.
-          params['xlabel']=u"k_{i,z} [Å^{-1}]"
-          params['ylabel']=u"k_{f,z} [Å^{-1}]"
+          params['xlabel']=u"k_{i,z} [Å^{-1}]"
+          params['ylabel']=u"k_{f,z} [Å^{-1}]"
           params['xrange']="%f:%f"%(0., ki_max)
           params['yrange']="%f:%f"%(0., ki_max)
           params['pix_x']=1400*cols
