@@ -27,6 +27,11 @@ sys.modules['genx.data']=genx_data
 genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 
+GP_ENVIRONMENT=os.environ
+for path in GP_FONT_PATHS:
+  if os.path.exists(path):
+    GP_ENVIRONMENT.update({'GDFONTPATH': path})
+
 class HeaderCreator(object):
   '''
   Class to create file headers from a set of Reflectivity objects.
@@ -832,7 +837,7 @@ class Exporter(object):
         plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
       params['plot_lines']=GP_SEP.join(plotlines)
       script=GP_TEMPLATE%params
-      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1'))
+      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     else:
       # 3D plot
       if 'ki_max' in output_data:
@@ -900,10 +905,11 @@ class Exporter(object):
         plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
       params['plot_lines']=plotlines
       script=GP_TEMPLATE_3D%params
-      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1'))
+      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     self.exported_files_all.append(output)
     try:
-      subprocess.call(['gnuplot', output], cwd=directory, shell=False)
+      subprocess.call(['gnuplot', output], cwd=directory, shell=False,
+                      env=GP_ENVIRONMENT)
     except:
       pass
     else:
