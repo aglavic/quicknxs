@@ -60,6 +60,16 @@
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="exportTrueSpecular">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>True Specular</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QCheckBox" name="exportOffSpecular">
                <property name="text">
                 <string>Off-Specular Raw</string>

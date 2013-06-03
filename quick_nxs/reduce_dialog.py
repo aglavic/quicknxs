@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Mon Jun  3 16:55:21 2013
+# Created: Mon Jun  3 17:30:57 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,6 +50,10 @@ class Ui_Dialog(object):
     self.exportSpecular.setChecked(True)
     self.exportSpecular.setObjectName(_fromUtf8("exportSpecular"))
     self.verticalLayout.addWidget(self.exportSpecular)
+    self.exportTrueSpecular = QtGui.QCheckBox(self.groupBox_2)
+    self.exportTrueSpecular.setEnabled(False)
+    self.exportTrueSpecular.setObjectName(_fromUtf8("exportTrueSpecular"))
+    self.verticalLayout.addWidget(self.exportTrueSpecular)
     self.exportOffSpecular = QtGui.QCheckBox(self.groupBox_2)
     self.exportOffSpecular.setObjectName(_fromUtf8("exportOffSpecular"))
     self.verticalLayout.addWidget(self.exportOffSpecular)
@@ -266,6 +270,7 @@ class Ui_Dialog(object):
     Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Reduction Options", None, QtGui.QApplication.UnicodeUTF8))
     self.groupBox_2.setTitle(QtGui.QApplication.translate("Dialog", "Items", None, QtGui.QApplication.UnicodeUTF8))
     self.exportSpecular.setText(QtGui.QApplication.translate("Dialog", "Specular", None, QtGui.QApplication.UnicodeUTF8))
+    self.exportTrueSpecular.setText(QtGui.QApplication.translate("Dialog", "True Specular", None, QtGui.QApplication.UnicodeUTF8))
     self.exportOffSpecular.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Raw", None, QtGui.QApplication.UnicodeUTF8))
     self.exportOffSpecularCorr.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Corrected", None, QtGui.QApplication.UnicodeUTF8))
     self.exportOffSpecularSmoothed.setText(QtGui.QApplication.translate("Dialog", "Off-Specular Smoothed", None, QtGui.QApplication.UnicodeUTF8))
