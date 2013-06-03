@@ -802,6 +802,11 @@ class Exporter(object):
     for title, output_data in self.output_data.items():
         self._create_gnuplot_script(output_data, title, directory, naming, check_exists)
 
+  def replace_gp(self, text):
+    for tfrom, tto in GP_REPLACE_CHARS:
+      text=text.replace(tfrom, tto)
+    return text
+
   def _create_gnuplot_script(self, output_data, title, directory, naming, check_exists):
     ind_str=self.ind_str
     ofname_full=os.path.join(directory, naming)
@@ -827,7 +832,7 @@ class Exporter(object):
         plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
       params['plot_lines']=GP_SEP.join(plotlines)
       script=GP_TEMPLATE%params
-      open(output, 'wb').write(script.encode('utf8'))
+      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1'))
     else:
       # 3D plot
       if 'ki_max' in output_data:
@@ -895,7 +900,7 @@ class Exporter(object):
         plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
       params['plot_lines']=plotlines
       script=GP_TEMPLATE_3D%params
-      open(output, 'wb').write(script.encode('utf8'))
+      open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     self.exported_files_all.append(output)
     try:
       subprocess.call(['gnuplot', output], cwd=directory, shell=False)
