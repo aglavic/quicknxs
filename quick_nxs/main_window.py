@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Mon Jun  3 18:43:42 2013
+# Created: Tue Jun  4 12:09:35 2013
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -626,7 +626,7 @@ class Ui_MainWindow(object):
     self.reductionTable.setHorizontalHeaderItem(11, item)
     item = QtGui.QTableWidgetItem()
     self.reductionTable.setHorizontalHeaderItem(12, item)
-    self.reductionTable.horizontalHeader().setVisible(True)
+    self.reductionTable.horizontalHeader().setVisible(False)
     self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
     self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
     self.reductionTable.verticalHeader().setVisible(False)
@@ -1087,6 +1087,8 @@ class Ui_MainWindow(object):
     self.menuReduction.setObjectName(_fromUtf8("menuReduction"))
     self.menuAutomatics = QtGui.QMenu(self.menubar)
     self.menuAutomatics.setObjectName(_fromUtf8("menuAutomatics"))
+    self.menuSTAFF = QtGui.QMenu(self.menubar)
+    self.menuSTAFF.setObjectName(_fromUtf8("menuSTAFF"))
     MainWindow.setMenuBar(self.menubar)
     self.statusbar = QtGui.QStatusBar(MainWindow)
     self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -1198,6 +1200,12 @@ class Ui_MainWindow(object):
     self.actionPolarization.setObjectName(_fromUtf8("actionPolarization"))
     self.actionRaw_Data_Comparison = QtGui.QAction(MainWindow)
     self.actionRaw_Data_Comparison.setObjectName(_fromUtf8("actionRaw_Data_Comparison"))
+    self.actionIPython_Console = QtGui.QAction(MainWindow)
+    self.actionIPython_Console.setObjectName(_fromUtf8("actionIPython_Console"))
+    self.actionRaise_Error = QtGui.QAction(MainWindow)
+    self.actionRaise_Error.setObjectName(_fromUtf8("actionRaise_Error"))
+    self.actionLog_Debug_Messages = QtGui.QAction(MainWindow)
+    self.actionLog_Debug_Messages.setObjectName(_fromUtf8("actionLog_Debug_Messages"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1231,11 +1239,16 @@ class Ui_MainWindow(object):
     self.menuAutomatics.addAction(self.actionAuto_Reflectivity)
     self.menuAutomatics.addSeparator()
     self.menuAutomatics.addAction(self.actionStrip_Overlap)
+    self.menuSTAFF.addAction(self.actionIPython_Console)
+    self.menuSTAFF.addAction(self.actionLog_Debug_Messages)
+    self.menuSTAFF.addSeparator()
+    self.menuSTAFF.addAction(self.actionRaise_Error)
     self.menubar.addAction(self.menuFile.menuAction())
     self.menubar.addAction(self.menuReduction.menuAction())
     self.menubar.addAction(self.menuAdvanced.menuAction())
     self.menubar.addAction(self.menuAutomatics.menuAction())
     self.menubar.addAction(self.menuHelp.menuAction())
+    self.menubar.addAction(self.menuSTAFF.menuAction())
     self.mainToolbar.addAction(self.actionOpen)
     self.mainToolbar.addAction(self.actionPrevious_File)
     self.mainToolbar.addAction(self.actionNext_File)
@@ -1264,7 +1277,7 @@ class Ui_MainWindow(object):
 
     self.retranslateUi(MainWindow)
     self.toolBox.setCurrentIndex(0)
-    self.plotTab.setCurrentIndex(0)
+    self.plotTab.setCurrentIndex(6)
     self.tabWidget.setCurrentIndex(0)
     QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.fileOpenDialog)
     QtCore.QObject.connect(self.plotTab, QtCore.SIGNAL(_fromUtf8("currentChanged(int)")), MainWindow.plotActiveTab)
@@ -1334,6 +1347,9 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.bgActive, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeRegionValues)
     QtCore.QObject.connect(self.actionPolarization, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_polarization_window)
     QtCore.QObject.connect(self.actionRaw_Data_Comparison, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_rawdata_dialog)
+    QtCore.QObject.connect(self.actionIPython_Console, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.run_ipython)
+    QtCore.QObject.connect(self.actionRaise_Error, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.raiseError)
+    QtCore.QObject.connect(self.actionLog_Debug_Messages, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.set_debug)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1615,6 +1631,7 @@ class Ui_MainWindow(object):
     self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
     self.menuReduction.setTitle(QtGui.QApplication.translate("MainWindow", "Reduction", None, QtGui.QApplication.UnicodeUTF8))
     self.menuAutomatics.setTitle(QtGui.QApplication.translate("MainWindow", "Automatics", None, QtGui.QApplication.UnicodeUTF8))
+    self.menuSTAFF.setTitle(QtGui.QApplication.translate("MainWindow", "Debug", None, QtGui.QApplication.UnicodeUTF8))
     self.mainToolbar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Main Toolbar", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "Open...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionOpen.setToolTip(QtGui.QApplication.translate("MainWindow", "Open a new file (Ctrl+O)", None, QtGui.QApplication.UnicodeUTF8))
@@ -1671,6 +1688,9 @@ class Ui_MainWindow(object):
     self.actionStrip_Overlap.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+S", None, QtGui.QApplication.UnicodeUTF8))
     self.actionPolarization.setText(QtGui.QApplication.translate("MainWindow", "Polarization...", None, QtGui.QApplication.UnicodeUTF8))
     self.actionRaw_Data_Comparison.setText(QtGui.QApplication.translate("MainWindow", "Raw Data Comparison...", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionIPython_Console.setText(QtGui.QApplication.translate("MainWindow", "IPython Console", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionRaise_Error.setText(QtGui.QApplication.translate("MainWindow", "Raise Error", None, QtGui.QApplication.UnicodeUTF8))
+    self.actionLog_Debug_Messages.setText(QtGui.QApplication.translate("MainWindow", "Log Debug Messages", None, QtGui.QApplication.UnicodeUTF8))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

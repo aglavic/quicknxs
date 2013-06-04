@@ -175,13 +175,21 @@ class QtHandler(logging.Handler):
       tb=traceback.format_exception(*record.exc_info)
       message='\n'.join(tb)
       mbox.setDetailedText(message)
-      mbox.setText(u'An unexpected error has occurred: <b>%s</b><br />&nbsp;&nbsp;&nbsp;&nbsp;<i>%s</i>: %s'%(
+      if message in self.reported_bugs:
+        mbox.setText(u'An unexpected error has occurred: <b>%s</b><br />&nbsp;&nbsp;&nbsp;&nbsp;<i>%s</i>: %s'%(
                                     record.msg,
                                     record.exc_info[0].__name__,
                                     record.exc_info[1]))
-      if message in self.reported_bugs:
         mbox.setStandardButtons(QMessageBox.Close)
         mbox.setInformativeText('This error has already been reported to the support team.')
+      else:
+        mbox.setText(u'An unexpected error has occurred: <b>%s</b><br />&nbsp;&nbsp;&nbsp;&nbsp;<i>%s</i>: %s'%(
+                                    record.msg,
+                                    record.exc_info[0].__name__,
+                                    record.exc_info[1])+
+                   u'<br /><br />If you know what triggered the exception please select "No"'+
+                   u' and activate full logging from the "Debug" menu, trigger the error again'+
+                   u' and send a full report.')
     else:
       message=''
       mbox.setText(u'An unexpected error has occurred: <br />&nbsp;&nbsp;<b>%s</b>'%record.msg)

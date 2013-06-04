@@ -929,7 +929,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -1447,7 +1447,7 @@
                        <number>0</number>
                       </property>
                       <attribute name="horizontalHeaderVisible">
-                       <bool>true</bool>
+                       <bool>false</bool>
                       </attribute>
                       <attribute name="horizontalHeaderDefaultSectionSize">
                        <number>50</number>
@@ -2448,11 +2448,21 @@
     <addaction name="separator"/>
     <addaction name="actionStrip_Overlap"/>
    </widget>
+   <widget class="QMenu" name="menuSTAFF">
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="actionIPython_Console"/>
+    <addaction name="actionLog_Debug_Messages"/>
+    <addaction name="separator"/>
+    <addaction name="actionRaise_Error"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
    <addaction name="menuAdvanced"/>
    <addaction name="menuAutomatics"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuSTAFF"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="mainToolbar">
@@ -2786,6 +2796,21 @@
   <action name="actionRaw_Data_Comparison">
    <property name="text">
     <string>Raw Data Comparison...</string>
+   </property>
+  </action>
+  <action name="actionIPython_Console">
+   <property name="text">
+    <string>IPython Console</string>
+   </property>
+  </action>
+  <action name="actionRaise_Error">
+   <property name="text">
+    <string>Raise Error</string>
+   </property>
+  </action>
+  <action name="actionLog_Debug_Messages">
+   <property name="text">
+    <string>Log Debug Messages</string>
    </property>
   </action>
  </widget>
@@ -3966,6 +3991,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionIPython_Console</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>run_ipython()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRaise_Error</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>raiseError()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLog_Debug_Messages</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>set_debug()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4010,5 +4083,8 @@
   <slot>stripOverlap()</slot>
   <slot>open_polarization_window()</slot>
   <slot>open_rawdata_dialog()</slot>
+  <slot>run_ipython()</slot>
+  <slot>raiseError()</slot>
+  <slot>set_debug()</slot>
  </slots>
 </ui>

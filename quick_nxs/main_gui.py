@@ -108,8 +108,7 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
-    if not '-ipython' in argv:
-      install_gui_handler(self)
+    install_gui_handler(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
@@ -149,19 +148,7 @@ class MainGUI(QtGui.QMainWindow):
 
     # open file after GUI is shown
     if '-ipython' in argv:
-      argv.remove('-ipython')
-      from .ipython_widget import IPythonConsoleQtWidget
-      self.ipython=IPythonConsoleQtWidget(self)
-      self.ui.plotTab.addTab(self.ipython, 'IPython')
-
-      # install logging magic within ipython ZMQ
-      import IPython.core.ipapi
-      install_gui_handler(self)
-      # console process excepions (IPython controlled)
-      ip=IPython.core.ipapi.get()
-      ip.set_custom_exc((Exception,), ip_excepthook_overwrite)
-      # exceptions within GUI thread, must be installed by method within that process
-      self.trigger('_install_exc')
+      self.run_ipython()
     else:
       self.ipython=None
     if len(argv)>0:
@@ -180,6 +167,40 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.numberSearchEntry.setFocus()
       self.auto_change_active=True # prevent exceptions when changing options without file open
+
+  def run_ipython(self):
+    '''
+      Startup the IPython console within the program.
+    '''
+    info('Start IPython console')
+    from .ipython_widget import IPythonConsoleQtWidget
+    self.ipython=IPythonConsoleQtWidget(self)
+    self.ui.plotTab.addTab(self.ipython, 'IPython')
+    # install logging magic within ipython ZMQ
+    import IPython.core.ipapi
+    # console process exceptions (IPython controlled)
+    ip=IPython.core.ipapi.get()
+    ip.set_custom_exc((Exception,), ip_excepthook_overwrite)
+    # exceptions within GUI thread, must be installed by method within that process
+    self.trigger('_install_exc')
+
+  def raiseError(self):
+    '''
+      Just for testing of loggin etc.
+    '''
+    raise RuntimeError, 'Test error from GUI'
+
+  def set_debug(self):
+    '''
+      Switch on debug mode logging during normal execuation.
+    '''
+    from logging import getLogger, DEBUG
+    logger=getLogger()
+    logger.setLevel(DEBUG)
+    for handler in logger.handlers:
+      if handler.__class__.__name__=='FileHandler':
+        handler.setLevel(DEBUG)
+    info('Logger debug mode is now active')
 
   def _install_exc(self):
     '''

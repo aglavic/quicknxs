@@ -74,6 +74,15 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
       return RichIPythonWidget.__new__(cls)
 
     def __init__(self, parent):
+      from logging import getLogger, CRITICAL
+      logger=getLogger()
+      silenced=None
+      for handler in logger.handlers:
+        if handler.__class__.__name__=='QtHandler':
+          silenced=handler
+          old_level=silenced.level
+          silenced.setLevel(CRITICAL+1)
+          break
       RichIPythonWidget.__init__(self)
       self._parent=parent
       kernelapp=IPythonLocalKernelApp.instance()
@@ -84,6 +93,8 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
       self.namespace['app']=QtGui.QApplication.instance()
       self.namespace['gui']=parent
       self.namespace['plot']=self._plot
+      if silenced:
+        silenced.setLevel(old_level)
 
     def connect_kernel(self, connection_file, heartbeat=False):
         """
