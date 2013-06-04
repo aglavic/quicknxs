@@ -82,7 +82,7 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
 
 @log_both
 def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
-             snr=5, min_width=1, max_width=20, ridge_length=15, return_pf=False, refine=True):
+             snr=3., min_width=1.5, max_width=20, ridge_length=15, return_pf=False, refine=True):
   """
   Calculate the specular or direct beam peak position from data x-projection.
   
@@ -337,7 +337,10 @@ class DetectorTailCorrector(object):
     self._gauss_params=p[2:]
     self._create_shape()
     Gconv=self._compare_shape()
-    return 0, log(self.det_I[self.det_I>0])-log(Gconv[self.det_I>0])
+    # make sure all points are above zero
+    det_I=where((self.det_I>0)&(Gconv>0.), self.det_I, 1e-20)
+    Gconv=where((self.det_I>0)&(Gconv>0.), Gconv, 1e-20)
+    return 0, log(det_I)-log(Gconv)
 
   def _fit_shape(self):
     '''
