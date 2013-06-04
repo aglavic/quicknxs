@@ -698,8 +698,11 @@
               <property name="decimals">
                <number>1</number>
               </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
               <property name="value">
-               <double>5.000000000000000</double>
+               <double>3.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -747,7 +750,7 @@
             <item row="4" column="1">
              <widget class="QSpinBox" name="pfRidgeLength">
               <property name="value">
-               <number>12</number>
+               <number>15</number>
               </property>
              </widget>
             </item>

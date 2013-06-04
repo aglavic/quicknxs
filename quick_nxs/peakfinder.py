@@ -105,7 +105,7 @@ class PeakFinder(object):
       #info.append(ridge[max_idx][0])
       info.append(scales[ridge[max_idx][0]])
       info.append(ridge_intensity[max_idx])
-      # peak center estimate fromridge maximum
+      # peak center estimate from ridge maximum
       info.append(ridge[max_idx][1])
       ridge_info.append(info)
       ridge_intensities.append(ridge_intensity)
@@ -114,7 +114,7 @@ class PeakFinder(object):
     self.ridge_info=ridge_info
     self.ridge_intensities=ridge_intensities
 
-  def _SNR(self, minimum_noise_level=0.05):
+  def _SNR(self, minimum_noise_level=0.001):
     '''
       Calculate signal to noise ratio. Signal is the highest
       CWT intensity of all scales, noise is the 95% quantile
@@ -129,10 +129,10 @@ class PeakFinder(object):
                         0.95,
                         3./8., 3./8.))
     for info in ridge_info:
-      scale=min(5, info[2])
+      scale=max(3, info[2]) # get a minimal width of 30 items for noise calculation
       signal=info[3]
-      base_left=min(0, (info[1]-scale*3))
-      base_right=info[1]+scale*3
+      base_left=max(0, int(info[1]-scale*5))
+      base_right=int(info[1]+scale*5)
       noise=mquantiles(noise_cwt[base_left:base_right+1],
                        0.95,
                        3./8., 3./8.)
@@ -208,8 +208,8 @@ class PeakFinder(object):
       else:
         info.append(xdata[item[1]])
       # width corresponding to index width
-      i_low=int(item[1]-item[2])
-      i_high=int(item[1]+item[2])
+      i_low=int(item[1]-item[2]/2.)
+      i_high=int(item[1]+item[2]/2.)
       if i_low<0:
         i_low=0
       elif i_low==item[1]:
@@ -221,7 +221,7 @@ class PeakFinder(object):
       w_low=xdata[i_low]
       w_high=xdata[i_high]
       w=w_high-w_low
-      info.append(float(abs(w))) # estimated peak FWHM
+      info.append(float(abs(w)/numpy.sqrt(2.))) # estimated peak FWHM
       # intensity from ridge value (empirical from application to Gauss peak)
       info.append(item[3]*3.)
       # ridge length
@@ -304,7 +304,7 @@ class PeakFinder(object):
     semilogy(self.xdata, numpy.maximum(self.ydata, 0.1*mcount), 'r-', label='Data')
     if len(peaks)>0:
       errorbar([p[0] for p in peaks], [p[2] for p in peaks],
-             xerr=[p[1] for p in peaks], fmt='go',
+             xerr=[p[1]/2. for p in peaks], fmt='go',
              elinewidth=2, barsabove=True, capsize=6,
              label='Detected Peaks', markersize=10)
     legend()
@@ -421,11 +421,11 @@ class Cwt:
         if scaling=="log":
             if notes<=0: notes=1
             # adjust nscale so smallest scale is 1
-            noctave=self._log2(ndata/largestscale)
+            noctave=self._log2(2.*ndata/largestscale)
             self.nscale=notes*noctave
             self.scales=numpy.zeros(self.nscale, float)
             for j in range(self.nscale):
-                self.scales[j]=0.5*2.0**(float(j)/notes)
+                self.scales[j]=2.0**(float(j)/notes)
         elif scaling=="linear":
             nmax=ndata/largestscale/2
             self.scales=numpy.arange(float(2), float(nmax))
@@ -462,10 +462,11 @@ class MexicanHat(Cwt):
     """
     fourierwl=2.0*numpy.pi/numpy.sqrt(2.5)
     def wf(self, s_omega):
+        ss_omega_scaled=(s_omega/2./numpy.pi*numpy.sqrt(2))**2
         # should this number be 1/sqrt(3/4) (no pi)?
         #s_omega = s_omega/self.fourierwl
         #print max(s_omega)
-        a=s_omega**2
-        b=s_omega**2/2
-        return a*numpy.exp(-b)/1.1529702
+#        a=(s_omega*)**2
+#        b=s_omega**2/2.
+        return ss_omega_scaled*numpy.exp(-0.5*ss_omega_scaled)/1.1529702
         #return s_omega**2*numpy.exp(-s_omega**2/2.0)/1.1529702
