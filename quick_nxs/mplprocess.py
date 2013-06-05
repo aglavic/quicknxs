@@ -752,6 +752,7 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
     self.setIconSize(QtCore.QSize(20, 20))
+    self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
     self.draw_process=canvas.draw_process
 
   def draw_rubberband(self, event, x0, y0, x1, y1):
