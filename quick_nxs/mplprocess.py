@@ -626,7 +626,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.vbox.addStretch(1)
     if toolbar:
       self.toolbar=BackgroundNavigationToolbar(self, self)
-      self.vbox.addWidget(self.toolbar, 0)
+      self.vbox.addWidget(self.toolbar, 0, QtCore.Qt.AlignBottom)
       self.tb_offset=self.toolbar.height()+5
     else:
       self.tb_offset=0.
