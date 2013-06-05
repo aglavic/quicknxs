@@ -603,8 +603,10 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   vbox=None
   toolbar=None
 
-  def __init__(self, parent=None, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
+  def __init__(self, parent=None, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={},
+               toolbar=True):
     QtGui.QWidget.__init__(self, parent)
+    self.setContentsMargins(0, 0, 0, 0)
     self.callbacks=CallbackRegistry()
     self.widgetlock=widgets.LockDraw()
 
@@ -620,12 +622,18 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.buffer_width, self.buffer_height=0, 0
 
     self.vbox=QtGui.QVBoxLayout(self)
-    self.drawArea=QtGui.QWidget(self)
-    self.drawArea.setMouseTracking(True)
-    self.drawArea.mouseMoveEvent=self.mouseMoveEvent
-    self.vbox.addWidget(self.drawArea)
-    self.toolbar=BackgroundNavigationToolbar(self, self)
-    self.vbox.addWidget(self.toolbar)
+    self.setMouseTracking(True)
+    self.vbox.addStretch(1)
+#    self.drawArea=QtGui.QWidget(self)
+#    self.drawArea.setMouseTracking(True)
+#    self.drawArea.mouseMoveEvent=self.mouseMoveEvent
+#    self.vbox.addWidget(self.drawArea, 1)
+    if toolbar:
+      self.toolbar=BackgroundNavigationToolbar(self, self)
+      self.vbox.addWidget(self.toolbar)
+      self.tb_offset=self.toolbar.height()+5
+    else:
+      self.tb_offset=0.
 
     self.resize(width, height)
 
@@ -641,7 +649,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   def resizeEvent(self, event):
     QtGui.QWidget.resizeEvent(self, event)
     w=event.size().width()
-    h=event.size().height()-self.toolbar.height()-5
+    h=event.size().height()-self.tb_offset
     winch=w/self.dpi
     hinch=h/self.dpi
     self.width=w
@@ -650,7 +658,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.draw()
 
   def sizeHint(self):
-      return QtCore.QSize(self.width, self.height+self.toolbar.height()+5)
+      return QtCore.QSize(self.width, self.height+self.tb_offset)
 
   def minumumSizeHint(self):
       return QtCore.QSize(10, 10)
@@ -968,15 +976,15 @@ if __name__=='__main__':
     if event.inaxes:
       if event.button:
         for plot in plots:
-          plot.draw_process._lines[1].set_xdata([event.xdata, event.xdata])
+          plot.draw_process.vlines[1].set_xdata([event.xdata, event.xdata])
           plot.draw()
       else:
         for plot in plots:
-          plot.draw_process._lines[0].set_xdata([event.xdata, event.xdata])
+          plot.draw_process.vlines[0].set_xdata([event.xdata, event.xdata])
           plot.draw()
   for i in range(10):
     # start 4 processes with plots
-    plot=MPLBackgroundWidget(left)
+    plot=MPLBackgroundWidget(left, toolbar=False)
     vbox1.addWidget(plot)
     for j in range(50):
       plot.plot(np.arange(100)*j)
@@ -986,7 +994,7 @@ if __name__=='__main__':
     plot.mpl_connect('motion_notify_event', line_follow)
     plots.append(plot)
 
-  implot=MPLBackgroundWidget(right)
+  implot=MPLBackgroundWidget(right, toolbar=True)
   vbox2.addWidget(implot)
   y, x=np.mgrid[0:201:4000j, 0:201:4000j]
   z=-(x-100)**2-(y-100)**2
@@ -1006,7 +1014,5 @@ if __name__=='__main__':
     implot.draw()
   implot.mpl_connect('button_press_event', follow_pos)
 
-  tb=BackgroundNavigationToolbar(implot, right)
-  vbox2.addWidget(tb)
   dia.show()
   exit(app.exec_())
