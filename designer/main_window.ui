@@ -28,6 +28,9 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_6">
+    <property name="margin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
@@ -41,8 +44,29 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <property name="spacing">
+           <number>7</number>
+          </property>
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="label_28">
             <property name="toolTip">
@@ -64,6 +88,12 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="histogramActive">
             <property name="text">
@@ -93,8 +123,14 @@
         <item>
          <widget class="QWidget" name="eventModeEntries" native="true">
           <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="margin">
+            <number>0</number>
+           </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
              <item>
               <widget class="QLabel" name="label_27">
                <property name="sizePolicy">
@@ -151,6 +187,9 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_6">
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
              <item row="2" column="3">
               <widget class="LimitingSpinBox" name="eventSplitIndex">
                <property name="minimum">
@@ -216,14 +255,30 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>Reload Active File</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Reload Active File</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QToolBox" name="toolBox">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -232,7 +287,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
+             <width>254</width>
              <height>142</height>
             </rect>
            </property>
@@ -482,7 +537,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
+             <width>254</width>
              <height>138</height>
             </rect>
            </property>
@@ -665,7 +720,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
+             <width>254</width>
              <height>135</height>
             </rect>
            </property>
@@ -776,6 +831,19 @@
          </widget>
         </item>
         <item>
+         <widget class="Line" name="line">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
            <string>Plot Options</string>
@@ -790,7 +858,27 @@
            <property name="spacing">
             <number>1</number>
            </property>
-           <item row="0" column="0">
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="xLamda">
+             <property name="toolTip">
+              <string>Replace ToF axis with wavelength for the maps</string>
+             </property>
+             <property name="text">
+              <string>X-λ Maps</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QCheckBox" name="tthPhi">
+             <property name="toolTip">
+              <string>Replace X and Y axes by the according scattering angle for the maps</string>
+             </property>
+             <property name="text">
+              <string>2θ-φ Maps</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
             <widget class="QCheckBox" name="show_colorbars">
              <property name="toolTip">
               <string>Show a colorbar for the map plots</string>
@@ -800,7 +888,43 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="5" column="0">
+            <widget class="QCheckBox" name="normalizeXTof">
+             <property name="toolTip">
+              <string>Normalize the intensity in the X-ToF maps by the incident beam measurement</string>
+             </property>
+             <property name="text">
+              <string>Norm. X-ToF/λ</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="logarithmic_colorscale">
+             <property name="toolTip">
+              <string>Logarithmic colorscale in the maps</string>
+             </property>
+             <property name="text">
+              <string>Log Colorscale</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="logarithmic_y">
+             <property name="toolTip">
+              <string>Logarithmic Y-scale for the projections and reflectivity</string>
+             </property>
+             <property name="text">
+              <string>Log Y for lines</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
             <widget class="QComboBox" name="color_selector">
              <property name="toolTip">
               <string>Select the color scale from a list of presets</string>
@@ -842,69 +966,13 @@
              </item>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="logarithmic_colorscale">
-             <property name="toolTip">
-              <string>Logarithmic colorscale in the maps</string>
-             </property>
-             <property name="text">
-              <string>Log Colorscale</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="logarithmic_y">
-             <property name="toolTip">
-              <string>Logarithmic Y-scale for the projections and reflectivity</string>
-             </property>
-             <property name="text">
-              <string>Log Y for lines</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
+           <item row="4" column="0">
             <widget class="QCheckBox" name="hide_plots">
              <property name="toolTip">
               <string>Hide empty channels in the X-Y and X-ToF tabs to make more space for the measured channels</string>
              </property>
              <property name="text">
               <string>Hide Empty</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QCheckBox" name="xLamda">
-             <property name="toolTip">
-              <string>Replace ToF axis with wavelength for the maps</string>
-             </property>
-             <property name="text">
-              <string>X-λ Maps</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QCheckBox" name="normalizeXTof">
-             <property name="toolTip">
-              <string>Normalize the intensity in the X-ToF maps by the incident beam measurement</string>
-             </property>
-             <property name="text">
-              <string>Norm. X-ToF/λ</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QCheckBox" name="tthPhi">
-             <property name="toolTip">
-              <string>Replace X and Y axes by the according scattering angle for the maps</string>
-             </property>
-             <property name="text">
-              <string>2θ-φ Maps</string>
              </property>
             </widget>
            </item>
@@ -929,7 +997,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -942,6 +1010,18 @@
          <string>Show the active dataset and information about the datasets selected for normalization and reduction</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_13">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="currentChannel">
            <property name="toolTip">
@@ -952,6 +1032,9 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="margin">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -968,6 +1051,12 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="margin">
+              <number>2</number>
+             </property>
              <item>
               <widget class="MPLWidget" name="xy_overview" native="true">
                <property name="sizePolicy">
@@ -1352,8 +1441,20 @@
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="margin">
+                 <number>2</number>
+                </property>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
+                  <property name="leftMargin">
+                   <number>4</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>4</number>
+                  </property>
                   <item>
                    <widget class="QLabel" name="label_7">
                     <property name="toolTip">
@@ -1429,6 +1530,9 @@
                     <string>A list of datasets that will be used for reduction</string>
                    </attribute>
                    <layout class="QVBoxLayout" name="verticalLayout_16">
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
                     <item>
                      <widget class="QTableWidget" name="reductionTable">
                       <property name="editTriggers">
@@ -1447,7 +1551,7 @@
                        <number>0</number>
                       </property>
                       <attribute name="horizontalHeaderVisible">
-                       <bool>false</bool>
+                       <bool>true</bool>
                       </attribute>
                       <attribute name="horizontalHeaderDefaultSectionSize">
                        <number>50</number>
@@ -1577,6 +1681,9 @@
                     <string>A list of datasets available for wavelength normalization</string>
                    </attribute>
                    <layout class="QVBoxLayout" name="verticalLayout_17">
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
                     <item>
                      <widget class="QTableWidget" name="normalizeTable">
                       <property name="editTriggers">
@@ -1692,6 +1799,12 @@
          <string>X-Y intensity maps for all channels in this file</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="0" column="0">
           <widget class="PersistentFrame" name="frame_xy_pp">
            <property name="frameShape">
@@ -1778,6 +1891,12 @@
          <string>X-ToF intensity maps for all channels in this file</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="0" column="0">
           <widget class="PersistentFrame" name="frame_xtof_pp">
            <property name="frameShape">
@@ -1836,6 +1955,12 @@
          <string>Off-Specular scattering intensity preview for all files in the reduction list</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="2" column="1">
           <widget class="QFrame" name="frame_4">
            <property name="sizePolicy">
@@ -2006,6 +2131,12 @@
          <string>GISANS Preview</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_13">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="1" column="0">
           <widget class="PersistentFrame" name="frame_gisans_pp">
            <property name="sizePolicy">
@@ -2175,12 +2306,21 @@
          <string>Motor and parameter log read from the file</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_8">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="0" column="0">
           <widget class="QGroupBox" name="daslogBox">
            <property name="title">
             <string>Recorded values for all Motors/Devices:</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_19">
+            <property name="margin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QTableWidget" name="daslogTableBox">
               <property name="editTriggers">
@@ -2228,6 +2368,9 @@
          <string>Compare</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <property name="margin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="CompareWidget" name="widget_5" native="true"/>
          </item>
@@ -2242,12 +2385,15 @@
         </sizepolicy>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Panel</enum>
+        <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="margin">
+         <number>2</number>
+        </property>
         <item>
          <widget class="QSplitter" name="plotSplitter">
           <property name="orientation">
@@ -2854,7 +3000,6 @@
   <tabstop>eventSplitItems</tabstop>
   <tabstop>eventSplitIndex</tabstop>
   <tabstop>file_list</tabstop>
-  <tabstop>pushButton_2</tabstop>
   <tabstop>refYPos</tabstop>
   <tabstop>refYWidth</tabstop>
   <tabstop>refXPos</tabstop>
@@ -3070,8 +3215,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
-     <y>105</y>
+     <x>817</x>
+     <y>97</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3086,8 +3231,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>558</x>
-     <y>105</y>
+     <x>634</x>
+     <y>97</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3102,8 +3247,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>381</x>
-     <y>105</y>
+     <x>452</x>
+     <y>97</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3246,8 +3391,8 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>134</y>
+     <x>518</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>510</x>
@@ -3262,8 +3407,8 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>793</x>
-     <y>134</y>
+     <x>817</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>774</x>
@@ -3278,8 +3423,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>514</x>
-     <y>107</y>
+     <x>543</x>
+     <y>99</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3294,8 +3439,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>780</x>
-     <y>107</y>
+     <x>817</x>
+     <y>99</y>
     </hint>
     <hint type="destinationlabel">
      <x>739</x>
@@ -3343,7 +3488,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>569</x>
-     <y>135</y>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
      <x>862</x>
@@ -3422,8 +3567,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>758</y>
+     <x>134</x>
+     <y>766</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -3454,8 +3599,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>549</y>
+     <x>174</x>
+     <y>558</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -3470,8 +3615,8 @@
    <slot>toggleHide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>804</y>
+     <x>134</x>
+     <y>812</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -3518,8 +3663,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>573</y>
+     <x>174</x>
+     <y>582</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -3534,8 +3679,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>597</y>
+     <x>174</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3582,8 +3727,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
-     <y>645</y>
+     <x>174</x>
+     <y>654</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3614,8 +3759,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>668</y>
+     <x>175</x>
+     <y>677</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -3630,8 +3775,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>826</y>
+     <x>134</x>
+     <y>834</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3646,8 +3791,8 @@
    <slot>visualizePeakfinding()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>136</x>
-     <y>692</y>
+     <x>132</x>
+     <y>701</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3662,8 +3807,8 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>112</y>
+     <x>90</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3678,8 +3823,8 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>112</y>
+     <x>177</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3694,8 +3839,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>138</x>
-     <y>782</y>
+     <x>134</x>
+     <y>790</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3726,8 +3871,8 @@
    <slot>openByNumber()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>265</x>
-     <y>85</y>
+     <x>262</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3774,8 +3919,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>601</y>
+     <x>175</x>
+     <y>610</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3791,7 +3936,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>265</x>
-     <y>112</y>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -3806,8 +3951,8 @@
    <slot>reloadFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>454</y>
+     <x>146</x>
+     <y>481</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -3826,8 +3971,8 @@
      <y>185</y>
     </hint>
     <hint type="destinationlabel">
-     <x>219</x>
-     <y>190</y>
+     <x>265</x>
+     <y>185</y>
     </hint>
    </hints>
   </connection>
@@ -3886,8 +4031,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>569</x>
-     <y>412</y>
+     <x>684</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
      <x>797</x>
@@ -3902,8 +4047,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>598</x>
-     <y>415</y>
+     <x>723</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -3918,8 +4063,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>651</x>
-     <y>417</y>
+     <x>764</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
      <x>782</x>
@@ -3934,8 +4079,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>686</x>
-     <y>419</y>
+     <x>805</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
      <x>762</x>

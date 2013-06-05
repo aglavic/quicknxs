@@ -43,6 +43,10 @@ class NavigationToolbar(NavigationToolbar2QT):
   '''
   _auto_toggle=False
 
+  def __init__(self, canvas, parent, coordinates=False):
+    NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
+    self.setIconSize(QtCore.QSize(20, 20))
+
   def _init_toolbar(self):
     if not hasattr(self, '_actions'):
       self._actions={}
@@ -321,6 +325,7 @@ class MPLWidget(QtGui.QWidget):
     self.canvas=MplCanvas()
     self.canvas.ax2=None
     self.vbox=QtGui.QVBoxLayout()
+    self.vbox.setMargin(1)
     self.vbox.addWidget(self.canvas)
     if with_toolbar:
       self.toolbar=NavigationToolbar(self.canvas, self)
