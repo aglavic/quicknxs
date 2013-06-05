@@ -624,13 +624,9 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.vbox=QtGui.QVBoxLayout(self)
     self.setMouseTracking(True)
     self.vbox.addStretch(1)
-#    self.drawArea=QtGui.QWidget(self)
-#    self.drawArea.setMouseTracking(True)
-#    self.drawArea.mouseMoveEvent=self.mouseMoveEvent
-#    self.vbox.addWidget(self.drawArea, 1)
     if toolbar:
       self.toolbar=BackgroundNavigationToolbar(self, self)
-      self.vbox.addWidget(self.toolbar)
+      self.vbox.addWidget(self.toolbar, 0)
       self.tb_offset=self.toolbar.height()+5
     else:
       self.tb_offset=0.
