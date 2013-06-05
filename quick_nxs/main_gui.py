@@ -101,6 +101,7 @@ class MainGUI(QtGui.QMainWindow):
   fileLoaded=QtCore.pyqtSignal()
   initiateProjectionPlot=QtCore.pyqtSignal(bool)
   initiateReflectivityPlot=QtCore.pyqtSignal(bool)
+  reflectivityUpdated=QtCore.pyqtSignal(bool)
 
   def __init__(self, argv=[]):
     QtGui.QMainWindow.__init__(self)
@@ -1584,7 +1585,7 @@ class MainGUI(QtGui.QMainWindow):
     if self.reduction_list==[]:
       self.ref_list_channels=list(channels)
     elif self.ref_list_channels!=channels:
-      warning(u'''The active dataset has not the same channels as the ones already in the list:
+      warning(u'''The active dataset has not the same states as the ones already in the list:
 
 %s  ≠  %s'''%(u" / ".join(channels), u' / '.join(self.ref_list_channels)),
              extra={'title': u'Wrong Channels'})
@@ -1638,6 +1639,8 @@ class MainGUI(QtGui.QMainWindow):
                                    QtGui.QTableWidgetItem(str(opts['normalization'].options['number'])))
     self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
+    # emit signals
+    self.reflectivityUpdated.emit(do_plot)
     if do_plot:
       self.initiateReflectivityPlot.emit(True)
 
@@ -1692,6 +1695,7 @@ class MainGUI(QtGui.QMainWindow):
         refl_new=self.recalculateReflectivity(refl, options)
         self.reduction_list[entry]=refl_new
     self.ui.reductionTable.resizeColumnsToContents()
+    self.reflectivityUpdated.emit(True)
     self.initiateReflectivityPlot.emit(True)
 
   @log_call
@@ -1724,6 +1728,7 @@ class MainGUI(QtGui.QMainWindow):
     self.reduction_list=[]
     self.ui.reductionTable.setRowCount(0)
     self.ui.actionAutoYLimits.setChecked(True)
+    self.reflectivityUpdated.emit(do_plot)
     if do_plot:
       self.initiateReflectivityPlot.emit(False)
 
@@ -1738,6 +1743,7 @@ class MainGUI(QtGui.QMainWindow):
     self.reduction_list.pop(index)
     self.ui.reductionTable.removeRow(index)
     #self.ui.reductionTable.setRowCount(0)
+    self.reflectivityUpdated.emit(True)
     self.initiateReflectivityPlot.emit(False)
 
   @log_call
