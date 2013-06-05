@@ -606,7 +606,6 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   def __init__(self, parent=None, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={},
                toolbar=True):
     QtGui.QWidget.__init__(self, parent)
-    self.setContentsMargins(0, 0, 0, 0)
     self.callbacks=CallbackRegistry()
     self.widgetlock=widgets.LockDraw()
 
@@ -622,12 +621,13 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.buffer_width, self.buffer_height=0, 0
 
     self.vbox=QtGui.QVBoxLayout(self)
+    self.vbox.setMargin(0)
     self.setMouseTracking(True)
     self.vbox.addStretch(1)
     if toolbar:
       self.toolbar=BackgroundNavigationToolbar(self, self)
       self.vbox.addWidget(self.toolbar, 0, QtCore.Qt.AlignBottom)
-      self.tb_offset=self.toolbar.height()+5
+      self.tb_offset=self.toolbar.height()
     else:
       self.tb_offset=0.
 
