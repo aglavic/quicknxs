@@ -748,9 +748,10 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
       return getattr(self.draw_process, name)
     return QtGui.QWidget.__getattr__(self, name)
 
-class BackgroundNavigationToolbar(NavigationToolbar2QT, QtGui.QToolBar):
-  def __init__(self, canvas, parent, coordinates=True):
+class BackgroundNavigationToolbar(NavigationToolbar2QT):
+  def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
+    self.setIconSize(QtCore.QSize(20, 20))
     self.draw_process=canvas.draw_process
 
   def draw_rubberband(self, event, x0, y0, x1, y1):
