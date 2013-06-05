@@ -288,17 +288,24 @@ class MPLProcess(FigureCanvasAgg, Process):
         error('Error in process:'+str(error))
 
   def _run(self):
-    while True:
+    action_buffer=[]
+    while not self.exitEvent.is_set():
       if self.exitEvent.is_set():
         return
-      if not self.pipe_in.poll(0.05):
+      if not (action_buffer or self.pipe_in.poll(0.05)):
         continue
       # read everything from the pipe, to be able to drop unneeded actions before a clear call
-      action_buffer=[]
       while self.pipe_in.poll():
         action_buffer.append(self.pipe_in.recv())
       # apply actions
-      for action, args, opts in action_buffer:
+      if action_buffer:
+        action, args, opts=action_buffer.pop(0)
+        if action=='draw' and 'draw' in [buf[0] for buf in action_buffer]:
+          # there is another draw following so skip this one
+          self.pipe_out.send(None)
+          self.parentActionPending.set()
+          continue
+        # call the method given as action
         result=getattr(self, action)(*args, **opts)
         try:
           self.pipe_out.send(result)
@@ -485,29 +492,23 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
         self.check_event()
       if not self.scheduled_actions and not self.scheduled_receives:
         self.actionPending.clear()
-        self.actionPending.wait(1.)
+        self.actionPending.wait(1.) # don't block forever in some unforeseen situation
 
   def checkit(self):
-    debug('Thread %i enter actions'%self.currentThreadId())
     if self.scheduled_actions:
+      debug('Thread %i enter actions'%self.currentThreadId())
       actions=self.scheduled_actions
       self.scheduled_actions=[]
-      # remove all but last draw from action list
-      action_names=[a[0] for a in actions]
-      for ignore in range(action_names.count('draw')-1):
-        idx=action_names.index('draw')
-        actions.pop(idx)
-        action_names.pop(idx)
       map(self.pipe_in.send, actions)
       self.scheduled_receives+=actions
 
   def check_result(self):
-    debug('Thread %i enter results'%self.currentThreadId())
     paint_result=None
     while self.scheduled_receives and self.pipe_out.poll():
+      debug('Thread %i enter results'%self.currentThreadId())
       item=self.scheduled_receives.pop(0)
       result=self.pipe_out.recv()
-      if item[0]=='draw':
+      if item[0]=='draw' and result is not None:
         paint_result=result
       elif item[0] in ['plot', 'errorbar', 'semilogy']:
         for resulti in result:
@@ -542,10 +543,10 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
         self.paintFinished.emit(paint_result)
 
   def check_event(self):
-    debug('Thread %i enter event'%self.currentThreadId())
     # process only last event of specific type
     evnts={}
     while self.event_pipe.poll():
+      debug('Thread %i enter event'%self.currentThreadId())
       s, event=self.event_pipe.recv()
       if s in ['fig', 'ax']:
         getattr(self, s)._update(event)
