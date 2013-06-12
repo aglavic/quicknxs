@@ -105,15 +105,17 @@ class NavigationToolbar(NavigationToolbar2QT):
     # Add the x,y location widget at the right side of the toolbar
     # The stretch factor is 1 which means any resizing of the toolbar
     # will resize this label instead of the buttons.
+    self.locLabel=QtGui.QLabel("", self)
+    self.locLabel.setAlignment(
+            QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+    self.locLabel.setSizePolicy(
+        QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
+                          QtGui.QSizePolicy.Ignored))
+    self.labelAction=self.addWidget(self.locLabel)
     if self.coordinates:
-        self.locLabel=QtGui.QLabel("", self)
-        self.locLabel.setAlignment(
-                QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
-        self.locLabel.setSizePolicy(
-            QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
-                              QtGui.QSizePolicy.Ignored))
-        labelAction=self.addWidget(self.locLabel)
-        labelAction.setVisible(True)
+      self.labelAction.setVisible(True)
+    else:
+      self.labelAction.setVisible(False)
 
     # reference holder for subplots_adjust window
     self.adj_window=None

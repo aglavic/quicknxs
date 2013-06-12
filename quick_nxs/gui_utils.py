@@ -432,6 +432,7 @@ class PlotDialog(QDialog):
     self.ui.setupUi(self)
     self.hideMinMax()
     self.plot=self.ui.plot
+    self.plot.toolbar.labelAction.setVisible(True)
 
   def showMinMax(self, Imin=1e-6, Imax=1.):
     self.ui.Imin.setValue(log10(Imin))
