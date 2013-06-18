@@ -73,13 +73,67 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <H1><A NAME="SECTION00110000000000000000">
 <SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">1</SPAN> The data recorded at Beamline 4A</A>
 </H1>
+      The raw data recorded at the magnetism reflectometer stores each detected neutron as one event, which includes information on
+      the position on the detector, the relative time passed after the neutron pulse was created at the target, the absolute time of the
+      according pulse and some instrument flags as the flipper ON/OFF state.
+      After one run is finished this data is translated to the NeXus (.nxs) file format (which is based on the HDF5 standard) as two separate files,
+      one with event information (flexible) and one with 3D histograms in X,Y and time of flight coordinates (fast).
+
+<P>
+While the X and Y position can be used in conjunction with the instrument motor positions to gain information about the scattering
+      angle the time of flight (ToF) together with the moderator to detector distance allows to deduce the neutron wavelength.
+      Combining these three degrees of freedom allows to transform the coordinates into reciprocal space coordinates (for reflectivity
+      only the <SPAN CLASS="MATH"><IMG
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img14.png"
+ ALT="$ Q_z$"></SPAN> coordinate is relevant.
+
+<P>
+In order to derive the correct <SPAN CLASS="MATH"><IMG
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
+ SRC="img14.png"
+ ALT="$ Q_z$"></SPAN> dependent intensities a normalization to the incident beam is necessary. 
+      For this the direct beam intensity of the same wavelength band and with the same instrumental setup is measured
+      prior to the actual data. This measurement is later used as reference when calculating the reflectivity.
+      When different incident angles are measured (as is most often the case), each incident angle takes a different part out of
+      the direct beam and generally won't have the same scaling factor as the earlier measurement. For the extracted reflectivity
+      these different runs need to be combined.
 
 <P>
 
 <H1><A NAME="SECTION00120000000000000000">
 <SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">2</SPAN> What does QuickNXS data reduction do?</A>
 </H1>
-  <BR><HR>
+      QuickNXS is a comprehensive tool to carry out the operations described above starting from the NeXus files and export the
+      data in a form usable for plotting and fit with reflectivity modeling software.
+      The program includes real time plots of several projections of the raw file data and previews of the exported data.
+      Several automated algorithms aid the process to improve the learning curve of non expert users and speed up
+      the extraction process of normal datasets while keeping the flexibility to apply special treatments for more
+      complicated cases.
+      <SPAN  CLASS="textbf">For a quick start reflectivity extraction guide see section <A HREF="node3.html#sec:quick_start">3.3</A>.</SPAN>
+  
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html41"
+  HREF="node2.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html39"
+  HREF="QuickNXS_Users_Manual.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html33"
+  HREF="QuickNXS_Users_Manual.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="/usr/share/latex2html/icons/prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html42"
+  HREF="node2.html">2. User Interface</A>
+<B> Up:</B> <A NAME="tex2html40"
+  HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A>
+<B> Previous:</B> <A NAME="tex2html34"
+  HREF="QuickNXS_Users_Manual.html">QuickNXS_Users_Manual</A></DIV>
+<!--End of Navigation Panel-->
 
 </BODY>
 </HTML>

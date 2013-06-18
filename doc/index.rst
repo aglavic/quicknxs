@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to QuickNXS's documentation!
-====================================
+Welcome to QuickNXS's API documentation!
+========================================
 
 Contents of the quick_nxs Package:
 
@@ -19,6 +19,10 @@ Contents of the quick_nxs Package:
 
 Indices and tables
 ==================
+
+.. toctree::
+  
+  references
 
 * :ref:`genindex`
 * :ref:`modindex`

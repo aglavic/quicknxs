@@ -102,9 +102,7 @@ class PolarizationDialog(QDialog):
   def calc_pols(self, I):
     '''
     Calculate efficiency parameters from intensities using the
-    formulas (11) given in:
-    A.R. Wildes, Neutron Polarization Analysis Corrections Made Easy, 
-                 Neutron News 17:2, 17-25 (2007)
+    formulas (11) given in [ARWildes2007]_.
     '''
     I00=I['++'].Rraw;I01=I['+-'].Rraw;I10=I['-+'].Rraw;I11=I['--'].Rraw
     ddI00=I['++'].dRraw**2;ddI01=I['+-'].dRraw**2;ddI10=I['-+'].dRraw**2;ddI11=I['--'].dRraw**2
@@ -115,7 +113,7 @@ class PolarizationDialog(QDialog):
     # error propagation
     ddphi1=((ddI00+ddI01)*(I00-I10)**2)+((ddI00+ddI10)*(I00-I01)**2)
     ddphi2=(ddI00*I11**2+ddI11*I00**2)+(ddI01*I10**2+ddI10*I01**2)
-    dphi=sqrt(ddphi1/phi2**2 + ddphi2*phi1**2/phi2**4)
+    dphi=sqrt(ddphi1/phi2**2+ddphi2*phi1**2/phi2**4)
 
     # flipper 1 efficiency
     Fp1=(I00-I01-I10+I11)

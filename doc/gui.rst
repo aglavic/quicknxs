@@ -25,6 +25,14 @@ GUI Modules
     :undoc-members:
     :show-inheritance:
 
+:mod:`gisans_dialog` Module
+---------------------------
+
+.. automodule:: quick_nxs.gisans_dialog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`gui_logging` Module
 -------------------------
 
@@ -37,6 +45,14 @@ GUI Modules
 -----------------------
 
 .. automodule:: quick_nxs.gui_utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`help_widgets` Module
+--------------------------
+
+.. automodule:: quick_nxs.help_widgets
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,3 +80,20 @@ GUI Modules
     :members:
     :undoc-members:
     :show-inheritance:
+
+:mod:`polarization_gui` Module
+------------------------------
+
+.. automodule:: quick_nxs.polarization_gui
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`rawcompare_plots` Module
+------------------------------
+
+.. automodule:: quick_nxs.rawcompare_plots
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

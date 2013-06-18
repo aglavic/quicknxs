@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 '''
-  Global configurations for e.g. default paths etc. Some of these are stored
-  in the users account for easy changes.
+Global configurations for e.g. default paths etc. Some of these are stored
+in the users account for easy changes.
 '''
 
 import os

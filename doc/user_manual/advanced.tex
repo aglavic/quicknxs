@@ -2,16 +2,18 @@
 \label{chap:advanced_usage}
   \section{Event mode data}
     When the event mode is selected for file import additional options for the desired binning are shown. You can define the number of \textbf{Bins}, the bin steps (constant ToF or Q steps) and split datasets in time.
+    In all other aspects event mode data is not treated differently from histogram data. To be able to use a direct beam measurement, it needs to be extracted with the same binning as the actual measurement.
   
   \section{Re-reduction of already exported data}
-    You can read all datasets and options from an already exported reflectivity using the \textbf{File->Load Extraction...} menu and select a ASCII file. 
+    You can read all datasets and options from an already exported reflectivity using the \textbf{File->Load Extraction...} menu and select an ASCII file. 
     Afterwards the options in the reduction table can be changed as desired.
 
   \section{Overwrite direct beam parameters}
+  \label{sec:overwrite}
     If the the direct beam position was not saved correctly during instrument alignment all calculated \Qz-values for the reflectivity will be wrong.
     To correct this there are two parameters to overwrite it in the \textbf{Reflectivity Extraction (Advanced)} area, Direct Pixel and Dangle0.
     These parameters are ignored if they have the values -1 and None.
-    To overwrite the correct values you can open a direct beam dataset and activate the  \textbf{Adjust Direct Beam} \icon{tthZero} to save the current DANGLE as \textbf{Dangle0} and the fitted x-position as \textbf{Direct Pixel}.
+    To overwrite the correct values you can open a direct beam dataset and activate the  \textbf{Adjust Direct Beam action} \icon{tthZero} to save the current DANGLE as \textbf{Dangle0} and the fitted X-position as \textbf{Direct Pixel}.
   
   \clearpage
   \section{Advanced background subtraction}
@@ -26,20 +28,23 @@
     You can use Polygons to define the extraction area for the background precisely, these polygons are than shown in the X vs. λ plot as gray areas. 
     The normal extraction region defined by the main window parameters is shown in red. 
     For each λ channel the average value of all pixels in the gray areas is taken as background. 
-    If for a given value of λ no points are defined with a polygon the red area is taken.
+    If, for a given value of λ, no points are defined with a polygon the red area is taken.
     As an additional option it is possible to presume a background that is directly dependent on the incident intensity to reduce the error bars.
   
   \section{"Fan"-Reflectivity}
+  \label{sec:fan}
     Some samples have a weavy or bent surface and reflect the neutron beam into different angles. 
     Treating these as one reflection will destroy the \Qz resolution of you measurement or needs to be restricted to a small X-region, which reduces the statistics.
-    For these cases the \textbf{Reflectivity Extraction (Advanced)} area has a \textbf{"Fan"-Reflectivity} option, which treats each pixel on the detector separately to calculate I(\Qz) and combines these reflectivity afterwards to get better statistics. 
+    For these cases the \textbf{Reflectivity Extraction (Advanced)} area has a \textbf{"Fan"-Reflectivity} option, which treats each pixel on the detector separately to calculate I(\Qz) and combines these reflectivities afterwards to get better statistics. 
     In this case you can widen the red area on the X-projection plot to take into account your full reflectivity.
     The underlying algorithm reduces the total width of a selected dataset in \Qz so it can be possible that for lower angles you do not get overlapping areas to stitch the data together.
     In this case you should select a smaller area for the lower angle measurements and/or extract two regions in X for one dataset.
   
   \section{Off-specular and GISANS scattering}
     Off-specular scattering can easily be extracted when the specular reflectivity is already defined in the reduction table. You can take a look at the \textbf{OffSpec Preview} tab to take a look in advance (does not show the active dataset, only the reduction table entries).
-    The reduction dialog as a separate option to export the off-specular data, where \textit{Raw} refers to the data as extractec, \textit{Corrected} applies an algorithm to reduce detector artifacts from high intensity areas and \textit{Smoothed} will interpolate the data to a regular grid with \Qz-dependent Gaussian smoothing (parameters are defined in a separate dialog when exporting).
+    The reduction dialog has a separate option to export the off-specular data, where \textit{Raw} refers to the data as extractec, \textit{Corrected} applies an algorithm to reduce detector artifacts from high intensity areas and \textit{Smoothed} will interpolate the data to a regular grid with \Qz-dependent Gaussian smoothing (parameters are defined in a separate dialog when exporting).
+    
+    \textit{The scaling factors to combine datasets for off-specular extraction will only be correct if the \textbf{full reflectivity} is within the X-width and if you \textbf{keep the X-width constant}! These conditions need not to be fulfilled when only specular data is extracted.}
     
     For GISANS measurements another dialog appears when exporting, where you can define the wavelength bands, which will be combined in one image.
   

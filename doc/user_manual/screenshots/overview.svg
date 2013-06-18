@@ -14,11 +14,11 @@
    height="590"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="overview.svg"
    inkscape:export-filename="/home/agf/Software/Scripte/QuickNXS/doc/user_manual/screenshots/overview_labels.png"
-   inkscape:export-xdpi="300"
-   inkscape:export-ydpi="300">
+   inkscape:export-xdpi="300.04153"
+   inkscape:export-ydpi="300.04153">
   <defs
      id="defs4">
     <marker
@@ -44,13 +44,13 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="328.38142"
-     inkscape:cy="340.2802"
+     inkscape:cy="283.13734"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1680"
-     inkscape:window-height="982"
-     inkscape:window-x="1916"
+     inkscape:window-height="988"
+     inkscape:window-x="3596"
      inkscape:window-y="-6"
      inkscape:window-maximized="1" />
   <metadata
@@ -297,7 +297,7 @@
          id="flowPara3324">active</flowPara><flowPara
          style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
          id="flowPara3326">Folder</flowPara></flowRoot>    <flowRoot
-       transform="translate(174.28571,-40.000001)"
+       transform="translate(266.42857,-45.714287)"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot3336"
        xml:space="preserve"><flowRegion
@@ -311,7 +311,7 @@
          style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
          id="flowPara3342">Toolbar</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)"
-       d="m 362.14286,57.857142 -40,-19.285714"
+       d="M 447.14286,57.142856 340,44.285714"
        id="path3344"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
@@ -319,7 +319,7 @@
        xml:space="preserve"
        id="flowRoot4558"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(267.14286,-73.57143)"><flowRegion
+       transform="translate(186.42857,-72.142859)"><flowRegion
          id="flowRegion4560"><rect
            id="rect4562"
            width="188.57143"
@@ -332,7 +332,7 @@
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path4566"
-       d="M 445.00001,27.857142 142.85715,24.999999"
+       d="M 366.42858,27.857142 142.85715,24.999999"
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)" />
     <flowRoot
        transform="translate(-164.28572,297.85714)"

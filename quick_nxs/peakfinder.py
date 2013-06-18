@@ -1,14 +1,10 @@
 #-*- coding: utf8 -*-
 '''
-    Peak finder algorithm based on the continuous wavelet transform (CWT) method
-    discribed in:
+Peak finder algorithm based on the continuous wavelet transform (CWT) method
+discribed in [PDu2006]_.
 
-        Du P, Kibbe WA, Lin SM.
-        Improved peak detection in mass spectrum by incorporating continuous 
-        wavelet transform-based pattern matching
-        Bioinformatics 22(17) (2006)
-    
-    Implemented by Artur Glavic (artur.glavic@gmail.com) 2012-2013
+
+Implemented by Artur Glavic (artur.glavic@gmail.com) 2012-2013
 '''
 
 import numpy
@@ -19,15 +15,15 @@ except ImportError:
 
 class PeakFinder(object):
   '''
-    Peak finder which can be reevaluated with different thresholds 
-    without recalculation all steps.
-    The steps performed are:
-    
-      - CWT of the dataset (which also removes the baseline)
-      - Finding ridged lines by walking through different CWT scales
-      - Calculate signal to noise ratio (SNR)
-      - Identify the peaks from the ridged lines 
-        (this is where the user parameters enter and can be recalculated fast) 
+  Peak finder which can be reevaluated with different thresholds 
+  without recalculation all steps.
+  The steps performed are:
+  
+    - CWT of the dataset (which also removes the baseline)
+    - Finding ridged lines by walking through different CWT scales
+    - Calculate signal to noise ratio (SNR)
+    - Identify the peaks from the ridged lines 
+      (this is where the user parameters enter and can be recalculated fast) 
   '''
 
   def __init__(self, xdata, ydata, resolution=5):
@@ -45,7 +41,7 @@ class PeakFinder(object):
 
   def _CWT(self):
     '''
-      Create the continous wavelet transform for the dataset.
+    Create the continous wavelet transform for the dataset.
     '''
     self.CWT=MexicanHat(self.ydata,
                         largestscale=1,
@@ -56,11 +52,11 @@ class PeakFinder(object):
 
   def _find_ridges(self, maxgap=4):
     '''
-      Ridges are lines connecting local maxima at different
-      scales of the CWT. Starting from the highest scale
-      (most smooth) the lines are flowed down to the lowest
-      scale. Strong peaks will produce longer ridge lines than
-      weaker or noise, as they start at higher scales.
+    Ridges are lines connecting local maxima at different
+    scales of the CWT. Starting from the highest scale
+    (most smooth) the lines are flowed down to the lowest
+    scale. Strong peaks will produce longer ridge lines than
+    weaker or noise, as they start at higher scales.
     '''
     cwt=self.CWT.getdata()
     scales=self.CWT.getscales()
@@ -116,9 +112,9 @@ class PeakFinder(object):
 
   def _SNR(self, minimum_noise_level=0.001):
     '''
-      Calculate signal to noise ratio. Signal is the highest
-      CWT intensity of all scales, noise is the 95% quantile
-      of the lowest scale WT, which is dominated by noise.
+    Calculate signal to noise ratio. Signal is the highest
+    CWT intensity of all scales, noise is the 95% quantile
+    of the lowest scale WT, which is dominated by noise.
     '''
     ridge_info=self.ridge_info
     cwt=self.CWT.getdata()
@@ -142,9 +138,9 @@ class PeakFinder(object):
 
   def _find_local_max(self, data, steps=3):
     '''
-      Find the positions of local maxima in a set of data.
-      A window of size steps is used to check if the central
-      point is the largest in the window region.
+    Find the positions of local maxima in a set of data.
+    A window of size steps is used to check if the central
+    point is the largest in the window region.
     '''
     if steps%2==0:
       steps+=1
@@ -164,17 +160,17 @@ class PeakFinder(object):
                 double_peak_reduced_ridge_length=3,
                 estimate_center=False):
     '''
-      Return a list of peaks fulfilling the defined conditions.
-      
-      :param snr: Minimal signal to noise ratio
-      :param min_width: Minimal peak width
-      :param max_width: Maximal peak width
-      :param ridge_length: Minimal ridge line length
-      :param analyze: Store information to analyze the filtering
-      :param double_peak_detection: Perform a second run, where the ridge_length is reduced near found peaks
-      :param estimate_center: Use the x position of the ridge maximum to estimate peak position
-      
-      :return: List of found peaks as (x0, width, I0, ridge length, SNR)
+    Return a list of peaks fulfilling the defined conditions.
+    
+    :param snr: Minimal signal to noise ratio
+    :param min_width: Minimal peak width
+    :param max_width: Maximal peak width
+    :param ridge_length: Minimal ridge line length
+    :param analyze: Store information to analyze the filtering
+    :param double_peak_detection: Perform a second run, where the ridge_length is reduced near found peaks
+    :param estimate_center: Use the x position of the ridge maximum to estimate peak position
+    
+    :return: List of found peaks as (x0, width, I0, ridge length, SNR)
     '''
     xdata=self.xdata
     if min_width is None:
@@ -339,22 +335,7 @@ class PeakFinder(object):
     show()
 
 
-############## Code below here is adapted from an python CWT example with 2D version added ###########
-'''
-References:
-A practical guide to wavelet analysis
-C Torrance and GP Compo
-Bull Amer Meteor Soc Vol 79 No 1 61-78 (1998)
-naming below vaguely follows this.
-
-updates:
-(24/2/07):  Fix Morlet so can get MorletReal by cutting out H
-(10/04/08): Numeric -> numpy
-(25/07/08): log and lin scale increment in same direction!
-            swap indices in 2-d coeffiecient matrix
-            explicit scaling of scale axis
-'''
-
+############## Code below here is adapted from an python CWT example ###########
 class Cwt:
     """
     Base class for continuous wavelet transforms
@@ -362,6 +343,8 @@ class Cwt:
     Used by subclass which provides the method wf(self,s_omega)
     wf is the Fourier transform of the wavelet function.
     Returns an instance.
+    
+    Naming convention roughly follows [CTorrance1998]_.
     """
 
     fourierwl=1.00
@@ -374,14 +357,14 @@ class Cwt:
         """
         Continuous wavelet transform of data
 
-        data:    data in array to transform, length must be power of 2
-        notes:   number of scale intervals per octave
-        largestscale: largest scale as inverse fraction of length
-                 of data array
-                 scale = len(data)/largestscale
-                 smallest scale should be >= 2 for meaningful data
-        order:   Order of wavelet basis function for some families
-        scaling: Linear or log
+        :param data:    data in array to transform, length must be power of 2
+        :param notes:   number of scale intervals per octave
+        :param largestscale: largest scale as inverse fraction of length
+                             of data array
+                             scale = len(data)/largestscale
+                             smallest scale should be >= 2 for meaningful data
+        :param order:   Order of wavelet basis function for some families
+        :param scaling: Linear or log
         """
         ndata=len(data)
         self.order=order
@@ -416,7 +399,6 @@ class Cwt:
         """
         if notes non-zero, returns a log scale based on notes per ocave
         else a linear scale
-        (25/07/08): fix notes!=0 case so smallest scale at [0]
         """
         if scaling=="log":
             if notes<=0: notes=1

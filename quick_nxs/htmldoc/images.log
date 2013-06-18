@@ -1,17 +1,21 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2012.12.3)  23 APR 2013 10:08
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=latex 2013.6.5)  18 JUN 2013 16:55
 entering extended mode
+ restricted \write18 enabled.
  %&-line parsing enabled.
 **./images.tex
 (./images.tex
-LaTeX2e <2009/09/24>
-Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, farsi, arabic, croatian, bulgarian, ukrainian, russian, czech, slov
-ak, danish, dutch, finnish, french, basque, ngerman, german, german-x-2009-06-1
-9, ngerman-x-2009-06-19, ibycus, monogreek, greek, ancientgreek, hungarian, san
-skrit, italian, latin, latvian, lithuanian, mongolian2a, mongolian, bokmal, nyn
-orsk, romanian, irish, coptic, serbian, turkish, welsh, esperanto, uppersorbian
-, estonian, indonesian, interlingua, icelandic, kurmanji, slovenian, polish, po
-rtuguese, spanish, galician, catalan, swedish, ukenglish, pinyin, loaded.
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, et
+hiopic, farsi, arabic, pinyin, croatian, bulgarian, ukrainian, russian, slovak,
+ czech, danish, dutch, usenglishmax, ukenglish, finnish, french, basque, ngerma
+n, german, swissgerman, ngerman-x-2012-05-30, german-x-2012-05-30, monogreek, g
+reek, ibycus, ancientgreek, hungarian, bengali, tamil, hindi, telugu, gujarati,
+ sanskrit, malayalam, kannada, assamese, marathi, oriya, panjabi, italian, lati
+n, latvian, lithuanian, mongolian, mongolianlmc, nynorsk, bokmal, indonesian, e
+speranto, coptic, welsh, irish, interlingua, serbian, serbianc, slovenian, friu
+lan, romansh, estonian, romanian, armenian, uppersorbian, turkish, afrikaans, i
+celandic, kurmanji, polish, portuguese, galician, catalan, spanish, swedish, th
+ai, loaded.
 
 
 ! LaTeX Error: \usepackage before \documentclass.
@@ -25,9 +29,9 @@ l.3 \usepackage{
 \usepackage may only appear in the document preamble, i.e.,
 between \documentclass and \begin{document}.
 
-(/usr/share/texmf-texlive/tex/latex/base/book.cls
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
 Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/share/texmf-texlive/tex/latex/base/bk12.clo
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk12.clo
 File: bk12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -42,19 +46,19 @@ File: bk12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
-) (/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
-) (/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2008/03/30 v1.1d Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
-(/usr/share/texmf-texlive/tex/latex/base/utf8.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OML ...
 ... no UTF-8 mapping file for font encoding OML
 Now handling font encoding T1 ...
 ... processing UTF-8 mapping file for font encoding T1
-(/usr/share/texmf-texlive/tex/latex/base/t1enc.dfu
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu
 File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -203,7 +207,7 @@ File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 )
 Now handling font encoding OT1 ...
 ... processing UTF-8 mapping file for font encoding OT1
-(/usr/share/texmf-texlive/tex/latex/base/ot1enc.dfu
+(/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu
 File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -233,7 +237,7 @@ File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 )
 Now handling font encoding OMS ...
 ... processing UTF-8 mapping file for font encoding OMS
-(/usr/share/texmf-texlive/tex/latex/base/omsenc.dfu
+(/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu
 File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A7 (decimal 167)
    defining Unicode char U+00B6 (decimal 182)
@@ -256,7 +260,7 @@ Now handling font encoding U ...
    defining Unicode char U+2026 (decimal 8230)
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
-)) (/usr/share/texmf-texlive/tex/latex/psnfss/mathptmx.sty
+)) (/usr/share/texlive/texmf-dist/tex/latex/psnfss/mathptmx.sty
 Package: mathptmx 2005/04/12 PSNFSS-v9.2a Times w/ Math, improved (SPQR, WaS) 
 LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -291,14 +295,14 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
 LaTeX Info: Redefining \hbar on input line 50.
-) (/usr/share/texmf-texlive/tex/latex/psnfss/helvet.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/psnfss/helvet.sty
 Package: helvet 2005/04/12 PSNFSS-v9.2a (WaS) 
-(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks16
-)) (/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+)) (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
-(/usr/share/texmf-texlive/tex/latex/base/t1enc.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
 File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
 ))
@@ -314,42 +318,42 @@ LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
    defining Unicode char U+931 (decimal 2353)
    defining Unicode char U+916 (decimal 2326)
    defining Unicode char U+960 (decimal 2400)
-(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
-(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
-(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
-) (/etc/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+) (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: dvips.def on input line 91.
-(/usr/share/texmf-texlive/tex/latex/graphics/dvips.def
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvips.def
 File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 ))
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
-) (/usr/share/texmf-texlive/tex/latex/wrapfig/wrapfig.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/wrapfig/wrapfig.sty
 \wrapoverhang=\dimen105
 \WF@size=\dimen106
 \c@WF@wrappedlines=\count88
 \WF@box=\box26
 \WF@everypar=\toks17
 Package: wrapfig 2003/01/31  v 3.6
-) (/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2000/07/18 v2.13 AMS math features
 \@mathmargin=\skip43
 For additional information on amsmath, use the `?' option.
-(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01
-(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
 \@emptytoks=\toks18
 \ex@=\dimen107
-)) (/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty
+)) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
 \pmbraise@=\dimen108
-) (/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
 \inf@bad=\count89
@@ -389,36 +393,36 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2666.
 LaTeX Info: Redefining \] on input line 2667.
-) (/usr/share/texmf-texlive/tex/latex/amsfonts/amssymb.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2009/06/22 v3.00
-(/usr/share/texmf-texlive/tex/latex/amsfonts/amsfonts.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
 \symAMSa=\mathgroup6
 \symAMSb=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
-)) (/usr/share/texmf-texlive/tex/latex/was/upgreek.sty
+)) (/usr/share/texlive/texmf-dist/tex/latex/was/upgreek.sty
 Package: upgreek 2003/02/12 v2.0 (WaS)
 Package upgreek Info: Using Euler Roman for upright Greek on input line 31.
 \symugrf@m=\mathgroup8
 LaTeX Font Info:    Overwriting symbol font `ugrf@m' in version `bold'
 (Font)                  U/eur/m/n --> U/eur/b/n on input line 38.
-) (/usr/share/texmf-texlive/tex/latex/units/units.sty
+) (/usr/share/texlive/texmf-dist/tex/latex/units/units.sty
 Package: units 1998/08/04 v0.9b Typesetting units
-(/usr/share/texmf-texlive/tex/latex/units/nicefrac.sty
+(/usr/share/texlive/texmf-dist/tex/latex/units/nicefrac.sty
 Package: nicefrac 1998/08/04 v0.9b Nice fractions
 \L@UnitsRaiseDisplaystyle=\skip46
 \L@UnitsRaiseTextstyle=\skip47
 \L@UnitsRaiseScriptstyle=\skip48
-)) (/usr/share/texmf-texlive/tex/latex/tools/xspace.sty
-Package: xspace 2006/05/08 v1.12 Space after command names (DPC,MH)
-) (/usr/share/texmf-texlive/tex/latex/graphics/color.sty
+)) (/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty
+Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
+) (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
-(/etc/texmf/tex/latex/config/color.cfg
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: dvips.def on input line 130.
-(/usr/share/texmf-texlive/tex/latex/graphics/dvipsnam.def
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvipsnam.def
 File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 ))
 
@@ -465,7 +469,7 @@ LaTeX Font Info:    ... okay on input line 181.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 181.
 LaTeX Font Info:    ... okay on input line 181.
 LaTeX Font Info:    Try loading font information for T1+ptm on input line 181.
-(/usr/share/texmf-texlive/tex/latex/psnfss/t1ptm.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
 
@@ -493,27 +497,27 @@ latex2htmlLength evensidemargin=39.0pt
 
 LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 20
 5.
-(/usr/share/texmf-texlive/tex/latex/psnfss/ot1ztmcm.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 20
 5.
-(/usr/share/texmf-texlive/tex/latex/psnfss/omlztmcm.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 20
 5.
-(/usr/share/texmf-texlive/tex/latex/psnfss/omsztmcm.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 20
 5.
-(/usr/share/texmf-texlive/tex/latex/psnfss/omxztmcm.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
 LaTeX Font Info:    Try loading font information for OT1+ptm on input line 205.
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/ot1ptm.fd
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
@@ -522,63 +526,63 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 205.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 205.
-l2hSize :tex2html_wrap_inline1350:8.09999pt::0.0pt::8.50151pt.
+l2hSize :tex2html_wrap_inline1582:8.09999pt::0.0pt::8.50151pt.
 [1
 
 
 
 ]
-l2hSize :tex2html_wrap_inline1352:8.79688pt::8.79688pt::8.55013pt.
+l2hSize :tex2html_wrap_inline1584:8.79688pt::8.79688pt::8.55013pt.
 [2
 
 
 ]
-l2hSize :tex2html_wrap_inline1354:8.59999pt::8.59999pt::7.90193pt.
+l2hSize :tex2html_wrap_inline1586:8.59999pt::8.59999pt::7.90193pt.
 [3
 
 
 ]
-l2hSize :tex2html_wrap_inline1356:8.29688pt::0.0pt::6.61203pt.
+l2hSize :tex2html_wrap_inline1588:8.29688pt::0.0pt::6.61203pt.
 [4
 
 
 ]
-l2hSize :tex2html_wrap_inline1358:8.29688pt::0.0pt::7.10141pt.
+l2hSize :tex2html_wrap_inline1590:8.29688pt::0.0pt::7.10141pt.
 [5
 
 
 ]
-l2hSize :tex2html_wrap_inline1360:8.09999pt::0.0pt::7.86304pt.
+l2hSize :tex2html_wrap_inline1592:8.09999pt::0.0pt::7.86304pt.
 [6
 
 
 ]
-l2hSize :tex2html_wrap_inline1362:8.59999pt::8.59999pt::7.17595pt.
+l2hSize :tex2html_wrap_inline1594:8.59999pt::8.59999pt::7.17595pt.
 [7
 
 
 ]
-l2hSize :tex2html_wrap_inline1364:8.29688pt::0.0pt::7.25049pt.
+l2hSize :tex2html_wrap_inline1596:8.29688pt::0.0pt::7.25049pt.
 [8
 
 
 ]
-l2hSize :tex2html_wrap_inline1366:8.69586pt::8.69586pt::9.49191pt.
+l2hSize :tex2html_wrap_inline1598:8.69586pt::8.69586pt::9.49191pt.
 [9
 
 
 ]
-l2hSize :tex2html_wrap_inline1368:8.09999pt::0.0pt::7.70393pt.
+l2hSize :tex2html_wrap_inline1600:8.09999pt::0.0pt::7.70393pt.
 [10
 
 
 ]
-l2hSize :tex2html_wrap_inline1370:8.19586pt::0.0pt::7.94403pt.
+l2hSize :tex2html_wrap_inline1602:8.19586pt::0.0pt::7.94403pt.
 [11
 
 
 ]
-l2hSize :tex2html_wrap_inline1372:8.09999pt::0.0pt::7.90842pt.
+l2hSize :tex2html_wrap_inline1604:8.09999pt::0.0pt::7.90842pt.
 [12
 
 
@@ -618,7 +622,7 @@ If that doesn't work, type  X <return>  to quit.
 
 File: ../../icons/logo.pdf Graphic file (type eps)
 <../../icons/logo.pdf>)
-l2hSize :figure1373:487.15965pt::0.0pt::349.0pt.
+l2hSize :figure1605:487.15965pt::0.0pt::349.0pt.
 [1
 
 
@@ -626,43 +630,43 @@ l2hSize :figure1373:487.15965pt::0.0pt::349.0pt.
 
 
 ]
-l2hSize :tex2html_wrap_inline1448:8.59999pt::8.59999pt::13.2649pt.
+l2hSize :tex2html_wrap_inline1609:8.59999pt::8.59999pt::13.2649pt.
 [2
 
 
 ]
-l2hSize :tex2html_wrap_inline1455:10.8768pt::10.8768pt::13.48398pt.
+l2hSize :tex2html_wrap_inline1699:10.8768pt::10.8768pt::13.48398pt.
 [3
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1458:11.47679pt::11.47679pt::40.12003pt.
+l2hSize :tex2html_wrap_indisplay1702:11.47679pt::11.47679pt::40.12003pt.
 [4
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1460:19.23732pt::19.23732pt::256.65932pt.
+l2hSize :tex2html_wrap_indisplay1704:19.23732pt::19.23732pt::256.65932pt.
 [5
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1462:9.5pt::9.5pt::37.46619pt.
+l2hSize :tex2html_wrap_indisplay1706:9.5pt::9.5pt::37.46619pt.
 [6
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1464:11.47679pt::11.47679pt::78.88448pt.
+l2hSize :tex2html_wrap_indisplay1708:11.47679pt::11.47679pt::78.88448pt.
 [7
 
 
 ] (./images.aux (./titlepage.aux)) ) 
 Here is how much of TeX's memory you used:
- 2511 strings out of 493849
- 29748 string characters out of 1152846
- 75805 words of memory out of 3000000
- 5721 multiletter control sequences out of 15000+50000
+ 2517 strings out of 493486
+ 30335 string characters out of 3143550
+ 76945 words of memory out of 3000000
+ 5759 multiletter control sequences out of 15000+200000
  23177 words of font info for 48 fonts, out of 3000000 for 9000
- 714 hyphenation exceptions out of 8191
+ 957 hyphenation exceptions out of 8191
  27i,5n,24p,224b,372s stack positions out of 5000i,500n,10000p,200000b,50000s
 
 Output written on images.dvi (19 pages, 5280 bytes).

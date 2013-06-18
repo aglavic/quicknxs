@@ -74,30 +74,33 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 <SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Event mode data</A>
 </H1>
     When the event mode is selected for file import additional options for the desired binning are shown. You can define the number of <SPAN  CLASS="textbf">Bins</SPAN>, the bin steps (constant ToF or Q steps) and split datasets in time.
+    In all other aspects event mode data is not treated differently from histogram data. To be able to use a direct beam measurement, it needs to be extracted with the same binning as the actual measurement.
 
 <P>
 
 <H1><A NAME="SECTION00420000000000000000">
 <SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">2</SPAN> Re-reduction of already exported data</A>
 </H1>
-    You can read all datasets and options from an already exported reflectivity using the <SPAN  CLASS="textbf">File-&gt;Load Extraction...</SPAN> menu and select a ASCII file. 
+    You can read all datasets and options from an already exported reflectivity using the <SPAN  CLASS="textbf">File-&gt;Load Extraction...</SPAN> menu and select an ASCII file. 
     Afterwards the options in the reduction table can be changed as desired.
 
 <P>
 
-<H1><A NAME="SECTION00430000000000000000">
-<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> Overwrite direct beam parameters</A>
+<H1><A NAME="SECTION00430000000000000000"></A>
+  <A NAME="sec:overwrite"></A>
+<BR>
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> Overwrite direct beam parameters
 </H1>
     If the the direct beam position was not saved correctly during instrument alignment all calculated <SPAN CLASS="MATH"><IMG
- WIDTH="25" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
  SRC="img14.png"
  ALT="$ Q_z$"></SPAN>-values for the reflectivity will be wrong.
     To correct this there are two parameters to overwrite it in the <SPAN  CLASS="textbf">Reflectivity Extraction (Advanced)</SPAN> area, Direct Pixel and Dangle0.
     These parameters are ignored if they have the values -1 and None.
-    To overwrite the correct values you can open a direct beam dataset and activate the  <SPAN  CLASS="textbf">Adjust Direct Beam</SPAN> <IMG
+    To overwrite the correct values you can open a direct beam dataset and activate the  <SPAN  CLASS="textbf">Adjust Direct Beam action</SPAN> <IMG
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./tthZero.png"
- ALT="Image tthZero"> to save the current DANGLE as <SPAN  CLASS="textbf">Dangle0</SPAN> and the fitted x-position as <SPAN  CLASS="textbf">Direct Pixel</SPAN>.
+ ALT="Image tthZero"> to save the current DANGLE as <SPAN  CLASS="textbf">Dangle0</SPAN> and the fitted X-position as <SPAN  CLASS="textbf">Direct Pixel</SPAN>.
 
 <P>
 
@@ -122,26 +125,28 @@ There are a few cases where you could need additional control over the subtracte
     You can use Polygons to define the extraction area for the background precisely, these polygons are than shown in the X vs. &#206;&#187; plot as gray areas. 
     The normal extraction region defined by the main window parameters is shown in red. 
     For each &#206;&#187; channel the average value of all pixels in the gray areas is taken as background. 
-    If for a given value of &#206;&#187; no points are defined with a polygon the red area is taken.
+    If, for a given value of &#206;&#187;, no points are defined with a polygon the red area is taken.
     As an additional option it is possible to presume a background that is directly dependent on the incident intensity to reduce the error bars.
 
 <P>
 
-<H1><A NAME="SECTION00450000000000000000">
-<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">5</SPAN> "Fan"-Reflectivity</A>
+<H1><A NAME="SECTION00450000000000000000"></A>
+  <A NAME="sec:fan"></A>
+<BR>
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">5</SPAN> "Fan"-Reflectivity
 </H1>
     Some samples have a weavy or bent surface and reflect the neutron beam into different angles. 
     Treating these as one reflection will destroy the <SPAN CLASS="MATH"><IMG
- WIDTH="25" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
  SRC="img14.png"
  ALT="$ Q_z$"></SPAN> resolution of you measurement or needs to be restricted to a small X-region, which reduces the statistics.
     For these cases the <SPAN  CLASS="textbf">Reflectivity Extraction (Advanced)</SPAN> area has a <SPAN  CLASS="textbf">"Fan"-Reflectivity</SPAN> option, which treats each pixel on the detector separately to calculate I(<SPAN CLASS="MATH"><IMG
- WIDTH="25" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
  SRC="img14.png"
- ALT="$ Q_z$"></SPAN>) and combines these reflectivity afterwards to get better statistics. 
+ ALT="$ Q_z$"></SPAN>) and combines these reflectivities afterwards to get better statistics. 
     In this case you can widen the red area on the X-projection plot to take into account your full reflectivity.
     The underlying algorithm reduces the total width of a selected dataset in <SPAN CLASS="MATH"><IMG
- WIDTH="25" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
  SRC="img14.png"
  ALT="$ Q_z$"></SPAN> so it can be possible that for lower angles you do not get overlapping areas to stitch the data together.
     In this case you should select a smaller area for the lower angle measurements and/or extract two regions in X for one dataset.
@@ -152,10 +157,13 @@ There are a few cases where you could need additional control over the subtracte
 <SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">6</SPAN> Off-specular and GISANS scattering</A>
 </H1>
     Off-specular scattering can easily be extracted when the specular reflectivity is already defined in the reduction table. You can take a look at the <SPAN  CLASS="textbf">OffSpec Preview</SPAN> tab to take a look in advance (does not show the active dataset, only the reduction table entries).
-    The reduction dialog as a separate option to export the off-specular data, where <SPAN  CLASS="textit">Raw</SPAN> refers to the data as extractec, <SPAN  CLASS="textit">Corrected</SPAN> applies an algorithm to reduce detector artifacts from high intensity areas and <SPAN  CLASS="textit">Smoothed</SPAN> will interpolate the data to a regular grid with <SPAN CLASS="MATH"><IMG
- WIDTH="25" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+    The reduction dialog has a separate option to export the off-specular data, where <SPAN  CLASS="textit">Raw</SPAN> refers to the data as extractec, <SPAN  CLASS="textit">Corrected</SPAN> applies an algorithm to reduce detector artifacts from high intensity areas and <SPAN  CLASS="textit">Smoothed</SPAN> will interpolate the data to a regular grid with <SPAN CLASS="MATH"><IMG
+ WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
  SRC="img14.png"
  ALT="$ Q_z$"></SPAN>-dependent Gaussian smoothing (parameters are defined in a separate dialog when exporting).
+
+<P>
+<SPAN  CLASS="textit">The scaling factors to combine datasets for off-specular extraction will only be correct if the <SPAN  CLASS="textbf">full reflectivity</SPAN> is within the X-width and if you <SPAN  CLASS="textbf">keep the X-width constant</SPAN>! These conditions need not to be fulfilled when only specular data is extracted.</SPAN>
 
 <P>
 For GISANS measurements another dialog appears when exporting, where you can define the wavelength bands, which will be combined in one image.

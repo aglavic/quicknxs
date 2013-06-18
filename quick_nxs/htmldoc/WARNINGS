@@ -7,5 +7,13 @@ No implementation found for style `units'
 
 QuickNXS_Users_Manual.tex is newer than QuickNXS_Users_Manual.aux: Please rerun latex.
 
+? brace missing for \
+
 Substitution of arg to newlabelxx delayed.
+
+redefining command \ 
+
+? brace missing for \oldcontentsline
+
+? brace missing for \oldnewlabel
 {eqnarray} does not have 3 columns, inserting blank cell

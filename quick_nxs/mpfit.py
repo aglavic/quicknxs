@@ -630,243 +630,241 @@ class mpfit:
                                  mp_limit=None,
                                  diag=None, epsfcn=None, debug=0):
                 """
-  Inputs:
-        fcn:
-           The function to be minimized.  The function should return the weighted
-           deviations between the model and the data, as described above.
+    :param fcn: The function to be minimized.  The function should return the weighted
+                deviations between the model and the data, as described above.
 
-        xall:
-           An array of starting values for each of the parameters of the model.
-           The number of parameters should be fewer than the number of measurements.
-
-           This parameter is optional if the parinfo keyword is used (but see
-           parinfo).  The parinfo keyword provides a mechanism to fix or constrain
-           individual parameters.
-
-  Keywords:
-
-         autoderivative:
-                If this is set, derivatives of the function will be computed
-                automatically via a finite differencing procedure.  If not set, then
-                fcn must provide the (analytical) derivatives.
-                   Default: set (=1)
-                   NOTE: to supply your own analytical derivatives,
-                                 explicitly pass autoderivative=0
-
-         ftol:
-                A nonnegative input variable. Termination occurs when both the actual
-                and predicted relative reductions in the sum of squares are at most
-                ftol (and status is accordingly set to 1 or 3).  Therefore, ftol
-                measures the relative error desired in the sum of squares.
-                   Default: 1E-10
-
-         functkw:
-                A dictionary which contains the parameters to be passed to the
-                user-supplied function specified by fcn via the standard Python
-                keyword dictionary mechanism.  This is the way you can pass additional
-                data to your user-supplied function without using global variables.
-
-                Consider the following example:
-                   if functkw = {'xval':[1.,2.,3.], 'yval':[1.,4.,9.],
-                                                 'errval':[1.,1.,1.] }
-                then the user supplied function should be declared like this:
-                   def myfunct(p, fjac=None, xval=None, yval=None, errval=None):
-
-                Default: {}   No extra parameters are passed to the user-supplied
-                                          function.
-
-         gtol:
-                A nonnegative input variable. Termination occurs when the cosine of
-                the angle between fvec and any column of the jacobian is at most gtol
-                in absolute value (and status is accordingly set to 4). Therefore,
-                gtol measures the orthogonality desired between the function vector
-                and the columns of the jacobian.
-                   Default: 1e-10
-
-         iterkw:
-                The keyword arguments to be passed to iterfunct via the dictionary
-                keyword mechanism.  This should be a dictionary and is similar in
-                operation to FUNCTKW.
-                   Default: {}  No arguments are passed.
-
-         iterfunct:
-                The name of a function to be called upon each NPRINT iteration of the
-                MPFIT routine.  It should be declared in the following way:
-                   def iterfunct(myfunct, p, iter, fnorm, functkw=None,
-                                                 parinfo=None, quiet=0, dof=None, [iterkw keywords here])
-                   # perform custom iteration update
-
-                iterfunct must accept all three keyword parameters (FUNCTKW, PARINFO
-                and QUIET).
-
-                myfunct:  The user-supplied function to be minimized,
-                p:              The current set of model parameters
-                iter:    The iteration number
-                functkw:  The arguments to be passed to myfunct.
-                fnorm:  The chi-squared value.
-                quiet:  Set when no textual output should be printed.
-                dof:      The number of degrees of freedom, normally the number of points
-                                  less the number of free parameters.
-                See below for documentation of parinfo.
-
-                In implementation, iterfunct can perform updates to the terminal or
-                graphical user interface, to provide feedback while the fit proceeds.
-                If the fit is to be stopped for any reason, then iterfunct should return a
-                a status value between -15 and -1.  Otherwise it should return None
-                (e.g. no return statement) or 0.
-                In principle, iterfunct should probably not modify the parameter values,
-                because it may interfere with the algorithm's stability.  In practice it
-                is allowed.
-
-                Default: an internal routine is used to print the parameter values.
-
-                Set iterfunct=None if there is no user-defined routine and you don't
-                want the internal default routine be called.
-
-         maxiter:
-                The maximum number of iterations to perform.  If the number is exceeded,
-                then the status value is set to 5 and MPFIT returns.
-                Default: 200 iterations
-
-         nocovar:
-                Set this keyword to prevent the calculation of the covariance matrix
-                before returning (see COVAR)
-                Default: clear (=0)  The covariance matrix is returned
-
-         nprint:
-                The frequency with which iterfunct is called.  A value of 1 indicates
-                that iterfunct is called with every iteration, while 2 indicates every
-                other iteration, etc.  Note that several Levenberg-Marquardt attempts
-                can be made in a single iteration.
-                Default value: 1
-
-         parinfo
-                Provides a mechanism for more sophisticated constraints to be placed on
-                parameter values.  When parinfo is not passed, then it is assumed that
-                all parameters are free and unconstrained.  Values in parinfo are never
-                modified during a call to MPFIT.
-
-                See description above for the structure of PARINFO.
-
-                Default value: None  All parameters are free and unconstrained.
-
-         quiet:
-                Set this keyword when no textual output should be printed by MPFIT
-
-         damp:
-                A scalar number, indicating the cut-off value of residuals where
-                "damping" will occur.  Residuals with magnitudes greater than this
-                number will be replaced by their hyperbolic tangent.  This partially
-                mitigates the so-called large residual problem inherent in
-                least-squares solvers (as for the test problem CURVI,
-                http://www.maxthis.com/curviex.htm).
-                A value of 0 indicates no damping.
-                   Default: 0
-
-                Note: DAMP doesn't work with autoderivative=0
-
-         xtol:
-                A nonnegative input variable. Termination occurs when the relative error
-                between two consecutive iterates is at most xtol (and status is
-                accordingly set to 2 or 3).  Therefore, xtol measures the relative error
-                desired in the approximate solution.
-                Default: 1E-10
+    :param xall:  An array of starting values for each of the parameters of the model.
+        The number of parameters should be fewer than the number of measurements.
         
-        mp_limit:
-                The mimimal time in ms for function execution before switching 
-                to multiprocessing.
+        This parameter is optional if the parinfo keyword is used (but see
+        parinfo).  The parinfo keyword provides a mechanism to fix or constrain
+        individual parameters.
 
-   Outputs:
+    :keyword autoderivative:  If this is set, derivatives of the function will be computed
+        automatically via a finite differencing procedure.  
+        If not set, then fcn must provide the (analytical) derivatives.
+                
+        **NOTE**: to supply your own analytical derivatives,
+        explicitly pass autoderivative=0
+        
+        *Default*: set (=1)
+                   
 
-         Returns an object of type mpfit.  The results are attributes of this class,
-         e.g. mpfit.status, mpfit.errmsg, mpfit.params, npfit.niter, mpfit.covar.
+    :keyword ftol:  A nonnegative input variable. Termination occurs when both the actual
+        and predicted relative reductions in the sum of squares are at most
+        ftol (and status is accordingly set to 1 or 3).  Therefore, ftol
+        measures the relative error desired in the sum of squares.
+        
+        *Default*: 1E-10
 
-         .status
-                An integer status code is returned.  All values greater than zero can
-                represent success (however .status == 5 may indicate failure to
-                converge). It can have one of the following values:
+    :keyword functkw: A dictionary which contains the parameters to be passed to the
+        user-supplied function specified by fcn via the standard Python
+        keyword dictionary mechanism.  This is the way you can pass additional
+        data to your user-supplied function without using global variables.
+        
+        Consider the following example::
+        
+            if functkw = {'xval':[1.,2.,3.], 'yval':[1.,4.,9.],
+                          'errval':[1.,1.,1.] }
+        
+        then the user supplied function should be declared like this::
+        
+            def myfunct(p, fjac=None, xval=None, yval=None, errval=None):
+        
+        *Default*: {} No extra parameters are passed to the user-supplied function.
 
-                -16
-                   A parameter or function value has become infinite or an undefined
-                   number.  This is usually a consequence of numerical overflow in the
-                   user's model function, which must be avoided.
+    :keyword gtol:  A nonnegative input variable. Termination occurs when the cosine of
+        the angle between fvec and any column of the jacobian is at most gtol
+        in absolute value (and status is accordingly set to 4). Therefore,
+        gtol measures the orthogonality desired between the function vector
+        and the columns of the jacobian.
+                    
+        *Default*: 1e-10
 
-                -15 to -1
-                   These are error codes that either MYFUNCT or iterfunct may return to
-                   terminate the fitting process.  Values from -15 to -1 are reserved
-                   for the user functions and will not clash with MPFIT.
+    :keyword iterkw:  The keyword arguments to be passed to iterfunct via the dictionary
+        keyword mechanism.  This should be a dictionary and is similar in
+        operation to FUNCTKW.
+        
+        *Default*: {}  No arguments are passed.
 
-                0  Improper input parameters.
+    :keyword iterfunct:  The name of a function to be called upon each NPRINT iteration of the
+        MPFIT routine.  It should be declared in the following way::
+                         
+            def iterfunct(myfunct, p, iter, fnorm, functkw=None,
+                          parinfo=None, quiet=0, dof=None, [iterkw keywords here])
+                # perform custom iteration update
+                
+        iterfunct must accept all three keyword parameters (FUNCTKW, PARINFO
+        and QUIET).
+        
+        ========= ===============================================================
+        Keyword   Description
+        ========= ===============================================================
+        myfunct   The user-supplied function to be minimized,
+        p         The current set of model parameters
+        iter      The iteration number
+        functkw   The arguments to be passed to myfunct.
+        fnorm     The chi-squared value.
+        quiet     Set when no textual output should be printed.
+        dof       The number of degrees of freedom, normally the number of points
+                  less the number of free parameters.
+                  See below for documentation of parinfo.
+        ========= ===============================================================
+        
+        In implementation, iterfunct can perform updates to the terminal or
+        graphical user interface, to provide feedback while the fit proceeds.
+        If the fit is to be stopped for any reason, then iterfunct should return a
+        a status value between -15 and -1.  Otherwise it should return None
+        (e.g. no return statement) or 0.
+        In principle, iterfunct should probably not modify the parameter values,
+        because it may interfere with the algorithm's stability.  In practice it
+        is allowed.
+        
+        Set iterfunct=None if there is no user-defined routine and you don't
+        want the internal default routine be called.
+        
+        *Default*: an internal routine is used to print the parameter values.
 
-                1  Both actual and predicted relative reductions in the sum of squares
-                   are at most ftol.
+    :keyword maxiter: The maximum number of iterations to perform.  If the number is exceeded,
+        then the status value is set to 5 and MPFIT returns.
+        
+        *Default*: 200 iterations
 
-                2  Relative error between two consecutive iterates is at most xtol
+    :keyword nocovar: Set this keyword to prevent the calculation of the covariance matrix
+        before returning (see COVAR)
+        
+        *Default*: clear (=0)  The covariance matrix is returned
 
-                3  Conditions for status = 1 and status = 2 both hold.
+    :keyword nprint:  The frequency with which iterfunct is called.  A value of 1 indicates
+        that iterfunct is called with every iteration, while 2 indicates every
+        other iteration, etc.  Note that several Levenberg-Marquardt attempts
+        can be made in a single iteration.
+        
+        *Default*: 1
 
-                4  The cosine of the angle between fvec and any column of the jacobian
-                   is at most gtol in absolute value.
+    :keyword parinfo: Provides a mechanism for more sophisticated constraints to be placed on
+        parameter values.  When parinfo is not passed, then it is assumed that
+        all parameters are free and unconstrained.  Values in parinfo are never
+        modified during a call to MPFIT.
+        
+        See description above for the structure of PARINFO.
+        
+        *Default*: None  All parameters are free and unconstrained.
 
-                5  The maximum number of iterations has been reached.
+    :keyword quiet: Set this keyword when no textual output should be printed by MPFIT
 
-                6  ftol is too small. No further reduction in the sum of squares is
-                   possible.
+    :keyword damp:  A scalar number, indicating the cut-off value of residuals where
+        "damping" will occur.  Residuals with magnitudes greater than this
+        number will be replaced by their hyperbolic tangent.  This partially
+        mitigates the so-called large residual problem inherent in
+        least-squares solvers (as for the test problem CURVI,
+        http://www.maxthis.com/curviex.htm).
+        A value of 0 indicates no damping.
 
-                7  xtol is too small. No further improvement in the approximate solution
-                   x is possible.
+        **Note**: damp doesn't work with autoderivative=0
+        
+        *Default*: 0
 
-                8  gtol is too small. fvec is orthogonal to the columns of the jacobian
-                   to machine precision.
+    :keyword xtol:  A nonnegative input variable. Termination occurs when the relative error
+        between two consecutive iterates is at most xtol (and status is
+        accordingly set to 2 or 3).  Therefore, xtol measures the relative error
+        desired in the approximate solution.
+        
+        *Default*: 1E-10
+        
+    :keyword mp_limit: The mimimal time in ms for function execution before switching 
+        to multiprocessing.
 
-         .fnorm
-                The value of the summed squared residuals for the returned parameter
-                values.
-
-         .covar
-                The covariance matrix for the set of parameters returned by MPFIT.
-                The matrix is NxN where N is the number of  parameters.  The square root
-                of the diagonal elements gives the formal 1-sigma statistical errors on
-                the parameters if errors were treated "properly" in fcn.
-                Parameter errors are also returned in .perror.
-
-                To compute the correlation matrix, pcor, use this example:
-                   cov = mpfit.covar
-                   pcor = cov * 0.
-                   for i in range(n):
-                          for j in range(n):
-                                 pcor[i,j] = cov[i,j]/sqrt(cov[i,i]*cov[j,j])
-
-                If nocovar is set or MPFIT terminated abnormally, then .covar is set to
-                a scalar with value None.
-
-         .errmsg
-                A string error or warning message is returned.
-
-         .nfev
-                The number of calls to MYFUNCT performed.
-
-         .niter
-                The number of iterations completed.
-
-         .perror
-                The formal 1-sigma errors in each parameter, computed from the
-                covariance matrix.  If a parameter is held fixed, or if it touches a
-                boundary, then the error is reported as zero.
-
-                If the fit is unweighted (i.e. no errors were given, or the weights
-                were uniformly set to unity), then .perror will probably not represent
-                the true parameter uncertainties.
-
-                *If* you can assume that the true reduced chi-squared value is unity --
-                meaning that the fit is implicitly assumed to be of good quality --
-                then the estimated parameter uncertainties can be computed by scaling
-                .perror by the measured chi-squared value.
-
-                   dof = len(x) - len(mpfit.params) # deg of freedom
-                   # scaled uncertainties
-                   pcerror = mpfit.perror * sqrt(mpfit.fnorm / dof)
-
+    :returns:
+        Returns an object of type mpfit.  The results are attributes of this class,
+        e.g. mpfit.status, mpfit.errmsg, mpfit.params, npfit.niter, mpfit.covar.
+        
+        **.status**
+            An integer status code is returned.  All values greater than zero can
+            represent success (however .status == 5 may indicate failure to
+            converge). It can have one of the following values:
+            
+            :-16:
+                A parameter or function value has become infinite or an undefined
+                number.  This is usually a consequence of numerical overflow in the
+                user's model function, which must be avoided.
+            
+            :-15 to -1:
+                These are error codes that either MYFUNCT or iterfunct may return to
+                terminate the fitting process.  Values from -15 to -1 are reserved
+                for the user functions and will not clash with MPFIT.
+            
+            :0: Improper input parameters.
+            
+            :1: Both actual and predicted relative reductions in the sum of squares
+              are at most ftol.
+            
+            :2: Relative error between two consecutive iterates is at most xtol
+            
+            :3: Conditions for status = 1 and status = 2 both hold.
+            
+            :4: The cosine of the angle between fvec and any column of the jacobian
+                is at most gtol in absolute value.
+            
+            :5: The maximum number of iterations has been reached.
+            
+            :6: ftol is too small. No further reduction in the sum of squares is
+                possible.
+            
+            :7:  xtol is too small. No further improvement in the approximate solution
+                x is possible.
+            
+            :8:  gtol is too small. fvec is orthogonal to the columns of the jacobian
+                to machine precision.
+        
+        **.fnorm**
+            The value of the summed squared residuals for the returned parameter
+            values.
+        
+        **.covar**
+            The covariance matrix for the set of parameters returned by MPFIT.
+            The matrix is NxN where N is the number of  parameters.  The square root
+            of the diagonal elements gives the formal 1-sigma statistical errors on
+            the parameters if errors were treated "properly" in fcn.
+            Parameter errors are also returned in .perror.
+            
+            To compute the correlation matrix, pcor, use this example:
+            cov = mpfit.covar
+            pcor = cov * 0.
+            for i in range(n):
+            for j in range(n):
+            pcor[i,j] = cov[i,j]/sqrt(cov[i,i]*cov[j,j])
+            
+            If nocovar is set or MPFIT terminated abnormally, then .covar is set to
+            a scalar with value None.
+        
+        **.errmsg**
+            A string error or warning message is returned.
+        
+        **.nfev**
+            The number of calls to MYFUNCT performed.
+        
+        **.niter**
+            The number of iterations completed.
+        
+        **.perror**
+            The formal 1-sigma errors in each parameter, computed from the
+            covariance matrix.  If a parameter is held fixed, or if it touches a
+            boundary, then the error is reported as zero.
+            
+            If the fit is unweighted (i.e. no errors were given, or the weights
+            were uniformly set to unity), then .perror will probably not represent
+            the true parameter uncertainties.
+            
+            *If* you can assume that the true reduced chi-squared value is unity --
+            meaning that the fit is implicitly assumed to be of good quality --
+            then the estimated parameter uncertainties can be computed by scaling
+            .perror by the measured chi-squared value::
+            
+              dof = len(x) - len(mpfit.params) # deg of freedom
+              # scaled uncertainties
+              pcerror = mpfit.perror * sqrt(mpfit.fnorm / dof)
+            
                 """
                 self.niter=0
                 self.params=None
