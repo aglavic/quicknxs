@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/polarization_dialog.ui'
 #
-# Created: Sun May 19 11:19:19 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Jun  4 13:39:19 2013
+#      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,16 +13,7 @@ from PyQt4 import QtCore, QtGui
 try:
   _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-  def _fromUtf8(s):
-    return s
-
-try:
-  _encoding = QtGui.QApplication.UnicodeUTF8
-  def _translate(context, text, disambig):
-    return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-  def _translate(context, text, disambig):
-    return QtGui.QApplication.translate(context, text, disambig)
+  _fromUtf8 = lambda s: s
 
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
@@ -199,30 +190,30 @@ class Ui_Dialog(object):
     QtCore.QMetaObject.connectSlotsByName(Dialog)
 
   def retranslateUi(self, Dialog):
-    Dialog.setWindowTitle(_translate("Dialog", "QuickNXS - Polarization", None))
-    self.groupBox.setTitle(_translate("Dialog", "Flipping Ratios (Current Run)", None))
-    self.label_2.setText(_translate("Dialog", "Mean:", None))
-    self.label_3.setText(_translate("Dialog", "SF1", None))
-    self.FR1.setText(_translate("Dialog", "0", None))
-    self.label_5.setText(_translate("Dialog", "SF2", None))
-    self.FR2.setText(_translate("Dialog", "0", None))
-    self.groupBox1.setTitle(_translate("Dialog", "Contributing Datasets", None))
-    self.pushButton_2.setText(_translate("Dialog", "Add", None))
-    self.pushButton.setText(_translate("Dialog", "Clear", None))
+    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "QuickNXS - Polarization", None, QtGui.QApplication.UnicodeUTF8))
+    self.groupBox.setTitle(QtGui.QApplication.translate("Dialog", "Flipping Ratios (Current Run)", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_2.setText(QtGui.QApplication.translate("Dialog", "Mean:", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_3.setText(QtGui.QApplication.translate("Dialog", "SF1", None, QtGui.QApplication.UnicodeUTF8))
+    self.FR1.setText(QtGui.QApplication.translate("Dialog", "0", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_5.setText(QtGui.QApplication.translate("Dialog", "SF2", None, QtGui.QApplication.UnicodeUTF8))
+    self.FR2.setText(QtGui.QApplication.translate("Dialog", "0", None, QtGui.QApplication.UnicodeUTF8))
+    self.groupBox1.setTitle(QtGui.QApplication.translate("Dialog", "Contributing Datasets", None, QtGui.QApplication.UnicodeUTF8))
+    self.pushButton_2.setText(QtGui.QApplication.translate("Dialog", "Add", None, QtGui.QApplication.UnicodeUTF8))
+    self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Clear", None, QtGui.QApplication.UnicodeUTF8))
     item = self.wlTable.horizontalHeaderItem(0)
-    item.setText(_translate("Dialog", "Run No.", None))
+    item.setText(QtGui.QApplication.translate("Dialog", "Run No.", None, QtGui.QApplication.UnicodeUTF8))
     item = self.wlTable.horizontalHeaderItem(1)
-    item.setText(_translate("Dialog", "λ-min", None))
+    item.setText(QtGui.QApplication.translate("Dialog", "λ-min", None, QtGui.QApplication.UnicodeUTF8))
     item = self.wlTable.horizontalHeaderItem(2)
-    item.setText(_translate("Dialog", "λ-max", None))
-    self.pushButton_4.setText(_translate("Dialog", "Add", None))
-    self.pushButton_3.setText(_translate("Dialog", "Clear", None))
+    item.setText(QtGui.QApplication.translate("Dialog", "λ-max", None, QtGui.QApplication.UnicodeUTF8))
+    self.pushButton_4.setText(QtGui.QApplication.translate("Dialog", "Add", None, QtGui.QApplication.UnicodeUTF8))
+    self.pushButton_3.setText(QtGui.QApplication.translate("Dialog", "Clear", None, QtGui.QApplication.UnicodeUTF8))
     item = self.xTable.horizontalHeaderItem(0)
-    item.setText(_translate("Dialog", "Run No.", None))
+    item.setText(QtGui.QApplication.translate("Dialog", "Run No.", None, QtGui.QApplication.UnicodeUTF8))
     item = self.xTable.horizontalHeaderItem(1)
-    item.setText(_translate("Dialog", "PixX", None))
-    self.groupBox_2.setTitle(_translate("Dialog", "Polarization Parameters", None))
-    self.label.setText(_translate("Dialog", "Wavelength Dependance", None))
-    self.label_4.setText(_translate("Dialog", "Detector Position Dependance", None))
+    item.setText(QtGui.QApplication.translate("Dialog", "PixX", None, QtGui.QApplication.UnicodeUTF8))
+    self.groupBox_2.setTitle(QtGui.QApplication.translate("Dialog", "Polarization Parameters", None, QtGui.QApplication.UnicodeUTF8))
+    self.label.setText(QtGui.QApplication.translate("Dialog", "Wavelength Dependance", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_4.setText(QtGui.QApplication.translate("Dialog", "Detector Position Dependance", None, QtGui.QApplication.UnicodeUTF8))
 
 from .mplwidget import MPLWidget

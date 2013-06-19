@@ -1061,7 +1061,7 @@
               <number>2</number>
              </property>
              <item>
-              <widget class="MPLWidget" name="xy_overview" native="true">
+              <widget class="MPLBackgroundWidget" name="xy_overview" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -1077,7 +1077,7 @@
               </widget>
              </item>
              <item>
-              <widget class="MPLWidget" name="xtof_overview" native="true">
+              <widget class="MPLBackgroundWidget" name="xtof_overview" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -2497,7 +2497,7 @@
              </widget>
             </item>
             <item>
-             <widget class="MPLWidget" name="x_project" native="true">
+             <widget class="MPLBackgroundWidget" name="x_project" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -2539,7 +2539,7 @@
              </widget>
             </item>
             <item>
-             <widget class="MPLWidget" name="y_project" native="true">
+             <widget class="MPLBackgroundWidget" name="y_project" native="true">
               <property name="minimumSize">
                <size>
                 <width>150</width>
@@ -2575,7 +2575,7 @@
              </widget>
             </item>
             <item>
-             <widget class="MPLWidget" name="refl" native="true">
+             <widget class="MPLBackgroundWidget" name="refl" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -3072,6 +3072,12 @@
     <slot>setMaxValue(int)</slot>
     <slot>setMinValue(int)</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>MPLBackgroundWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">.mplprocess.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

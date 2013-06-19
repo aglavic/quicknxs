@@ -175,6 +175,7 @@ class MainGUI(QtGui.QMainWindow):
         self.trigger('automaticExtraction', argv)
     else:
       self.ui.numberSearchEntry.setFocus()
+      self.auto_change_active=True # prevent exceptions when changing options without file open
 
   def run_ipython(self):
     '''

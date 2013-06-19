@@ -321,6 +321,8 @@ class MplCanvas(FigureCanvas):
 class MPLWidget(QtGui.QWidget):
   cplot=None
   cbar=None
+  vlines=[]
+  hlines=[]
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -336,6 +338,9 @@ class MPLWidget(QtGui.QWidget):
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
+
+  def mpl_connect(self, *args, **opts):
+    return self.canvas.mpl_connect(*args, **opts)
 
   def leaveEvent(self, event):
     '''
@@ -430,6 +435,12 @@ class MPLWidget(QtGui.QWidget):
     except ValueError:
       pass
 
+  def axvline(self, *args, **opts):
+    self.vlines.append(self.canvas.ax.axvline(*args, **opts))
+
+  def axhline(self, *args, **opts):
+    self.hlines.append(self.canvas.ax.axhline(*args, **opts))
+
   def clear_fig(self):
     self.cplot=None
     self.cbar=None
@@ -438,6 +449,8 @@ class MPLWidget(QtGui.QWidget):
 
   def clear(self):
     self.cplot=None
+    self.vlines=[]
+    self.hlines=[]
     self.toolbar._views.clear()
     self.toolbar._positions.clear()
     self.canvas.ax.clear()

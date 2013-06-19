@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/gisans_dialog.ui'
 #
-# Created: Sun May 19 11:19:19 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Jun  4 13:39:19 2013
+#      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,16 +13,7 @@ from PyQt4 import QtCore, QtGui
 try:
   _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-  def _fromUtf8(s):
-    return s
-
-try:
-  _encoding = QtGui.QApplication.UnicodeUTF8
-  def _translate(context, text, disambig):
-    return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-  def _translate(context, text, disambig):
-    return QtGui.QApplication.translate(context, text, disambig)
+  _fromUtf8 = lambda s: s
 
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
@@ -323,20 +314,20 @@ class Ui_Dialog(object):
     Dialog.setTabOrder(self.plotShowList, self.scrollArea)
 
   def retranslateUi(self, Dialog):
-    Dialog.setWindowTitle(_translate("Dialog", "QuickNXS - GISANS export", None))
-    self.label_9.setText(_translate("Dialog", "I-Max", None))
-    self.label_11.setText(_translate("Dialog", "10^", None))
-    self.label_10.setText(_translate("Dialog", "I-Min", None))
-    self.label_12.setText(_translate("Dialog", "10^", None))
-    self.label_3.setText(_translate("Dialog", "Å", None))
-    self.label_7.setText(_translate("Dialog", "Grid Points Qy", None))
-    self.projectionMethod.setItemText(0, _translate("Dialog", "Binning", None))
-    self.label_2.setText(_translate("Dialog", "λ-Max", None))
-    self.label.setText(_translate("Dialog", "λ-Min", None))
-    self.label_5.setText(_translate("Dialog", "No. of Slices", None))
-    self.label_4.setText(_translate("Dialog", "Å", None))
-    self.label_6.setText(_translate("Dialog", "Projection Method", None))
-    self.pushButton.setText(_translate("Dialog", "Create Preview", None))
-    self.label_8.setText(_translate("Dialog", "Grid Points Qz", None))
+    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "QuickNXS - GISANS export", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_9.setText(QtGui.QApplication.translate("Dialog", "I-Max", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_11.setText(QtGui.QApplication.translate("Dialog", "10^", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_10.setText(QtGui.QApplication.translate("Dialog", "I-Min", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_12.setText(QtGui.QApplication.translate("Dialog", "10^", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_3.setText(QtGui.QApplication.translate("Dialog", "Å", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_7.setText(QtGui.QApplication.translate("Dialog", "Grid Points Qy", None, QtGui.QApplication.UnicodeUTF8))
+    self.projectionMethod.setItemText(0, QtGui.QApplication.translate("Dialog", "Binning", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_2.setText(QtGui.QApplication.translate("Dialog", "λ-Max", None, QtGui.QApplication.UnicodeUTF8))
+    self.label.setText(QtGui.QApplication.translate("Dialog", "λ-Min", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_5.setText(QtGui.QApplication.translate("Dialog", "No. of Slices", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_4.setText(QtGui.QApplication.translate("Dialog", "Å", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_6.setText(QtGui.QApplication.translate("Dialog", "Projection Method", None, QtGui.QApplication.UnicodeUTF8))
+    self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Create Preview", None, QtGui.QApplication.UnicodeUTF8))
+    self.label_8.setText(QtGui.QApplication.translate("Dialog", "Grid Points Qz", None, QtGui.QApplication.UnicodeUTF8))
 
 from .mplwidget import MPLWidget

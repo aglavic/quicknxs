@@ -11,20 +11,26 @@ The background plotting canvas uses a three object model:
     backend of matplotlib.
 '''
 from functools import partial
-#from time import time, sleep
+from cPickle import PicklingError
 from PyQt4 import QtCore, QtGui
 
-from multiprocessing import Process, Pipe
+from multiprocessing import Process, Pipe, Event
 from matplotlib.cbook import CallbackRegistry
 from matplotlib.backend_bases import FigureCanvasBase, MouseEvent, KeyEvent
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_agg import FigureCanvasAgg, Figure
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
 from matplotlib.lines import Line2D
+from matplotlib.container import ErrorbarContainer
+from matplotlib.collections import LineCollection
 from matplotlib.image import AxesImage
+from matplotlib.legend import Legend
 from matplotlib.collections import QuadMesh
 from matplotlib import widgets
 from matplotlib.transforms import Affine2D, CompositeGenericTransform
+from matplotlib.colors import LogNorm
+
+from logging import debug, error
 
 # objects used to represent objects present in the other process
 class ConnectedObject(object):
@@ -53,8 +59,14 @@ class ConnectedObject(object):
 class ConnectedLine2D(ConnectedObject):
   _type=Line2D
 
+class ConnectedLineCollection(ConnectedObject):
+  _type=LineCollection
+
 class ConnectedImage(ConnectedObject):
   _type=AxesImage
+
+  def set_clim(self, *args, **opts):
+    return self._caller('set_clim', *args, **opts)
 
 class ConnectedQuadMesh(ConnectedObject):
   _type=QuadMesh
@@ -62,6 +74,7 @@ class ConnectedQuadMesh(ConnectedObject):
 def get_connected_object(item, index):
   known_classes=[subcls._type for subcls in ConnectedObject.__subclasses__()]
   if not item.__class__ in known_classes:
+    print item.__class__
 #    raise ValueError, 'no connection class defined for object of type %s'%item.__class__
     return None
   idx=known_classes.index(item.__class__)
@@ -129,7 +142,7 @@ class ConnectedAxes(FixedConnectedObject):
     bbox.extents=obj.bbox.extents
     viewLim=BBox()
     viewLim.extents=obj.viewLim.extents
-    transData=obj.transData.frozen().to_values()
+    transData=[]#obj.transData.frozen().to_values()
 
     return dict(xlim=xlim, ylim=ylim,
                 points=pos._points,
@@ -165,6 +178,9 @@ class ConnectedAxes(FixedConnectedObject):
   def get_navigate(self):
     return True
 
+class ConnectedLegend(ConnectedObject):
+  _type=Legend
+
 # objects used to mimic matplotlib classes that cannot be pickled as e.g. events
 class TransferredAxes(object):
   def __init__(self, x, y):
@@ -195,6 +211,19 @@ class TransferredKeyEvent(TransferredEvent):
 TransferredEvents={MouseEvent: TransferredMouseEvent,
              KeyEvent: TransferredKeyEvent}
 
+class AttribCaller(object):
+
+  def __init__(self, parent, name):
+    self._parent=parent
+    self._name=name
+
+  def __getattr__(self, name):
+    if not name.startswith("_") and not name in self.__dict__:
+      return partial(self._caller, name)
+
+  def _caller(self, name, *args, **opts):
+    self._parent.scheduled_actions.append(('_attrib_call', (self._name, name, args, opts), {}))
+
 class MPLProcess(FigureCanvasAgg, Process):
   '''
   Separate process carrying out plots with matplotlib in memory.
@@ -203,8 +232,9 @@ class MPLProcess(FigureCanvasAgg, Process):
   sends back any results and the third sends matplotlib event messages.
   '''
   _object_index=0
+  cplot=None
 
-  def __init__(self, pipe_in, pipe_out, event_pipe,
+  def __init__(self, pipe_in, pipe_out, event_pipe, action_pending,
                width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
     Process.__init__(self)
     self.pipe_in=pipe_in
@@ -224,7 +254,8 @@ class MPLProcess(FigureCanvasAgg, Process):
     self.ax.hold(True)
     self._connect_objects={}
     self._fixed_connect_objects={}
-    self.exit_set, self.exit_get=Pipe()
+    self.exitEvent=Event()
+    self.parentActionPending=action_pending
 
   def _connect_events(self):
     for name in ['button_press_event', 'button_release_event',
@@ -242,33 +273,44 @@ class MPLProcess(FigureCanvasAgg, Process):
     try:
       event=TransferredEvents[event.__class__](event, ax=self.ax)
       self.event_pipe.send((s, event))
+      self.parentActionPending.set()
     except:
       pass
 
   def run(self):
     self._connect_events()
+    self.exitEvent.clear()
+    self.parentActionPending.clear()
+    while not self.exitEvent.is_set():
+      try:
+        self._run()
+      except Exception, error:
+        error('Error in process:'+str(error))
+
+  def _run(self):
     while True:
+      if self.exitEvent.is_set():
+        return
       if not self.pipe_in.poll(0.05):
-        if self.exit_get.poll(0.01):
-          return
         continue
       # read everything from the pipe, to be able to drop unneeded actions before a clear call
       action_buffer=[]
       while self.pipe_in.poll():
         action_buffer.append(self.pipe_in.recv())
-      for i, (action, ignore, ignore) in reversed(tuple(enumerate(action_buffer))):
-        # if clear is amongst the calls drop everything before the last clear command
-        if action=='clear':
-          action_buffer=action_buffer[i:]
-          break
       # apply actions
       for action, args, opts in action_buffer:
         result=getattr(self, action)(*args, **opts)
-        self.pipe_out.send(result)
+        try:
+          self.pipe_out.send(result)
+          self.parentActionPending.set()
+        except PicklingError:
+          print "Can't pickle object for function call return: "+repr(result)
+          self.pipe_out.send(None)
+          self.parentActionPending.set()
 
   def join(self, timeout=None):
     # send a signal to process to finish the loop
-    self.exit_set.send(True)
+    self.exitEvent.set()
     Process.join(self, timeout)
 
   ######### plotting related methods
@@ -287,22 +329,56 @@ class MPLProcess(FigureCanvasAgg, Process):
     return self._add_object(self.ax.plot(*args, **opts))
 
   def errorbar(self, *args, **opts):
-    return self._add_object(self.ax.plot(*args, **opts))
+    return self._add_object(self.ax.errorbar(*args, **opts))
 
   def semilogy(self, *args, **opts):
     return self._add_object(self.ax.semilogy(*args, **opts))
 
   def imshow(self, *args, **opts):
-    return self._add_object(self.ax.imshow(*args, **opts))
+    self.cplot=self.ax.imshow(*args, **opts)
+    return self._add_object(self.cplot)
 
   def pcolormesh(self, *args, **opts):
-    return self._add_object(self.ax.pcolormesh(*args, **opts))
+    self.cplot=self.ax.pcolormesh(*args, **opts)
+    return self._add_object(self.cplot)
 
   def axvline(self, *args, **opts):
     return self._add_object(self.ax.axvline(*args, **opts))
 
   def axhline(self, *args, **opts):
-    return self._add_object(self.ax.axHline(*args, **opts))
+    return self._add_object(self.ax.axhline(*args, **opts))
+
+  def set_xlabel(self, *args, **opts):
+    self.ax.set_xlabel(*args, **opts)
+
+  def set_ylabel(self, *args, **opts):
+    self.ax.set_xlabel(*args, **opts)
+
+  def set_xscale(self, *args, **opts):
+    self.ax.set_xscale(*args, **opts)
+
+  def set_yscale(self, *args, **opts):
+    self.ax.set_yscale(*args, **opts)
+
+  def set_xlim(self, *args, **opts):
+    self.ax.set_xlim(*args, **opts)
+
+  def set_ylim(self, *args, **opts):
+    self.ax.set_ylim(*args, **opts)
+
+  def axis(self, *args, **opts):
+    self.ax.axis(*args, **opts)
+
+  def get_config(self):
+    spp=self.fig.subplotpars
+    config=dict(left=spp.left,
+                right=spp.right,
+                bottom=spp.bottom,
+                top=spp.top)
+    return config
+
+  def legend(self, *args, **opts):
+    return self._add_object(self.ax.legend(*args, **opts))
 
   def draw(self):
     FigureCanvasAgg.draw(self)
@@ -324,6 +400,8 @@ class MPLProcess(FigureCanvasAgg, Process):
       return map(self._add_object, item)
     if type(item) is tuple:
       return tuple(map(self._add_object, item))
+    if type(item) is ErrorbarContainer:
+      return list(map(self._add_object, item))
     idx=self._object_index
     self._object_index+=1
     self._connect_objects[idx]=item
@@ -334,10 +412,14 @@ class MPLProcess(FigureCanvasAgg, Process):
   def _object_call(self, index, name, args, opts):
     return index, getattr(self._connect_objects[index], name)(*args, **opts)
 
+  def _attrib_call(self, attrib, name, args, opts):
+    return getattr(getattr(self, attrib), name)(*args, **opts)
+
   def _update_fixed_objects(self):
     for attr, cls in self._fixed_connect_objects.items():
       result=cls._do_update(getattr(self, attr))
       self.event_pipe.send((attr, result))
+      self.parentActionPending.set()
 
   def _fixed_object_call(self, attr, name, args, opts):
     if name=='_init_me':
@@ -356,13 +438,17 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
   drawFinished=QtCore.pyqtSignal()
   paintFinished=QtCore.pyqtSignal(object)
   eventEmitted=QtCore.pyqtSignal(object, object)
+  cplot=None
+  vlines=[]
+  hlines=[]
 
   def __init__(self, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
     QtCore.QThread.__init__(self)
-    self.pipe_in, pipe_in=Pipe()
-    pipe_out, self.pipe_out=Pipe()
-    event_pipe, self.event_pipe=Pipe()
-    self.canvas_process=MPLProcess(pipe_in, pipe_out, event_pipe,
+    pipe_in, self.pipe_in=Pipe(False)
+    self.pipe_out, pipe_out=Pipe(False)
+    self.event_pipe, event_pipe=Pipe(False)
+    self.actionPending=Event()
+    self.canvas_process=MPLProcess(pipe_in, pipe_out, event_pipe, self.actionPending,
                                    width, height, dpi,
                                    sharex, sharey, adjust={})
     self.stay_alive=True
@@ -370,33 +456,53 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     self.scheduled_receives=[]
     self._plots=[]
     self._imgs=[]
-    self._lines=[]
+    self.vlines=[]
+    self.hlines=[]
     self._objts=[]
 
     self.fig=ConnectedFigure(self, 'fig')
+    self.figure=self.fig
     self.ax=ConnectedAxes(self, 'ax')
+    self.cplot=AttribCaller(self, 'cplot')
 
   def run(self):
+    while True:
+      try:
+        self._run()
+      except:
+        error('ERROR in Thread %i:'%self.currentThreadId(), exc_info=True)
+
+  def _run(self):
     # start the plot process
     self.canvas_process.start()
     # create a timer to regularly communicate with the process
-    self.timer=QtCore.QTimer()
-    self.timer.timeout.connect(self.checkit)
-    self.timer.start(10)
-    self.exec_()
+    while True:
+      if self.scheduled_actions:
+        self.checkit()
+      if self.pipe_out.poll():
+        self.check_result()
+      if self.event_pipe.poll():
+        self.check_event()
+      if not self.scheduled_actions and not self.scheduled_receives:
+        self.actionPending.clear()
+        self.actionPending.wait(1.)
 
   def checkit(self):
+    debug('Thread %i enter actions'%self.currentThreadId())
     if self.scheduled_actions:
-      actions=list(self.scheduled_actions)
+      actions=self.scheduled_actions
+      self.scheduled_actions=[]
       # remove all but last draw from action list
       action_names=[a[0] for a in actions]
       for ignore in range(action_names.count('draw')-1):
         idx=action_names.index('draw')
         actions.pop(idx)
         action_names.pop(idx)
-      self.scheduled_actions=[]
       map(self.pipe_in.send, actions)
       self.scheduled_receives+=actions
+
+  def check_result(self):
+    debug('Thread %i enter results'%self.currentThreadId())
     paint_result=None
     while self.scheduled_receives and self.pipe_out.poll():
       item=self.scheduled_receives.pop(0)
@@ -405,12 +511,19 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
         paint_result=result
       elif item[0] in ['plot', 'errorbar', 'semilogy']:
         for resulti in result:
-          resulti._parent=self
+          if type(resulti) is tuple:
+            for resultj in resulti:
+              resultj._parent=self
+          else:
+            resulti._parent=self
         self._plots+=result
         self._objts+=result
       elif item[0] in ['axvline', 'axhline']:
         result._parent=self
-        self._lines.append(result)
+        if item[0]=='axvline':
+          self.vlines.append(result)
+        else:
+          self.hlines.append(result)
         self._objts.append(result)
       elif item[0] in ['imshow', 'pcolormesh']:
         result._parent=self
@@ -422,19 +535,48 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
           obj=self._objts[oidx.index(result[0])]._recall(item[0], result[1])
       elif item[0]=='_fixed_object_call':
         getattr(self, item[1][0])._recall(item[1][1], result)
+      elif item[0]=='clear':
+        self.vlines=[]
+        self.hlines=[]
     if paint_result:
         self.paintFinished.emit(paint_result)
-    if self.event_pipe.poll():
-      # process only last event of specific type
-      evnts={}
-      while self.event_pipe.poll():
-        s, event=self.event_pipe.recv()
-        if s in ['fig', 'ax']:
-          getattr(self, s)._update(event)
-        else:
-          evnts[s]=event
-      for s, event in evnts.items():
-        self.eventEmitted.emit(s, event)
+
+  def check_event(self):
+    debug('Thread %i enter event'%self.currentThreadId())
+    # process only last event of specific type
+    evnts={}
+    while self.event_pipe.poll():
+      s, event=self.event_pipe.recv()
+      if s in ['fig', 'ax']:
+        getattr(self, s)._update(event)
+      else:
+        evnts[s]=event
+    for s, event in evnts.items():
+      self.eventEmitted.emit(s, event)
+
+
+  def imshow(self, data, log=False, imin=None, imax=None, update=True, **opts):
+    '''
+      Convenience wrapper for self.canvas.ax.plot
+    '''
+    self.next_action='imshow'
+    if log:
+      self(data, norm=LogNorm(imin, imax), **opts)
+    else:
+      self(data, **opts)
+    return self.cplot
+
+  def pcolormesh(self, data, log=False, imin=None, imax=None, update=True, **opts):
+    '''
+      Convenience wrapper for self.canvas.ax.plot
+    '''
+    self.next_action='pcolormesh'
+    if log:
+      self(data, norm=LogNorm(imin, imax), **opts)
+    else:
+      self(data, **opts)
+    return self.cplot
+
 
   # Makes interfacing to the process convenient by passing
   # all methods available in the process class on access.
@@ -447,7 +589,9 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     return QtCore.QThread.__getattr__(self, name)
 
   def __call__(self, *args, **opts):
+    debug('Thread %i - Call method '%self.currentThreadId()+self.next_action)
     self.scheduled_actions.append((self.next_action, args, opts))
+    self.actionPending.set()
 
 class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   _running_threads=[]
@@ -455,13 +599,13 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
            QtCore.Qt.MidButton   : 2,
            QtCore.Qt.RightButton : 3,
            }
+  vbox=None
+  toolbar=None
 
   def __init__(self, parent=None, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
     QtGui.QWidget.__init__(self, parent)
     self.callbacks=CallbackRegistry()
-    self.setMouseTracking(True)
     self.widgetlock=widgets.LockDraw()
-
 
     self.dpi=dpi
     self.width=width
@@ -473,6 +617,15 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.drawRect=False
     self.stringBuffer=None
     self.buffer_width, self.buffer_height=0, 0
+
+    self.vbox=QtGui.QVBoxLayout(self)
+    self.drawArea=QtGui.QWidget(self)
+    self.drawArea.setMouseTracking(True)
+    self.drawArea.mouseMoveEvent=self.mouseMoveEvent
+    self.vbox.addWidget(self.drawArea)
+    self.toolbar=BackgroundNavigationToolbar(self, self)
+    self.vbox.addWidget(self.toolbar)
+
     self.resize(width, height)
 
   def update(self):
@@ -487,7 +640,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   def resizeEvent(self, event):
     QtGui.QWidget.resizeEvent(self, event)
     w=event.size().width()
-    h=event.size().height()
+    h=event.size().height()-self.toolbar.height()-5
     winch=w/self.dpi
     hinch=h/self.dpi
     self.width=w
@@ -496,7 +649,7 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.draw()
 
   def sizeHint(self):
-      return QtCore.QSize(self.width, self.height)
+      return QtCore.QSize(self.width, self.height+self.toolbar.height()+5)
 
   def minumumSizeHint(self):
       return QtCore.QSize(10, 10)
@@ -585,7 +738,8 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   # all methods available in the process class on access.
   # This means that thread.draw() will append ('draw', (), {}) to the process.
   def __getattr__(self, name):
-    if not name.startswith("_") and not name in self.__dict__ and name in MPLProcess.__dict__:
+    if not name.startswith("_") and not name in self.__dict__ and (name in MPLProcess.__dict__ or
+                                                                   name in MPLProcessHolder.__dict__):
       return getattr(self.draw_process, name)
     return QtGui.QWidget.__getattr__(self, name)
 
@@ -782,7 +936,6 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT, QtGui.QToolBar):
     'push the current view limits and position onto the stack'
     lims=[]; pos=[]
     a=self.draw_process.ax
-    print a.get_xlim(), a.get_ylim()
     xmin, xmax=a.get_xlim()
     ymin, ymax=a.get_ylim()
     lims.append((xmin, xmax, ymin, ymax))
