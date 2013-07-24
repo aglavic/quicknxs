@@ -19,9 +19,9 @@ import sys
 from copy import deepcopy
 from glob import glob
 from numpy import *
-from logging import debug, info #@Reimport
+from logging import debug, info, warn #@Reimport
 import h5py
-from time import time
+from time import time, strptime, mktime
 # ignore zero devision error
 #seterr(invalid='ignore')
 
@@ -182,11 +182,15 @@ class NXSData(object):
       self.measurement_type='Unknown'
       mapping=[(channel, channel) for channel in channels]
 
+    # get runtime for event mode splitting
+    total_duration=time_from_header('', nxs=nxs)
+
     progress=0.1
     if self._options['callback']:
       self._options['callback'](progress)
     self._read_times.append(time()-start)
     i=1
+    empty_channels=[]
     for dest, channel in mapping:
       if channel not in channels:
         continue
@@ -196,7 +200,12 @@ class NXSData(object):
                                   callback=self._options['callback'],
                                   callback_offset=progress,
                                   callback_scaling=0.9/len(channels),
-                                  tof_overwrite=self._options['event_tof_overwrite'])
+                                  tof_overwrite=self._options['event_tof_overwrite'],
+                                  total_duration=total_duration)
+        if data is None:
+          # no data in channel, don't add it
+          empty_channels.append(dest)
+          continue
       elif filename.endswith('histo.nxs'):
         data=MRDataset.from_histogram(raw_data, self._options)
       else:
@@ -212,6 +221,8 @@ class NXSData(object):
     #print time()-start
     if not is_ancient:
       nxs.close()
+    if empty_channels:
+      warn('No counts for state %s'%(','.join(empty_channels)))
     return True
 
   def _get_ancient(self, filename):
@@ -447,6 +458,7 @@ class MRDataset(object):
   @log_call
   def from_event(cls, data, read_options,
                  callback=None, callback_offset=0., callback_scaling=1.,
+                 total_duration=None,
                  tof_overwrite=None):
     '''
     Load data from a Nexus file containing event information.
@@ -460,6 +472,20 @@ class MRDataset(object):
     bin_type=read_options['bin_type']
     bins=read_options['bins']
     output._collect_info(data)
+
+    if tof_overwrite is None:
+      lcenter=data['DASlogs/LambdaRequest/value'].value[0]
+      # ToF region for this specific central wavelength
+      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+      if bin_type==0:
+        tof_edges=linspace(tmin, tmax, bins+1)
+      elif bin_type==1:
+        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      else:
+        raise ValueError, 'Unknown bin type %i'%bin_type
+    else:
+      tof_edges=tof_overwrite
 
     # Histogram the data
     # create pixel map
@@ -477,34 +503,40 @@ class MRDataset(object):
       # read the relative time in seconds from measurement start to event
       tof_real_time=data['bank1_events/event_time_zero'].value
       tof_idx_to_id=data['bank1_events/event_index'].value
-      split_step=float(tof_real_time[-1])/split_bins
-      start_id, stop_id=where(((tof_real_time>=(split_index*split_step))&
-                               (tof_real_time<=((split_index+1)*split_step))))[0][[0,-1]]
-      start_idx=tof_idx_to_id[start_id]
-      if (split_index+1)==split_bins:
-        stop_idx=None
+      # read the corresponding proton charge of each pulse
+      tof_pc=data['DASlogs/proton_charge/value'].value
+      if total_duration is None:
+        split_step=float(tof_real_time[-1]+0.01)/split_bins
       else:
-        stop_idx=tof_idx_to_id[stop_id+1]
+        split_step=float(total_duration+0.01)/split_bins
+      try:
+        start_id, stop_id=where(((tof_real_time>=(split_index*split_step))&
+                                 (tof_real_time<((split_index+1)*split_step))))[0][[0,-1]]
+      except IndexError:
+        debug('No pulses in selected range')
+        return None
+
+      if start_id==0:
+        start_idx=0
+      else:
+        start_idx=tof_idx_to_id[start_id-1]
+      stop_idx=tof_idx_to_id[stop_id]
+      debug('Event split with %.1f<=t<%.1f yielding pulse/tof indices: [%i:%i]/[%i:%i]'
+            %((split_index*split_step), ((split_index+1)*split_step),
+              start_id, stop_id+1, start_idx, stop_idx)
+            )
+      # calculate total proton charge in the selected area
+      output.proton_charge=tof_pc[start_id:stop_id+1].sum()
+
       tof_ids=tof_ids[start_idx:stop_idx]
       tof_time=tof_time[start_idx:stop_idx]
-      # correct the count statistics
+      # correct the total count value for the number of neutrons in the selected range
       output.total_counts=tof_time.shape[0]
-      output.proton_charge/=split_bins
+      if output.total_counts==0:
+        debug('No counts in selected range')
+        return None
     tof_x=X[tof_ids]
     tof_y=Y[tof_ids]
-    if tof_overwrite is None:
-      lcenter=data['DASlogs/LambdaRequest/value'].value[0]
-      # ToF region for this specific central wavelength
-      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
-      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
-      if bin_type==0:
-        tof_edges=linspace(tmin, tmax, bins+1)
-      elif bin_type==1:
-        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
-      else:
-        raise ValueError, 'Unknown bin type %i'%bin_type
-    else:
-      tof_edges=tof_overwrite
 
     if callback is not None:
       # create the 3D binning
@@ -657,19 +689,32 @@ class MRDataset(object):
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
-def time_from_header(filename):
+def time_from_header(filename, nxs=None):
   '''
   Read just an edf header to get the time of a measurement in seconds.
   '''
-  try:
-    nxs=h5py.File(filename, mode='r')
-  except IOError:
-    return None
-  sumtime=0
+  if nxs is None:
+    try:
+      nxs=h5py.File(filename, mode='r')
+    except IOError:
+      return None
+    close=True
+  else:
+    close=False
+  stime=1.e30
+  etime=0.
   for item in nxs.values():
-    sumtime+=item['duration'].value[0]
-  nxs.close()
-  return sumtime
+    start_str, start_sub=item['start_time'].value[0].split('.', 1)
+    start_sub=start_sub.split('-')[0]
+    start_time=mktime(strptime(start_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+start_sub)
+    end_str, end_sub=item['end_time'].value[0].split('.', 1)
+    end_sub=start_sub.split('-')[0]
+    end_time=mktime(strptime(end_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+end_sub)
+    stime=min(stime, start_time)
+    etime=max(etime, end_time)
+  if close:
+    nxs.close()
+  return etime-stime
 
 def locate_file(number, histogram=True, old_format=False):
     '''

@@ -261,8 +261,8 @@ class MainGUI(QtGui.QMainWindow):
     self.active_file=base
 
     if base.endswith('event.nxs'):
-      maxtime=time_from_header(os.path.join(folder, base))
-      self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(maxtime/60))
+      tottime=time_from_header(os.path.join(folder, base))
+      self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(tottime/60))
     if base.endswith('event.nxs') and self.ui.eventSplit.isChecked():
       event_split_bins=self.ui.eventSplitItems.value()
       event_split_index=self.ui.eventSplitIndex.value()-1
