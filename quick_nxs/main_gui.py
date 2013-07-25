@@ -14,7 +14,7 @@ from PyQt4 import QtGui, QtCore, QtWebKit
 from .version import str_version
 from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
 from .main_window import Ui_MainWindow
-from .gui_utils import DelayedTrigger, ReduceDialog
+from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
 from .polarization_gui import PolarizationDialog
@@ -103,8 +103,11 @@ class MainGUI(QtGui.QMainWindow):
   initiateReflectivityPlot=QtCore.pyqtSignal(bool)
   reflectivityUpdated=QtCore.pyqtSignal(bool)
 
-  def __init__(self, argv=[]):
-    QtGui.QMainWindow.__init__(self)
+  def __init__(self, argv=[], parent=None):
+    if parent is None:
+      QtGui.QMainWindow.__init__(self)
+    else:
+      QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
@@ -1794,6 +1797,18 @@ class MainGUI(QtGui.QMainWindow):
     dialog.exec_()
     dialog.destroy()
 
+  @log_call
+  def quickReduce(self):
+    '''
+    Reduce the current list of reduction items using the last options.
+    '''
+    if len(self.reduction_list)==0:
+      warning(u'Please select at least\none dataset to reduce.',
+              extra={'title': u'Select a dataset'})
+      return
+    reducer=Reducer(self, self.ref_list_channels, self.reduction_list)
+    reducer.execute()
+
   def plotMouseEvent(self, event):
     '''
     Show the mouse position of any plot in the main window
@@ -2067,7 +2082,7 @@ Do you want to try to restore the working reduction list?""",
     except:
       pass
 
-  def closeEvent(self, event):
+  def closeEvent(self, event=None):
     '''
     Save window and dock geometry.
     '''

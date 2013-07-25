@@ -43,108 +43,105 @@ sys.modules['genx.data']=genx_data
 genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 
-class ReduceDialog(QDialog):
-  _overwrite_all=False
+# check if run from mantid
+
+try:
+  import mantidplot
+except ImportError:
+  FROM_MANTID=False
+else:
+  FROM_MANTID=True
+
+class Reducer(object):
+  '''
+  Carry out the reduction process for a set of data runs. Can be used Ither as
+  base class for the ReduceDialog or stand alone when options are already
+  given.
+  '''
+  export_optios=dict(
+                      foldername=PATHS['results'], naming=PATHS['export_name'], sample_length=10.,
+                     )
+  export_optios.update(EXPORT)
 
   def __init__(self, parent, channels, refls):
-    QDialog.__init__(self, parent)
+    self._parent_window=parent
     self.cmap=parent.color
-    self.ui=UiReduction()
-    self.ui.setupUi(self)
     self.channels=list(channels) # make sure we don't alter the original list
     self.refls=refls
-    self.ui.directoryEntry.setText(PATHS['results'])
-    self.ui.fileNameEntry.setText(PATHS['export_name'])
-    self.set_email_texts()
-    for i in range(4):
-      checkbutton=getattr(self.ui, 'export_'+str(i))
-      if len(self.channels)>i:
-        checkbutton.setText(self.channels[i])
-      else:
-        checkbutton.setEnabled(False)
-        checkbutton.hide()
-    for key, value in EXPORT.items():
-      option=getattr(self.ui, key)
-      if hasattr(option, 'setChecked'):
-        option.setChecked(value)
-      else:
-        option.setText(value)
     self.tempfiles=[]
     self._gisans_plots=[]
 
+  def execute(self):
+    opts=self.export_optios
+    self.exported_files_all=[]
+    self.exported_files_plots=[]
+    self.exported_files_data=[]
+
+    # calculate and collect reflectivities
+    self.exporter=Exporter(self.channels, self.refls,
+                           sample_length=opts['sample_length'])
+    info('Re-reading all datasets...')
+    self.exporter.read_data()
+
+    if opts['exportSpecular']:
+      info('Extracting reflectivity...')
+      self.exporter.extract_reflectivity()
+    if opts['exportOffSpecular'] or opts['exportOffSpecularSmoothed']:
+      info('Extracting off-specular data...')
+      self.exporter.extract_offspecular()
+    if opts['exportOffSpecularCorr']:
+      info('Extracting corrected off-specular data...')
+      self.exporter.extract_offspecular_corr()
+    if opts['exportOffSpecularSmoothed']:
+      self.smooth_offspec()
+      if not opts['exportOffSpecular']:
+        del(self.exporter.output_data['OffSpec'])
+    if opts['exportGISANS']:
+      self.extract_gisans()
+
+    self.exporter.export_data(
+                              opts['foldername'], opts['naming'],
+                              multi_ascii=opts['multiAscii'],
+                              combined_ascii=opts['combinedAscii'],
+                              matlab_data=opts['matlab'],
+                              numpy_data=opts['numpy'],
+                              check_exists=self.check_exists,
+                              )
+    if opts['mantidplot'] and FROM_MANTID:
+      self.push_to_mantidplot()
+    if opts['gnuplot']:
+      info('Creating gnuplot scripts...')
+      self.exporter.create_gnuplot_scripts(opts['foldername'], opts['naming'])
+    if opts['genx']:
+      info('Creating genx file...')
+      self.exporter.create_genx_file(opts['foldername'], opts['naming'])
+    if opts['plot']:
+      info('Plotting...')
+      for title, output_data in self.exporter.output_data.items():
+        self.plot_result(output_data, title)
+
+    if opts['emailSend']:
+      self.send_email()
+    for tmp in self.tempfiles:
+      os.remove(tmp)
+    info('Finished')
+
   @log_call
-  def exec_(self):
+  def check_exists(self, filename):
     '''
-      Run the dialog and perform reflectivity extraction.
+      If the filename exists, prompt the user if it should be overwritten.
+      :return: If the file should be written or not.
     '''
-    if QDialog.exec_(self):
-      self.exported_files_all=[]
-      self.exported_files_plots=[]
-      self.exported_files_data=[]
-      foldername=unicode(self.ui.directoryEntry.text())
-      if not os.path.exists(foldername):
-        result=QMessageBox.question(self, 'Creat Folder?',
-                      'The folder "%s" does not exist. Do you want to create it?'%foldername,
-                      buttons=QMessageBox.Yes|QMessageBox.No)
-        if result==QMessageBox.Yes:
-          os.makedirs(foldername)
-        else:
-          return
-      self.save_settings()
-      # remove channels not selected
-      for i in reversed(list(range(len(self.channels)))):
-        checkbutton=getattr(self.ui, 'export_'+str(i))
-        if not checkbutton.isChecked():
-          self.channels.pop(i)
-      # calculate and collect reflectivities
-      self.exporter=Exporter(self.channels, self.refls,
-                             sample_length=self.ui.sampleSize.value())
-      info('Re-reading all datasets...')
-      self.exporter.read_data()
-
-      if self.ui.exportSpecular.isChecked():
-        info('Extracting reflectivity...')
-        self.exporter.extract_reflectivity()
-      if self.ui.exportOffSpecular.isChecked() or self.ui.exportOffSpecularSmoothed.isChecked():
-        info('Extracting off-specular data...')
-        self.exporter.extract_offspecular()
-      if self.ui.exportOffSpecularCorr.isChecked():
-        info('Extracting corrected off-specular data...')
-        self.exporter.extract_offspecular_corr()
-      if self.ui.exportOffSpecularSmoothed.isChecked():
-        self.smooth_offspec()
-        if not self.ui.exportOffSpecular.isChecked():
-          del(self.exporter.output_data['OffSpec'])
-      if self.ui.exportGISANS.isChecked():
-        self.extract_gisans()
-
-      directory=unicode(self.ui.directoryEntry.text())
-      naming=unicode(self.ui.fileNameEntry.text())
-      self.exporter.export_data(
-                                directory, naming,
-                                multi_ascii=self.ui.multiAscii.isChecked(),
-                                combined_ascii=self.ui.combinedAscii.isChecked(),
-                                matlab_data=self.ui.matlab.isChecked(),
-                                numpy_data=self.ui.numpy.isChecked(),
-                                check_exists=self.check_exists,
-                                )
-      if self.ui.gnuplot.isChecked():
-        info('Creating gnuplot scripts...')
-        self.exporter.create_gnuplot_scripts(directory, naming)
-      if self.ui.genx.isChecked():
-        info('Creating genx file...')
-        self.exporter.create_genx_file(directory, naming)
-      if self.ui.plot.isChecked():
-        info('Plotting...')
-        for title, output_data in self.exporter.output_data.items():
-          self.plot_result(output_data, title)
-
-      if self.ui.emailSend.isChecked():
-        self.send_email()
-      for tmp in self.tempfiles:
-        os.remove(tmp)
+    if self._overwrite_all or not os.path.exists(filename):
       return True
-      info('Finished')
+    result=QMessageBox.question(self, 'Overwrite file?',
+                                'The file "%s" already exists, overwrite it?'%filename,
+                                buttons=QMessageBox.Yes|QMessageBox.YesToAll|QMessageBox.No)
+    if result==QMessageBox.YesToAll:
+      self._overwrite_all=True
+      return True
+    elif result==QMessageBox.Yes:
+      return True
     else:
       return False
 
@@ -161,7 +158,7 @@ class ReduceDialog(QDialog):
       for channel in self.channels:
         gisans=GISANS(fdata[channel], **opts)
         output_data[channel].append(gisans)
-    dia=GISANSDialog(self, output_data[self.channels[0]])
+    dia=GISANSDialog(self._parent_window, output_data[self.channels[0]])
     result=dia.exec_()
     lmin=dia.ui.lambdaMin.value()
     lmax=dia.ui.lambdaMax.value()
@@ -190,14 +187,14 @@ class ReduceDialog(QDialog):
   @log_call
   def smooth_offspec(self):
     data=self.exporter.output_data['OffSpec'][self.channels[0]]
-    dia=SmoothDialog(self.parent(), data)
+    dia=SmoothDialog(self._parent_window, data)
     if not dia.exec_():
       dia.destroy()
       return
     settings=dia.getOptions()
     dia.destroy()
     pbinfo="Smoothing Channel "
-    pb=ProgressDialog(self.parent(), title="Smoothing",
+    pb=ProgressDialog(self._parent_window, title="Smoothing",
                       info_start=pbinfo+self.channels[0],
                       maximum=100*len(self.channels))
     pb.show()
@@ -205,23 +202,39 @@ class ReduceDialog(QDialog):
     pb.destroy()
 
   @log_call
-  def check_exists(self, filename):
-    '''
-      If the filename exists, prompt the user if it should be overwritten.
-      :return: If the file should be written or not.
-    '''
-    if self._overwrite_all or not os.path.exists(filename):
-      return True
-    result=QMessageBox.question(self, 'Overwrite file?',
-                                'The file "%s" already exists, overwrite it?'%filename,
-                                buttons=QMessageBox.Yes|QMessageBox.YesToAll|QMessageBox.No)
-    if result==QMessageBox.YesToAll:
-      self._overwrite_all=True
-      return True
-    elif result==QMessageBox.Yes:
-      return True
-    else:
-      return False
+  def push_to_mantidplot(self):
+    from _qti import Table, Layer #@UnresolvedImport
+    mp=mantidplot
+    root=mp.rootFolder()
+    ind_str=self.exporter.ind_str
+    folder=mp.addFolder(ind_str, root)
+    mp.changeFolder(folder)
+    for title, output_data in self.exporter.output_data.items():
+      if type(output_data[self.channels[0]]) is not list:
+        graph=mp.newGraph(ind_str+' '+title)
+        tbls=[]
+        ymin=1e10
+        ymax=0.
+        for channel in self.channels:
+          data=output_data[channel]
+          yfil=data[:, 1][data[:, 1]>0]
+          ymin=min(yfil.min(), ymin)
+          ymax=max(data[:, 1].max(), ymax)
+          tbls.append(mp.newTable(ind_str+' '+title+' ['+channel+']', data.shape[0], data.shape[1]))
+          for i, name in enumerate(output_data['column_names']):
+            tbls[-1].setColName(i+1, name)
+          tbls[-1].setColumnRole(3, Table.yErr)
+          for i in range(data.shape[0]):
+            for j in range(data.shape[1]):
+              tbls[-1].setCell(j+1, i+1, data[i, j])
+        lay=graph.layer(1)
+        lay.setScale(Layer.Left, ymin/1.5, ymax*1.5, 0., 5, 5, Layer.Log10)
+        for tbl, channel in zip(tbls, self.channels):
+          lay.addCurve(tbl, output_data['column_names'][1])
+        lay.setAxisTitle(Layer.Bottom, output_data['column_names'][0]+
+                         u' [%s]'%output_data['column_units'][0])
+        lay.setAxisTitle(Layer.Left, output_data['column_names'][1]+
+                         u' [%s]'%output_data['column_units'][1])
 
   @log_call
   def plot_result(self, output_data, title):
@@ -241,8 +254,8 @@ class ReduceDialog(QDialog):
       plot.set_title(ind_str+' - '+title)
       plot.draw()
       dialog.show()
-      self.parent().open_plots.append(dialog)
-      if self.ui.emailSend.isChecked() and not self.ui.gnuplot.isChecked():
+      self._parent_window.open_plots.append(dialog)
+      if self.export_optios['emailSend'] and not self.export_optios['gnuplot']:
         self._save_plot(plot)
     else:
       if title in ['OffSpec', 'OffSpecCorr']:
@@ -292,8 +305,8 @@ class ReduceDialog(QDialog):
         plot.set_title(ind_str+' - '+title+' - (%s)'%channel)
         plot.draw()
         dialog.show()
-        self.parent().open_plots.append(dialog)
-        if self.ui.emailSend.isChecked() and not self.ui.gnuplot.isChecked():
+        self._parent_window.open_plots.append(dialog)
+        if self.export_optios['emailSend'] and not self.export_optios['gnuplot']:
           self._save_plot(plot)
 
   @log_call
@@ -306,47 +319,6 @@ class ReduceDialog(QDialog):
     else:
       self.exported_files_plots.append(fname)
       self.tempfiles.append(fname)
-
-  @log_call
-  def changeDir(self):
-    oldd=self.ui.directoryEntry.text()
-    newd=QFileDialog.getExistingDirectory(parent=self, caption=u'Select new folder',
-                                          directory=oldd)
-    if newd is not None:
-      self.ui.directoryEntry.setText(newd)
-
-  @log_call
-  def set_email_texts(self):
-    for name, value in EMAIL.items():
-      entry=getattr(self.ui, 'email'+name)
-      if entry.__class__.__name__=='QPlainTextEdit':
-        entry.setPlainText(value)
-      elif entry.__class__.__name__=='QLineEdit':
-        entry.setText(value)
-      else:
-        entry.setChecked(value)
-
-  def save_settings(self):
-    PATHS['results']=unicode(self.ui.directoryEntry.text())
-    for key in EXPORT.keys():
-      option=getattr(self.ui, key)
-      if hasattr(option, 'setChecked'):
-        EXPORT[key]=option.isChecked()
-      else:
-        EXPORT[key]=unicode(option.text())
-    self.save_email_texts()
-
-  @log_call
-  def save_email_texts(self):
-    for name, value in EMAIL.items():
-      entry=getattr(self.ui, 'email'+name)
-      if entry.__class__.__name__=='QPlainTextEdit':
-        value=entry.toPlainText()
-      elif entry.__class__.__name__=='QLineEdit':
-        value=entry.text()
-      else:
-        value=entry.isChecked()
-      EMAIL[name]=value
 
   def _email_replace(self, text):
     return text.replace('{ipts}', self.exporter.ipts_str).replace('{numbers}',
@@ -416,6 +388,104 @@ class ReduceDialog(QDialog):
       warning("Could not send email, perhaps you're not in the ORNL network.", exc_info=True)
     else:
       debug('Email sent successfully')
+
+
+class ReduceDialog(QDialog, Reducer):
+  _overwrite_all=False
+
+  def __init__(self, parent, channels, refls):
+    QDialog.__init__(self, parent)
+    Reducer.__init__(self, parent, channels, refls)
+    self.ui=UiReduction()
+    self.ui.setupUi(self)
+    self.ui.directoryEntry.setText(PATHS['results'])
+    self.ui.fileNameEntry.setText(PATHS['export_name'])
+    self.set_email_texts()
+    for i in range(4):
+      checkbutton=getattr(self.ui, 'export_'+str(i))
+      if len(self.channels)>i:
+        checkbutton.setText(self.channels[i])
+      else:
+        checkbutton.setEnabled(False)
+        checkbutton.hide()
+    if FROM_MANTID:
+      self.ui.mantidplot.setEnabled(True)
+    for key, value in EXPORT.items():
+      option=getattr(self.ui, key)
+      if hasattr(option, 'setChecked'):
+        option.setChecked(value)
+      else:
+        option.setText(value)
+
+  @log_call
+  def exec_(self):
+    '''
+      Run the dialog and perform reflectivity extraction.
+    '''
+    if QDialog.exec_(self):
+      foldername=unicode(self.ui.directoryEntry.text())
+      if not os.path.exists(foldername):
+        result=QMessageBox.question(self, 'Creat Folder?',
+                      'The folder "%s" does not exist. Do you want to create it?'%foldername,
+                      buttons=QMessageBox.Yes|QMessageBox.No)
+        if result==QMessageBox.Yes:
+          os.makedirs(foldername)
+        else:
+          return
+      self.save_settings()
+      self.execute()
+      return True
+    else:
+      return False
+
+  @log_call
+  def changeDir(self):
+    oldd=self.ui.directoryEntry.text()
+    newd=QFileDialog.getExistingDirectory(parent=self, caption=u'Select new folder',
+                                          directory=oldd)
+    if newd is not None:
+      self.ui.directoryEntry.setText(newd)
+
+  @log_call
+  def set_email_texts(self):
+    for name, value in EMAIL.items():
+      entry=getattr(self.ui, 'email'+name)
+      if entry.__class__.__name__=='QPlainTextEdit':
+        entry.setPlainText(value)
+      elif entry.__class__.__name__=='QLineEdit':
+        entry.setText(value)
+      else:
+        entry.setChecked(value)
+
+  def save_settings(self):
+    ui=self.ui
+    PATHS['results']=unicode(ui.directoryEntry.text())
+    for key in EXPORT.keys():
+      option=getattr(ui, key)
+      if hasattr(option, 'setChecked'):
+        EXPORT[key]=option.isChecked()
+      else:
+        EXPORT[key]=unicode(option.text())
+    self.save_email_texts()
+    # update options from all UI stuff
+    opts=self.export_optios
+    for key in EXPORT.keys():
+      opts[key]=getattr(ui, key).isChecked()
+    opts['foldername']=unicode(self.ui.directoryEntry.text())
+    opts['naming']=unicode(self.ui.fileNameEntry.text())
+    opts['sample_length']=self.ui.sampleSize.value()
+
+  @log_call
+  def save_email_texts(self):
+    for name, value in EMAIL.items():
+      entry=getattr(self.ui, 'email'+name)
+      if entry.__class__.__name__=='QPlainTextEdit':
+        value=entry.toPlainText()
+      elif entry.__class__.__name__=='QLineEdit':
+        value=entry.text()
+      else:
+        value=entry.isChecked()
+      EMAIL[name]=value
 
 
 class PlotDialog(QDialog):

@@ -287,7 +287,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>254</width>
+             <width>246</width>
              <height>142</height>
             </rect>
            </property>
@@ -537,7 +537,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>254</width>
+             <width>246</width>
              <height>138</height>
             </rect>
            </property>
@@ -720,7 +720,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>254</width>
+             <width>246</width>
              <height>135</height>
             </rect>
            </property>
@@ -1776,7 +1776,14 @@
                   <item>
                    <widget class="QPushButton" name="reduceButton">
                     <property name="text">
-                     <string>Reduce</string>
+                     <string>Reduce...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="reduceLastButton">
+                    <property name="text">
+                     <string>Quick-Reduce (use last options)</string>
                     </property>
                    </widget>
                   </item>
@@ -2582,6 +2589,7 @@
     <addaction name="actionClear"/>
     <addaction name="separator"/>
     <addaction name="actionReduce"/>
+    <addaction name="actionQuick_Reduce"/>
    </widget>
    <widget class="QMenu" name="menuAutomatics">
     <property name="title">
@@ -2959,6 +2967,17 @@
     <string>Log Debug Messages</string>
    </property>
   </action>
+  <action name="actionQuick_Reduce">
+   <property name="text">
+    <string>Quick-Reduce</string>
+   </property>
+   <property name="toolTip">
+    <string>Reduce list using options from last export</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -3231,7 +3250,7 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>634</x>
+     <x>632</x>
      <y>97</y>
     </hint>
     <hint type="destinationlabel">
@@ -3247,7 +3266,7 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
+     <x>446</x>
      <y>97</y>
     </hint>
     <hint type="destinationlabel">
@@ -3391,7 +3410,7 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>518</x>
+     <x>514</x>
      <y>122</y>
     </hint>
     <hint type="destinationlabel">
@@ -3423,7 +3442,7 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>543</x>
+     <x>539</x>
      <y>99</y>
     </hint>
     <hint type="destinationlabel">
@@ -3487,7 +3506,7 @@
    <slot>clip_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>569</x>
+     <x>565</x>
      <y>123</y>
     </hint>
     <hint type="destinationlabel">
@@ -3519,8 +3538,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>621</y>
+     <x>251</x>
+     <y>630</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -3535,8 +3554,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>760</y>
+     <x>255</x>
+     <y>768</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -3551,8 +3570,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>557</y>
+     <x>251</x>
+     <y>566</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3567,7 +3586,7 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
+     <x>130</x>
      <y>766</y>
     </hint>
     <hint type="destinationlabel">
@@ -3583,8 +3602,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>549</y>
+     <x>251</x>
+     <y>558</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -3599,7 +3618,7 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
+     <x>169</x>
      <y>558</y>
     </hint>
     <hint type="destinationlabel">
@@ -3615,7 +3634,7 @@
    <slot>toggleHide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
+     <x>130</x>
      <y>812</y>
     </hint>
     <hint type="destinationlabel">
@@ -3631,8 +3650,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>580</y>
+     <x>251</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3647,8 +3666,8 @@
    <slot>fileOpenList()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>266</x>
-     <y>412</y>
+     <x>258</x>
+     <y>456</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3663,7 +3682,7 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
+     <x>169</x>
      <y>582</y>
     </hint>
     <hint type="destinationlabel">
@@ -3679,7 +3698,7 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
+     <x>169</x>
      <y>606</y>
     </hint>
     <hint type="destinationlabel">
@@ -3695,8 +3714,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>573</y>
+     <x>251</x>
+     <y>582</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -3711,8 +3730,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>597</y>
+     <x>251</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3727,7 +3746,7 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
+     <x>169</x>
      <y>654</y>
     </hint>
     <hint type="destinationlabel">
@@ -3743,8 +3762,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>645</y>
+     <x>251</x>
+     <y>654</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3759,7 +3778,7 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
+     <x>171</x>
      <y>677</y>
     </hint>
     <hint type="destinationlabel">
@@ -3775,7 +3794,7 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
+     <x>130</x>
      <y>834</y>
     </hint>
     <hint type="destinationlabel">
@@ -3791,7 +3810,7 @@
    <slot>visualizePeakfinding()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>132</x>
+     <x>128</x>
      <y>701</y>
     </hint>
     <hint type="destinationlabel">
@@ -3823,7 +3842,7 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>177</x>
+     <x>174</x>
      <y>104</y>
     </hint>
     <hint type="destinationlabel">
@@ -3839,7 +3858,7 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
+     <x>130</x>
      <y>790</y>
     </hint>
     <hint type="destinationlabel">
@@ -3855,8 +3874,8 @@
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>782</y>
+     <x>255</x>
+     <y>790</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3871,7 +3890,7 @@
    <slot>openByNumber()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>262</x>
+     <x>254</x>
      <y>80</y>
     </hint>
     <hint type="destinationlabel">
@@ -3887,8 +3906,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>804</y>
+     <x>255</x>
+     <y>812</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3903,8 +3922,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>826</y>
+     <x>255</x>
+     <y>834</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3919,7 +3938,7 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
+     <x>171</x>
      <y>610</y>
     </hint>
     <hint type="destinationlabel">
@@ -3935,7 +3954,7 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>265</x>
+     <x>257</x>
      <y>104</y>
     </hint>
     <hint type="destinationlabel">
@@ -3971,7 +3990,7 @@
      <y>185</y>
     </hint>
     <hint type="destinationlabel">
-     <x>265</x>
+     <x>257</x>
      <y>185</y>
     </hint>
    </hints>
@@ -4184,6 +4203,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reduceLastButton</sender>
+   <signal>pressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>quickReduce()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>640</x>
+     <y>820</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>663</x>
+     <y>866</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuick_Reduce</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>quickReduce()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4231,5 +4282,6 @@
   <slot>run_ipython()</slot>
   <slot>raiseError()</slot>
   <slot>set_debug()</slot>
+  <slot>quickReduce()</slot>
  </slots>
 </ui>

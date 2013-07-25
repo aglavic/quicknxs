@@ -497,14 +497,14 @@ class MRDataset(object):
     # create ToF edges for the binning and correlate pixel indices with pixel position
     tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
     tof_time=data['bank1_events/event_time_offset'].value
+    # read the corresponding proton charge of each pulse
+    tof_pc=data['DASlogs/proton_charge/value'].value
     if read_options['event_split_bins']:
       split_bins=read_options['event_split_bins']
       split_index=read_options['event_split_index']
       # read the relative time in seconds from measurement start to event
       tof_real_time=data['bank1_events/event_time_zero'].value
       tof_idx_to_id=data['bank1_events/event_index'].value
-      # read the corresponding proton charge of each pulse
-      tof_pc=data['DASlogs/proton_charge/value'].value
       if total_duration is None:
         split_step=float(tof_real_time[-1]+0.01)/split_bins
       else:
@@ -525,8 +525,7 @@ class MRDataset(object):
             %((split_index*split_step), ((split_index+1)*split_step),
               start_id, stop_id+1, start_idx, stop_idx)
             )
-      # calculate total proton charge in the selected area
-      output.proton_charge=tof_pc[start_id:stop_id+1].sum()
+      tof_pc=tof_pc[start_id:stop_id+1]
 
       tof_ids=tof_ids[start_idx:stop_idx]
       tof_time=tof_time[start_idx:stop_idx]
@@ -537,6 +536,8 @@ class MRDataset(object):
         return None
     tof_x=X[tof_ids]
     tof_y=Y[tof_ids]
+    # calculate total proton charge in the selected area
+    output.proton_charge=tof_pc.sum()
 
     if callback is not None:
       # create the 3D binning
@@ -704,12 +705,18 @@ def time_from_header(filename, nxs=None):
   stime=1.e30
   etime=0.
   for item in nxs.values():
-    start_str, start_sub=item['start_time'].value[0].split('.', 1)
-    start_sub=start_sub.split('-')[0]
-    start_time=mktime(strptime(start_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+start_sub)
-    end_str, end_sub=item['end_time'].value[0].split('.', 1)
-    end_sub=start_sub.split('-')[0]
-    end_time=mktime(strptime(end_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+end_sub)
+    if '.' in item['start_time'].value[0]:
+      start_str, start_sub=item['start_time'].value[0].split('.', 1)
+      start_sub=start_sub.split('-')[0]
+      start_time=mktime(strptime(start_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+start_sub)
+      end_str, end_sub=item['end_time'].value[0].split('.', 1)
+      end_sub=start_sub.split('-')[0]
+      end_time=mktime(strptime(end_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+end_sub)
+    else:
+      start_str, start_sub=item['start_time'].value[0].rsplit('-', 1)
+      start_time=mktime(strptime(start_str, '%Y-%m-%dT%H:%M:%S'))
+      end_str, end_sub=item['end_time'].value[0].rsplit('-', 1)
+      end_time=mktime(strptime(end_str, '%Y-%m-%dT%H:%M:%S'))
     stime=min(stime, start_time)
     etime=max(etime, end_time)
   if close:

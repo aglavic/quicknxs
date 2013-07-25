@@ -27,7 +27,7 @@ class GeneralClassTest(unittest.TestCase):
     self.assertTrue(isinstance(obj, mreduce.NXSData), 'NXS file readout')
     self.assertEqual(obj.origin, TEST_DATASET, 'make sure right file name is saved')
     self._attr_check(obj, 'measurement_type')
-    self.assertEqual(len(obj), 1)
+    self.assertEqual(len(obj), 4)
     repr(obj)
 
   def test_read_file_event(self):
@@ -35,7 +35,7 @@ class GeneralClassTest(unittest.TestCase):
     self.assertTrue(isinstance(obj, mreduce.NXSData), 'NXS file readout')
     self.assertEqual(obj.origin, TEST_EVENT, 'make sure right file name is saved')
     self._attr_check(obj, 'measurement_type')
-    self.assertEqual(len(obj), 1)
+    self.assertEqual(len(obj), 4)
     self.assertEqual(len(obj[0].tof), 40)
 
   def test_caching(self):
@@ -157,8 +157,8 @@ class EventModeTests(unittest.TestCase):
   def test_splitting(self):
     full_ds=mreduce.NXSData(TEST_EVENT, event_split_bins=None)
     split_ds=[]
-    for i in range(10):
-      split_ds.append(mreduce.NXSData(TEST_EVENT, event_split_bins=10,
+    for i in range(4):
+      split_ds.append(mreduce.NXSData(TEST_EVENT, event_split_bins=4,
                                       event_split_index=i))
     self.assertEqual(full_ds[0].total_counts,
                      sum([d[0].total_counts for d in split_ds]))

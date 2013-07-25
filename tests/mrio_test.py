@@ -127,13 +127,13 @@ class ExportTest(FakeData, unittest.TestCase):
     os.remove(expfile)
 
   def test_write_consistent(self):
-    exporter=Exporter(self.ds.keys(), [self.ref1])
+    exporter=Exporter([self.ds.keys()[0]], [self.ref1])
     exporter.extract_reflectivity()
     expfile=os.path.join(tempfile.gettempdir(), 'testexport.dat')
     exporter.export_data(tempfile.gettempdir(), 'testexport.dat',
                       multi_ascii=True, combined_ascii=False,
                       matlab_data=False, numpy_data=False)
-    tdata=array([self.ref1.Q, self.ref1.R, self.ref1.dR]).transpose()[::-1]
+    tdata=array([self.ref1.Q, self.ref1.R, self.ref1.dR]).transpose()
     if sys.version_info[0]>=3:
       rdata=loadtxt(open(expfile, 'rb'))
     else:
