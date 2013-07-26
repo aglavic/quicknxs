@@ -94,6 +94,11 @@ class NXSData(object):
 
   @log_both
   def __new__(cls, filename, **options):
+    if type(filename) is int:
+      fn=locate_file(filename)
+      if fn is None:
+        raise RuntimeError, 'No file found for index %i'%filename
+      filename=fn
     all_options=dict(cls.DEFAULT_OPTIONS)
     for key, value in options.items():
       if not key in all_options:
@@ -540,7 +545,7 @@ class MRDataset(object):
     output.proton_charge=tof_pc.sum()
 
     if callback is not None:
-      # create the 3D binning
+      # create the 3D binning using chunks to update the callback regularly
       ssize=1e5
       Ixyt, D=histogramdd(vstack([tof_x[:ssize], tof_y[:ssize], tof_time[:ssize]]).transpose(),
                          bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
