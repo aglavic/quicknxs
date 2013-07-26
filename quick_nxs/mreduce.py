@@ -705,17 +705,19 @@ def time_from_header(filename, nxs=None):
   stime=1.e30
   etime=0.
   for item in nxs.values():
-    if '.' in str(item['start_time'].value[0]):
-      start_str, start_sub=str(item['start_time'].value[0]).split('.', 1)
+    sstr=item['start_time'].value[0].decode()
+    estr=item['end_time'].value[0].decode()
+    if '.' in sstr:
+      start_str, start_sub=sstr.split('.', 1)
       start_sub=start_sub.split('-')[0]
       start_time=mktime(strptime(start_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+start_sub)
-      end_str, end_sub=str(item['end_time'].value[0]).split('.', 1)
+      end_str, end_sub=estr.split('.', 1)
       end_sub=start_sub.split('-')[0]
       end_time=mktime(strptime(end_str, '%Y-%m-%dT%H:%M:%S'))+float('.'+end_sub)
     else:
-      start_str, start_sub=str(item['start_time'].value[0]).rsplit('-', 1)
+      start_str, start_sub=sstr.rsplit('-', 1)
       start_time=mktime(strptime(start_str, '%Y-%m-%dT%H:%M:%S'))
-      end_str, end_sub=str(item['end_time'].value[0]).rsplit('-', 1)
+      end_str, end_sub=estr.rsplit('-', 1)
       end_time=mktime(strptime(end_str, '%Y-%m-%dT%H:%M:%S'))
     stime=min(stime, start_time)
     etime=max(etime, end_time)
