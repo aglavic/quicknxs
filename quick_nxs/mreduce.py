@@ -433,12 +433,15 @@ class MRDataset(object):
     output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
     output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset
 
-    mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
-                                          output.dist_mod_det/output.dist_mod_mon
-    mon_I_from=data['monitor1']['data'].value.astype(float)
-    mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
-                       weights=mon_I_from)[0]
-    output.mon_data=mod_data
+    try:
+      mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
+                                            output.dist_mod_det/output.dist_mod_mon
+      mon_I_from=data['monitor1']['data'].value.astype(float)
+      mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
+                         weights=mon_I_from)[0]
+      output.mon_data=mod_data
+    except KeyError:
+      output.mon_data=None
     return output
 
   @classmethod
