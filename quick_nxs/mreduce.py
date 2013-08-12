@@ -1060,14 +1060,24 @@ class Reflectivity(object):
     if bg_poly:
       # create the background region from given polygons
       # for ToF channels without polygon region the normal positions are use
-      from matplotlib.nxutils import points_inside_poly
+      import matplotlib
       x=dataset.x
       lamda=dataset.lamda
       X, Lamda=meshgrid(x, lamda)
       points=vstack([Lamda.flatten(), X.flatten()]).transpose()
       points_in_region=zeros(X.shape, dtype=bool).flatten()
-      for poly in bg_poly:
-        points_in_region|=points_inside_poly(points, poly)
+      # matplotlib 1.2 deprecates nxutils and 1.3 removes it
+      if matplotlib.__version__>='1.2':
+        debug('Using matplotlib.path for polygon checking')
+        from matplotlib.path import Path
+        for poly in bg_poly:
+          poly_path=Path(poly)
+          points_in_region|=poly_path.contains_points(points)
+      else:
+        debug('Using matplotlib.nxutils for polygon checking')
+        from matplotlib.nxutils import points_inside_poly
+        for poly in bg_poly:
+          points_in_region|=points_inside_poly(points, poly)
       points_in_region=points_in_region.reshape(X.shape)
       lamda_regions=unique(Lamda[points_in_region].flatten())
       # add missing lambda items from normal bg region
