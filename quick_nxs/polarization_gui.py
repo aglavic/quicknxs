@@ -191,7 +191,7 @@ class PolarizationDialog(QDialog):
     for ignore, I, xpos in self._Xitems:
       lamda=I.values()[0].lamda
       lamdas.append(lamda)
-      FRs.append(I['++']/I['+-'])
+      FRs.append(I['++'].Rraw/I['+-'].Rraw)
       Xs.append(ones_like(lamda)*xpos)
     plot.pcolormesh(array(Xs), array(lamdas), array(FRs), cmap=self.parent_window.color)
     plot.cplot.set_clim(30, 150)
