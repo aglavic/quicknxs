@@ -62,6 +62,7 @@ class Reducer(object):
                       foldername=PATHS['results'], naming=PATHS['export_name'], sample_length=10.,
                      )
   export_optios.update(EXPORT)
+  _overwrite_all=False
 
   def __init__(self, parent, channels, refls):
     self._parent_window=parent
@@ -134,7 +135,11 @@ class Reducer(object):
     '''
     if self._overwrite_all or not os.path.exists(filename):
       return True
-    result=QMessageBox.question(self, 'Overwrite file?',
+    if isinstance(self, ReduceDialog):
+      parent=self
+    else:
+      parent=self._parent_window
+    result=QMessageBox.question(parent, 'Overwrite file?',
                                 'The file "%s" already exists, overwrite it?'%filename,
                                 buttons=QMessageBox.Yes|QMessageBox.YesToAll|QMessageBox.No)
     if result==QMessageBox.YesToAll:
@@ -391,7 +396,6 @@ class Reducer(object):
 
 
 class ReduceDialog(QDialog, Reducer):
-  _overwrite_all=False
 
   def __init__(self, parent, channels, refls):
     QDialog.__init__(self, parent)
