@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Wed Jul 24 17:18:20 2013
+# Created: Mon Aug 26 13:59:42 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,6 +41,7 @@ class Ui_MainWindow(object):
     self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
     self.mainSplitter = QtGui.QSplitter(self.centralwidget)
     self.mainSplitter.setOrientation(QtCore.Qt.Horizontal)
+    self.mainSplitter.setChildrenCollapsible(False)
     self.mainSplitter.setObjectName(_fromUtf8("mainSplitter"))
     self.leftEntries = QtGui.QFrame(self.mainSplitter)
     self.leftEntries.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -311,7 +312,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 246, 135))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 141, 135))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1051,6 +1052,7 @@ class Ui_MainWindow(object):
     self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
     self.plotSplitter = QtGui.QSplitter(self.rightPlots)
     self.plotSplitter.setOrientation(QtCore.Qt.Vertical)
+    self.plotSplitter.setChildrenCollapsible(False)
     self.plotSplitter.setObjectName(_fromUtf8("plotSplitter"))
     self.widget_4 = QtGui.QWidget(self.plotSplitter)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
