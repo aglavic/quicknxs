@@ -155,7 +155,11 @@ class QtHandler(logging.Handler):
       Warning messages display a dialog to the user.
     '''
     from PyQt4.QtGui import QMessageBox
-    QMessageBox.warning(self.main_window, 'QuickNXS '+record.levelname, record.msg)
+    if record.exc_info:
+      msg=u'%s\nError Message:\n%s:   %s'%(record.msg, record.exc_info[0].__name__, record.exc_info[1])
+      QMessageBox.warning(self.main_window, 'QuickNXS '+record.levelname, msg)
+    else:
+      QMessageBox.warning(self.main_window, 'QuickNXS '+record.levelname, record.msg)
 
   def show_error(self, record):
     '''

@@ -1150,7 +1150,12 @@ class MainGUI(QtGui.QMainWindow):
     else:
       header=self._pending_header
       self._pending_header=None
-    parser=HeaderParser(header)
+    try:
+      parser=HeaderParser(header)
+    except:
+      warning('Could not evaluate header information, probably the wrong format:\n\n',
+              exc_info=True)
+      return
     info('Reloading data from information in file header...')
     parser.parse(callback=self.updateEventReadout)
     info('Data loaded')
