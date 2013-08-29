@@ -698,6 +698,31 @@ class MRDataset(object):
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
+  def get_tth(self, dangle0=None, dpix=None):
+    '''
+    Return the tth values corresponding to each x-pixel.
+    '''
+    if dangle0 is None:
+      dangle0=self.dangle0
+    if dpix is None:
+      dpix=self.dpix
+    x=self.x
+    grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
+    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
+    tth_range=x[::-1]*grad_per_pixel
+    return tth0+tth_range
+
+  def get_tthlamda(self, dangle0=None, dpix=None):
+    '''
+    Return tth and lamda values corresponding to x and tof.
+    '''
+    return meshgrid(self.lamda, self.get_tth(dangle0, dpix))
+
+  tth=property(get_tth)
+  tthlamda=property(get_tthlamda)
+
+
+
 def time_from_header(filename, nxs=None):
   '''
   Read just an edf header to get the time of a measurement in seconds.
