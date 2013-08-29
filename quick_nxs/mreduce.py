@@ -44,6 +44,28 @@ DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 # measurement type mapping of states
+MAPPING_12FULL=(
+                 (u'++ (0V)', u'entry-off_off_Ezero'),
+                 (u'-- (0V)', u'entry-on_on_Ezero'),
+                 (u'+- (0V)', u'entry-off_on_Ezero'),
+                 (u'-+ (0V)', u'entry-on_off_Ezero'),
+                 (u'++ (+V)', u'entry-off_off_Eplus'),
+                 (u'-- (+V)', u'entry-on_on_Eplus'),
+                 (u'+- (+V)', u'entry-off_on_Eplus'),
+                 (u'-+ (+V)', u'entry-on_off_Eplus'),
+                 (u'++ (-V)', u'entry-off_off_Eminus'),
+                 (u'-- (-V)', u'entry-on_on_Eminus'),
+                 (u'+- (-V)', u'entry-off_on_Eminus'),
+                 (u'-+ (-V)', u'entry-on_off_Eminus'),
+                 )
+MAPPING_12HALF=(
+                 (u'+ (0V)', u'entry-off_off_Ezero'),
+                 (u'- (0V)', u'entry-on_off_Ezero'),
+                 (u'+ (+V)', u'entry-off_off_Eplus'),
+                 (u'- (+V)', u'entry-on_off_Eplus'),
+                 (u'+ (-V)', u'entry-off_off_Eminus'),
+                 (u'- (-V)', u'entry-on_off_Eminus'),
+                 )
 MAPPING_FULLPOL=(
                  (u'++', u'entry-Off_Off'),
                  (u'--', u'entry-On_On'),
@@ -149,9 +171,11 @@ class NXSData(object):
     try:
       nxs=h5py.File(filename, mode='r')
     except IOError:
+      debug('Could not read nxs file %s'%filename, exc_info=True)
       return False
     # analyze channels
     channels=nxs.keys()
+    debug('Channels in file: '+repr(channels))
     if channels==['entry']:
       # ancient file format with polarizations in different files
       nxs=self._get_ancient(filename)
@@ -161,31 +185,45 @@ class NXSData(object):
     else:
       is_ancient=False
     for channel in list(channels):
+      debug(str(nxs[channel][u'total_counts'].value[0]))
       if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
         channels.remove(channel)
     if len(channels)==0:
+      debug('No valid channels in file')
       return False
     ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
     pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
 
     # select the type of measurement that has been used
     if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
-      self.measurement_type='Polarization Analysis'
-      mapping=MAPPING_FULLPOL
+      if channels[0] in [m[1] for m in MAPPING_12FULL]:
+        self.measurement_type='Polarization Analysis w/E-Field'
+        mapping=list(MAPPING_12FULL)
+      else:
+        self.measurement_type='Polarization Analysis'
+        mapping=list(MAPPING_FULLPOL)
     elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
-      self.measurement_type='Polarized'
-      mapping=MAPPING_HALFPOL
+      if channels[0] in [m[1] for m in MAPPING_12HALF]:
+        self.measurement_type='Polarized w/E-Field'
+        mapping=list(MAPPING_12HALF)
+      else:
+        self.measurement_type='Polarized'
+        mapping=list(MAPPING_HALFPOL)
     elif 'DASlogs' in nxs[channels[0]] and \
           nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
           channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
       self.measurement_type='Electric Field'
-      mapping=MAPPING_EFIELD
+      mapping=list(MAPPING_EFIELD)
     elif len(channels)==1:
       self.measurement_type='Unpolarized'
-      mapping=MAPPING_UNPOL
+      mapping=list(MAPPING_UNPOL)
     else:
       self.measurement_type='Unknown'
-      mapping=[(channel, channel) for channel in channels]
+      mapping=[]
+    # check that all channels have a mapping entry
+    for channel in channels:
+      if not channel in [m[1] for m in mapping]:
+        mapping.append((channel.lstrip('entry-'), channel))
 
     # get runtime for event mode splitting
     total_duration=time_from_header('', nxs=nxs)
@@ -246,7 +284,7 @@ class NXSData(object):
     return nxs
 
   def __getitem__(self, item):
-    if type(item)==int:
+    if type(item) in [int, slice]:
       return self._channel_data[item]
     else:
       if item in self._channel_names:

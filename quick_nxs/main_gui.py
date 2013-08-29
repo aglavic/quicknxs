@@ -122,6 +122,10 @@ class MainGUI(QtGui.QMainWindow):
     button.setFlat(True)
     button.setMaximumSize(150, 20)
 
+    # hide radio buttons
+    for i in range(1, 12):
+      getattr(self.ui, 'selectedChannel%i'%i).hide()
+
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(140, 100)
@@ -308,7 +312,7 @@ class MainGUI(QtGui.QMainWindow):
     self.channels=data.keys()
 
     currentChannel=0
-    for i in range(4):
+    for i in range(12):
       if getattr(self.ui, 'selectedChannel%i'%i).isChecked():
         currentChannel=i
 
@@ -320,7 +324,7 @@ class MainGUI(QtGui.QMainWindow):
     for i, channel in enumerate(self.channels):
       getattr(self.ui, 'selectedChannel%i'%i).show()
       getattr(self.ui, 'selectedChannel%i'%i).setText(channel)
-    for i in range(len(self.channels), 4):
+    for i in range(len(self.channels), 12):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
     self.active_data=data
     self.last_mtime=os.path.getmtime(filename)
@@ -499,7 +503,7 @@ class MainGUI(QtGui.QMainWindow):
     imin=1e20
     imax=1e-20
     xynormed=[]
-    for dataset in self.active_data:
+    for dataset in self.active_data[:4]:
       d=dataset.xydata/dataset.proton_charge
       xynormed.append(d)
       imin=min(imin, d[d>0].min())
@@ -554,7 +558,7 @@ class MainGUI(QtGui.QMainWindow):
       ref_norm=ref_norm.Rraw
       ref_norm=where(ref_norm>0, ref_norm, 1.)
 
-    for dataset in self.active_data:
+    for dataset in self.active_data[:4]:
       d=dataset.xtofdata/dataset.proton_charge
       if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
         # normalize all datasets for wavelength distribution
@@ -1713,7 +1717,7 @@ class MainGUI(QtGui.QMainWindow):
     recalculates already extracted reflectivities.
     '''
     selection=0
-    for i in range(4):
+    for i in range(12):
       if getattr(self.ui, 'selectedChannel%i'%i).isChecked():
         selection=i
     if selection>=len(self.channels):

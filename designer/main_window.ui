@@ -723,7 +723,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>141</width>
+             <width>246</width>
              <height>135</height>
             </rect>
            </property>
@@ -1488,35 +1488,95 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="selectedChannel0">
-                    <property name="text">
-                     <string>++</string>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="selectedChannel1">
-                    <property name="text">
-                     <string>--</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="selectedChannel2">
-                    <property name="text">
-                     <string>+-</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="selectedChannel3">
-                    <property name="text">
-                     <string>-+</string>
-                    </property>
-                   </widget>
+                   <layout class="QGridLayout" name="gridLayout_7">
+                    <item row="0" column="0">
+                     <widget class="QRadioButton" name="selectedChannel0">
+                      <property name="text">
+                       <string>++</string>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QRadioButton" name="selectedChannel5">
+                      <property name="text">
+                       <string>--</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="3">
+                     <widget class="QRadioButton" name="selectedChannel7">
+                      <property name="text">
+                       <string>-+</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QRadioButton" name="selectedChannel1">
+                      <property name="text">
+                       <string>--</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QRadioButton" name="selectedChannel4">
+                      <property name="text">
+                       <string>++</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="2">
+                     <widget class="QRadioButton" name="selectedChannel2">
+                      <property name="text">
+                       <string>+-</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="3">
+                     <widget class="QRadioButton" name="selectedChannel3">
+                      <property name="text">
+                       <string>-+</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <widget class="QRadioButton" name="selectedChannel6">
+                      <property name="text">
+                       <string>+-</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QRadioButton" name="selectedChannel8">
+                      <property name="text">
+                       <string>++</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QRadioButton" name="selectedChannel9">
+                      <property name="text">
+                       <string>--</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <widget class="QRadioButton" name="selectedChannel10">
+                      <property name="text">
+                       <string>+-</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="3">
+                     <widget class="QRadioButton" name="selectedChannel11">
+                      <property name="text">
+                       <string>-+</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                  </layout>
                 </item>
@@ -3240,8 +3300,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>817</x>
-     <y>97</y>
+     <x>364</x>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3256,8 +3316,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>632</x>
-     <y>97</y>
+     <x>364</x>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3272,8 +3332,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>97</y>
+     <x>364</x>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3416,8 +3476,8 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>514</x>
-     <y>122</y>
+     <x>364</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>510</x>
@@ -3432,8 +3492,8 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>817</x>
-     <y>122</y>
+     <x>364</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>774</x>
@@ -3448,8 +3508,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>539</x>
-     <y>99</y>
+     <x>364</x>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3464,8 +3524,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>817</x>
-     <y>99</y>
+     <x>364</x>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
      <x>739</x>
@@ -3512,8 +3572,8 @@
    <slot>clip_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>565</x>
-     <y>123</y>
+     <x>364</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>862</x>
@@ -3576,8 +3636,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>251</x>
-     <y>566</y>
+     <x>246</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3656,8 +3716,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>251</x>
-     <y>589</y>
+     <x>246</x>
+     <y>530</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3784,8 +3844,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>171</x>
-     <y>677</y>
+     <x>166</x>
+     <y>618</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -3816,8 +3876,8 @@
    <slot>visualizePeakfinding()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>128</x>
-     <y>701</y>
+     <x>123</x>
+     <y>615</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3944,8 +4004,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>171</x>
-     <y>610</y>
+     <x>166</x>
+     <y>551</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -4056,8 +4116,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>684</x>
-     <y>428</y>
+     <x>683</x>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
      <x>797</x>
@@ -4072,8 +4132,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>723</x>
-     <y>428</y>
+     <x>722</x>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -4088,8 +4148,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>764</x>
-     <y>428</y>
+     <x>763</x>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
      <x>782</x>
@@ -4104,8 +4164,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>805</x>
-     <y>428</y>
+     <x>804</x>
+     <y>409</y>
     </hint>
     <hint type="destinationlabel">
      <x>762</x>
@@ -4234,6 +4294,134 @@
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel4</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>664</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel5</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>705</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel6</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>745</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel7</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>786</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel8</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>664</x>
+     <y>449</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel9</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>705</x>
+     <y>449</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel10</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>745</x>
+     <y>449</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectedChannel11</sender>
+   <signal>released()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeActiveChannel()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>786</x>
+     <y>449</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
