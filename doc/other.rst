@@ -4,7 +4,7 @@ Other Modules
 :mod:`config` Module
 --------------------
 
-.. automodule:: quick_nxs.config
+.. automodule:: quicknxs.config
     :members:
     :undoc-members:
     :show-inheritance:
@@ -13,7 +13,7 @@ Other Modules
 :mod:`output_templates` Module
 ------------------------------
 
-.. automodule:: quick_nxs.output_templates
+.. automodule:: quicknxs.output_templates
     :members:
     :undoc-members:
     :show-inheritance:

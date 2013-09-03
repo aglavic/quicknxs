@@ -4,7 +4,7 @@ GUI Modules
 :mod:`main_gui` Module
 ----------------------
 
-.. automodule:: quick_nxs.main_gui
+.. automodule:: quicknxs.main_gui
     :members:
     :undoc-members:
     :show-inheritance:
@@ -12,7 +12,7 @@ GUI Modules
 :mod:`advanced_background` Module
 ---------------------------------
 
-.. automodule:: quick_nxs.advanced_background
+.. automodule:: quicknxs.advanced_background
     :members:
     :undoc-members:
     :show-inheritance:
@@ -20,7 +20,7 @@ GUI Modules
 :mod:`compare_plots` Module
 ---------------------------
 
-.. automodule:: quick_nxs.compare_plots
+.. automodule:: quicknxs.compare_plots
     :members:
     :undoc-members:
     :show-inheritance:
@@ -28,7 +28,7 @@ GUI Modules
 :mod:`gisans_dialog` Module
 ---------------------------
 
-.. automodule:: quick_nxs.gisans_dialog
+.. automodule:: quicknxs.gisans_dialog
     :members:
     :undoc-members:
     :show-inheritance:
@@ -36,7 +36,7 @@ GUI Modules
 :mod:`gui_logging` Module
 -------------------------
 
-.. automodule:: quick_nxs.gui_logging
+.. automodule:: quicknxs.gui_logging
     :members:
     :undoc-members:
     :show-inheritance:
@@ -44,7 +44,7 @@ GUI Modules
 :mod:`gui_utils` Module
 -----------------------
 
-.. automodule:: quick_nxs.gui_utils
+.. automodule:: quicknxs.gui_utils
     :members:
     :undoc-members:
     :show-inheritance:
@@ -52,7 +52,7 @@ GUI Modules
 :mod:`help_widgets` Module
 --------------------------
 
-.. automodule:: quick_nxs.help_widgets
+.. automodule:: quicknxs.help_widgets
     :members:
     :undoc-members:
     :show-inheritance:
@@ -60,7 +60,7 @@ GUI Modules
 :mod:`ipython_widget` Module
 ----------------------------
 
-.. automodule:: quick_nxs.ipython_widget
+.. automodule:: quicknxs.ipython_widget
     :members:
     :undoc-members:
     :show-inheritance:
@@ -68,7 +68,7 @@ GUI Modules
 :mod:`mplwidget` Module
 -----------------------
 
-.. automodule:: quick_nxs.mplwidget
+.. automodule:: quicknxs.mplwidget
     :members:
     :undoc-members:
     :show-inheritance:
@@ -76,7 +76,7 @@ GUI Modules
 :mod:`persistentframe` Module
 -----------------------------
 
-.. automodule:: quick_nxs.persistentframe
+.. automodule:: quicknxs.persistentframe
     :members:
     :undoc-members:
     :show-inheritance:
@@ -84,7 +84,7 @@ GUI Modules
 :mod:`polarization_gui` Module
 ------------------------------
 
-.. automodule:: quick_nxs.polarization_gui
+.. automodule:: quicknxs.polarization_gui
     :members:
     :undoc-members:
     :show-inheritance:
@@ -92,7 +92,7 @@ GUI Modules
 :mod:`rawcompare_plots` Module
 ------------------------------
 
-.. automodule:: quick_nxs.rawcompare_plots
+.. automodule:: quicknxs.rawcompare_plots
     :members:
     :undoc-members:
     :show-inheritance:

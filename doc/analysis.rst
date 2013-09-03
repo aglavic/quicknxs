@@ -4,7 +4,7 @@ Analysis Modules
 :mod:`mreduce` Module
 ---------------------
 
-.. automodule:: quick_nxs.mreduce
+.. automodule:: quicknxs.mreduce
     :members:
     :undoc-members:
     :show-inheritance:
@@ -12,7 +12,7 @@ Analysis Modules
 :mod:`mrio` Module
 ------------------
 
-.. automodule:: quick_nxs.mrio
+.. automodule:: quicknxs.mrio
     :members:
     :undoc-members:
     :show-inheritance:
@@ -20,7 +20,7 @@ Analysis Modules
 :mod:`mrcalc` Module
 --------------------
 
-.. automodule:: quick_nxs.mrcalc
+.. automodule:: quicknxs.mrcalc
     :members:
     :undoc-members:
     :show-inheritance:
@@ -28,7 +28,7 @@ Analysis Modules
 :mod:`decorators` Module
 ------------------------
 
-.. automodule:: quick_nxs.decorators
+.. automodule:: quicknxs.decorators
     :members:
     :undoc-members:
     :show-inheritance:
@@ -36,7 +36,7 @@ Analysis Modules
 :mod:`mpfit` Module
 -------------------
 
-.. automodule:: quick_nxs.mpfit
+.. automodule:: quicknxs.mpfit
     :members:
     :undoc-members:
     :show-inheritance:
@@ -44,7 +44,7 @@ Analysis Modules
 :mod:`peakfinder` Module
 ------------------------
 
-.. automodule:: quick_nxs.peakfinder
+.. automodule:: quicknxs.peakfinder
     :members:
     :undoc-members:
     :show-inheritance:

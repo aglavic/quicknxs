@@ -93,6 +93,32 @@ if sys.platform.startswith('win'):
 else:
   _caching_available=True
 
+class OptionsDocMeta(type):
+  '''
+  Metaclass to update docstring to dynamically include keyword arguments
+  '''
+
+  def __new__(cls, name, bases, dct):
+    # overwrite the docstring
+    docstring=dct['__doc__']
+    docstring+='''
+    The generator takes several keyword arguments to control the readout:
+    '''
+    if 'DEFAULT_OPTIONS' in dct:
+      opts=dct['DEFAULT_OPTIONS']
+    else:
+      for base in bases:
+        if hasattr(base, 'DEFAULT_OPTIONS'):
+          opts=base.DEFAULT_OPTIONS
+          break
+    for key, value in sorted(opts.items()):
+      docstring+='\n      * %s=%s'%(key, value)
+      if '_OPTIONS_DESCRTIPTION' in dct and key in dct['_OPTIONS_DESCRTIPTION']:
+        docstring+=': %s'%dct['_OPTIONS_DESCRTIPTION'][key]
+    dct['__doc__']=docstring
+
+    return super(OptionsDocMeta, cls).__new__(cls, name, bases, dct)
+
 class NXSData(object):
   '''
   Class for readout and evaluation of histogram and event mode .nxs files,
@@ -100,16 +126,20 @@ class NXSData(object):
   
   The object can be used as a ordered dictionary or list of channels,
   where each channel is a MRDataset object.
-  
-  The generator takes several keyword arguments to control the readout:
-  
-    * use_caching=True: If files should be cached for faster future readouts (last 20 files)
-    * bin_type='0: linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode
-    * bins=40: Number of ToF bins for event mode
   '''
+  __metaclass__=OptionsDocMeta
+
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None,
                        event_split_bins=None, event_split_index=0,
                        event_tof_overwrite=None)
+  _OPTIONS_DESCRTIPTION=dict(
+    bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
+    bins='Number of ToF bins for event mode',
+    use_caching='If files should be cached for faster future readouts (last 20 files)',
+    event_split_bin='Number of items, to split the events in time or None for no splitting',
+    event_split_index='Index of the splitted item to be returned, when event_split_bin is not None',
+    event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
+    )
   COUNT_THREASHOLD=100
   MAX_CACHE=20
   _cache=[]
@@ -817,6 +847,8 @@ class Reflectivity(object):
   Extraction of reflectivity from MRDatatset object storing all data
   and options used for the extraction process.
   """
+  __metaclass__=OptionsDocMeta
+
   DEFAULT_OPTIONS=dict(
        x_pos=None,
        x_width=9,
@@ -827,18 +859,41 @@ class Reflectivity(object):
        tth=None,
        dpix=None,
        scale=1.,
-       sample_length=10., # mm - used to calculate the angular resolution
-       extract_fan=False, # Treat every x-pixel separately and join the data afterwards
-       normalization=None, # another Reflectivity object used for normalization
-       bg_tof_constant=False, # treat background to be independent of wavelength for better statistics
-       bg_poly_regions=None, # use polygon regions in x/λ to determine which points to use for the background
-       bg_scale_xfit=False, # use a linear fit on x-axes projection to scale the background
+       sample_length=10.,
+       extract_fan=False,
+       normalization=None,
+       bg_tof_constant=False,
+       bg_poly_regions=None,
+       bg_scale_xfit=False,
        bg_scale_factor=1.,
        P0=0,
        PN=0,
        number='0',
        gisans_gridy=50,
        gisans_gridz=50,
+       )
+  _OPTIONS_DESCRTIPTION=dict(
+       x_pos='X-pixel position of the reflected beam on the detector',
+       x_width='Pixel width of the area used to extract the intensity',
+       y_pos='Y-pixel position of the are used to extract the intensity',
+       y_width='Pixel width in Y-direction to be used to extract the intensity',
+       bg_pos='X-pixel position of the background subtraction area (center)',
+       bg_width='X-pixel width of the background subtraction area',
+       tth='Two Theta of the detector arm',
+       dpix='X-pixel position of the direct beam at tth=0',
+       scale='Scaling factor for the reflectivity',
+       sample_length='Length of the sample in mm, used to calculate the Q-resolution',
+       extract_fan='Treat every x-pixel separately and join the data afterwards',
+       normalization='another Reflectivity object used for normalization',
+       bg_tof_constant='treat background to be independent of wavelength for better statistics',
+       bg_poly_regions='use polygon regions in x/λ to determine which points to use for the background',
+       bg_scale_xfit='use a linear fit on x-axes projection to scale the background',
+       bg_scale_factor='scale the background by this constant before subtraction',
+       P0='Number of points to remove from the low-Q side of the reflectivity',
+       PN='Number of points to remove from the high-Q side of the reflectivity',
+       number='Index of the origin dataset used for naming etc. when exported',
+       gisans_gridy='When extracting GISANS data, this is the number of pixels in Qz',
+       gisans_gridz='When extracting GISANS data, this is the number of pixels in Qy',
        )
 
   @log_input
@@ -1452,4 +1507,3 @@ class GISANS(Reflectivity):
     qy=(qy[:-1]+qy[1:])/2.
     qz=(qz[:-1]+qz[1:])/2.
     self.QyGrid, self.QzGrid=meshgrid(qy, qz)
-

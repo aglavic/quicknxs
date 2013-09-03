@@ -6,7 +6,7 @@
 Welcome to QuickNXS's API documentation!
 ========================================
 
-Contents of the quick_nxs Package:
+Contents of the quicknxs Package:
 
 .. toctree::
    :maxdepth: 2

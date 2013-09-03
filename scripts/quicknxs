@@ -4,15 +4,21 @@
   Small program for quick access to SNS magnetism reflectometer raw data.
 '''
 
+import os
 import sys
+
+# if script was run from commandline
+if os.path.abspath(__file__).endswith('scripts/quicknxs'):
+  sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # first thing to do is starting the logging system
-from quick_nxs.gui_logging import setup_system, check_runstate
+from quicknxs.gui_logging import setup_system, check_runstate
 
 def _run(argv=[]):
   from PyQt4.QtGui import QApplication, QSplashScreen, QPixmap
   from PyQt4.QtCore import Qt
   app=QApplication(argv)
-  from quick_nxs import icons_rc, version  #@UnusedImport
+  from quicknxs import icons_rc, version  #@UnusedImport
   splash=QSplashScreen(QPixmap(u':/General/logo_hq.png'))
   #splash.setStyleSheet("qproperty-alignment: AlignBottom;")
   splash.showMessage(u"""<html>
@@ -24,7 +30,7 @@ def _run(argv=[]):
                         </html>"""%version.str_version,
                      alignment=Qt.AlignBottom|Qt.AlignHCenter)
   splash.show()
-  from quick_nxs.main_gui import MainGUI
+  from quicknxs.main_gui import MainGUI
   window=MainGUI(argv)
   window.show()
   splash.finish(window)
