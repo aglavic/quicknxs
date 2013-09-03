@@ -25,11 +25,11 @@ __author_email__=__email__
 __url__="http://"
 __description__='''Magnetism reflectometer data reduction software'''
 
-__scripts__=['quicknxs']
+__scripts__=['scripts/quicknxs']
 __py_modules__=[]
 __package_dir__={}
-__packages__=['quick_nxs']
-__package_data__={'quick_nxs': ['default_config.cfg', 'window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
+__packages__=['quicknxs']
+__package_data__={'quicknxs': ['default_config.cfg', 'window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
                 ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png']),
@@ -42,9 +42,9 @@ if "py2exe" in sys.argv:
   __data_files__=matplotlib.get_py2exe_datafiles()
   sys.path.append("..\\App")
   __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
-  __data_files__+=[(r'quick_nxs', [r'quick_nxs\window.pkl']),
-                   (r'quick_nxs\genx_templates', glob(r'quick_nxs\genx_templates\*.gx')),
-                   (r'quick_nxs\htmldoc', glob(r'quick_nxs\htmldoc\*')),
+  __data_files__+=[(r'quicknxs', [r'quicknxs\window.pkl']),
+                   (r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
+                   (r'quicknxs\htmldoc', glob(r'quicknxs\htmldoc\*')),
                    ("IPython\\config\\profile", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\*.*')+
                                                 glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\README*')),
                    ("IPython\\config\\profile\\cluster", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\cluster\\*')),
@@ -100,7 +100,7 @@ if 'bdist' in sys.argv:
     print "Not all tests were successfull, stop building distribution!"
     exit()
 
-from quick_nxs.version import str_version
+from quicknxs.version import str_version
 __version__=str_version
 
 #### Run the setup command with the selected parameters ####

@@ -9,7 +9,7 @@ tag,revision,rev_name=Popen(['git','describe'], stdout=PIPE).communicate()[0].sp
 revision=revision.strip()
 last_change=Popen(['git', 'show', '-s', '--format=%ci'], stdout=PIPE).communicate()[0].rsplit(None,1)[0]
 
-versiontxt=open("quick_nxs/version.py",'r').readlines()
+versiontxt=open("quicknxs/version.py",'r').readlines()
 
 output=''
 for line in versiontxt:
@@ -21,4 +21,4 @@ for line in versiontxt:
   if line.startswith('last_changes='):
     line='last_changes="%s"\n'%last_change
   output+=line
-open("quick_nxs/version.py",'w').write(output)
+open("quicknxs/version.py",'w').write(output)

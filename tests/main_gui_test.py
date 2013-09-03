@@ -6,8 +6,8 @@ from PyQt4.QtGui import QApplication, QMainWindow
 from PyQt4.QtTest import QTest
 from PyQt4.QtCore import QLocale#, Qt
 
-from quick_nxs.main_gui import MainGUI
-from quick_nxs.mreduce import NXSData, Reflectivity
+from quicknxs.main_gui import MainGUI
+from quicknxs.mreduce import NXSData, Reflectivity
 
 dot=QLocale().decimalPoint()
 if not isinstance(dot, basestring):

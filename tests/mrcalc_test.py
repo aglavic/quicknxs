@@ -2,9 +2,9 @@
 
 import unittest
 from numpy import *
-from quick_nxs.mrcalc import refine_gauss, get_scaling, get_xpos, get_yregion, \
+from quicknxs.mrcalc import refine_gauss, get_scaling, get_xpos, get_yregion, \
                              get_total_reflection, smooth_data, DetectorTailCorrector
-from quick_nxs.mreduce import MRDataset, Reflectivity
+from quicknxs.mreduce import MRDataset, Reflectivity
 
 class FitTest(unittest.TestCase):
   def setUp(self):

@@ -5,7 +5,7 @@ Create and format a dependency graph for the project.
 from subprocess import Popen, PIPE
 
 # create the graph file
-result_1=Popen(['sfood', 'quick_nxs'], stdout=PIPE).communicate()[0]
+result_1=Popen(['sfood', 'quicknxs'], stdout=PIPE).communicate()[0]
 dot=Popen(['sfood-graph'], stdout=PIPE, stdin=PIPE).communicate(result_1)[0]
 
 # process result dot file data
@@ -15,12 +15,12 @@ ext_packages=[]
 first_add=True
 
 for line in dot.splitlines():
-  if line.startswith('"quick_nxs"') or 'version' in line or '"logging"' in line or \
+  if line.startswith('"quicknxs"') or 'version' in line or '"logging"' in line or \
         'sip' in line or 'figureoptions' in line or 'types' in line or 'nxutils.so' in line or\
         'output_templates' in line or 'os' in line or 'sys' in line:
     continue
-  elif line.startswith('"quick_nxs/'):
-    line=line.replace('style=filled', 'style=filled, color="#00aa00" shape=box, fontsize=12').replace('quick_nxs/', '')
+  elif line.startswith('"quicknxs/'):
+    line=line.replace('style=filled', 'style=filled, color="#00aa00" shape=box, fontsize=12').replace('quicknxs/', '')
   if 'PyQt4' in line or 'email' in line or 'scipy' in line or 'matplotlib/' in line or \
       'IPython' in line:
     line=line.split('/')[0]+'";'

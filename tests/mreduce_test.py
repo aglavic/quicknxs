@@ -3,7 +3,7 @@
 import os
 import unittest
 from math import pi
-from quick_nxs import mreduce
+from quicknxs import mreduce
 from numpy.testing import assert_array_equal
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')

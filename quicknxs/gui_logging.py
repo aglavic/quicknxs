@@ -78,7 +78,7 @@ def check_runstate():
     return False
 
 def setup_system():
-  logger=logging.getLogger()#logging.getLogger('quick_nxs')
+  logger=logging.getLogger()#logging.getLogger('quicknxs')
   logger.setLevel(min(FILE_LEVEL, CONSOLE_LEVEL, GUI_LEVEL))
   if not sys.platform.startswith('win'):
     # no console logger for windows (py2exe)
