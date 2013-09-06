@@ -86,7 +86,8 @@ MAPPING_EFIELD=(
                 )
 
 # used for * imports
-__all__=['NXSData', 'Reflectivity', 'OffSpecular', 'GISANS']
+__all__=['NXSData', 'MRDataset', 'Reflectivity', 'OffSpecular', 'GISANS', 'time_from_header',
+         'locate_file']
 
 if sys.platform.startswith('win'):
   _caching_available=False
@@ -102,22 +103,51 @@ class OptionsDocMeta(type):
     # overwrite the docstring
     docstring=dct['__doc__']
     docstring+='''
-    The generator takes several keyword arguments to control the readout:
-    '''
+  The generator takes several keyword arguments to control the readout:'''
+    opt_desc={}
     if 'DEFAULT_OPTIONS' in dct:
       opts=dct['DEFAULT_OPTIONS']
+      if '_OPTIONS_DESCRTIPTION' in dct:
+        opt_desc=dct['_OPTIONS_DESCRTIPTION']
     else:
       for base in bases:
         if hasattr(base, 'DEFAULT_OPTIONS'):
           opts=base.DEFAULT_OPTIONS
+          if hasattr(base, '_OPTIONS_DESCRTIPTION'):
+            opt_desc=base._OPTIONS_DESCRTIPTION
           break
+    maxlen_key=3
+    maxlen_val=7
     for key, value in sorted(opts.items()):
-      docstring+='\n      * %s=%s'%(key, value)
-      if '_OPTIONS_DESCRTIPTION' in dct and key in dct['_OPTIONS_DESCRTIPTION']:
-        docstring+=': %s'%dct['_OPTIONS_DESCRTIPTION'][key]
+      maxlen_key=max(maxlen_key, len("%s"%key))
+      maxlen_val=max(maxlen_val, len("%s"%value))
+    maxlen_desc=80-maxlen_key-maxlen_val
+    docline='\n      %%-%is  %%-%is  %%-%is'%(maxlen_key, maxlen_val, maxlen_desc)
+    docstring+=docline%('='*maxlen_key, '='*maxlen_val, '='*maxlen_desc)
+    docstring+=docline%('Key', 'Default', 'Description')
+    docstring+=docline%('='*maxlen_key, '='*maxlen_val, '='*maxlen_desc)
+    for key, value in sorted(opts.items()):
+      desc=['']
+      if key in opt_desc:
+        desc=OptionsDocMeta.format_description(opt_desc[key], maxlen_desc)
+      docstring+=docline%(key, value, desc[0])
+      for desci in desc[1:]:
+        docstring+=docline%('', '', desci)
+    docstring+=docline%('='*maxlen_key, '='*maxlen_val, '='*maxlen_desc)+'\n      '
     dct['__doc__']=docstring
 
     return super(OptionsDocMeta, cls).__new__(cls, name, bases, dct)
+  
+  @staticmethod
+  def format_description(description, maxlen):
+    output=[description]
+    while len(output[-1])>maxlen:
+      lastitem=output.pop(-1)
+      splitidx=lastitem[:maxlen].rfind(' ')
+      output.append(lastitem[:splitidx])
+      output.append(lastitem[splitidx+1:])
+    return output
+    
 
 class NXSData(object):
   '''
@@ -136,12 +166,13 @@ class NXSData(object):
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
     use_caching='If files should be cached for faster future readouts (last 20 files)',
-    event_split_bin='Number of items, to split the events in time or None for no splitting',
+    event_split_bins='Number of items, to split the events in time or None for no splitting',
     event_split_index='Index of the splitted item to be returned, when event_split_bin is not None',
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
+    callback='Function called to update e.g. a progress bar',
     )
-  COUNT_THREASHOLD=100
-  MAX_CACHE=20
+  COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
+  MAX_CACHE=20 #: Number of datasets that are kept in the cache
   _cache=[]
 
   @log_both
@@ -194,6 +225,8 @@ class NXSData(object):
   def _read_file(self, filename):
     '''
     Load data from a Nexus file.
+    
+    :param str filename: Path to file to read
     '''
     start=time()
     if self._options['callback']:
@@ -303,6 +336,8 @@ class NXSData(object):
     For the oldest file format, where polarization channels
     are in different .nxs files, this method reads all files
     and builds a dictionary of it.
+    
+    :param str filename: Path to file to read
     '''
     base_name=filename.rsplit("_p", 1)[0]
     files=glob(base_name+"*.nxs")
@@ -356,7 +391,7 @@ class NXSData(object):
     return zip(self.keys(), self.values())
 
   def numitems(self):
-    ''':return: three items tuples of the channel index, name and data'''
+    ''':returns: three items tuples of the channel index, name and data'''
     return zip(xrange(len(self.keys())), self.keys(), self.values())
 
   def __iter__(self):
@@ -370,27 +405,27 @@ class NXSData(object):
     """
     return sum([ds.nbytes for ds in cls._cache])
 
-  # easy access properties common to all datasets
-  # return the size of the data stored in memory for all states of this file
-  @property
-  def nbytes(self): return sum([ds.nbytes for ds in self])
+  def __nbytes(self): return sum([ds.nbytes for ds in self])
+  nbytes=property(__nbytes, doc='size of the data stored in memory for all states of this file')
 
-  @property
-  def lambda_center(self): return self[0].lambda_center
-  @property
-  def number(self): return self[0].number
-  @property
-  def experiment(self): return self[0].experiment
-  @property
-  def merge_warnings(self): return self[0].merge_warnings
-  @property
-  def dpix(self): return self[0].dpix
-  @property
-  def dangle(self): return self[0].dangle
-  @property
-  def dangle0(self): return self[0].dangle0
-  @property
-  def sangle(self): return self[0].sangle
+
+  # easy access properties common to all datasets
+  def __lambda_center(self): return self[0].lambda_center
+  def __number(self): return self[0].number
+  def __experiment(self): return self[0].experiment
+  def __merge_warnings(self): return self[0].merge_warnings
+  def __dpix(self): return self[0].dpix
+  def __dangle(self): return self[0].dangle
+  def __dangle0(self): return self[0].dangle0
+  def __sangle(self): return self[0].sangle
+  lambda_center=property(__lambda_center, doc='first state lambda_center attribute')
+  number=property(__number, doc='first state number attribute')
+  experiment=property(__experiment, doc='first state experiment attribute')
+  merge_warnings=property(__merge_warnings, doc='first state merge_warnings attribute')
+  dpix=property(__dpix, doc='first state dpix attribute')
+  dangle=property(__dangle, doc='first state dangle attribute')
+  dangle0=property(__dangle0, doc='first state dangle0 attribute')
+  sangle=property(__lambda_center, doc='first state sangle attribute')
 
 
 class NXSMultiData(NXSData):
@@ -427,6 +462,8 @@ class NXSMultiData(NXSData):
     '''
     Add the counts of all channels to this dataset channels 
     and increase the proton charge equally.
+    
+    :type other: NXSData
     '''
     for key, value in self.items():
       value+=other[key]
@@ -441,38 +478,38 @@ class MRDataset(object):
   Representation of one measurement channel of the reflectometer
   including meta data.
   '''
-  proton_charge=0.
-  total_counts=0
-  tof_edges=None
-  dangle=0. #°
-  dangle0=4. #°
-  sangle=0. #°
-  mon_data=None
+  proton_charge=0. #: total proton charge on target [pC]
+  total_counts=0 #: total counts on detector
+  tof_edges=None #: array of time of flight edges for the bins [µs]
+  dangle=0. #: detector arm angle value in [°]
+  dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
+  sangle=0. #: sample angle [°]
+  mon_data=None #: array of monitor counts per ToF bin
 
   # for resolution calculation
-  slit1_width=3. # mm
-  slit1_dist=2600. # mm
-  slit2_width=2. # mm
-  slit2_dist=2019. #mm
-  slit3_width=0.05 # mm
-  slit3_dist=714. # mm
+  slit1_width=3. #: first slit width [mm]
+  slit1_dist=2600. #: first slit to sample distance [mm]
+  slit2_width=2. #: second slit width [mm]
+  slit2_dist=2019. #: second slit to sample distance [mm]
+  slit3_width=0.05 #: last slit width [mm]
+  slit3_dist=714. #: last slit to sample distance [mm]
 
-  ai=None
-  dpix=0
-  lambda_center=3.37 #Å
-  xydata=None
-  xtofdata=None
-  data=None
-  logs={}
-  log_units={}
-  experiment=''
-  number=0
+  ai=None #: incident angle
+  dpix=0 #: pixel of direct beam position at dangle0
+  lambda_center=3.37 #: central wavelength of measurement band [Å]
+  xydata=None #: 2D array of intensity projected on X-Y
+  xtofdata=None #: 2D array of intensity projected on X-ToF
+  data=None #: 3D array of intensity in X, Y and ToF
+  logs={} #: Log information of instrument parameters
+  log_units={} #: Units of the parameters given in logs
+  experiment='' #: Name of the experiment
+  number=0 #: Index of the run
   merge_warnings=''
-  dist_mod_det=21.2535 #m
-  dist_sam_det=2.55505 #m
-  det_size_x=0.2128 #m
-  det_size_y=0.1792 #m
-  from_event_mode=False
+  dist_mod_det=21.2535 #: moderator to detector distance [m]
+  dist_sam_det=2.55505 #: sample to detector distance [m]
+  det_size_x=0.2128 #: horizontal size of detector [m]
+  det_size_y=0.1792 #: vertical size of detector [m]
+  from_event_mode=False #: was this dataset created from event mode nexus file
 
   _Q=None
   _I=None
@@ -643,6 +680,11 @@ class MRDataset(object):
     return output
 
   def _collect_info(self, data):
+    '''
+    Extract header information from the HDF5 file.
+    
+    :param h5py._hl.group.Group data:
+    '''
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
     self.logs={}
     self.log_minmax={}
@@ -793,7 +835,9 @@ class MRDataset(object):
 
 def time_from_header(filename, nxs=None):
   '''
-  Read just an edf header to get the time of a measurement in seconds.
+  Read just an nxs header to get the time of a measurement in seconds.
+  
+  :param str filename: Path to nxs file
   '''
   if nxs is None:
     try:
@@ -829,6 +873,8 @@ def time_from_header(filename, nxs=None):
 def locate_file(number, histogram=True, old_format=False):
     '''
     Search the data folders for a specific file number and open it.
+    
+    :param int number: Run number
     '''
     info('Trying to locate file number %s...'%number)
     if histogram:
@@ -951,7 +997,7 @@ class Reflectivity(object):
     Error is also calculated and all intermediate steps are stored in the object 
     (scaled and unscaled intensity and background).
     
-    :param dataset: MRDataset object
+    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1037,6 +1083,8 @@ class Reflectivity(object):
     that a brought region reflected from a bend sample is
     analyzed, so each x line corresponds to different alpha i
     values.
+    
+    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1157,8 +1205,7 @@ class Reflectivity(object):
     Calculate the background intensity vs. ToF.
     Equal for normal and fan reflectivity extraction.
     
-    Methods supported:
-        'data': Just take a region in x to extract an average count rate vs. ToF
+    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
     '''
     data=dataset.data
     y_pos=self.options['y_pos']
@@ -1317,6 +1364,8 @@ class OffSpecular(Reflectivity):
     and than sums all I values for each ToF and x channel.
     Qz,Qx,kiz,kfz is calculated using the x and ToF positions
     together with the tth-bank and direct pixel values.
+    
+    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1432,6 +1481,7 @@ class GISANS(Reflectivity):
   @log_call
   def _calc_gisans(self, dataset):
     """
+    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data

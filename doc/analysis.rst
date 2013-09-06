@@ -6,7 +6,7 @@ Analysis Modules
 
 .. automodule:: quicknxs.mreduce
     :members:
-    :undoc-members:
+    :private-members:
     :show-inheritance:
 
 :mod:`mrio` Module
@@ -14,7 +14,7 @@ Analysis Modules
 
 .. automodule:: quicknxs.mrio
     :members:
-    :undoc-members:
+    :private-members:
     :show-inheritance:
 
 :mod:`mrcalc` Module
@@ -22,7 +22,7 @@ Analysis Modules
 
 .. automodule:: quicknxs.mrcalc
     :members:
-    :undoc-members:
+    :private-members:
     :show-inheritance:
 
 :mod:`decorators` Module

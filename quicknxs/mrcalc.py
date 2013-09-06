@@ -21,7 +21,7 @@ def get_total_reflection(refl, return_npoints=False):
   Starting from low Q points it searches for a drop in intensity to 
   locate the andge and than returns the weighted mean.
   
-  :param refl: Reflectivity object
+  :param quicknxs.mreduce.Reflectivity refl: Used to get the reflected intensity
   
   :returns: scaling, (number of points used for weighted mean)
   """
@@ -49,9 +49,10 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   """
   Calculate the scaling factor needed to stich one dataset to another.
   
-  :param refl1/2: Reflectivity objects
-  :param add_points: Number of points of both datasets considered outside the overlapping region
-  :param polynom: Degree of polynom to use for fitting, 0 is Gaussian
+  :param quicknxs.mreduce.Reflectivity refl1: First reflectivity object
+  :param quicknxs.mreduce.Reflectivity refl2: Second reflectivity object, to be scaled
+  :param int add_points: Number of points of both datasets considered outside the overlapping region
+  :param int polynom: Degree of polynom to use for fitting, 0 is Gaussian
   
   :returns: scaling, array of fitted x and y
   """
@@ -86,7 +87,15 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   """
   Calculate the specular or direct beam peak position from data x-projection.
   
-  :param data: MRDataset object
+  :param quicknxs.mreduce.MRDataset data: Raw data used to find the x-position
+  :param float dangle0_overwrite: If not None, overwrite dataset dangle0 with this value
+  :param float direct_pixel_overwrite: If !=-1, overwrite dataset direct pixel with this value
+  :param float snr: Minimum signal to noise for peak detection
+  :param float min_width: Minimum peak width for peak detection
+  :param float max_width: Maximum peak width for peak detection
+  :param float ridge_length: Parameter of the peakfinder, giving the peak strength
+  :param bool return_pf: Return the peak finder object together with the center value
+  :param bool refine: Fit the peak position after peak detection
   
   :returns: x_center, (Peakfinder)
   """
@@ -134,7 +143,7 @@ def get_yregion(data):
   """
   Calculate the beam y region from data y-projection.
   
-  :param data: MRDataset object
+  :param quicknxs.mreduce.MRDataset data: Raw data used to find the y-region
   
   :returns: y_center, y_width, y_bg
   """
@@ -151,6 +160,11 @@ def get_yregion(data):
 def refine_gauss(data, pos, width, return_params=False):
   '''
   Fit a gaussian function to a given dataset and return the x0 position.
+  
+  :param numpy.ndarray data: Intensity data to be used for the fit
+  :param float pos: Starting value for the peak center
+  :param float width: Starting value for the peak width
+  :param bool return_params: Return full parameter array, if False only return position
   '''
   p0=[data[int(pos)], pos, max(1., width)]
   parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
@@ -175,12 +189,22 @@ def refine_gauss(data, pos, width, return_params=False):
     return res.params[1]
 
 @log_input
-def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=0.06, callback=None):
+def smooth_data(settings, x, y, I, sigmas=3.,
+                axis_sigma_scaling=None, xysigma0=0.06, callback=None):
   '''
   Smooth a irregular spaced dataset onto a regular grid.
   Takes each intensities with a distance < 3*sigma
   to a given grid point and averages their intensities
   weighted by the gaussian of the distance.
+
+  :param dict settings: Contains options for 'grid', 'sigma' and 'region' of the algorithm
+  :param numpy.ndarray x: x-values of the original data
+  :param numpy.ndarray y: y-values of the original data
+  :param numpy.ndarray I: Intensity values of the original data
+  :param float sigmas: Range in units of sigma to search around a grid point
+  :param int axis_sigma_scaling: Defines how the sigmas change with the x/y value
+  :param float xysigma0: x/y value where the given sigmas are used
+  :param callback: Optional function to be called to display the calculation progress
   '''
   gridx, gridy=settings['grid']
   sigmax, sigmay=settings['sigma']
@@ -221,6 +245,7 @@ def smooth_data(settings, x, y, I, sigmas=3., axis_sigma_scaling=None, xysigma0=
 def _gauss_residuals(p, fjac=None, data=None, width=1):
   '''
   Gaussian of I0, x0 and sigma parameters minus the data.
+  Used in mpfit routine of refine_gauss.
   '''
   xdata=arange(data.shape[0])
   I0=p[0]
