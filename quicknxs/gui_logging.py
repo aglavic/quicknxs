@@ -20,12 +20,17 @@ from .config import PATHS, ADMIN_MAIL
 
 # default options used for logging
 CONSOLE_LEVEL=logging.WARNING
+FILE_LEVEL=logging.INFO
+GUI_LEVEL=logging.INFO
+
+# switch on debugging with command line or when python debugger is running
 if '--debug' in sys.argv:
   sys.argv.remove('--debug')
   FILE_LEVEL=logging.DEBUG
-else:
-  FILE_LEVEL=logging.INFO
-GUI_LEVEL=logging.INFO
+  CONSOLE_LEVEL=logging.DEBUG
+elif 'pdb' in sys.modules.keys() or 'pydevd' in sys.modules.keys():
+  # if common debugger modules have been loaded, assume a debug run and output to console
+  CONSOLE_LEVEL=logging.DEBUG
 
 def excepthook_overwrite(*exc_info):
   logging.critical('python error', exc_info=exc_info)
