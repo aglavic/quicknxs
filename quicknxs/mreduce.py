@@ -425,7 +425,7 @@ class NXSData(object):
   dpix=property(__dpix, doc='first state dpix attribute')
   dangle=property(__dangle, doc='first state dangle attribute')
   dangle0=property(__dangle0, doc='first state dangle0 attribute')
-  sangle=property(__lambda_center, doc='first state sangle attribute')
+  sangle=property(__sangle, doc='first state sangle attribute')
 
 
 class NXSMultiData(NXSData):
