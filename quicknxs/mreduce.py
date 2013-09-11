@@ -24,6 +24,7 @@ import h5py
 from time import time, strptime, mktime
 # ignore zero devision error
 #seterr(invalid='ignore')
+import multiprocessing
 
 try:
   from .decorators import log_call, log_input, log_both
@@ -148,6 +149,20 @@ class OptionsDocMeta(type):
       output.append(lastitem[splitidx+1:])
     return output
     
+class AsyncCache(list):
+  def __getitem__(self, index):
+    value=list.__getitem__(self, index)
+    if isinstance(value, multiprocessing.pool.ApplyResult):
+      value=value.get()
+      self[index]=value
+    return value
+
+  def pop(self, index):
+    value=list.pop(self, index)
+    if isinstance(value, multiprocessing.pool.ApplyResult):
+      value=value.get()
+      self[index]=value
+    return value
 
 class NXSData(object):
   '''
@@ -173,10 +188,13 @@ class NXSData(object):
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=20 #: Number of datasets that are kept in the cache
-  _cache=[]
+  _cache=AsyncCache()
 
   @log_both
-  def __new__(cls, filename, **options):
+  def __new__(cls, filename=None, **options):
+    if filename is None:
+      # make object usable with pickle for multiprocessing
+      return object.__new__(cls)
     if type(filename) is int:
       fn=locate_file(filename)
       if fn is None:
@@ -236,6 +254,13 @@ class NXSData(object):
     except IOError:
       debug('Could not read nxs file %s'%filename, exc_info=True)
       return False
+
+    if nxs.values()[0]['instrument/beamline'].value[0]=='4A':
+      return self._read_file_MR(filename, nxs, start)
+    else:
+      return self._read_file_LR(filename, nxs, start)
+
+  def _read_file_MR(self, filename, nxs, start):
     # analyze channels
     channels=nxs.keys()
     debug('Channels in file: '+repr(channels))
@@ -254,6 +279,7 @@ class NXSData(object):
     if len(channels)==0:
       debug('No valid channels in file')
       return False
+
     ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
     pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
 
@@ -329,6 +355,41 @@ class NXSData(object):
       nxs.close()
     if empty_channels:
       warn('No counts for state %s'%(','.join(empty_channels)))
+    return True
+
+  def _read_file_LR(self, filename, nxs, start):
+    # analyze channels
+    dest='x'
+    raw_data=nxs.values()[0]
+
+    # get runtime for event mode splitting
+    total_duration=time_from_header('', nxs=nxs)
+
+    progress=0.1
+    if self._options['callback']:
+      self._options['callback'](progress)
+    self._read_times.append(time()-start)
+    if filename.endswith('event.nxs'):
+      data=LRDataset.from_event(raw_data, self._options,
+                                callback=self._options['callback'],
+                                callback_offset=progress,
+                                callback_scaling=0.9,
+                                tof_overwrite=self._options['event_tof_overwrite'],
+                                total_duration=total_duration)
+      if data is None:
+        # no data in channel, don't add it
+        warn('No counts for dataset')
+        return False
+    else:
+      data=LRDataset.from_histogram(raw_data, self._options)
+    self._channel_data.append(data)
+    self._channel_names.append(dest)
+    self._channel_origin.append(nxs.keys()[0])
+    if self._options['callback']:
+      self._options['callback'](1.)
+    self._read_times.append(time()-self._read_times[-1]-start)
+
+    nxs.close()
     return True
 
   def _get_ancient(self, filename):
@@ -472,11 +533,9 @@ class NXSMultiData(NXSData):
   def _callback_sum(cls, progress):
     cls._callback(cls._progress+progress/cls._progress_items)
 
-
-class MRDataset(object):
+class ReflectivityDataset(object):
   '''
-  Representation of one measurement channel of the reflectometer
-  including meta data.
+  Base class for both reflectometer dataset typs.
   '''
   proton_charge=0. #: total proton charge on target [pC]
   total_counts=0 #: total counts on detector
@@ -521,6 +580,167 @@ class MRDataset(object):
     use the class methods from_histogram or from_event.
     '''
     self.origin=('none', 'none')
+
+  def _collect_info(self, data):
+    raise NotImplementedError, '_collect_info needs to be overwritten by derived clsss'
+
+  def __repr__(self):
+    if type(self.origin) is tuple:
+      return "<%s '%s' counts: %i>"%(self.__class__.__name__,
+                                     "%s/%s"%(os.path.basename(self.origin[0]), self.origin[1]),
+                                     self.total_counts)
+    else:
+      return "<%s '%s' counts: %i>"%(self.__class__.__name__,
+                                     "SUM"+repr(self.number),
+                                     self.total_counts)
+
+  def __iadd__(self, other):
+    '''
+    Add the data of one dataset to this dataset.
+    '''
+    self.data+=other.data
+    self.xydata+=other.xydata
+    self.xtofdata+=other.xtofdata
+    self.total_counts+=other.total_counts
+    self.proton_charge+=other.proton_charge
+    if type(self.number) is list:
+      self.number.append(other.number)
+      self.origin.append(other.origin)
+    else:
+      self.number=[self.number, other.number]
+      self.origin=[self.origin, other.origin]
+    return self
+    #self.origin.append(other.origin)
+
+  def __add__(self, other):
+    '''
+    Add two datasets.
+    '''
+    output=deepcopy(self)
+    output+=other
+    return output
+
+  ################## Properties for easy data access ##########################
+  # return the size of the data stored in memory for this dataset
+  @property
+  def nbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
+
+  @property
+  def xdata(self): return self.xydata.mean(axis=0)
+
+  @property
+  def ydata(self): return self.xydata.mean(axis=1)
+
+  @property
+  def tofdata(self): return self.xtofdata.mean(axis=0)
+
+  # coordinates corresponding to the data items
+  @property
+  def x(self): return arange(self.xydata.shape[1])
+
+  @property
+  def y(self): return arange(self.xydata.shape[0])
+
+  @property
+  def xy(self): return meshgrid(self.x, self.y)
+
+  @property
+  def tof(self): return (self.tof_edges[:-1]+self.tof_edges[1:])/2.
+
+  @property
+  def xtof(self): return meshgrid(self.tof, self.x)
+
+  @property
+  def lamda(self):
+    v_n=self.dist_mod_det/self.tof*1e6 #m/s
+    lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
+    return lamda_n
+
+  def get_tth(self, dangle0=None, dpix=None):
+    '''
+    Return the tth values corresponding to each x-pixel.
+    '''
+    if dangle0 is None:
+      dangle0=self.dangle0
+    if dpix is None:
+      dpix=self.dpix
+    x=self.x
+    grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
+    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
+    tth_range=x[::-1]*grad_per_pixel
+    return tth0+tth_range
+
+  def get_tthlamda(self, dangle0=None, dpix=None):
+    '''
+    Return tth and lamda values corresponding to x and tof.
+    '''
+    return meshgrid(self.lamda, self.get_tth(dangle0, dpix))
+
+  tth=property(get_tth)
+  tthlamda=property(get_tthlamda)
+
+class MRDataset(ReflectivityDataset):
+  '''
+  Representation of one measurement channel of the magnetism reflectometer
+  including meta data.
+  '''
+
+  def _collect_info(self, data):
+    '''
+    Extract header information from the HDF5 file.
+    
+    :param h5py._hl.group.Group data:
+    '''
+    self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
+    self.logs={}
+    self.log_minmax={}
+    self.log_units={}
+    if 'DASlogs' in data:
+      # the old format does not include the DAS logs
+      for motor, item in data['DASlogs'].items():
+        try:
+          self.logs[motor]=item['average_value'].value[0]
+          if 'units' in item['average_value'].attrs:
+            self.log_units[motor]=item['average_value'].attrs['units']
+          else:
+            self.log_units[motor]=u''
+          self.log_minmax[motor]=(item['minimum_value'].value[0],
+                                  item['maximum_value'].value[0])
+        except:
+          continue
+      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
+    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
+    if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
+      self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
+      self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
+      self.slit1_width=data['instrument/aperture1/S1HWidth/value'].value[0]
+      self.slit2_width=data['instrument/aperture2/S2HWidth/value'].value[0]
+      self.slit3_width=data['instrument/aperture3/S3HWidth/value'].value[0]
+    else:
+      self.slit1_width=data['instrument/aperture1/RSlit1/value'].value[0]-\
+                      data['instrument/aperture1/LSlit1/value'].value[0]
+      self.slit2_width=data['instrument/aperture2/RSlit2/value'].value[0]-\
+                      data['instrument/aperture2/LSlit2/value'].value[0]
+      self.slit3_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
+                      data['instrument/aperture3/LSlit3/value'].value[0]
+    self.slit1_dist=-data['instrument/aperture1/distance'].value[0]*1000.
+    self.slit2_dist=-data['instrument/aperture2/distance'].value[0]*1000.
+    self.slit3_dist=-data['instrument/aperture3/distance'].value[0]*1000.
+
+    self.sangle=data['sample/SANGLE/value'].value[0]
+
+    self.proton_charge=data['proton_charge'].value[0]
+    self.total_counts=data['total_counts'].value[0]
+
+    self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
+    self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
+    self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
+    self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
+    self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
+
+    self.experiment=str(data['experiment_identifier'].value[0])
+    self.number=int(data['run_number'].value[0])
+    self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
 
   @classmethod
   @log_call
@@ -679,6 +899,13 @@ class MRDataset(object):
     output.xtofdata=Ixt.astype(float) # 2D dataset
     return output
 
+class LRDataset(ReflectivityDataset):
+  '''
+  Representation of one measurement channel of the liquids reflectometer
+  including meta data.
+  '''
+  dpix=151
+
   def _collect_info(self, data):
     '''
     Extract header information from the HDF5 file.
@@ -702,33 +929,16 @@ class MRDataset(object):
                                   item['maximum_value'].value[0])
         except:
           continue
-      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
-    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
-      self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
-      self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-      self.slit1_width=data['instrument/aperture1/S1HWidth/value'].value[0]
-      self.slit2_width=data['instrument/aperture2/S2HWidth/value'].value[0]
-      self.slit3_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    else:
-      self.slit1_width=data['instrument/aperture1/RSlit1/value'].value[0]-\
-                      data['instrument/aperture1/LSlit1/value'].value[0]
-      self.slit2_width=data['instrument/aperture2/RSlit2/value'].value[0]-\
-                      data['instrument/aperture2/LSlit2/value'].value[0]
-      self.slit3_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
-                      data['instrument/aperture3/LSlit3/value'].value[0]
-    self.slit1_dist=-data['instrument/aperture1/distance'].value[0]*1000.
-    self.slit2_dist=-data['instrument/aperture2/distance'].value[0]*1000.
-    self.slit3_dist=-data['instrument/aperture3/distance'].value[0]*1000.
-
-    self.sangle=data['sample/SANGLE/value'].value[0]
+      self.lambda_center=data['DASlogs/Lambda1/value'].value[0]
+    self.dangle=data['instrument/bank1/TwoTheta/readback'].value[0]
+    self.dangle0=0.
+    self.sangle=data['instrument/bank1/Theta/readback'].value[0]
 
     self.proton_charge=data['proton_charge'].value[0]
     self.total_counts=data['total_counts'].value[0]
 
-    self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
-    self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
-    self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
+    self.dist_sam_det=data['instrument/bank1/distance'].value.mean()
+    self.dist_mod_det=-data['instrument/moderator/distance'].value[0]+self.dist_sam_det
     self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
     self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
 
@@ -736,102 +946,144 @@ class MRDataset(object):
     self.number=int(data['run_number'].value[0])
     self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
 
-  def __repr__(self):
-    if type(self.origin) is tuple:
-      return "<%s '%s' counts: %i>"%(self.__class__.__name__,
-                                     "%s/%s"%(os.path.basename(self.origin[0]), self.origin[1]),
-                                     self.total_counts)
-    else:
-      return "<%s '%s' counts: %i>"%(self.__class__.__name__,
-                                     "SUM"+repr(self.number),
-                                     self.total_counts)
+  @classmethod
+  @log_call
+  def from_histogram(cls, data, read_options):
+    '''
+    Create object from a histogram Nexus file.
+    '''
+    output=cls()
+    output.read_options=read_options
+    output._collect_info(data)
 
-  def __iadd__(self, other):
-    '''
-    Add the data of one dataset to this dataset.
-    '''
-    self.data+=other.data
-    self.xydata+=other.xydata
-    self.xtofdata+=other.xtofdata
-    self.total_counts+=other.total_counts
-    self.proton_charge+=other.proton_charge
-    if type(self.number) is list:
-      self.number.append(other.number)
-      self.origin.append(other.origin)
-    else:
-      self.number=[self.number, other.number]
-      self.origin=[self.origin, other.origin]
-    return self
-    #self.origin.append(other.origin)
+    output.tof_edges=data['bank1/time_of_flight'].value
+    # the data arrays
+    output.data=data['bank1/data'].value.astype(float) # 3D dataset
+    output.xydata=data['bank1']['data_x_y'].value.astype(float) # 2D dataset
+    output.xtofdata=data['bank1']['data_y_time_of_flight'].value.astype(float) # 2D dataset
 
-  def __add__(self, other):
-    '''
-    Add two datasets.
-    '''
-    output=deepcopy(self)
-    output+=other
+    try:
+      mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
+                                            output.dist_mod_det/output.dist_mod_mon
+      mon_I_from=data['monitor1']['data'].value.astype(float)
+      mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
+                         weights=mon_I_from)[0]
+      output.mon_data=mod_data
+    except KeyError:
+      output.mon_data=None
     return output
 
-  ################## Properties for easy data access ##########################
-  # return the size of the data stored in memory for this dataset
-  @property
-  def nbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
-
-  @property
-  def xdata(self): return self.xydata.mean(axis=0)
-
-  @property
-  def ydata(self): return self.xydata.mean(axis=1)
-
-  @property
-  def tofdata(self): return self.xtofdata.mean(axis=0)
-
-  # coordinates corresponding to the data items
-  @property
-  def x(self): return arange(self.xydata.shape[1])
-
-  @property
-  def y(self): return arange(self.xydata.shape[0])
-
-  @property
-  def xy(self): return meshgrid(self.x, self.y)
-
-  @property
-  def tof(self): return (self.tof_edges[:-1]+self.tof_edges[1:])/2.
-
-  @property
-  def xtof(self): return meshgrid(self.tof, self.x)
-
-  @property
-  def lamda(self):
-    v_n=self.dist_mod_det/self.tof*1e6 #m/s
-    lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
-    return lamda_n
-
-  def get_tth(self, dangle0=None, dpix=None):
+  @classmethod
+  @log_call
+  def from_event(cls, data, read_options,
+                 callback=None, callback_offset=0., callback_scaling=1.,
+                 total_duration=None,
+                 tof_overwrite=None):
     '''
-    Return the tth values corresponding to each x-pixel.
+    Load data from a Nexus file containing event information.
+    Creates 3D histogram with ither linear or 1/t spaced 
+    time of flight channels. The result has the same format as
+    from the read_file function.
     '''
-    if dangle0 is None:
-      dangle0=self.dangle0
-    if dpix is None:
-      dpix=self.dpix
-    x=self.x
-    grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
-    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
-    tth_range=x[::-1]*grad_per_pixel
-    return tth0+tth_range
+    output=cls()
+    output.read_options=read_options
+    output.from_event_mode=True
+    bin_type=read_options['bin_type']
+    bins=read_options['bins']
+    output._collect_info(data)
 
-  def get_tthlamda(self, dangle0=None, dpix=None):
-    '''
-    Return tth and lamda values corresponding to x and tof.
-    '''
-    return meshgrid(self.lamda, self.get_tth(dangle0, dpix))
+    if tof_overwrite is None:
+      lcenter=data['DASlogs/LambdaRequest/value'].value[0]
+      # ToF region for this specific central wavelength
+      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+      if bin_type==0:
+        tof_edges=linspace(tmin, tmax, bins+1)
+      elif bin_type==1:
+        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      else:
+        raise ValueError, 'Unknown bin type %i'%bin_type
+    else:
+      tof_edges=tof_overwrite
 
-  tth=property(get_tth)
-  tthlamda=property(get_tthlamda)
+    # Histogram the data
+    # create pixel map
+    x=arange(304)
+    y=arange(256)
+    Y, X=meshgrid(y, x)
+    X=X.flatten()
+    Y=Y.flatten()
+    # create ToF edges for the binning and correlate pixel indices with pixel position
+    tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
+    tof_time=data['bank1_events/event_time_offset'].value
+    # read the corresponding proton charge of each pulse
+    tof_pc=data['DASlogs/proton_charge/value'].value
+    if read_options['event_split_bins']:
+      split_bins=read_options['event_split_bins']
+      split_index=read_options['event_split_index']
+      # read the relative time in seconds from measurement start to event
+      tof_real_time=data['bank1_events/event_time_zero'].value
+      tof_idx_to_id=data['bank1_events/event_index'].value
+      if total_duration is None:
+        split_step=float(tof_real_time[-1]+0.01)/split_bins
+      else:
+        split_step=float(total_duration+0.01)/split_bins
+      try:
+        start_id, stop_id=where(((tof_real_time>=(split_index*split_step))&
+                                 (tof_real_time<((split_index+1)*split_step))))[0][[0,-1]]
+      except IndexError:
+        debug('No pulses in selected range')
+        return None
 
+      if start_id==0:
+        start_idx=0
+      else:
+        start_idx=tof_idx_to_id[start_id-1]
+      stop_idx=tof_idx_to_id[stop_id]
+      debug('Event split with %.1f<=t<%.1f yielding pulse/tof indices: [%i:%i]/[%i:%i]'
+            %((split_index*split_step), ((split_index+1)*split_step),
+              start_id, stop_id+1, start_idx, stop_idx)
+            )
+      tof_pc=tof_pc[start_id:stop_id+1]
 
+      tof_ids=tof_ids[start_idx:stop_idx]
+      tof_time=tof_time[start_idx:stop_idx]
+      # correct the total count value for the number of neutrons in the selected range
+      output.total_counts=tof_time.shape[0]
+      if output.total_counts==0:
+        debug('No counts in selected range')
+        return None
+    tof_x=X[tof_ids]
+    tof_y=Y[tof_ids]
+    # calculate total proton charge in the selected area
+    output.proton_charge=tof_pc.sum()
+
+    if callback is not None:
+      # create the 3D binning using chunks to update the callback regularly
+      ssize=1e5
+      Ixyt, D=histogramdd(vstack([tof_x[:ssize], tof_y[:ssize], tof_time[:ssize]]).transpose(),
+                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
+      steps=int(tof_x.shape[0]/ssize)
+      callback(callback_offset+callback_scaling*1/(steps+1))
+      for i in range(1, steps+1):
+        Ixyti, D=histogramdd(vstack([tof_x[ssize*i:ssize*(i+1)], tof_y[ssize*i:ssize*(i+1)],
+                                     tof_time[ssize*i:ssize*(i+1)]]).transpose(),
+                           bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
+        Ixyt+=Ixyti
+        callback(callback_offset+callback_scaling*(i+1)/(steps+1))
+    else:
+      # create the 3D binning
+      Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
+                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
+    # create projections for the 2D datasets
+    Ixy=Ixyt.sum(axis=2)
+    Ixt=Ixyt.sum(axis=1)
+    # store the data
+    output.tof_edges=D[2]
+    output.data=Ixyt.astype(float) # 3D dataset
+    output.xydata=Ixy.transpose().astype(float) # 2D dataset
+    output.xtofdata=Ixt.astype(float) # 2D dataset
+    return output
 
 def time_from_header(filename, nxs=None):
   '''
@@ -887,6 +1139,46 @@ def locate_file(number, histogram=True, old_format=False):
       return search[0]
     else:
       return None
+
+class Prefetcher(object):
+  """
+  Manages prefetching of data into cache using a separate process.
+  """
+
+  def __init__(self):
+    self.pool=multiprocessing.Pool(initializer=Prefetcher._init_pool)
+
+  @classmethod
+  def _init_pool(cls):
+    NXSData.DEFAULT_OPTIONS['use_caching']=False
+
+  @log_call
+  def prefetch(self, filename, **options):
+    info('prefetching '+filename)
+    all_options=dict(NXSData.DEFAULT_OPTIONS)
+    for key, value in options.items():
+      if not key in all_options:
+        raise ValueError, "%s is not a known option parameter"%key
+      all_options[key]=value
+
+    all_options['callback']=None
+    cached_names=[item.origin for item in NXSData._cache]
+    if all_options['use_caching'] and filename in cached_names:
+      cache_index=cached_names.index(filename)
+      cached_object=NXSData._cache[cache_index]
+      compare_options=dict(all_options)
+      compare_options['callback']=None
+      if cached_object is None or isinstance(cached_object, multiprocessing.pool.ApplyResult) \
+         or cached_object._options==compare_options:
+        return
+    all_options['use_caching']=False
+    aresult=self.pool.apply_async(NXSData, [filename], all_options)
+    aresult.origin=filename
+    aresult.nbytes=0.
+    NXSData._cache.append(aresult)
+
+  def __del__(self):
+    self.pool.join()
 
 class Reflectivity(object):
   """

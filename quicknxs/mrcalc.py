@@ -6,7 +6,7 @@ Module for calculations used in data reduction and automatic algorithms.
 from numpy import *
 from logging import debug, info #@Reimport
 from .decorators import log_input, log_both
-from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
+from .mreduce import Reflectivity, ReflectivityDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
 
@@ -99,7 +99,7 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   
   :returns: x_center, (Peakfinder)
   """
-  if type(data) is not MRDataset:
+  if not isinstance(data, ReflectivityDataset):
     raise ValueError, "'data' needs to be a MRDataset object"
   xproj=data.xdata
   # calculate approximate peak position
@@ -147,7 +147,7 @@ def get_yregion(data):
   
   :returns: y_center, y_width, y_bg
   """
-  if type(data) is not MRDataset:
+  if not isinstance(data, ReflectivityDataset):
     raise ValueError, "'data' needs to be a MRDataset object"
   yproj=data.ydata
   # find the central peak reagion with intensities larger than the median

@@ -19,7 +19,7 @@ from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
 from .polarization_gui import PolarizationDialog
 from .advanced_background import BackgroundDialog
-from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION, Prefetcher
 from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .mrio import HeaderParser, HeaderCreator
 
@@ -153,6 +153,7 @@ class MainGUI(QtGui.QMainWindow):
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
     self.initiateReflectivityPlot.connect(self.updateStateFile)
+    self.prefetcher=Prefetcher()
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -345,6 +346,10 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=False
 
     self.fileLoaded.emit()
+    for i in range(5):
+      pfname=self.ui.file_list.item(self.ui.file_list.currentRow()+i)
+      pfname=os.path.join(self.active_folder, unicode(pfname.text()))
+      self.prefetcher.prefetch(pfname, **data._options)
     if do_plot:
       self.initiateProjectionPlot.emit(False)
       self.initiateReflectivityPlot.emit(False)
@@ -353,7 +358,8 @@ class MainGUI(QtGui.QMainWindow):
     """
     Empty the NXSData readout cache.
     """
-    NXSData._cache=[]
+    for ignore in NXSData._cache:
+      NXSData._cache.pop(0)
     self.cache_indicator.setText('Cache Size: 0.0MB')
 
 ####### Plot related methods
