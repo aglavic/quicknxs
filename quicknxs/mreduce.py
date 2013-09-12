@@ -15,7 +15,6 @@ storing the result as well as some intermediate data in itself as attributes.
 '''
 
 import os
-import sys
 import zlib
 from copy import deepcopy
 from glob import glob
@@ -90,11 +89,6 @@ MAPPING_EFIELD=(
 __all__=['NXSData', 'MRDataset', 'Reflectivity', 'OffSpecular', 'GISANS', 'time_from_header',
          'locate_file']
 
-if sys.platform.startswith('win'):
-  _caching_available=False
-else:
-  _caching_available=True
-
 class OptionsDocMeta(type):
   '''
   Metaclass to update docstring to dynamically include keyword arguments
@@ -160,7 +154,7 @@ class NXSData(object):
   '''
   __metaclass__=OptionsDocMeta
 
-  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None,
+  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0,
                        event_tof_overwrite=None)
   _OPTIONS_DESCRTIPTION=dict(
