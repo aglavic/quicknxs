@@ -173,7 +173,7 @@ class NXSData(object):
     callback='Function called to update e.g. a progress bar',
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
-  MAX_CACHE=20 #: Number of datasets that are kept in the cache
+  MAX_CACHE=100 #: Number of datasets that are kept in the cache
   _cache=[]
 
   @log_both
@@ -809,7 +809,7 @@ class MRDataset(object):
   ################## Properties for easy data access ##########################
   # return the size of the data stored in memory for this dataset
   @property
-  def nbytes(self): return (len(self._data_zipped.nbytes)+
+  def nbytes(self): return (len(self._data_zipped)+
                             self.xydata.nbytes+self.xtofdata.nbytes)
   @property
   def rawbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
