@@ -452,7 +452,7 @@ class NXSMultiData(NXSData):
       cls._progress=(i+1.)/cls._progress_items
       other=NXSData(filename, **options)
       if len(self._channel_data)!=len(other._channel_data):
-        raise ValueError, 'Files can not be combined due to different number of statess'
+        raise ValueError, 'Files can not be combined due to different number of states'
       self._add_data(other)
       numbers.append(other.number)
     self.origin=filenames

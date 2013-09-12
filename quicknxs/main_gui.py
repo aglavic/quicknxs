@@ -297,10 +297,14 @@ class MainGUI(QtGui.QMainWindow):
       self.onPathChanged(base, folder)
     self.active_file=base
     info(u"Reading files %s..."%(filenames[0]))
-    data=NXSMultiData(filenames,
-          bin_type=self.ui.eventBinMode.currentIndex(),
-          bins=self.ui.eventTofBins.value(),
-          callback=self.updateEventReadout)
+    try:
+      data=NXSMultiData(filenames,
+            bin_type=self.ui.eventBinMode.currentIndex(),
+            bins=self.ui.eventTofBins.value(),
+            callback=self.updateEventReadout)
+    except:
+      warning('Could not open files to sum them up:', exc_info=True)
+      return
     self._fileOpenDone(data, filenames[0], do_plot)
 
   @log_call
