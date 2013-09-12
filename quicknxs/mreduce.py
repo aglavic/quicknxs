@@ -16,6 +16,7 @@ storing the result as well as some intermediate data in itself as attributes.
 
 import os
 import sys
+import zlib
 from copy import deepcopy
 from glob import glob
 from numpy import *
@@ -791,10 +792,27 @@ class MRDataset(object):
     output+=other
     return output
 
+  # data compressed in memory properties
+  _data_zipped=None
+  _data_dtype=float
+  _data_shape=(0,)
+  @property
+  def data(self):
+    data=fromstring(zlib.decompress(self._data_zipped), dtype=self._data_dtype)
+    return data.reshape(self._data_shape)
+  @data.setter
+  def data(self, data):
+    self._data_zipped=zlib.compress(data.tostring(), 1)
+    self._data_dtype=data.dtype
+    self._data_shape=data.shape
+
   ################## Properties for easy data access ##########################
   # return the size of the data stored in memory for this dataset
   @property
-  def nbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
+  def nbytes(self): return (len(self._data_zipped.nbytes)+
+                            self.xydata.nbytes+self.xtofdata.nbytes)
+  @property
+  def rawbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
 
   @property
   def xdata(self): return self.xydata.mean(axis=0)
