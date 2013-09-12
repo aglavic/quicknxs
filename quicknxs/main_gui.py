@@ -54,6 +54,7 @@ class MainGUI(QtGui.QMainWindow):
   '''
   active_folder=PATHS['data_base']
   active_file=u''
+  last_mtime=0. #: Stores the last time the current file has been modified
   _active_data=None
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
@@ -174,7 +175,6 @@ class MainGUI(QtGui.QMainWindow):
         self.trigger('automaticExtraction', argv)
     else:
       self.ui.numberSearchEntry.setFocus()
-      self.auto_change_active=True # prevent exceptions when changing options without file open
 
   def run_ipython(self):
     '''
@@ -614,6 +614,8 @@ class MainGUI(QtGui.QMainWindow):
     exceeded by a certain number of points. This can be helpful to better
     separate the specular reflection from bragg-sheets
     '''
+    if self.active_data is None:
+      return
     data=self.active_data[self.active_channel]
     xproj=data.xdata
     yproj=data.ydata
@@ -1090,13 +1092,8 @@ class MainGUI(QtGui.QMainWindow):
       return
     item=self.ui.file_list.currentItem()
     name=unicode(item.text())
-    try:
-      mtime=os.path.getmtime(os.path.join(self.active_folder, self.active_file))
-    except OSError:
-      mtime=1e10
-    if name!=self.active_file or mtime>self.last_mtime:
-      # only reload if filename was actually changed or file was modifiede
-      self.fileOpen(os.path.join(self.active_folder, name))
+    # only reload if filename was actually changed or file was modified
+    self.fileOpen(os.path.join(self.active_folder, name))
 
   @log_call
   def openByNumber(self, number=None, do_plot=True):
@@ -1790,7 +1787,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Recalculate reflectivity based on changed overwrite parameters.
     '''
-    if not self.auto_change_active:
+    if not self.auto_change_active and self.active_data is not None:
       self.updateLabels()
       self.calcReflParams()
       self.initiateProjectionPlot.emit(True)
