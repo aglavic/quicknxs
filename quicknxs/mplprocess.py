@@ -20,7 +20,6 @@ from PyQt4 import QtCore, QtGui
 
 from multiprocessing import Process, Pipe, Event
 import matplotlib
-from matplotlib.backends.qt4_compat import _getSaveFileName
 from matplotlib.cbook import CallbackRegistry
 from matplotlib.backend_bases import FigureCanvasBase, MouseEvent, KeyEvent
 from matplotlib.axes import Axes
@@ -1269,8 +1268,9 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
       filters.append(filter)
     filters=';;'.join(filters)
     # TODO: check why selectedFilter is ignored
-    fname=_getSaveFileName(self, "Choose a filename to save to",
-                                    start, filters, selectedFilter)
+    fname=QtGui.QFileDialog.getOpenFileNameAndFilter(self, "Choose a filename to save to",
+                                    start, filter=filters, initialFilter=selectedFilter)[0]
+                                            
     if fname:
         try:
           self.draw_process.print_figure(unicode(fname))
