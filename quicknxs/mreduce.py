@@ -790,7 +790,7 @@ class MRDataset(object):
   ################## Properties for easy data access ##########################
   # return the size of the data stored in memory for this dataset
   @property
-  def nbytes(self): return (len(self._data_zipped.nbytes)+
+  def nbytes(self): return (len(self._data_zipped)+
                             self.xydata.nbytes+self.xtofdata.nbytes)
   @property
   def rawbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)

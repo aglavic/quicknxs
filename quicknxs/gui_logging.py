@@ -134,12 +134,26 @@ class QtHandler(logging.Handler):
     self.logged_items=[]
     self.reported_bugs=[]
     self.main_window=main_window
+    from PyQt4 import QtCore
+    QtCore.QObject.connect(main_window, QtCore.SIGNAL("threadEmit"), self._emit)
 
   def emit(self, record):
     self.logged_items.append(record)
-    # make sure the buffer doesn't get infinitly large
+    # make sure the buffer doesn't get infinitely large
     if len(self.logged_items)>self.max_items:
       self.logged_items.pop(0)
+    from PyQt4.QtCore import QThread, SIGNAL
+    from PyQt4.QtGui import QApplication
+    if QApplication.instance() is None:
+      return
+    if QThread.currentThread()!=QApplication.instance().thread():
+      #make sure it is run in main thread
+      self.main_window.emit(SIGNAL("threadEmit"))
+    else:
+      self._emit()
+  
+  def _emit(self):
+    record=self.logged_items[-1]
     if record.levelno<=self.info_limit:
       self.show_info(record)
     elif record.levelno<=self.warn_limit:

@@ -10,17 +10,24 @@ The background plotting canvas uses a three object model:
     this widget has to implement all functionalities normally provided by the Qt4Add
     backend of matplotlib.
 '''
+import os
+import sys
+import traceback
+import tempfile
 from functools import partial
 from cPickle import PicklingError
 from PyQt4 import QtCore, QtGui
 
 from multiprocessing import Process, Pipe, Event
+import matplotlib
+from matplotlib.backends.qt4_compat import _getSaveFileName
 from matplotlib.cbook import CallbackRegistry
 from matplotlib.backend_bases import FigureCanvasBase, MouseEvent, KeyEvent
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_agg import FigureCanvasAgg, Figure
-from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
+from matplotlib.backends.backend_qt4 import NavigationToolbar2QT, SubplotToolQt
 from matplotlib.lines import Line2D
+from matplotlib.colors import Normalize
 from matplotlib.container import ErrorbarContainer
 from matplotlib.collections import LineCollection
 from matplotlib.image import AxesImage
@@ -203,7 +210,7 @@ class TransferredEvent(object):
         setattr(self, attr, getattr(event, attr, None))
 
 class TransferredMouseEvent(TransferredEvent):
-  _attrs=['x', 'y', 'inaxes', 'xdata', 'ydata', 'button', 'step', 'dblclick']
+  _attrs=['x', 'y', 'key', 'inaxes', 'xdata', 'ydata', 'button', 'step', 'dblclick']
 
 class TransferredKeyEvent(TransferredEvent):
   _attrs=['x', 'y', 'inaxes', 'xdata', 'ydata', 'key']
@@ -257,6 +264,9 @@ class MPLProcess(FigureCanvasAgg, Process):
     self.exitEvent=Event()
     self.parentActionPending=action_pending
 
+  def subplots_adjust(self, *args, **opts):
+    self.fig.subplots_adjust(*args, **opts)
+
   def _connect_events(self):
     for name in ['button_press_event', 'button_release_event',
                   'key_press_event', 'key_release_event', 'motion_notify_event',
@@ -284,8 +294,8 @@ class MPLProcess(FigureCanvasAgg, Process):
     while not self.exitEvent.is_set():
       try:
         self._run()
-      except Exception, error:
-        error('Error in process:'+str(error))
+      except:
+        self.event_pipe.send(('Error', traceback.format_exc()))
 
   def _run(self):
     action_buffer=[]
@@ -355,11 +365,14 @@ class MPLProcess(FigureCanvasAgg, Process):
   def axhline(self, *args, **opts):
     return self._add_object(self.ax.axhline(*args, **opts))
 
+  def add_line(self, *args, **opts):
+    return self._add_object(self.ax.add_line(*args, **opts))
+
   def set_xlabel(self, *args, **opts):
     self.ax.set_xlabel(*args, **opts)
 
   def set_ylabel(self, *args, **opts):
-    self.ax.set_xlabel(*args, **opts)
+    self.ax.set_ylabel(*args, **opts)
 
   def set_xscale(self, *args, **opts):
     self.ax.set_xscale(*args, **opts)
@@ -376,14 +389,6 @@ class MPLProcess(FigureCanvasAgg, Process):
   def axis(self, *args, **opts):
     self.ax.axis(*args, **opts)
 
-  def get_config(self):
-    spp=self.fig.subplotpars
-    config=dict(left=spp.left,
-                right=spp.right,
-                bottom=spp.bottom,
-                top=spp.top)
-    return config
-
   def legend(self, *args, **opts):
     return self._add_object(self.ax.legend(*args, **opts))
 
@@ -398,6 +403,27 @@ class MPLProcess(FigureCanvasAgg, Process):
     self.ax.clear()
     if self.ax2 is not None:
       self.ax2.clear()
+
+  def drag_pan(self, button, key, x, y):
+    self.ax.drag_pan(button, key, x, y)
+
+  def toggle_log(self, *args):
+    ax=self.ax
+    if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
+      logstate=ax.get_yscale()
+      if logstate=='linear':
+        ax.set_yscale('log')
+      else:
+        ax.set_yscale('linear')
+    else:
+      imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
+      norm=imgs[0].norm
+      if norm.__class__ is LogNorm:
+        for img in imgs:
+          img.set_norm(Normalize(norm.vmin, norm.vmax))
+      else:
+        for img in imgs:
+          img.set_norm(LogNorm(norm.vmin, norm.vmax))
 
   def set_size_inches(self, w, h):
     self.fig.set_size_inches(w, h)
@@ -444,10 +470,13 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
   MAX_IMAGE_SIZE=4*4000*4000
   drawFinished=QtCore.pyqtSignal()
   paintFinished=QtCore.pyqtSignal(object)
+  printFinished=Event()
   eventEmitted=QtCore.pyqtSignal(object, object)
   cplot=None
   vlines=[]
   hlines=[]
+  shown_plots=[]
+  shown_imgs=[]
 
   def __init__(self, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
     QtCore.QThread.__init__(self)
@@ -461,8 +490,8 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     self.stay_alive=True
     self.scheduled_actions=[]
     self.scheduled_receives=[]
-    self._plots=[]
-    self._imgs=[]
+    self.shown_plots=[]
+    self.shown_imgs=[]
     self.vlines=[]
     self.hlines=[]
     self._objts=[]
@@ -473,6 +502,8 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     self.cplot=AttribCaller(self, 'cplot')
 
   def run(self):
+    # start the plot process
+    self.canvas_process.start()
     while True:
       try:
         self._run()
@@ -480,8 +511,6 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
         error('ERROR in Thread %i:'%self.currentThreadId(), exc_info=True)
 
   def _run(self):
-    # start the plot process
-    self.canvas_process.start()
     # create a timer to regularly communicate with the process
     while True:
       if self.scheduled_actions:
@@ -517,7 +546,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
               resultj._parent=self
           else:
             resulti._parent=self
-        self._plots+=result
+        self.shown_plots+=result
         self._objts+=result
       elif item[0] in ['axvline', 'axhline']:
         result._parent=self
@@ -528,7 +557,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
         self._objts.append(result)
       elif item[0] in ['imshow', 'pcolormesh']:
         result._parent=self
-        self._imgs.append(result)
+        self.shown_imgs.append(result)
         self._objts.append(result)
       elif item[0]=='_object_call':
         oidx=[obj._index for obj in self._objts]
@@ -539,6 +568,8 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
       elif item[0]=='clear':
         self.vlines=[]
         self.hlines=[]
+      elif item[0]=='print_figure':
+        self.printFinished.set()
     if paint_result:
         self.paintFinished.emit(paint_result)
 
@@ -550,13 +581,15 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
       s, event=self.event_pipe.recv()
       if s in ['fig', 'ax']:
         getattr(self, s)._update(event)
+      elif s=='Error':
+        error('Error in process %s:\n%s'%(self.canvas_process.pid, event))
       else:
         evnts[s]=event
     for s, event in evnts.items():
       self.eventEmitted.emit(s, event)
 
 
-  def imshow(self, data, log=False, imin=None, imax=None, update=True, **opts):
+  def imshow(self, data, log=False, imin=None, imax=None, **opts):
     '''
       Convenience wrapper for self.canvas.ax.plot
     '''
@@ -566,6 +599,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     else:
       self(data, **opts)
     return self.cplot
+
 
   def pcolormesh(self, data, log=False, imin=None, imax=None, update=True, **opts):
     '''
@@ -594,6 +628,17 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     self.scheduled_actions.append((self.next_action, args, opts))
     self.actionPending.set()
 
+  def __del__(self):
+    self.canvas_process.join(10.)
+
+class SubPlotParams:
+  left=0.15
+  right=0.95
+  top=0.95
+  bottom=0.1
+  wspace=0.
+  hspace=0.
+
 class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
   _running_threads=[]
   buttond={QtCore.Qt.LeftButton  : 1,
@@ -602,12 +647,16 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
            }
   vbox=None
   toolbar=None
+  cplot=None
+  plot_log=False
 
   def __init__(self, parent=None, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={},
                toolbar=True):
     QtGui.QWidget.__init__(self, parent)
     self.callbacks=CallbackRegistry()
     self.widgetlock=widgets.LockDraw()
+    self.canvas=self
+    self.subplotpars=SubPlotParams()
 
     self.dpi=dpi
     self.width=width
@@ -632,6 +681,22 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
       self.tb_offset=0.
 
     self.resize(width, height)
+
+  def subplots_adjust(self, *args, **opts):
+    for key, value in opts.items():
+      setattr(self.subplotpars, key, value)
+    self.draw_process.subplots_adjust(*args, **opts)
+
+  def get_config(self):
+    spp=self.subplotpars
+    config=dict(left=spp.left,
+                right=spp.right,
+                bottom=spp.bottom,
+                top=spp.top)
+    return config
+
+  def set_config(self, opts):
+    self.subplots_adjust(**opts)
 
   def update(self):
     QtGui.QWidget.update(self)
@@ -675,6 +740,16 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     p.end()
     self.drawRect=False
 
+  def leaveEvent(self, event):
+    '''
+    Make sure the cursor is reset to it's default when leaving the widget.
+    In some cases the zoom cursor does not reset when leaving the plot.
+    '''
+    if self.toolbar:
+      QtGui.QApplication.restoreOverrideCursor()
+      self.toolbar._lastCursor=None
+    return QtGui.QWidget.leaveEvent(self, event)
+
   def draw(self):
     self.draw_process.draw()
 
@@ -682,6 +757,28 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.rect=rect
     self.drawRect=True
     self.repaint()
+
+  def clear(self):
+    self.cplot=None
+    self.draw_process.clear()
+
+  def set_yscale(self, scale):
+    if scale=='linear':
+      self.plot_log=False
+    else:
+      self.plot_log=True
+    self.draw_process.set_yscale(scale)
+
+  def imshow(self, data, log=False, imin=None, imax=None, update=True, **opts):
+    '''
+      Convenience wrapper for self.canvas.ax.plot
+    '''
+    self.plot_log=log
+    if self.cplot is None or not update:
+      self.cplot=self.draw_process.imshow(data, log=log, imin=imin, imax=imax, **opts)
+    else:
+      self.cplot.set_data(data)
+    return self.cplot
 
   ###### user interaction events similar to matplotlib default but with process interaction ##
   def mousePressEvent(self, event):
@@ -749,11 +846,119 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     return QtGui.QWidget.__getattr__(self, name)
 
 class BackgroundNavigationToolbar(NavigationToolbar2QT):
+  _auto_toggle=False
+
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
     self.setIconSize(QtCore.QSize(20, 20))
     self.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
     self.draw_process=canvas.draw_process
+
+  def _init_toolbar(self):
+    if not hasattr(self, '_actions'):
+      self._actions={}
+    self.basedir=os.path.join(matplotlib.rcParams[ 'datapath' ], 'images')
+
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/go-home.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Home', self.home)
+    a.setToolTip('Reset original view')
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/zoom-previous.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Back', self.back)
+    a.setToolTip('Back to previous view')
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/zoom-next.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Forward', self.forward)
+    a.setToolTip('Forward to next view')
+    self.addSeparator()
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/transform-move.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Pan', self.pan)
+    a.setToolTip('Pan axes with left mouse, zoom with right')
+    a.setCheckable(True)
+    self._actions['pan']=a
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/zoom-select.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Zoom', self.zoom)
+    a.setToolTip('Zoom to rectangle')
+    a.setCheckable(True)
+    self._actions['zoom']=a
+    self.addSeparator()
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/edit-guides.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Subplots', self.configure_subplots)
+    a.setToolTip('Configure plot boundaries')
+
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/document-save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Save', self.save_figure)
+    a.setToolTip('Save the figure')
+
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/document-print.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, 'Print', self.print_figure)
+    a.setToolTip('Print the figure with the default printer')
+
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-log.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.addSeparator()
+    a=self.addAction(icon, 'Log', self.toggle_log)
+    a.setToolTip('Toggle logarithmic scale')
+
+
+    self.buttons={}
+
+    # Add the x,y location widget at the right side of the toolbar
+    # The stretch factor is 1 which means any resizing of the toolbar
+    # will resize this label instead of the buttons.
+    self.locLabel=QtGui.QLabel("", self)
+    self.locLabel.setAlignment(
+            QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+    self.locLabel.setSizePolicy(
+        QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
+                          QtGui.QSizePolicy.Ignored))
+    self.labelAction=self.addWidget(self.locLabel)
+    if self.coordinates:
+      self.labelAction.setVisible(True)
+    else:
+      self.labelAction.setVisible(False)
+
+    # reference holder for subplots_adjust window
+    self.adj_window=None
+
+  def print_figure(self):
+    '''
+      Save the plot to a temporary png file and show a preview dialog also used for printing.
+    '''
+    filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.png")
+    self.canvas.draw_process.printFinished.clear()
+    self.canvas.draw_process.print_figure(filename, dpi=600)
+    self.canvas.draw_process.printFinished.wait(10.)
+    imgpix=QtGui.QPixmap(filename)
+    os.remove(filename)
+
+    imgobj=QtGui.QLabel()
+    imgobj.setPixmap(imgpix)
+    imgobj.setMask(imgpix.mask())
+    imgobj.setGeometry(0, 0, imgpix.width(), imgpix.height())
+
+    def getPrintData(printer):
+      imgobj.render(printer)
+
+    printer=QtGui.QPrinter()
+    printer.setPrinterName('mrac4a_printer')
+    printer.setPageSize(QtGui.QPrinter.Letter)
+    printer.setResolution(600)
+    printer.setOrientation(QtGui.QPrinter.Landscape)
+
+    pd=QtGui.QPrintPreviewDialog(printer)
+    pd.paintRequested.connect(getPrintData)
+    pd.exec_()
+
+  def toggle_log(self, *args):
+    self.canvas.toggle_log()
+    self.canvas.draw()
 
   def draw_rubberband(self, event, x0, y0, x1, y1):
     height=self.canvas.height
@@ -768,6 +973,13 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
 
   def zoom(self, *args):
     'activate zoom to rect mode'
+    if self._auto_toggle:
+      return
+    if self._active=='PAN':
+      self._auto_toggle=True
+      self._actions['pan'].setChecked(False)
+      self._auto_toggle=False
+
     if self._active=='ZOOM':
       self._active=None
     else:
@@ -941,18 +1153,169 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
 
   def push_current(self):
     'push the current view limits and position onto the stack'
-    lims=[]; pos=[]
+    lims=[]
     a=self.draw_process.ax
     xmin, xmax=a.get_xlim()
     ymin, ymax=a.get_ylim()
     lims.append((xmin, xmax, ymin, ymax))
     # Store both the original and modified positions
-    pos.append((a.get_position(True), a.get_position()))
+    #pos.append()
     self._views.push(lims)
-    self._positions.push(pos)
+    self._positions.push([(a.get_position(True).flatten(), a.get_position().flatten())])
     self.set_history_buttons()
 
+  def pan(self, *args):
+    'Activate the pan/zoom tool. pan with left button, zoom with right'
+    # set the pointer icon and button press funcs to the
+    # appropriate callbacks
+    if self._auto_toggle:
+      return
+    if self._active=='ZOOM':
+      self._auto_toggle=True
+      self._actions['zoom'].setChecked(False)
+      self._auto_toggle=False
+
+    if self._active=='PAN':
+      self._active=None
+    else:
+      self._active='PAN'
+    if self._idPress is not None:
+      self._idPress=self.canvas.mpl_disconnect(self._idPress)
+      self.mode=''
+
+    if self._idRelease is not None:
+      self._idRelease=self.canvas.mpl_disconnect(self._idRelease)
+      self.mode=''
+
+
+    if  self._active:
+      self._idPress=self.canvas.mpl_connect('button_press_event', self.press_pan)
+      self._idRelease=self.canvas.mpl_connect('button_release_event', self.release_pan)
+      self.mode='pan/zoom'
+      self.canvas.widgetlock(self)
+    else:
+      self.canvas.widgetlock.release(self)
+
+    self.draw_process.ax.set_navigate_mode(self._active)
+
+    self.set_message(self.mode)
+  
+  def press_pan(self, event):
+    if event.button==1:
+      self._button_pressed=1
+    elif  event.button==3:
+      self._button_pressed=3
+    else:
+      self._button_pressed=None
+      return
+
+    x, y, key, xdata, ydata=event.x, event.y, event.key, event.xdata, event.ydata
+
+    # push the current view to define home if stack is empty
+    if self._views.empty(): self.push_current()
+
+    self._xypress=[]
+    i, a=0, self.draw_process.ax
+    if (x is not None and y is not None and event.inaxes and
+      a.get_navigate() and a.can_zoom()) :
+      self._xypress.append((x, y, key, a, i, a.viewLim,
+                             [xdata, ydata]))
+      a.start_pan(x, y, event.button)
+
+    id1=self.canvas.mpl_connect('motion_notify_event', self.drag_pan)
+
+    self._ids_pan=(id1,)
+
+    self.press(event)
+  
+  def release_pan(self, event):
+    for pan_id in self._ids_pan:
+        self.canvas.mpl_disconnect(pan_id)
+    self._ids_pan=[]
+    if self._button_pressed is None:
+        return
+
+    if not self._xypress: return
+    self._xypress[0][3].end_pan()
+    self._xypress=[]
+    self._button_pressed=None
+    self.push_current()
+    self.release(event)
+    self.draw()
+
+  def drag_pan(self, event):
+      """the drag callback in pan/zoom mode"""
+      self.canvas.draw_process.drag_pan(self._button_pressed, event.key, event.x, event.y)
+
+      self.canvas.draw()
+
+  def save_figure(self, *args):
+    filetypes={}
+    for ext, name in FigureCanvasAgg.filetypes.iteritems():
+        filetypes.setdefault(name, []).append(ext)
+        filetypes[name].sort()
+    sorted_filetypes=filetypes.items()
+    sorted_filetypes.sort()
+    default_filetype='png'
+
+    start='image.'+default_filetype
+    filters=[]
+    selectedFilter=None
+    for name, exts in sorted_filetypes:
+      exts_list=" ".join(['*.%s'%ext for ext in exts])
+      filter='%s (%s)'%(name, exts_list)
+      if default_filetype in exts:
+        selectedFilter=filter
+      filters.append(filter)
+    filters=';;'.join(filters)
+    # TODO: check why selectedFilter is ignored
+    fname=_getSaveFileName(self, "Choose a filename to save to",
+                                    start, filters, selectedFilter)
+    if fname:
+        try:
+          self.draw_process.print_figure(unicode(fname))
+        except Exception as e:
+          QtGui.QMessageBox.critical(
+              self, "Error saving file", str(e),
+              QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+
+  def configure_subplots(self):
+    self.adj_window=QtGui.QMainWindow()
+    win=self.adj_window
+
+    win.setWindowTitle("Subplot Configuration Tool")
+    image=os.path.join(matplotlib.rcParams['datapath'], 'images', 'matplotlib.png')
+    win.setWindowIcon(QtGui.QIcon(image))
+
+    tool=SubplotToolQt(self.canvas, win)
+    win.setCentralWidget(tool)
+    win.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+
+    win.show()
+
   def draw(self):
+    self.canvas.draw()
+
+  def _update_view(self):
+    """Update the viewlim and position from the view and
+    position stack for each axes
+    """
+    lims=self._views()
+    if lims is None:  return
+    pos=self._positions()
+    if pos is None: return
+
+    xmin, xmax, ymin, ymax=lims[0]
+    a=self.draw_process.ax
+    a.set_xlim((xmin, xmax))
+    a.set_ylim((ymin, ymax))
+    self.canvas.draw()
+    return
+    # TODO: check out why this is not working properly
+    # Restore both the original and modified positions
+    a.set_position(pos[0][0], 'original')
+    a.set_position(pos[0][1], 'active')
+
     self.canvas.draw()
 
 

@@ -241,20 +241,20 @@ class MainGUI(QtGui.QMainWindow):
            self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
            self.ui.xy_overview, self.ui.xtof_overview,
            self.ui.x_project, self.ui.y_project, self.ui.refl]:
-      plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
+      plot.mpl_connect('motion_notify_event', self.plotMouseEvent)
     for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
                  self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
                  self.ui.xy_overview, self.ui.xtof_overview]:
-      plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
-    self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
-    self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
-    self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
-    self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
-    self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
-    self.ui.xy_overview.canvas.mpl_connect('button_press_event', self.plotPickXY)
-    self.ui.xy_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXY)
-    self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
-    self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
+      plot.mpl_connect('scroll_event', self.changeColorScale)
+    self.ui.x_project.mpl_connect('motion_notify_event', self.plotPickX)
+    self.ui.x_project.mpl_connect('button_press_event', self.plotPickX)
+    self.ui.y_project.mpl_connect('motion_notify_event', self.plotPickY)
+    self.ui.y_project.mpl_connect('button_press_event', self.plotPickY)
+    self.ui.refl.mpl_connect('scroll_event', self.scaleOnPlot)
+    self.ui.xy_overview.mpl_connect('button_press_event', self.plotPickXY)
+    self.ui.xy_overview.mpl_connect('motion_notify_event', self.plotPickXY)
+    self.ui.xtof_overview.mpl_connect('button_press_event', self.plotPickXToF)
+    self.ui.xtof_overview.mpl_connect('motion_notify_event', self.plotPickXToF)
 
   @log_input
   def fileOpen(self, filename, do_plot=True):
@@ -432,10 +432,6 @@ class MainGUI(QtGui.QMainWindow):
       phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
       tth0=(data.dangle-data.dangle0)-(304-data.dpix)*rad_per_pixel*180./pi
       self.ui.xy_overview.clear()
-      if self.overview_lines is None:
-        self.overview_lines=[]
-      else:
-        self.overview_lines=self.overview_lines[-2:]
 
       self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
                                aspect='auto', cmap=self.color, origin='lower',
@@ -450,20 +446,16 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.xy_overview.set_ylabel(u'y [pix]')
       self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
 
-      if self.overview_lines is None or len(self.overview_lines)==2:
-        x1=self.ui.xy_overview.canvas.ax.axvline(x_peak-x_width/2., color='#aa0000')
-        x2=self.ui.xy_overview.canvas.ax.axvline(x_peak+x_width/2., color='#aa0000')
-        y1=self.ui.xy_overview.canvas.ax.axhline(y_pos-y_width/2., color='#00aa00')
-        y2=self.ui.xy_overview.canvas.ax.axhline(y_pos+y_width/2., color='#00aa00')
-        if self.overview_lines is not None:
-          self.overview_lines=[x1, x2, y1, y2]+self.overview_lines
-        else:
-          self.overview_lines=[x1, x2, y1, y2]
+      if len(self.ui.xy_overview.vlines)==0:
+        self.ui.xy_overview.axvline(x_peak-x_width/2., color='#aa0000')
+        self.ui.xy_overview.axvline(x_peak+x_width/2., color='#aa0000')
+        self.ui.xy_overview.axhline(y_pos-y_width/2., color='#00aa00')
+        self.ui.xy_overview.axhline(y_pos+y_width/2., color='#00aa00')
       else:
-        self.overview_lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-        self.overview_lines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-        self.overview_lines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
-        self.overview_lines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
+        self.ui.xy_overview.vlines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+        self.ui.xy_overview.vlines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+        self.ui.xy_overview.hlines[0].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
+        self.ui.xy_overview.hlines[1].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
     # XToF plot
     if self.ui.xLamda.isChecked():
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
@@ -476,17 +468,16 @@ class MainGUI(QtGui.QMainWindow):
                                    extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
       self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
-    if len(self.overview_lines) in [0, 4]:
-      x3=self.ui.xtof_overview.canvas.ax.axhline(x_peak-x_width/2., color='#aa0000')
-      x4=self.ui.xtof_overview.canvas.ax.axhline(x_peak+x_width/2., color='#aa0000')
-      x5=self.ui.xtof_overview.canvas.ax.axhline(bg_pos-bg_width/2., color='black')
-      x6=self.ui.xtof_overview.canvas.ax.axhline(bg_pos+bg_width/2., color='black')
-      self.overview_lines+=[x3, x4, x5, x6]
+    if len(self.ui.xtof_overview.hlines)==0:
+      self.ui.xtof_overview.axhline(x_peak-x_width/2., color='#aa0000')
+      self.ui.xtof_overview.axhline(x_peak+x_width/2., color='#aa0000')
+      self.ui.xtof_overview.axhline(bg_pos-bg_width/2., color='black')
+      self.ui.xtof_overview.axhline(bg_pos+bg_width/2., color='black')
     else:
-      self.overview_lines[-4].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
-      self.overview_lines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
-      self.overview_lines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-      self.overview_lines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+      self.ui.xtof_overview.hlines[0].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.ui.xtof_overview.hlines[1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.ui.xtof_overview.hlines[2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      self.ui.xtof_overview.hlines[3].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 
     if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
@@ -636,35 +627,35 @@ class MainGUI(QtGui.QMainWindow):
     yxlim=(0, len(yproj)-1)
     yylim=(yproj[yproj>0].min(), yproj.max()*2)
 
-    if self._x_projection is None:
-      self._x_projection=self.ui.x_project.plot(xproj, color='blue')[0]
+    if len(self.ui.x_project.shown_plots)==0:
+      #self._x_projection=
+      self.ui.x_project.plot(xproj, color='blue')
       self.ui.x_project.set_xlabel(u'x [pix]')
       self.ui.x_project.set_ylabel(u'I$_{max}$')
-      xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
-      xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
-      xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
-      xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='black')
-      xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='black')
+      self.ui.x_project.axvline(x_peak, color='black')
+      self.ui.x_project.axvline(x_peak-x_width/2., color='red')
+      self.ui.x_project.axvline(x_peak+x_width/2., color='red')
+      self.ui.x_project.axvline(bg_pos-bg_width/2., color='black')
+      self.ui.x_project.axvline(bg_pos+bg_width/2., color='black')
 
-      self._y_projection=self.ui.y_project.plot(yproj, color='blue')[0]
+      #self._y_projection=
+      self.ui.y_project.plot(yproj, color='blue')
       self.ui.y_project.set_xlabel(u'y [pix]')
       self.ui.y_project.set_ylabel(u'I$_{max}$')
-      yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='green')
-      yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='green')
-      ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='black')
-      self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right, ybg)
+      self.ui.y_project.axvline(y_pos-y_width/2., color='green')
+      self.ui.y_project.axvline(y_pos+y_width/2., color='green')
+      self.ui.y_project.axhline(self.y_bg, color='black')
     else:
-      self._x_projection.set_ydata(xproj)
-      self._y_projection.set_ydata(yproj)
-      lines=self.proj_lines
-      lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-      lines[1].set_xdata([x_peak, x_peak])
-      lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-      lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-      lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
-      lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
-      lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
-      lines[7].set_ydata([self.y_bg, self.y_bg])
+      self.ui.x_project.shown_plots[0].set_ydata(xproj)
+      self.ui.y_project.shown_plots[0].set_ydata(yproj)
+      self.ui.x_project.vlines[0].set_xdata([x_peak, x_peak])
+      self.ui.x_project.vlines[1].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.ui.x_project.vlines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.ui.x_project.vlines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      self.ui.x_project.vlines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+      self.ui.y_project.vlines[0].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+      self.ui.y_project.vlines[1].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+      self.ui.y_project.hlines[0].set_ydata([self.y_bg, self.y_bg])
     if preserve_lim:
       self.ui.x_project.canvas.ax.axis(xview)
       self.ui.y_project.canvas.ax.axis(yview)
@@ -674,10 +665,10 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.x_project.set_yscale('linear')
       self.ui.y_project.set_yscale('linear')
-    self.ui.x_project.canvas.ax.set_xlim(*xxlim)
-    self.ui.x_project.canvas.ax.set_ylim(*xylim)
-    self.ui.y_project.canvas.ax.set_xlim(*yxlim)
-    self.ui.y_project.canvas.ax.set_ylim(*yylim)
+    self.ui.x_project.set_xlim(*xxlim)
+    self.ui.x_project.set_ylim(*xylim)
+    self.ui.y_project.set_xlim(*yxlim)
+    self.ui.y_project.set_ylim(*yylim)
 
     self.ui.x_project.draw()
     self.ui.y_project.draw()
@@ -796,7 +787,7 @@ class MainGUI(QtGui.QMainWindow):
                               yerr=refli.dR[PNi:P0i], label=str(refli.options['number']),
                               color=self._refl_color_list[i%len(self._refl_color_list)])
       self.ui.refl.set_ylabel(u'I')
-      self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
+      self.ui.refl.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'Q$_z$ [Å$^{-1}$]')
     else:
       try:
@@ -810,7 +801,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.refl.errorbar(self.refl.lamda, self.refl.I, yerr=self.refl.dI, label='I-'+options['number'])
       self.ui.refl.errorbar(self.refl.lamda, self.refl.BG, yerr=self.refl.dBG, label='BG-'+options['number'])
       self.ui.refl.set_ylabel(u'I')
-      self.ui.refl.canvas.ax.set_ylim((ymin*0.9, ymax*1.1))
+      self.ui.refl.set_ylim((ymin*0.9, ymax*1.1))
       self.ui.refl.set_xlabel(u'$\\lambda{}$ [Å]')
     if self.ui.logarithmic_y.isChecked():
       self.ui.refl.set_yscale('log')
@@ -1404,7 +1395,7 @@ class MainGUI(QtGui.QMainWindow):
     Sets up a trigger to replot the reflectivity with a delay so
     a subsequent change can occur without several replots.
     '''
-    if self.auto_change_active or self.proj_lines is None:
+    if self.auto_change_active or len(self.ui.x_project.vlines)==0:
       return
     lines=self.proj_lines
     olines=self.overview_lines
@@ -1416,27 +1407,26 @@ class MainGUI(QtGui.QMainWindow):
     bg_pos=self.ui.bgCenter.value()
     bg_width=self.ui.bgWidth.value()
 
-    lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-    lines[1].set_xdata([x_peak, x_peak])
-    lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-    lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-    lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
-    lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
-    lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+    self.ui.x_project.vlines[0].set_xdata([x_peak, x_peak])
+    self.ui.x_project.vlines[1].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+    self.ui.x_project.vlines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+    self.ui.x_project.vlines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+    self.ui.x_project.vlines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+    self.ui.y_project.vlines[0].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+    self.ui.y_project.vlines[1].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
     self.ui.x_project.draw()
     self.ui.y_project.draw()
 
-    if len(olines)>4:
-      olines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-      olines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-      olines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
-      olines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
+    if len(self.ui.xy_overview.hlines)!=0:
+      self.ui.xy_overview.vlines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.ui.xy_overview.vlines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.ui.xy_overview.hlines[0].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
+      self.ui.xy_overview.hlines[1].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
       self.ui.xy_overview.draw()
-    olines[-4].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
-    olines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
-    olines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-    olines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
-
+    self.ui.xtof_overview.hlines[0].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+    self.ui.xtof_overview.hlines[1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+    self.ui.xtof_overview.hlines[2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+    self.ui.xtof_overview.hlines[3].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.draw()
 
     if self.ui.fanReflectivity.isChecked() and self.refl and not self.refl.options['extract_fan']:
@@ -1578,7 +1568,7 @@ class MainGUI(QtGui.QMainWindow):
       first=len(self.refl.R)-self.ui.rangeStart.value()
       Q=self.refl.Q[:first][self.refl.R[:first]>0]
       totref=Line2D([Q.min(), Q[npoints]], [1., 1.], color='red')
-      self.ui.refl.canvas.ax.add_line(totref)
+      self.ui.refl.add_line(totref)
     self.auto_change_active=False
     self.ui.refl.draw()
 
