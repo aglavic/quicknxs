@@ -27,7 +27,10 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg, Figure
 from matplotlib.backends.backend_qt4 import NavigationToolbar2QT, SubplotToolQt
 from matplotlib.lines import Line2D
 from matplotlib.colors import Normalize
-from matplotlib.container import ErrorbarContainer
+try:
+  from matplotlib.container import ErrorbarContainer
+except:
+  ErrorbarContainer=None
 from matplotlib.collections import LineCollection
 from matplotlib.image import AxesImage
 from matplotlib.legend import Legend
