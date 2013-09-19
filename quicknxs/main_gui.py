@@ -1397,9 +1397,6 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.auto_change_active or len(self.ui.x_project.vlines)==0:
       return
-    lines=self.proj_lines
-    olines=self.overview_lines
-
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
     y_pos=self.ui.refYPos.value()

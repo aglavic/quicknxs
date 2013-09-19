@@ -21,6 +21,7 @@ from copy import deepcopy
 from glob import glob
 from numpy import *
 from logging import debug, info, warn #@Reimport
+from platform import node
 import h5py
 from time import time, strptime, mktime
 # ignore zero devision error
@@ -85,6 +86,9 @@ MAPPING_EFIELD=(
                 (u'+V', u'entry-On_Off'),
                 (u'-V', u'entry-Off_On'),
                 )
+
+# don't save RAM by compression when on analysis cluster or mrac computer as they have plenty
+USE_COMPRESSION=not ('biganalysis' in node() or 'mrac' in node())
 
 # used for * imports
 __all__=['NXSData', 'MRDataset', 'Reflectivity', 'OffSpecular', 'GISANS', 'time_from_header',
@@ -773,27 +777,32 @@ class MRDataset(object):
     output+=other
     return output
 
-  # data compressed in memory properties
-  _data_zipped=None
-  _data_dtype=float
-  _data_shape=(0,)
-  @property
-  def data(self):
-    data=fromstring(zlib.decompress(self._data_zipped), dtype=self._data_dtype)
-    return data.reshape(self._data_shape)
-  @data.setter
-  def data(self, data):
-    self._data_zipped=zlib.compress(data.tostring(), 1)
-    self._data_dtype=data.dtype
-    self._data_shape=data.shape
+  if USE_COMPRESSION:
+    # data compressed in memory properties
+    _data_zipped=None
+    _data_dtype=float
+    _data_shape=(0,)
+    @property
+    def data(self):
+      data=fromstring(zlib.decompress(self._data_zipped), dtype=self._data_dtype)
+      return data.reshape(self._data_shape)
+    @data.setter
+    def data(self, data):
+      self._data_zipped=zlib.compress(data.tostring(), 1)
+      self._data_dtype=data.dtype
+      self._data_shape=data.shape
 
   ################## Properties for easy data access ##########################
   # return the size of the data stored in memory for this dataset
   @property
-  def nbytes(self): return (len(self._data_zipped)+
-                            self.xydata.nbytes+self.xtofdata.nbytes)
-  @property
   def rawbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
+
+  if USE_COMPRESSION:
+    @property
+    def nbytes(self): return (len(self._data_zipped)+
+                              self.xydata.nbytes+self.xtofdata.nbytes)
+  else:
+    nbytes=rawbytes
 
   @property
   def xdata(self): return self.xydata.mean(axis=0)
