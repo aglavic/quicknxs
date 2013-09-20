@@ -723,7 +723,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>141</width>
+             <width>246</width>
              <height>135</height>
             </rect>
            </property>
@@ -1070,14 +1070,14 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>150</width>
                  <height>150</height>
                 </size>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="MPLWidget" name="xtof_overview" native="true">
+              <widget class="MPLWidget" name="refl" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -1086,7 +1086,23 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>150</width>
+                 <height>150</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MPLWidget" name="x_project" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
                  <height>150</height>
                 </size>
                </property>
@@ -1861,162 +1877,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="XY_Tab">
-        <attribute name="title">
-         <string>X-Y</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>X-Y intensity maps for all channels in this file</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="PersistentFrame" name="frame_xy_pp">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="MPLWidget" name="xy_pp" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="PersistentFrame" name="frame_xy_mm">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="MPLWidget" name="xy_mm" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="PersistentFrame" name="frame_xy_sf">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="MPLWidget" name="xy_pm" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="xy_mp" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>105</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="XTof_Tab">
-        <attribute name="title">
-         <string>X-ToF</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>X-ToF intensity maps for all channels in this file</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="PersistentFrame" name="frame_xtof_pp">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <widget class="MPLWidget" name="xtof_pp" native="true"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="PersistentFrame" name="frame_xtof_mm">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="MPLWidget" name="xtof_mm" native="true"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="PersistentFrame" name="frame_xtof_sf">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="MPLWidget" name="xtof_pm" native="true"/>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="xtof_mp" native="true"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="OffSpec_Tab">
         <attribute name="title">
          <string>OffSpec Preview</string>
@@ -2447,159 +2307,163 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QFrame" name="rightPlots">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="margin">
-         <number>2</number>
-        </property>
-        <item>
-         <widget class="QSplitter" name="plotSplitter">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="childrenCollapsible">
-           <bool>false</bool>
-          </property>
-          <widget class="QWidget" name="widget_4" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>2</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_24">
-            <item>
-             <widget class="QLabel" name="label_35">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>X-Projection</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="x_project" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="widget_2" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>1</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_23">
-            <item>
-             <widget class="QLabel" name="label_34">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Y-Projection</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="y_project" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="widget" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>3</verstretch>
-            </sizepolicy>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_22">
-            <item>
-             <widget class="QLabel" name="label_33">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Reflectivity</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="refl" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="hiddenWidget" native="true"/>
+     <widget class="QWidget" name="hiddenWidget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_16">
+       <item>
+        <widget class="PersistentFrame" name="frame_xy_pp">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="MPLWidget" name="xy_pp" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>150</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="PersistentFrame" name="frame_xy_sf">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="MPLWidget" name="xy_pm" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>150</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="MPLWidget" name="xy_mp" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>105</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="PersistentFrame" name="frame_xy_mm">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="MPLWidget" name="xy_mm" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>150</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="MPLWidget" name="y_project" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>150</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="MPLWidget" name="xtof_overview" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>150</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="PersistentFrame" name="frame_xtof_pp">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="MPLWidget" name="xtof_pp" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="PersistentFrame" name="frame_xtof_mm">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="MPLWidget" name="xtof_mm" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="PersistentFrame" name="frame_xtof_sf">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="MPLWidget" name="xtof_pm" native="true"/>
+          </item>
+          <item>
+           <widget class="MPLWidget" name="xtof_mp" native="true"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>

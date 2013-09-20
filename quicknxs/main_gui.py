@@ -13,7 +13,7 @@ from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
 from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
-from .main_window import Ui_MainWindow
+from .main_window_ltest import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
@@ -112,6 +112,7 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=True
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
+    self.ui.hiddenWidget.hide()
     install_gui_handler(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
@@ -385,17 +386,18 @@ class MainGUI(QtGui.QMainWindow):
       self._gisansThread.terminate()
       self._gisansThread.wait(100)
       self._gisansThread=None
-    if self.ui.plotTab.currentIndex()==0:
+    cur_text=self.ui.plotTab.tabText(self.ui.plotTab.currentIndex())
+    if cur_text=='Overview':
       self.plot_overview()
-    if self.ui.plotTab.currentIndex()==1:
+    if cur_text=='X-Y':
       self.plot_xy()
-    if self.ui.plotTab.currentIndex()==2:
+    if cur_text=='X-ToF':
       self.plot_xtof()
-    if self.ui.plotTab.currentIndex()==3:
+    if cur_text=='OffSpec Preview':
       self.plot_offspec()
-    if self.ui.plotTab.currentIndex()==4:
+    if cur_text=='GISANS Preview':
       self.plot_gisans()
-    if self.ui.plotTab.currentIndex()==5:
+    if cur_text=='DAS Logs':
       self.update_daslog()
 
   @log_call
