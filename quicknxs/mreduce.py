@@ -690,16 +690,36 @@ class MRDataset(object):
     self.log_minmax={}
     self.log_units={}
     if 'DASlogs' in data:
+      # get an array of all pulses to make it possible to correlate values with states
+      stimes=data['DASlogs/proton_charge/time'].value
+      stimes=unique(stimes.round(1)) # reduce the number of items to speed up the correlation
       # the old format does not include the DAS logs
       for motor, item in data['DASlogs'].items():
+        if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
+          continue
         try:
-          self.logs[motor]=item['average_value'].value[0]
-          if 'units' in item['average_value'].attrs:
-            self.log_units[motor]=item['average_value'].attrs['units']
+          if 'units' in item['value'].attrs:
+            self.log_units[motor]=item['value'].attrs['units']
           else:
             self.log_units[motor]=u''
-          self.log_minmax[motor]=(item['minimum_value'].value[0],
-                                  item['maximum_value'].value[0])
+          #self.logs[motor]=item['average_value'].value[0]
+          #self.log_minmax=(item['minimum_value'].value[0], item['maximum_value'].value[0])
+          val=item['value'].value
+          if val.shape[0]==1:
+            self.logs[motor]=val[0]
+            self.log_minmax[motor]=(val[0], val[0])
+          else:
+            vtime=item['time'].value
+            sidx=searchsorted(stimes, vtime)
+            sidx[(sidx+1)>=len(stimes)]=len(stimes)-2
+            filter_idx=(abs(stimes[sidx]-vtime)<0.2)&(abs(stimes[sidx+1]-vtime)<0.2)
+            val=val[filter_idx]
+            if len(val)==0:
+              self.logs[motor]=NaN
+              self.log_minmax[motor]=(NaN, NaN)
+            else:
+              self.logs[motor]=val.mean()
+              self.log_minmax[motor]=(val.min(), val.max())
         except:
           continue
       self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
