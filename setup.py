@@ -78,8 +78,8 @@ elif 'py2app' in sys.argv:
                'app': ["scripts/quicknxs"],
                'options': {'py2app': {
                           'optimize': 1,
-                          'Compression': False,
-                          'argv_emulation': True,
+                          'compressed': False,
+                          'argv_emulation': False,
                           'iconfile': 'dist_data/quicknxs.icns',
                           'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork',
                                        'h5py.defs', 'h5py.utils', 'h5py._proxy'],
