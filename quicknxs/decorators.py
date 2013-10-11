@@ -136,7 +136,7 @@ def log_call(func, *args, **kw):
   '''
     Decorator to log just the method call.
   '''
-  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  if logging.root.getEffectiveLevel()>logging.DEBUG: return func(*args, **kw)
   infodict=getinfo(func)
   if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
     _logformat('%s.%s.%s'%(infodict['module'],
@@ -151,7 +151,7 @@ def log_input(func, *args, **kw):
   '''
     Decorator to log a method call with input.
   '''
-  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  if logging.root.getEffectiveLevel()>logging.DEBUG: return func(*args, **kw)
   infodict=getinfo(func)
   if hasattr(func, 'im_func'):
     logstr=' call %s.%s('%(args[0].__class__.__name__, infodict['name'])
@@ -193,7 +193,7 @@ def log_output(func, *args, **kw):
     Decorator to log a method call with output. If combined with log_input
     the input is logged at the time before the call and the output after.
   '''
-  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  if logging.root.getEffectiveLevel()>logging.DEBUG: return func(*args, **kw)
   output=func(*args, **kw)
   infodict=getinfo(func)
   if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
@@ -214,7 +214,7 @@ def log_both(func, *args, **kw):
   '''
     Decoratore to log a method call with input and output.
   '''
-  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  if logging.root.getEffectiveLevel()>logging.DEBUG: return func(*args, **kw)
   infodict=getinfo(func)
   if hasattr(func, 'im_func'):
     logstr=' call %s.%s('%(args[0].__class__.__name__, infodict['name'])
@@ -269,7 +269,7 @@ def time_call(func, *args, **kw):
   '''
     Decorator to log just the method call.
   '''
-  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  if logging.root.getEffectiveLevel()>logging.DEBUG: return func(*args, **kw)
   name=func.__name__
   start=time()
   output=func(*args, **kw)

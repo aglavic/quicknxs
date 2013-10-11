@@ -111,6 +111,6 @@ def _store_cfg():
   for name, option in EXPORT.items():
     option=_replace_global(unicode(option))
     cfg.set('export', name, option)
-  cfg.write(open(CFG_FILE, 'wb'))
+  cfg.write(open(CFG_FILE, 'w'))
 
 atexit.register(_store_cfg)
