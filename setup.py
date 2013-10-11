@@ -97,19 +97,18 @@ if 'install' not in sys.argv:
   if os.path.exists('MANIFEST'):
     os.remove('MANIFEST')
 
-if 'bdist' in sys.argv:
-  # make sure revision is correct before building
-  from subprocess import call
-  call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
-  print "Running unit test before compiling build distribution."
-  from test_all import test_suites
-  import unittest
-  runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
-  suite=unittest.TestSuite(test_suites.values())
-  result=runner.run(suite)
-  if len(result.errors+result.failures):
-    print "Not all tests were successfull, stop building distribution!"
-    exit()
+# make sure revision is correct before building
+from subprocess import call
+call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
+print "Running unit test before compiling build distribution."
+from test_all import test_suites
+import unittest
+runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
+suite=unittest.TestSuite(test_suites.values())
+result=runner.run(suite)
+if len(result.errors+result.failures):
+  print "Not all tests were successfull, stop building distribution!"
+  exit()
 
 from quicknxs.version import str_version
 __version__=str_version

@@ -1981,7 +1981,7 @@ class MainGUI(QtGui.QMainWindow):
 ####### Calculations and data treatment
 
   def updateStateFile(self, ignore):
-    sfile=open(PATHS['state_file'], 'w')
+    sfile=open(PATHS['state_file'], 'wb')
     sfile.write('Running PID %i\n'%os.getpid())
     if len(self.reduction_list)>0:
       sfile.write(unicode(HeaderCreator(self.reduction_list)).encode('utf8'))
