@@ -81,8 +81,13 @@ elif 'py2app' in sys.argv:
                           'compressed': False,
                           'argv_emulation': False,
                           'iconfile': 'dist_data/quicknxs.icns',
-                          'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork',
-                                       'h5py.defs', 'h5py.utils', 'h5py._proxy'],
+                          'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork'],
+                          'packages': ['h5py', 'zmq', 'pygments', 'IPython'],
+                          'excludes': [ 'doctest', 'tcl', 'tk', 'Tkinter',
+                                       '_gtkagg', '_tkagg', '_wxagg',
+                                       '_gtk', '_gtkcairo', '_agg2', '_cairo',
+                                       '_cocoaagg', '_fltkagg',
+                                       ],
                          }}
                }
 else:
