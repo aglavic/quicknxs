@@ -2117,7 +2117,7 @@ Do you want to try to restore the working reduction list?""",
     self.trigger.stay_alive=False
     self.trigger.wait()
     del(self.trigger)
-    debug('Delay trigger closed')
+    debug('Gathering figure and window layout')
     # store geometry and setting parameters
     figure_params=[]
     for fig in [
@@ -2135,9 +2135,20 @@ Do you want to try to restore the working reduction list?""",
          self.ui.normalizeXTof.isChecked(),
          figure_params,
          )
+    debug('Dumping config file %s'%PATHS['window'])
     dump(obj, open(PATHS['window'], 'wb'))
     # remove the state file on normal exit
+    debug('Removing status file')
     os.remove(PATHS['state_file'])
+    # detach the gui logging handler before closing the window
+    debug('Detaching GUI handler')
+    from logging import getLogger
+    logger=getLogger()
+    for handler in logger.handlers:
+      if handler.__class__.__name__=='QtHandler':
+        logger.removeHandler(handler)
+    debug('GUI handler removed, closing window')
+    # actually close the window
     QtGui.QMainWindow.closeEvent(self, event)
 
   @log_call

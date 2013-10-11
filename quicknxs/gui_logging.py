@@ -47,15 +47,25 @@ class NumpyLogger(logging.getLoggerClass()):
     is used for logging numpy floating point errors, not the numpy_logger function.
   '''
 
-  def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
-    curframe=inspect.currentframe()
-    calframes=inspect.getouterframes(curframe, 2)
-    # stack starts with:
-    # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
-    ignore, fname, lineno, func, ignore, ignore=calframes[4]
-    return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
-                                                   msg, args,
-                                                   exc_info, func=func, extra=extra)
+  if sys.version_info[0:2]>=(3, 2): #sinfo was introduced in python 3.2
+    def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None, sinfo=None):
+      curframe=inspect.currentframe()
+      calframes=inspect.getouterframes(curframe, 2)
+      # stack starts with:
+      # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
+      ignore, fname, lineno, func, ignore, ignore=calframes[4]
+      return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
+                                   msg, args, exc_info, func=func, extra=extra, sinfo=sinfo)
+  else:
+    def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
+      curframe=inspect.currentframe()
+      calframes=inspect.getouterframes(curframe, 2)
+      # stack starts with:
+      # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
+      ignore, fname, lineno, func, ignore, ignore=calframes[4]
+      return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
+                                                 msg, args, exc_info, func=func, extra=extra)
+
 nplogger=None
 def numpy_logger(err, flag):
   nplogger.debug('numpy floating point error encountered (%s)'%err)
@@ -102,20 +112,17 @@ def setup_system():
   logging.info('*** QuickNXS %s Logging started ***'%str_version)
 
   # define numpy warning behavior
-  if logger.level>logging.DEBUG:
-    seterr(all='ignore')
-  else:
-    global nplogger
-    old_class=logging.getLoggerClass()
-    logging.setLoggerClass(NumpyLogger)
-    nplogger=logging.getLogger('numpy')
-    nplogger.setLevel(logging.DEBUG)
-    null_handler=logging.StreamHandler(StringIO())
-    null_handler.setLevel(logging.CRITICAL)
-    nplogger.addHandler(null_handler)
-    logging.setLoggerClass(old_class)
-    seterr(divide='call', over='call', under='ignore', invalid='call')
-    seterrcall(numpy_logger)
+  global nplogger
+  old_class=logging.getLoggerClass()
+  logging.setLoggerClass(NumpyLogger)
+  nplogger=logging.getLogger('numpy')
+  nplogger.setLevel(logging.DEBUG)
+  null_handler=logging.StreamHandler(StringIO())
+  null_handler.setLevel(logging.CRITICAL)
+  nplogger.addHandler(null_handler)
+  logging.setLoggerClass(old_class)
+  seterr(divide='call', over='call', under='ignore', invalid='call')
+  seterrcall(numpy_logger)
 
   # write information on program exit
   sys.excepthook=excepthook_overwrite
