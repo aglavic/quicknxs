@@ -1147,7 +1147,7 @@ class MainGUI(QtGui.QMainWindow):
 
     self.clearRefList(do_plot=False)
     if self._pending_header is None:
-      text=unicode(open(filename, 'r').read(), 'utf8')
+      text=unicode(open(filename, 'rb').read(), 'utf8')
       header=[]
       for line in text.splitlines():
         if not line.startswith('#'):

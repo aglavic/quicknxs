@@ -42,7 +42,8 @@ if "py2exe" in sys.argv:
   __data_files__=matplotlib.get_py2exe_datafiles()
   sys.path.append("..\\App")
   __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
-  __data_files__+=[(r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
+  __data_files__+=[(r'quicknxs\default_config.cfg'),
+                   (r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
                    (r'quicknxs\htmldoc', glob(r'quicknxs\htmldoc\*')),
                    ("IPython\\config\\profile", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\*.*')+
                                                 glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\README*')),
@@ -106,7 +107,8 @@ if 'install' not in sys.argv:
 
 # make sure revision is correct before building
 from subprocess import call
-call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
+if not 'py2exe' in sys.argv:
+  call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
 if ('sdist' in sys.argv or 'py2exe' in sys.argv or 'py2app' in sys.argv) and \
     not '--nocheck' in sys.argv:
   print "Running unit test before compiling build distribution."

@@ -8,8 +8,11 @@ import os
 import sys
 
 # if script was run from commandline
-if os.path.abspath(__file__).endswith('scripts/quicknxs'):
-  sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+  if os.path.abspath(__file__).endswith('scripts/quicknxs'):
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+except NameError:
+  pass
 
 # first thing to do is starting the logging system
 from quicknxs.gui_logging import setup_system, check_runstate
