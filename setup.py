@@ -77,6 +77,8 @@ elif 'py2app' in sys.argv:
   __options__={
                'app': ["scripts/quicknxs"],
                'options': {'py2app': {
+                          'optimize': 1,
+                          'Compression': False,
                           'argv_emulation': True,
                           'iconfile': 'dist_data/quicknxs.icns',
                           'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork',
@@ -100,15 +102,19 @@ if 'install' not in sys.argv:
 # make sure revision is correct before building
 from subprocess import call
 call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
-print "Running unit test before compiling build distribution."
-from test_all import test_suites
-import unittest
-runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
-suite=unittest.TestSuite(test_suites.values())
-result=runner.run(suite)
-if len(result.errors+result.failures):
-  print "Not all tests were successfull, stop building distribution!"
-  exit()
+if ('sdist' in sys.argv or 'py2exe' in sys.argv or 'py2app' in sys.argv) and \
+    not '--nocheck' in sys.argv:
+  print "Running unit test before compiling build distribution."
+  from test_all import test_suites
+  import unittest
+  runner=unittest.TextTestRunner(sys.stderr, 'Pre-Build unit test run', 2)
+  suite=unittest.TestSuite(test_suites.values())
+  result=runner.run(suite)
+  if len(result.errors+result.failures):
+    print "Not all tests were successfull, stop building distribution!"
+    exit()
+if '--nocheck' in sys.argv:
+  sys.argv.remove('--nocheck')
 
 from quicknxs.version import str_version
 __version__=str_version
