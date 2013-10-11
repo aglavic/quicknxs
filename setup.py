@@ -29,7 +29,7 @@ __scripts__=['scripts/quicknxs']
 __py_modules__=[]
 __package_dir__={}
 __packages__=['quicknxs']
-__package_data__={'quicknxs': ['default_config.cfg', 'window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
+__package_data__={'quicknxs': ['default_config.cfg', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
                 ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png']),
@@ -42,8 +42,7 @@ if "py2exe" in sys.argv:
   __data_files__=matplotlib.get_py2exe_datafiles()
   sys.path.append("..\\App")
   __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
-  __data_files__+=[(r'quicknxs', [r'quicknxs\window.pkl']),
-                   (r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
+  __data_files__+=[(r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
                    (r'quicknxs\htmldoc', glob(r'quicknxs\htmldoc\*')),
                    ("IPython\\config\\profile", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\*.*')+
                                                 glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\README*')),
@@ -73,7 +72,7 @@ if "py2exe" in sys.argv:
                            }
               }
 elif 'py2app' in sys.argv:
-  import py2app
+  import py2app #@UnusedImport @UnresolvedImport
   __data_files__=[]
   __options__={
                'app': ["scripts/quicknxs"],

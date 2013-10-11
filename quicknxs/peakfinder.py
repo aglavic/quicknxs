@@ -13,7 +13,6 @@ try:
 except ImportError:
   # use the slightly slower quantiles function that does not rely on scipy
   def mquantiles(data, prob, *ignore): return quantile(data, prob)
-from .decorators import time_call
 
 class PeakFinder(object):
   '''
