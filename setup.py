@@ -52,7 +52,7 @@ if "py2exe" in sys.argv:
   sys.path.append(pexe)
   __options__={
                 "windows": [ {
-                            "script": "quicknxs",
+                            "script": "scripts/quicknxs",
                             "icon_resources": [(1, "icons/logo.ico")],
                             }, ], # executable for py2exe is windows application
                 "options": {  "py2exe": {
