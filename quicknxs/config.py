@@ -59,7 +59,17 @@ class UnicodeConfigParser(SafeConfigParser):
 
 cfg=UnicodeConfigParser()
 # first read defaults and than overwrite with user options
-cfg.read(os.path.join(PACKAGE, u'default_config.cfg'))
+if '.zip/' in PACKAGE:
+  from zipfile import ZipFile
+  zname, subpath=PACKAGE.split('.zip/')
+  zname+=u'.zip'
+  subpath_cfg=os.path.join(subpath, u'default_config.cfg')
+  z=ZipFile(zname)
+  z.extract(subpath_cfg, u'/tmp')
+  cfg.read(os.path.join(u'/tmp', subpath_cfg))
+  z.close()
+else:
+  cfg.read(os.path.join(PACKAGE, u'default_config.cfg'))
 if os.path.exists(CFG_FILE):
   cfg.read(CFG_FILE)
 

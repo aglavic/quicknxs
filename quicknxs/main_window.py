@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Thu Aug 29 16:28:37 2013
+# Created: Fri Oct 11 10:31:41 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -165,6 +165,7 @@ class Ui_MainWindow(object):
     self.refYPos = QtGui.QDoubleSpinBox(self.page)
     self.refYPos.setDecimals(1)
     self.refYPos.setMaximum(400.0)
+    self.refYPos.setProperty("value", 128.0)
     self.refYPos.setObjectName(_fromUtf8("refYPos"))
     self.gridLayout_3.addWidget(self.refYPos, 1, 2, 1, 1)
     self.label_3 = QtGui.QLabel(self.page)
@@ -184,16 +185,19 @@ class Ui_MainWindow(object):
     self.refXPos = QtGui.QDoubleSpinBox(self.page)
     self.refXPos.setDecimals(1)
     self.refXPos.setMaximum(400.0)
+    self.refXPos.setProperty("value", 128.0)
     self.refXPos.setObjectName(_fromUtf8("refXPos"))
     self.gridLayout_3.addWidget(self.refXPos, 2, 2, 1, 1)
     self.bgWidth = QtGui.QDoubleSpinBox(self.page)
     self.bgWidth.setDecimals(1)
     self.bgWidth.setMaximum(400.0)
+    self.bgWidth.setProperty("value", 4.0)
     self.bgWidth.setObjectName(_fromUtf8("bgWidth"))
     self.gridLayout_3.addWidget(self.bgWidth, 3, 3, 1, 1)
     self.bgCenter = QtGui.QDoubleSpinBox(self.page)
     self.bgCenter.setDecimals(1)
     self.bgCenter.setMaximum(400.0)
+    self.bgCenter.setProperty("value", 2.0)
     self.bgCenter.setObjectName(_fromUtf8("bgCenter"))
     self.gridLayout_3.addWidget(self.bgCenter, 3, 2, 1, 1)
     self.label_4 = QtGui.QLabel(self.page)

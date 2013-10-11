@@ -112,177 +112,173 @@ class DecoratorLogger(logging.getLoggerClass()):
                                                      msg, args,
                                                      exc_info, func=extra['func'], extra=None)      
 
-if logging.root.getEffectiveLevel()<=logging.DEBUG:
-  # only use the debug decorators in debugging runs.
-  old_class=logging.getLoggerClass()
-  logging.setLoggerClass(DecoratorLogger)
-  logger=logging.getLogger('deco')
-  logger.setLevel(logging.DEBUG)
-  null_handler=logging.StreamHandler(StringIO())
-  null_handler.setLevel(logging.CRITICAL)
-  logger.addHandler(null_handler)
-  logging.setLoggerClass(old_class)
-  
-  def _logformat(msg, decname, func):
-    if hasattr(func, 'im_func'):
-      co=func.im_func.func_code
-    else:
-      co=func.func_code
-    fname=co.co_filename
-    lno=co.co_firstlineno
-    logger.debug(msg, extra={'func': '@'+decname, 'name': fname, 'lno': lno})
-  
-  @decorator
-  def log_call(func, *args, **kw):
-    '''
-      Decorator to log just the method call.
-    '''
-    infodict=getinfo(func)
-    if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
-      _logformat('%s.%s.%s'%(infodict['module'],
-                                     args[0].__class__.__name__, infodict['name']),
-                 'log_call', func)
-    else:
-      _logformat('%s.%s'%(infodict['module'], infodict['name']), 'log_call', func)
-    return func(*args, **kw)
-  
-  @decorator
-  def log_input(func, *args, **kw):
-    '''
-      Decorator to log a method call with input.
-    '''
-    infodict=getinfo(func)
-    if hasattr(func, 'im_func'):
-      logstr=' call %s.%s('%(args[0].__class__.__name__, infodict['name'])
-      method=True
-      info_len=len('%s.%s('%(args[0].__class__.__name__, infodict['name']))
-    else:
-      logstr='call %s('%(infodict['name'])
-      method=False
-      info_len=len('%s('%(infodict['name']))
+# only use the debug decorators in debugging runs.
+old_class=logging.getLoggerClass()
+logging.setLoggerClass(DecoratorLogger)
+logger=logging.getLogger('deco')
+logger.setLevel(logging.DEBUG)
+null_handler=logging.StreamHandler(StringIO())
+null_handler.setLevel(logging.CRITICAL)
+logger.addHandler(null_handler)
+logging.setLoggerClass(old_class)
 
-    namelen=max([len(name)+3 for name in infodict['argnames']]+[len(name) for name in kw.keys()])
-    for i, arg in enumerate(args):
-      if i==0 and (method or infodict['name']=='__init__'):
-        continue
-      value=repr(arg)
-      value_split=value.splitlines()
-      if len(value_split)>5:
-        value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-      value.replace('\n', '\n'+' '*(namelen+7))
-      logstr+='\n'+('%% %is= %%s (%%s)'%(namelen+3))%(infodict['argnames'][i], value, _nicetype(arg))
+def _logformat(msg, decname, func):
+  if hasattr(func, 'im_func'):
+    co=func.im_func.func_code
+  else:
+    co=func.func_code
+  fname=co.co_filename
+  lno=co.co_firstlineno
+  logger.debug(msg, extra={'func': '@'+decname, 'name': fname, 'lno': lno})
 
-    for key, arg in sorted(kw.items()):
-      value=repr(arg)
-      value_split=value.splitlines()
-      if len(value_split)>5:
-        value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-      value.replace('\n', '\n'+' '*(namelen+4))
-      logstr+='\n'+('KW %% %ss= %%s (%%s)'%namelen)%(key, repr(value), _nicetype(arg))
-    logstr+='\n)'
-    logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
-    logstr=logstr.replace('call ', 'call \n'+' '*10)
+@decorator
+def log_call(func, *args, **kw):
+  '''
+    Decorator to log just the method call.
+  '''
+  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  infodict=getinfo(func)
+  if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
+    _logformat('%s.%s.%s'%(infodict['module'],
+                                   args[0].__class__.__name__, infodict['name']),
+               'log_call', func)
+  else:
+    _logformat('%s.%s'%(infodict['module'], infodict['name']), 'log_call', func)
+  return func(*args, **kw)
 
-    _logformat(logstr, 'log_input', func)
-    return func(*args, **kw)
-  
-  @decorator
-  def log_output(func, *args, **kw):
-    '''
-      Decorator to log a method call with output. If combined with log_input
-      the input is logged at the time before the call and the output after.
-    '''
-    output=func(*args, **kw)
-    infodict=getinfo(func)
-    if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
-      logstr='return from %s.%s'%(args[0].__class__.__name__, infodict['name'])
-    else:
-      logstr='return from %s'%(infodict['name'])
-    value=repr(output)
+@decorator
+def log_input(func, *args, **kw):
+  '''
+    Decorator to log a method call with input.
+  '''
+  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  infodict=getinfo(func)
+  if hasattr(func, 'im_func'):
+    logstr=' call %s.%s('%(args[0].__class__.__name__, infodict['name'])
+    method=True
+    info_len=len('%s.%s('%(args[0].__class__.__name__, infodict['name']))
+  else:
+    logstr='call %s('%(infodict['name'])
+    method=False
+    info_len=len('%s('%(infodict['name']))
+
+  namelen=max([len(name)+3 for name in infodict['argnames']]+[len(name) for name in kw.keys()])
+  for i, arg in enumerate(args):
+    if i==0 and (method or infodict['name']=='__init__'):
+      continue
+    value=repr(arg)
     value_split=value.splitlines()
     if len(value_split)>5:
       value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-    logstr+='\n-> %15s (%s)'%(value, _nicetype(output))
-    logstr=logstr.replace('\n', '\n'+' '*44)
-    _logformat(logstr, 'log_output', func)
-    return output
-  
-  @decorator
-  def log_both(func, *args, **kw):
-    '''
-      Decoratore to log a method call with input and output.
-    '''
-    infodict=getinfo(func)
-    if hasattr(func, 'im_func'):
-      logstr=' call %s.%s('%(args[0].__class__.__name__, infodict['name'])
-      method=True
-      info_len=len('%s.%s('%(args[0].__class__.__name__, infodict['name']))
-    else:
-      logstr='call %s('%(infodict['name'])
-      method=False
-      info_len=len('%s('%(infodict['name']))
+    value.replace('\n', '\n'+' '*(namelen+7))
+    logstr+='\n'+('%% %is= %%s (%%s)'%(namelen+3))%(infodict['argnames'][i], value, _nicetype(arg))
 
-    namelen=max([len(name)+3 for name in infodict['argnames']]+[len(name) for name in kw.keys()])
-    for i, arg in enumerate(args):
-      if i==0 and (method or infodict['name']=='__init__'):
-        continue
-      value=repr(arg)
-      value_split=value.splitlines()
-      if len(value_split)>5:
-        value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-      value.replace('\n', '\n'+' '*(namelen+7))
-      logstr+='\n'+('%% %is= %%s (%%s)'%(namelen+3))%(infodict['argnames'][i], value, _nicetype(arg))
-
-    for key, arg in sorted(kw.items()):
-      value=repr(arg)
-      value_split=value.splitlines()
-      if len(value_split)>5:
-        value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-      value.replace('\n', '\n'+' '*(namelen+4))
-      logstr+='\n'+('KW %% %ss= %%s (%%s)'%namelen)%(key, repr(value), _nicetype(arg))
-    logstr+='\n)'
-    logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
-    logstr=logstr.replace('call ', 'call \n'+' '*10)
-
-    _logformat(logstr, 'log_input', func)
-    # call the function
-    output=func(*args, **kw)
-    if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
-      logstr='return from %s.%s'%(args[0].__class__.__name__, infodict['name'])
-    else:
-      logstr='return from %s'%(infodict['name'])
-    value=repr(output)
+  for key, arg in sorted(kw.items()):
+    value=repr(arg)
     value_split=value.splitlines()
     if len(value_split)>5:
       value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-    logstr+='\n-> %s (%s)'%(value, _nicetype(output))
-    logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
-    _logformat(logstr, 'log_output', func)
-    return output
+    value.replace('\n', '\n'+' '*(namelen+4))
+    logstr+='\n'+('KW %% %ss= %%s (%%s)'%namelen)%(key, repr(value), _nicetype(arg))
+  logstr+='\n)'
+  logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
+  logstr=logstr.replace('call ', 'call \n'+' '*10)
 
-  timings={}
-  @decorator
-  def time_call(func, *args, **kw):
-    '''
-      Decorator to log just the method call.
-    '''
-    name=func.__name__
-    start=time()
-    output=func(*args, **kw)
-    runtime=time()-start
-    if not name in timings:
-      timings[name]=(0., 0.)
-    avg, calls=timings[name]
-    timings[name]=((avg*calls+runtime)/(calls+1), calls+1)
-    return output
+  _logformat(logstr, 'log_input', func)
+  return func(*args, **kw)
 
-else:
-  # if logging level is higher than DEBUG remove overhead from string format creation
-  def log_call(funct): return funct
-  def log_input(funct): return funct
-  def log_output(funct): return funct
-  def log_both(funct): return funct
-  def time_call(funct): return funct
+@decorator
+def log_output(func, *args, **kw):
+  '''
+    Decorator to log a method call with output. If combined with log_input
+    the input is logged at the time before the call and the output after.
+  '''
+  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  output=func(*args, **kw)
+  infodict=getinfo(func)
+  if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
+    logstr='return from %s.%s'%(args[0].__class__.__name__, infodict['name'])
+  else:
+    logstr='return from %s'%(infodict['name'])
+  value=repr(output)
+  value_split=value.splitlines()
+  if len(value_split)>5:
+    value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
+  logstr+='\n-> %15s (%s)'%(value, _nicetype(output))
+  logstr=logstr.replace('\n', '\n'+' '*44)
+  _logformat(logstr, 'log_output', func)
+  return output
+
+@decorator
+def log_both(func, *args, **kw):
+  '''
+    Decoratore to log a method call with input and output.
+  '''
+  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  infodict=getinfo(func)
+  if hasattr(func, 'im_func'):
+    logstr=' call %s.%s('%(args[0].__class__.__name__, infodict['name'])
+    method=True
+    info_len=len('%s.%s('%(args[0].__class__.__name__, infodict['name']))
+  else:
+    logstr='call %s('%(infodict['name'])
+    method=False
+    info_len=len('%s('%(infodict['name']))
+
+  namelen=max([len(name)+3 for name in infodict['argnames']]+[len(name) for name in kw.keys()])
+  for i, arg in enumerate(args):
+    if i==0 and (method or infodict['name']=='__init__'):
+      continue
+    value=repr(arg)
+    value_split=value.splitlines()
+    if len(value_split)>5:
+      value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
+    value.replace('\n', '\n'+' '*(namelen+7))
+    logstr+='\n'+('%% %is= %%s (%%s)'%(namelen+3))%(infodict['argnames'][i], value, _nicetype(arg))
+
+  for key, arg in sorted(kw.items()):
+    value=repr(arg)
+    value_split=value.splitlines()
+    if len(value_split)>5:
+      value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
+    value.replace('\n', '\n'+' '*(namelen+4))
+    logstr+='\n'+('KW %% %ss= %%s (%%s)'%namelen)%(key, repr(value), _nicetype(arg))
+  logstr+='\n)'
+  logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
+  logstr=logstr.replace('call ', 'call \n'+' '*10)
+
+  _logformat(logstr, 'log_input', func)
+  # call the function
+  output=func(*args, **kw)
+  if len(infodict['argnames'])>0 and infodict['argnames'][0]=='self':
+    logstr='return from %s.%s'%(args[0].__class__.__name__, infodict['name'])
+  else:
+    logstr='return from %s'%(infodict['name'])
+  value=repr(output)
+  value_split=value.splitlines()
+  if len(value_split)>5:
+    value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
+  logstr+='\n-> %s (%s)'%(value, _nicetype(output))
+  logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
+  _logformat(logstr, 'log_output', func)
+  return output
+
+timings={}
+@decorator
+def time_call(func, *args, **kw):
+  '''
+    Decorator to log just the method call.
+  '''
+  if logging.root.getEffectiveLevel()<=logging.DEBUG: return func(*args, **kw)
+  name=func.__name__
+  start=time()
+  output=func(*args, **kw)
+  runtime=time()-start
+  if not name in timings:
+    timings[name]=(0., 0.)
+  avg, calls=timings[name]
+  timings[name]=((avg*calls+runtime)/(calls+1), calls+1)
+  return output
 
 ########################## General decorators ###############################
 

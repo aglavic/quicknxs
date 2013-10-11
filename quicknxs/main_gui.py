@@ -28,6 +28,12 @@ from logging import info, warning, debug
 from .gui_logging import install_gui_handler, ip_excepthook_overwrite, excepthook_overwrite
 from .decorators import log_call, log_input, log_both
 
+#fix python 3 encoding issue when reading files pickled with python2
+if sys.version_info[0]>=3:
+  _load, _dump=load, dump
+  def load(*args): _load(*args, encoding='latin1')
+  def dump(*args): _dump(*args, protocol=2)
+
 class gisansCalcThread(QtCore.QThread):
   '''
   Perform GISANS scattering calculations in the background.
@@ -2072,7 +2078,16 @@ Do you want to try to restore the working reduction list?""",
       except:
         return
     else:
-      obj=load(open(PATHS['window_default'], 'rb'))
+      if '.zip/' in PATHS['window_default']:
+        from zipfile import ZipFile
+        zname, subpath=PATHS['window_default'].split('.zip/')
+        zname+='.zip'
+        z=ZipFile(zname)
+        z.extract(subpath, '/tmp')
+        obj=load(open(os.path.join('/tmp', subpath), 'rb'))
+        z.close()
+      else:
+        obj=load(open(PATHS['window_default'], 'rb'))
     try:
       self.restoreGeometry(obj[0])
       self.restoreState(obj[1])

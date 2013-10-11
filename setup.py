@@ -72,6 +72,18 @@ if "py2exe" in sys.argv:
                              },
                            }
               }
+elif 'py2app' in sys.argv:
+  import py2app
+  __data_files__=[]
+  __options__={
+               'app': ["scripts/quicknxs"],
+               'options': {'py2app': {
+                          'argv_emulation': True,
+                          'iconfile': 'dist_data/quicknxs.icns',
+                          'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork',
+                                       'h5py.defs', 'h5py.utils', 'h5py._proxy'],
+                         }}
+               }
 else:
   __options__={}
 
@@ -120,3 +132,8 @@ setup(name=__package_name__,
       requires=__requires__, #does not do anything
       **__options__
      )
+
+if 'py2app' in sys.argv:
+  # add qt.conf which fixes issues with the app and a currently installed qt4 library
+  open('dist/QuickNXS.app/Contents/Resources/qt.conf', 'w').write(open('dist_data/qt.conf', 'r').read())
+  

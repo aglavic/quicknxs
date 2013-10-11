@@ -7,9 +7,9 @@ import matplotlib.colors
 from . import icons_rc #@UnusedImport
 
 font={
-      #'family' : 'sans',
+      'family' : 'serif',
       #  'weight' : 'normal',
-        'variant': 'DejaVuSerif',
+      #  'variant': 'DejaVuSerif',
         'size': 7,
         }
 savefig={
