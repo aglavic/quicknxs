@@ -701,7 +701,7 @@ class MRDataset(object):
           continue
         try:
           if 'units' in item['value'].attrs:
-            self.log_units[motor]=item['value'].attrs['units']
+            self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
           else:
             self.log_units[motor]=u''
           val=item['value'].value

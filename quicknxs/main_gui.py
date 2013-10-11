@@ -1038,8 +1038,8 @@ class MainGUI(QtGui.QMainWindow):
       table.setItem(j, len(self.channels)+1,
                     QtGui.QTableWidgetItem(self.active_data[0].log_units[key]))
       for i, _channel, data in self.active_data.numitems():
-        item=QtGui.QTableWidgetItem('%g'%data.logs[key])
-        item.setToolTip('MIN: %g   MAX: %g'%(data.log_minmax[key]))
+        item=QtGui.QTableWidgetItem(u'%g'%data.logs[key])
+        item.setToolTip(u'MIN: %g   MAX: %g'%(data.log_minmax[key]))
         table.setItem(j, i+1, item)
     table.resizeColumnsToContents()
 
