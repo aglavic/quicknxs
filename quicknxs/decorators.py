@@ -179,19 +179,19 @@ def log_input(func, *args, **kw):
     value=repr(arg)
     value_split=value.splitlines()
     if len(value_split)>5:
-      value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-    value.replace('\n', '\n'+' '*(namelen+7))
+      value="\n".join(value_split[:2]+[' '*int(len(value_split[1])/2)+'...']+value_split[-2:])
+    value.replace('\n', '\n'+' '*int(namelen+7))
     logstr+='\n'+('%% %is= %%s (%%s)'%(namelen+3))%(infodict['argnames'][i], value, _nicetype(arg))
 
   for key, arg in sorted(kw.items()):
     value=repr(arg)
     value_split=value.splitlines()
     if len(value_split)>5:
-      value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-    value.replace('\n', '\n'+' '*(namelen+4))
+      value="\n".join(value_split[:2]+[' '*int(len(value_split[1])/2)+'...']+value_split[-2:])
+    value.replace('\n', '\n'+' '*int(namelen+4))
     logstr+='\n'+('KW %% %ss= %%s (%%s)'%namelen)%(key, repr(value), _nicetype(arg))
   logstr+='\n)'
-  logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
+  logstr=logstr.replace('\n', '\n'+' '*int(info_len+10))
   logstr=logstr.replace('call ', 'call \n'+' '*10)
 
   _logformat(logstr, 'log_input', func)
@@ -213,7 +213,7 @@ def log_output(func, *args, **kw):
   value=repr(output)
   value_split=value.splitlines()
   if len(value_split)>5:
-    value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
+    value="\n".join(value_split[:2]+[' '*int(len(value_split[1])/2)+'...']+value_split[-2:])
   logstr+='\n-> %15s (%s)'%(value, _nicetype(output))
   logstr=logstr.replace('\n', '\n'+' '*44)
   _logformat(logstr, 'log_output', func)
@@ -242,19 +242,19 @@ def log_both(func, *args, **kw):
     value=repr(arg)
     value_split=value.splitlines()
     if len(value_split)>5:
-      value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-    value.replace('\n', '\n'+' '*(namelen+7))
+      value="\n".join(value_split[:2]+[' '*int(len(value_split[1])/2)+'...']+value_split[-2:])
+    value.replace('\n', '\n'+' '*int(namelen+7))
     logstr+='\n'+('%% %is= %%s (%%s)'%(namelen+3))%(infodict['argnames'][i], value, _nicetype(arg))
 
   for key, arg in sorted(kw.items()):
     value=repr(arg)
     value_split=value.splitlines()
     if len(value_split)>5:
-      value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
-    value.replace('\n', '\n'+' '*(namelen+4))
+      value="\n".join(value_split[:2]+[' '*int(len(value_split[1])/2)+'...']+value_split[-2:])
+    value.replace('\n', '\n'+' '*int(namelen+4))
     logstr+='\n'+('KW %% %ss= %%s (%%s)'%namelen)%(key, repr(value), _nicetype(arg))
   logstr+='\n)'
-  logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
+  logstr=logstr.replace('\n', '\n'+' '*int(info_len+10))
   logstr=logstr.replace('call ', 'call \n'+' '*10)
 
   _logformat(logstr, 'log_input', func)
@@ -267,9 +267,9 @@ def log_both(func, *args, **kw):
   value=repr(output)
   value_split=value.splitlines()
   if len(value_split)>5:
-    value="\n".join(value_split[:2]+[' '*(len(value_split[1])/2)+'...']+value_split[-2:])
+    value="\n".join(value_split[:2]+[' '*int(len(value_split[1])/2)+'...']+value_split[-2:])
   logstr+='\n-> %s (%s)'%(value, _nicetype(output))
-  logstr=logstr.replace('\n', '\n'+' '*(info_len+10))
+  logstr=logstr.replace('\n', '\n'+' '*int(info_len+10))
   _logformat(logstr, 'log_output', func)
   return output
 

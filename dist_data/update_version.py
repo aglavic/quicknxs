@@ -5,7 +5,8 @@
 
 
 from subprocess import Popen, PIPE
-tag,revision,rev_name=Popen(['git','describe'], stdout=PIPE).communicate()[0].split('-',3)
+tag, revision, rev_name=unicode(Popen(['git', 'describe'], stdout=PIPE).communicate()[0],
+                                encoding='utf8').split('-', 3)
 revision=revision.strip()
 last_change=Popen(['git', 'show', '-s', '--format=%ci'], stdout=PIPE).communicate()[0].rsplit(None,1)[0]
 
