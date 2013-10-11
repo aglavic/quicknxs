@@ -786,19 +786,28 @@ class MRDataset(object):
     output+=other
     return output
 
-  # data compressed in memory properties
+  # data compressed in memory properties, last dataset data is cached for better GUI response
   _data_zipped=None
   _data_dtype=float
   _data_shape=(0,)
+  _cached_object=None
+  _cached_data=None
   @property
   def data(self):
+    if MRDataset._cached_object is self:
+      return MRDataset._cached_data
     data=fromstring(zlib.decompress(self._data_zipped), dtype=self._data_dtype)
-    return data.reshape(self._data_shape)
+    data=data.reshape(self._data_shape)
+    MRDataset._cached_data=data
+    MRDataset._cached_object=self
+    return data
   @data.setter
   def data(self, data):
     self._data_zipped=zlib.compress(data.tostring(), 1)
     self._data_dtype=data.dtype
     self._data_shape=data.shape
+    MRDataset._cached_data=data
+    MRDataset._cached_object=self
 
   ################## Properties for easy data access ##########################
   # return the size of the data stored in memory for this dataset
