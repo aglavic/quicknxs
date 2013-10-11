@@ -1982,7 +1982,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def updateStateFile(self, ignore):
     sfile=open(PATHS['state_file'], 'wb')
-    sfile.write('Running PID %i\n'%os.getpid())
+    sfile.write((u'Running PID %i\n'%os.getpid()).encode('utf8'))
     if len(self.reduction_list)>0:
       sfile.write(unicode(HeaderCreator(self.reduction_list)).encode('utf8'))
     sfile.close()
