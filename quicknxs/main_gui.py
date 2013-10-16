@@ -185,6 +185,7 @@ class MainGUI(QtGui.QMainWindow):
     from .ipython_widget import IPythonConsoleQtWidget
     self.ipython=IPythonConsoleQtWidget(self)
     self.ui.plotTab.addTab(self.ipython, 'IPython')
+    self.ipython.namespace['data']=self.active_data
     # install logging magic within ipython ZMQ
     import IPython.core.ipapi
     # console process exceptions (IPython controlled)

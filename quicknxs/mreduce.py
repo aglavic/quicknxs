@@ -26,17 +26,9 @@ from time import time, strptime, mktime
 # ignore zero devision error
 #seterr(invalid='ignore')
 
-try:
-  from .decorators import log_call, log_input, log_both
-  from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
-except ImportError:
-  # just in case module is used separately
-  BASE_SEARCH, OLD_BASE_SEARCH='', ''
-  PATHS={}
-  def log_call(func): return func
-  def log_input(func): return func
-  def log_both(func): return func
-
+from .decorators import log_call, log_input, log_both
+from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
+from .ipython_tools import AttributePloter
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -380,6 +372,19 @@ class NXSData(object):
     output=output[:-1]+'\n'+spacer0+'})'
     return output
 
+  def _repr_html_(self):
+    '''Object representation for IPython'''
+    output='<h2>%s object:</h2>\n'%self.__class__.__name__
+    output+='<table>\n'
+    output+='\t<tr><td colspan="2" align="center">Object Data:</td></td>\n'
+    output+='\t<tr><th>State</th><th>Data Object</th></td>\n'
+    for key, value in self.items():
+      output+='\t<tr>\n\t\t<td>\n\t\t\t<b>%s</b>\n\t\t</td>\n\t\t<td>\n\t\t\t'%key
+      output+='%s\n'%value._repr_html_()
+      output+='\t\t</td>\n\t</tr>\n'
+    output+='</table>'
+    return output
+
   def keys(self):
     return self._channel_names
 
@@ -425,7 +430,7 @@ class NXSData(object):
   dangle=property(__dangle, doc='first state dangle attribute')
   dangle0=property(__dangle0, doc='first state dangle0 attribute')
   sangle=property(__sangle, doc='first state sangle attribute')
-
+  
 
 class NXSMultiData(NXSData):
   '''
@@ -764,6 +769,23 @@ class MRDataset(object):
                                      "SUM"+repr(self.number),
                                      self.total_counts)
 
+  def _repr_html_(self):
+    '''Object representation for IPython'''
+    output='<div><center><b>%s Object</b>\n<table border="1">\n'%self.__class__.__name__
+    output+='<tr><th>Attribute</th><th>Value</th></tr>\n'
+    for attr in ['experiment', 'number', 'total_counts', 'proton_charge',
+                 'sangle', 'dangle', 'dangle0', 'dpix']:
+      output+='<tr><td>%s</td><td>%s</td></tr>\n'%(attr, str(getattr(self, attr)))
+    if type(self.number) is list:
+      for i, item in enumerate(self.origin):
+        output+='<tr><td>origin[%i][0]</td><td>%s</td></tr>\n'%(i, item[0])
+        output+='<tr><td>origin[%i][1]</td><td>%s</td></tr>\n'%(i, item[1])
+    else:
+      output+='<tr><td>origin[0]</td><td>%s</td></tr>\n'%self.origin[0]
+      output+='<tr><td>origin[1]</td><td>%s</td></tr>\n'%self.origin[1]
+    output+='</table></center></div>'
+    return output
+
   def __iadd__(self, other):
     '''
     Add the data of one dataset to this dataset.
@@ -883,6 +905,10 @@ class MRDataset(object):
   tth=property(get_tth)
   tthlamda=property(get_tthlamda)
 
+  @property
+  def p(self):
+    '''A attribute to quickly plot data in the qt console'''
+    return AttributePloter(self, ['xdata', 'xydata', 'ydata', 'xtofdata', 'tofdata', 'data'])
 
 
 def time_from_header(filename, nxs=None):
@@ -1036,6 +1062,30 @@ class Reflectivity(object):
       output+=' FAN'
     output+='>'
     return output
+
+  def _repr_png_(self):
+    from cStringIO import StringIO
+    from matplotlib.figure import Figure
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    fig=Figure(figsize=[4, 4])
+    ax=fig.add_axes([.1, .1, .85, .8])
+    ax.set_title('%s Object from %s/%s'%(self.__class__.__name__,
+                                         os.path.basename(self.origin[0]),
+                                         self.origin[1]))
+
+    if self.options['normalization'] is None:
+      ax.plot(self.lamda, self.I)
+      ax.set_yscale('log')
+      ax.set_xlabel('$\\lambda$ [$\\AA$]')
+    else:
+      ax.plot(self.Q, self.R)
+      ax.set_yscale('log')
+      ax.set_xlabel('$Q_z$ [$\\AA^{-1}$]')
+
+    canvas=FigureCanvasAgg(fig)
+    buf=StringIO()
+    canvas.print_png(buf)
+    return buf.getvalue()
 
   #############################################################################
 
