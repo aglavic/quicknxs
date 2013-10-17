@@ -28,7 +28,7 @@ from time import time, strptime, mktime
 
 from .decorators import log_call, log_input, log_both
 from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
-from .ipython_tools import AttributePloter
+from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -690,9 +690,9 @@ class MRDataset(object):
     :param h5py._hl.group.Group data:
     '''
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
-    self.logs={}
-    self.log_minmax={}
-    self.log_units={}
+    self.logs=NiceDict()
+    self.log_minmax=NiceDict()
+    self.log_units=NiceDict()
     if 'DASlogs' in data:  # the old format does not include the DAS logs
       # get an array of all pulses to make it possible to correlate values with states
       stimes=data['DASlogs/proton_charge/time'].value
@@ -771,7 +771,7 @@ class MRDataset(object):
 
   def _repr_html_(self):
     '''Object representation for IPython'''
-    output='<div><center><b>%s Object</b>\n<table border="1">\n'%self.__class__.__name__
+    output='<b>%s</b> Object:\n<table border="1">\n'%self.__class__.__name__
     output+='<tr><th>Attribute</th><th>Value</th></tr>\n'
     for attr in ['experiment', 'number', 'total_counts', 'proton_charge',
                  'sangle', 'dangle', 'dangle0', 'dpix']:
@@ -783,7 +783,7 @@ class MRDataset(object):
     else:
       output+='<tr><td>origin[0]</td><td>%s</td></tr>\n'%self.origin[0]
       output+='<tr><td>origin[1]</td><td>%s</td></tr>\n'%self.origin[1]
-    output+='</table></center></div>'
+    output+='</table>'
     return output
 
   def __iadd__(self, other):
@@ -1063,29 +1063,49 @@ class Reflectivity(object):
     output+='>'
     return output
 
-  def _repr_png_(self):
-    from cStringIO import StringIO
-    from matplotlib.figure import Figure
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-    fig=Figure(figsize=[4, 4])
-    ax=fig.add_axes([.1, .1, .85, .8])
-    ax.set_title('%s Object from %s/%s'%(self.__class__.__name__,
-                                         os.path.basename(self.origin[0]),
-                                         self.origin[1]))
-
-    if self.options['normalization'] is None:
-      ax.plot(self.lamda, self.I)
-      ax.set_yscale('log')
-      ax.set_xlabel('$\\lambda$ [$\\AA$]')
+  def _repr_html_(self):
+    '''Object representation for IPython'''
+    output='<b>%s</b> Object:\n<table border="1">\n'%self.__class__.__name__
+    try:
+      output+='<tr><td>#points</td><td>%i</td></tr>\n'%(len(self.Q))
+    except AttributeError:
+      output+='<tr><td>#points</td><td>%s</td></tr>\n'%(repr(self.Qz.shape))
+    if type(self.origin) is list:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[0][1])
+      for i, item in enumerate(self.origin):
+          output+='<tr><td>origin[%i]</td><td>%s</td></tr>\n'%(i, item[0])
     else:
-      ax.plot(self.Q, self.R)
-      ax.set_yscale('log')
-      ax.set_xlabel('$Q_z$ [$\\AA^{-1}$]')
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[1])
+      output+='<tr><td>origin</td><td>%s</td></tr>\n'%(self.origin[0])
+    output+='</table>See .info attribute for detailed description.\n'
+    return output
 
-    canvas=FigureCanvasAgg(fig)
-    buf=StringIO()
-    canvas.print_png(buf)
-    return buf.getvalue()
+  @property
+  def info(self):
+    output='<table border="1">\n'
+    try:
+      output+='<tr><td>#points</td><td>%i</td></tr>\n'%(len(self.Q))
+    except AttributeError:
+      output+='<tr><td>#points</td><td>%s</td></tr>\n'%(repr(self.Qz.shape))
+    if type(self.origin) is list:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[0][1])
+      for i, item in enumerate(self.origin):
+          output+='<tr><td>origin[%i]</td><td>%s</td></tr>\n'%(i, item[0])
+    else:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[1])
+      output+='<tr><td>origin</td><td>%s</td></tr>\n'%(self.origin[0])
+    output+='</table><table border="1">\n'
+    output+='<tr><th>Option</th><th>Value</th></tr>\n'
+    for key, value in sorted(self.options.items()):
+      if key=='normalization' and value is not None:
+        output+='<tr><td>%s</td><td>%s</td></tr>\n'%(key,
+                                    value.origin[0])
+      else:
+        output+='<tr><td>%s</td><td>%s</td></tr>\n'%(key,
+                                    repr(value).replace('<', '[').replace('>', ']'))
+    output+='</table>'
+    return StringRepr('self.options='+repr(self.options), output)
+
 
   #############################################################################
 

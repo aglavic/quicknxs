@@ -4,6 +4,39 @@ Helpers to improve interactivity in ipython.
 '''
 from numpy import ndarray
 
+class StringRepr(str):
+  '''
+  A string with nice html representation for use in info properties of objects.
+  '''
+  _htmlrepr=''
+  def __new__(cls, strrep, htmlrepr):
+    out=str.__new__(cls, strrep)
+    out._htmlrepr=htmlrepr
+    return out
+
+  def _repr_html_(self):
+    return self._htmlrepr
+
+class NiceDict(dict):
+  '''
+  A dictionary object with a html list representation displaying 
+  keys, values and value types sorted by key.
+  '''
+  def _repr_html_(self):
+    output='<table border="1">\n'
+    output+='<tr><th>key</th><th>value</th><th>type</th></tr>\n'
+    for key, value in sorted(self.items()):
+      valrepr=repr(value).replace('<', '[').replace('>', ']')
+      if hasattr(value, '_repr_html_'):
+        try:
+          valrepr=value._repr_html_()
+        except:
+          pass
+      output+='<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n'%(key, valrepr,
+                                                              type(value).__name__)
+    output+='</table>'
+    return output
+
 class PlottableArray(ndarray):
   '''
   A numpy array that displays a plotted representation, when it is shown in the qt console. 
