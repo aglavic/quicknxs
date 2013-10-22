@@ -5,8 +5,8 @@ import unittest
 import tempfile
 
 from numpy import float64, float32, loadtxt, array, testing
-from quicknxs.mreduce import NXSData, Reflectivity
-from quicknxs.mrio import HeaderCreator, HeaderParser, Exporter
+from quicknxs.qreduce import NXSData, Reflectivity
+from quicknxs.qio import HeaderCreator, HeaderParser, Exporter
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
 TEST_EVENT=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_event.nxs')

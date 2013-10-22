@@ -33,6 +33,10 @@ def _run(argv=[]):
                         </html>"""%version.str_version,
                      alignment=Qt.AlignBottom|Qt.AlignHCenter)
   splash.show()
+  # set instrument configuration
+  from quicknxs import config
+  config.instrument=config.proxy.add_alias('ref_m', 'instrument')
+
   from quicknxs.main_gui import MainGUI
   window=MainGUI(argv)
   window.show()

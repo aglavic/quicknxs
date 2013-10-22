@@ -27,7 +27,7 @@ from time import time, strptime, mktime
 #seterr(invalid='ignore')
 
 from .decorators import log_call, log_input, log_both
-from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
+from .config import paths, instrument
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
@@ -956,11 +956,11 @@ def locate_file(number, histogram=True, old_format=False):
     '''
     info('Trying to locate file number %s...'%number)
     if histogram:
-      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'histo.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
     elif old_format:
-      search=glob(os.path.join(PATHS['data_base'], (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.OLD_BASE_SEARCH%(number, number))+u'.nxs'))
     else:
-      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'event.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'event.nxs'))
     if search:
       return search[0]
     else:
@@ -1119,7 +1119,7 @@ class Reflectivity(object):
     Error is also calculated and all intermediate steps are stored in the object 
     (scaled and unscaled intensity and background).
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1206,7 +1206,7 @@ class Reflectivity(object):
     analyzed, so each x line corresponds to different alpha i
     values.
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1327,7 +1327,7 @@ class Reflectivity(object):
     Calculate the background intensity vs. ToF.
     Equal for normal and fan reflectivity extraction.
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     '''
     data=dataset.data
     y_pos=self.options['y_pos']
@@ -1487,7 +1487,7 @@ class OffSpecular(Reflectivity):
     Qz,Qx,kiz,kfz is calculated using the x and ToF positions
     together with the tth-bank and direct pixel values.
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1603,7 +1603,7 @@ class GISANS(Reflectivity):
   @log_call
   def _calc_gisans(self, dataset):
     """
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data

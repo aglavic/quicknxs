@@ -6,7 +6,7 @@ Module for calculations used in data reduction and automatic algorithms.
 from numpy import *
 from logging import debug, info #@Reimport
 from .decorators import log_input, log_both
-from .mreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
+from .qreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
 
@@ -21,7 +21,7 @@ def get_total_reflection(refl, return_npoints=False):
   Starting from low Q points it searches for a drop in intensity to 
   locate the andge and than returns the weighted mean.
   
-  :param quicknxs.mreduce.Reflectivity refl: Used to get the reflected intensity
+  :param quicknxs.qreduce.Reflectivity refl: Used to get the reflected intensity
   
   :returns: scaling, (number of points used for weighted mean)
   """
@@ -49,8 +49,8 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   """
   Calculate the scaling factor needed to stich one dataset to another.
   
-  :param quicknxs.mreduce.Reflectivity refl1: First reflectivity object
-  :param quicknxs.mreduce.Reflectivity refl2: Second reflectivity object, to be scaled
+  :param quicknxs.qreduce.Reflectivity refl1: First reflectivity object
+  :param quicknxs.qreduce.Reflectivity refl2: Second reflectivity object, to be scaled
   :param int add_points: Number of points of both datasets considered outside the overlapping region
   :param int polynom: Degree of polynom to use for fitting, 0 is Gaussian
   
@@ -87,7 +87,7 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   """
   Calculate the specular or direct beam peak position from data x-projection.
   
-  :param quicknxs.mreduce.MRDataset data: Raw data used to find the x-position
+  :param quicknxs.qreduce.MRDataset data: Raw data used to find the x-position
   :param float dangle0_overwrite: If not None, overwrite dataset dangle0 with this value
   :param float direct_pixel_overwrite: If !=-1, overwrite dataset direct pixel with this value
   :param float snr: Minimum signal to noise for peak detection
@@ -143,7 +143,7 @@ def get_yregion(data):
   """
   Calculate the beam y region from data y-projection.
   
-  :param quicknxs.mreduce.MRDataset data: Raw data used to find the y-region
+  :param quicknxs.qreduce.MRDataset data: Raw data used to find the y-region
   
   :returns: y_center, y_width, y_bg
   """

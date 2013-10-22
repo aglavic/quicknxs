@@ -12,16 +12,16 @@ from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
-from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
+from .config import paths, instrument, gui
 from .main_window import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
 from .polarization_gui import PolarizationDialog
 from .advanced_background import BackgroundDialog
-from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
-from .mrcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
-from .mrio import HeaderParser, HeaderCreator
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
+from .qio import HeaderParser, HeaderCreator
 
 #from logging import info, debug
 from logging import info, warning, debug
@@ -52,7 +52,7 @@ class MainGUI(QtGui.QMainWindow):
   '''
   The program top level window with all direct event handling.
   '''
-  active_folder=PATHS['data_base']
+  active_folder=instrument.data_base
   active_file=u''
   last_mtime=0. #: Stores the last time the current file has been modified
   _active_data=None
@@ -1103,11 +1103,11 @@ class MainGUI(QtGui.QMainWindow):
     info('Trying to locate file number %s...'%number)
     QtGui.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
-      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'histo.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
     elif self.ui.oldFormatActive.isChecked():
-      search=glob(os.path.join(PATHS['data_base'], (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.OLD_BASE_SEARCH%(number, number))+u'.nxs'))
     else:
-      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'event.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'event.nxs'))
     if search:
       self.ui.numberSearchEntry.setText('')
       self.fileOpen(os.path.abspath(search[0]), do_plot=do_plot)
@@ -1136,7 +1136,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if filename is None and self._pending_header is None:
       filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
-                                               directory=PATHS['results'],
+                                               directory=paths.results,
                                                filter=u'Extracted Dataset (*.dat)')
     if filename==u'':
       return
@@ -1978,7 +1978,7 @@ class MainGUI(QtGui.QMainWindow):
 ####### Calculations and data treatment
 
   def updateStateFile(self, ignore):
-    sfile=open(PATHS['state_file'], 'wb')
+    sfile=open(paths.STATE_FILE, 'wb')
     sfile.write((u'Running PID %i\n'%os.getpid()).encode('utf8'))
     if len(self.reduction_list)>0:
       sfile.write(unicode(HeaderCreator(self.reduction_list)).encode('utf8'))
@@ -2051,7 +2051,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     # setup a file in the users directroy making sure the application is not run twice
     # the file also stores the current working state for reload after a crash (reduced data)
-    if os.path.exists(PATHS['state_file']):
+    if os.path.exists(paths.STATE_FILE):
       _result=QtGui.QMessageBox.warning(self, "Previous Crash",
 """There is a state file but no running process for it, 
 this could indicate a previous crash.
@@ -2059,36 +2059,27 @@ this could indicate a previous crash.
 Do you want to try to restore the working reduction list?""",
           buttons=QtGui.QMessageBox.Yes|QtGui.QMessageBox.No)
       if _result==QtGui.QMessageBox.Yes:
-        self._pending_header=open(PATHS['state_file'], 'r').read()
+        self._pending_header=open(paths.STATE_FILE, 'r').read()
         QtCore.QTimer.singleShot(1500, self.loadExtraction)
-    open(PATHS['state_file'], 'w').write('Running PID %i\n'%os.getpid())
+    open(paths.STATE_FILE, 'w').write('Running PID %i\n'%os.getpid())
     # read window settings
-    if os.path.exists(PATHS['window']):
-      try:
-        obj=load(open(PATHS['window'], 'rb'))
-      except:
-        return
-    else:
-      return
-    try:
-      self.restoreGeometry(obj[0])
-      self.restoreState(obj[1])
-      self.ui.mainSplitter.setSizes(obj[2][0])
-      self.ui.overviewSplitter.setSizes(obj[2][1])
-      self.ui.plotSplitter.setSizes(obj[2][2])
-      self.ui.color_selector.setCurrentIndex(obj[3])
-      self.ui.show_colorbars.setChecked(obj[4])
-      self.ui.normalizeXTof.setChecked(obj[5])
-      for i, fig in enumerate([
-                              self.ui.xy_overview,
-                              self.ui.xtof_overview,
-                              self.ui.refl,
-                              self.ui.x_project,
-                              self.ui.y_project,
-                              ]):
-        fig.set_config(obj[6][i])
-    except:
-      pass
+    debug('Applying GUI configuration')
+    if gui.geometry is not None: self.restoreGeometry(QtCore.QByteArray(gui.geometry))
+    if gui.state is not None: self.restoreState(gui.state)
+    self.ui.mainSplitter.setSizes(gui.splitters[0])
+    self.ui.overviewSplitter.setSizes(gui.splitters[1])
+    self.ui.plotSplitter.setSizes(gui.splitters[2])
+    self.ui.color_selector.setCurrentIndex(gui.color_selection)
+    self.ui.show_colorbars.setChecked(gui.show_colorbars)
+    self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
+    for i, fig in enumerate([
+                            self.ui.xy_overview,
+                            self.ui.xtof_overview,
+                            self.ui.refl,
+                            self.ui.x_project,
+                            self.ui.y_project,
+                            ]):
+      fig.set_config(gui.figure_params[i])
 
   def closeEvent(self, event=None):
     '''
@@ -2110,18 +2101,19 @@ Do you want to try to restore the working reduction list?""",
                 self.ui.y_project,
                 ]:
       figure_params.append(fig.get_config())
-    obj=(self.saveGeometry(), self.saveState(),
-         (self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes()),
-         self.ui.color_selector.currentIndex(),
-         self.ui.show_colorbars.isChecked(),
-         self.ui.normalizeXTof.isChecked(),
-         figure_params,
-         )
-    debug('Dumping config file %s'%PATHS['window'])
-    dump(obj, open(PATHS['window'], 'wb'))
+
+    debug('Storing GUI configuration')
+    gui.geometry=str(self.saveGeometry())
+    gui.state=str(self.saveState())
+    gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
+    gui.color_selection=self.ui.color_selector.currentIndex()
+    gui.show_colorbars=self.ui.show_colorbars.isChecked()
+    gui.normalizeXTof=self.ui.normalizeXTof.isChecked()
+    gui.figure_params=figure_params
+
     # remove the state file on normal exit
     debug('Removing status file')
-    os.remove(PATHS['state_file'])
+    os.remove(paths.STATE_FILE)
     # detach the gui logging handler before closing the window
     debug('Detaching GUI handler')
     from logging import getLogger
@@ -2177,7 +2169,7 @@ Do you want to try to restore the working reduction list?""",
     verticalLayout=QtGui.QVBoxLayout(dia)
     dia.setLayout(verticalLayout)
     webview=QtWebKit.QWebView(dia)
-    webview.load(QtCore.QUrl.fromLocalFile(PATHS['doc_index']))
+    webview.load(QtCore.QUrl.fromLocalFile(paths.DOC_INDEX))
     verticalLayout.addWidget(webview)
     # set width of the page to fit the document and height to the same as the main window
     dia.resize(700, self.height())
