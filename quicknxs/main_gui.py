@@ -7,7 +7,6 @@ import os
 import sys
 from glob import glob
 from numpy import where, pi, newaxis, log10
-from cPickle import load, dump
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 

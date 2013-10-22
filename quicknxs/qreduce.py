@@ -27,7 +27,7 @@ from time import time, strptime, mktime
 #seterr(invalid='ignore')
 
 from .decorators import log_call, log_input, log_both
-from .config import paths, instrument
+from .config import instrument
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.

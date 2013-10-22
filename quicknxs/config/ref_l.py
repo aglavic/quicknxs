@@ -6,6 +6,7 @@ REF_L specific values.
 config_file=''
 
 NAME='REF_L'
+BEAMLINE='4B'
 
 # for the search of files by number
 data_base=u'/SNS/REF_L'

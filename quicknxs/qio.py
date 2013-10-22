@@ -14,11 +14,10 @@ from time import strftime
 from zipfile import ZipFile
 from cPickle import loads, dumps
 from .decorators import log_call
-from .config import paths, instrument
+from .config import paths, instrument, output_templates
 from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
 from .qcalc import smooth_data, DetectorTailCorrector
 from .version import str_version
-from .output_templates import *
 
 from . import genx_data
 # make sure importing and changing genx templates do only use our
@@ -28,7 +27,7 @@ genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 
 GP_ENVIRONMENT=os.environ
-for path in GP_FONT_PATHS:
+for path in output_templates.gp_font_paths:
   if os.path.exists(path):
     GP_ENVIRONMENT.update({'GDFONTPATH': path})
 
@@ -795,10 +794,10 @@ class Exporter(object):
     for channel in self.channels:
       data=output_data[channel]
       if type(data) is not list:
-        output[DICTIZE_CHANNELS[channel]]=data
+        output[output_templates.DICTIZE_CHANNELS[channel]]=data
       else:
         for i, plotmap in enumerate(data):
-          output[DICTIZE_CHANNELS[channel]+"_"+str(i)]=plotmap
+          output[output_templates.DICTIZE_CHANNELS[channel]+"_"+str(i)]=plotmap
     return output
 
   @log_call
@@ -812,7 +811,7 @@ class Exporter(object):
         self._create_gnuplot_script(output_data, title, directory, naming, check_exists)
 
   def replace_gp(self, text):
-    for tfrom, tto in GP_REPLACE_CHARS:
+    for tfrom, tto in output_templates.GP_REPLACE_CHARS:
       text=text.replace(tfrom, tto)
     return text
 
@@ -841,9 +840,9 @@ class Exporter(object):
         filename=naming.replace('{item}', title).replace('{state}', channel)\
                      .replace('{instrument}', instrument.NAME)\
                      .replace('{type}', 'dat').replace('{numbers}', ind_str)
-        plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
-      params['plot_lines']=GP_SEP.join(plotlines)
-      script=GP_TEMPLATE%params
+        plotlines.append(output_templates.gp_line%dict(file_name=filename, channel=channel, index=i+1))
+      params['plot_lines']=output_templates.GP_SEP.join(plotlines)
+      script=output_templates.gp_template%params
       open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     else:
       # 3D plot
@@ -911,9 +910,9 @@ class Exporter(object):
         line_params['file_name']=naming.replace('{item}', title).replace('{state}', channel)\
                      .replace('{instrument}', instrument.NAME)\
                      .replace('{type}', 'dat').replace('{numbers}', ind_str)
-        plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
+        plotlines+=output_templates.GP_SEP_3D%channel+output_templates.gp_line_3D%line_params
       params['plot_lines']=plotlines
-      script=GP_TEMPLATE_3D%params
+      script=output_templates.gp_template_3D%params
       open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     self.exported_files_all.append(output)
     try:

@@ -35,7 +35,6 @@ from .smooth_dialog import Ui_Dialog as UiSmooth
 from .qreduce import GISANS
 from .qio import Exporter
 from .decorators import log_call, log_output
-from .output_templates import *
 from . import genx_data
 # make sure importing and changing genx templates do only use our
 # build in dummy module
@@ -336,21 +335,21 @@ class Reducer(object):
     Collect all files and send them to the user via smtp mail.
     '''
     msg=MIMEMultipart()
-    msg['Subject']=self._email_replace(email.subject)
+    msg['Subject']=self._email_replace(email.Subject)
     msg['From']='BL4A@ornl.gov'
-    msg['To']=email.to.replace(';', ', ')
-    msg['CC']=email.cc.replace(';', ', ')
-    text=self._email_replace(email.text)
+    msg['To']=email.To.replace(';', ', ')
+    msg['CC']=email.Cc.replace(';', ', ')
+    text=self._email_replace(email.Text)
     msg.preamble=text
     msg.attach(MIMEText(text))
 
-    if email.send_data:
+    if email.SendData:
       exported_files=self.exporter.exported_files_data
-    elif email.send_plots:
+    elif email.SendPlots:
       exported_files=self.exporter.exported_files_plots
     else:
       exported_files=self.exporter.exported_files_all
-    if email.zip_data:
+    if email.ZIPData:
       # create an in-memory zip file which gets attached to the mail
       fobj=StringIO()
       zipfile=ZipFile(fobj, 'w', ZIP_DEFLATED)
@@ -482,7 +481,7 @@ class ReduceDialog(QDialog, Reducer):
 
   @log_call
   def save_email_texts(self):
-    for name, value in emails.items(): #@UndefinedVariable
+    for name, value in email.items(): #@UndefinedVariable
       entry=getattr(self.ui, 'email'+name)
       if entry.__class__.__name__=='QPlainTextEdit':
         value=entry.toPlainText()

@@ -133,7 +133,8 @@ class ConfigProxy(object):
       value=self.tmp_storages[storage][config][item]
     else:
       value=self.storages[storage][config][item]
-    if isinstance(value, basestring) and '%' in value:
+    if isinstance(value, basestring) and '%' in value and \
+          not self.storages[storage][config].get('NO_INTERPOLATION', False):
       # perform interpolation with constants if possible
       value=self.interpolate(config, value)
     return value
