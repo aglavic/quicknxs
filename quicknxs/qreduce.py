@@ -36,6 +36,7 @@ DETECTOR_X_REGION=(8, 295) # the active area of the detector
 DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
+SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
 # measurement type mapping of states
 MAPPING_12FULL=(
                  (u'++ (0V)', u'entry-off_off_Ezero'),
@@ -247,6 +248,10 @@ class NXSData(object):
       return False
     ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
     pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+    try:
+      smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
+    except KeyError:
+      smpt=0.
 
     # select the type of measurement that has been used
     if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
@@ -256,7 +261,8 @@ class NXSData(object):
       else:
         self.measurement_type='Polarization Analysis'
         mapping=list(MAPPING_FULLPOL)
-    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
+    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
+         abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
       if channels[0] in [m[1] for m in MAPPING_12HALF]:
         self.measurement_type='Polarized w/E-Field'
         mapping=list(MAPPING_12HALF)
