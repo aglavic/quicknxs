@@ -76,6 +76,7 @@ class MainGUI(QtGui.QMainWindow):
   # plot line storages
   _x_projection=None
   _y_projection=None
+  _picked_line=None
   proj_lines=None
   overview_lines=None
   # colors for the reflecitivy lines
@@ -243,13 +244,17 @@ class MainGUI(QtGui.QMainWindow):
       plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
     self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
     self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
+    self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotRelese)
     self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
     self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
+    self.ui.y_project.canvas.mpl_connect('button_release_event', self.plotRelese)
     self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
     self.ui.xy_overview.canvas.mpl_connect('button_press_event', self.plotPickXY)
     self.ui.xy_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXY)
+    self.ui.xy_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
     self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
     self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
+    self.ui.xtof_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
 
   @log_input
   def fileOpen(self, filename, do_plot=True):
@@ -1826,6 +1831,9 @@ class MainGUI(QtGui.QMainWindow):
       return
     self.ui.statusbar.showMessage(u"x=%15g    y=%15g"%(event.xdata, event.ydata))
 
+  def plotRelese(self, event):
+    self._picked_line=None
+
   def plotPickX(self, event):
     '''
     Plot for x-projection has been clicked.
@@ -1838,7 +1846,10 @@ class MainGUI(QtGui.QMainWindow):
         bgw=self.ui.bgWidth.value()
         bgl=bgc-bgw/2.
         bgr=bgc+bgw/2.
-        if event.xdata<bgr and abs(event.xdata-bgl)<abs(event.xdata-bgr):
+        dists=[abs(event.xdata-item) for item in [xcen, bgl, bgr]]
+        min_dist=dists.index(min(dists))
+        pl=self._picked_line
+        if pl=='bgl' or (pl is None and min_dist==1):
           # left of right background bar and closer to left one
           bgl=event.xdata
           bgc=(bgr+bgl)/2.
@@ -1847,7 +1858,8 @@ class MainGUI(QtGui.QMainWindow):
           self.ui.bgCenter.setValue(bgc)
           self.auto_change_active=False
           self.ui.bgWidth.setValue(bgw)
-        elif event.xdata<bgr or abs(event.xdata-bgr)<abs(event.xdata-xcen):
+          self._picked_line='bgl'
+        elif pl=='bgr' or (pl is None and min_dist==2):
           # left of right background bar or closer to right background than peak
           bgr=event.xdata
           bgc=(bgr+bgl)/2.
@@ -1856,8 +1868,10 @@ class MainGUI(QtGui.QMainWindow):
           self.ui.bgCenter.setValue(bgc)
           self.auto_change_active=False
           self.ui.bgWidth.setValue(bgw)
+          self._picked_line='bgr'
         else:
           self.ui.refXPos.setValue(event.xdata)
+          self._picked_line='xpos'
       elif event.button==3:
         self.ui.refXWidth.setValue(abs(self.ui.refXPos.value()-event.xdata)*2.)
 
@@ -1871,10 +1885,13 @@ class MainGUI(QtGui.QMainWindow):
       yw=self.ui.refYWidth.value()
       yl=ypos-yw/2.
       yr=ypos+yw/2.
-      if abs(event.xdata-yl)<abs(event.xdata-yr):
+      pl=self._picked_line
+      if pl=='yl' or (pl is None and abs(event.xdata-yl)<abs(event.xdata-yr)):
         yl=event.xdata
+        self._picked_line='yl'
       else:
         yr=event.xdata
+        self._picked_line='yr'
       ypos=(yr+yl)/2.
       yw=(yr-yl)
       self.auto_change_active=True
@@ -1895,10 +1912,13 @@ class MainGUI(QtGui.QMainWindow):
       yw=self.ui.refYWidth.value()
       yl=ypos-yw/2.
       yr=ypos+yw/2.
-      if abs(event.ydata-yl)<abs(event.ydata-yr):
+      pl=self._picked_line
+      if pl=='yl' or (pl is None and abs(event.ydata-yl)<abs(event.ydata-yr)):
         yl=event.ydata
+        self._picked_line='yl'
       else:
         yr=event.ydata
+        self._picked_line='yr'
       ypos=(yr+yl)/2.
       yw=(yr-yl)
       self.auto_change_active=True
@@ -1909,7 +1929,37 @@ class MainGUI(QtGui.QMainWindow):
   def plotPickXToF(self, event):
     if event.button==1 and self.ui.xtof_overview.toolbar._active is None and \
         event.ydata is not None:
-      self.ui.refXPos.setValue(event.ydata)
+        xcen=self.ui.refXPos.value()
+        bgc=self.ui.bgCenter.value()
+        bgw=self.ui.bgWidth.value()
+        bgl=bgc-bgw/2.
+        bgr=bgc+bgw/2.
+        dists=[abs(event.ydata-item) for item in [xcen, bgl, bgr]]
+        min_dist=dists.index(min(dists))
+        pl=self._picked_line
+        if pl=='bgl' or (pl is None and min_dist==1):
+          # left of right background bar and closer to left one
+          bgl=event.ydata
+          bgc=(bgr+bgl)/2.
+          bgw=(bgr-bgl)
+          self.auto_change_active=True
+          self.ui.bgCenter.setValue(bgc)
+          self.auto_change_active=False
+          self.ui.bgWidth.setValue(bgw)
+          self._picked_line='bgl'
+        elif pl=='bgr' or (pl is None and min_dist==2):
+          # left of right background bar or closer to right background than peak
+          bgr=event.ydata
+          bgc=(bgr+bgl)/2.
+          bgw=(bgr-bgl)
+          self.auto_change_active=True
+          self.ui.bgCenter.setValue(bgc)
+          self.auto_change_active=False
+          self.ui.bgWidth.setValue(bgw)
+          self._picked_line='bgr'
+        else:
+          self.ui.refXPos.setValue(event.ydata)
+          self._picked_line='xpos'
     elif event.button==3 and self.ui.xtof_overview.toolbar._active is None and \
         event.ydata is not None:
       xpos=self.ui.refXPos.value()
