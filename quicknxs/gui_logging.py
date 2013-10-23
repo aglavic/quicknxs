@@ -25,8 +25,10 @@ CONSOLE_LEVEL, FILE_LEVEL, GUI_LEVEL=logging.WARNING, logging.INFO, logging.INFO
 if 'pdb' in sys.modules.keys() or 'pydevd' in sys.modules.keys():
   # if common debugger modules have been loaded, assume a debug run
   _log_levels=misc.pdb_log_levels
-elif '--debug' in sys.argv or misc.debug_mode:
+elif '--debug' in sys.argv:
   sys.argv.remove('--debug')
+  _log_levels=misc.debug_log_levels
+elif misc.debug_mode:
   _log_levels=misc.debug_log_levels
 else:
   _log_levels=misc.default_log_levels
