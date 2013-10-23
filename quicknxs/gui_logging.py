@@ -18,19 +18,20 @@ from numpy import seterr, seterrcall
 from .version import str_version
 from .config import paths, misc
 
-# default options used for logging
-CONSOLE_LEVEL=logging.WARNING
-FILE_LEVEL=logging.INFO
-GUI_LEVEL=logging.INFO
+# default options used if nothing is set in the configuration
+CONSOLE_LEVEL, FILE_LEVEL, GUI_LEVEL=logging.WARNING, logging.INFO, logging.INFO
 
-# switch on debugging with command line or when python debugger is running
-if '--debug' in sys.argv:
+# set log levels according to options
+if 'pdb' in sys.modules.keys() or 'pydevd' in sys.modules.keys():
+  # if common debugger modules have been loaded, assume a debug run
+  _log_levels=misc.pdb_log_levels
+elif '--debug' in sys.argv or misc.debug_mode:
   sys.argv.remove('--debug')
-  FILE_LEVEL=logging.DEBUG
-  CONSOLE_LEVEL=logging.DEBUG
-elif 'pdb' in sys.modules.keys() or 'pydevd' in sys.modules.keys():
-  # if common debugger modules have been loaded, assume a debug run and output to console
-  CONSOLE_LEVEL=logging.DEBUG
+  _log_levels=misc.debug_log_levels
+else:
+  _log_levels=misc.default_log_levels
+for item, level in _log_levels.items():
+  exec '%s_LEVEL=logging.%s'%(item, level)
 
 def excepthook_overwrite(*exc_info):
   logging.critical('python error', exc_info=exc_info)

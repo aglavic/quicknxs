@@ -1437,8 +1437,8 @@ class Reflectivity(object):
     for width, dist in self.slits:
       # calculate the maximum opening angle dTheta
       dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
-      # standard deviation for a triangle shaped beam intensity distribution is dTheta / sqrt(6)
-      res.append(dTheta*0.408)
+      # standard deviation for a uniform angle distribution is Δθ/√12
+      res.append(dTheta*0.28867513)
     return min(res)
 
 class OffSpecular(Reflectivity):

@@ -28,7 +28,7 @@ __description__='''Magnetism reflectometer data reduction software'''
 __scripts__=['scripts/quicknxs']
 __py_modules__=[]
 __package_dir__={}
-__packages__=['quicknxs']
+__packages__=['quicknxs', 'quicknxs.config']
 __package_data__={'quicknxs': ['default_config.cfg', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
