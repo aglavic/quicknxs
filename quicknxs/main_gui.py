@@ -25,7 +25,7 @@ from .mrio import HeaderParser, HeaderCreator
 
 #from logging import info, debug
 from logging import info, warning, debug
-from .gui_logging import install_gui_handler, ip_excepthook_overwrite, excepthook_overwrite
+from .gui_logging import install_gui_handler, excepthook_overwrite
 from .decorators import log_call, log_input, log_both
 
 class gisansCalcThread(QtCore.QThread):
@@ -186,11 +186,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ipython=IPythonConsoleQtWidget(self)
     self.ui.plotTab.addTab(self.ipython, 'IPython')
     self.ipython.namespace['data']=self.active_data
-    # install logging magic within ipython ZMQ
-    import IPython.core.ipapi
-    # console process exceptions (IPython controlled)
-    ip=IPython.core.ipapi.get()
-    ip.set_custom_exc((Exception,), ip_excepthook_overwrite)
     # exceptions within GUI thread, must be installed by method within that process
     self.trigger('_install_exc')
 
