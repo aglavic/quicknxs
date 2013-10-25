@@ -16,6 +16,7 @@ from .main_window import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
+from .nxs_gui import NXSDialog
 from .polarization_gui import PolarizationDialog
 from .advanced_background import BackgroundDialog
 from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
@@ -2205,6 +2206,12 @@ Do you want to try to restore the working reduction list?""",
   @log_call
   def open_polarization_window(self):
     dia=PolarizationDialog(self)
+    dia.show()
+
+  @log_call
+  def open_nxs_dialog(self):
+    if self.active_data is None: return
+    dia=NXSDialog(self, self.active_data.origin)
     dia.show()
 
   @log_call

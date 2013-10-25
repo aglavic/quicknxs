@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Oct 11 10:31:41 2013
+# Created: Fri Oct 25 11:00:58 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -1301,6 +1301,8 @@ class Ui_MainWindow(object):
     self.actionLog_Debug_Messages.setObjectName(_fromUtf8("actionLog_Debug_Messages"))
     self.actionQuick_Reduce = QtGui.QAction(MainWindow)
     self.actionQuick_Reduce.setObjectName(_fromUtf8("actionQuick_Reduce"))
+    self.actionBrowse_NXS_File = QtGui.QAction(MainWindow)
+    self.actionBrowse_NXS_File.setObjectName(_fromUtf8("actionBrowse_NXS_File"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1335,6 +1337,8 @@ class Ui_MainWindow(object):
     self.menuAutomatics.addAction(self.actionAuto_Reflectivity)
     self.menuAutomatics.addSeparator()
     self.menuAutomatics.addAction(self.actionStrip_Overlap)
+    self.menuSTAFF.addAction(self.actionBrowse_NXS_File)
+    self.menuSTAFF.addSeparator()
     self.menuSTAFF.addAction(self.actionIPython_Console)
     self.menuSTAFF.addAction(self.actionLog_Debug_Messages)
     self.menuSTAFF.addSeparator()
@@ -1456,6 +1460,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.selectedChannel9, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.selectedChannel10, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.selectedChannel11, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
+    QtCore.QObject.connect(self.actionBrowse_NXS_File, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_nxs_dialog)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1803,11 +1808,14 @@ class Ui_MainWindow(object):
     self.actionPolarization.setText(_translate("MainWindow", "Polarization...", None))
     self.actionRaw_Data_Comparison.setText(_translate("MainWindow", "Raw Data Comparison...", None))
     self.actionIPython_Console.setText(_translate("MainWindow", "IPython Console", None))
+    self.actionIPython_Console.setShortcut(_translate("MainWindow", "Ctrl+I", None))
     self.actionRaise_Error.setText(_translate("MainWindow", "Raise Error", None))
     self.actionLog_Debug_Messages.setText(_translate("MainWindow", "Log Debug Messages", None))
     self.actionQuick_Reduce.setText(_translate("MainWindow", "Quick-Reduce", None))
     self.actionQuick_Reduce.setToolTip(_translate("MainWindow", "Reduce list using options from last export", None))
     self.actionQuick_Reduce.setShortcut(_translate("MainWindow", "Ctrl+R", None))
+    self.actionBrowse_NXS_File.setText(_translate("MainWindow", "Browse NXS File", None))
+    self.actionBrowse_NXS_File.setShortcut(_translate("MainWindow", "Ctrl+N", None))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

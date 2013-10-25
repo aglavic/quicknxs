@@ -2684,6 +2684,8 @@
     <property name="title">
      <string>Debug</string>
     </property>
+    <addaction name="actionBrowse_NXS_File"/>
+    <addaction name="separator"/>
     <addaction name="actionIPython_Console"/>
     <addaction name="actionLog_Debug_Messages"/>
     <addaction name="separator"/>
@@ -3034,6 +3036,9 @@
    <property name="text">
     <string>IPython Console</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionRaise_Error">
    <property name="text">
@@ -3054,6 +3059,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionBrowse_NXS_File">
+   <property name="text">
+    <string>Browse NXS File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>
@@ -4441,6 +4454,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionBrowse_NXS_File</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_nxs_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4489,5 +4518,6 @@
   <slot>raiseError()</slot>
   <slot>set_debug()</slot>
   <slot>quickReduce()</slot>
+  <slot>open_nxs_dialog()</slot>
  </slots>
 </ui>
