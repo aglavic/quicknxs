@@ -17,6 +17,7 @@ import atexit
 import re
 from logging import error
 from .configobj import ConfigObj, ConfigObjError
+from ..decorators import log_call, log_input
 
 
 class ConfigProxy(object):
@@ -43,6 +44,7 @@ class ConfigProxy(object):
     # store .ini files on interpreter exit
     atexit.register(self.store)
 
+  @log_input
   def add_config(self, name, items, storage=''):
     '''
     Crate a new dictionary connected to a storage config file.
@@ -63,12 +65,12 @@ class ConfigProxy(object):
         self.storages[storage]=ConfigObj(
                                         infile=sfile,
                                         unrepr=True,
-                                        encoding='utf8',
                                         indent_type='    ',
                                         interpolation=False,
                                         )
       except ConfigObjError:
-        error("Could not parse configfile %s, using temporary config.\nFix or delete the file!"%sfile)
+        error("Could not parse configfile %s, using temporary config.\nFix or delete the file!"%sfile,
+              exc_info=True)
         self.storages[storage]={}
       self.tmp_storages[storage]={}
     self.configs[name]=storage
@@ -82,6 +84,7 @@ class ConfigProxy(object):
     self.tmp_storages[storage][name]={}
     return self[name]
 
+  @log_input
   def add_alias(self, config, alias):
     '''
     Crate an alias for another configuration item.
@@ -93,6 +96,7 @@ class ConfigProxy(object):
     self.aliases[alias]=config
     return self[config]
 
+  @log_call
   def store(self):
     """store configuration data into .ini files."""
     for item in self.storages.values():
