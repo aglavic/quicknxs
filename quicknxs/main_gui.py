@@ -2116,13 +2116,12 @@ Do you want to try to restore the working reduction list?""",
     debug('Applying GUI configuration')
     if gui.geometry is not None: self.restoreGeometry(QtCore.QByteArray(gui.geometry))
     if gui.state is not None: self.restoreState(QtCore.QByteArray(gui.state))
-    self.ui.mainSplitter.setSizes(list(gui.splitters[0]))
-    self.ui.overviewSplitter.setSizes(list(gui.splitters[1]))
-    self.ui.plotSplitter.setSizes(list(gui.splitters[2]))
+    self.ui.mainSplitter.setSizes(gui.splitters[0])
+    self.ui.overviewSplitter.setSizes(gui.splitters[1])
+    self.ui.plotSplitter.setSizes(gui.splitters[2])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
     self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
-    fp=list(gui.figure_params)
     for i, fig in enumerate([
                             self.ui.xy_overview,
                             self.ui.xtof_overview,
@@ -2130,7 +2129,7 @@ Do you want to try to restore the working reduction list?""",
                             self.ui.x_project,
                             self.ui.y_project,
                             ]):
-      fig.set_config(fp[i])
+      fig.set_config(gui.figure_params[i])
 
   def closeEvent(self, event=None):
     '''

@@ -161,7 +161,7 @@ class Builder(object):
         return m(o)
 
     def build_List(self, o):
-        return map(self.build, o.elts)
+        return list(map(self.build, o.elts))
 
     def build_Num(self, o):
         return o.n
@@ -2058,10 +2058,13 @@ class ConfigObj(Section):
         output = newline.join(out)
         if self.encoding:
             output = output.encode(self.encoding)
+            if type(output) is bytes and type(newline) is str:
+                newline=newline.encode(self.encoding)
 
         if self.BOM and ((self.encoding is None) or match_utf8(self.encoding)):
             # Add the UTF8 BOM
             output = BOM_UTF8 + output
+
 
         if not output.endswith(newline):
             output += newline
@@ -2069,7 +2072,8 @@ class ConfigObj(Section):
             outfile.write(u_str(output))
         else:
             h = open(self.filename, 'wb')
-            output = output.encode() # encoding the data to bytes
+            if type(output) is not bytes:
+                output=output.encode() # encoding the data to bytes
             h.write(u_str(output))
             h.close()
 
