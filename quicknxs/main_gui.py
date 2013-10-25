@@ -2154,8 +2154,8 @@ Do you want to try to restore the working reduction list?""",
       figure_params.append(fig.get_config())
 
     debug('Storing GUI configuration')
-    gui.geometry=str(self.saveGeometry())
-    gui.state=str(self.saveState())
+    gui.geometry=self.saveGeometry().data()
+    gui.state=self.saveState().data()
     gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
     gui.color_selection=self.ui.color_selector.currentIndex()
     gui.show_colorbars=self.ui.show_colorbars.isChecked()

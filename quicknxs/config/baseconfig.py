@@ -15,7 +15,7 @@
 import os
 import atexit
 import re
-from logging import error
+import sys
 from .configobj import ConfigObj, ConfigObjError
 from ..decorators import log_call, log_input
 
@@ -28,6 +28,7 @@ class ConfigProxy(object):
   can hold several configurations.
   '''
   _KEYCRE=re.compile(r"%\(([^)]*)\)s") # search pattern for interpolation
+  _PARSE_ERRORS=None
 
   default_storage='general'
   config_path=''
@@ -36,6 +37,7 @@ class ConfigProxy(object):
   aliases={}
 
   def __init__(self, config_path):
+    self._PARSE_ERRORS=[]
     self.configs={}
     self.aliases={}
     self.storages={}
@@ -65,12 +67,14 @@ class ConfigProxy(object):
         self.storages[storage]=ConfigObj(
                                         infile=sfile,
                                         unrepr=True,
+                                        encoding='utf8',
                                         indent_type='    ',
                                         interpolation=False,
                                         )
       except ConfigObjError:
-        error("Could not parse configfile %s, using temporary config.\nFix or delete the file!"%sfile,
-              exc_info=True)
+        self._PARSE_ERRORS.append(
+            ("Could not parse configfile %s, using temporary config.\nFix or delete the file!"%sfile,
+              sys.exc_info()))
         self.storages[storage]={}
       self.tmp_storages[storage]={}
     self.configs[name]=storage

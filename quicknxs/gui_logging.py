@@ -16,7 +16,7 @@ import inspect
 from cStringIO import StringIO
 from numpy import seterr, seterrcall
 from .version import str_version
-from .config import paths, misc
+from .config import paths, misc, proxy
 
 # default options used if nothing is set in the configuration
 CONSOLE_LEVEL, FILE_LEVEL, GUI_LEVEL=logging.WARNING, logging.INFO, logging.INFO
@@ -236,7 +236,7 @@ class QtHandler(logging.Handler):
         mitem.add_header('Content-Disposition', 'attachment', filename='debug.log')
         msg.attach(mitem)
 
-        smtp=smtplib.SMTP('160.91.4.26')
+        smtp=smtplib.SMTP(misc.SMTP_SERVER)
         smtp.sendmail(msg['From'], msg['To'].split(','), msg.as_string())
         smtp.quit()
         logging.info('Mail sent')
@@ -248,3 +248,7 @@ class QtHandler(logging.Handler):
 
 def install_gui_handler(main_window):
   logging.root.addHandler(QtHandler(main_window))
+  # config errors will be raised before GUI is initialized,
+  # make sure they are displayed to the user
+  for text, exc_info in proxy._PARSE_ERRORS:
+    logging.warning(text, exc_info=exc_info)

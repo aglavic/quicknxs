@@ -7,6 +7,7 @@ config_file=''
 
 ADMIN='Artur Glavic'
 ADMIN_EMAIL=u'agf@ornl.gov'
+SMTP_SERVER='160.91.4.26'
 
 debug_mode=False
 default_log_levels={

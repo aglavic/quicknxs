@@ -15,8 +15,6 @@
 # ConfigObj mailing list:
 # http://lists.sourceforge.net/lists/listinfo/configobj-develop
 # Comments, suggestions and bug reports welcome.
-import pdb
-
 import os
 import re
 import sys
@@ -69,7 +67,7 @@ if sys.version_info < (3, ):
     # text type are unicode or str
     TEXT_TYPE = (unicode, str)
 else:
-    TEXT_TYPE = str
+    TEXT_TYPE=(str,)
 
 def match_utf8(encoding):
     return BOM_LIST.get(encoding.lower()) == 'utf_8'
@@ -97,7 +95,7 @@ __version__ = '4.7.2'
 try:
     any
 except NameError:
-    def any(iterable):
+    def any(iterable): #@ReservedAssignment
         for entry in iterable:
             if entry:
                 return True
@@ -146,7 +144,7 @@ OPTION_DEFAULTS = {
 }
 
 def getObj(s):
-    p = parse("a=" + s)
+    p=parse("a="+s)
     obj = p.body[0].value
     return obj
 
@@ -168,7 +166,10 @@ class Builder(object):
     def build_Num(self, o):
         return o.n
 
-    def build_Str(str, o):
+    def build_Str(self, o):
+        return o.s
+
+    def build_Bytes(self, o):
         return o.s
 
     def build_Dict(self, o):
@@ -1466,7 +1467,7 @@ class ConfigObj(Section):
 
         # If `infile` is a Unicode string, return as such
         if isinstance(infile, TEXT_TYPE):
-            return infile
+            return infile.splitlines(True)
 
         # If `infile` is bytes type; decode and split
         if isinstance(infile, bytes):
@@ -1616,7 +1617,7 @@ class ConfigObj(Section):
                                 if type(e) == UnknownType:
                                     msg = 'Unknown name or type in value at line %s.'
                                 else:
-                                    msg = 'Parse error in value at line %s.'
+                                    msg='Parse error in multiline value at line %s.'
                                 self._handle_error(msg, UnreprError, infile,
                                     cur_index)
                                 continue

@@ -26,7 +26,7 @@ from PyQt4.QtCore import QThread, pyqtSignal
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
-from .config import paths, export, email, instrument
+from .config import paths, export, email, instrument, misc
 from .mplwidget import MPLWidget
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
@@ -384,7 +384,7 @@ class Reducer(object):
 
     try:
       debug('Trying to send data via smtp.ornl.gov')
-      smtp=smtplib.SMTP('160.91.4.26', timeout=10)
+      smtp=smtplib.SMTP(misc.SMTP_SERVER, timeout=10)
       smtp.sendmail(msg['From'],
                     map(unicode.strip, msg['To'].split(',')+msg['CC'].split(',')),
                     msg.as_string())
