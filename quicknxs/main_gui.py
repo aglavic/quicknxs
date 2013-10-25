@@ -2114,7 +2114,7 @@ Do you want to try to restore the working reduction list?""",
     open(paths.STATE_FILE, 'w').write('Running PID %i\n'%os.getpid())
     # read window settings
     debug('Applying GUI configuration')
-    if gui.geometry is not None: self.restoreGeometry(QtCore.QByteArray(gui.geometry))
+    if gui.geometry is not None: self.restoreGeometry(gui.geometry)
     if gui.state is not None: self.restoreState(gui.state)
     self.ui.mainSplitter.setSizes(gui.splitters[0])
     self.ui.overviewSplitter.setSizes(gui.splitters[1])
