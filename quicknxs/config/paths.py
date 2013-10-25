@@ -23,9 +23,9 @@ else:
 if not os.path.exists(CFG_PATH):
   os.makedirs(CFG_PATH)
 
-results='%(HOME)s/results'
-export_name='%(instrument.NAME)s_{numbers}_{item}_{state}.{type}'
-DOC_INDEX='%(PACKAGE)s/htmldoc/node3.html'
-STATE_FILE='%(CFG_PATH)s/run_state.dat'
-LOG_FILE='%(CFG_PATH)s/debug.log'
-GENX_TEMPLATES='%(PACKAGE)s/genx_templates'
+results=u'%(HOME)s/results'
+export_name=u'%(instrument.NAME)s_{numbers}_{item}_{state}.{type}'
+DOC_INDEX=u'%(PACKAGE)s/htmldoc/node3.html'
+STATE_FILE=u'%(CFG_PATH)s/run_state.dat'
+LOG_FILE=u'%(CFG_PATH)s/debug.log'
+GENX_TEMPLATES=u'%(PACKAGE)s/genx_templates'

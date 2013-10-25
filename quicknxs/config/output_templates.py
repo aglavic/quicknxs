@@ -71,7 +71,7 @@ GP_REPLACE_CHARS=(
                   (u'δ', u'{/Symbol d}'),
                   )
 
-gp_font_paths=['/usr/share/fonts/dejavu/', '/usr/share/fonts/truetype/ttf-dejavu/']
+gp_font_paths=[u'/usr/share/fonts/dejavu/', u'/usr/share/fonts/truetype/ttf-dejavu/']
 
 FILE_HEADER=u'''# Datafile created by QuickNXS %(version)s
 # Date: %(date)s
