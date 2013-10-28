@@ -6,7 +6,7 @@
 from numpy import *
 from PyQt4.QtGui import QDialog
 from .rawcompare_dialog import Ui_RawDat
-from .mreduce import Reflectivity
+from .qreduce import Reflectivity
 
 class RawCompare(QDialog):
   state_colors=[['#ff0000', '#00ff00', '#0000ff', '#aa00aa'],

@@ -11,7 +11,8 @@ import numpy
 try:
   from scipy.stats.mstats import mquantiles
 except ImportError:
-  pass
+  # use the slightly slower quantiles function that does not rely on scipy
+  def mquantiles(data, prob, *ignore): return quantile(data, prob)
 
 class PeakFinder(object):
   '''
@@ -452,3 +453,43 @@ class MexicanHat(Cwt):
 #        b=s_omega**2/2.
         return ss_omega_scaled*numpy.exp(-0.5*ss_omega_scaled)/1.1529702
         #return s_omega**2*numpy.exp(-s_omega**2/2.0)/1.1529702
+
+def quantile(a, prob):
+    """
+    Estimates the prob'th quantile of the values in a data array.
+
+    Uses the algorithm of matlab's quantile(), namely:
+        - Remove any nan values
+        - Take the sorted data as the (.5/n), (1.5/n), ..., (1-.5/n) quantiles.
+        - Use linear interpolation for values between (.5/n) and (1 - .5/n).
+        - Use the minimum or maximum for quantiles outside that range.
+
+    See also: scipy.stats.mstats.mquantiles
+    """
+    a=numpy.asanyarray(a)
+    a=a[numpy.logical_not(numpy.isnan(a))].ravel()
+    n=a.size
+
+    if prob>=1-.5/n:
+        return a.max()
+    elif prob<=.5/n:
+        return a.min()
+
+    # find the two bounds we're interpreting between:
+    # that is, find i such that (i+.5) / n <= prob <= (i+1.5)/n
+    t=n*prob-.5
+    i=numpy.floor(t)
+
+    # partial sort so that the ith element is at position i, with bigger ones
+    # to the right and smaller to the left
+    a.sort()
+
+    if i==t: # did we luck out and get an integer index?
+        return a[i]
+    else:
+        # we'll linearly interpolate between this and the next index
+        smaller=a[i]
+        larger=a[i+1:].min()
+        if numpy.isinf(smaller):
+            return smaller # avoid inf - inf
+        return smaller+(larger-smaller)*(t-i)

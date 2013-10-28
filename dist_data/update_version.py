@@ -5,7 +5,12 @@
 
 
 from subprocess import Popen, PIPE
-tag,revision,rev_name=Popen(['git','describe'], stdout=PIPE).communicate()[0].split('-',3)
+try:
+  tag, revision, rev_name=unicode(Popen(['git', 'describe'], stdout=PIPE).communicate()[0],
+                                  encoding='utf8').split('-', 3)
+except ValueError:
+  tag=unicode(Popen(['git', 'describe'], stdout=PIPE).communicate()[0], encoding='utf8')
+  revision=u'0'
 revision=revision.strip()
 last_change=Popen(['git', 'show', '-s', '--format=%ci'], stdout=PIPE).communicate()[0].rsplit(None,1)[0]
 
@@ -15,9 +20,8 @@ output=''
 for line in versiontxt:
   if line.startswith('version='):
     old_revision=line.rsplit(',',1)[1].split(')',1)[0].strip()
-    if old_revision==revision:
-      exit()
-    line=line.rsplit(',',1)[0]+', '+revision+')'+line.rsplit(',',1)[1].split(')',1)[1]
+    if old_revision!=revision:
+      line=line.rsplit(',', 1)[0]+', '+revision+')'+line.rsplit(',', 1)[1].split(')', 1)[1]
   if line.startswith('last_changes='):
     line='last_changes="%s"\n'%last_change
   output+=line

@@ -7,7 +7,7 @@ from PyQt4.QtTest import QTest
 from PyQt4.QtCore import QLocale#, Qt
 
 from quicknxs.main_gui import MainGUI
-from quicknxs.mreduce import NXSData, Reflectivity
+from quicknxs.qreduce import NXSData, Reflectivity
 
 dot=QLocale().decimalPoint()
 if not isinstance(dot, basestring):

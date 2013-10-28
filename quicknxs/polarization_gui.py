@@ -7,7 +7,7 @@ measurements of the direct beam.
 from numpy import where, ones_like, array, sqrt
 from PyQt4.QtGui import QDialog, QTableWidgetItem
 from polarization_dialog import Ui_Dialog
-from .mreduce import Reflectivity
+from .qreduce import Reflectivity
 
 class PolarizationDialog(QDialog):
   Icurrent={}

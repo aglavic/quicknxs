@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>460</height>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -369,7 +369,7 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="2">
-          <widget class="QCheckBox" name="emailZIP">
+          <widget class="QCheckBox" name="emailZIPData">
            <property name="text">
             <string>ZIP Files</string>
            </property>
@@ -379,14 +379,14 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QRadioButton" name="emailPlots">
+          <widget class="QRadioButton" name="emailSendPlots">
            <property name="text">
             <string>Only Plots</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QRadioButton" name="emailAll">
+          <widget class="QRadioButton" name="emailSendAll">
            <property name="text">
             <string>All</string>
            </property>
@@ -403,7 +403,7 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QRadioButton" name="emailData">
+          <widget class="QRadioButton" name="emailSendData">
            <property name="text">
             <string>Only Data</string>
            </property>
@@ -435,7 +435,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="emailCC"/>
+          <widget class="QLineEdit" name="emailCc"/>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_3">
@@ -498,12 +498,12 @@
   <tabstop>toolButton</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>emailSend</tabstop>
-  <tabstop>emailZIP</tabstop>
-  <tabstop>emailAll</tabstop>
-  <tabstop>emailPlots</tabstop>
-  <tabstop>emailData</tabstop>
+  <tabstop>emailZIPData</tabstop>
+  <tabstop>emailSendAll</tabstop>
+  <tabstop>emailSendPlots</tabstop>
+  <tabstop>emailSendData</tabstop>
   <tabstop>emailTo</tabstop>
-  <tabstop>emailCC</tabstop>
+  <tabstop>emailCc</tabstop>
   <tabstop>emailSubject</tabstop>
   <tabstop>emailText</tabstop>
  </tabstops>

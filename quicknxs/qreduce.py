@@ -27,17 +27,9 @@ from time import time, strptime, mktime
 # ignore zero devision error
 #seterr(invalid='ignore')
 
-try:
-  from .decorators import log_call, log_input, log_both
-  from .config import PATHS, BASE_SEARCH, OLD_BASE_SEARCH
-except ImportError:
-  # just in case module is used separately
-  BASE_SEARCH, OLD_BASE_SEARCH='', ''
-  PATHS={}
-  def log_call(func): return func
-  def log_input(func): return func
-  def log_both(func): return func
-
+from .decorators import log_call, log_input, log_both
+from .config import instrument
+from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -45,6 +37,7 @@ DETECTOR_X_REGION=(8, 295) # the active area of the detector
 DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
+SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
 # measurement type mapping of states
 MAPPING_12FULL=(
                  (u'++ (0V)', u'entry-off_off_Ezero'),
@@ -93,11 +86,6 @@ USE_COMPRESSION=not ('biganalysis' in node() or 'mrac' in node())
 # used for * imports
 __all__=['NXSData', 'MRDataset', 'Reflectivity', 'OffSpecular', 'GISANS', 'time_from_header',
          'locate_file']
-
-if sys.platform.startswith('win'):
-  _caching_available=False
-else:
-  _caching_available=True
 
 class OptionsDocMeta(type):
   '''
@@ -164,7 +152,7 @@ class NXSData(object):
   '''
   __metaclass__=OptionsDocMeta
 
-  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=_caching_available, callback=None,
+  DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0,
                        event_tof_overwrite=None)
   _OPTIONS_DESCRTIPTION=dict(
@@ -177,7 +165,7 @@ class NXSData(object):
     callback='Function called to update e.g. a progress bar',
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
-  MAX_CACHE=20 #: Number of datasets that are kept in the cache
+  MAX_CACHE=100 #: Number of datasets that are kept in the cache
   _cache=[]
 
   @log_both
@@ -261,6 +249,10 @@ class NXSData(object):
       return False
     ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
     pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+    try:
+      smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
+    except KeyError:
+      smpt=0.
 
     # select the type of measurement that has been used
     if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
@@ -270,7 +262,8 @@ class NXSData(object):
       else:
         self.measurement_type='Polarization Analysis'
         mapping=list(MAPPING_FULLPOL)
-    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1]: # is polarizer is in position
+    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
+         abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
       if channels[0] in [m[1] for m in MAPPING_12HALF]:
         self.measurement_type='Polarized w/E-Field'
         mapping=list(MAPPING_12HALF)
@@ -386,6 +379,19 @@ class NXSData(object):
     output=output[:-1]+'\n'+spacer0+'})'
     return output
 
+  def _repr_html_(self):
+    '''Object representation for IPython'''
+    output='<h2>%s object:</h2>\n'%self.__class__.__name__
+    output+='<table>\n'
+    output+='\t<tr><td colspan="2" align="center">Object Data:</td></td>\n'
+    output+='\t<tr><th>State</th><th>Data Object</th></td>\n'
+    for key, value in self.items():
+      output+='\t<tr>\n\t\t<td>\n\t\t\t<b>%s</b>\n\t\t</td>\n\t\t<td>\n\t\t\t'%key
+      output+='%s\n'%value._repr_html_()
+      output+='\t\t</td>\n\t</tr>\n'
+    output+='</table>'
+    return output
+
   def keys(self):
     return self._channel_names
 
@@ -431,7 +437,7 @@ class NXSData(object):
   dangle=property(__dangle, doc='first state dangle attribute')
   dangle0=property(__dangle0, doc='first state dangle0 attribute')
   sangle=property(__sangle, doc='first state sangle attribute')
-
+  
 
 class NXSMultiData(NXSData):
   '''
@@ -691,20 +697,39 @@ class MRDataset(object):
     :param h5py._hl.group.Group data:
     '''
     self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
-    self.logs={}
-    self.log_minmax={}
-    self.log_units={}
-    if 'DASlogs' in data:
-      # the old format does not include the DAS logs
+    self.logs=NiceDict()
+    self.log_minmax=NiceDict()
+    self.log_units=NiceDict()
+    if 'DASlogs' in data:  # the old format does not include the DAS logs
+      # get an array of all pulses to make it possible to correlate values with states
+      stimes=data['DASlogs/proton_charge/time'].value
+      stimes=stimes[::10] # reduce the number of items to speed up the correlation
+      # use only values that are not directly before or after a state change
+      stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
+      stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
       for motor, item in data['DASlogs'].items():
+        if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
+          continue
         try:
-          self.logs[motor]=item['average_value'].value[0]
-          if 'units' in item['average_value'].attrs:
-            self.log_units[motor]=item['average_value'].attrs['units']
+          if 'units' in item['value'].attrs:
+            self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
           else:
             self.log_units[motor]=u''
-          self.log_minmax[motor]=(item['minimum_value'].value[0],
-                                  item['maximum_value'].value[0])
+          val=item['value'].value
+          if val.shape[0]==1:
+            self.logs[motor]=val[0]
+            self.log_minmax[motor]=(val[0], val[0])
+          else:
+            vtime=item['time'].value
+            sidx=searchsorted(vtime, stimes, side='right')
+            sidx=maximum(sidx-1, 0)
+            val=val[sidx]
+            if len(val)==0:
+              self.logs[motor]=NaN
+              self.log_minmax[motor]=(NaN, NaN)
+            else:
+              self.logs[motor]=val.mean()
+              self.log_minmax[motor]=(val.min(), val.max())
         except:
           continue
       self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
@@ -751,6 +776,23 @@ class MRDataset(object):
                                      "SUM"+repr(self.number),
                                      self.total_counts)
 
+  def _repr_html_(self):
+    '''Object representation for IPython'''
+    output='<b>%s</b> Object:\n<table border="1">\n'%self.__class__.__name__
+    output+='<tr><th>Attribute</th><th>Value</th></tr>\n'
+    for attr in ['experiment', 'number', 'total_counts', 'proton_charge',
+                 'sangle', 'dangle', 'dangle0', 'dpix']:
+      output+='<tr><td>%s</td><td>%s</td></tr>\n'%(attr, str(getattr(self, attr)))
+    if type(self.number) is list:
+      for i, item in enumerate(self.origin):
+        output+='<tr><td>origin[%i][0]</td><td>%s</td></tr>\n'%(i, item[0])
+        output+='<tr><td>origin[%i][1]</td><td>%s</td></tr>\n'%(i, item[1])
+    else:
+      output+='<tr><td>origin[0]</td><td>%s</td></tr>\n'%self.origin[0]
+      output+='<tr><td>origin[1]</td><td>%s</td></tr>\n'%self.origin[1]
+    output+='</table>'
+    return output
+
   def __iadd__(self, other):
     '''
     Add the data of one dataset to this dataset.
@@ -778,22 +820,34 @@ class MRDataset(object):
     return output
 
   if USE_COMPRESSION:
-    # data compressed in memory properties
+    # data compressed in memory properties, last dataset data is cached for better GUI response
     _data_zipped=None
     _data_dtype=float
     _data_shape=(0,)
+    _cached_object=None
+    _cached_data=None
     @property
     def data(self):
+      if MRDataset._cached_object is self:
+        return MRDataset._cached_data
       data=fromstring(zlib.decompress(self._data_zipped), dtype=self._data_dtype)
-      return data.reshape(self._data_shape)
+      data=data.reshape(self._data_shape)
+      MRDataset._cached_data=data
+      MRDataset._cached_object=self
+      return data
     @data.setter
     def data(self, data):
       self._data_zipped=zlib.compress(data.tostring(), 1)
       self._data_dtype=data.dtype
       self._data_shape=data.shape
+      MRDataset._cached_data=data
+      MRDataset._cached_object=self
 
   ################## Properties for easy data access ##########################
   # return the size of the data stored in memory for this dataset
+  @property
+  def nbytes(self): return (len(self._data_zipped)+
+                            self.xydata.nbytes+self.xtofdata.nbytes)
   @property
   def rawbytes(self): return (self.data.nbytes+self.xydata.nbytes+self.xtofdata.nbytes)
 
@@ -858,6 +912,10 @@ class MRDataset(object):
   tth=property(get_tth)
   tthlamda=property(get_tthlamda)
 
+  @property
+  def p(self):
+    '''A attribute to quickly plot data in the qt console'''
+    return AttributePloter(self, ['xdata', 'xydata', 'ydata', 'xtofdata', 'tofdata', 'data'])
 
 
 def time_from_header(filename, nxs=None):
@@ -905,11 +963,11 @@ def locate_file(number, histogram=True, old_format=False):
     '''
     info('Trying to locate file number %s...'%number)
     if histogram:
-      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'histo.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
     elif old_format:
-      search=glob(os.path.join(PATHS['data_base'], (OLD_BASE_SEARCH%(number, number))+u'.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.OLD_BASE_SEARCH%(number, number))+u'.nxs'))
     else:
-      search=glob(os.path.join(PATHS['data_base'], (BASE_SEARCH%number)+u'event.nxs'))
+      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'event.nxs'))
     if search:
       return search[0]
     else:
@@ -1012,6 +1070,50 @@ class Reflectivity(object):
     output+='>'
     return output
 
+  def _repr_html_(self):
+    '''Object representation for IPython'''
+    output='<b>%s</b> Object:\n<table border="1">\n'%self.__class__.__name__
+    try:
+      output+='<tr><td>#points</td><td>%i</td></tr>\n'%(len(self.Q))
+    except AttributeError:
+      output+='<tr><td>#points</td><td>%s</td></tr>\n'%(repr(self.Qz.shape))
+    if type(self.origin) is list:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[0][1])
+      for i, item in enumerate(self.origin):
+          output+='<tr><td>origin[%i]</td><td>%s</td></tr>\n'%(i, item[0])
+    else:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[1])
+      output+='<tr><td>origin</td><td>%s</td></tr>\n'%(self.origin[0])
+    output+='</table>See .info attribute for detailed description.\n'
+    return output
+
+  @property
+  def info(self):
+    output='<table border="1">\n'
+    try:
+      output+='<tr><td>#points</td><td>%i</td></tr>\n'%(len(self.Q))
+    except AttributeError:
+      output+='<tr><td>#points</td><td>%s</td></tr>\n'%(repr(self.Qz.shape))
+    if type(self.origin) is list:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[0][1])
+      for i, item in enumerate(self.origin):
+          output+='<tr><td>origin[%i]</td><td>%s</td></tr>\n'%(i, item[0])
+    else:
+      output+='<tr><td>State</td><td>%s</td></tr>\n'%(self.origin[1])
+      output+='<tr><td>origin</td><td>%s</td></tr>\n'%(self.origin[0])
+    output+='</table><table border="1">\n'
+    output+='<tr><th>Option</th><th>Value</th></tr>\n'
+    for key, value in sorted(self.options.items()):
+      if key=='normalization' and value is not None:
+        output+='<tr><td>%s</td><td>%s</td></tr>\n'%(key,
+                                    value.origin[0])
+      else:
+        output+='<tr><td>%s</td><td>%s</td></tr>\n'%(key,
+                                    repr(value).replace('<', '[').replace('>', ']'))
+    output+='</table>'
+    return StringRepr('self.options='+repr(self.options), output)
+
+
   #############################################################################
 
   @log_call
@@ -1024,7 +1126,7 @@ class Reflectivity(object):
     Error is also calculated and all intermediate steps are stored in the object 
     (scaled and unscaled intensity and background).
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1111,7 +1213,7 @@ class Reflectivity(object):
     analyzed, so each x line corresponds to different alpha i
     values.
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1232,7 +1334,7 @@ class Reflectivity(object):
     Calculate the background intensity vs. ToF.
     Equal for normal and fan reflectivity extraction.
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     '''
     data=dataset.data
     y_pos=self.options['y_pos']
@@ -1336,8 +1438,8 @@ class Reflectivity(object):
     for width, dist in self.slits:
       # calculate the maximum opening angle dTheta
       dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
-      # standard deviation for a triangle shaped beam intensity distribution is dTheta / sqrt(6)
-      res.append(dTheta*0.408)
+      # standard deviation for a uniform angle distribution is Δθ/√12
+      res.append(dTheta*0.28867513)
     return min(res)
 
 class OffSpecular(Reflectivity):
@@ -1392,7 +1494,7 @@ class OffSpecular(Reflectivity):
     Qz,Qx,kiz,kfz is calculated using the x and ToF positions
     together with the tth-bank and direct pixel values.
     
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
@@ -1508,7 +1610,7 @@ class GISANS(Reflectivity):
   @log_call
   def _calc_gisans(self, dataset):
     """
-    :param quicknxs.mreduce.MRDataset dataset: The dataset to use for extraction
+    :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     """
     tof_edges=dataset.tof_edges
     data=dataset.data

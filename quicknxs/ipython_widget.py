@@ -10,63 +10,75 @@ import atexit
 
 from PyQt4 import QtCore, QtGui
 
-from IPython.zmq.ipkernel import IPKernelApp
-from IPython.lib.kernel import find_connection_file
-from IPython.frontend.qt.kernelmanager import QtKernelManager
-from IPython.frontend.qt.console.rich_ipython_widget import RichIPythonWidget
-from IPython.config.application import catch_config_error
-
 DEFAULT_INSTANCE_ARGS=['qtconsole', '--pylab=inline', '--colors=linux']
 
-class IPythonLocalKernelApp(IPKernelApp):
-    @catch_config_error
-    def initialize(self, argv=DEFAULT_INSTANCE_ARGS):
-        """
-        :param argv: IPython args
+import IPython
+if IPython.__version__<'1.0':
+    # does not work for ipython >= 1.0 as it is completely restructured
+    from IPython.zmq.ipkernel import IPKernelApp
+    from IPython.lib.kernel import find_connection_file
+    from IPython.frontend.qt.kernelmanager import QtKernelManager
+    from IPython.frontend.qt.console.rich_ipython_widget import RichIPythonWidget #@UnusedImport
+    from IPython.core.ipapi import get as get_ipython #@UnusedImport
+else:
+    from IPython.qt.console.rich_ipython_widget import RichIPythonWidget #@UnresolvedImport @Reimport
+    from IPython.qt.inprocess import QtInProcessKernelManager #@UnresolvedImport
+    from IPython.lib import guisupport #@UnusedImport
+    from IPython.core.getipython import get_ipython #@UnresolvedImport @Reimport
 
-        example:
+from IPython.config.application import catch_config_error
+from .gui_logging import ip_excepthook_overwrite
 
-            app = QtGui.QApplication([])
-            kernelapp = IPythonLocalKernelApp.instance()
-            kernelapp.initialize()
+if IPython.__version__<'1.0':
+    class IPythonLocalKernelApp(IPKernelApp):
+        @catch_config_error
+        def initialize(self, argv=DEFAULT_INSTANCE_ARGS):
+            """
+            :param argv: IPython args
+    
+            example:
+    
+                app = QtGui.QApplication([])
+                kernelapp = IPythonLocalKernelApp.instance()
+                kernelapp.initialize()
+    
+                widget = IPythonConsoleQtWidget()
+                widget.set_default_style(colors='linux')
+    
+                widget.connect_kernel(connection_file=kernelapp.get_connection_file())
+                # if you won't to connect to remote kernel you don't need kernelapp part, just widget part and:
+    
+                # widget.connect_kernel(connection_file='kernel-16098.json')
+    
+                # where kernel-16098.json is the kernel name
+                widget.show()
+    
+                namespace = kernelapp.get_user_namespace()
+                nxxx = 12
+                namespace["widget"] = widget
+                namespace["QtGui"]=QtGui
+                namespace["nxxx"]=nxxx
+    
+                app.exec_()
+            """
+            super(IPythonLocalKernelApp, self).initialize(argv)
+            self.kernel.eventloop=self.loop_qt4_nonblocking
+            self.kernel.start()
+            self.start()
 
-            widget = IPythonConsoleQtWidget()
-            widget.set_default_style(colors='linux')
+        def loop_qt4_nonblocking(self, kernel):
+            """Non-blocking version of the ipython qt4 kernel loop"""
+            kernel.timer=QtCore.QTimer()
+            kernel.timer.timeout.connect(kernel.do_one_iteration)
+            kernel.timer.start(1000*kernel._poll_interval)
 
-            widget.connect_kernel(connection_file=kernelapp.get_connection_file())
-            # if you won't to connect to remote kernel you don't need kernelapp part, just widget part and:
+        def get_connection_file(self):
+            """Returne current kernel connection file."""
+            return self.connection_file
 
-            # widget.connect_kernel(connection_file='kernel-16098.json')
-
-            # where kernel-16098.json is the kernel name
-            widget.show()
-
-            namespace = kernelapp.get_user_namespace()
-            nxxx = 12
-            namespace["widget"] = widget
-            namespace["QtGui"]=QtGui
-            namespace["nxxx"]=nxxx
-
-            app.exec_()
-        """
-        super(IPythonLocalKernelApp, self).initialize(argv)
-        self.kernel.eventloop=self.loop_qt4_nonblocking
-        self.kernel.start()
-        self.start()
-
-    def loop_qt4_nonblocking(self, kernel):
-        """Non-blocking version of the ipython qt4 kernel loop"""
-        kernel.timer=QtCore.QTimer()
-        kernel.timer.timeout.connect(kernel.do_one_iteration)
-        kernel.timer.start(1000*kernel._poll_interval)
-
-    def get_connection_file(self):
-        """Returne current kernel connection file."""
-        return self.connection_file
-
-    def get_user_namespace(self):
-        """Returns current kernel userspace dict"""
-        return self.kernel.shell.user_ns
+        def get_user_namespace(self):
+            """Returns current kernel userspace dict"""
+            return self.kernel.shell.user_ns
 
 class IPythonConsoleQtWidget(RichIPythonWidget):
 
@@ -85,11 +97,23 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
           break
       RichIPythonWidget.__init__(self)
       self._parent=parent
-      kernelapp=IPythonLocalKernelApp.instance()
-      kernelapp.initialize()
+      self.buffer_size=10000 # increase buffer size to show longer outputs
       self.set_default_style(colors='linux')
-      self.connect_kernel(connection_file=kernelapp.get_connection_file())
-      self.namespace=kernelapp.get_user_namespace()
+      if IPython.__version__<'1.0':
+        kernelapp=IPythonLocalKernelApp.instance()
+        kernelapp.initialize()
+        self.connect_kernel(connection_file=kernelapp.get_connection_file())
+      else:
+        kernel_manager=QtInProcessKernelManager(config=self.config, gui='qt4')
+        kernel_manager.start_kernel()
+        self.kernel_manager=kernel_manager
+        self.kernel_client=kernel_manager.client()
+        self.kernel_client.start_channels()
+      ip=get_ipython()
+      # console process exceptions (IPython controlled)
+      ip.set_custom_exc((Exception,), ip_excepthook_overwrite)
+      self.namespace=ip.user_ns
+      self.namespace['IP']=self
       self.namespace['app']=QtGui.QApplication.instance()
       self.namespace['gui']=parent
       self.namespace['plot']=self._plot
@@ -137,3 +161,6 @@ class IPythonConsoleQtWidget(RichIPythonWidget):
       self._parent.ui.refl.clear()
       self._parent.ui.refl.plot(*args, **opts)
       self._parent.ui.refl.draw()
+
+
+

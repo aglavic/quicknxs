@@ -3,7 +3,7 @@ recursive-include doc *
 recursive-include designer *.ui
 include compile_gui.sh
 include MANIFEST.in
-include quicknxs/window.pkl quicknxs/default_config.cfg 
+include quicknxs/default_config.cfg 
 include quicknxs/genx_templates/*.gx quicknxs/htmldoc/*
 include test_all.py tests/*.py tests/*.nxs
 include dist_data/*

@@ -28,12 +28,11 @@ __description__='''Magnetism reflectometer data reduction software'''
 __scripts__=['scripts/quicknxs']
 __py_modules__=[]
 __package_dir__={}
-__packages__=['quicknxs']
-__package_data__={'quicknxs': ['default_config.cfg', 'window.pkl', 'htmldoc/*', 'genx_templates/*.gx']}
+__packages__=['quicknxs', 'quicknxs.config']
+__package_data__={'quicknxs': ['default_config.cfg', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
-                ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png']),
-                ('/usr/share/mime/packages', ['dist_data/x-quicknxs-dat.xml', 'dist_data/x-quicknxs-nxs.xml'])]
+                ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png'])]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
@@ -42,7 +41,7 @@ if "py2exe" in sys.argv:
   __data_files__=matplotlib.get_py2exe_datafiles()
   sys.path.append("..\\App")
   __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
-  __data_files__+=[(r'quicknxs', [r'quicknxs\window.pkl']),
+  __data_files__+=[(r'quicknxs', [r'quicknxs\default_config.cfg']),
                    (r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
                    (r'quicknxs\htmldoc', glob(r'quicknxs\htmldoc\*')),
                    ("IPython\\config\\profile", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\*.*')+
@@ -53,7 +52,7 @@ if "py2exe" in sys.argv:
   sys.path.append(pexe)
   __options__={
                 "windows": [ {
-                            "script": "quicknxs",
+                            "script": "scripts/quicknxs",
                             "icon_resources": [(1, "icons/logo.ico")],
                             }, ], # executable for py2exe is windows application
                 "options": {  "py2exe": {
@@ -72,6 +71,25 @@ if "py2exe" in sys.argv:
                              },
                            }
               }
+elif 'py2app' in sys.argv:
+  import py2app #@UnusedImport @UnresolvedImport
+  __data_files__=[]
+  __options__={
+               'app': ["scripts/quicknxs"],
+               'options': {'py2app': {
+                          'optimize': 1,
+                          'compressed': False,
+                          'argv_emulation': False,
+                          'iconfile': 'dist_data/quicknxs.icns',
+                          'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork'],
+                          'packages': ['h5py', 'zmq', 'pygments', 'IPython'],
+                          'excludes': [ 'doctest', 'tcl', 'tk', 'Tkinter',
+                                       '_gtkagg', '_tkagg', '_wxagg',
+                                       '_gtk', '_gtkcairo', '_agg2', '_cairo',
+                                       '_cocoaagg', '_fltkagg',
+                                       ],
+                         }}
+               }
 else:
   __options__={}
 
@@ -86,10 +104,12 @@ if 'install' not in sys.argv:
   if os.path.exists('MANIFEST'):
     os.remove('MANIFEST')
 
-if 'bdist' in sys.argv:
-  # make sure revision is correct before building
-  from subprocess import call
+# make sure revision is correct before building
+from subprocess import call
+if not 'py2exe' in sys.argv:
   call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
+if ('sdist' in sys.argv or 'py2exe' in sys.argv or 'py2app' in sys.argv) and \
+    not '--nocheck' in sys.argv:
   print "Running unit test before compiling build distribution."
   from test_all import test_suites
   import unittest
@@ -99,6 +119,8 @@ if 'bdist' in sys.argv:
   if len(result.errors+result.failures):
     print "Not all tests were successfull, stop building distribution!"
     exit()
+if '--nocheck' in sys.argv:
+  sys.argv.remove('--nocheck')
 
 from quicknxs.version import str_version
 __version__=str_version
@@ -120,3 +142,8 @@ setup(name=__package_name__,
       requires=__requires__, #does not do anything
       **__options__
      )
+
+if 'py2app' in sys.argv:
+  # add qt.conf which fixes issues with the app and a currently installed qt4 library
+  open('dist/QuickNXS.app/Contents/Resources/qt.conf', 'w').write(open('dist_data/qt.conf', 'r').read())
+  

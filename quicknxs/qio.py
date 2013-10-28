@@ -14,9 +14,9 @@ from time import strftime
 from zipfile import ZipFile
 from cPickle import loads, dumps
 from .decorators import log_call
-from .config import PATHS
-from .mreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
-from .mrcalc import smooth_data, DetectorTailCorrector
+from .config import paths, instrument, output_templates
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
+from .qcalc import smooth_data, DetectorTailCorrector
 from .version import str_version
 from .output_templates import *
 
@@ -28,7 +28,7 @@ genx_data.DataList.__module__='genx.data'
 genx_data.DataSet.__module__='genx.data'
 
 GP_ENVIRONMENT=os.environ
-for path in GP_FONT_PATHS:
+for path in output_templates.gp_font_paths:
   if os.path.exists(path):
     GP_ENVIRONMENT.update({'GDFONTPATH': path})
 
@@ -685,8 +685,8 @@ class Exporter(object):
     self.output_data['OffSpecSmooth']=output_data
 
   @log_call
-  def export_data(self, directory=PATHS['results'],
-                  naming=u'REF_M_{numbers}_{item}_{state}.{type}',
+  def export_data(self, directory=paths.results,
+                  naming=paths.export_name,
                   multi_ascii=True,
                   combined_ascii=False,
                   matlab_data=False,
@@ -703,6 +703,7 @@ class Exporter(object):
         for channel in self.channels:
           value=output_data[channel]
           output=ofname.replace('{item}', key).replace('{state}', channel)\
+                       .replace('{instrument}', instrument.NAME)\
                        .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
           if not check_exists(output):
             continue
@@ -730,6 +731,7 @@ class Exporter(object):
       if combined_ascii:
         debug('Export multi_ascii')
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
+                     .replace('{instrument}', instrument.NAME)\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
         if check_exists(output):
           of=open(output, 'wb')
@@ -764,6 +766,7 @@ class Exporter(object):
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
+                       .replace('{instrument}', instrument.NAME)\
                        .replace('{type}', 'mat').replace('{numbers}', self.ind_str)
         if not check_exists(output):
           continue
@@ -774,6 +777,7 @@ class Exporter(object):
       for key, output_data in self.output_data.items():
         dictdata=self.dictize_data(output_data)
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
+                       .replace('{instrument}', instrument.NAME)\
                        .replace('{type}', 'npz').replace('{numbers}', self.ind_str)
         if not check_exists(output):
           continue
@@ -791,15 +795,15 @@ class Exporter(object):
     for channel in self.channels:
       data=output_data[channel]
       if type(data) is not list:
-        output[DICTIZE_CHANNELS[channel]]=data
+        output[output_templates.DICTIZE_CHANNELS[channel]]=data
       else:
         for i, plotmap in enumerate(data):
-          output[DICTIZE_CHANNELS[channel]+"_"+str(i)]=plotmap
+          output[output_templates.DICTIZE_CHANNELS[channel]+"_"+str(i)]=plotmap
     return output
 
   @log_call
-  def create_gnuplot_scripts(self, directory=PATHS['results'],
-                  naming=u'REF_M_{numbers}_{item}_{state}.{type}',
+  def create_gnuplot_scripts(self, directory=paths.results,
+                  naming=paths.export_name,
                   check_exists=lambda ignore: True):
     '''
     Create gnuplot scripts in images for all exported datasets.
@@ -808,7 +812,7 @@ class Exporter(object):
         self._create_gnuplot_script(output_data, title, directory, naming, check_exists)
 
   def replace_gp(self, text):
-    for tfrom, tto in GP_REPLACE_CHARS:
+    for tfrom, tto in output_templates.GP_REPLACE_CHARS:
       text=text.replace(tfrom, tto)
     return text
 
@@ -816,6 +820,7 @@ class Exporter(object):
     ind_str=self.ind_str
     ofname_full=os.path.join(directory, naming)
     output=ofname_full.replace('{item}', title).replace('{state}', 'all')\
+                       .replace('{instrument}', instrument.NAME)\
                  .replace('{type}', 'gp').replace('{numbers}', ind_str)
     if not check_exists(output):
       return
@@ -823,6 +828,7 @@ class Exporter(object):
       # 2D PLot
       params=dict(
                   output=naming.replace('{item}', title).replace('{state}', 'all')\
+                         .replace('{instrument}', instrument.NAME)\
                          .replace('{type}', '').replace('{numbers}', ind_str),
                   xlabel=u"Q_z [Å^{-1}]",
                   ylabel=u"Reflectivity",
@@ -833,10 +839,11 @@ class Exporter(object):
       plotlines=[]
       for i, channel in enumerate(self.channels):
         filename=naming.replace('{item}', title).replace('{state}', channel)\
+                     .replace('{instrument}', instrument.NAME)\
                      .replace('{type}', 'dat').replace('{numbers}', ind_str)
-        plotlines.append(GP_LINE%dict(file_name=filename, channel=channel, index=i+1))
-      params['plot_lines']=GP_SEP.join(plotlines)
-      script=GP_TEMPLATE%params
+        plotlines.append(output_templates.gp_line%dict(file_name=filename, channel=channel, index=i+1))
+      params['plot_lines']=output_templates.GP_SEP.join(plotlines)
+      script=output_templates.gp_template%params
       open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     else:
       # 3D plot
@@ -848,6 +855,7 @@ class Exporter(object):
       cols=1+int(len(self.channels)>1)
       params=dict(
                   output=naming.replace('{item}', title).replace('{state}', 'all')\
+                         .replace('{instrument}', instrument.NAME)\
                          .replace('{type}', '').replace('{numbers}', ind_str),
                   zlabel=u"I [a.u.]",
                   title=ind_str,
@@ -901,10 +909,11 @@ class Exporter(object):
       plotlines=''
       for channel in self.channels:
         line_params['file_name']=naming.replace('{item}', title).replace('{state}', channel)\
+                     .replace('{instrument}', instrument.NAME)\
                      .replace('{type}', 'dat').replace('{numbers}', ind_str)
-        plotlines+=GP_SEP_3D%channel+GP_LINE_3D%line_params
+        plotlines+=output_templates.GP_SEP_3D%channel+output_templates.gp_line_3D%line_params
       params['plot_lines']=plotlines
-      script=GP_TEMPLATE_3D%params
+      script=output_templates.gp_template_3D%params
       open(output, 'wb').write(self.replace_gp(script).encode('ISO-8859-1', 'ignore'))
     self.exported_files_all.append(output)
     try:
@@ -921,8 +930,8 @@ class Exporter(object):
       self.exported_files_all.append(output);self.exported_files_plots.append(output)
 
   @log_call
-  def create_genx_file(self, directory=PATHS['results'],
-                       naming=u'REF_M_{numbers}_{item}_{state}.{type}',
+  def create_genx_file(self, directory=paths.results,
+                       naming=paths.export_name,
                        check_exists=lambda ignore: True):
     '''
     Create a Genx .gx model file with the right polarization states
@@ -930,15 +939,16 @@ class Exporter(object):
     '''
     ofname=os.path.join(directory, naming)
     if 'x' in self.channels:
-      template=os.path.join(PATHS['genx_templates'], 'unpolarized.gx')
+      template=os.path.join(paths.GENX_TEMPLATES, 'unpolarized.gx')
     elif '+' in self.channels or '-' in self.channels:
-      template=os.path.join(PATHS['genx_templates'], 'polarized.gx')
+      template=os.path.join(paths.GENX_TEMPLATES, 'polarized.gx')
     else:
-      template=os.path.join(PATHS['genx_templates'], 'spinflip.gx')
+      template=os.path.join(paths.GENX_TEMPLATES, 'spinflip.gx')
     for key, output_data in self.output_data.items():
       if not key in ['Specular', 'TrueSpecular']:
         continue
       output=ofname.replace('{item}', key).replace('{state}', 'all')\
+                   .replace('{instrument}', instrument.NAME)\
                    .replace('{type}', 'gx').replace('{numbers}', self.ind_str)
       if not check_exists(output):
         continue

@@ -11,4 +11,4 @@ except:
   pass
 
 # used for * imports
-__all__=['mreduce', 'mrcalc', 'mrio']
+__all__=['qreduce', 'qcalc', 'qio', 'config']

@@ -16,21 +16,24 @@ import inspect
 from cStringIO import StringIO
 from numpy import seterr, seterrcall
 from .version import str_version
-from .config import PATHS, ADMIN_MAIL
+from .config import paths, misc, proxy
 
-# default options used for logging
-CONSOLE_LEVEL=logging.WARNING
-FILE_LEVEL=logging.INFO
-GUI_LEVEL=logging.INFO
+# default options used if nothing is set in the configuration
+CONSOLE_LEVEL, FILE_LEVEL, GUI_LEVEL=logging.WARNING, logging.INFO, logging.INFO
 
-# switch on debugging with command line or when python debugger is running
-if '--debug' in sys.argv:
+# set log levels according to options
+if 'pdb' in sys.modules.keys() or 'pydevd' in sys.modules.keys():
+  # if common debugger modules have been loaded, assume a debug run
+  _log_levels=misc.pdb_log_levels
+elif '--debug' in sys.argv:
   sys.argv.remove('--debug')
-  FILE_LEVEL=logging.DEBUG
-  CONSOLE_LEVEL=logging.DEBUG
-elif 'pdb' in sys.modules.keys() or 'pydevd' in sys.modules.keys():
-  # if common debugger modules have been loaded, assume a debug run and output to console
-  CONSOLE_LEVEL=logging.DEBUG
+  _log_levels=misc.debug_log_levels
+elif misc.debug_mode:
+  _log_levels=misc.debug_log_levels
+else:
+  _log_levels=misc.default_log_levels
+for item, level in _log_levels.items():
+  exec '%s_LEVEL=logging.%s'%(item, level)
 
 def excepthook_overwrite(*exc_info):
   logging.critical('python error', exc_info=exc_info)
@@ -47,15 +50,25 @@ class NumpyLogger(logging.getLoggerClass()):
     is used for logging numpy floating point errors, not the numpy_logger function.
   '''
 
-  def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
-    curframe=inspect.currentframe()
-    calframes=inspect.getouterframes(curframe, 2)
-    # stack starts with:
-    # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
-    ignore, fname, lineno, func, ignore, ignore=calframes[4]
-    return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
-                                                   msg, args,
-                                                   exc_info, func=func, extra=extra)
+  if sys.version_info[0:2]>=(3, 2): #sinfo was introduced in python 3.2
+    def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None, sinfo=None):
+      curframe=inspect.currentframe()
+      calframes=inspect.getouterframes(curframe, 2)
+      # stack starts with:
+      # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
+      ignore, fname, lineno, func, ignore, ignore=calframes[4]
+      return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
+                                   msg, args, exc_info, func=func, extra=extra, sinfo=sinfo)
+  else:
+    def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
+      curframe=inspect.currentframe()
+      calframes=inspect.getouterframes(curframe, 2)
+      # stack starts with:
+      # (this method, debug call, debug call rootlogger, numpy_logger, actual function, ...)
+      ignore, fname, lineno, func, ignore, ignore=calframes[4]
+      return logging.getLoggerClass().makeRecord(self, name, lvl, fname, lineno,
+                                                 msg, args, exc_info, func=func, extra=extra)
+
 nplogger=None
 def numpy_logger(err, flag):
   nplogger.debug('numpy floating point error encountered (%s)'%err)
@@ -75,8 +88,8 @@ def check_runstate():
   '''
   Check for running application by this user.
   '''
-  if os.path.exists(PATHS['state_file']):
-    pid=int(open(PATHS['state_file']).readline().split()[-1])
+  if os.path.exists(paths.STATE_FILE):
+    pid=int(open(paths.STATE_FILE).readline().split()[-1])
     running=pid_exists(pid)
     return running
   else:
@@ -93,7 +106,7 @@ def setup_system():
     console.setLevel(CONSOLE_LEVEL)
     logger.addHandler(console)
 
-  logfile=logging.FileHandler(PATHS['log_file'], 'w')
+  logfile=logging.FileHandler(paths.LOG_FILE, 'w')
   formatter=logging.Formatter('[%(levelname)s] - %(asctime)s - %(filename)s:%(lineno)i:%(funcName)s %(message)s', '')
   logfile.setFormatter(formatter)
   logfile.setLevel(FILE_LEVEL)
@@ -102,20 +115,17 @@ def setup_system():
   logging.info('*** QuickNXS %s Logging started ***'%str_version)
 
   # define numpy warning behavior
-  if logger.level>logging.DEBUG:
-    seterr(all='ignore')
-  else:
-    global nplogger
-    old_class=logging.getLoggerClass()
-    logging.setLoggerClass(NumpyLogger)
-    nplogger=logging.getLogger('numpy')
-    nplogger.setLevel(logging.DEBUG)
-    null_handler=logging.StreamHandler(StringIO())
-    null_handler.setLevel(logging.CRITICAL)
-    nplogger.addHandler(null_handler)
-    logging.setLoggerClass(old_class)
-    seterr(divide='call', over='call', under='ignore', invalid='call')
-    seterrcall(numpy_logger)
+  global nplogger
+  old_class=logging.getLoggerClass()
+  logging.setLoggerClass(NumpyLogger)
+  nplogger=logging.getLogger('numpy')
+  nplogger.setLevel(logging.DEBUG)
+  null_handler=logging.StreamHandler(StringIO())
+  null_handler.setLevel(logging.CRITICAL)
+  nplogger.addHandler(null_handler)
+  logging.setLoggerClass(old_class)
+  seterr(divide='call', over='call', under='ignore', invalid='call')
+  seterrcall(numpy_logger)
 
   # write information on program exit
   sys.excepthook=excepthook_overwrite
@@ -228,7 +238,7 @@ class QtHandler(logging.Handler):
         msg=MIMEMultipart()
         msg['Subject']='QuickNXS error report'
         msg['From']='%s@ornl.gov'%getuser()
-        msg['To']=ADMIN_MAIL
+        msg['To']=misc.ADMIN_EMAIL
         text='This is an automatic bugreport from QuickNXS\n\n%s'%record.msg
         if record.exc_info:
           text+='\n\n'+message
@@ -236,11 +246,11 @@ class QtHandler(logging.Handler):
         msg.preamble=text
         msg.attach(MIMEText(text))
 
-        mitem=MIMEText(open(PATHS['log_file'], 'r').read(), 'log')
+        mitem=MIMEText(open(paths.LOG_FILE, 'r').read(), 'log')
         mitem.add_header('Content-Disposition', 'attachment', filename='debug.log')
         msg.attach(mitem)
 
-        smtp=smtplib.SMTP('160.91.4.26')
+        smtp=smtplib.SMTP(misc.SMTP_SERVER)
         smtp.sendmail(msg['From'], msg['To'].split(','), msg.as_string())
         smtp.quit()
         logging.info('Mail sent')
@@ -252,3 +262,7 @@ class QtHandler(logging.Handler):
 
 def install_gui_handler(main_window):
   logging.root.addHandler(QtHandler(main_window))
+  # config errors will be raised before GUI is initialized,
+  # make sure they are displayed to the user
+  for text, exc_info in proxy._PARSE_ERRORS:
+    logging.warning(text, exc_info=exc_info)

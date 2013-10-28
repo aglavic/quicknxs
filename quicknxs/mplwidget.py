@@ -5,22 +5,13 @@ from PyQt4 import QtCore, QtGui
 import matplotlib.cm
 import matplotlib.colors
 from . import icons_rc #@UnusedImport
-
-font={
-      #'family' : 'sans',
-      #  'weight' : 'normal',
-        'variant': 'DejaVuSerif',
-        'size': 7,
-        }
-savefig={
-         'dpi': 600,
-         }
+from .config import plotting
 
 # set the default backend to be compatible with Qt in case someone uses pylab from IPython console
 matplotlib.use('Qt4Agg')
 def _set_default_rc():
-  matplotlib.rc('font', **font)
-  matplotlib.rc('savefig', **savefig)
+  matplotlib.rc('font', **plotting.font)
+  matplotlib.rc('savefig', **plotting.savefig)
 _set_default_rc()
 
 cmap=matplotlib.colors.LinearSegmentedColormap.from_list('default',
