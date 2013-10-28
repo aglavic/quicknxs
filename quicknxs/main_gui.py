@@ -1831,7 +1831,7 @@ class MainGUI(QtGui.QMainWindow):
     Plot for x-projection has been clicked.
     '''
     if event.button is not None and self.ui.x_project.toolbar._active is None and \
-        event.xdata is not None:
+        event.inaxes is not None:
       if event.button==1:
         xcen=self.ui.refXPos.value()
         bgc=self.ui.bgCenter.value()
@@ -1872,7 +1872,7 @@ class MainGUI(QtGui.QMainWindow):
     Plot for y-projection has been clicked.
     '''
     if event.button==1 and self.ui.y_project.toolbar._active is None and \
-        event.xdata is not None:
+        event.inaxes is not None:
       ypos=self.ui.refYPos.value()
       yw=self.ui.refYWidth.value()
       yl=ypos-yw/2.
@@ -1896,7 +1896,7 @@ class MainGUI(QtGui.QMainWindow):
     Plot for xy-map has been clicked.
     '''
     if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
-        event.xdata is not None:
+        event.inaxes is not None:
       self.ui.refXPos.setValue(event.xdata)
     elif event.button==3 and self.ui.xy_overview.toolbar._active is None and \
         event.ydata is not None:

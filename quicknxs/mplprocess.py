@@ -11,7 +11,6 @@ The background plotting canvas uses a three object model:
     backend of matplotlib.
 '''
 import os
-import sys
 import traceback
 import tempfile
 from functools import partial
@@ -36,7 +35,6 @@ from matplotlib.image import AxesImage
 from matplotlib.legend import Legend
 from matplotlib.collections import QuadMesh
 from matplotlib import widgets
-from matplotlib.transforms import Affine2D, CompositeGenericTransform
 from matplotlib.colors import LogNorm
 
 from logging import debug, error
@@ -151,7 +149,7 @@ class ConnectedAxes(FixedConnectedObject):
     bbox.extents=obj.bbox.extents
     viewLim=BBox()
     viewLim.extents=obj.viewLim.extents
-    transData=[]#obj.transData.frozen().to_values()
+    transData=[]
 
     return dict(xlim=xlim, ylim=ylim,
                 points=pos._points,
@@ -283,11 +281,13 @@ class MPLProcess(FigureCanvasAgg, Process):
 
   def _event_callback(self, s, event):
     try:
+      if s=='button_release_event' and event.xdata is None:
+        event.xdata, event.ydata=self.ax.transData.inverted().transform_point((event.x, event.y))
       event=TransferredEvents[event.__class__](event, ax=self.ax)
       self.event_pipe.send((s, event))
       self.parentActionPending.set()
     except:
-      pass
+      self.event_pipe.send(('Error', traceback.format_exc()))
 
   def run(self):
     self._connect_events()
@@ -836,6 +836,9 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.draw_process.key_release_event(key)
 
   def _event_callback(self, s, event):
+    if s=='transformed_xy_event':
+      self.transformed_xy=event
+      return
     self.callbacks.process(s, event)
 
   # Makes interfacing to the process convenient by passing
@@ -1048,14 +1051,13 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
     for zoom_id in self._ids_zoom:
         self.canvas.mpl_disconnect(zoom_id)
     self._ids_zoom=[]
-
     if not self._xypress: return
 
     last_a=[]
 
     for cur_xypress in self._xypress:
       x, y=event.x, event.y
-      lastx, lasty, a, ind, lim, trans=cur_xypress
+      lastx, lasty, a, _ind, lim, trans=cur_xypress
       # ignore singular clicks - 5 pixels is a threshold
       if abs(x-lastx)<5 or abs(y-lasty)<5:
           self._xypress=None
@@ -1086,10 +1088,10 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
           x0, x1=Xmin, Xmax
       else:
           if Xmin<Xmax:
-              if x<lastx:  x0, x1=x, lastx
-              else: x0, x1=lastx, x
-              if x0<Xmin: x0=Xmin
-              if x1>Xmax: x1=Xmax
+              if x<lastx:  x0, x1=x, lastx;
+              else: x0, x1=lastx, x;
+              if x0<Xmin: x0=Xmin;
+              if x1>Xmax: x1=Xmax;
           else:
               if x>lastx:  x0, x1=x, lastx
               else: x0, x1=lastx, x
@@ -1265,10 +1267,10 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
     selectedFilter=None
     for name, exts in sorted_filetypes:
       exts_list=" ".join(['*.%s'%ext for ext in exts])
-      filter='%s (%s)'%(name, exts_list)
+      filter_='%s (%s)'%(name, exts_list)
       if default_filetype in exts:
-        selectedFilter=filter
-      filters.append(filter)
+        selectedFilter=filter_
+      filters.append(filter_)
     filters=';;'.join(filters)
     # TODO: check why selectedFilter is ignored
     fname=QtGui.QFileDialog.getOpenFileNameAndFilter(self, "Choose a filename to save to",

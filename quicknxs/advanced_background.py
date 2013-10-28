@@ -32,7 +32,7 @@ class BackgroundDialog(QDialog):
     '''
     Add a point to the current polygon.
     '''
-    if event.button!=1 or event.xdata is None or self.active_poly is None:
+    if event.button!=1 or event.inaxes is None or self.active_poly is None:
       return
     parent=self.main_window
     data=parent.active_data[parent.active_channel]
