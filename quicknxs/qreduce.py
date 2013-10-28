@@ -15,7 +15,6 @@ storing the result as well as some intermediate data in itself as attributes.
 '''
 
 import os
-import sys
 import zlib
 from copy import deepcopy
 from glob import glob
