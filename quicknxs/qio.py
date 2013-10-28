@@ -18,9 +18,8 @@ from .config import paths, instrument, output_templates
 from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
 from .qcalc import smooth_data, DetectorTailCorrector
 from .version import str_version
-from .output_templates import *
-
 from . import genx_data
+
 # make sure importing and changing genx templates do only use our
 # build in dummy module
 sys.modules['genx.data']=genx_data

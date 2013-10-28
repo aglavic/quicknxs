@@ -252,10 +252,10 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.refl.mpl_connect('scroll_event', self.scaleOnPlot)
     self.ui.xy_overview.mpl_connect('button_press_event', self.plotPickXY)
     self.ui.xy_overview.mpl_connect('motion_notify_event', self.plotPickXY)
-    self.ui.xy_project.mpl_connect('button_release_event', self.plotRelese)
+    self.ui.xy_overview.mpl_connect('button_release_event', self.plotRelese)
     self.ui.xtof_overview.mpl_connect('button_press_event', self.plotPickXToF)
     self.ui.xtof_overview.mpl_connect('motion_notify_event', self.plotPickXToF)
-    self.ui.xtof_project.mpl_connect('button_release_event', self.plotRelese)    
+    self.ui.xtof_overview.mpl_connect('button_release_event', self.plotRelese)
 
   @log_input
   def fileOpen(self, filename, do_plot=True):
@@ -1950,7 +1950,7 @@ class MainGUI(QtGui.QMainWindow):
           self.ui.bgWidth.setValue(bgw)
           self._picked_line='bgr'
         else:
-      self.ui.refXPos.setValue(event.ydata)
+          self.ui.refXPos.setValue(event.ydata)
           self._picked_line='xpos'
     elif event.button==3 and self.ui.xtof_overview.toolbar._active is None and \
         event.ydata is not None:
@@ -2113,7 +2113,7 @@ Do you want to try to restore the working reduction list?""",
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
     self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
-      for i, fig in enumerate([
+    for i, fig in enumerate([
                               self.ui.xy_overview,
                               self.ui.xtof_overview,
                               self.ui.refl,
