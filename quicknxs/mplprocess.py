@@ -37,7 +37,24 @@ from matplotlib.collections import QuadMesh
 from matplotlib import widgets
 from matplotlib.colors import LogNorm
 
-from logging import debug, error
+import logging
+
+class MPHandler(logging.Handler):
+  '''
+  A logging Handler to be used by process to send any logs to parent thread.
+  '''
+  def __init__(self, process, *args, **opts):
+    logging.Handler.__init__(self, *args, **opts)
+    self.process=process
+
+  def emit(self, record):
+    record.msg='MPLProcess %i: '%self.process.pid+record.msg
+    if record.exc_info:
+      etype, value, tb=record.exc_info
+      record.exc_info=None
+      record.formated_tb=(etype, value, ''.join(traceback.format_exception(etype, value, tb)))
+      record.msg+='\n'+record.formated_tb[2]
+    self.process.event_pipe.send(('logger', record))
 
 # objects used to represent objects present in the other process
 class ConnectedObject(object):
@@ -239,7 +256,9 @@ class MPLProcess(FigureCanvasAgg, Process):
   sends back any results and the third sends matplotlib event messages.
   '''
   _object_index=0
+  _stored_axis=None
   cplot=None
+  cbar=None
 
   def __init__(self, pipe_in, pipe_out, event_pipe, action_pending,
                width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
@@ -287,9 +306,10 @@ class MPLProcess(FigureCanvasAgg, Process):
       self.event_pipe.send((s, event))
       self.parentActionPending.set()
     except:
-      self.event_pipe.send(('Error', traceback.format_exc()))
+      logging.critical('python error', exc_info=True)
 
   def run(self):
+    self.init_mp_logger()
     self._connect_events()
     self.exitEvent.clear()
     self.parentActionPending.clear()
@@ -297,7 +317,7 @@ class MPLProcess(FigureCanvasAgg, Process):
       try:
         self._run()
       except:
-        self.event_pipe.send(('Error', traceback.format_exc()))
+        logging.critical('python error', exc_info=True)
 
   def _run(self):
     action_buffer=[]
@@ -323,9 +343,20 @@ class MPLProcess(FigureCanvasAgg, Process):
           self.pipe_out.send(result)
           self.parentActionPending.set()
         except PicklingError:
-          print "Can't pickle object for function call return: "+repr(result)
+          logging.warning("Can't pickle object for function call return: "+repr(result))
           self.pipe_out.send(None)
           self.parentActionPending.set()
+
+  def init_mp_logger(self):
+    logger=logging.getLogger()
+    logger.handlers=[]
+    handler=MPHandler(self, level=logging.DEBUG)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    from .gui_logging import excepthook_overwrite
+    import sys
+    sys.excepthook=excepthook_overwrite
+    logger.debug('Process logger initialized')
 
   def join(self, timeout=None):
     # send a signal to process to finish the loop
@@ -391,8 +422,20 @@ class MPLProcess(FigureCanvasAgg, Process):
   def axis(self, *args, **opts):
     self.ax.axis(*args, **opts)
 
+  def store_axis(self):
+    self._stored_axis=self.ax.axis()
+
+  def restore_axis(self):
+    if self._stored_axis is not None:
+      self.axis(self._stored_axis)
+      self._stored_axis=None
+
   def legend(self, *args, **opts):
     return self._add_object(self.ax.legend(*args, **opts))
+
+  def colorbar(self):
+    if self.cbar is None:
+      self.cbar=self.fig.colorbar(self.cplot)
 
   def draw(self):
     FigureCanvasAgg.draw(self)
@@ -401,10 +444,16 @@ class MPLProcess(FigureCanvasAgg, Process):
 
   def clear(self):
     self.cplot=None
+    if self.cbar is not None:
+      self.fig.clear()
+      self.ax=self.fig.add_subplot(111)
+      self.ax2=None
+    else:
+      self.ax.clear()
+      if self.ax2 is not None:
+        self.ax2.clear()
+    self.cbar=None
     self._connect_objects={}
-    self.ax.clear()
-    if self.ax2 is not None:
-      self.ax2.clear()
 
   def drag_pan(self, button, key, x, y):
     self.ax.drag_pan(button, key, x, y)
@@ -510,7 +559,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
       try:
         self._run()
       except:
-        error('ERROR in Thread %i:'%self.currentThreadId(), exc_info=True)
+        logging.error('ERROR in Thread %i:'%self.currentThreadId(), exc_info=True)
 
   def _run(self):
     # create a timer to regularly communicate with the process
@@ -527,7 +576,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
 
   def checkit(self):
     if self.scheduled_actions:
-      debug('Thread %i enter actions'%self.currentThreadId())
+      #debug('Thread %i enter actions'%self.currentThreadId())
       actions=self.scheduled_actions
       self.scheduled_actions=[]
       map(self.pipe_in.send, actions)
@@ -536,7 +585,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
   def check_result(self):
     paint_result=None
     while self.scheduled_receives and self.pipe_out.poll():
-      debug('Thread %i enter results'%self.currentThreadId())
+      #debug('Thread %i enter results'%self.currentThreadId())
       item=self.scheduled_receives.pop(0)
       result=self.pipe_out.recv()
       if item[0]=='draw' and result is not None:
@@ -579,12 +628,12 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     # process only last event of specific type
     evnts={}
     while self.event_pipe.poll():
-      debug('Thread %i enter event'%self.currentThreadId())
+      #debug('Thread %i enter event'%self.currentThreadId())
       s, event=self.event_pipe.recv()
       if s in ['fig', 'ax']:
         getattr(self, s)._update(event)
-      elif s=='Error':
-        error('Error in process %s:\n%s'%(self.canvas_process.pid, event))
+      elif s=='logger':
+        logging.getLogger().handle(event)
       else:
         evnts[s]=event
     for s, event in evnts.items():
@@ -614,7 +663,6 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
       self(data, **opts)
     return self.cplot
 
-
   # Makes interfacing to the process convenient by passing
   # all methods available in the process class on access.
   # This means that thread.draw() will append ('draw', (), {}) to the process.
@@ -626,7 +674,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     return QtCore.QThread.__getattr__(self, name)
 
   def __call__(self, *args, **opts):
-    debug('Thread %i - Call method '%self.currentThreadId()+self.next_action)
+    #debug('Thread %i - Call method '%self.currentThreadId()+self.next_action)
     self.scheduled_actions.append((self.next_action, args, opts))
     self.actionPending.set()
 
@@ -764,6 +812,8 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
     self.cplot=None
     self.draw_process.clear()
 
+  clear_fig=clear
+
   def set_yscale(self, scale):
     if scale=='linear':
       self.plot_log=False
@@ -840,6 +890,9 @@ class MPLBackgroundWidget(QtGui.QWidget, FigureCanvasBase):
       self.transformed_xy=event
       return
     self.callbacks.process(s, event)
+
+  @property
+  def ax(self): return self.draw_process.ax
 
   # Makes interfacing to the process convenient by passing
   # all methods available in the process class on access.

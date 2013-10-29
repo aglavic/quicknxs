@@ -405,6 +405,10 @@ class MPLWidget(QtGui.QWidget):
       self.update(data, **opts)
     return self.cplot
 
+  def colorbar(self):
+    if self.cbar is None and self.cplot is not None:
+      self.cbar=self.canvas.fig.colorbar(self.cplot)
+
   def set_title(self, new_title):
     return self.canvas.ax.title.set_text(new_title)
 

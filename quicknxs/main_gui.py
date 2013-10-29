@@ -485,9 +485,9 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.xtof_overview.hlines[3].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 
-    if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
-      self.ui.xy_overview.cbar=self.ui.xy_overview.canvas.fig.colorbar(self.ui.xy_overview.cplot)
-      self.ui.xtof_overview.cbar=self.ui.xtof_overview.canvas.fig.colorbar(self.ui.xtof_overview.cplot)
+    if self.ui.show_colorbars.isChecked():
+      self.ui.xy_overview.colorbar()
+      self.ui.xtof_overview.colorbar()
     self.ui.xy_overview.draw()
     self.ui.xtof_overview.draw()
 
@@ -542,8 +542,8 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].set_title(self.channels[i])
       if plots[i].cplot is not None:
         plots[i].cplot.set_clim([imin, imax])
-      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
-        plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked():
+        plots[i].colorbar()
       plots[i].draw()
 
   @log_call
@@ -598,8 +598,8 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].set_ylabel(u'x [pix]')
       if plots[i].cplot is not None:
         plots[i].cplot.set_clim([imin, imax])
-      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
-        plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked():
+        plots[i].colorbar()
       plots[i].draw()
 
   @log_call
@@ -625,8 +625,8 @@ class MainGUI(QtGui.QMainWindow):
     bg_width=self.ui.bgWidth.value()
 
     if preserve_lim:
-      xview=self.ui.x_project.canvas.ax.axis()
-      yview=self.ui.y_project.canvas.ax.axis()
+      self.ui.x_project.store_axis()
+      self.ui.y_project.store_axis()
     xxlim=(0, len(xproj)-1)
     xylim=(xproj[xproj>0].min(), xproj.max()*2)
     yxlim=(0, len(yproj)-1)
@@ -662,8 +662,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.y_project.vlines[1].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
       self.ui.y_project.hlines[0].set_ydata([self.y_bg, self.y_bg])
     if preserve_lim:
-      self.ui.x_project.canvas.ax.axis(xview)
-      self.ui.y_project.canvas.ax.axis(yview)
+      self.ui.x_project.restore_axis()
+      self.ui.y_project.restore_axis()
     if self.ui.logarithmic_y.isChecked():
       self.ui.x_project.set_yscale('log')
       self.ui.y_project.set_yscale('log')
@@ -894,8 +894,8 @@ class MainGUI(QtGui.QMainWindow):
       plot.set_title(channel)
       if plot.cplot is not None:
         plot.cplot.set_clim([Imin, Imax])
-        if self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
-          plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+        if self.ui.show_colorbars.isChecked():
+          plots[i].colorbar()
       plot.draw()
 
   @log_call
@@ -1014,8 +1014,8 @@ class MainGUI(QtGui.QMainWindow):
       plots[i].set_title(self.channels[i])
       if plots[i].cplot is not None:
         plots[i].cplot.set_clim([Imin, Imax])
-      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
-        plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+      if plots[i].cplot is not None and self.ui.show_colorbars.isChecked():
+        plots[i].colorbar()
       plots[i].draw()
 
   @log_call

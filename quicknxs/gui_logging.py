@@ -223,6 +223,15 @@ class QtHandler(logging.Handler):
                    u'<br /><br />If you know what triggered the exception please select "No"'+
                    u' and activate full logging from the "Debug" menu, trigger the error again'+
                    u' and send a full report.')
+    elif hasattr(record, 'formated_tb'):
+      mbox.setDetailedText(record.formated_tb[2])
+      mbox.setText(u'An unexpected error has occurred: <b>%s</b><br />&nbsp;&nbsp;&nbsp;&nbsp;<i>%s</i>: %s'%(
+                                  record.msg[:-len(record.formated_tb[2])],
+                                  record.formated_tb[0].__name__,
+                                  record.formated_tb[1])+
+                 u'<br /><br />If you know what triggered the exception please select "No"'+
+                 u' and activate full logging from the "Debug" menu, trigger the error again'+
+                 u' and send a full report.')
     else:
       message=''
       mbox.setText(u'An unexpected error has occurred: <br />&nbsp;&nbsp;<b>%s</b>'%record.msg)
