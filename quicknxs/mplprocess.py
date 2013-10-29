@@ -13,6 +13,7 @@ The background plotting canvas uses a three object model:
 import os
 import traceback
 import tempfile
+import atexit
 from functools import partial
 from cPickle import PicklingError
 from PyQt4 import QtCore, QtGui
@@ -98,7 +99,6 @@ class ConnectedQuadMesh(ConnectedObject):
 def get_connected_object(item, index):
   known_classes=[subcls._type for subcls in ConnectedObject.__subclasses__()]
   if not item.__class__ in known_classes:
-    print item.__class__
 #    raise ValueError, 'no connection class defined for object of type %s'%item.__class__
     return None
   idx=known_classes.index(item.__class__)
@@ -528,6 +528,7 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
   hlines=[]
   shown_plots=[]
   shown_imgs=[]
+  ALL_THREADS=[]
 
   def __init__(self, width=10, height=12, dpi=100., sharex=None, sharey=None, adjust={}):
     QtCore.QThread.__init__(self)
@@ -551,11 +552,12 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     self.figure=self.fig
     self.ax=ConnectedAxes(self, 'ax')
     self.cplot=AttribCaller(self, 'cplot')
+    self.ALL_THREADS.append(self)
 
   def run(self):
     # start the plot process
     self.canvas_process.start()
-    while True:
+    while self.canvas_process.is_alive():
       try:
         self._run()
       except:
@@ -679,7 +681,11 @@ class MPLProcessHolder(QtCore.QThread, QtCore.QObject):
     self.actionPending.set()
 
   def __del__(self):
+    self.join()
+
+  def join(self):
     self.canvas_process.join(10.)
+    self.ALL_THREADS.remove(self)
 
 class SubPlotParams:
   left=0.15
@@ -1376,7 +1382,10 @@ class BackgroundNavigationToolbar(NavigationToolbar2QT):
 
     self.canvas.draw()
 
-
+def kill_processes():
+  for thread in MPLProcessHolder.ALL_THREADS:
+    thread.join()
+atexit.register(kill_processes)
 
 if __name__=='__main__':
   app=QtGui.QApplication([])
