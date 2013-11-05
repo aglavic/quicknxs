@@ -601,10 +601,12 @@ class MRDataset(object):
       # ToF region for this specific central wavelength
       tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
       tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
-      if bin_type==0:
+      if bin_type==0: # constant Δλ
         tof_edges=linspace(tmin, tmax, bins+1)
-      elif bin_type==1:
+      elif bin_type==1: # constant ΔQ
         tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      elif bin_type==2: # constant Δλ/λ
+        tof_edges=tmin*(((tmax/tmin)**(1./(bins+1)))**arange(bins+1))
       else:
         raise ValueError, 'Unknown bin type %i'%bin_type
     else:

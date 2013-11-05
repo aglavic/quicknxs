@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Oct 25 11:00:58 2013
+# Created: Mon Nov  4 17:00:23 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -101,6 +101,7 @@ class Ui_MainWindow(object):
     self.horizontalLayout_10.addWidget(self.eventTofBins)
     self.eventBinMode = QtGui.QComboBox(self.eventModeEntries)
     self.eventBinMode.setObjectName(_fromUtf8("eventBinMode"))
+    self.eventBinMode.addItem(_fromUtf8(""))
     self.eventBinMode.addItem(_fromUtf8(""))
     self.eventBinMode.addItem(_fromUtf8(""))
     self.horizontalLayout_10.addWidget(self.eventBinMode)
@@ -316,7 +317,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 246, 135))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 141, 135))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1529,6 +1530,7 @@ class Ui_MainWindow(object):
     self.eventBinMode.setToolTip(_translate("MainWindow", "<html><head/><body><p>How to bin the time of flight channels:</p><p>  Linear: Equally spaced in ToF</p><p>  1/x: Equally spaced in Q</p></body></html>", None))
     self.eventBinMode.setItemText(0, _translate("MainWindow", "Equal ΔToF", None))
     self.eventBinMode.setItemText(1, _translate("MainWindow", "Equal ΔQ", None))
+    self.eventBinMode.setItemText(2, _translate("MainWindow", "Equal Δλ/λ", None))
     self.label_38.setText(_translate("MainWindow", "Index", None))
     self.label_39.setText(_translate("MainWindow", "Items", None))
     self.eventSplit.setText(_translate("MainWindow", "Split by event time", None))
