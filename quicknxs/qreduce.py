@@ -606,7 +606,7 @@ class MRDataset(object):
       elif bin_type==1: # constant ΔQ
         tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
       elif bin_type==2: # constant Δλ/λ
-        tof_edges=tmin*(((tmax/tmin)**(1./(bins+1)))**arange(bins+1))
+        tof_edges=tmin*(((tmax/tmin)**(1./bins))**arange(bins+1))
       else:
         raise ValueError, 'Unknown bin type %i'%bin_type
     else:
