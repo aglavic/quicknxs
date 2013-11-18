@@ -550,11 +550,11 @@ class Exporter(object):
       opts=refli.options
       index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[0].tof)-opts['P0']
-      PN=opts['PN']
       for channel in self.channels:
         res=Reflectivity(fdata[channel], **opts)
         Qz, R, dR, dQz=res.Q, res.R, res.dR, res.dQ
+        P0=len(Qz)-opts['P0']
+        PN=opts['PN']
         rdata=np.vstack([Qz[PN:P0], R[PN:P0], dR[PN:P0], dQz[PN:P0],
                       0.*Qz[PN:P0]+res.ai]).transpose()
         output_data[channel].append(rdata)
