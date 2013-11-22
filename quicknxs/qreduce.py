@@ -19,6 +19,7 @@ import zlib
 from copy import deepcopy
 from glob import glob
 from numpy import *
+from numpy.version import version as npversion
 from logging import debug, info, warn #@Reimport
 from platform import node
 import h5py
@@ -85,6 +86,21 @@ USE_COMPRESSION=not ('biganalysis' in node() or 'mrac' in node())
 # used for * imports
 __all__=['NXSData', 'MRDataset', 'Reflectivity', 'OffSpecular', 'GISANS', 'time_from_header',
          'locate_file']
+
+_bincount=bincount
+def bincount(x, weights=None, minlength=None):
+  if len(x)==0:
+    if minlength:
+      return zeros(minlength, dtype=int)
+    else:
+      return array([0], dtype=int)
+  if npversion<'1.6.0':
+    bins=_bincount(x, weights=weights)
+    if minlength and len(bins)<minlength:
+      bins.resize(minlength)
+    return bins
+  else:
+    return _bincount(x, weights, minlength)
 
 class OptionsDocMeta(type):
   '''
