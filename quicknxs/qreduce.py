@@ -490,6 +490,7 @@ class MRDataset(object):
   '''
   proton_charge=0. #: total proton charge on target [pC]
   total_counts=0 #: total counts on detector
+  total_time=0 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
   dangle=0. #: detector arm angle value in [°]
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
@@ -613,12 +614,6 @@ class MRDataset(object):
       tof_edges=tof_overwrite
 
     # Histogram the data
-    # create pixel map
-    x=arange(304)
-    y=arange(256)
-    Y, X=meshgrid(y, x)
-    X=X.flatten()
-    Y=Y.flatten()
     # create ToF edges for the binning and correlate pixel indices with pixel position
     tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
     tof_time=data['bank1_events/event_time_offset'].value
@@ -659,37 +654,68 @@ class MRDataset(object):
       if output.total_counts==0:
         debug('No counts in selected range')
         return None
-    tof_x=X[tof_ids]
-    tof_y=Y[tof_ids]
     # calculate total proton charge in the selected area
     output.proton_charge=tof_pc.sum()
+    Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges,
+                              callback, callback_offset, callback_scaling)
 
-    if callback is not None:
-      # create the 3D binning using chunks to update the callback regularly
-      ssize=1e5
-      Ixyt, D=histogramdd(vstack([tof_x[:ssize], tof_y[:ssize], tof_time[:ssize]]).transpose(),
-                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
-      steps=int(tof_x.shape[0]/ssize)
-      callback(callback_offset+callback_scaling*1/(steps+1))
-      for i in range(1, steps+1):
-        Ixyti, D=histogramdd(vstack([tof_x[ssize*i:ssize*(i+1)], tof_y[ssize*i:ssize*(i+1)],
-                                     tof_time[ssize*i:ssize*(i+1)]]).transpose(),
-                           bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
-        Ixyt+=Ixyti
-        callback(callback_offset+callback_scaling*(i+1)/(steps+1))
-    else:
-      # create the 3D binning
-      Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
-                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
     # create projections for the 2D datasets
     Ixy=Ixyt.sum(axis=2)
     Ixt=Ixyt.sum(axis=1)
     # store the data
-    output.tof_edges=D[2]
+    output.tof_edges=tof_edges
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.xtofdata=Ixt.astype(float) # 2D dataset
     return output
+
+  @staticmethod
+  def bin_events(tof_ids, tof_time, tof_edges,
+                 callback=None, callback_offset=0., callback_scaling=1.):
+    '''
+    Filter events outside the tof_edges region and calculate the binning with devide_bin.
+    
+    @return: 3D array of dimensions (x, y, tof)
+    '''
+    region=(tof_time>=tof_edges[0])&(tof_time<=tof_edges[-1])
+    result=array(MRDataset.devide_bin(tof_ids[region], tof_time[region], tof_edges,
+                                callback, callback_offset, callback_scaling/len(tof_edges)))
+    return result.transpose((1, 2, 0))
+
+  @staticmethod
+  def devide_bin(tof_ids, tof_time, tof_edges, 
+                 callback=None, callback_offset=0., callback_scaling=1., cbidx=0):
+    '''
+    Use a divide and conquer strategy to bin the data. For the actual binning the
+    numpy bincount function is used, as it is much faster then histogram for
+    counting of integer values.
+    
+    @param tof_ids: Array of positional indices for each event
+    @param tof_time: Array of time of flight for each event
+    @param tof_edges: The edges of bins to be used for the histogram
+    @keyword callback: Optional callback function for the progress
+    @keyword callback_offset: Offset for calling the function
+    @keyword callback_scaling: Factor to multiply the counting index when calling the function
+    @keyword cbidx: Current counting index for this recursive call
+    
+    @return: 3D list of dimensions (tof, x, y)
+    '''
+    if len(tof_edges)==2:
+      # deepest recursion reached, all items should be within the two ToF edges
+      if callback is not None:
+        callback(callback_offset+callback_scaling*cbidx)
+      return [bincount(tof_ids, minlength=304*256).reshape(304, 256).tolist()]
+    # split all events into two time of flight regions
+    split_idx=len(tof_edges)/2
+    left_region=tof_time<tof_edges[split_idx]
+    left_list=MRDataset.devide_bin(tof_ids[left_region], tof_time[left_region],
+                              tof_edges[:split_idx+1],
+                              callback, callback_offset, callback_scaling, cbidx)
+    right_region=logical_not(left_region)
+    right_list=MRDataset.devide_bin(tof_ids[right_region], tof_time[right_region],
+                              tof_edges[split_idx:],
+                              callback, callback_offset, callback_scaling, split_idx+cbidx)
+    return left_list+right_list
 
   def _collect_info(self, data):
     '''
@@ -756,6 +782,7 @@ class MRDataset(object):
 
     self.proton_charge=data['proton_charge'].value[0]
     self.total_counts=data['total_counts'].value[0]
+    self.total_time=data['duration'].value[0]
 
     self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
     self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
