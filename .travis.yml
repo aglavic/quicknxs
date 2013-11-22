@@ -42,5 +42,5 @@ install:
 # command to run tests
 script: 
   - 'if [ $TRAVIS_PYTHON_VERSION == "2.7" ]; then python -m unittest test_all; fi'
-  - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then python -m unittest tests.qeduce_test tests.qcalc_test tests.qio_test; fi'
+  - 'if [ $TRAVIS_PYTHON_VERSION == "3.2" ]; then python -m unittest tests.qreduce_test tests.qcalc_test tests.qio_test; fi'
   
