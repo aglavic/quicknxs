@@ -1363,7 +1363,9 @@ class MainGUI(QtGui.QMainWindow):
                                                          self.active_data.lambda_center-1.5,
                                                          self.active_data.lambda_center+1.5))
     self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
+    self.ui.datasetTime.setText(u"%i s"%d.total_time)
     self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
+    self.ui.datasetRate.setText(u"%.1f cps"%(d.total_counts/d.total_time))
     self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
     self.ui.datasetDangle0.setText(dangle0)
     self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)

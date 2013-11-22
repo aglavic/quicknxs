@@ -109,10 +109,13 @@ class NXSWidget(QWidget):
     self.ui.nodePlotter.draw()
 
   def plotData(self, data):
+    self.ui.nodePlotter.clear_fig()
     if len(data.shape)==1:
       self.ui.nodePlotter.plot(data)
     else:
-      self.ui.nodePlotter.imshow(maximum(data.transpose(), 0.1), aspect='auto')
+      cmap=self.ui.nodePlotter.imshow(maximum(data.transpose(), 0.1),
+                                      aspect='auto', origin='lower')
+      #self.ui.nodePlotter.canvas.fig.colorbar(cmap)
 
 
 class NXSDialog(QDialog):
