@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/main_window.ui'
 #
-# Created: Fri Nov 22 14:43:59 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Mon Jan 13 12:46:05 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -1201,6 +1201,8 @@ class Ui_MainWindow(object):
     self.menuAutomatics.setObjectName(_fromUtf8("menuAutomatics"))
     self.menuSTAFF = QtGui.QMenu(self.menubar)
     self.menuSTAFF.setObjectName(_fromUtf8("menuSTAFF"))
+    self.menuTools = QtGui.QMenu(self.menubar)
+    self.menuTools.setObjectName(_fromUtf8("menuTools"))
     MainWindow.setMenuBar(self.menubar)
     self.statusbar = QtGui.QStatusBar(MainWindow)
     self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -1322,6 +1324,8 @@ class Ui_MainWindow(object):
     self.actionQuick_Reduce.setObjectName(_fromUtf8("actionQuick_Reduce"))
     self.actionBrowse_NXS_File = QtGui.QAction(MainWindow)
     self.actionBrowse_NXS_File.setObjectName(_fromUtf8("actionBrowse_NXS_File"))
+    self.actionFilter_Points = QtGui.QAction(MainWindow)
+    self.actionFilter_Points.setObjectName(_fromUtf8("actionFilter_Points"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1334,8 +1338,6 @@ class Ui_MainWindow(object):
     self.menuAdvanced.addSeparator()
     self.menuAdvanced.addAction(self.actionPolarization)
     self.menuAdvanced.addAction(self.actionRaw_Data_Comparison)
-    self.menuAdvanced.addSeparator()
-    self.menuAdvanced.addAction(self.actionOpen_Compare_Window)
     self.menuHelp.addAction(self.actionManual)
     self.menuHelp.addAction(self.actionAbout)
     self.menuReduction.addAction(self.actionNorm)
@@ -1362,10 +1364,13 @@ class Ui_MainWindow(object):
     self.menuSTAFF.addAction(self.actionLog_Debug_Messages)
     self.menuSTAFF.addSeparator()
     self.menuSTAFF.addAction(self.actionRaise_Error)
+    self.menuTools.addAction(self.actionOpen_Compare_Window)
+    self.menuTools.addAction(self.actionFilter_Points)
     self.menubar.addAction(self.menuFile.menuAction())
     self.menubar.addAction(self.menuReduction.menuAction())
-    self.menubar.addAction(self.menuAdvanced.menuAction())
+    self.menubar.addAction(self.menuTools.menuAction())
     self.menubar.addAction(self.menuAutomatics.menuAction())
+    self.menubar.addAction(self.menuAdvanced.menuAction())
     self.menubar.addAction(self.menuHelp.menuAction())
     self.menubar.addAction(self.menuSTAFF.menuAction())
     self.mainToolbar.addAction(self.actionOpen)
@@ -1480,6 +1485,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.selectedChannel10, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.selectedChannel11, QtCore.SIGNAL(_fromUtf8("released()")), MainWindow.changeActiveChannel)
     QtCore.QObject.connect(self.actionBrowse_NXS_File, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_nxs_dialog)
+    QtCore.QObject.connect(self.actionFilter_Points, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_filter_dialog)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1773,6 +1779,7 @@ class Ui_MainWindow(object):
     self.menuReduction.setTitle(_translate("MainWindow", "Reduction", None))
     self.menuAutomatics.setTitle(_translate("MainWindow", "Automatics", None))
     self.menuSTAFF.setTitle(_translate("MainWindow", "Debug", None))
+    self.menuTools.setTitle(_translate("MainWindow", "Tools", None))
     self.mainToolbar.setWindowTitle(_translate("MainWindow", "Main Toolbar", None))
     self.actionOpen.setText(_translate("MainWindow", "Open...", None))
     self.actionOpen.setToolTip(_translate("MainWindow", "Open a new file (Ctrl+O)", None))
@@ -1838,6 +1845,8 @@ class Ui_MainWindow(object):
     self.actionQuick_Reduce.setShortcut(_translate("MainWindow", "Ctrl+R", None))
     self.actionBrowse_NXS_File.setText(_translate("MainWindow", "Browse NXS File", None))
     self.actionBrowse_NXS_File.setShortcut(_translate("MainWindow", "Ctrl+N", None))
+    self.actionFilter_Points.setText(_translate("MainWindow", "Filter Points...", None))
+    self.actionFilter_Points.setToolTip(_translate("MainWindow", "Remove points from already exported reflectivity datasets", None))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

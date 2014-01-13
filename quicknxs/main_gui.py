@@ -16,6 +16,7 @@ from .main_window import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
+from .point_picker import PointPicker
 from .nxs_gui import NXSDialog
 from .polarization_gui import PolarizationDialog
 from .advanced_background import BackgroundDialog
@@ -1155,11 +1156,13 @@ class MainGUI(QtGui.QMainWindow):
           break
         header.append(line)
       header='\n'.join(header)
+      from_backup=False
     else:
       header=self._pending_header
       self._pending_header=None
+      from_backup=True
     try:
-      parser=HeaderParser(header)
+      parser=HeaderParser(header, parse_meta=not from_backup)
     except:
       warning('Could not evaluate header information, probably the wrong format:\n\n',
               exc_info=True)
@@ -2215,6 +2218,44 @@ Do you want to try to restore the working reduction list?""",
     if self.active_data is None: return
     dia=NXSDialog(self, self.active_data.origin)
     dia.show()
+
+  def open_filter_dialog(self):
+    filter_=u'Reflectivity (*.dat);;All (*.*)'
+    names=QtGui.QFileDialog.getOpenFileNames(self, u'Select reflectivity file(s)...',
+                                             directory=paths.results,
+                                             filter=filter_)
+    if names:
+      filtered_points=[]
+      for name in names:
+        text=unicode(open(name, 'rb').read(), 'utf8')
+        header=[]
+        for line in text.splitlines():
+          if not line.startswith('#'):
+            break
+          header.append(line)
+        header='\n'.join(header)
+        try:
+          parser=HeaderParser(header)
+        except:
+          warning('Open file %s:\nCould not evaluate header information, probably the wrong format:\n\n'%
+                  name,
+              exc_info=True)
+          continue
+        if not (parser.export_type=='Specular' and len(parser.states_in_file)==1):
+          warning('Open file %s:\nThis function only works for reflectivity files with a single spin state.'%
+                  name)
+          continue
+        if 'Filtered Indices' in parser.sections:
+          # if opening a already filtered dataset the original is opened with the used filters
+          origin=parser.sections['Filtered Indices'][0].split(': ', 1)[1].strip()
+          if os.path.exists(origin):
+            name=origin
+            filtered_points=eval(parser.sections['Filtered Indices'][1].split(': ', 1)[1])
+
+        dia=PointPicker(name, filtered_points)
+        result=dia.exec_()
+        if result:
+          filtered_points=dia.filtered_idxs
 
   @log_call
   def helpDialog(self):

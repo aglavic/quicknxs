@@ -2687,8 +2687,6 @@
     <addaction name="separator"/>
     <addaction name="actionPolarization"/>
     <addaction name="actionRaw_Data_Comparison"/>
-    <addaction name="separator"/>
-    <addaction name="actionOpen_Compare_Window"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -2736,10 +2734,18 @@
     <addaction name="separator"/>
     <addaction name="actionRaise_Error"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionOpen_Compare_Window"/>
+    <addaction name="actionFilter_Points"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
-   <addaction name="menuAdvanced"/>
+   <addaction name="menuTools"/>
    <addaction name="menuAutomatics"/>
+   <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
    <addaction name="menuSTAFF"/>
   </widget>
@@ -3112,6 +3118,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionFilter_Points">
+   <property name="text">
+    <string>Filter Points...</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove points from already exported reflectivity datasets</string>
    </property>
   </action>
  </widget>
@@ -4515,6 +4529,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionFilter_Points</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_filter_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4564,5 +4594,6 @@
   <slot>set_debug()</slot>
   <slot>quickReduce()</slot>
   <slot>open_nxs_dialog()</slot>
+  <slot>open_filter_dialog()</slot>
  </slots>
 </ui>

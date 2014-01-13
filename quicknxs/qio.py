@@ -330,19 +330,55 @@ class HeaderParser(object):
   poly_defaults=dict(poly_region=0, l1=0., l2=0., l3=0., l4=0.,
                                     x1=0., x2=0., x3=0., x4=0.)
   callback=None
+  quicknxs_version=None
+  export_type=None
+  export_date=None
+  states_in_file=None
 
-  def __init__(self, header):
+  def __init__(self, header, parse_meta=True):
     if type(header) is not unicode:
       header=unicode(header, 'utf8', 'ignore')
+    # if header is a single line, assume it is a file name, not a header string
+    if not '\n' in header:
+      header=self.read_file_header(header)
     self.header=header
     self.sections={}
+    if parse_meta:
+      self._collect_meta_data()
     self._collect_sections()
     self._evaluate()
+
+  @staticmethod
+  def read_file_header(fname):
+    text=unicode(open(fname, 'rb').read(), 'utf8')
+    header=[]
+    for line in text.splitlines():
+      if not line.startswith('#'):
+        break
+      header.append(line)
+    header='\n'.join(header)
+    return header
 
   def parse(self, callback=None):
     self.callback=callback
     self._read_direct_beam()
     self._read_datasets()
+
+  def _collect_meta_data(self):
+    '''
+    Check if the header was written by QuickNXS and collect version and other general info.
+    '''
+    hlines=self.header.splitlines()
+    if not hlines[0].startswith('# Datafile created by QuickNXS'):
+      raise IOError, 'This is no file created by QuickNXS'
+    self.quicknxs_version=hlines[0].strip().rsplit(' ', 1)[1]
+    for line in hlines:
+      if line.startswith('# Date:'):
+        self.export_date=line.split(': ', 1)[1].strip()
+      if line.startswith('# Type:'):
+        self.export_type=line.split(': ', 1)[1].strip()
+      if line.startswith('# Extracted states:'):
+        self.states_in_file=line.split(': ', 1)[1].strip().split()
 
   def _collect_sections(self):
     '''
