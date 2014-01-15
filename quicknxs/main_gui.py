@@ -12,7 +12,6 @@ from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
 from .config import paths, instrument, gui
-from .main_window import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
@@ -113,6 +112,7 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
+    exec 'from .%s_interface import Ui_MainWindow'%gui.interface
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
@@ -2121,9 +2121,10 @@ Do you want to try to restore the working reduction list?""",
     debug('Applying GUI configuration')
     if gui.geometry is not None: self.restoreGeometry(QtCore.QByteArray(gui.geometry))
     if gui.state is not None: self.restoreState(QtCore.QByteArray(gui.state))
-    self.ui.mainSplitter.setSizes(gui.splitters[0])
+    if hasattr(self.ui, 'mainSplitter'):
+      self.ui.mainSplitter.setSizes(gui.splitters[0])
+      self.ui.plotSplitter.setSizes(gui.splitters[2])
     self.ui.overviewSplitter.setSizes(gui.splitters[1])
-    self.ui.plotSplitter.setSizes(gui.splitters[2])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
     self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
@@ -2160,7 +2161,10 @@ Do you want to try to restore the working reduction list?""",
     debug('Storing GUI configuration')
     gui.geometry=self.saveGeometry().data()
     gui.state=self.saveState().data()
-    gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
+    if hasattr(self.ui, 'mainSplitter'):
+      gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
+    else:
+      gui.splitters=(gui.splitters[0], self.ui.overviewSplitter.sizes(), gui.splitters[2])
     gui.color_selection=self.ui.color_selector.currentIndex()
     gui.show_colorbars=self.ui.show_colorbars.isChecked()
     gui.normalizeXTof=self.ui.normalizeXTof.isChecked()
@@ -2219,6 +2223,7 @@ Do you want to try to restore the working reduction list?""",
     dia=NXSDialog(self, self.active_data.origin)
     dia.show()
 
+  @log_call
   def open_filter_dialog(self):
     filter_=u'Reflectivity (*.dat);;All (*.*)'
     names=QtGui.QFileDialog.getOpenFileNames(self, u'Select reflectivity file(s)...',

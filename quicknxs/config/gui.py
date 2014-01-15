@@ -6,6 +6,7 @@ GUI configuration settings
 config_file='gui'
 
 # UI geometry
+interface='default'
 geometry=None
 state=None
 splitters=([240, 505, 239], [298, 438], [240, 169, 360])
