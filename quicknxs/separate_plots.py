@@ -5,7 +5,8 @@ Dialogs connected to the main GUI for separate display of specific plots.
 
 
 from PyQt4.QtGui import QDialog, QVBoxLayout
-from numpy import array, argsort
+from numpy import array, argsort, arange
+from matplotlib.gridspec import GridSpec
 from .mplwidget import MPLWidget
 from .qreduce import NXSData, NXSMultiData, Reflectivity
 
@@ -86,3 +87,72 @@ class ReductionPreviewDialog(QDialog):
   def closeEvent(self, *args, **kwargs):
     self.parent_window.initiateReflectivityPlot.disconnect(self.plot_preview)
     return QDialog.closeEvent(self, *args, **kwargs)
+
+class ProjectionPlotDialog(QDialog):
+  xline=None
+  yline=None
+
+  def __init__(self, parent, *args, **opts):
+    QDialog.__init__(self, parent, *args, **opts)
+    self.setWindowTitle('Projection Plot')
+    self.vbox=QVBoxLayout(self)
+    self.plot=MPLWidget(self, True)
+    self.vbox.addWidget(self.plot)
+
+    self.parent_window=parent
+    self.create_axes()
+    for action in self.plot.toolbar.actions():
+      if str(action.iconText())=='Log':
+        action.triggered.connect(self.toggle_log)
+
+  def create_axes(self):
+    '''
+    Create all subplots with a large area for the color map and left and below it
+    two smaller plots for the projections. The plot axes tough each other and
+    are connected, so that zooming in one plot does the same in the other.
+    '''
+    plot=self.plot
+    plot.cplot=None
+    plot.cbar=None
+    plot.canvas.fig.clear()
+    gs=GridSpec(4,4, wspace=0., hspace=0.)
+    fig=plot.canvas.fig
+    plot.canvas.ax=fig.add_subplot(gs[:3, 1:])
+    self.ax_map=plot.canvas.ax
+    self.ax_y=fig.add_subplot(gs[:3, 0], sharey=self.ax_map)
+    self.ax_x=fig.add_subplot(gs[3, 1:], sharex=self.ax_map)
+    # make sure lables are on the right side of each subplot
+    self.ax_map.xaxis.tick_top()
+    self.ax_map.yaxis.tick_right()
+    self.ax_y.xaxis.tick_top()
+  
+  def draw(self):
+    self.plot.draw()
+
+  def imshow(self, data, log=False, imin=None, imax=None, update=True, **opts):
+    '''
+    Draw a colormap of the given dataset and create projections on x and y axes.
+    '''
+    self.plot.imshow(data, log, imin, imax, update, **opts)
+    if update and self.xline is not None:
+      self.xline.set_data(arange(data.shape[1]), data.sum(axis=0))
+      self.yline.set_data(data.sum(axis=1), arange(data.shape[0]))
+    else:
+      self.xline=self.ax_x.plot(arange(data.shape[1]), data.sum(axis=0))[0]
+      self.yline=self.ax_y.plot(data.sum(axis=1), arange(data.shape[0]))[0]
+    if log:
+      self.ax_x.set_yscale('log')
+      self.ax_y.set_xscale('log')
+ 
+  def toggle_log(self, *args):
+    '''
+    Toggle the logarithmic axes of the projection plots.
+    '''
+    logstate=self.ax_x.get_yscale()
+    if logstate=='linear':
+      self.ax_x.set_yscale('log')
+      self.ax_y.set_xscale('log')
+    else:
+      self.ax_x.set_yscale('linear')
+      self.ax_y.set_xscale('linear')
+    self.draw()
