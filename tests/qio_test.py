@@ -43,7 +43,7 @@ class HeaderTest(FakeData, unittest.TestCase):
 
   def test_recreation(self):
     header=HeaderCreator([self.ref1, self.ref2])
-    parser=HeaderParser(unicode(header))
+    parser=HeaderParser(unicode(header), parse_meta=False)
     self._process=None
     parser.parse(callback=self._cb_test)
     self.assertFalse(self._process is None)
@@ -66,7 +66,7 @@ class HeaderTest(FakeData, unittest.TestCase):
     ref=Reflectivity(ds[0])
     ref2=Reflectivity(ds[0], normalization=ref)
     header=HeaderCreator([ref2, self.ref1, self.ref2])
-    parser=HeaderParser(unicode(header))
+    parser=HeaderParser(unicode(header), parse_meta=False)
     parser.parse()
     prefl=parser.refls[0]
     for key, value in self.ref1.options.items():
