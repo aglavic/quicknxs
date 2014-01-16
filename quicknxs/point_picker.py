@@ -10,7 +10,13 @@ from .point_picker_dialog import Ui_Dialog
 
 class PointPicker(QDialog):
   '''
-  A dialog to delete unwanted points from a reflectivity curve.
+  A dialog to delete unwanted points from a reflectivity curve. It enables picking the points
+  from a list of αi,Q,I values or directly on the plot.
+  The dialog is created with the filename where the data is taken from. Optionally
+  the pre_filter list can be given, which is a list of indices to be selected on startup.
+  
+  When the user accepts the dialog, the current selection 
+  is stored in the filtered_idxs attribute.
   '''
   origin_file=None
   _table_change_active=False
@@ -31,7 +37,7 @@ class PointPicker(QDialog):
 
   def read_filedata(self):
     '''
-    Read the ascii data of the origin file.
+    Read the ASCII data of the origin file.
     '''
     data=np.loadtxt(self.origin_file, comments='#', unpack=True)
     self.Qz=data[0]
@@ -146,7 +152,7 @@ class PointPicker(QDialog):
     if self.ui.plot.toolbar._active is None and event.button==1 and \
       event.xdata is not None:
       # no tool is selected and a button was pressed inside the plot
-      x, y=event.xdata, event.ydata
+      x=event.xdata
       dist=abs(self.Qz-x)
       idx=dist.argmin()
       self.ui.pointTable.selectRow(idx)

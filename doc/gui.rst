@@ -57,6 +57,13 @@ GUI Modules
     :undoc-members:
     :show-inheritance:
 
+:mod:`ipython_tools` Module
+---------------------------
+
+.. automodule:: quicknxs.ipython_tools
+    :members:
+    :show-inheritance:
+
 :mod:`ipython_widget` Module
 ----------------------------
 
@@ -73,10 +80,26 @@ GUI Modules
     :undoc-members:
     :show-inheritance:
 
+:mod:`nxs_gui` Module
+---------------------
+
+.. automodule:: quicknxs.nxs_gui
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`persistentframe` Module
 -----------------------------
 
 .. automodule:: quicknxs.persistentframe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`point_picker` Module
+--------------------------
+
+.. automodule:: quicknxs.point_picker
     :members:
     :undoc-members:
     :show-inheritance:

@@ -113,7 +113,8 @@ class NXSWidget(QWidget):
     if len(data.shape)==1:
       self.ui.nodePlotter.plot(data)
     else:
-      cmap=self.ui.nodePlotter.imshow(maximum(data.transpose(), 0.1),
+      #cmap=
+      self.ui.nodePlotter.imshow(maximum(data.transpose(), 0.1),
                                       aspect='auto', origin='lower')
       #self.ui.nodePlotter.canvas.fig.colorbar(cmap)
 

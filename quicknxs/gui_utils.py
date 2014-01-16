@@ -478,7 +478,7 @@ class ReduceDialog(QDialog, Reducer):
         opts[key]=option.value()
       else:
         export[key]=unicode(option.text())
-        opts[key]=options.text()
+        opts[key]=option.text()
     self.save_email_texts()
     opts['foldername']=unicode(self.ui.directoryEntry.text())
     opts['naming']=unicode(self.ui.fileNameEntry.text())

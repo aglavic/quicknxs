@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 '''
-  Module including main GUI class with all signal handling and plot creation.
+Module including main GUI class with all signal handling and plot creation.
 '''
 
 import os

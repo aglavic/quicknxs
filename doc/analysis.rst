@@ -1,26 +1,26 @@
 Analysis Modules
 ================
 
-:mod:`mreduce` Module
+:mod:`qreduce` Module
 ---------------------
 
-.. automodule:: quicknxs.mreduce
+.. automodule:: quicknxs.qreduce
     :members:
     :private-members:
     :show-inheritance:
 
-:mod:`mrio` Module
-------------------
+:mod:`qio` Module
+-----------------
 
-.. automodule:: quicknxs.mrio
+.. automodule:: quicknxs.qio
     :members:
     :private-members:
     :show-inheritance:
 
-:mod:`mrcalc` Module
---------------------
+:mod:`qcalc` Module
+-------------------
 
-.. automodule:: quicknxs.mrcalc
+.. automodule:: quicknxs.qcalc
     :members:
     :private-members:
     :show-inheritance:

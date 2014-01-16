@@ -111,6 +111,9 @@ class HeaderCreator(object):
         self.evts.append(event_opts)
 
   def _collect_global_options(self):
+    '''
+    Collect export options used for the whole set of data.
+    '''
     self.gbl_opts={}
     for item in self.global_options:
       self.gbl_opts[item]=self.refls[0].options[item]
