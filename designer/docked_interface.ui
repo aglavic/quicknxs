@@ -1184,12 +1184,23 @@
     <property name="title">
      <string>Advanced</string>
     </property>
+    <widget class="QMenu" name="menuDebug">
+     <property name="title">
+      <string>Debug</string>
+     </property>
+     <addaction name="actionLog_Debug_Messages"/>
+     <addaction name="actionRaise_Error"/>
+    </widget>
     <addaction name="actionAdvanced_Background"/>
     <addaction name="actionAdjust_Dirct_Beam"/>
     <addaction name="actionClear_Overwrite"/>
     <addaction name="separator"/>
     <addaction name="actionPolarization"/>
     <addaction name="actionRaw_Data_Comparison"/>
+    <addaction name="actionBrowse_NXS_File"/>
+    <addaction name="separator"/>
+    <addaction name="actionIPython_Console"/>
+    <addaction name="menuDebug"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1226,31 +1237,21 @@
     <addaction name="separator"/>
     <addaction name="actionStrip_Overlap"/>
    </widget>
-   <widget class="QMenu" name="menuSTAFF">
-    <property name="title">
-     <string>Debug</string>
-    </property>
-    <addaction name="actionBrowse_NXS_File"/>
-    <addaction name="separator"/>
-    <addaction name="actionIPython_Console"/>
-    <addaction name="actionLog_Debug_Messages"/>
-    <addaction name="separator"/>
-    <addaction name="actionRaise_Error"/>
-   </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
     </property>
     <addaction name="actionOpen_Compare_Window"/>
+    <addaction name="actionOpen_Reduction_Preview"/>
+    <addaction name="separator"/>
     <addaction name="actionFilter_Points"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
-   <addaction name="menuTools"/>
    <addaction name="menuAutomatics"/>
+   <addaction name="menuTools"/>
    <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
-   <addaction name="menuSTAFF"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="mainToolbar">
@@ -3059,7 +3060,7 @@
   </action>
   <action name="actionBrowse_NXS_File">
    <property name="text">
-    <string>Browse NXS File</string>
+    <string>Browse NXS File...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -3071,6 +3072,11 @@
    </property>
    <property name="toolTip">
     <string>Remove points from already exported reflectivity datasets</string>
+   </property>
+  </action>
+  <action name="actionOpen_Reduction_Preview">
+   <property name="text">
+    <string>Open Reduction Preview...</string>
    </property>
   </action>
  </widget>
@@ -4460,6 +4466,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOpen_Reduction_Preview</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_reduction_preview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>517</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4510,5 +4532,6 @@
   <slot>quickReduce()</slot>
   <slot>open_nxs_dialog()</slot>
   <slot>open_filter_dialog()</slot>
+  <slot>open_reduction_preview()</slot>
  </slots>
 </ui>

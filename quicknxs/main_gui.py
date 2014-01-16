@@ -25,6 +25,7 @@ from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
 from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
 from .rawcompare_plots import RawCompare
+from .separate_plots import ReductionPreviewDialog
 from .version import str_version
 from logging import info, warning, debug
 
@@ -2208,6 +2209,12 @@ Do you want to try to restore the working reduction list?""",
   @log_call
   def open_compare_window(self):
     dia=CompareDialog(size=QtCore.QSize(800, 800))
+    dia.show()
+    self.open_plots.append(dia)
+
+  @log_call
+  def open_reduction_preview(self):
+    dia=ReductionPreviewDialog(self)
     dia.show()
     self.open_plots.append(dia)
 

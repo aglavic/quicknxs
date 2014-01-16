@@ -190,11 +190,7 @@ class NXSData(object):
       if fn is None:
         raise RuntimeError, 'No file found for index %i'%filename
       filename=fn
-    all_options=dict(cls.DEFAULT_OPTIONS)
-    for key, value in options.items():
-      if not key in all_options:
-        raise ValueError, "%s is not a known option parameter"%key
-      all_options[key]=value
+    all_options=cls._get_all_options(options)
     filename=os.path.abspath(filename)
     cached_names=[item.origin for item in cls._cache]
     if all_options['use_caching'] and filename in cached_names:
@@ -229,6 +225,15 @@ class NXSData(object):
     # remove callback function to make the object Pickleable
     self._options['callback']=None
     return self
+
+  @classmethod
+  def _get_all_options(cls, options):
+    all_options=dict(cls.DEFAULT_OPTIONS)
+    for key, value in options.items():
+      if not key in all_options:
+        raise ValueError, "%s is not a known option parameter"%key
+      all_options[key]=value
+    return all_options
 
   def _read_file(self, filename):
     '''
@@ -465,6 +470,15 @@ class NXSMultiData(NXSData):
   def __new__(cls, filenames, **options):
     if not hasattr(filenames, '__iter__') or len(filenames)==0:
       raise ValueError, 'File names needs to be an iterable of length > 0'
+    all_options=cls._get_all_options(options)
+    all_options['callback']=None
+    cached_names=[item.origin for item in cls._cache]
+    if all_options['use_caching'] and filenames in cached_names:
+      cache_index=cached_names.index(filenames)
+      cached_object=cls._cache[cache_index]
+      if cached_object._options==all_options:
+        return cached_object
+
     options['use_caching']=False # caching would return NXSData type objects
     filenames.sort()
     if 'callback' in options and options['callback'] is not None:
@@ -482,6 +496,17 @@ class NXSMultiData(NXSData):
       self._add_data(other)
       numbers.append(other.number)
     self.origin=filenames
+    self._options=all_options
+    for item in self:
+      item.read_options=all_options
+    if all_options['use_caching']:
+      if filenames in cached_names:
+        cache_index=cached_names.index(filenames)
+        cls._cache.pop(cache_index)
+      # make sure cache does not get bigger than MAX_CACHE items or 80% of available memory
+      while len(cls._cache)>=cls.MAX_CACHE:
+        cls._cache.pop(0)
+      cls._cache.append(self)
     return self
 
   def _add_data(self, other):
@@ -1472,6 +1497,7 @@ class Reflectivity(object):
     self.dR*=rescale
     self.options['scale']=scaling
 
+  @log_call
   def get_resolution(self):
     '''
     Calculate the angular resolution given by all slits together with the sample size
@@ -1481,9 +1507,14 @@ class Reflectivity(object):
     s_width=self.options['sample_length']*sin(self.ai)
     for width, dist in self.slits:
       # calculate the maximum opening angle dTheta
-      dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
+      if s_width>0.:
+        dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
+      else:
+        dTheta=arctan(width/2./dist)*2.
       # standard deviation for a uniform angle distribution is Δθ/√12
       res.append(dTheta*0.28867513)
+    debug('Sample Size %.2f\tSample FP: %.5f\tResolutions for slits: %s'%(
+                            self.options['sample_length'], s_width, res))
     return min(res)
 
 class OffSpecular(Reflectivity):

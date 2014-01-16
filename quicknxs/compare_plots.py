@@ -93,10 +93,6 @@ class CompareWidget(QWidget):
         color_item.setText(result.name())
         color_item.setBackgroundColor(result)
 
-
-
-
-
 class CompareDialog(QDialog):
   '''
   A simple dialog window with a CompareWidget.
