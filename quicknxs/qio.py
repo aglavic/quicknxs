@@ -40,6 +40,7 @@ class HeaderCreator(object):
   bgs=None
   bg_polys=None
   evts=None
+  gbl_opts=None
   sections=None
   direct_beam_options=['P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                        'bg_pos', 'bg_width', 'dpix', 'tth', 'number']
@@ -47,6 +48,7 @@ class HeaderCreator(object):
                    'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number']
   bg_options=['bg_tof_constant', 'bg_scale_xfit', 'bg_poly_regions', 'bg_scale_factor']
   event_options=['bin_type', 'bins', 'event_split_bins', 'event_split_index']
+  global_options=['sample_length']
 
   def __init__(self, refls):
     self.refls=refls
@@ -54,6 +56,7 @@ class HeaderCreator(object):
     self._collect_norms()
     self._collect_background()
     self._collect_event()
+    self._collect_global_options()
     self._collect_data()
 
   def _collect_norms(self):
@@ -106,6 +109,11 @@ class HeaderCreator(object):
       event_opts=[item.read_options[option] for option in self.event_options]
       if not event_opts in self.evts:
         self.evts.append(event_opts)
+
+  def _collect_global_options(self):
+    self.gbl_opts={}
+    for item in self.global_options:
+      self.gbl_opts[item]=self.refls[0].options[item]
 
   def _collect_data(self):
     '''
@@ -233,6 +241,11 @@ class HeaderCreator(object):
                [dict(zip(options, item)) for item in data]]
       self.sections.append(section)
 
+    debug('Global Options section')
+    section=[u'Global Options', ['name', 'value'],
+                  [{'name': key, 'value': self.gbl_opts[key]} for key in self.global_options]]
+    self.sections.append(section)
+
   def _get_general_header(self):
     '''
     Return header lines present in any file, indipendent of datasets.
@@ -329,6 +342,7 @@ class HeaderParser(object):
   event_defaults=dict(EVT_ID=0, bin_type=0, bins=40, event_split_bins=10, event_split_index=0)
   poly_defaults=dict(poly_region=0, l1=0., l2=0., l3=0., l4=0.,
                                     x1=0., x2=0., x3=0., x4=0.)
+  global_defaults=dict(name='unknown', value=10.)
   callback=None
   quicknxs_version=None
   export_type=None
@@ -448,6 +462,11 @@ class HeaderParser(object):
     if 'Background Polygon Regions' in self.sections:
       self.section_data['Background Polygon Regions']=self._evaluate_section(
                         'Background Polygon Regions', self.poly_defaults)
+    if 'Global Options' in self.sections:
+      gbl_options=self._evaluate_section(
+                        'Global Options', self.global_defaults)
+      self.section_data['Global Options']=dict([(item['name'], item['value'])
+                                                for item in gbl_options])
     self._collect_background_options()
 
   def _get_dataset(self, options):

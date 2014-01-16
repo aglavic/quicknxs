@@ -11,7 +11,8 @@ from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 from .version import str_version
-from .config import paths, instrument, gui
+from .config import paths, instrument, gui, export
+from .default_interface import Ui_MainWindow
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .compare_plots import CompareDialog
 from .rawcompare_plots import RawCompare
@@ -112,7 +113,8 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
-    exec 'from .%s_interface import Ui_MainWindow'%gui.interface
+    if gui.interface!='default':
+      exec 'from .%s_interface import Ui_MainWindow'%gui.interface
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
@@ -1178,6 +1180,9 @@ class MainGUI(QtGui.QMainWindow):
     for refl in parser.refls:
       self.refl=refl
       self.addRefList(do_plot=False)
+    # update global export options
+    if 'Global Options' in parser.section_data:
+      export.sampleSize=parser.section_data['Global Options']['sample_length']
     # set settings for the dataset added last
     self.auto_change_active=True
     self.ui.refXPos.setValue(refl.options['x_pos'])

@@ -58,7 +58,7 @@ class Reducer(object):
   given.
   '''
   export_optios=dict(
-                      foldername=paths.results, naming=paths.export_name, sample_length=10.,
+                      foldername=paths.results, naming=paths.export_name,
                      )
   export_optios.update(export)
   _overwrite_all=False
@@ -79,7 +79,7 @@ class Reducer(object):
 
     # calculate and collect reflectivities
     self.exporter=Exporter(self.channels, self.refls,
-                           sample_length=opts['sample_length'])
+                           sample_length=opts['sampleSize'])
     info('Re-reading all datasets...')
     self.exporter.read_data()
 
@@ -418,6 +418,8 @@ class ReduceDialog(QDialog, Reducer):
       option=getattr(self.ui, key)
       if hasattr(option, 'setChecked'):
         option.setChecked(value)
+      elif hasattr(option, 'setValue'):
+        option.setValue(value)
       else:
         option.setText(value)
 
@@ -464,20 +466,23 @@ class ReduceDialog(QDialog, Reducer):
   def save_settings(self):
     ui=self.ui
     paths.results=unicode(ui.directoryEntry.text())
+    # update options from all UI stuff
+    opts=self.export_optios
     for key in export.keys(): #@UndefinedVariable
       option=getattr(ui, key)
       if hasattr(option, 'setChecked'):
         export[key]=option.isChecked()
+        opts[key]=option.isChecked()
+      elif hasattr(option, 'setValue'):
+        export[key]=option.value()
+        opts[key]=option.value()
       else:
         export[key]=unicode(option.text())
+        opts[key]=options.text()
     self.save_email_texts()
-    # update options from all UI stuff
-    opts=self.export_optios
-    for key in export.keys(): #@UndefinedVariable
-      opts[key]=getattr(ui, key).isChecked()
     opts['foldername']=unicode(self.ui.directoryEntry.text())
     opts['naming']=unicode(self.ui.fileNameEntry.text())
-    opts['sample_length']=self.ui.sampleSize.value()
+    opts['sampleSize']=self.ui.sampleSize.value()
 
   @log_call
   def save_email_texts(self):
