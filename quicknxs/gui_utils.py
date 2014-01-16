@@ -27,10 +27,10 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse
 
 from .config import paths, export, email, instrument, misc
+from .gisans_dialog import Ui_Dialog as UiGisans
 from .mplwidget import MPLWidget
 from .plot_dialog import Ui_Dialog as UiPlot
 from .reduce_dialog import Ui_Dialog as UiReduction
-from .gisans_dialog import Ui_Dialog as UiGisans
 from .smooth_dialog import Ui_Dialog as UiSmooth
 from .qreduce import GISANS
 from .qio import Exporter

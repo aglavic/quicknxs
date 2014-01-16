@@ -13,10 +13,10 @@ from logging import debug, info
 from time import strftime
 from zipfile import ZipFile
 from cPickle import loads, dumps
-from .decorators import log_call
 from .config import paths, instrument, output_templates
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
+from .decorators import log_call
 from .qcalc import smooth_data, DetectorTailCorrector
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
 from .version import str_version
 
 from . import genx_data

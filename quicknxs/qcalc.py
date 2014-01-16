@@ -6,9 +6,9 @@ Module for calculations used in data reduction and automatic algorithms.
 from numpy import *
 from logging import debug, info #@Reimport
 from .decorators import log_input, log_both
-from .qreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
+from .qreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 
 # used for * imports
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',

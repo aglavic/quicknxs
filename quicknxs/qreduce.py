@@ -16,19 +16,19 @@ storing the result as well as some intermediate data in itself as attributes.
 
 import os
 import zlib
+import h5py
 from copy import deepcopy
 from glob import glob
 from numpy import *
 from numpy.version import version as npversion
-from logging import debug, info, warn #@Reimport
 from platform import node
-import h5py
 from time import time, strptime, mktime
 # ignore zero devision error
 #seterr(invalid='ignore')
 
-from .decorators import log_call, log_input, log_both
+from logging import debug, info, warn #@Reimport
 from .config import instrument
+from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.

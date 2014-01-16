@@ -10,24 +10,23 @@ from numpy import where, pi, newaxis, log10
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
-from .version import str_version
-from .config import paths, instrument, gui, export
-from .default_interface import Ui_MainWindow
-from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
-from .compare_plots import CompareDialog
-from .rawcompare_plots import RawCompare
-from .point_picker import PointPicker
-from .nxs_gui import NXSDialog
-from .polarization_gui import PolarizationDialog
+#from logging import info, debug
 from .advanced_background import BackgroundDialog
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .compare_plots import CompareDialog
+from .config import paths, instrument, gui, export
+from .decorators import log_call, log_input, log_both
+from .default_interface import Ui_MainWindow
+from .gui_logging import install_gui_handler, excepthook_overwrite
+from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
+from .nxs_gui import NXSDialog
+from .point_picker import PointPicker
+from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
-
-#from logging import info, debug
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .rawcompare_plots import RawCompare
+from .version import str_version
 from logging import info, warning, debug
-from .gui_logging import install_gui_handler, excepthook_overwrite
-from .decorators import log_call, log_input, log_both
 
 class gisansCalcThread(QtCore.QThread):
   '''
