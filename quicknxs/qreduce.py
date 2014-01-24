@@ -38,6 +38,9 @@ DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
+POLY_CORR_PARAMS=[-4.74152261e-05,-4.62469580e-05, 1.25995446e-02, 2.13654008e-02,
+                  1.02334517e+01] # parameters used in polynomial detector sensitivity correction
+DETECTOR_SENSITIVITY={}
 # measurement type mapping of states
 MAPPING_12FULL=(
                  (u'++ (0V)', u'entry-off_off_Ezero'),
@@ -1066,6 +1069,7 @@ class Reflectivity(object):
        bg_poly_regions=None,
        bg_scale_xfit=False,
        bg_scale_factor=1.,
+       sensitivity_correction=None,
        P0=0,
        PN=0,
        number='0',
@@ -1089,6 +1093,7 @@ class Reflectivity(object):
        bg_poly_regions='use polygon regions in x/λ to determine which points to use for the background',
        bg_scale_xfit='use a linear fit on x-axes projection to scale the background',
        bg_scale_factor='scale the background by this constant before subtraction',
+       sensitivity_correction='Detector sensitivity correction to be used',
        P0='Number of points to remove from the low-Q side of the reflectivity',
        PN='Number of points to remove from the high-Q side of the reflectivity',
        number='Index of the origin dataset used for naming etc. when exported',
@@ -1183,6 +1188,22 @@ class Reflectivity(object):
     return StringRepr('self.options='+repr(self.options), output)
 
 
+  @log_call
+  def _correct_sensitivity(self, data):
+    if self.options['sensitivity_correction'] in DETECTOR_SENSITIVITY:
+      return data/DETECTOR_SENSITIVITY[self.options['sensitivity_correction']][:, :, newaxis]
+    elif self.options['sensitivity_correction']=='polynomial':
+      # use polynomial form to generate sensitivity map
+      X, Y=meshgrid(arange(data.shape[0]), arange(data.shape[1]))
+      X, Y=X.T.astype(float), Y.T.astype(float)
+      ax, ay, bx, by, c=POLY_CORR_PARAMS
+      Isens=ax*X**2+ay*Y**2+bx*X+by*Y+c
+      Isens/=Isens.mean()
+      DETECTOR_SENSITIVITY[self.options['sensitivity_correction']]=Isens
+      return data/Isens[:, :, newaxis]
+    else:
+      raise NotImplementedError, 'sensitivity correction %s not known'%self.options['sensitivity_correction']
+
   #############################################################################
 
   @log_call
@@ -1199,6 +1220,8 @@ class Reflectivity(object):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
@@ -1286,6 +1309,8 @@ class Reflectivity(object):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
@@ -1406,6 +1431,8 @@ class Reflectivity(object):
     :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     '''
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
     bg_pos=self.options['bg_pos']
@@ -1573,6 +1600,8 @@ class OffSpecular(Reflectivity):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
@@ -1689,6 +1718,8 @@ class GISANS(Reflectivity):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     y_pos=self.options['y_pos']
     # create a nicer intensity scale by multiplying with the reflectiviy extraction region
