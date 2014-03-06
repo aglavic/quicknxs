@@ -1075,6 +1075,7 @@ class Reflectivity(object):
        number='0',
        gisans_gridy=50,
        gisans_gridz=50,
+       gisans_no_DP=True,
        )
   _OPTIONS_DESCRTIPTION=dict(
        x_pos='X-pixel position of the reflected beam on the detector',
@@ -1099,6 +1100,7 @@ class Reflectivity(object):
        number='Index of the origin dataset used for naming etc. when exported',
        gisans_gridy='When extracting GISANS data, this is the number of pixels in Qz',
        gisans_gridz='When extracting GISANS data, this is the number of pixels in Qy',
+       gisans_no_DP='Remove the ToF bin which contains the direct pulse background',
        )
 
   @log_input
@@ -1778,6 +1780,24 @@ class GISANS(Reflectivity):
       self.S[:, :, idxs]/=normR[idxs][newaxis, newaxis, :]
       self.S[:, :, logical_not(idxs)]=0.
       self.dS[:, :, logical_not(idxs)]=0.
+
+    if self.options['gisans_no_DP']:
+      fast_n_tof=[i*1.0e6/60. for i in range(4)]
+      tof_edges=dataset.tof_edges[PN:P0]
+      fresult=(tof_edges[1:]<fast_n_tof[0])|(tof_edges[:-1]>fast_n_tof[0])
+      for fnt in fast_n_tof[1:]:
+        fresult&=(tof_edges[1:]<fnt)|(tof_edges[:-1]>fnt)
+      fidx=where(fresult)[0]
+      # apply filtering to all arrays
+      self.Iraw=self.Iraw[:, :, fidx]
+      self.dIraw=self.dIraw[:, :, fidx]
+      self.I=self.I[:, :, fidx]
+      self.dI=self.dI[:, :, fidx]
+      self.S=self.S[:, :, fidx]
+      self.dS=self.dS[:, :, fidx]
+      self.Qx=self.Qx[:, :, fidx]
+      self.Qy=self.Qy[:, :, fidx]
+      self.Qz=self.Qz[:, :, fidx]
 
     # create grid
     self.SGrid, qy, qz=histogram2d(self.Qy.flatten(), self.Qz.flatten(),

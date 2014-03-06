@@ -172,6 +172,16 @@ class Reducer(object):
     dia.destroy()
     app=QApplication.instance()
     if result==QDialog.Accepted:
+      if not dia.ui.lambdaNoDirectPulse.isChecked():
+        output_data=dict([(channel, []) for channel in self.channels])
+        for refli in self.refls:
+          opts=dict(refli.options)
+          opts['gisans_no_DP']=False
+          index=opts['number']
+          fdata=self.exporter.raw_data[index]
+          for channel in self.channels:
+            gisans=GISANS(fdata[channel], **opts)
+            output_data[channel].append(gisans)
       for channel in self.channels:
         thread=GISANSCalculation(output_data[channel], lmin, lmax, nslices, gridQy, gridQz)
         thread.start()
