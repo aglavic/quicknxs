@@ -3,6 +3,7 @@
 A dialog to delete unwanted points from a reflectivity curve.
 '''
 
+import sys
 import numpy as np
 from os import path
 from PyQt4.QtGui import QDialog, QTableWidgetItem
@@ -39,7 +40,12 @@ class PointPicker(QDialog):
     '''
     Read the ASCII data of the origin file.
     '''
-    data=np.loadtxt(self.origin_file, comments='#', unpack=True)
+    if sys.version_info[0]>2:
+      # circumvent numpy bug in python 3, trying to always read in latin-1
+      data=np.loadtxt(open(self.origin_file, 'r', encoding='latin-1'),
+                      comments='#', unpack=True)
+    else:
+      data=np.loadtxt(self.origin_file, comments='#', unpack=True)
     self.Qz=data[0]
     self.dQz=data[3]
     self.R=data[1]
@@ -185,6 +191,11 @@ class PointPicker(QDialog):
       else:
         break
     value=np.array([self.Qz[reg], self.R[reg], self.dR[reg], self.dQz[reg], self.ai[reg]])
+    if sys.version_info[0]>2:
+      output.close()
+      outbytes=open(outfile, 'rb').read()
+      output=open(outfile, 'wb')
+      output.write(outbytes)
     np.savetxt(output, value.T, delimiter='\t', fmt='%-18e')
     output.close()
     QDialog.accept(self)
