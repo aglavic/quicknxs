@@ -795,7 +795,10 @@ class MainGUI(QtGui.QMainWindow):
           ymin=min(ymin, ynormed[ynormed>0].min())
         except ValueError:
           pass
-        ymax=max(ymax, ynormed.max())
+        try:
+          ymax=max(ymax, ynormed.max())
+        except ValueError:
+          pass
         self.ui.refl.errorbar(refli.Q[PNi:P0i], ynormed,
                               yerr=refli.dR[PNi:P0i], label=str(refli.options['number']),
                               color=self._refl_color_list[i%len(self._refl_color_list)])
@@ -1619,8 +1622,13 @@ class MainGUI(QtGui.QMainWindow):
     # options used for the extraction
     opts=self.refl.options
 
-    Pstart=len(self.refl.R)-where(self.refl.R>0)[0][-1]-1
-    Pend=where(self.refl.R>0)[0][0]
+    try:
+      Pstart=len(self.refl.R)-where(self.refl.R>0)[0][-1]-1
+      Pend=where(self.refl.R>0)[0][0]
+    except IndexError:
+      # for the rare case of reflectivity with no counts catch the exception
+      Pstart=0
+      Pend=0
     opts['P0']=max(Pstart, opts['P0'])
     opts['PN']=max(Pend, opts['PN'])
 

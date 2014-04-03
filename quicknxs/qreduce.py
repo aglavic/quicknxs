@@ -264,7 +264,11 @@ class NXSData(object):
     else:
       is_ancient=False
     for channel in list(channels):
-      debug(str(nxs[channel][u'total_counts'].value[0]))
+      try:
+        debug(str(nxs[channel][u'total_counts'].value[0]))
+      except KeyError:
+        warn('total_counts not defined in channel %s'%channel)
+        return False
       if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
         channels.remove(channel)
     if len(channels)==0:
@@ -1467,7 +1471,7 @@ class Reflectivity(object):
           points_in_region|=poly_path.contains_points(points)
       else:
         debug('Using matplotlib.nxutils for polygon checking')
-        from matplotlib.nxutils import points_inside_poly
+        from matplotlib.nxutils import points_inside_poly #@UnresolvedImport
         for poly in bg_poly:
           points_in_region|=points_inside_poly(points, poly)
       points_in_region=points_in_region.reshape(X.shape)

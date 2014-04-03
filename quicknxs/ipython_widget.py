@@ -15,11 +15,11 @@ DEFAULT_INSTANCE_ARGS=['qtconsole', '--pylab=inline', '--colors=linux']
 import IPython
 if IPython.__version__<'1.0':
     # does not work for ipython >= 1.0 as it is completely restructured
-    from IPython.zmq.ipkernel import IPKernelApp
-    from IPython.lib.kernel import find_connection_file
-    from IPython.frontend.qt.kernelmanager import QtKernelManager
-    from IPython.frontend.qt.console.rich_ipython_widget import RichIPythonWidget #@UnusedImport
-    from IPython.core.ipapi import get as get_ipython #@UnusedImport
+    from IPython.zmq.ipkernel import IPKernelApp #@UnresolvedImport
+    from IPython.lib.kernel import find_connection_file #@UnresolvedImport
+    from IPython.frontend.qt.kernelmanager import QtKernelManager #@UnresolvedImport
+    from IPython.frontend.qt.console.rich_ipython_widget import RichIPythonWidget #@UnusedImport @UnresolvedImport
+    from IPython.core.ipapi import get as get_ipython #@UnusedImport @UnresolvedImport
 else:
     from IPython.qt.console.rich_ipython_widget import RichIPythonWidget #@UnresolvedImport @Reimport
     from IPython.qt.inprocess import QtInProcessKernelManager #@UnresolvedImport
