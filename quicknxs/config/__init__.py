@@ -95,5 +95,5 @@ if proxy is None:
   _create_proxy()
   # make sure a valid instrument is selected
   # at the beginning, also for auto completion
-  from . import ref_m
-  instrument=ref_m
+  from . import ref_l
+  instrument=ref_l

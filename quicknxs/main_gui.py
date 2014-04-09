@@ -113,12 +113,19 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
-    if gui.interface!='default':
-      exec 'from .%s_interface import Ui_MainWindow'%gui.interface
+    if instrument.NAME == 'REF_M':
+      exec 'from .default_interface import Ui_MainWindow'
+    else:
+      exec 'from .default_interface_refl import Ui_MainWindow'
+        
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
-    self.setWindowTitle(u'QuickNXS   %s'%str_version)
+    if instrument.NAME == 'REF_L':
+      window_title = 'QuickNXS for REF_L'
+    else:
+      window_title = 'QuickNXS'
+    self.setWindowTitle(u'%s   %s'%(window_title,str_version))
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
     button=QtGui.QPushButton('Empty Cache')
@@ -127,16 +134,19 @@ class MainGUI(QtGui.QMainWindow):
     button.setFlat(True)
     button.setMaximumSize(150, 20)
 
-    # hide radio buttons
-    for i in range(1, 12):
-      getattr(self.ui, 'selectedChannel%i'%i).hide()
+    if instrument.NAME=="REF_M":
+      # hide radio buttons
+      for i in range(1, 12):
+        getattr(self.ui, 'selectedChannel%i'%i).hide()
 
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(140, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
 
-    self.toggleHide()
+    if instrument.NAME=="REF_M":
+      self.toggleHide()
+      
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
@@ -1321,20 +1331,25 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Create a new filelist if the folder has changes.
     '''
-    was_active=self.auto_change_active
-    self.auto_change_active=True
-    if self.ui.histogramActive.isChecked():
-      newlist=glob(os.path.join(folder, '*histo.nxs'))
-      self.ui.eventModeEntries.hide()
-    elif self.ui.oldFormatActive.isChecked():
-      newlist=glob(os.path.join(folder, '*.nxs'))
-      self.ui.eventModeEntries.hide()
-    elif self.ui.eventActive.isChecked():
+    if instrument.NAME=='REF_M':
+      was_active=self.auto_change_active
+      self.auto_change_active=True
+      if self.ui.histogramActive.isChecked():
+        newlist=glob(os.path.join(folder, '*histo.nxs'))
+        self.ui.eventModeEntries.hide()
+      elif self.ui.oldFormatActive.isChecked():
+        newlist=glob(os.path.join(folder, '*.nxs'))
+        self.ui.eventModeEntries.hide()
+      elif self.ui.eventActive.isChecked():
+        self.ui.eventModeEntries.show()
+        newlist=glob(os.path.join(folder, '*event.nxs'))
+      else:
+        self.ui.histogramActive.setChecked(True)
+        return self.updateFileList(base, folder)
+    else: 
       self.ui.eventModeEntries.show()
       newlist=glob(os.path.join(folder, '*event.nxs'))
-    else:
-      self.ui.histogramActive.setChecked(True)
-      return self.updateFileList(base, folder)
+
     newlist.sort()
     newlist=map(lambda name: os.path.basename(name), newlist)
     oldlist=[self.ui.file_list.item(i).text() for i in range(self.ui.file_list.count())]
