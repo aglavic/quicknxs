@@ -35,7 +35,7 @@ def _run(argv=[]):
   splash.show()
   # set instrument configuration
   from quicknxs import config
-  config.instrument=config.proxy.add_alias('ref_m', 'instrument')
+  config.instrument=config.proxy.add_alias('ref_l', 'instrument')
 
   from quicknxs.main_gui import MainGUI
   window=MainGUI(argv)
