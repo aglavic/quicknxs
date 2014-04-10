@@ -145,7 +145,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
 
     if instrument.NAME=="REF_M":
-      self.toggleHide()
+      self.toggleHide()      
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -168,6 +168,9 @@ class MainGUI(QtGui.QMainWindow):
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
     self.initiateReflectivityPlot.connect(self.updateStateFile)
+
+    if instrument.NAME=="REF_L":
+      self.folderModified()
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -1365,7 +1368,8 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.file_list.setCurrentRow(newlist.index(base))
       except ValueError:
         pass
-    self.auto_change_active=was_active
+    if instrument.NAME=="REF_M":
+      self.auto_change_active=was_active
 
   @log_call
   def updateLabels(self):
