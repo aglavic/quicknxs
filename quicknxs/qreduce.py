@@ -655,6 +655,7 @@ class MRDataset(object):
   Representation of one measurement channel of the reflectometer
   including meta data.
   '''
+  proton_charge=0. #: total proton charge on target [pC]
   total_counts=0 #: total counts on detector
   total_time=0 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
@@ -670,19 +671,6 @@ class MRDataset(object):
   slit2_dist=2019. #: second slit to sample distance [mm]
   slit3_width=0.05 #: last slit width [mm]
   slit3_dist=714. #: last slit to sample distance [mm]
-
-  # metadata
-  proton_charge=0. #: total proton charge on target [pC]
-  lambda_requested=0
-  thi=0 # rad
-  tthd=0 #rad
-  S1W=0 # slit 1 width
-  S2W=0 # slit 2 width
-  S1H=0 # slit 1 height
-  S2H=0 # slit 2 height
-  dMS=0 # distance Moderator-Sample
-  dSD=0 # distance Sample-Detector
-  dMD=0 # distance Moderator-Detector
 
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
@@ -1130,7 +1118,6 @@ class LRDataset(object):
   Representation of one measurement channel of the reflectometer
   including meta data.
   '''
-  proton_charge=0. #: total proton charge on target [pC]
   total_counts=0 #: total counts on detector
   total_time=0 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
@@ -1146,6 +1133,20 @@ class LRDataset(object):
   slit2_dist=2019. #: second slit to sample distance [mm]
   slit3_width=0.05 #: last slit width [mm]
   slit3_dist=714. #: last slit to sample distance [mm]
+
+  # metadata
+  proton_charge=0. #: total proton charge on target [pC]  
+  lambda_requested=0
+  lambda_requested_units=''
+  thi=0 # rad
+  tthd=0 #rad
+  S1W=0 # slit 1 width
+  S2W=0 # slit 2 width
+  S1H=0 # slit 1 height
+  S2H=0 # slit 2 height
+  dMS=0 # distance Moderator-Sample
+  dSD=0 # distance Sample-Detector
+  dMD=0 # distance Moderator-Detector
 
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
@@ -1372,76 +1373,13 @@ class LRDataset(object):
     self.log_minmax=NiceDict()
     self.log_units=NiceDict()
 
-
-
-
-
-    #if 'DASlogs' in data:  # the old format does not include the DAS logs
-      ## get an array of all pulses to make it possible to correlate values with states
-      #stimes=data['DASlogs/proton_charge/time'].value
-      #stimes=stimes[::10] # reduce the number of items to speed up the correlation
-      ## use only values that are not directly before or after a state change
-      #stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
-      #stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
-      #for motor, item in data['DASlogs'].items():
-        #if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
-          #continue
-        #try:
-          #if 'units' in item['value'].attrs:
-            #self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
-          #else:
-            #self.log_units[motor]=u''
-          #val=item['value'].value
-          #if val.shape[0]==1:
-            #self.logs[motor]=val[0]
-            #self.log_minmax[motor]=(val[0], val[0])
-          #else:
-            #vtime=item['time'].value
-            #sidx=searchsorted(vtime, stimes, side='right')
-            #sidx=maximum(sidx-1, 0)
-            #val=val[sidx]
-            #if len(val)==0:
-              #self.logs[motor]=NaN
-              #self.log_minmax[motor]=(NaN, NaN)
-            #else:
-              #self.logs[motor]=val.mean()
-              #self.log_minmax[motor]=(val.min(), val.max())
-        #except:
-          #continue
-      #self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
-    #self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    #if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
-      #self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
-      #self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-      #self.slit1_width=data['instrument/aperture1/S1HWidth/value'].value[0]
-      #self.slit2_width=data['instrument/aperture2/S2HWidth/value'].value[0]
-      #self.slit3_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    #else:
-      #self.slit1_width=data['instrument/aperture1/RSlit1/value'].value[0]-\
-                      #data['instrument/aperture1/LSlit1/value'].value[0]
-      #self.slit2_width=data['instrument/aperture2/RSlit2/value'].value[0]-\
-                      #data['instrument/aperture2/LSlit2/value'].value[0]
-      #self.slit3_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
-                      #data['instrument/aperture3/LSlit3/value'].value[0]
-    #self.slit1_dist=-data['instrument/aperture1/distance'].value[0]*1000.
-    #self.slit2_dist=-data['instrument/aperture2/distance'].value[0]*1000.
-    #self.slit3_dist=-data['instrument/aperture3/distance'].value[0]*1000.
-
-    #self.sangle=data['sample/SANGLE/value'].value[0]
-
-    #self.proton_charge=data['proton_charge'].value[0]
-    #self.total_counts=data['total_counts'].value[0]
-    #self.total_time=data['duration'].value[0]
-
-    #self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
-    #self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
-    #self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
-    #self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
-    #self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
-
-    #self.experiment=str(data['experiment_identifier'].value[0])
-    #self.number=int(data['run_number'].value[0])
-    #self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
+    self.thi = data['DASlogs/thi/value'].value[0]
+    self.tthd = data['DASlogs/tthd/value'].value[0]
+    self.S1W = data['DASlogs/S1HWidth/value'].value[0]
+    self.S2W = data['DASlogs/S2HWidth/value'].value[0]
+    self.S1H = data['DASlogs/S1VHeight/value'].value[0]
+    self.S2H = data['DASlogs/S2VHeight/value'].value[0]    
+    self.lambda_requested = data['DASlogs/LambdaRequest/value'].value[0]
 
   def __repr__(self):
     if type(self.origin) is tuple:
