@@ -284,21 +284,27 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.updateFileList(base, folder)
     self.active_file=base
-
-    if base.endswith('event.nxs'):
-      tottime=time_from_header(os.path.join(folder, base))
-      self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(tottime/60))
-    if base.endswith('event.nxs') and self.ui.eventSplit.isChecked():
-      event_split_bins=self.ui.eventSplitItems.value()
-      event_split_index=self.ui.eventSplitIndex.value()-1
+    
+    if instrument.NAME=='REF_M':
+      if base.endswith('event.nxs'):
+        tottime=time_from_header(os.path.join(folder, base))
+        self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(tottime/60))
+      if base.endswith('event.nxs') and self.ui.eventSplit.isChecked():
+        event_split_bins=self.ui.eventSplitItems.value()
+        event_split_index=self.ui.eventSplitIndex.value()-1
+      else:
+        event_split_bins=None
+        event_split_index=0
+      bin_type=self.ui.eventBinMode.currentIndex()
     else:
       event_split_bins=None
-      event_split_index=0
+      event_split_index=0      
+      bin_type=0
 
     self._norm_selected=None
     info(u"Reading file %s..."%(filename))
     data=NXSData(filename,
-          bin_type=self.ui.eventBinMode.currentIndex(),
+          bin_type=bin_type,
           bins=self.ui.eventTofBins.value(),
           callback=self.updateEventReadout,
           event_split_bins=event_split_bins,

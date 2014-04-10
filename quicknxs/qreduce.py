@@ -264,104 +264,101 @@ class NXSData(object):
         debug('Could not read nxs file %s'%filename, exc_info=True)
         return False
 
-      channels = ['entry']
-      nxs=self._get_ancient(filename)
-      channels=nxs.keys()
-      channels.sort()
-      is_ancient=True
+      #channels = ['entry']
+      #nxs=self._get_ancient(filename)
+      #channels=nxs.keys()
+      #channels.sort()
+      #is_ancient=True
 
-      print 'nxs: '
-      print nxs
+      #for channel in list(channels):
+        #debug(str(nxs[channel][u'total_counts'].value[0]))
+        #if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
+          #channels.remove(channel)
+      #if len(channels)==0:
+        #debug('No valid channels in file')
+        #return False
+      #ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
+      #pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+      #try:
+        #smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
+      #except KeyError:
+        #smpt=0.
+  
+      ## select the type of measurement that has been used
+      #if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
+        #if channels[0] in [m[1] for m in MAPPING_12FULL]:
+          #self.measurement_type='Polarization Analysis w/E-Field'
+          #mapping=list(MAPPING_12FULL)
+        #else:
+          #self.measurement_type='Polarization Analysis'
+          #mapping=list(MAPPING_FULLPOL)
+      #elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
+           #abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
+        #if channels[0] in [m[1] for m in MAPPING_12HALF]:
+          #self.measurement_type='Polarized w/E-Field'
+          #mapping=list(MAPPING_12HALF)
+        #else:
+          #self.measurement_type='Polarized'
+          #mapping=list(MAPPING_HALFPOL)
+      #elif 'DASlogs' in nxs[channels[0]] and \
+            #nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
+            #channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
+        #self.measurement_type='Electric Field'
+        #mapping=list(MAPPING_EFIELD)
+      #elif len(channels)==1:
+        #self.measurement_type='Unpolarized'
+        #mapping=list(MAPPING_UNPOL)
+      #else:
+        #self.measurement_type='Unknown'
+        #mapping=[]
+      ## check that all channels have a mapping entry
+      #for channel in channels:
+        #if not channel in [m[1] for m in mapping]:
+          #mapping.append((channel.lstrip('entry-'), channel))
+  
+      ## get runtime for event mode splitting
+      #total_duration=time_from_header('', nxs=nxs)
+  
+      #progress=0.1
+      #if self._options['callback']:
+        #self._options['callback'](progress)
+      #self._read_times.append(time()-start)
+      #i=1
+      #empty_channels=[]
+      #for dest, channel in mapping:
+        #if channel not in channels:
+          #continue
+        #raw_data=nxs[channel]
+        #if filename.endswith('event.nxs'):
 
-      return None
+      raw_data = nxs['entry']
+      data=LRDataset.from_event(raw_data, self._options,
+                                callback=self._options['callback'])
 
-      for channel in list(channels):
-        debug(str(nxs[channel][u'total_counts'].value[0]))
-        if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
-          channels.remove(channel)
-      if len(channels)==0:
-        debug('No valid channels in file')
-        return False
-      ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
-      pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
-      try:
-        smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
-      except KeyError:
-        smpt=0.
-  
-      # select the type of measurement that has been used
-      if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
-        if channels[0] in [m[1] for m in MAPPING_12FULL]:
-          self.measurement_type='Polarization Analysis w/E-Field'
-          mapping=list(MAPPING_12FULL)
-        else:
-          self.measurement_type='Polarization Analysis'
-          mapping=list(MAPPING_FULLPOL)
-      elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
-           abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
-        if channels[0] in [m[1] for m in MAPPING_12HALF]:
-          self.measurement_type='Polarized w/E-Field'
-          mapping=list(MAPPING_12HALF)
-        else:
-          self.measurement_type='Polarized'
-          mapping=list(MAPPING_HALFPOL)
-      elif 'DASlogs' in nxs[channels[0]] and \
-            nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
-            channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
-        self.measurement_type='Electric Field'
-        mapping=list(MAPPING_EFIELD)
-      elif len(channels)==1:
-        self.measurement_type='Unpolarized'
-        mapping=list(MAPPING_UNPOL)
-      else:
-        self.measurement_type='Unknown'
-        mapping=[]
-      # check that all channels have a mapping entry
-      for channel in channels:
-        if not channel in [m[1] for m in mapping]:
-          mapping.append((channel.lstrip('entry-'), channel))
-  
-      # get runtime for event mode splitting
-      total_duration=time_from_header('', nxs=nxs)
-  
-      progress=0.1
-      if self._options['callback']:
-        self._options['callback'](progress)
-      self._read_times.append(time()-start)
-      i=1
-      empty_channels=[]
-      for dest, channel in mapping:
-        if channel not in channels:
-          continue
-        raw_data=nxs[channel]
-        if filename.endswith('event.nxs'):
-          data=MRDataset.from_event(raw_data, self._options,
-                                    callback=self._options['callback'],
-                                    callback_offset=progress,
-                                    callback_scaling=0.9/len(channels),
-                                    tof_overwrite=self._options['event_tof_overwrite'],
-                                    total_duration=total_duration)
-          if data is None:
-            # no data in channel, don't add it
-            empty_channels.append(dest)
-            continue
-        elif filename.endswith('histo.nxs'):
-          data=MRDataset.from_histogram(raw_data, self._options)
-        else:
-          data=MRDataset.from_old_format(raw_data, self._options)
-        self._channel_data.append(data)
-        self._channel_names.append(dest)
-        self._channel_origin.append(channel)
-        progress=0.1+0.9*float(i)/len(channels)
-        if self._options['callback']:
-          self._options['callback'](progress)
-        i+=1
-        self._read_times.append(time()-self._read_times[-1]-start)
-      #print time()-start
-      if not is_ancient:
-        nxs.close()
-      if empty_channels:
-        warn('No counts for state %s'%(','.join(empty_channels)))
+      return True
+
+
+          #if data is None:
+            ## no data in channel, don't add it
+            #empty_channels.append(dest)
+            #continue
+        #elif filename.endswith('histo.nxs'):
+          #data=MRDataset.from_histogram(raw_data, self._options)
+        #else:
+          #data=MRDataset.from_old_format(raw_data, self._options)
+        #self._channel_data.append(data)
+        #self._channel_names.append(dest)
+        #self._channel_origin.append(channel)
+        #progress=0.1+0.9*float(i)/len(channels)
+        #if self._options['callback']:
+          #self._options['callback'](progress)
+        #i+=1
+        #self._read_times.append(time()-self._read_times[-1]-start)
+      ##print time()-start
+      #if not is_ancient:
+        #nxs.close()
+      #if empty_channels:
+        #warn('No counts for state %s'%(','.join(empty_channels)))
       return True
 
   def _read_REFM_file(self, filename):
@@ -1238,9 +1235,11 @@ class LRDataset(object):
     output=cls()
     output.read_options=read_options
     output.from_event_mode=True
-    bin_type=read_options['bin_type']
-    bins=read_options['bins']
+    bin_type=0
+    #bins=read_options['bins']
     output._collect_info(data)
+
+    return None
 
     if tof_overwrite is None:
       lcenter=data['DASlogs/LambdaRequest/value'].value[0]
@@ -1372,72 +1371,77 @@ class LRDataset(object):
     self.logs=NiceDict()
     self.log_minmax=NiceDict()
     self.log_units=NiceDict()
-    if 'DASlogs' in data:  # the old format does not include the DAS logs
-      # get an array of all pulses to make it possible to correlate values with states
-      stimes=data['DASlogs/proton_charge/time'].value
-      stimes=stimes[::10] # reduce the number of items to speed up the correlation
-      # use only values that are not directly before or after a state change
-      stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
-      stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
-      for motor, item in data['DASlogs'].items():
-        if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
-          continue
-        try:
-          if 'units' in item['value'].attrs:
-            self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
-          else:
-            self.log_units[motor]=u''
-          val=item['value'].value
-          if val.shape[0]==1:
-            self.logs[motor]=val[0]
-            self.log_minmax[motor]=(val[0], val[0])
-          else:
-            vtime=item['time'].value
-            sidx=searchsorted(vtime, stimes, side='right')
-            sidx=maximum(sidx-1, 0)
-            val=val[sidx]
-            if len(val)==0:
-              self.logs[motor]=NaN
-              self.log_minmax[motor]=(NaN, NaN)
-            else:
-              self.logs[motor]=val.mean()
-              self.log_minmax[motor]=(val.min(), val.max())
-        except:
-          continue
-      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
-    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
-    if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
-      self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
-      self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
-      self.slit1_width=data['instrument/aperture1/S1HWidth/value'].value[0]
-      self.slit2_width=data['instrument/aperture2/S2HWidth/value'].value[0]
-      self.slit3_width=data['instrument/aperture3/S3HWidth/value'].value[0]
-    else:
-      self.slit1_width=data['instrument/aperture1/RSlit1/value'].value[0]-\
-                      data['instrument/aperture1/LSlit1/value'].value[0]
-      self.slit2_width=data['instrument/aperture2/RSlit2/value'].value[0]-\
-                      data['instrument/aperture2/LSlit2/value'].value[0]
-      self.slit3_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
-                      data['instrument/aperture3/LSlit3/value'].value[0]
-    self.slit1_dist=-data['instrument/aperture1/distance'].value[0]*1000.
-    self.slit2_dist=-data['instrument/aperture2/distance'].value[0]*1000.
-    self.slit3_dist=-data['instrument/aperture3/distance'].value[0]*1000.
 
-    self.sangle=data['sample/SANGLE/value'].value[0]
 
-    self.proton_charge=data['proton_charge'].value[0]
-    self.total_counts=data['total_counts'].value[0]
-    self.total_time=data['duration'].value[0]
 
-    self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
-    self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
-    self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
-    self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
-    self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
 
-    self.experiment=str(data['experiment_identifier'].value[0])
-    self.number=int(data['run_number'].value[0])
-    self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
+
+    #if 'DASlogs' in data:  # the old format does not include the DAS logs
+      ## get an array of all pulses to make it possible to correlate values with states
+      #stimes=data['DASlogs/proton_charge/time'].value
+      #stimes=stimes[::10] # reduce the number of items to speed up the correlation
+      ## use only values that are not directly before or after a state change
+      #stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
+      #stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
+      #for motor, item in data['DASlogs'].items():
+        #if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
+          #continue
+        #try:
+          #if 'units' in item['value'].attrs:
+            #self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
+          #else:
+            #self.log_units[motor]=u''
+          #val=item['value'].value
+          #if val.shape[0]==1:
+            #self.logs[motor]=val[0]
+            #self.log_minmax[motor]=(val[0], val[0])
+          #else:
+            #vtime=item['time'].value
+            #sidx=searchsorted(vtime, stimes, side='right')
+            #sidx=maximum(sidx-1, 0)
+            #val=val[sidx]
+            #if len(val)==0:
+              #self.logs[motor]=NaN
+              #self.log_minmax[motor]=(NaN, NaN)
+            #else:
+              #self.logs[motor]=val.mean()
+              #self.log_minmax[motor]=(val.min(), val.max())
+        #except:
+          #continue
+      #self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
+    #self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
+    #if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
+      #self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
+      #self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
+      #self.slit1_width=data['instrument/aperture1/S1HWidth/value'].value[0]
+      #self.slit2_width=data['instrument/aperture2/S2HWidth/value'].value[0]
+      #self.slit3_width=data['instrument/aperture3/S3HWidth/value'].value[0]
+    #else:
+      #self.slit1_width=data['instrument/aperture1/RSlit1/value'].value[0]-\
+                      #data['instrument/aperture1/LSlit1/value'].value[0]
+      #self.slit2_width=data['instrument/aperture2/RSlit2/value'].value[0]-\
+                      #data['instrument/aperture2/LSlit2/value'].value[0]
+      #self.slit3_width=data['instrument/aperture3/RSlit3/value'].value[0]-\
+                      #data['instrument/aperture3/LSlit3/value'].value[0]
+    #self.slit1_dist=-data['instrument/aperture1/distance'].value[0]*1000.
+    #self.slit2_dist=-data['instrument/aperture2/distance'].value[0]*1000.
+    #self.slit3_dist=-data['instrument/aperture3/distance'].value[0]*1000.
+
+    #self.sangle=data['sample/SANGLE/value'].value[0]
+
+    #self.proton_charge=data['proton_charge'].value[0]
+    #self.total_counts=data['total_counts'].value[0]
+    #self.total_time=data['duration'].value[0]
+
+    #self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
+    #self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
+    #self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
+    #self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
+    #self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
+
+    #self.experiment=str(data['experiment_identifier'].value[0])
+    #self.number=int(data['run_number'].value[0])
+    #self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
 
   def __repr__(self):
     if type(self.origin) is tuple:
