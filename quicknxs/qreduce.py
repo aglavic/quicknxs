@@ -17,12 +17,14 @@ storing the result as well as some intermediate data in itself as attributes.
 import os
 import zlib
 import h5py
+import base64
 from copy import deepcopy
 from glob import glob
 from numpy import *
 from numpy.version import version as npversion
 from platform import node
 from time import time, strptime, mktime
+from xml.dom import minidom
 # ignore zero devision error
 #seterr(invalid='ignore')
 
@@ -464,7 +466,7 @@ class NXSData(object):
   dangle=property(__dangle, doc='first state dangle attribute')
   dangle0=property(__dangle0, doc='first state dangle0 attribute')
   sangle=property(__sangle, doc='first state sangle attribute')
-  
+
 
 class NXSMultiData(NXSData):
   '''
@@ -530,6 +532,124 @@ class NXSMultiData(NXSData):
   def _callback_sum(cls, progress):
     cls._callback(cls._progress+progress/cls._progress_items)
 
+class XMLData(NXSData):
+  '''
+  Load running experiment from a set of xml files. The metat data xml
+  contains the instrument info and the filenames of the collected data.
+  '''
+
+  def _read_file(self, filename):
+    start=time()
+    if self._options['callback']:
+      self._options['callback'](0.)
+    try:
+      xml=minidom.parse(filename)
+    except:
+      debug('Could not read xml file %s'%filename, exc_info=True)
+      return False
+    finfo=xml.getElementsByTagName('Files')[0]
+    channels=[]
+    xmlfiles=[]
+    path=os.path.dirname(filename)
+    for item in finfo.getElementsByTagName('entry'):
+      channels.append(item.getAttribute('name'))
+      xmlfiles.append((os.path.join(path, item.getAttribute('xy_file')), 
+                       os.path.join(path, item.getAttribute('xtof_file'))))
+    
+    # collect meta information
+    daslogs={}
+    for item in xml.getElementsByTagName('DASLogs')[0].getElementsByTagName('item'):
+      value=item.getAttribute('value')
+      try:
+        value=float(value)
+      except ValueError:
+        pass
+      daslogs[item.getAttribute('name')]=value
+
+    # check counts for each channel
+    for i in reversed(range(len(channels))):
+      xyxml=minidom.parse(xmlfiles[i][0])
+      counts=int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data)
+      if counts<self.COUNT_THREASHOLD:
+        channels.pop(i)
+        xmlfiles.pop(i)
+    if len(channels)==0:
+      debug('No valid channels in file')
+      return False
+    ana=daslogs['AnalyzerLift']
+    pol=daslogs['PolLift']
+    try:
+      smpt=daslogs['SMPolTrans']
+    except KeyError:
+      smpt=0.
+
+    # select the type of measurement that has been used
+    if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
+      if channels[0] in [m[1] for m in MAPPING_12FULL]:
+        self.measurement_type='Polarization Analysis w/E-Field'
+        mapping=list(MAPPING_12FULL)
+      else:
+        self.measurement_type='Polarization Analysis'
+        mapping=list(MAPPING_FULLPOL)
+    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
+         abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
+      if channels[0] in [m[1] for m in MAPPING_12HALF]:
+        self.measurement_type='Polarized w/E-Field'
+        mapping=list(MAPPING_12HALF)
+      else:
+        self.measurement_type='Polarized'
+        mapping=list(MAPPING_HALFPOL)
+    #elif 'SP_HV_Minus' in daslogs and \
+    #      daslogs['SP_HV_Minus']!='None' and \
+    #      channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
+    #  self.measurement_type='Electric Field'
+    #  mapping=list(MAPPING_EFIELD)
+    elif len(channels)==1:
+      self.measurement_type='Unpolarized'
+      mapping=list(MAPPING_UNPOL)
+    else:
+      self.measurement_type='Unknown'
+      mapping=[]
+    # check that all channels have a mapping entry
+    for channel in channels:
+      if not channel in [m[1] for m in mapping]:
+        mapping.append((channel.lstrip('entry-'), channel))
+
+    progress=0.1
+    if self._options['callback']:
+      self._options['callback'](progress)
+    self._read_times.append(time()-start)
+    i=1
+    empty_channels=[]
+    for dest, channel in mapping:
+      if channel not in channels:
+        continue
+      xyfile, xtoffile=xmlfiles[channels.index(channel)]
+      data=MRDataset.from_xml(xyfile, xtoffile, daslogs, self._options,
+                              callback=self._options['callback'],
+                              callback_offset=progress,
+                              callback_scaling=0.9/len(channels),
+                              tof_overwrite=self._options['event_tof_overwrite'])
+      data.origin=(os.path.abspath(filename), channel)
+
+      if data is None:
+        # no data in channel, don't add it
+        empty_channels.append(dest)
+        continue
+
+      self._channel_data.append(data)
+      self._channel_names.append(dest)
+      self._channel_origin.append(channel)
+      progress=0.1+0.9*float(i)/len(channels)
+      if self._options['callback']:
+        self._options['callback'](progress)
+      i+=1
+      self._read_times.append(time()-self._read_times[-1]-start)
+
+    if empty_channels:
+      warn('No counts for state %s'%(','.join(empty_channels)))
+
+    return True
 
 class MRDataset(object):
   '''
@@ -717,6 +837,77 @@ class MRDataset(object):
     output.xtofdata=Ixt.astype(float) # 2D dataset
     return output
 
+  @classmethod
+  @log_call
+  def from_xml(cls, xyfile, xtoffile, daslogs,
+               read_options, callback=None, callback_offset=0.,
+               callback_scaling=1., tof_overwrite=None):
+    '''
+    Load data from a XML previe format created by PyDAS.
+    Needs to rebin the data to be able to normalize it with a normal direct beam measurement.
+    The 3D dataset is just a dummy, as it is not available in this format.
+    '''
+    output=cls()
+    output.read_options=read_options
+    output.from_event_mode=True
+    bin_type=read_options['bin_type']
+    bins=read_options['bins']
+
+    xyxml=minidom.parse(xyfile)
+
+    output.total_time=float(xyxml.getElementsByTagName('TotalTime')[0].childNodes[0].data[:-4])
+    output.total_counts=int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data)
+    output.proton_charge=float(xyxml.getElementsByTagName('TotalCharge')[0].childNodes[0].data)
+
+    output.logs=dict(daslogs)
+
+    output.lambda_center=daslogs['lamda_center']
+    output.sangle=daslogs['SANGLE']
+    output.dangle=daslogs['DANGLE']
+    output.dangle0=daslogs['DANGLE0']
+    output.dpix=daslogs['DIRPIX']
+    output.slit1_width=daslogs['S1HWidth']
+    output.slit2_width=daslogs['S2HWidth']
+    output.slit3_width=daslogs['S3HWidth']
+
+    xydata=MRDataset._getxml_data(xyxml)
+    xtofxml=minidom.parse(xtoffile)
+    xtofdata=MRDataset._getxml_data(xtofxml).T
+    
+    output.xydata=xydata.T.astype(float)
+
+    if tof_overwrite is None:
+      lcenter=output.lambda_center
+      # ToF region for this specific central wavelength
+      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+      if bin_type==0: # constant Δλ
+        tof_edges=linspace(tmin, tmax, bins+1)
+      elif bin_type==1: # constant ΔQ
+        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      elif bin_type==2: # constant Δλ/λ
+        tof_edges=tmin*(((tmax/tmin)**(1./bins))**arange(bins+1))
+      else:
+        raise ValueError, 'Unknown bin type %i'%bin_type
+    else:
+      tof_edges=tof_overwrite
+    
+    tmin=float(xtofxml.getElementsByTagName('TOFMin')[0].childNodes[0].data[:-3])
+    tstep=float(xtofxml.getElementsByTagName('TOFBinSize')[0].childNodes[0].data[:-3])
+    tof_bins=arange(tmin, tmin+tstep*xtofdata.shape[1], tstep)
+
+    newxtofdata=zeros((xtofdata.shape[0], tof_edges.shape[0]-1), dtype=float)
+    for i, (tfrom, tto) in enumerate(zip(tof_edges[:-1], tof_edges[1:])):
+      newxtofdata[:, i]=xtofdata[:, (tof_bins>=tfrom)&(tof_bins<tto)].sum(axis=1)
+
+    output.xtofdata=newxtofdata
+    yscale=zeros(xydata.shape[1])
+    yscale[xydata.shape[1]//2]=1.
+    output.data=output.xtofdata[:, newaxis, :]*yscale[newaxis, :, newaxis]
+    output.tof_edges=tof_edges
+
+    return output
+
   @staticmethod
   def bin_events(tof_ids, tof_time, tof_edges,
                  callback=None, callback_offset=0., callback_scaling=1.):
@@ -841,6 +1032,16 @@ class MRDataset(object):
     self.experiment=str(data['experiment_identifier'].value[0])
     self.number=int(data['run_number'].value[0])
     self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
+  
+  @staticmethod
+  def _getxml_data(xml):
+    data=xml.getElementsByTagName('Data')[0]
+    rawdata=[item for item in data.childNodes if item.nodeType==minidom.CDATASection.nodeType][0]
+    xdim=int(data.getAttribute('xdim'))
+    ydim=int(data.getAttribute('ydim'))
+    type_name=data.getAttribute('type')
+    Idata=fromstring(base64.decodestring(rawdata.data), dtype=type_name).reshape(xdim, ydim)
+    return Idata
 
   def __repr__(self):
     if type(self.origin) is tuple:
