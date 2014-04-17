@@ -370,9 +370,15 @@ class MainGUI(QtGui.QMainWindow):
     tof_overwrite=None
     if self.active_data is not None:
       tof_overwrite=self.active_data[0].tof_edges
-    data=XMLData(instrument.LIVE_DATA, event_tof_overwrite=tof_overwrite, use_caching=False)
+    info(u"Reading Live Data...")
+    data=XMLData(instrument.LIVE_DATA,
+                 event_tof_overwrite=tof_overwrite,
+                 bin_type=self.ui.eventBinMode.currentIndex(),
+                 bins=self.ui.eventTofBins.value(),
+                 callback=self.updateEventReadout,
+                 use_caching=False,
+                 )
     self._fileOpenDone(data, 'LiveData', do_plot=True)
-
 
   def empty_cache(self):
     """

@@ -8,7 +8,7 @@ from PyQt4.QtGui import QDialog, QVBoxLayout
 from numpy import array, argsort, arange
 from matplotlib.gridspec import GridSpec
 from .mplwidget import MPLWidget
-from .qreduce import NXSData, NXSMultiData, Reflectivity, XMLData
+from .qreduce import NXSData, NXSMultiData, Reflectivity
 
 class ReductionPreviewDialog(QDialog):
   '''
@@ -48,8 +48,6 @@ class ReductionPreviewDialog(QDialog):
       if type(refli.origin) is list:
         filenames=[origin[0] for origin in refli.origin]
         data=NXSMultiData(filenames, **refli.read_options)
-      elif refli.origin[0].endswith('.xml'):
-        data=XMLData(refli.origin[0], **refli.read_options)
       else:
         filename, _channel=refli.origin
         data=NXSData(filename, **refli.read_options)

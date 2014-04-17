@@ -195,6 +195,8 @@ class NXSData(object):
       if fn is None:
         raise RuntimeError, 'No file found for index %i'%filename
       filename=fn
+    if filename.endswith('.xml') and cls is not XMLData:
+      return XMLData(filename, **options)
     all_options=cls._get_all_options(options)
     filename=os.path.abspath(filename)
     cached_names=[item.origin for item in cls._cache]
