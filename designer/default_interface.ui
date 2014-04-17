@@ -277,6 +277,19 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Load Live Data</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -295,8 +308,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
-             <height>142</height>
+             <width>256</width>
+             <height>132</height>
             </rect>
            </property>
            <attribute name="label">
@@ -557,8 +570,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
-             <height>138</height>
+             <width>251</width>
+             <height>129</height>
             </rect>
            </property>
            <attribute name="label">
@@ -740,8 +753,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>246</width>
-             <height>135</height>
+             <width>145</width>
+             <height>128</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2663,7 +2676,7 @@
      <x>0</x>
      <y>0</y>
      <width>990</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -3247,8 +3260,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>62</y>
+     <x>785</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -3392,7 +3405,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>364</x>
-     <y>105</y>
+     <y>93</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3407,8 +3420,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
+     <x>329</x>
+     <y>93</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3423,8 +3436,8 @@
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
+     <x>294</x>
+     <y>93</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3567,8 +3580,8 @@
    <slot>change_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>364</x>
-     <y>113</y>
+     <x>301</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
      <x>510</x>
@@ -3584,7 +3597,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>364</x>
-     <y>113</y>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
      <x>774</x>
@@ -3599,8 +3612,8 @@
    <slot>change_gisans_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
+     <x>312</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3616,7 +3629,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>364</x>
-     <y>105</y>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>739</x>
@@ -3663,8 +3676,8 @@
    <slot>clip_offspec_colorscale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>364</x>
-     <y>113</y>
+     <x>323</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
      <x>862</x>
@@ -3727,8 +3740,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>246</x>
-     <y>507</y>
+     <x>250</x>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3743,8 +3756,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>766</y>
+     <x>129</x>
+     <y>772</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -3759,8 +3772,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>251</x>
-     <y>558</y>
+     <x>255</x>
+     <y>584</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -3776,7 +3789,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>558</y>
+     <y>584</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -3791,8 +3804,8 @@
    <slot>toggleHide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>812</y>
+     <x>129</x>
+     <y>815</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -3807,8 +3820,8 @@
    <slot>overwriteChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>246</x>
-     <y>530</y>
+     <x>250</x>
+     <y>557</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3823,8 +3836,8 @@
    <slot>fileOpenList()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>456</y>
+     <x>257</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3840,7 +3853,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>582</y>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -3856,7 +3869,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>606</y>
+     <y>628</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3871,8 +3884,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>251</x>
-     <y>582</y>
+     <x>255</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -3887,8 +3900,8 @@
    <slot>changeRegionValues()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>251</x>
-     <y>606</y>
+     <x>255</x>
+     <y>628</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3936,7 +3949,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>618</y>
+     <y>640</y>
     </hint>
     <hint type="destinationlabel">
      <x>85</x>
@@ -3951,8 +3964,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>834</y>
+     <x>129</x>
+     <y>836</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3967,8 +3980,8 @@
    <slot>visualizePeakfinding()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>615</y>
+     <x>78</x>
+     <y>639</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3983,8 +3996,8 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>104</y>
+     <x>88</x>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3999,8 +4012,8 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
-     <y>104</y>
+     <x>172</x>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4015,8 +4028,8 @@
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>790</y>
+     <x>129</x>
+     <y>794</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -4047,8 +4060,8 @@
    <slot>openByNumber()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>254</x>
-     <y>80</y>
+     <x>253</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4096,7 +4109,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>551</y>
+     <y>578</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -4111,8 +4124,8 @@
    <slot>folderModified()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
-     <y>104</y>
+     <x>256</x>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4127,8 +4140,8 @@
    <slot>reloadFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>146</x>
-     <y>481</y>
+     <x>110</x>
+     <y>512</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -4147,8 +4160,8 @@
      <y>185</y>
     </hint>
     <hint type="destinationlabel">
-     <x>257</x>
-     <y>185</y>
+     <x>256</x>
+     <y>194</y>
     </hint>
    </hints>
   </connection>
@@ -4207,8 +4220,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>683</x>
-     <y>409</y>
+     <x>659</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>797</x>
@@ -4223,8 +4236,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>722</x>
-     <y>409</y>
+     <x>701</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -4239,8 +4252,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>763</x>
-     <y>409</y>
+     <x>745</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>782</x>
@@ -4255,8 +4268,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>804</x>
-     <y>409</y>
+     <x>789</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>762</x>
@@ -4272,7 +4285,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>56</x>
-     <y>586</y>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4399,8 +4412,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>664</x>
-     <y>424</y>
+     <x>659</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4415,8 +4428,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>705</x>
-     <y>424</y>
+     <x>701</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4432,7 +4445,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>745</x>
-     <y>424</y>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4447,8 +4460,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>786</x>
-     <y>424</y>
+     <x>789</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4463,8 +4476,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>664</x>
-     <y>449</y>
+     <x>659</x>
+     <y>491</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4479,8 +4492,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>705</x>
-     <y>449</y>
+     <x>701</x>
+     <y>491</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4496,7 +4509,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>745</x>
-     <y>449</y>
+     <y>491</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4511,8 +4524,8 @@
    <slot>changeActiveChannel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>786</x>
-     <y>449</y>
+     <x>789</x>
+     <y>491</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4568,6 +4581,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>live_open()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>505</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4619,5 +4648,6 @@
   <slot>open_nxs_dialog()</slot>
   <slot>open_filter_dialog()</slot>
   <slot>open_reduction_preview()</slot>
+  <slot>live_open()</slot>
  </slots>
 </ui>

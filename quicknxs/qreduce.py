@@ -184,7 +184,7 @@ class NXSData(object):
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
     callback='Function called to update e.g. a progress bar',
     )
-  COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
+  COUNT_THREASHOLD=0.01 #: Relative number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=100 #: Number of datasets that are kept in the cache
   _cache=[]
 
@@ -265,13 +265,13 @@ class NXSData(object):
       is_ancient=True
     else:
       is_ancient=False
+    try:
+      max_counts=max([nxs[channel][u'total_counts'].value[0] for channel in channels])
+    except KeyError:
+      warn('total_counts not defined in channels')
+      return False
     for channel in list(channels):
-      try:
-        debug(str(nxs[channel][u'total_counts'].value[0]))
-      except KeyError:
-        warn('total_counts not defined in channel %s'%channel)
-        return False
-      if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
+      if nxs[channel][u'total_counts'].value[0]<(self.COUNT_THREASHOLD*max_counts):
         channels.remove(channel)
     if len(channels)==0:
       debug('No valid channels in file')
@@ -566,11 +566,15 @@ class XMLData(NXSData):
         pass
       daslogs[item.getAttribute('name')]=value
 
+    channel_counts=[]
     # check counts for each channel
+    for xyfile, ignore in xmlfiles:
+      xyxml=minidom.parse(xyfile)
+      channel_counts.append(int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data))
+    max_counts=max(channel_counts)
     for i in reversed(range(len(channels))):
-      xyxml=minidom.parse(xmlfiles[i][0])
-      counts=int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data)
-      if counts<self.COUNT_THREASHOLD:
+      counts=channel_counts[i]
+      if counts<(self.COUNT_THREASHOLD*max_counts):
         channels.pop(i)
         xmlfiles.pop(i)
     if len(channels)==0:
@@ -858,6 +862,8 @@ class MRDataset(object):
     output.total_time=float(xyxml.getElementsByTagName('TotalTime')[0].childNodes[0].data[:-4])
     output.total_counts=int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data)
     output.proton_charge=float(xyxml.getElementsByTagName('TotalCharge')[0].childNodes[0].data)
+    output.number=int(daslogs['run_number'])
+    output.experiment='Live Data'
 
     output.logs=dict(daslogs)
 

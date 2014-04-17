@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface.ui'
 #
-# Created: Thu Jan 16 14:15:50 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Thu Apr 17 09:42:44 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -151,13 +151,21 @@ class Ui_MainWindow(object):
     self.pushButton_2.setSizePolicy(sizePolicy)
     self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
     self.horizontalLayout_15.addWidget(self.pushButton_2)
+    self.pushButton_3 = QtGui.QPushButton(self.leftEntries)
+    sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+    sizePolicy.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
+    self.pushButton_3.setSizePolicy(sizePolicy)
+    self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
+    self.horizontalLayout_15.addWidget(self.pushButton_3)
     self.verticalLayout_5.addLayout(self.horizontalLayout_15)
     self.toolBox = QtGui.QToolBox(self.leftEntries)
     self.toolBox.setFrameShape(QtGui.QFrame.NoFrame)
     self.toolBox.setLineWidth(0)
     self.toolBox.setObjectName(_fromUtf8("toolBox"))
     self.page = QtGui.QWidget()
-    self.page.setGeometry(QtCore.QRect(0, 0, 246, 142))
+    self.page.setGeometry(QtCore.QRect(0, 0, 256, 132))
     self.page.setObjectName(_fromUtf8("page"))
     self.gridLayout_3 = QtGui.QGridLayout(self.page)
     self.gridLayout_3.setMargin(2)
@@ -251,7 +259,7 @@ class Ui_MainWindow(object):
     self.gridLayout_3.addWidget(self.bgActive, 3, 1, 1, 1)
     self.toolBox.addItem(self.page, _fromUtf8(""))
     self.page_2 = QtGui.QWidget()
-    self.page_2.setGeometry(QtCore.QRect(0, 0, 246, 138))
+    self.page_2.setGeometry(QtCore.QRect(0, 0, 251, 129))
     self.page_2.setObjectName(_fromUtf8("page_2"))
     self.gridLayout_15 = QtGui.QGridLayout(self.page_2)
     self.gridLayout_15.setMargin(2)
@@ -317,7 +325,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 246, 135))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 145, 128))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1187,7 +1195,7 @@ class Ui_MainWindow(object):
     self.verticalLayout_6.addWidget(self.mainSplitter)
     MainWindow.setCentralWidget(self.centralwidget)
     self.menubar = QtGui.QMenuBar(MainWindow)
-    self.menubar.setGeometry(QtCore.QRect(0, 0, 990, 21))
+    self.menubar.setGeometry(QtCore.QRect(0, 0, 990, 25))
     self.menubar.setObjectName(_fromUtf8("menubar"))
     self.menuFile = QtGui.QMenu(self.menubar)
     self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -1491,6 +1499,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.actionBrowse_NXS_File, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_nxs_dialog)
     QtCore.QObject.connect(self.actionFilter_Points, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_filter_dialog)
     QtCore.QObject.connect(self.actionOpen_Reduction_Preview, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_reduction_preview)
+    QtCore.QObject.connect(self.pushButton_3, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.live_open)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1565,6 +1574,7 @@ class Ui_MainWindow(object):
     self.eventSplit.setText(_translate("MainWindow", "Split by event time", None))
     self.eventTotalTimeLabel.setText(_translate("MainWindow", "(0min)", None))
     self.pushButton_2.setText(_translate("MainWindow", "Reload Active File", None))
+    self.pushButton_3.setText(_translate("MainWindow", "Load Live Data", None))
     self.refYPos.setToolTip(_translate("MainWindow", "Center of region used for extraction", None))
     self.label_3.setToolTip(_translate("MainWindow", "Y Pixel Window", None))
     self.label_3.setText(_translate("MainWindow", "Y", None))

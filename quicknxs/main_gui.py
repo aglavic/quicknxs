@@ -23,7 +23,8 @@ from .point_picker import PointPicker
 from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, \
+                     GISANS, DETECTOR_X_REGION, XMLData
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
 from .version import str_version
@@ -336,7 +337,10 @@ class MainGUI(QtGui.QMainWindow):
     for i in range(len(self.channels), 12):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
     self.active_data=data
-    self.last_mtime=os.path.getmtime(filename)
+    try:
+      self.last_mtime=os.path.getmtime(filename)
+    except OSError:
+      pass
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
 
@@ -357,6 +361,18 @@ class MainGUI(QtGui.QMainWindow):
     if do_plot:
       self.initiateProjectionPlot.emit(False)
       self.initiateReflectivityPlot.emit(False)
+
+  def live_open(self):
+    '''
+    Load data from current run stored in special xml format. Use binning from any direct
+    beam measurement available.
+    '''
+    tof_overwrite=None
+    if self.active_data is not None:
+      tof_overwrite=self.active_data[0].tof_edges
+    data=XMLData(instrument.LIVE_DATA, event_tof_overwrite=tof_overwrite, use_caching=False)
+    self._fileOpenDone(data, 'LiveData', do_plot=True)
+
 
   def empty_cache(self):
     """
