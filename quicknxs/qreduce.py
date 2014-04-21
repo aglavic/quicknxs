@@ -23,6 +23,7 @@ from numpy import *
 from numpy.version import version as npversion
 from platform import node
 from time import time, strptime, mktime
+from mantid.simpleapi import *
 # ignore zero devision error
 #seterr(invalid='ignore')
 
@@ -259,30 +260,13 @@ class NXSData(object):
       if self._options['callback']:
         self._options['callback'](0.)
       try:
-        nxs=h5py.File(filename, mode='r')
+#        nxs=h5py.File(filename, mode='r')
+        nxs = LoadEventNexus(Filename=str(filename))
       except IOError:
         debug('Could not read nxs file %s'%filename, exc_info=True)
         return False
 
-      #channels = ['entry']
-      #nxs=self._get_ancient(filename)
-      #channels=nxs.keys()
-      #channels.sort()
-      #is_ancient=True
 
-      #for channel in list(channels):
-        #debug(str(nxs[channel][u'total_counts'].value[0]))
-        #if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
-          #channels.remove(channel)
-      #if len(channels)==0:
-        #debug('No valid channels in file')
-        #return False
-      #ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
-      #pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
-      #try:
-        #smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
-      #except KeyError:
-        #smpt=0.
   
       ## select the type of measurement that has been used
       #if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
@@ -330,6 +314,8 @@ class NXSData(object):
           #continue
         #raw_data=nxs[channel]
         #if filename.endswith('event.nxs'):
+        
+      return True
 
       raw_data = nxs['entry']
       data=LRDataset.from_event(raw_data, self._options,
