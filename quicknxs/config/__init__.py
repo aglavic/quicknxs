@@ -17,7 +17,7 @@
   For example the module "user1" could look like this::
     
     # module docstring
-    config_file="user"
+    config_file="user1"
     CONST1=12.3
     CONST2=431.2
     opt1=12
