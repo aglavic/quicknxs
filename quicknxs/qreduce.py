@@ -267,6 +267,7 @@ class NXSData(object):
         return False
 
 
+      print 'test'
   
       ## select the type of measurement that has been used
       #if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
