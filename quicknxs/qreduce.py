@@ -266,59 +266,7 @@ class NXSData(object):
         debug('Could not read nxs file %s'%filename, exc_info=True)
         return False
 
-
-  
-      ## select the type of measurement that has been used
-      #if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
-        #if channels[0] in [m[1] for m in MAPPING_12FULL]:
-          #self.measurement_type='Polarization Analysis w/E-Field'
-          #mapping=list(MAPPING_12FULL)
-        #else:
-          #self.measurement_type='Polarization Analysis'
-          #mapping=list(MAPPING_FULLPOL)
-      #elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
-           #abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
-        #if channels[0] in [m[1] for m in MAPPING_12HALF]:
-          #self.measurement_type='Polarized w/E-Field'
-          #mapping=list(MAPPING_12HALF)
-        #else:
-          #self.measurement_type='Polarized'
-          #mapping=list(MAPPING_HALFPOL)
-      #elif 'DASlogs' in nxs[channels[0]] and \
-            #nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
-            #channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
-        #self.measurement_type='Electric Field'
-        #mapping=list(MAPPING_EFIELD)
-      #elif len(channels)==1:
-        #self.measurement_type='Unpolarized'
-        #mapping=list(MAPPING_UNPOL)
-      #else:
-        #self.measurement_type='Unknown'
-        #mapping=[]
-      ## check that all channels have a mapping entry
-      #for channel in channels:
-        #if not channel in [m[1] for m in mapping]:
-          #mapping.append((channel.lstrip('entry-'), channel))
-  
-      ## get runtime for event mode splitting
-      #total_duration=time_from_header('', nxs=nxs)
-  
-      #progress=0.1
-      #if self._options['callback']:
-        #self._options['callback'](progress)
-      #self._read_times.append(time()-start)
-      #i=1
-      #empty_channels=[]
-      #for dest, channel in mapping:
-        #if channel not in channels:
-          #continue
-        #raw_data=nxs[channel]
-        #if filename.endswith('event.nxs'):
-        
-      return True
-
-      raw_data = nxs['entry']
-      data=LRDataset.from_event(raw_data, self._options,
+      data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
 
       return True
@@ -1124,15 +1072,20 @@ class LRDataset(object):
   proton_charge=0. #: total proton charge on target [pC]  
   lambda_requested=0
   lambda_requested_units=''
-  thi=0 # rad
-  tthd=0 #rad
+  thi=0 
+  thi_units=''
+  tthd=0
+  tthd_units = ''
   S1W=0 # slit 1 width
   S2W=0 # slit 2 width
   S1H=0 # slit 1 height
   S2H=0 # slit 2 height
   dMS=0 # distance Moderator-Sample
+  dMS_units = ''
   dSD=0 # distance Sample-Detector
+  dSD_units = ''
   dMD=0 # distance Moderator-Detector
+  dMD_units = ''
 
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
@@ -1209,7 +1162,7 @@ class LRDataset(object):
 
   @classmethod
   @log_call
-  def from_event(cls, data, read_options,
+  def from_event(cls, nxs, read_options,
                  callback=None, callback_offset=0., callback_scaling=1.,
                  total_duration=None,
                  tof_overwrite=None):
@@ -1224,7 +1177,7 @@ class LRDataset(object):
     output.from_event_mode=True
     bin_type=0
     #bins=read_options['bins']
-    output._collect_info(data)
+    output._collect_info(nxs)
 
     #import mantid
     return None
@@ -1349,24 +1302,23 @@ class LRDataset(object):
                               callback, callback_offset, callback_scaling, split_idx+cbidx)
     return left_list+right_list
 
-  def _collect_info(self, data):
+  def _collect_info(self, nxs):
     '''
     Extract header information from the HDF5 file.
     
     :param h5py._hl.group.Group data:
     '''
-    self.origin=(os.path.abspath(data.file.filename), data.name.lstrip('/'))
-    self.logs=NiceDict()
-    self.log_minmax=NiceDict()
-    self.log_units=NiceDict()
-
-    self.thi = data['DASlogs/thi/value'].value[0]
-    self.tthd = data['DASlogs/tthd/value'].value[0]
-    self.S1W = data['DASlogs/S1HWidth/value'].value[0]
-    self.S2W = data['DASlogs/S2HWidth/value'].value[0]
-    self.S1H = data['DASlogs/S1VHeight/value'].value[0]
-    self.S2H = data['DASlogs/S2VHeight/value'].value[0]    
-    self.lambda_requested = data['DASlogs/LambdaRequest/value'].value[0]
+    mt_run = nxs.getRun()
+    self.lambda_requested = mt_run.getProperty('LambdaRequest').value
+    self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units
+    self.thi = mt_run.getProperty('thi').value[0]
+    self.thi_units = mt_run.getProperty('thi').units
+    self.tthd = mt_run.getProperty('tthd').value[0]
+    self.tthd_units = mt_run.getProperty('tthd').units
+    self.S1W = mt_run.getProperty('S1HWidth').value
+    self.S2W = mt_run.getProperty('S2HWidth').value
+    self.S1H = mt_run.getProperty('S1VHeight').value
+    self.S2H = mt_run.getProperty('S2VHeight').value
 
   def __repr__(self):
     if type(self.origin) is tuple:
