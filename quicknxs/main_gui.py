@@ -8,7 +8,8 @@ import sys
 from glob import glob
 from numpy import where, pi, newaxis, log10
 from matplotlib.lines import Line2D
-from PyQt4 import QtGui, QtCore, QtWebKit
+from PyQt4 import QtGui, QtCore
+# from PyQt4 import QtWebkit
 
 #from logging import info, debug
 from .advanced_background import BackgroundDialog
