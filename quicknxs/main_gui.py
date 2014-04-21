@@ -9,7 +9,11 @@ from glob import glob
 from numpy import where, pi, newaxis, log10
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
+<<<<<<< HEAD
 #QtWebKit
+=======
+# from PyQt4 import QtWebkit
+>>>>>>> e9548b3627656bfee6772891f36e0bcf1d68f69b
 
 #from logging import info, debug
 from .advanced_background import BackgroundDialog

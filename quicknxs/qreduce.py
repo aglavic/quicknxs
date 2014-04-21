@@ -1226,6 +1226,7 @@ class LRDataset(object):
     #bins=read_options['bins']
     output._collect_info(data)
 
+    #import mantid
     return None
 
     if tof_overwrite is None:
