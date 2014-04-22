@@ -8,7 +8,7 @@ from logging import debug, info #@Reimport
 from .decorators import log_input, log_both
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
-from .qreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
+from .qreduce import Reflectivity, MRDataset
 
 # used for * imports
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',
@@ -116,13 +116,13 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   pix_position=dp-(ai*2-tth_bank)/rad_per_pixel
 
   # locate peaks using CWT peak finder algorithm
-  pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
-                xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
+  pf=PeakFinder(arange(data.active_area_x[1]-data.active_area_x[0]),
+                xproj[data.active_area_x[0]:data.active_area_x[1]])
   # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
   peaks=pf.get_peaks(snr=snr, min_width=min_width, max_width=max_width,
                      ridge_length=ridge_length)
   try:
-    x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
+    x_peaks=array([p[0] for p in peaks])+data.active_area_x[0]
     wpeaks=array([p[1] for p in peaks])
     delta_pix=abs(pix_position-x_peaks)
     x_peak=x_peaks[delta_pix==delta_pix.min()][0]

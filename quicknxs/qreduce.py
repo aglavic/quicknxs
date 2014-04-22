@@ -35,8 +35,6 @@ from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
-DETECTOR_X_REGION=(8, 295) # the active area of the detector
-DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
@@ -699,6 +697,8 @@ class MRDataset(object):
   _Q=None
   _I=None
   _dI=None
+  _active_area_x=None #: active pixels for x direction
+  _active_area_y=None #: active pixels for y direction
 
   def __init__(self):
     '''
@@ -929,6 +929,7 @@ class MRDataset(object):
                                 callback, callback_offset, callback_scaling/len(tof_edges)))
     return result.transpose((1, 2, 0))
 
+  #TODO: Implement this for arbitrary detector size
   @staticmethod
   def devide_bin(tof_ids, tof_time, tof_edges, 
                  callback=None, callback_offset=0., callback_scaling=1., cbidx=0):
@@ -1040,6 +1041,11 @@ class MRDataset(object):
     self.experiment=str(data['experiment_identifier'].value[0])
     self.number=int(data['run_number'].value[0])
     self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
+
+    detector_id=str(data['instrument/SNSgeometry_file_name'].value[0])
+    if detector_id in instrument.DETECTOR_REGION:
+      self.active_area_x=instrument.DETECTOR_REGION[detector_id][0]
+      self.active_area_y=instrument.DETECTOR_REGION[detector_id][1]
   
   @staticmethod
   def _getxml_data(xml):
@@ -1174,6 +1180,26 @@ class MRDataset(object):
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
+  @property
+  def active_area_x(self):
+    if self._active_area_x is None:
+      return (0, self.xydata.shape[1])
+    else:
+      return self._active_area_x
+  @active_area_x.setter
+  def active_area_x(self, value):
+    self._active_area_x=value
+
+  @property
+  def active_area_y(self):
+    if self._active_area_y is None:
+      return (0, self.xydata.shape[1])
+    else:
+      return self._active_area_y
+  @active_area_y.setter
+  def active_area_y(self, value):
+    self._active_area_y=value
+
   def get_tth(self, dangle0=None, dpix=None):
     '''
     Return the tth values corresponding to each x-pixel.
@@ -1184,7 +1210,7 @@ class MRDataset(object):
       dpix=self.dpix
     x=self.x
     grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
-    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
+    tth0=(self.dangle-dangle0)-(x.shape[0]-dpix)*grad_per_pixel
     tth_range=x[::-1]*grad_per_pixel
     return tth0+tth_range
 
@@ -1830,7 +1856,8 @@ class OffSpecular(Reflectivity):
     debug('Off-Specular region: %s'%str(reg))
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
-    xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
+    xtth=self.options['dpix']-arange(data.shape[0])[dataset.active_area_x[0]:
+                                                    dataset.active_area_x[1]]
     pix_offset_spec=self.options['dpix']-x_pos
     tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
@@ -1857,7 +1884,7 @@ class OffSpecular(Reflectivity):
     self.kf_z=k[newaxis, :]*sin(af)[:, newaxis]
 
     # calculate ROI intensities and normalize by number of points
-    Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3], :]
+    Idata=data[dataset.active_area_x[0]:dataset.active_area_x[1], reg[2]:reg[3], :]
     self.Iraw=Idata.sum(axis=1)
     self.dIraw=sqrt(self.Iraw)
     # normalize data by width in y and multiply scaling factor
@@ -1941,12 +1968,14 @@ class GISANS(Reflectivity):
     scale=self.options['scale']/dataset.proton_charge # scale by user factor
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
-    xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
+    xtth=self.options['dpix']-arange(data.shape[0])[dataset.active_area_x[0]:
+                                                    dataset.active_area_x[1]]
     pix_offset_spec=self.options['dpix']-x_pos
     tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
-    phi=(arange(data.shape[1])[DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1]]-y_pos)*rad_per_pixel
+    phi=(arange(data.shape[1])[dataset.active_area_y[0]:
+                               dataset.active_area_y[1]]-y_pos)*rad_per_pixel
     debug('alpha_i=%s'%(tth_spec/2.))
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
@@ -1962,8 +1991,8 @@ class GISANS(Reflectivity):
     # calculate ROI intensities and normalize by number of points
     P0=len(self.tof)-self.options['P0']
     PN=self.options['PN']
-    Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1],
-               DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1],
+    Idata=data[dataset.active_area_x[0]:dataset.active_area_x[1],
+               dataset.active_area_y[0]:dataset.active_area_y[1],
                PN:P0]
     # calculate reciprocal space, incident and outgoing perpendicular wave vectors
     self.Qx=k[newaxis, newaxis, PN:P0]*(cos(phi)*cos(af)[:, newaxis]-cos(ai)[:, newaxis])[:, :, newaxis]

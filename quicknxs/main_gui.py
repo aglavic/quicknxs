@@ -24,7 +24,7 @@ from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
 from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, \
-                     GISANS, DETECTOR_X_REGION, XMLData
+                     GISANS, XMLData
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
 from .version import str_version
@@ -144,8 +144,8 @@ class MainGUI(QtGui.QMainWindow):
     self.trigger=DelayedTrigger()
     self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
-    self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
-    self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
+    self.ui.bgCenter.setValue((instrument.START_BG[0]+instrument.START_BG[1])/2.)
+    self.ui.bgWidth.setValue((instrument.START_BG[1]-instrument.START_BG[0]))
 
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -456,7 +456,7 @@ class MainGUI(QtGui.QMainWindow):
       phi_range=xy.shape[0]*rad_per_pixel*180./pi
       tth_range=xy.shape[1]*rad_per_pixel*180./pi
       phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*rad_per_pixel*180./pi
+      tth0=(data.dangle-data.dangle0)-(xy.shape[1]-data.dpix)*rad_per_pixel*180./pi
       self.ui.xy_overview.clear()
       if self.overview_lines is None:
         self.overview_lines=[]
@@ -557,7 +557,7 @@ class MainGUI(QtGui.QMainWindow):
         phi_range=datai.shape[0]*rad_per_pixel*180./pi
         tth_range=datai.shape[1]*rad_per_pixel*180./pi
         phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(datai.shape[1]-dataset.dpix)*rad_per_pixel*180./pi
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, origin='lower',
@@ -662,7 +662,9 @@ class MainGUI(QtGui.QMainWindow):
     yxlim=(0, len(yproj)-1)
     yylim=(yproj[yproj>0].min(), yproj.max()*2)
 
-    if self._x_projection is None:
+    if self._x_projection is None or len(self._x_projection.get_xdata())!=xproj.shape[0]:
+      self.ui.x_project.clear_fig()
+      self.ui.y_project.clear_fig()
       self._x_projection=self.ui.x_project.plot(xproj, color='blue')[0]
       self.ui.x_project.set_xlabel(u'x [pix]')
       self.ui.x_project.set_ylabel(u'I$_{max}$')
