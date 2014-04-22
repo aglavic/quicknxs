@@ -189,6 +189,10 @@ class NXSData(object):
 
   @log_both
   def __new__(cls, filename, **options):
+
+    print 'in NXSdata'
+    print cls.DEFAULT_OPTIONS["bins"]
+
     if type(filename) is int:
       fn=locate_file(filename)
       if fn is None:
@@ -1179,7 +1183,10 @@ class LRDataset(object):
     #bins=read_options['bins']
     output._collect_info(nxs)
 
-    #import mantid
+    tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
+    tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
+
+
     return None
 
     if tof_overwrite is None:
@@ -1319,6 +1326,25 @@ class LRDataset(object):
     self.S2W = mt_run.getProperty('S2HWidth').value
     self.S1H = mt_run.getProperty('S1VHeight').value
     self.S2H = mt_run.getProperty('S2VHeight').value
+
+    sample = nxs.getInstrument().getSample()
+    source = nxs.getInstrument().getSource()
+    self.dMS = sample.getDistance(source) 
+    
+    #create array of distances pixel->sample
+    dPS_array = zeros((256,304))
+    for x in range(304):
+      for y in range(256):
+        _index = 256 * x + y
+        detector = nxs.getDetector(_index)
+        dPS_array[y,x] = sample.getDistance(detector)
+        
+    # array of distances pixel->source
+    dMP_array = dPS_array + self.dMS
+    # distance sample->center of detector
+    self.dSD = dPS_array[256/2, 304/2]
+    # distance source->center of detector
+    self.dMD = self.dSD + self.dMS
 
   def __repr__(self):
     if type(self.origin) is tuple:
