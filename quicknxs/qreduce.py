@@ -190,9 +190,6 @@ class NXSData(object):
   @log_both
   def __new__(cls, filename, **options):
 
-    print 'in NXSdata'
-    print cls.DEFAULT_OPTIONS["bins"]
-
     if type(filename) is int:
       fn=locate_file(filename)
       if fn is None:
@@ -1185,69 +1182,17 @@ class LRDataset(object):
 
     tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
     tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
-
-
-    return None
-
-    if tof_overwrite is None:
-      lcenter=data['DASlogs/LambdaRequest/value'].value[0]
-      # ToF region for this specific central wavelength
-      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
-      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
-      if bin_type==0: # constant Δλ
-        tof_edges=linspace(tmin, tmax, bins+1)
-      elif bin_type==1: # constant ΔQ
-        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
-      elif bin_type==2: # constant Δλ/λ
-        tof_edges=tmin*(((tmax/tmin)**(1./bins))**arange(bins+1))
-      else:
-        raise ValueError, 'Unknown bin type %i'%bin_type
-    else:
-      tof_edges=tof_overwrite
-
-    # Histogram the data
-    # create ToF edges for the binning and correlate pixel indices with pixel position
-    tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
-    tof_time=data['bank1_events/event_time_offset'].value
-    # read the corresponding proton charge of each pulse
-    tof_pc=data['DASlogs/proton_charge/value'].value
-    if read_options['event_split_bins']:
-      split_bins=read_options['event_split_bins']
-      split_index=read_options['event_split_index']
-      # read the relative time in seconds from measurement start to event
-      tof_real_time=data['bank1_events/event_time_zero'].value
-      tof_idx_to_id=data['bank1_events/event_index'].value
-      if total_duration is None:
-        split_step=float(tof_real_time[-1]+0.01)/split_bins
-      else:
-        split_step=float(total_duration+0.01)/split_bins
-      try:
-        start_id, stop_id=where(((tof_real_time>=(split_index*split_step))&
-                                 (tof_real_time<((split_index+1)*split_step))))[0][[0,-1]]
-      except IndexError:
-        debug('No pulses in selected range')
-        return None
-
-      if start_id==0:
-        start_idx=0
-      else:
-        start_idx=tof_idx_to_id[start_id-1]
-      stop_idx=tof_idx_to_id[stop_id]
-      debug('Event split with %.1f<=t<%.1f yielding pulse/tof indices: [%i:%i]/[%i:%i]'
-            %((split_index*split_step), ((split_index+1)*split_step),
-              start_id, stop_id+1, start_idx, stop_idx)
-            )
-      tof_pc=tof_pc[start_id:stop_id+1]
-
-      tof_ids=tof_ids[start_idx:stop_idx]
-      tof_time=tof_time[start_idx:stop_idx]
-      # correct the total count value for the number of neutrons in the selected range
-      output.total_counts=tof_time.shape[0]
-      if output.total_counts==0:
-        debug('No counts in selected range')
-        return None
-    # calculate total proton charge in the selected area
-    output.proton_charge=tof_pc.sum()
+    tbin = int(read_options["bins"])
+    
+    params = [float(tmin), float(tbin), float(tmax)]
+    nxs_histo = Rebin(InputWorkspace=nxs,Params=params, PreserveEvents=True)
+    
+    output.proton_charge = nxs.getRun().getProperty('gd_prtn_chrg').value
+    
+    
+    
+  
+    
     Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges,
                               callback, callback_offset, callback_scaling)
 
