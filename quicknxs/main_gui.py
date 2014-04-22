@@ -1558,7 +1558,7 @@ class MainGUI(QtGui.QMainWindow):
     if data is None:
       data=self.active_data[self.active_channel]
     for index, norm in sorted(self.ref_norm.items()):
-      if len(norm.Rraw)==len(data.tof) and norm.lambda_center==data.lambda_center:
+      if len(norm.Rraw)==len(data.tof) and round(norm.lambda_center-data.lambda_center, 3)==0.:
         fittings.append(norm)
         indices.append(str(index))
     if len(fittings)==0:

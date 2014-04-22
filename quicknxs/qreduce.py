@@ -259,7 +259,7 @@ class NXSData(object):
     # analyze channels
     channels=nxs.keys()
     debug('Channels in file: '+repr(channels))
-    if channels==['entry']:
+    if channels==['entry'] and 'DASlogs' not in nxs[channels[0]]:
       # ancient file format with polarizations in different files
       nxs=self._get_ancient(filename)
       channels=nxs.keys()
