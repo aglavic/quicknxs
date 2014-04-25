@@ -1070,7 +1070,8 @@ class LRDataset(object):
   slit3_dist=714. #: last slit to sample distance [mm]
 
   # metadata
-  proton_charge=0. #: total proton charge on target [pC]  
+  proton_charge=0. #: total proton charge on target [pC] 
+  proton_charge_units='' 
   lambda_requested=0
   lambda_requested_units=''
   thi=0 
@@ -1184,11 +1185,14 @@ class LRDataset(object):
     tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
     tbin = int(read_options["bins"])
     
+    # rebin event nexus to get histogram
     params = [float(tmin), float(tbin), float(tmax)]
     nxs_histo = Rebin(InputWorkspace=nxs,Params=params, PreserveEvents=True)
     
     output.proton_charge = nxs.getRun().getProperty('gd_prtn_chrg').value
+    output.proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
     
+    # keep only the TOF range requested
     
     
   
