@@ -5,7 +5,7 @@ for fname in designer/*.ui; do
   name=${name#designer/*}
   if [ "designer/$name.ui" -nt "quicknxs/$name.py" ] || [ ! -f "quicknxs/$name.py" ]; then 
     echo "$name.ui"
-    ./pyuic4 --from-imports -i 2 "designer/$name.ui" -o "quicknxs/$name.py"
+   ./pyuic4 --from-imports -i 2 "designer/$name.ui" -o "quicknxs/$name.py"
   fi
 done
 if [ "icons/icons.qrc" -nt "quicknxs/icons_rc.py" ]; then 

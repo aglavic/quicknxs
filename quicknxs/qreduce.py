@@ -1193,9 +1193,10 @@ class LRDataset(object):
     output.proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
     
     # keep only the TOF range requested
-    
+    Ixyt = LRDataset.getIxyt(nxs_histo)
     
   
+    return None
     
     Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges,
                               callback, callback_offset, callback_scaling)
@@ -1209,6 +1210,16 @@ class LRDataset(object):
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.xtofdata=Ixt.astype(float) # 2D dataset
     return output
+
+  @staticmethod
+  def getIxyt(nxs_histo):
+    '''
+    will format the histogrma NeXus to retrieve the right 3D data set
+    '''
+    
+
+    return None
+    
 
   @staticmethod
   def bin_events(tof_ids, tof_time, tof_edges,
