@@ -752,7 +752,7 @@ p, li { white-space: pre-wrap; }
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
-           <widget class="QLineEdit" name="lineEdit_4">
+           <widget class="QLineEdit" name="lineEdit_lowResMin">
             <property name="geometry">
              <rect>
               <x>85</x>
@@ -760,6 +760,9 @@ p, li { white-space: pre-wrap; }
               <width>61</width>
               <height>27</height>
              </rect>
+            </property>
+            <property name="text">
+             <string>100</string>
             </property>
            </widget>
            <widget class="QLabel" name="label_39">
@@ -778,7 +781,7 @@ p, li { white-space: pre-wrap; }
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
-           <widget class="QLineEdit" name="lineEdit_5">
+           <widget class="QLineEdit" name="lineEdit_lowResMax">
             <property name="geometry">
              <rect>
               <x>85</x>
@@ -786,6 +789,9 @@ p, li { white-space: pre-wrap; }
               <width>61</width>
               <height>27</height>
              </rect>
+            </property>
+            <property name="text">
+             <string>200</string>
             </property>
            </widget>
           </widget>
@@ -1614,357 +1620,6 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="OffSpec_Tab">
-        <attribute name="title">
-         <string>OffSpec Preview</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Off-Specular scattering intensity preview for all files in the reduction list</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_5">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="2" column="1">
-          <widget class="QFrame" name="frame_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_15">
-            <item>
-             <widget class="MPLWidget" name="offspec_mm" native="true"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QFrame" name="frame_2">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="MPLWidget" name="offspec_pm" native="true"/>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="offspec_mp" native="true"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QFrame" name="frame_3">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_14">
-            <item>
-             <widget class="MPLWidget" name="offspec_pp" native="true"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QRadioButton" name="kizmkfzVSqz">
-             <property name="text">
-              <string>(ki_z-kf_z) VS. Qz</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="qxVSqz">
-             <property name="text">
-              <string>Qx VS. Qz</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="kizVSkfz">
-             <property name="text">
-              <string>ki_z VS. kf_z</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_9">
-           <item>
-            <widget class="QLabel" name="label_21">
-             <property name="text">
-              <string>Imin 10^</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="offspecImin">
-             <property name="decimals">
-              <number>2</number>
-             </property>
-             <property name="minimum">
-              <double>-20.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>2.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.250000000000000</double>
-             </property>
-             <property name="value">
-              <double>-6.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="clipOffspec">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Clip</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_22">
-             <property name="text">
-              <string>Imax 10^</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="offspecImax">
-             <property name="minimum">
-              <double>-10.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.250000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="gisansTab">
-        <attribute name="title">
-         <string>GISANS Preview</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_13">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="PersistentFrame" name="frame_gisans_pp">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>1</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_20">
-            <item>
-             <widget class="MPLWidget" name="gisans_pp" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="PersistentFrame" name="frame_gisans_mm">
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_21">
-            <item>
-             <widget class="MPLWidget" name="gisans_mm" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>1</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="PersistentFrame" name="frame_gisans_sf">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>1</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="MPLWidget" name="gisans_pm" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>150</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="MPLWidget" name="gisans_mp" native="true">
-              <property name="minimumSize">
-               <size>
-                <width>150</width>
-                <height>105</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_14">
-           <item>
-            <widget class="QLabel" name="label_16">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Imin 10^</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="gisansImin">
-             <property name="minimum">
-              <double>-20.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>2.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.250000000000000</double>
-             </property>
-             <property name="value">
-              <double>-6.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_32">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Imax 10^</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="gisansImax">
-             <property name="minimum">
-              <double>-20.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>2.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.250000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="daslogTab">
         <attribute name="title">
          <string>DAS Logs</string>
@@ -2730,14 +2385,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>tthPhi</tabstop>
   <tabstop>plotTab</tabstop>
   <tabstop>reduceButton</tabstop>
-  <tabstop>kizmkfzVSqz</tabstop>
-  <tabstop>qxVSqz</tabstop>
-  <tabstop>kizVSkfz</tabstop>
-  <tabstop>offspecImin</tabstop>
-  <tabstop>offspecImax</tabstop>
-  <tabstop>clipOffspec</tabstop>
-  <tabstop>gisansImin</tabstop>
-  <tabstop>gisansImax</tabstop>
   <tabstop>daslogTableBox</tabstop>
  </tabstops>
  <resources>
@@ -2905,54 +2552,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>kizVSkfz</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>plotActiveTab()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qxVSqz</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>plotActiveTab()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>kizmkfzVSqz</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>plotActiveTab()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionReduce</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -3065,70 +2664,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>offspecImin</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>change_offspec_colorscale()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>113</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>510</x>
-     <y>0</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>offspecImax</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>change_offspec_colorscale()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>113</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>774</x>
-     <y>0</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>gisansImin</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>change_gisans_colorscale()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>0</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>gisansImax</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>change_gisans_colorscale()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>739</x>
-     <y>0</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionOpen_Compare_Window</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -3157,22 +2692,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>622</x>
      <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clipOffspec</sender>
-   <signal>pressed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>clip_offspec_colorscale()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>364</x>
-     <y>113</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>862</x>
-     <y>0</y>
     </hint>
    </hints>
   </connection>

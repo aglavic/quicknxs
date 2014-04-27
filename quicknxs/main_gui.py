@@ -301,6 +301,8 @@ class MainGUI(QtGui.QMainWindow):
       event_split_bins=None
       event_split_index=0      
       bin_type=0
+      low_res_px_min = self.ui.lineEdit_lowResMin.text()
+      print low_res_px_min
 
     self._norm_selected=None
     info(u"Reading file %s..."%(filename))
