@@ -172,7 +172,7 @@ class NXSData(object):
   __metaclass__=OptionsDocMeta
 
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
-                       event_split_bins=None, event_split_index=0,
+                       event_split_bins=None, event_split_index=0, low_res_range=[0,200000],
                        event_tof_overwrite=None)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
@@ -180,6 +180,7 @@ class NXSData(object):
     use_caching='If files should be cached for faster future readouts (last 20 files)',
     event_split_bins='Number of items, to split the events in time or None for no splitting',
     event_split_index='Index of the splitted item to be returned, when event_split_bin is not None',
+    low_res_range='Pixel range of the low resolution axis (0->304 for the REF_L)',
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
     callback='Function called to update e.g. a progress bar',
     )
@@ -1195,6 +1196,7 @@ class LRDataset(object):
     # keep only the TOF range requested
     Ixyt = LRDataset.getIxyt(nxs_histo)
     
+  
   
     return None
     

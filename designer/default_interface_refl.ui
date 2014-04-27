@@ -14,7 +14,7 @@
    <string>QuickNXS REF_L</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../icons/icons.qrc">
     <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
   </property>
   <property name="toolButtonStyle">
@@ -1997,7 +1997,7 @@ p, li { white-space: pre-wrap; }
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/document-open.png</normaloff>:/General/document-open.png</iconset>
    </property>
    <property name="text">
@@ -2012,7 +2012,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNext_File">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/listDown.png</normaloff>:/General/listDown.png</iconset>
    </property>
    <property name="text">
@@ -2027,7 +2027,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPrevious_File">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/listUp.png</normaloff>:/General/listUp.png</iconset>
    </property>
    <property name="text">
@@ -2042,7 +2042,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNorm">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/extractNormalization.png</normaloff>:/General/extractNormalization.png</iconset>
    </property>
    <property name="text">
@@ -2057,7 +2057,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionAddPlot">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/addRef.png</normaloff>:/General/addRef.png</iconset>
    </property>
    <property name="text">
@@ -2072,7 +2072,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionClear">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/clearRef.png</normaloff>:/General/clearRef.png</iconset>
    </property>
    <property name="text">
@@ -2087,7 +2087,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionAdjust_Dirct_Beam">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/tthZero.png</normaloff>:/General/tthZero.png</iconset>
    </property>
    <property name="text">
@@ -2099,7 +2099,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNormalizeScaling">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/totalReflection.png</normaloff>:/General/totalReflection.png</iconset>
    </property>
    <property name="text">
@@ -2114,7 +2114,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRemove">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/delRef.png</normaloff>:/General/delRef.png</iconset>
    </property>
    <property name="text">
@@ -2126,7 +2126,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionReduce">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/reduce.png</normaloff>:/General/reduce.png</iconset>
    </property>
    <property name="text">
@@ -2154,7 +2154,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/limitYauto.png</normaloff>:/General/limitYauto.png</iconset>
    </property>
    <property name="text">
@@ -2172,7 +2172,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/fitXPos.png</normaloff>:/General/fitXPos.png</iconset>
    </property>
    <property name="text">
@@ -2197,7 +2197,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionClear_Normalizations">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/clearNorm.png</normaloff>:/General/clearNorm.png</iconset>
    </property>
    <property name="text">
@@ -2233,7 +2233,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCut_Points">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/cutPoints.png</normaloff>:/General/cutPoints.png</iconset>
    </property>
    <property name="text">
@@ -2248,7 +2248,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionAuto_Reflectivity">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/autoRef.png</normaloff>:/General/autoRef.png</iconset>
    </property>
    <property name="text">
@@ -2263,7 +2263,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionStrip_Overlap">
    <property name="icon">
-    <iconset>
+    <iconset resource="../icons/icons.qrc">
      <normaloff>:/General/stripOverlap.png</normaloff>:/General/stripOverlap.png</iconset>
    </property>
    <property name="text">
@@ -2388,7 +2388,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>daslogTableBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../../quicknxs-code-2014/icons/icons.qrc"/>
+  <include location="../icons/icons.qrc"/>
  </resources>
  <connections>
   <connection>

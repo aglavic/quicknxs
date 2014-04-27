@@ -22,7 +22,7 @@ def _run(argv=[]):
   from PyQt4.QtCore import Qt
   app=QApplication(argv)
   from quicknxs import icons_rc, version  #@UnusedImport
-  splash=QSplashScreen(QPixmap(u':/General/logo_hq.png'))
+  splash=QSplashScreen(QPixmap(u':/General/logo_refl_hq.png'))
   #splash.setStyleSheet("qproperty-alignment: AlignBottom;")
   splash.showMessage(u"""<html>
                           <div style="margin-bottom: 420;"> &nbsp;</div>

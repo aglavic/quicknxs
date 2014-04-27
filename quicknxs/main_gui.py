@@ -302,11 +302,13 @@ class MainGUI(QtGui.QMainWindow):
       event_split_index=0      
       bin_type=0
       low_res_px_min = self.ui.lineEdit_lowResMin.text()
-      print low_res_px_min
+      low_res_px_max = self.ui.lineEdit_lowResMax.text()
+      low_res_range = [low_res_px_min, low_res_px_max]
 
     self._norm_selected=None
     info(u"Reading file %s..."%(filename))
     data=NXSData(filename,
+          low_res_range=low_res_range,
           bin_type=bin_type,
           bins=self.ui.eventTofBins.value(),
           callback=self.updateEventReadout,
