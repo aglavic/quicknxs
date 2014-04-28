@@ -268,6 +268,7 @@ class NXSData(object):
         debug('Could not read nxs file %s'%filename, exc_info=True)
         return False
 
+#      print self._options['low_res_range']
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
 
@@ -1093,9 +1094,14 @@ class LRDataset(object):
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
   lambda_center=3.37 #: central wavelength of measurement band [Å]
+
   xydata=None #: 2D array of intensity projected on X-Y
-  xtofdata=None #: 2D array of intensity projected on X-ToF
-  data=None #: 3D array of intensity in X, Y and ToF
+  xtofdata=None #: 2D array of intensity projected on X-TOF
+  data=None #: 3D array of intensity in X, Y and TOF
+  xyerror=None #: 2D array of the error projected on X-Y
+  xtoferror=None #: 2D array of error projected on X-TOF
+  error=None #: 3D array of error in X, Y and TOF
+
   logs={} #: Log information of instrument parameters
   log_units={} #: Units of the parameters given in logs
   experiment='' #: Name of the experiment
@@ -1190,38 +1196,63 @@ class LRDataset(object):
     params = [float(tmin), float(tbin), float(tmax)]
     nxs_histo = Rebin(InputWorkspace=nxs,Params=params, PreserveEvents=True)
     
+    # normalize by proton charge
+    nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
+    
     output.proton_charge = nxs.getRun().getProperty('gd_prtn_chrg').value
     output.proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
     
-    # keep only the TOF range requested
-    Ixyt = LRDataset.getIxyt(nxs_histo)
+    # retrieve 3D array
+    [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
     
-  
-  
-    return None
+    # keep only the low resolution range requested
+    low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
+    from_pixel = min(low_res_range)
+    to_pixel = max(low_res_range)
+        
+    Ixyt = Ixyt[from_pixel:to_pixel,:,:]
+    Exyt = Exyt[from_pixel:to_pixel,:,:]
     
-    Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges,
-                              callback, callback_offset, callback_scaling)
-
     # create projections for the 2D datasets
-    Ixy=Ixyt.sum(axis=2)
-    Ixt=Ixyt.sum(axis=1)
+    Ixy = Ixyt.sum(axis=2)
+    Ixt = Ixyt.sum(axis=1)
+    Exy = Exyt.sum(axis=2)
+    Ext = Exyt.sum(axis=1)
+    
     # store the data
-    output.tof_edges=tof_edges
+#    output.tof_edges=tof_edges
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.xtofdata=Ixt.astype(float) # 2D dataset
+    output.error=Exyt.astype(float)
+    output.xyerror=Exy.transpose().astype(float)
+    output.xtoferror=Ext.astype(float)
+
     return output
 
   @staticmethod
   def getIxyt(nxs_histo):
     '''
-    will format the histogrma NeXus to retrieve the right 3D data set
+    will format the histogrma NeXus to retrieve the full 3D data set
     '''
+    _tof_axis = nxs_histo.readX(0)[:].copy()
+    nbr_tof = len(_tof_axis)
+        
+    _y_axis = zeros((304, 256, nbr_tof-1))
+    _y_error_axis = zeros((304, 256, nbr_tof-1))
     
+    x_range = range(304)
+    y_range = range(256)
+        
+    for x in x_range:
+      for y in y_range:
+        _index = int(256*x+y)
+        _tmp_data = nxs_histo.readY(_index)[:].copy()
+        _y_axis[x,y,:] = _tmp_data
+        _tmp_error = nxs_histo.readE(_index)[:].copy()
+        _y_error_axis[x,y,:] = _tmp_error
 
-    return None
-    
+    return [_tof_axis, _y_axis, _y_error_axis]    
 
   @staticmethod
   def bin_events(tof_ids, tof_time, tof_edges,
