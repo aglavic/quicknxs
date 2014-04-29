@@ -220,6 +220,9 @@ class NXSData(object):
 
     if not self._read_file(filename):
       return None
+
+    print 'so far so good in NXSData __new__'
+    
     if all_options['use_caching']:
       if filename in cached_names:
         cache_index=cached_names.index(filename)
@@ -248,9 +251,9 @@ class NXSData(object):
     :param str filename: Path to file to read
     '''
     if instrument.NAME == 'REF_M':
-      self._read_REFM_file(filename)
+      return self._read_REFM_file(filename)
     else:
-      self._read_REFL_file(filename)
+      return self._read_REFL_file(filename)
 
   def _read_REFL_file(self, filename):
       '''
@@ -272,8 +275,7 @@ class NXSData(object):
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
 
-      return True
-
+      
 
           #if data is None:
             ## no data in channel, don't add it
@@ -1185,7 +1187,8 @@ class LRDataset(object):
     output.read_options=read_options
     output.from_event_mode=True
     bin_type=0
-    #bins=read_options['bins']
+
+    # retrieve the metadata from the nexus file
     output._collect_info(nxs)
 
     tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
@@ -1216,17 +1219,17 @@ class LRDataset(object):
     # create projections for the 2D datasets
     Ixy = Ixyt.sum(axis=2)
     Ixt = Ixyt.sum(axis=1)
-    Exy = Exyt.sum(axis=2)
-    Ext = Exyt.sum(axis=1)
+   # Exy = Exyt.sum(axis=2)    # FIXME
+   # Ext = Exyt.sum(axis=1)    # FIXME
     
     # store the data
-#    output.tof_edges=tof_edges
+    output.tof_edges=_tof_axis
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.xtofdata=Ixt.astype(float) # 2D dataset
-    output.error=Exyt.astype(float)
-    output.xyerror=Exy.transpose().astype(float)
-    output.xtoferror=Ext.astype(float)
+   # output.error=Exyt.astype(float)
+   # output.xyerror=Exy.transpose().astype(float)
+   # output.xtoferror=Ext.astype(float)
 
     return output
 

@@ -314,7 +314,10 @@ class MainGUI(QtGui.QMainWindow):
           callback=self.updateEventReadout,
           event_split_bins=event_split_bins,
           event_split_index=event_split_index)
-    self._fileOpenDone(data, filename, do_plot)
+    if instrument.NAME == 'REF_M':
+      self._fileOpenDone(data, filename, do_plot)
+    else:
+      self._fileOpenDoneREFL(data, filename, do_plot)
 
   @log_input
   def fileOpenSum(self, filenames, do_plot=True):
@@ -336,6 +339,26 @@ class MainGUI(QtGui.QMainWindow):
       return
     self._fileOpenDone(data, filenames[0], do_plot)
 
+  @log_call
+  def _fileOpenDoneREFL(self, data=None, filename=None, do_plot=None):
+    '''
+    plot the REFL data
+    '''
+    if data is None:
+      self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
+      return
+    
+    self.active_data = data
+    
+    if do_plot:
+        self.initiateProjectionPlot.emit(False)
+#        self.initiateReflectivityPlot.emit(False)    
+    
+    
+    
+    
+    pass
+  
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
     base=os.path.basename(filename)
@@ -359,6 +382,7 @@ class MainGUI(QtGui.QMainWindow):
       getattr(self.ui, 'selectedChannel%i'%i).setText(channel)
     for i in range(len(self.channels), 12):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
+    
     self.active_data=data
     self.last_mtime=os.path.getmtime(filename)
     info(u"%s loaded"%(filename))
@@ -645,9 +669,18 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.active_data is None:
       return
-    data=self.active_data[self.active_channel]
+
+    if instrument.NAME=="REF_L":
+      data = self.active_data
+    else:
+      data=self.active_data[self.active_channel]
+
+    return
+
     xproj=data.xdata
     yproj=data.ydata
+    
+    return 
 
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
@@ -1387,32 +1420,43 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Write file metadata to the labels in the overview tab.
     '''
-    d=self.active_data[self.active_channel]
+    
+    if instrument.NAME == "REF_M":
 
-    try:
-      dangle0=u"%.3f° (%.3f°)"%(float(self.ui.dangle0Overwrite.text()), d.dangle0)
-    except ValueError:
-      dangle0=u"%.3f°"%(d.dangle0)
-    if self.ui.directPixelOverwrite.value()>=0:
-      dpix=u"%.1f (%.1f)"%(self.ui.directPixelOverwrite.value(), d.dpix)
-    else:
-      dpix=u"%.1f"%d.dpix
-    self.ui.datasetLambda.setText(u"%.2f (%.2f-%.2f) Å"%(self.active_data.lambda_center,
-                                                         self.active_data.lambda_center-1.5,
-                                                         self.active_data.lambda_center+1.5))
-    self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
-    self.ui.datasetTime.setText(u"%i s"%d.total_time)
-    self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
-    self.ui.datasetRate.setText(u"%.1f cps"%(d.total_counts/d.total_time))
-    self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
-    self.ui.datasetDangle0.setText(dangle0)
-    self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
-    self.ui.datasetDirectPixel.setText(dpix)
-    self.ui.currentChannel.setText('<b>%s</b> (%s)&nbsp;&nbsp;&nbsp;Type: %s&nbsp;&nbsp;&nbsp;Current State: <b>%s</b>'%(
-                                                      self.active_data.number,
-                                                      self.active_data.experiment,
-                                                      self.active_data.measurement_type,
-                                                      self.active_channel))
+      d=self.active_data[self.active_channel]
+  
+      try:
+        dangle0=u"%.3f° (%.3f°)"%(float(self.ui.dangle0Overwrite.text()), d.dangle0)
+      except ValueError:
+        dangle0=u"%.3f°"%(d.dangle0)
+      if self.ui.directPixelOverwrite.value()>=0:
+        dpix=u"%.1f (%.1f)"%(self.ui.directPixelOverwrite.value(), d.dpix)
+      else:
+        dpix=u"%.1f"%d.dpix
+      self.ui.datasetLambda.setText(u"%.2f (%.2f-%.2f) Å"%(self.active_data.lambda_center,
+                                                           self.active_data.lambda_center-1.5,
+                                                           self.active_data.lambda_center+1.5))
+      self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
+      self.ui.datasetTime.setText(u"%i s"%d.total_time)
+      self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
+      self.ui.datasetRate.setText(u"%.1f cps"%(d.total_counts/d.total_time))
+      self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
+      self.ui.datasetDangle0.setText(dangle0)
+      self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
+      self.ui.datasetDirectPixel.setText(dpix)
+      self.ui.currentChannel.setText('<b>%s</b> (%s)&nbsp;&nbsp;&nbsp;Type: %s&nbsp;&nbsp;&nbsp;Current State: <b>%s</b>'%(
+                                                        self.active_data.number,
+                                                        self.active_data.experiment,
+                                                        self.active_data.measurement_type,
+                                                        self.active_channel))
+
+    else: #REF_L
+      
+      print 'hererere'
+      d = self.active_data
+      print d
+
+      
 
   @log_call
   def toggleColorbars(self):
