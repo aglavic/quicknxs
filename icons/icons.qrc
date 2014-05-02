@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="General">
+    <file>metadata_background.png</file>
+    <file>data_group_background.png</file>
     <file>logo_refl_hq.png</file>
     <file>logo_hq.png</file>
     <file>autoRef.png</file>
@@ -20,6 +22,7 @@
     <file>totalReflection.png</file>
     <file>tthZero.png</file>
     <file>extractNormalization.png</file>
+    <file>norm_group_background.png</file>
   </qresource>
   <qresource prefix="MPL Toolbar">
     <file>toggle-log.png</file>

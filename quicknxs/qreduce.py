@@ -221,8 +221,6 @@ class NXSData(object):
     if not self._read_file(filename):
       return None
 
-    print 'so far so good in NXSData __new__'
-    
     if all_options['use_caching']:
       if filename in cached_names:
         cache_index=cached_names.index(filename)
