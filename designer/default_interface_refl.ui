@@ -3842,6 +3842,70 @@ background-position: 100% 100%;</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dataLowResFlag</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_low_res_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>359</x>
+     <y>1073</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>965</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normFlag</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1262</x>
+     <y>975</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>965</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normBackFlag</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_background_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1000</x>
+     <y>1041</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>965</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLowResFlag</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_low_res_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1010</x>
+     <y>1076</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>965</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3894,5 +3958,9 @@ background-position: 100% 100%;</string>
   <slot>open_filter_dialog()</slot>
   <slot>open_reduction_preview()</slot>
   <slot>data_background_switch()</slot>
+  <slot>data_low_res_switch()</slot>
+  <slot>normalization_switch()</slot>
+  <slot>normalization_background_switch()</slot>
+  <slot>normalization_low_res_switch()</slot>
  </slots>
 </ui>

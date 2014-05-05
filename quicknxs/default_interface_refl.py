@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon May  5 09:41:28 2014
+# Created: Mon May  5 11:00:14 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1246,6 +1246,10 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionFilter_Points, QtCore.SIGNAL("triggered()"), MainWindow.open_filter_dialog)
         QtCore.QObject.connect(self.actionOpen_Reduction_Preview, QtCore.SIGNAL("triggered()"), MainWindow.open_reduction_preview)
         QtCore.QObject.connect(self.dataBackgroundFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.data_background_switch)
+        QtCore.QObject.connect(self.dataLowResFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.data_low_res_switch)
+        QtCore.QObject.connect(self.normFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.normalization_switch)
+        QtCore.QObject.connect(self.normBackFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.normalization_background_switch)
+        QtCore.QObject.connect(self.normLowResFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.normalization_low_res_switch)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

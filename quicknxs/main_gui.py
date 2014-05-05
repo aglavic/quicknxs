@@ -2285,10 +2285,93 @@ Do you want to try to restore the working reduction list?""",
     dia.show()
     self.open_plots.append(dia)
 
-  @log_call
-  def data_background_switch(self):
-    print 'inside dataBackgroundSwitch'
+  def data_background_switch(self,int):
+    '''
+    With or without data background
+    '''
+    if int==2:
+      flag = True
+    else:
+      flag = False
+      
+    self.ui.dataBackFromLabel.setEnabled(flag)
+    self.ui.dataBackFromValue.setEnabled(flag)
+    self.ui.dataBackToLabel.setEnabled(flag)
+    self.ui.dataBackToValue.setEnabled(flag)
 
+  def data_low_res_switch(self,int):
+    '''
+    With or without data low resolution range
+    '''
+    if int==2:
+      flag = True
+    else:
+      flag = False
+            
+    self.ui.dataLowResFromLabel.setEnabled(flag)
+    self.ui.dataLowResFromValue.setEnabled(flag)
+    self.ui.dataLowResToLabel.setEnabled(flag)
+    self.ui.dataLowResToValue.setEnabled(flag)
+
+  def normalization_switch(self, int):
+    '''
+    With or without normalization
+    '''
+
+    if int==2:
+      flag = True
+      # need to check status of over flags here
+      flagLowRes = self.ui.normLowResFlag.isChecked()
+      flagBack = self.ui.normBackFlag.isChecked()
+    else:
+      flag = False
+      flagLowRes = False
+      flagBack = False
+
+    self.ui.normPeakLabel.setEnabled(flag)
+    self.ui.normPeakFromLabel.setEnabled(flag)
+    self.ui.normPeakFromValue.setEnabled(flag)
+    self.ui.normPeakToLabel.setEnabled(flag)
+    self.ui.normPeakToValue.setEnabled(flag)
+    self.ui.normBackFlag.setEnabled(flag)
+    self.ui.normBackFromLabel.setEnabled(flagBack)
+    self.ui.normBackFromValue.setEnabled(flagBack)
+    self.ui.normBackToLabel.setEnabled(flagBack)
+    self.ui.normBackToValue.setEnabled(flagBack)
+    self.ui.normLowResFlag.setEnabled(flag)
+    self.ui.normLowResFromLabel.setEnabled(flagLowRes)
+    self.ui.normLowResFromValue.setEnabled(flagLowRes)
+    self.ui.normLowResToLabel.setEnabled(flagLowRes)
+    self.ui.normLowResToValue.setEnabled(flagLowRes)
+    
+  def normalization_background_switch(self, int):
+    '''
+    With or without normalization background
+    '''
+    if int==2:
+      flag = True
+    else:
+      flag = False
+    
+    self.ui.normBackFromLabel.setEnabled(flag)
+    self.ui.normBackFromValue.setEnabled(flag)
+    self.ui.normBackToLabel.setEnabled(flag)
+    self.ui.normBackToValue.setEnabled(flag)
+    
+  def normalization_low_res_switch(self, int):
+    '''
+    With or without normalization low resolution range
+    '''
+    if int==2:
+      flag = True
+    else:
+      flag = False
+
+    self.ui.normLowResFromLabel.setEnabled(flag)
+    self.ui.normLowResFromValue.setEnabled(flag)
+    self.ui.normLowResToLabel.setEnabled(flag)
+    self.ui.normLowResToValue.setEnabled(flag)
+    
   @log_call
   def open_reduction_preview(self):
     dia=ReductionPreviewDialog(self)
