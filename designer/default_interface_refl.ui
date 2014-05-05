@@ -1380,9 +1380,35 @@ p, li { white-space: pre-wrap; }
                   <item>
                    <layout class="QVBoxLayout" name="verticalLayout_41">
                     <item>
+                     <widget class="QLabel" name="label_8">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background: url(:/General/data_group_background.png), no-repeat;
+background-position: 100% 100%;</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_58">
                       <item>
-                       <widget class="QLabel" name="label_46">
+                       <widget class="QLabel" name="dataPeakLabel">
                         <property name="minimumSize">
                          <size>
                           <width>110</width>
@@ -1401,7 +1427,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_131">
+                       <widget class="QLabel" name="dataPeakFromLabel">
                         <property name="text">
                          <string>From Pixel</string>
                         </property>
@@ -1424,7 +1450,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_40">
+                       <widget class="QLineEdit" name="dataPeakFromValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1434,7 +1460,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_132">
+                       <widget class="QLabel" name="dataPeakToLabel">
                         <property name="text">
                          <string>To Pixel</string>
                         </property>
@@ -1457,7 +1483,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_41">
+                       <widget class="QLineEdit" name="dataPeakToValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1484,14 +1510,17 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_59">
                       <item>
-                       <widget class="QCheckBox" name="checkBox_16">
+                       <widget class="QCheckBox" name="dataBackgroundFlag">
                         <property name="text">
                          <string>Background</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_133">
+                       <widget class="QLabel" name="dataBackFromLabel">
                         <property name="text">
                          <string>From Pixel</string>
                         </property>
@@ -1514,7 +1543,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_42">
+                       <widget class="QLineEdit" name="dataBackFromValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1524,7 +1553,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_134">
+                       <widget class="QLabel" name="dataBackToLabel">
                         <property name="text">
                          <string>To Pixel</string>
                         </property>
@@ -1547,7 +1576,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_43">
+                       <widget class="QLineEdit" name="dataBackToValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1574,14 +1603,17 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_60">
                       <item>
-                       <widget class="QCheckBox" name="checkBox_17">
+                       <widget class="QCheckBox" name="dataLowResFlag">
                         <property name="text">
                          <string>Low Resolution</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_135">
+                       <widget class="QLabel" name="dataLowResFromLabel">
                         <property name="text">
                          <string>From Pixel</string>
                         </property>
@@ -1604,7 +1636,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_44">
+                       <widget class="QLineEdit" name="dataLowResFromValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1614,7 +1646,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_136">
+                       <widget class="QLabel" name="dataLowResToLabel">
                         <property name="text">
                          <string>To Pixel</string>
                         </property>
@@ -1637,7 +1669,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_45">
+                       <widget class="QLineEdit" name="dataLowResToValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1669,16 +1701,42 @@ p, li { white-space: pre-wrap; }
                      <number>7</number>
                     </property>
                     <item>
-                     <widget class="QCheckBox" name="checkBox_18">
+                     <widget class="QLabel" name="label_9">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background: url(:/General/norm_group_background.png), no-repeat;
+background-position: 100% 100%;</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="normFlag">
                       <property name="text">
                        <string>Use ?</string>
+                      </property>
+                      <property name="checked">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_61">
                       <item>
-                       <widget class="QLabel" name="label_137">
+                       <widget class="QLabel" name="normPeakLabel">
                         <property name="minimumSize">
                          <size>
                           <width>110</width>
@@ -1697,7 +1755,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_138">
+                       <widget class="QLabel" name="normPeakFromLabel">
                         <property name="text">
                          <string>From Pixel</string>
                         </property>
@@ -1720,7 +1778,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_46">
+                       <widget class="QLineEdit" name="normPeakFromValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1730,7 +1788,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_139">
+                       <widget class="QLabel" name="normPeakToLabel">
                         <property name="text">
                          <string>To Pixel</string>
                         </property>
@@ -1753,7 +1811,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_47">
+                       <widget class="QLineEdit" name="normPeakToValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1780,14 +1838,17 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_62">
                       <item>
-                       <widget class="QCheckBox" name="checkBox_19">
+                       <widget class="QCheckBox" name="normBackFlag">
                         <property name="text">
                          <string>Background</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_140">
+                       <widget class="QLabel" name="normBackFromLabel">
                         <property name="text">
                          <string>From Pixel</string>
                         </property>
@@ -1810,7 +1871,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_48">
+                       <widget class="QLineEdit" name="normBackFromValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1820,7 +1881,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_141">
+                       <widget class="QLabel" name="normBackToLabel">
                         <property name="text">
                          <string>To Pixel</string>
                         </property>
@@ -1843,7 +1904,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_49">
+                       <widget class="QLineEdit" name="normBackToValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1870,14 +1931,17 @@ p, li { white-space: pre-wrap; }
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_63">
                       <item>
-                       <widget class="QCheckBox" name="checkBox_20">
+                       <widget class="QCheckBox" name="normLowResFlag">
                         <property name="text">
                          <string>Low Resolution</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_142">
+                       <widget class="QLabel" name="normLowResFromLabel">
                         <property name="text">
                          <string>From Pixel</string>
                         </property>
@@ -1900,7 +1964,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_50">
+                       <widget class="QLineEdit" name="normLowResFromValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -1910,7 +1974,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_143">
+                       <widget class="QLabel" name="normLowResToLabel">
                         <property name="text">
                          <string>To Pixel</string>
                         </property>
@@ -1933,7 +1997,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_51">
+                       <widget class="QLineEdit" name="normLowResToValue">
                         <property name="maximumSize">
                          <size>
                           <width>50</width>
@@ -2937,8 +3001,8 @@ p, li { white-space: pre-wrap; }
    <slot>plotActiveTab()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>519</x>
-     <y>62</y>
+     <x>785</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -3226,7 +3290,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>251</x>
-     <y>630</y>
+     <y>1023</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -3241,8 +3305,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>255</x>
-     <y>768</y>
+     <x>258</x>
+     <y>1166</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -3257,8 +3321,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>766</y>
+     <x>133</x>
+     <y>1163</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -3274,7 +3338,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>251</x>
-     <y>558</y>
+     <y>939</y>
     </hint>
     <hint type="destinationlabel">
      <x>188</x>
@@ -3290,7 +3354,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>558</y>
+     <y>939</y>
     </hint>
     <hint type="destinationlabel">
      <x>162</x>
@@ -3305,8 +3369,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleHide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>812</y>
+     <x>133</x>
+     <y>1212</y>
     </hint>
     <hint type="destinationlabel">
      <x>246</x>
@@ -3338,7 +3402,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>582</y>
+     <y>967</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -3354,7 +3418,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>606</y>
+     <y>995</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3370,7 +3434,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>251</x>
-     <y>582</y>
+     <y>967</y>
     </hint>
     <hint type="destinationlabel">
      <x>230</x>
@@ -3386,7 +3450,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>251</x>
-     <y>606</y>
+     <y>995</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3402,7 +3466,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>169</x>
-     <y>654</y>
+     <y>1051</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3418,7 +3482,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>251</x>
-     <y>654</y>
+     <y>1051</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3433,8 +3497,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>834</y>
+     <x>133</x>
+     <y>1235</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3450,7 +3514,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>123</x>
-     <y>615</y>
+     <y>1076</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -3465,8 +3529,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>790</y>
+     <x>133</x>
+     <y>1189</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3481,8 +3545,8 @@ p, li { white-space: pre-wrap; }
    <slot>replotProjections()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>255</x>
-     <y>790</y>
+     <x>258</x>
+     <y>1189</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3513,8 +3577,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>255</x>
-     <y>812</y>
+     <x>258</x>
+     <y>1212</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3529,8 +3593,8 @@ p, li { white-space: pre-wrap; }
    <slot>toggleColorbars()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>255</x>
-     <y>834</y>
+     <x>258</x>
+     <y>1235</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -3545,8 +3609,8 @@ p, li { white-space: pre-wrap; }
    <slot>reloadFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>146</x>
-     <y>481</y>
+     <x>195</x>
+     <y>859</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -3610,7 +3674,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>56</x>
-     <y>586</y>
+     <y>992</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -3762,6 +3826,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dataBackgroundFlag</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_background_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>1032</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>965</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -3813,5 +3893,6 @@ p, li { white-space: pre-wrap; }
   <slot>open_nxs_dialog()</slot>
   <slot>open_filter_dialog()</slot>
   <slot>open_reduction_preview()</slot>
+  <slot>data_background_switch()</slot>
  </slots>
 </ui>

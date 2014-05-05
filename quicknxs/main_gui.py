@@ -2286,6 +2286,10 @@ Do you want to try to restore the working reduction list?""",
     self.open_plots.append(dia)
 
   @log_call
+  def data_background_switch(self):
+    print 'inside dataBackgroundSwitch'
+
+  @log_call
   def open_reduction_preview(self):
     dia=ReductionPreviewDialog(self)
     dia.show()
