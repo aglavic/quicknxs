@@ -297,7 +297,7 @@ class MainGUI(QtGui.QMainWindow):
         event_split_bins=None
         event_split_index=0
       bin_type=self.ui.eventBinMode.currentIndex()
-    else:
+    else: #REF_L
       event_split_bins=None
       event_split_index=0      
       bin_type=0
@@ -350,15 +350,15 @@ class MainGUI(QtGui.QMainWindow):
     
     self.active_data = data
     
+    info(u"%s loaded"%(filename))
+    self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))    
+    
+    self.fileLoaded.emit()
     if do_plot:
-        self.initiateProjectionPlot.emit(False)
+      pass
+#        self.initiateProjectionPlot.emit(False)
 #        self.initiateReflectivityPlot.emit(False)    
     
-    
-    
-    
-    pass
-  
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
     base=os.path.basename(filename)
@@ -1452,9 +1452,8 @@ class MainGUI(QtGui.QMainWindow):
 
     else: #REF_L
       
-      print 'hererere'
       d = self.active_data
-      print d
+      print d.proton_charge
 
       
 
