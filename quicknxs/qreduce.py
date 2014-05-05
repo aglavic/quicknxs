@@ -273,7 +273,6 @@ class NXSData(object):
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
 
-      
 
           #if data is None:
             ## no data in channel, don't add it
