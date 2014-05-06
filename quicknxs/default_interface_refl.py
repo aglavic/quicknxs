@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue May  6 12:49:44 2014
+# Created: Tue May  6 13:05:50 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -391,10 +391,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_12.setSpacing(0)
         self.verticalLayout_12.setMargin(2)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.label_6 = QtGui.QLabel(self.frame_2)
-        self.label_6.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_6.setObjectName("label_6")
-        self.verticalLayout_12.addWidget(self.label_6)
+        self.dataFileNameValue = QtGui.QLabel(self.frame_2)
+        self.dataFileNameValue.setAlignment(QtCore.Qt.AlignCenter)
+        self.dataFileNameValue.setObjectName("dataFileNameValue")
+        self.verticalLayout_12.addWidget(self.dataFileNameValue)
         self.frame = QtGui.QFrame(self.frame_2)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
@@ -643,6 +643,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_46.addLayout(self.horizontalLayout_72)
         self.horizontalLayout_64.addLayout(self.verticalLayout_46)
         self.verticalLayout_10.addLayout(self.horizontalLayout_64)
+        self.line_5 = QtGui.QFrame(self.frame_3)
+        self.line_5.setFrameShape(QtGui.QFrame.HLine)
+        self.line_5.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_5.setObjectName("line_5")
+        self.verticalLayout_10.addWidget(self.line_5)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout_41 = QtGui.QVBoxLayout()
@@ -1469,7 +1474,7 @@ class Ui_MainWindow(object):
         self.color_selector.setItemText(6, QtGui.QApplication.translate("MainWindow", "binary", None, QtGui.QApplication.UnicodeUTF8))
         self.logarithmic_colorscale.setToolTip(QtGui.QApplication.translate("MainWindow", "Logarithmic colorscale in the maps", None, QtGui.QApplication.UnicodeUTF8))
         self.logarithmic_colorscale.setText(QtGui.QApplication.translate("MainWindow", "Log Colorscale", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("MainWindow", "Name of the file loaded here !", None, QtGui.QApplication.UnicodeUTF8))
+        self.dataFileNameValue.setText(QtGui.QApplication.translate("MainWindow", "Name of the file loaded here !", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))

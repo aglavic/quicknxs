@@ -170,7 +170,7 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=False
 
     self.fileLoaded.connect(self.updateLabels)
-#    self.fileLoaded.connect(self.calcReflParams)  #REMOVEME   remove comments
+#    self.fileLoaded.connect(self.calcReflParams) #REMOVEME
 #    self.fileLoaded.connect(self.plotActiveTab)   #REMOVEME   remove comments
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
@@ -356,14 +356,14 @@ class MainGUI(QtGui.QMainWindow):
       return
     
     self.active_data = data.active_data
+    self.filename = data.origin
     
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))    
     
     self.fileLoaded.emit()
     if do_plot:
-      pass
-#        self.initiateProjectionPlot.emit(False)
+      self.initiateProjectionPlot.emit(False)
 #        self.initiateReflectivityPlot.emit(False)    
     
   @log_call
@@ -682,12 +682,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       data=self.active_data[self.active_channel]
 
-    return
-
     xproj=data.xdata
     yproj=data.ydata
-    
-    return 
 
     x_peak=self.ui.refXPos.value()
     x_width=self.ui.refXWidth.value()
@@ -1460,6 +1456,7 @@ class MainGUI(QtGui.QMainWindow):
     else: #REF_L
       
       d = self.active_data
+      self.ui.dataFileNameValue.setText('%s'%self.filename)
       self.ui.metadataProtonChargeValue.setText('%.3e'%d.proton_charge)
       self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)
       self.ui.metadataLambdaRequestedValue.setText('%.2f'%d.lambda_requested)
@@ -2139,7 +2136,11 @@ class MainGUI(QtGui.QMainWindow):
     Calculate x and y regions for reflectivity extraction and put them in the
     entry fields.
     '''
-    data=self.active_data[self.active_channel]
+    if instrument.NAME == "REF_M":
+      data=self.active_data[self.active_channel]
+    else:
+      data=self.active_data
+      
     self.auto_change_active=True
     if self.ui.actionAutomaticXPeak.isChecked():
       # locate peaks using CWT peak finder algorithm
