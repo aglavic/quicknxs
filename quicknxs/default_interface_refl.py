@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue May  6 10:48:32 2014
+# Created: Tue May  6 12:49:44 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -524,11 +524,11 @@ class Ui_MainWindow(object):
         self.metadatathiValue.setMaximumSize(QtCore.QSize(100, 16777215))
         self.metadatathiValue.setObjectName("metadatathiValue")
         self.horizontalLayout_67.addWidget(self.metadatathiValue)
-        self.label_14 = QtGui.QLabel(self.frame_3)
-        self.label_14.setMinimumSize(QtCore.QSize(50, 0))
-        self.label_14.setMaximumSize(QtCore.QSize(50, 16777215))
-        self.label_14.setObjectName("label_14")
-        self.horizontalLayout_67.addWidget(self.label_14)
+        self.metadatathiUnits = QtGui.QLabel(self.frame_3)
+        self.metadatathiUnits.setMinimumSize(QtCore.QSize(50, 0))
+        self.metadatathiUnits.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.metadatathiUnits.setObjectName("metadatathiUnits")
+        self.horizontalLayout_67.addWidget(self.metadatathiUnits)
         self.verticalLayout_44.addLayout(self.horizontalLayout_67)
         self.horizontalLayout_68 = QtGui.QHBoxLayout()
         self.horizontalLayout_68.setObjectName("horizontalLayout_68")
@@ -543,11 +543,11 @@ class Ui_MainWindow(object):
         self.metadatatthdValue.setMaximumSize(QtCore.QSize(100, 16777215))
         self.metadatatthdValue.setObjectName("metadatatthdValue")
         self.horizontalLayout_68.addWidget(self.metadatatthdValue)
-        self.label_15 = QtGui.QLabel(self.frame_3)
-        self.label_15.setMinimumSize(QtCore.QSize(50, 0))
-        self.label_15.setMaximumSize(QtCore.QSize(50, 16777215))
-        self.label_15.setObjectName("label_15")
-        self.horizontalLayout_68.addWidget(self.label_15)
+        self.metadatatthdUnits = QtGui.QLabel(self.frame_3)
+        self.metadatatthdUnits.setMinimumSize(QtCore.QSize(50, 0))
+        self.metadatatthdUnits.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.metadatatthdUnits.setObjectName("metadatatthdUnits")
+        self.horizontalLayout_68.addWidget(self.metadatatthdUnits)
         self.verticalLayout_44.addLayout(self.horizontalLayout_68)
         self.horizontalLayout_64.addLayout(self.verticalLayout_44)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -1485,10 +1485,10 @@ class Ui_MainWindow(object):
         self.metadataLambdaRequestedUnits.setText(QtGui.QApplication.translate("MainWindow", "units", None, QtGui.QApplication.UnicodeUTF8))
         self.label_150.setText(QtGui.QApplication.translate("MainWindow", "thi:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadatathiValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_14.setText(QtGui.QApplication.translate("MainWindow", "rad", None, QtGui.QApplication.UnicodeUTF8))
+        self.metadatathiUnits.setText(QtGui.QApplication.translate("MainWindow", "rad", None, QtGui.QApplication.UnicodeUTF8))
         self.label_152.setText(QtGui.QApplication.translate("MainWindow", "tthd:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadatatthdValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_15.setText(QtGui.QApplication.translate("MainWindow", "rad", None, QtGui.QApplication.UnicodeUTF8))
+        self.metadatatthdUnits.setText(QtGui.QApplication.translate("MainWindow", "rad", None, QtGui.QApplication.UnicodeUTF8))
         self.label_154.setText(QtGui.QApplication.translate("MainWindow", "S1W:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataS1WValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("MainWindow", "mm", None, QtGui.QApplication.UnicodeUTF8))

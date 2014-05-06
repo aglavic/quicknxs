@@ -170,8 +170,8 @@ class MainGUI(QtGui.QMainWindow):
     self.auto_change_active=False
 
     self.fileLoaded.connect(self.updateLabels)
-    self.fileLoaded.connect(self.calcReflParams)
-    self.fileLoaded.connect(self.plotActiveTab)
+#    self.fileLoaded.connect(self.calcReflParams)  #REMOVEME   remove comments
+#    self.fileLoaded.connect(self.plotActiveTab)   #REMOVEME   remove comments
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
     self.initiateReflectivityPlot.connect(self.updateStateFile)
@@ -320,6 +320,7 @@ class MainGUI(QtGui.QMainWindow):
           callback=self.updateEventReadout,
           event_split_bins=event_split_bins,
           event_split_index=event_split_index)
+
     if instrument.NAME == 'REF_M':
       self._fileOpenDone(data, filename, do_plot)
     else:
@@ -354,7 +355,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
       return
     
-    self.active_data = data
+    self.active_data = data.active_data
     
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))    
@@ -1459,9 +1460,18 @@ class MainGUI(QtGui.QMainWindow):
     else: #REF_L
       
       d = self.active_data
-      print d.proton_charge
-
-      
+      self.ui.metadataProtonChargeValue.setText('%.3e'%d.proton_charge)
+      self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)
+      self.ui.metadataLambdaRequestedValue.setText('%.2f'%d.lambda_requested)
+      self.ui.metadataLambdaRequestedUnits.setText('%s'%d.lambda_requested_units)
+      self.ui.metadatathiValue.setText('%.2f'%d.thi)
+      self.ui.metadatathiUnits.setText('%s'%d.thi_units)
+      self.ui.metadatatthdValue.setText('%.2f'%d.tthd)
+      self.ui.metadatatthdUnits.setText('%s'%d.tthd_units)
+      self.ui.metadataS1WValue.setText('%.2f'%d.S1W)
+      self.ui.metadataS2WValue.setText('%.2f'%d.S2W)
+      self.ui.metadataS1HValue.setText('%.2f'%d.S1H)
+      self.ui.metadataS2HValue.setText('%.2f'%d.S2H)
 
   @log_call
   def toggleColorbars(self):

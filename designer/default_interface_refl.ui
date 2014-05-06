@@ -1367,7 +1367,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_14">
+                       <widget class="QLabel" name="metadatathiUnits">
                         <property name="minimumSize">
                          <size>
                           <width>50</width>
@@ -1431,7 +1431,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_15">
+                       <widget class="QLabel" name="metadatatthdUnits">
                         <property name="minimumSize">
                          <size>
                           <width>50</width>
