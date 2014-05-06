@@ -147,6 +147,12 @@ class MainGUI(QtGui.QMainWindow):
 
     if instrument.NAME=="REF_M":
       self.toggleHide()      
+    
+    if instrument.NAME=="REF_L":
+      #set up the header of the big table
+      verticalHeader = ["Data Run #",u'Incident Angle (\u00b0)',u'\u03bbmin(\u00c5)',u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)','Norm. Run #']
+      self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
+      self.ui.reductionTable.resizeColumnsToContents()
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -2328,6 +2334,8 @@ Do you want to try to restore the working reduction list?""",
       flagLowRes = False
       flagBack = False
 
+    self.ui.normRunNumberLabel.setEnabled(flag)
+    self.ui.normRunNumberValue.setEnabled(flag)
     self.ui.normPeakLabel.setEnabled(flag)
     self.ui.normPeakFromLabel.setEnabled(flag)
     self.ui.normPeakFromValue.setEnabled(flag)
