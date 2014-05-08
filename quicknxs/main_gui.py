@@ -171,7 +171,7 @@ class MainGUI(QtGui.QMainWindow):
 
     self.fileLoaded.connect(self.updateLabels)
 #    self.fileLoaded.connect(self.calcReflParams) #REMOVEME
-#    self.fileLoaded.connect(self.plotActiveTab)   #REMOVEME   remove comments
+    self.fileLoaded.connect(self.plotActiveTab)
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
     self.initiateReflectivityPlot.connect(self.updateStateFile)
@@ -356,6 +356,7 @@ class MainGUI(QtGui.QMainWindow):
       return
     
     self.active_data = data.active_data
+#    self.active_data = data
     self.filename = data.origin
     
     info(u"%s loaded"%(filename))
@@ -363,8 +364,9 @@ class MainGUI(QtGui.QMainWindow):
     
     self.fileLoaded.emit()
     if do_plot:
-      self.initiateProjectionPlot.emit(False)
-#        self.initiateReflectivityPlot.emit(False)    
+      pass
+      #self.initiateProjectionPlot.emit(False)
+      #self.initiateReflectivityPlot.emit(False)    
     
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
@@ -461,6 +463,46 @@ class MainGUI(QtGui.QMainWindow):
     '''
     X vs. Y and X vs. Tof for main channel.
     '''
+    if instrument.NAME == "REF_M":
+      self.plot_overview_REFM()
+    else:
+      self.plot_overview_REFL()
+
+  @log_call
+  def plot_overview_REFL(self):
+    
+    data = self.active_data
+    xy = data.xydata
+    xtof = data.xtofdata
+    
+    # min and max of xy and xtof 2D arrays
+    xy_imin=xy[xy>0].min()
+    xy_imax=xy.max()
+    tof_imin=xtof[xtof>0].min()
+    tof_imax=xtof.max()
+
+    # for lines of the current extraction area
+    x_peak=self.ui.refXPos.value()
+    x_width=self.ui.refXWidth.value()
+    y_pos=self.ui.refYPos.value()
+    y_width=self.ui.refYWidth.value()
+    bg_pos=self.ui.bgCenter.value()
+    bg_width=self.ui.bgWidth.value()
+
+    # clear previous plot
+    self.ui.xy_overview.clear()
+    
+    self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
+                             aspect='auto', cmap=self.color, origin='lower')
+    self.ui.xy_overview.set_xlabel(u'x [pix]')
+    self.ui.xy_overview.set_ylabel(u'y [pix]')
+    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
+    
+    self.ui.xy_overview.draw()
+
+  @log_call
+  def plot_overview_REFM(self):
+
     data=self.active_data[self.active_channel]
     xy=data.xydata
     xtof=data.xtofdata

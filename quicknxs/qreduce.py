@@ -272,7 +272,7 @@ class NXSData(object):
 #      print self._options['low_res_range']
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
-
+#      self._channel_data.append(data)
       self.active_data = data
 
           #if data is None:

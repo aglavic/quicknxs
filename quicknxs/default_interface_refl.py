@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue May  6 13:05:50 2014
+# Created: Thu May  8 11:07:14 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -383,7 +383,8 @@ class Ui_MainWindow(object):
         self.overviewSplitter.setOrientation(QtCore.Qt.Vertical)
         self.overviewSplitter.setObjectName("overviewSplitter")
         self.frame_2 = QtGui.QFrame(self.overviewSplitter)
-        self.frame_2.setMaximumSize(QtCore.QSize(16777215, 380))
+        self.frame_2.setMinimumSize(QtCore.QSize(0, 400))
+        self.frame_2.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
@@ -421,6 +422,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.xtof_overview)
         self.verticalLayout_12.addWidget(self.frame)
         self.frame_3 = QtGui.QFrame(self.overviewSplitter)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
+        self.frame_3.setSizePolicy(sizePolicy)
+        self.frame_3.setMinimumSize(QtCore.QSize(0, 550))
         self.frame_3.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
@@ -1303,7 +1310,7 @@ class Ui_MainWindow(object):
         self.mainToolbar.addAction(self.actionAdjust_Dirct_Beam)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(4)
+        self.toolBox.setCurrentIndex(0)
         self.plotTab.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.plotTab, QtCore.SIGNAL("currentChanged(int)"), MainWindow.plotActiveTab)
