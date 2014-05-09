@@ -491,14 +491,43 @@ class MainGUI(QtGui.QMainWindow):
 
     # clear previous plot
     self.ui.xy_overview.clear()
+    self.ui.xtof_overview.clear()
     
+    # display xy
     self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
                              aspect='auto', cmap=self.color, origin='lower')
     self.ui.xy_overview.set_xlabel(u'x [pix]')
     self.ui.xy_overview.set_ylabel(u'y [pix]')
-    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
-    
+#    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
+        
+    xy_overview = self.ui.xy_overview
+#    print xStart
+#    print xEnd
+
+    # display xtof
+    self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
+                                 aspect='auto', cmap=self.color,
+                                 extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
+    self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
+    self.ui.xtof_overview.set_ylabel(u'x [pix]')
+
+    # draw plots
     self.ui.xy_overview.draw()
+    self.ui.xtof_overview.draw()
+
+    # change xlabels to display right range
+    low_res_range_min = self.ui.lineEdit_lowResMin.text()
+    xlabels = [item.get_text() for item in self.ui.xy_overview.canvas.ax.get_xticklabels()]
+    new_xlabels = []
+    for entry in xlabels:
+      if entry == '':
+        new_xlabels.append(entry)
+      else:
+        _value = int(entry)
+        _value += int(low_res_range_min)
+        new_xlabels.append(str(_value))
+    self.ui.xy_overview.canvas.ax.set_xticklabels(new_xlabels)
+    self.ui.xy_overview.draw()    
 
   @log_call
   def plot_overview_REFM(self):

@@ -833,16 +833,6 @@ p, li { white-space: pre-wrap; }
            <property name="spacing">
             <number>1</number>
            </property>
-           <item row="4" column="1">
-            <widget class="QCheckBox" name="xLamda">
-             <property name="toolTip">
-              <string>Replace ToF axis with wavelength for the maps</string>
-             </property>
-             <property name="text">
-              <string>X-λ Maps</string>
-             </property>
-            </widget>
-           </item>
            <item row="5" column="0">
             <widget class="QCheckBox" name="normalizeXTof">
              <property name="toolTip">
@@ -3419,7 +3409,6 @@ background-position: 100% 100%;</string>
   <tabstop>logarithmic_colorscale</tabstop>
   <tabstop>logarithmic_y</tabstop>
   <tabstop>hide_plots</tabstop>
-  <tabstop>xLamda</tabstop>
   <tabstop>normalizeXTof</tabstop>
   <tabstop>tthPhi</tabstop>
   <tabstop>plotTab</tabstop>
@@ -4018,22 +4007,6 @@ background-position: 100% 100%;</string>
     <hint type="destinationlabel">
      <x>0</x>
      <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>xLamda</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>1212</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>435</y>
     </hint>
    </hints>
   </connection>
