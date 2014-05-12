@@ -500,10 +500,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.xy_overview.set_ylabel(u'y [pix]')
 #    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
         
-    xy_overview = self.ui.xy_overview
-#    print xStart
-#    print xEnd
-
     # display xtof
     self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
                                  aspect='auto', cmap=self.color,
@@ -528,7 +524,7 @@ class MainGUI(QtGui.QMainWindow):
         new_xlabels.append(str(_value))
     self.ui.xy_overview.canvas.ax.set_xticklabels(new_xlabels)
     self.ui.xy_overview.draw()    
-
+    
   @log_call
   def plot_overview_REFM(self):
 
@@ -1036,6 +1032,45 @@ class MainGUI(QtGui.QMainWindow):
         if self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
           plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
       plot.draw()
+
+  @log_call
+  def auto_tof_switch(self, bool):
+    '''
+    Reached by the TOF auto switch
+    '''
+    self.ui.TOFmanualLabel.setEnabled(not bool)
+    self.ui.TOFmanualFromLabel.setEnabled(not bool)
+    self.ui.TOFmanualFromValue.setEnabled(not bool)
+    self.ui.TOFmanualFromUnitsValue.setEnabled(not bool)
+    self.ui.TOFmanualToLabel.setEnabled(not bool)
+    self.ui.TOFmanualToValue.setEnabled(not bool)
+    self.ui.TOFmanualToUnitsValue.setEnabled(not bool)
+    self.ui.TOFmanualMsValue.setEnabled(not bool)
+    self.ui.TOFmanualMicrosValue.setEnabled(not bool)
+    self.ui.TOFmanualMode.setChecked(not bool)
+ 
+  def manual_tof_switch(self, bool):
+    '''
+    Reached by the TOF manual switch
+    '''
+    self.ui.TOFmanualLabel.setEnabled(bool)
+    self.ui.TOFmanualFromLabel.setEnabled(bool)
+    self.ui.TOFmanualFromValue.setEnabled(bool)
+    self.ui.TOFmanualFromUnitsValue.setEnabled(bool)
+    self.ui.TOFmanualToLabel.setEnabled(bool)
+    self.ui.TOFmanualToValue.setEnabled(bool)
+    self.ui.TOFmanualToUnitsValue.setEnabled(bool)
+    self.ui.TOFmanualMsValue.setEnabled(bool)
+    self.ui.TOFmanualMicrosValue.setEnabled(bool)
+    self.ui.TOFautoMode.setChecked(not bool)
+ 
+  def tof_micros_switch(self, bool):
+    pass
+ 
+  def tof_ms_switch(self, bool):
+    pass
+
+
 
   @log_call
   def change_offspec_colorscale(self):
@@ -2069,7 +2104,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def plotPickXY(self, event):
     '''
-    Plot for xy-map has been clicked.
+    Plot for xy-map has been clicked or mouse moved
     '''
     if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
         event.xdata is not None:
