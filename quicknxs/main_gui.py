@@ -85,6 +85,11 @@ class MainGUI(QtGui.QMainWindow):
   # colors for the reflecitivy lines
   _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
 
+  # current TOF status
+  _auto_tof_flag = True
+  _ms_tof_flag = True
+  
+
   ##### for IPython mode, keep namespace up to date ######
   @property
   def active_data(self): return self._active_data
@@ -150,9 +155,12 @@ class MainGUI(QtGui.QMainWindow):
     
     if instrument.NAME=="REF_L":
       #set up the header of the big table
-      verticalHeader = ["Data Run #",u'Incident Angle (\u00b0)',u'\u03bbmin(\u00c5)',u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)','Norm. Run #']
+      verticalHeader = ["Data Run #",u'Incident Angle (\u00b0)',u'\u03bbmin(\u00c5)',
+                        u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)',
+                        'Norm. Run #']
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reductionTable.resizeColumnsToContents()
+      self.ui.TOFmanualMicrosValue.setText(u'\u03bcs')
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -1038,40 +1046,83 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Reached by the TOF auto switch
     '''
-    self.ui.TOFmanualLabel.setEnabled(not bool)
-    self.ui.TOFmanualFromLabel.setEnabled(not bool)
-    self.ui.TOFmanualFromValue.setEnabled(not bool)
-    self.ui.TOFmanualFromUnitsValue.setEnabled(not bool)
-    self.ui.TOFmanualToLabel.setEnabled(not bool)
-    self.ui.TOFmanualToValue.setEnabled(not bool)
-    self.ui.TOFmanualToUnitsValue.setEnabled(not bool)
-    self.ui.TOFmanualMsValue.setEnabled(not bool)
-    self.ui.TOFmanualMicrosValue.setEnabled(not bool)
-    self.ui.TOFmanualMode.setChecked(not bool)
+    if not self._auto_tof_flag:
+      self.ui.TOFmanualLabel.setEnabled(not bool)
+      self.ui.TOFmanualFromLabel.setEnabled(not bool)
+      self.ui.TOFmanualFromValue.setEnabled(not bool)
+      self.ui.TOFmanualFromUnitsValue.setEnabled(not bool)
+      self.ui.TOFmanualToLabel.setEnabled(not bool)
+      self.ui.TOFmanualToValue.setEnabled(not bool)
+      self.ui.TOFmanualToUnitsValue.setEnabled(not bool)
+      self.ui.TOFmanualMsValue.setEnabled(not bool)
+      self.ui.TOFmanualMicrosValue.setEnabled(not bool)
+      self._auto_tof_flag = True
  
   def manual_tof_switch(self, bool):
     '''
     Reached by the TOF manual switch
     '''
-    self.ui.TOFmanualLabel.setEnabled(bool)
-    self.ui.TOFmanualFromLabel.setEnabled(bool)
-    self.ui.TOFmanualFromValue.setEnabled(bool)
-    self.ui.TOFmanualFromUnitsValue.setEnabled(bool)
-    self.ui.TOFmanualToLabel.setEnabled(bool)
-    self.ui.TOFmanualToValue.setEnabled(bool)
-    self.ui.TOFmanualToUnitsValue.setEnabled(bool)
-    self.ui.TOFmanualMsValue.setEnabled(bool)
-    self.ui.TOFmanualMicrosValue.setEnabled(bool)
-    self.ui.TOFautoMode.setChecked(not bool)
+    if self._auto_tof_flag:
+      self.ui.TOFmanualLabel.setEnabled(bool)
+      self.ui.TOFmanualFromLabel.setEnabled(bool)
+      self.ui.TOFmanualFromValue.setEnabled(bool)
+      self.ui.TOFmanualFromUnitsValue.setEnabled(bool)
+      self.ui.TOFmanualToLabel.setEnabled(bool)
+      self.ui.TOFmanualToValue.setEnabled(bool)
+      self.ui.TOFmanualToUnitsValue.setEnabled(bool)
+      self.ui.TOFmanualMsValue.setEnabled(bool)
+      self.ui.TOFmanualMicrosValue.setEnabled(bool)
+      self._auto_tof_flag = False
  
   def tof_micros_switch(self, bool):
-    pass
+    '''
+    Will change the ms->micros labels in the TOF widgets
+    and the value of tof fields
+    '''
+    _units = u'\u03bcs'
+    self.ui.TOFmanualFromUnitsValue.setText(_units)
+    self.ui.TOFmanualToUnitsValue.setText(_units) 
+    # change units
+    self.change_tof_units('micros')
  
   def tof_ms_switch(self, bool):
-    pass
+    '''
+    Will change the microS->ms labels in the TOF widgets
+    and the value of tof fields
+    '''
+    _units = u'ms'
+    self.ui.TOFmanualFromUnitsValue.setText(_units)
+    self.ui.TOFmanualToUnitsValue.setText(_units) 
+    # change units
+    self.change_tof_units('ms')
 
-
-
+  def change_tof_units(self, new_units):
+    '''
+    Change the TOF value according to the new units selected
+    '''
+    tof_from = self.ui.TOFmanualFromValue.text().strip()
+    tof_to = self.ui.TOFmanualToValue.text().strip()
+    
+    # make sure the 'from' value is a float
+    if not tof_from: 
+      tof_from_float = 0.
+    else:
+      try:
+        tof_from_float = float(tof_from)
+      except ValueError:
+        tof_from_float = 0.
+    self.ui.TOFmanualFromValue.setText(str(tof_from_float))
+    
+    # make sure the 'to' value is a float
+    if not tof_from: 
+      tof_to_float = 0.
+    else:
+      try:
+        tof_to_float = float(tof_to)
+      except ValueError:
+        tof_to_float = 0.
+    self.ui.TOFmanualToValue.setText(str(tof_to_float))
+    
   @log_call
   def change_offspec_colorscale(self):
     plots=[self.ui.offspec_pp, self.ui.offspec_mm,

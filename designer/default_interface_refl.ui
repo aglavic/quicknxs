@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1931</width>
+    <width>1496</width>
     <height>1261</height>
    </rect>
   </property>
@@ -2469,45 +2469,64 @@ background-position: 100% 100%;</string>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
                   <item>
-                   <widget class="QRadioButton" name="TOFautoMode">
-                    <property name="text">
-                     <string>Auto</string>
+                   <widget class="QFrame" name="frame_4">
+                    <property name="frameShape">
+                     <enum>QFrame::NoFrame</enum>
                     </property>
-                    <property name="checked">
-                     <bool>true</bool>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
                     </property>
-                    <property name="autoExclusive">
-                     <bool>false</bool>
+                    <property name="lineWidth">
+                     <number>0</number>
                     </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_9">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Maximum</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="TOFmanualMode">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string>Manual</string>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>false</bool>
-                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_9">
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_11">
+                       <item>
+                        <widget class="QRadioButton" name="TOFautoMode">
+                         <property name="text">
+                          <string>Auto</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                         <property name="autoExclusive">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_10">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeType">
+                          <enum>QSizePolicy::Maximum</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>40</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="TOFmanualMode">
+                         <property name="enabled">
+                          <bool>true</bool>
+                         </property>
+                         <property name="text">
+                          <string>Manual</string>
+                         </property>
+                         <property name="autoExclusive">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                   <item>
@@ -2562,6 +2581,9 @@ background-position: 100% 100%;</string>
                       <width>150</width>
                       <height>16777215</height>
                      </size>
+                    </property>
+                    <property name="text">
+                     <string>0</string>
                     </property>
                    </widget>
                   </item>
@@ -2618,6 +2640,9 @@ background-position: 100% 100%;</string>
                       <height>16777215</height>
                      </size>
                     </property>
+                    <property name="text">
+                     <string>200</string>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -2647,32 +2672,42 @@ background-position: 100% 100%;</string>
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="TOFmanualMsValue">
-                    <property name="enabled">
-                     <bool>false</bool>
+                   <widget class="QFrame" name="frame_5">
+                    <property name="frameShape">
+                     <enum>QFrame::NoFrame</enum>
                     </property>
-                    <property name="text">
-                     <string>ms</string>
+                    <property name="frameShadow">
+                     <enum>QFrame::Raised</enum>
                     </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QRadioButton" name="TOFmanualMicrosValue">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>microS</string>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>false</bool>
-                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_13">
+                     <item>
+                      <layout class="QHBoxLayout" name="horizontalLayout_14">
+                       <item>
+                        <widget class="QRadioButton" name="TOFmanualMsValue">
+                         <property name="enabled">
+                          <bool>false</bool>
+                         </property>
+                         <property name="text">
+                          <string>ms</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                         <property name="autoExclusive">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="TOFmanualMicrosValue">
+                         <property name="text">
+                          <string>microS</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
                    </widget>
                   </item>
                   <item>
@@ -3123,7 +3158,7 @@ background-position: 100% 100%;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1931</width>
+     <width>1496</width>
      <height>25</height>
     </rect>
    </property>
@@ -4568,8 +4603,8 @@ background-position: 100% 100%;</string>
    <slot>auto_tof_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>323</x>
-     <y>1140</y>
+     <x>333</x>
+     <y>1136</y>
     </hint>
     <hint type="destinationlabel">
      <x>965</x>
@@ -4584,24 +4619,8 @@ background-position: 100% 100%;</string>
    <slot>manual_tof_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>442</x>
-     <y>1140</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>965</x>
-     <y>630</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TOFmanualMicrosValue</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>tof_micros_switch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1206</x>
-     <y>1140</y>
+     <x>452</x>
+     <y>1136</y>
     </hint>
     <hint type="destinationlabel">
      <x>965</x>
@@ -4616,11 +4635,27 @@ background-position: 100% 100%;</string>
    <slot>tof_ms_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1139</x>
-     <y>1140</y>
+     <x>1135</x>
+     <y>1136</y>
     </hint>
     <hint type="destinationlabel">
-     <x>965</x>
+     <x>747</x>
+     <y>630</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TOFmanualMicrosValue</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tof_micros_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1202</x>
+     <y>1136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>747</x>
      <y>630</y>
     </hint>
    </hints>
