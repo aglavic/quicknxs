@@ -168,8 +168,9 @@ class MainGUI(QtGui.QMainWindow):
     self.trigger=DelayedTrigger()
     self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
-    self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
-    self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
+    if instrument.NAME == "REF_M":
+      self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
+      self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
 
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -315,14 +316,16 @@ class MainGUI(QtGui.QMainWindow):
       event_split_bins=None
       event_split_index=0      
       bin_type=0
-      low_res_px_min = self.ui.lineEdit_lowResMin.text()
-      low_res_px_max = self.ui.lineEdit_lowResMax.text()
-      low_res_range = [low_res_px_min, low_res_px_max]
+#      low_res_px_center = self.ui.refXPos.text()
+#      low_res_px_width = self.ui.refXWidth.text()
+#      low_res_px_min = float(low_res_px_center) - float(low_res_px_width)
+#      low_res_px_max = float(low_res_px_center) + float(low_res_px_width)
+#      low_res_range = [low_res_px_min, low_res_px_max]
 
     self._norm_selected=None
     info(u"Reading file %s..."%(filename))
     data=NXSData(filename,
-          low_res_range=low_res_range,
+#          low_res_range=low_res_range,
           bin_type=bin_type,
           bins=self.ui.eventTofBins.value(),
           callback=self.updateEventReadout,
@@ -479,6 +482,10 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_overview_REFL(self):
     
+    # clear previous plot
+    self.ui.xy_overview.clear()
+    self.ui.xtof_overview.clear()
+
     data = self.active_data
     xy = data.xydata
     xtof = data.xtofdata
@@ -490,16 +497,26 @@ class MainGUI(QtGui.QMainWindow):
     tof_imax=xtof.max()
 
     # for lines of the current extraction area
-    x_peak=self.ui.refXPos.value()
-    x_width=self.ui.refXWidth.value()
-    y_pos=self.ui.refYPos.value()
-    y_width=self.ui.refYWidth.value()
-    bg_pos=self.ui.bgCenter.value()
-    bg_width=self.ui.bgWidth.value()
+    peak1 = int(self.ui.dataPeakFromValue.value())
+    peak2 = int(self.ui.dataPeakToValue.value())
+    
+    peak_min = min([peak1, peak2])
+    peak_max = max([peak1, peak2])
+    
+#    self.ui.dataPeakFromValue.setText(peak_min)
+#    self.ui.dataPeakToValue.setText(peak_max)
+ 
+    #y_pos = self.ui.refYPos.value()
+    #y_width = self.ui.refYWidth.value()
+    #bg_pos = self.ui.bgCenter.value()
+    #bg_width = self.ui.bgWidth.value()
 
-    # clear previous plot
-    self.ui.xy_overview.clear()
-    self.ui.xtof_overview.clear()
+# if (self.overview_lines is None) or (len(self.overview_lines) == 2):
+
+
+
+
+
     
     # display xy
     self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
@@ -509,29 +526,54 @@ class MainGUI(QtGui.QMainWindow):
 #    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
         
     # display xtof
+    tmin = data.tof_edges[0]
+    tmax = data.tof_edges[-1]
+    self.display_tof_range(tmin, tmax, 'micros')
+    
     self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
                                  aspect='auto', cmap=self.color,
-                                 extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
+                                 extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.x.shape[0]-1])
     self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
 
+#    x1 = self.ui.xy_overview.canvas.ax.axvline(x_peak-x_width/2., color='#aa0000')
+#    x2 = self.ui.xy_overview.canvas.ax.axvline(x_peak+x_width/2., color='#aa0000')
+    y1 = self.ui.xy_overview.canvas.ax.axhline(peak_min, color='#00aa00')
+    y2 = self.ui.xy_overview.canvas.ax.axhline(peak_max, color='#00aa00')
+      
     # draw plots
     self.ui.xy_overview.draw()
     self.ui.xtof_overview.draw()
 
-    # change xlabels to display right range
-    low_res_range_min = self.ui.lineEdit_lowResMin.text()
-    xlabels = [item.get_text() for item in self.ui.xy_overview.canvas.ax.get_xticklabels()]
-    new_xlabels = []
-    for entry in xlabels:
-      if entry == '':
-        new_xlabels.append(entry)
-      else:
-        _value = int(entry)
-        _value += int(low_res_range_min)
-        new_xlabels.append(str(_value))
-    self.ui.xy_overview.canvas.ax.set_xticklabels(new_xlabels)
-    self.ui.xy_overview.draw()    
+    ## change xlabels of xy_overview to display right range
+    #low_res_range_min = float(self.ui.refXPos) - float(self.ui.refXWidth)
+    #xlabels = [item.get_text() for item in self.ui.xy_overview.canvas.ax.get_xticklabels()]
+    #new_xlabels = []
+    #for entry in xlabels:
+      #if entry == '':
+        #new_xlabels.append(entry)
+      #else:
+        #_value = int(entry)
+        #_value += int(low_res_range_min)
+        #new_xlabels.append(str(_value))
+    #self.ui.xy_overview.canvas.ax.set_xticklabels(new_xlabels)
+    #self.ui.xy_overview.draw()    
+
+  def display_tof_range(self, tmin, tmax, units):
+    '''
+    will display the TOF min and max value in the metadata field
+    according to the units selected
+    '''
+    is_ms_selected = self.ui.TOFmanualMsValue.isChecked()
+    if is_ms_selected:
+      tmin *= 1e-3
+      tmax *= 1e-3
+    
+    stmin = str("%.2f" % tmin)
+    stmax = str("%.2f" % tmax)
+    
+    self.ui.TOFmanualFromValue.setText(stmin)
+    self.ui.TOFmanualToValue.setText(stmax)
     
   @log_call
   def plot_overview_REFM(self):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1496</width>
-    <height>1261</height>
+    <height>1258</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -186,7 +186,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
@@ -194,11 +194,17 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>258</width>
-             <height>162</height>
+             <height>120</height>
             </rect>
            </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>120</height>
+            </size>
+           </property>
            <attribute name="label">
-            <string>Reflectivity Extraction</string>
+            <string>Selection Settings</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_3">
             <property name="verticalSpacing">
@@ -207,244 +213,96 @@ p, li { white-space: pre-wrap; }
             <property name="margin">
              <number>2</number>
             </property>
-            <item row="1" column="2">
-             <widget class="QDoubleSpinBox" name="refYPos">
-              <property name="toolTip">
-               <string>Center of region used for extraction</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <double>400.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>128.000000000000000</double>
-              </property>
-             </widget>
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <item>
+               <widget class="QCheckBox" name="checkBox_4">
+                <property name="toolTip">
+                 <string extracomment="Automatic selection of the reflectivity peak"/>
+                </property>
+                <property name="text">
+                 <string>Auto. peak selection</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_16">
+                <item>
+                 <widget class="QCheckBox" name="checkBox_5">
+                  <property name="toolTip">
+                   <string extracomment="Automatic background selection according to the number of pixels defined"/>
+                  </property>
+                  <property name="text">
+                   <string>Auto. back. selection</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_17">
+                <item>
+                 <spacer name="horizontalSpacer_9">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Preferred</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; vertical-align:super;&quot;&gt;+&lt;/span&gt;/&lt;span style=&quot; vertical-align:sub;&quot;&gt;-&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="spinBox">
+                  <property name="toolTip">
+                   <string extracomment="Number of pixels from peak"/>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>px</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_11">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_3">
-              <property name="toolTip">
-               <string>Y Pixel Window</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">text-align: right;</string>
-              </property>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="checkBox_6">
               <property name="text">
-               <string>Y</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3">
-             <widget class="QLabel" name="label_2">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>18</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Width</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QSpinBox" name="rangeEnd">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove points from the extracted intensity on the high Q side. &lt;/p&gt;&lt;p&gt;Uses the full ToF range available in the file, so it is possible it does not have any effect for lower values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="maximum">
-               <number>200</number>
-              </property>
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QDoubleSpinBox" name="refXPos">
-              <property name="toolTip">
-               <string>Center of region used for extraction</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <double>400.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>128.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QDoubleSpinBox" name="bgWidth">
-              <property name="toolTip">
-               <string>Width of region used for extraction</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <double>400.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>4.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QDoubleSpinBox" name="bgCenter">
-              <property name="toolTip">
-               <string>Center of region used for extraction</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <double>400.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>2.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="label_4">
-              <property name="toolTip">
-               <string>X Pixel Window</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">text-align: right;</string>
-              </property>
-              <property name="text">
-               <string>X</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3">
-             <widget class="QDoubleSpinBox" name="refScale">
-              <property name="toolTip">
-               <string>Scaling factor for the reflectivity in powers of 10</string>
-              </property>
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="minimum">
-               <double>-20.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>20.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.020000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="2">
-             <widget class="QSpinBox" name="rangeStart">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove points from the extracted intensity on the low Q side. &lt;/p&gt;&lt;p&gt;Uses the full ToF range available in the file, so it is possible it does not have any effect for lower values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="maximum">
-               <number>200</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="QDoubleSpinBox" name="refXWidth">
-              <property name="toolTip">
-               <string>Width of region used for extraction</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="minimum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>304.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>9.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QDoubleSpinBox" name="refYWidth">
-              <property name="toolTip">
-               <string>Width of region used for extraction</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="minimum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>400.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>6.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLabel" name="label_20">
-              <property name="styleSheet">
-               <string notr="true">text-align: right;</string>
-              </property>
-              <property name="text">
-               <string>Cut Pts</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="label">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>18</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Position</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="QLabel" name="label_5">
-              <property name="toolTip">
-               <string>Scaling factor for the reflectivity in powers of 10</string>
-              </property>
-              <property name="text">
-               <string>Scale 10^</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QCheckBox" name="bgActive">
-              <property name="styleSheet">
-               <string notr="true">text-align: right;</string>
-              </property>
-              <property name="text">
-               <string>BG X</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
+               <string>Auto TOF selection</string>
               </property>
              </widget>
             </item>
@@ -559,7 +417,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>258</width>
-             <height>105</height>
+             <height>136</height>
             </rect>
            </property>
            <attribute name="label">
@@ -646,7 +504,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>258</width>
-             <height>105</height>
+             <height>136</height>
             </rect>
            </property>
            <attribute name="label">
@@ -699,90 +557,6 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="text">
              <string>Match slits width</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QWidget" name="page_5">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>258</width>
-             <height>105</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>General Settings</string>
-           </attribute>
-           <widget class="QLabel" name="label_7">
-            <property name="geometry">
-             <rect>
-              <x>8</x>
-              <y>7</y>
-              <width>151</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Low Resolution Range</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_38">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>40</y>
-              <width>71</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>From pixel</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="lineEdit_lowResMin">
-            <property name="geometry">
-             <rect>
-              <x>85</x>
-              <y>36</y>
-              <width>61</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>100</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_39">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>73</y>
-              <width>71</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>To pixel</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="lineEdit_lowResMax">
-            <property name="geometry">
-             <rect>
-              <x>85</x>
-              <y>70</y>
-              <width>61</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>200</string>
             </property>
            </widget>
           </widget>
@@ -1851,14 +1625,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataPeakFromValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="dataPeakFromValue"/>
                       </item>
                       <item>
                        <widget class="QLabel" name="dataPeakToLabel">
@@ -1884,14 +1651,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataPeakToValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="dataPeakToValue"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_42">
@@ -1944,14 +1704,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataBackFromValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="dataBackFromValue"/>
                       </item>
                       <item>
                        <widget class="QLabel" name="dataBackToLabel">
@@ -1959,6 +1712,9 @@ background-position: 100% 100%;</string>
                          <string>To Pixel</string>
                         </property>
                        </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="dataBackToValue"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_45">
@@ -1975,16 +1731,6 @@ background-position: 100% 100%;</string>
                          </size>
                         </property>
                        </spacer>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="dataBackToValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_46">
@@ -2037,14 +1783,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataLowResFromValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="dataLowResFromValue"/>
                       </item>
                       <item>
                        <widget class="QLabel" name="dataLowResToLabel">
@@ -2070,14 +1809,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataLowResToValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="dataLowResToValue"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_48">
@@ -2219,14 +1951,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="normPeakFromValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="normPeakFromValue"/>
                       </item>
                       <item>
                        <widget class="QLabel" name="normPeakToLabel">
@@ -2252,14 +1977,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="normPeakToValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="normPeakToValue"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_51">
@@ -2312,14 +2030,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="normBackFromValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="normBackFromValue"/>
                       </item>
                       <item>
                        <widget class="QLabel" name="normBackToLabel">
@@ -2345,14 +2056,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="normBackToValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="normBackToValue"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_54">
@@ -2405,14 +2109,7 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="normLowResFromValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
+                       <widget class="QSpinBox" name="normLowResFromValue"/>
                       </item>
                       <item>
                        <widget class="QLabel" name="normLowResToLabel">
@@ -2420,6 +2117,9 @@ background-position: 100% 100%;</string>
                          <string>To Pixel</string>
                         </property>
                        </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="normLowResToValue"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_58">
@@ -2436,16 +2136,6 @@ background-position: 100% 100%;</string>
                          </size>
                         </property>
                        </spacer>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="normLowResToValue">
-                        <property name="maximumSize">
-                         <size>
-                          <width>50</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_57">
@@ -3162,17 +2852,6 @@ background-position: 100% 100%;</string>
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionOpen_Sum"/>
-    <addaction name="actionNext_File"/>
-    <addaction name="actionPrevious_File"/>
-    <addaction name="separator"/>
-    <addaction name="actionLoad_Extraction"/>
-   </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
      <string>Advanced</string>
@@ -3240,7 +2919,6 @@ background-position: 100% 100%;</string>
     <addaction name="separator"/>
     <addaction name="actionFilter_Points"/>
    </widget>
-   <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
    <addaction name="menuAutomatics"/>
    <addaction name="menuTools"/>
@@ -3656,15 +3334,6 @@ background-position: 100% 100%;</string>
   <tabstop>numberSearchEntry</tabstop>
   <tabstop>eventTofBins</tabstop>
   <tabstop>file_list</tabstop>
-  <tabstop>refYPos</tabstop>
-  <tabstop>refYWidth</tabstop>
-  <tabstop>refXPos</tabstop>
-  <tabstop>refXWidth</tabstop>
-  <tabstop>bgCenter</tabstop>
-  <tabstop>bgWidth</tabstop>
-  <tabstop>refScale</tabstop>
-  <tabstop>rangeStart</tabstop>
-  <tabstop>rangeEnd</tabstop>
   <tabstop>pfSNR</tabstop>
   <tabstop>pfMinWidth</tabstop>
   <tabstop>pfMaxWidth</tabstop>
@@ -3989,22 +3658,6 @@ background-position: 100% 100%;</string>
    </hints>
   </connection>
   <connection>
-   <sender>refScale</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>1023</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>445</x>
-     <y>853</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>color_selector</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
@@ -4037,38 +3690,6 @@ background-position: 100% 100%;</string>
    </hints>
   </connection>
   <connection>
-   <sender>refYWidth</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>939</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>188</x>
-     <y>860</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>refYPos</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>169</x>
-     <y>939</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>162</x>
-     <y>860</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>hide_plots</sender>
    <signal>stateChanged(int)</signal>
    <receiver>MainWindow</receiver>
@@ -4097,102 +3718,6 @@ background-position: 100% 100%;</string>
     <hint type="destinationlabel">
      <x>543</x>
      <y>418</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>refXPos</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>169</x>
-     <y>967</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>171</x>
-     <y>860</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bgCenter</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>169</x>
-     <y>995</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>refXWidth</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>967</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>230</x>
-     <y>860</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bgWidth</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>995</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rangeStart</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>169</x>
-     <y>1051</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rangeEnd</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
-     <y>1051</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
     </hint>
    </hints>
   </connection>
@@ -4349,22 +3874,6 @@ background-position: 100% 100%;</string>
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>494</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bgActive</sender>
-   <signal>released()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeRegionValues()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>56</x>
-     <y>992</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>

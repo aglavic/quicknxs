@@ -172,7 +172,7 @@ class NXSData(object):
   __metaclass__=OptionsDocMeta
 
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
-                       event_split_bins=None, event_split_index=0, low_res_range=[0,200000],
+                       event_split_bins=None, event_split_index=0, low_res_range=[0,303],
                        event_tof_overwrite=None)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
@@ -1206,17 +1206,17 @@ class LRDataset(object):
     # retrieve 3D array
     [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
     
-    # keep only the low resolution range requested
-    low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
-    from_pixel = min(low_res_range)
-    to_pixel = max(low_res_range)
+    ## keep only the low resolution range requested
+    #low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
+    #from_pixel = min(low_res_range)
+    #to_pixel = max(low_res_range)
         
-    Ixyt = Ixyt[from_pixel:to_pixel,:,:]
-    Exyt = Exyt[from_pixel:to_pixel,:,:]
+    #Ixyt = Ixyt[from_pixel:to_pixel,:,:]
+    #Exyt = Exyt[from_pixel:to_pixel,:,:]
     
     # create projections for the 2D datasets
     Ixy = Ixyt.sum(axis=2)
-    Ixt = Ixyt.sum(axis=1)
+    Ixt = Ixyt.sum(axis=0)
    # Exy = Exyt.sum(axis=2)    # FIXME
    # Ext = Exyt.sum(axis=1)    # FIXME
     
