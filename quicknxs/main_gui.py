@@ -499,9 +499,18 @@ class MainGUI(QtGui.QMainWindow):
     # for lines of the current extraction area
     peak1 = int(self.ui.dataPeakFromValue.value())
     peak2 = int(self.ui.dataPeakToValue.value())
-    
     peak_min = min([peak1, peak2])
     peak_max = max([peak1, peak2])
+
+    back1 = int(self.ui.dataBackFromValue.value())
+    back2 = int(self.ui.dataBackToValue.value())
+    back_min = min([back1, back2])
+    back_max = max([back1, back2])
+    
+    lowRes1 = int(self.ui.dataLowResFromValue.value())
+    lowRes2 = int(self.ui.dataLowResToValue.value())
+    lowRes_min = min([lowRes1, lowRes2])
+    lowRes_max = max([lowRes1, lowRes2])
     
 #    self.ui.dataPeakFromValue.setText(peak_min)
 #    self.ui.dataPeakToValue.setText(peak_max)
@@ -513,11 +522,6 @@ class MainGUI(QtGui.QMainWindow):
 
 # if (self.overview_lines is None) or (len(self.overview_lines) == 2):
 
-
-
-
-
-    
     # display xy
     self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
                              aspect='auto', cmap=self.color, origin='lower')
@@ -532,14 +536,24 @@ class MainGUI(QtGui.QMainWindow):
     
     self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
                                  aspect='auto', cmap=self.color,
-                                 extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.x.shape[0]-1])
+                                 extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
     self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
 
 #    x1 = self.ui.xy_overview.canvas.ax.axvline(x_peak-x_width/2., color='#aa0000')
 #    x2 = self.ui.xy_overview.canvas.ax.axvline(x_peak+x_width/2., color='#aa0000')
+    # display peak selection
     y1 = self.ui.xy_overview.canvas.ax.axhline(peak_min, color='#00aa00')
     y2 = self.ui.xy_overview.canvas.ax.axhline(peak_max, color='#00aa00')
+    
+    # display background selection
+    yb1 = self.ui.xy_overview.canvas.ax.axhline(back_min, color='#aa0000')
+    yb2 = self.ui.xy_overview.canvas.ax.axhline(back_max, color='#aa0000')
+      
+    # display low res selection
+    x1 = self.ui.xy_overview.canvas.ax.axvline(lowRes_min, color='#0a25f3')
+    x2 = self.ui.xy_overview.canvas.ax.axvline(lowRes_max, color='#0a25f3')
+    
       
     # draw plots
     self.ui.xy_overview.draw()

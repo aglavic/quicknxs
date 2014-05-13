@@ -852,25 +852,6 @@ p, li { white-space: pre-wrap; }
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <widget class="QLabel" name="label_36">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>25</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QTableWidget" name="reductionTable">
                   <property name="minimumSize">
                    <size>
@@ -1625,7 +1606,14 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="dataPeakFromValue"/>
+                       <widget class="QSpinBox" name="dataPeakFromValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                        <property name="value">
+                         <number>50</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="dataPeakToLabel">
@@ -1651,7 +1639,14 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="dataPeakToValue"/>
+                       <widget class="QSpinBox" name="dataPeakToValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                        <property name="value">
+                         <number>70</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_42">
@@ -1704,7 +1699,14 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="dataBackFromValue"/>
+                       <widget class="QSpinBox" name="dataBackFromValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                        <property name="value">
+                         <number>30</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="dataBackToLabel">
@@ -1714,7 +1716,14 @@ background-position: 100% 100%;</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="dataBackToValue"/>
+                       <widget class="QSpinBox" name="dataBackToValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                        <property name="value">
+                         <number>75</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_45">
@@ -1783,7 +1792,14 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="dataLowResFromValue"/>
+                       <widget class="QSpinBox" name="dataLowResFromValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                        <property name="value">
+                         <number>50</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="dataLowResToLabel">
@@ -1809,7 +1825,14 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="dataLowResToValue"/>
+                       <widget class="QSpinBox" name="dataLowResToValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                        <property name="value">
+                         <number>250</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_48">
@@ -1951,7 +1974,11 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="normPeakFromValue"/>
+                       <widget class="QSpinBox" name="normPeakFromValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="normPeakToLabel">
@@ -1977,7 +2004,11 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="normPeakToValue"/>
+                       <widget class="QSpinBox" name="normPeakToValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_51">
@@ -2030,7 +2061,11 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="normBackFromValue"/>
+                       <widget class="QSpinBox" name="normBackFromValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="normBackToLabel">
@@ -2056,7 +2091,11 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="normBackToValue"/>
+                       <widget class="QSpinBox" name="normBackToValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_54">
@@ -2109,7 +2148,14 @@ background-position: 100% 100%;</string>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="normLowResFromValue"/>
+                       <widget class="QSpinBox" name="normLowResFromValue">
+                        <property name="minimum">
+                         <number>0</number>
+                        </property>
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="normLowResToLabel">
@@ -2119,7 +2165,11 @@ background-position: 100% 100%;</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QSpinBox" name="normLowResToValue"/>
+                       <widget class="QSpinBox" name="normLowResToValue">
+                        <property name="maximum">
+                         <number>255</number>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_58">
