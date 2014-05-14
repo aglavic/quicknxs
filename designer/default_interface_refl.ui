@@ -4219,6 +4219,70 @@ background-position: 100% 100%;</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dataPeakFromValue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_peak_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>520</x>
+     <y>984</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>747</x>
+     <y>628</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakToValue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_peak_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>643</x>
+     <y>984</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>747</x>
+     <y>628</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>520</x>
+     <y>984</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>747</x>
+     <y>628</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>643</x>
+     <y>984</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>747</x>
+     <y>628</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4279,5 +4343,7 @@ background-position: 100% 100%;</string>
   <slot>manual_tof_switch()</slot>
   <slot>tof_ms_switch()</slot>
   <slot>tof_micros_switch()</slot>
+  <slot>data_peak_spinbox()</slot>
+  <slot>data_peak_spinbox_validation()</slot>
  </slots>
 </ui>

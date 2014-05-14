@@ -2603,6 +2603,32 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normLowResFromValue.setEnabled(flag)
     self.ui.normLowResToLabel.setEnabled(flag)
     self.ui.normLowResToValue.setEnabled(flag)
+
+  def data_peak_spinbox(self, value):
+    '''
+    This function will update the plot of the selection
+    '''
+    print 'inside data_peak_spinbox'
+
+  def data_peak_spinbox_validation(self):
+    '''
+    This function, reached when the user is done editing the
+    spinboxes (ENTER, leaving the spinbox) 
+    will make sure the min value is < max value
+    
+    '''
+    peak1 = self.ui.dataPeakFromValue.value()
+    peak2 = self.ui.dataPeakToValue.value()
+    
+    if (peak1 > peak2):
+      peak_min = peak2
+      peak_max = peak1
+    else:
+      peak_min = peak1
+      peak_max = peak2
+      
+    self.ui.dataPeakFromValue.setValue(peak_min)
+    self.ui.dataPeakToValue.setValue(peak_max)
     
   @log_call
   def open_reduction_preview(self):
