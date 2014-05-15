@@ -89,6 +89,9 @@ class MainGUI(QtGui.QMainWindow):
   _auto_tof_flag = True
   _ms_tof_flag = True
   
+  # live selection of peak, back and low_res
+  _live_selection = None # 'peak_min','peak_max','back_min','back_max','lowres_min','lowres_max'
+  
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -540,6 +543,8 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
 
+    # display various selection
+
 #    x1 = self.ui.xy_overview.canvas.ax.axvline(x_peak-x_width/2., color='#aa0000')
 #    x2 = self.ui.xy_overview.canvas.ax.axvline(x_peak+x_width/2., color='#aa0000')
     # display peak selection
@@ -547,13 +552,23 @@ class MainGUI(QtGui.QMainWindow):
     y2 = self.ui.xy_overview.canvas.ax.axhline(peak_max, color='#00aa00')
     
     # display background selection
-    yb1 = self.ui.xy_overview.canvas.ax.axhline(back_min, color='#aa0000')
-    yb2 = self.ui.xy_overview.canvas.ax.axhline(back_max, color='#aa0000')
+    if self.ui.dataBackgroundFlag.isChecked():
+      yb1 = self.ui.xy_overview.canvas.ax.axhline(back_min, color='#aa0000')
+      yb2 = self.ui.xy_overview.canvas.ax.axhline(back_max, color='#aa0000')
       
     # display low res selection
-    x1 = self.ui.xy_overview.canvas.ax.axvline(lowRes_min, color='#0a25f3')
-    x2 = self.ui.xy_overview.canvas.ax.axvline(lowRes_max, color='#0a25f3')
+    if self.ui.dataLowResFlag.isChecked():
+      x1 = self.ui.xy_overview.canvas.ax.axvline(lowRes_min, color='#0a25f3')
+      x2 = self.ui.xy_overview.canvas.ax.axvline(lowRes_max, color='#0a25f3')
+
+    # display peak selection
+    y1tof = self.ui.xtof_overview.canvas.ax.axhline(peak_min, color='#00aa00')
+    y2tof = self.ui.xtof_overview.canvas.ax.axhline(peak_max, color='#00aa00')
     
+    # display background selection
+    if self.ui.dataBackgroundFlag.isChecked():
+      yb1tof = self.ui.xtof_overview.canvas.ax.axhline(back_min, color='#aa0000')
+      yb2tof = self.ui.xtof_overview.canvas.ax.axhline(back_max, color='#aa0000')
       
     # draw plots
     self.ui.xy_overview.draw()
@@ -2213,6 +2228,62 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Plot for xy-map has been clicked or mouse moved
     '''
+    # event.button == 1 -> mouse is moving with left button pressed
+    # event.button == 3 -> mouse is moving with right button pressed
+
+    # clicked outside region, nothing should be done
+    if event.xdata is None or event.ydata is None:
+      return
+
+    offset = 4    # click within 2 pixels of current selection will move this selection
+
+    _live_y = event.ydata
+    _live_x = event.xdata
+
+    if event.button == 1:
+
+      peak_min = self.ui.dataPeakFromValue.value()
+      if abs(peak_min - _live_y) <= offset:
+        self._live_selection = 'peak_min'
+
+      peak_max = self.ui.dataPeakToValue.value()
+      if abs(peak_max - _live_y) <= offset:
+        self._live_selection = 'peak_max'
+        
+      back_min = self.ui.dataBackFromValue.value()
+      if abs(back_min - _live_y) <= offset:
+        self._live_selection = 'back_min'
+      
+      back_max = self.ui.dataBackToValue.value()
+      if abs(back_max - _live_y) <= offset:
+        self._live_selection = 'back_max'
+        
+      lowres_min = self.ui.dataLowResFromValue.value()
+      if abs(lowres_min - _live_x) <= offset:
+        self._live_selection = 'lowres_min'
+        
+      lowres_max = self.ui.dataLowResToValue.value()
+      if abs(lowres_max - _live_x) <= offset:
+        self._live_selection = 'lowres_max'
+
+    if self._live_selection == 'peak_min':
+      self.ui.dataPeakFromValue.setValue(_live_y)
+    if self._live_selection == 'peak_max':
+      self.ui.dataPeakToValue.setValue(_live_y)
+    if self._live_selection == 'back_min':
+      self.ui.dataBackFromValue.setValue(_live_y)
+    if self._live_selection == 'back_max':
+      self.ui.dataBackToValue.setValue(_live_y)
+    if self._live_selection == 'lowres_min':
+      self.ui.dataLowResFromValue.setValue(_live_y)
+    if self._live_selection == 'lowres_max':
+      self.ui.dataLowResToValue.setValue(_live_y)
+
+    else:
+      self._live_selection = None  
+
+    return
+
     if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
         event.xdata is not None:
       self.ui.refXPos.setValue(event.xdata)
@@ -2529,6 +2600,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataBackToLabel.setEnabled(flag)
     self.ui.dataBackToValue.setEnabled(flag)
 
+    # refresh plot
+    self.plot_overview_REFL()
+
   def data_low_res_switch(self,int):
     '''
     With or without data low resolution range
@@ -2542,6 +2616,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataLowResFromValue.setEnabled(flag)
     self.ui.dataLowResToLabel.setEnabled(flag)
     self.ui.dataLowResToValue.setEnabled(flag)
+
+    # refresh plot
+    self.plot_overview_REFL()
 
   def normalization_switch(self, int):
     '''
@@ -2603,19 +2680,19 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normLowResFromValue.setEnabled(flag)
     self.ui.normLowResToLabel.setEnabled(flag)
     self.ui.normLowResToValue.setEnabled(flag)
-
-  def data_peak_spinbox(self, value):
+    
+  def data_spinbox(self, value):
     '''
-    This function will update the plot of the selection
+    This function will update the selection on the data plot
     '''
-    print 'inside data_peak_spinbox'
+    self.plot_overview_REFL()
 
+  # data peak spinboxes
   def data_peak_spinbox_validation(self):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
-    will make sure the min value is < max value
-    
+    will make sure the min value is < max value    
     '''
     peak1 = self.ui.dataPeakFromValue.value()
     peak2 = self.ui.dataPeakToValue.value()
@@ -2630,6 +2707,112 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataPeakFromValue.setValue(peak_min)
     self.ui.dataPeakToValue.setValue(peak_max)
     
+  # data back spinboxes
+  def data_back_spinbox_validation(self):
+    '''
+    This function, reached when the user is done editing the
+    spinboxes (ENTER, leaving the spinbox) 
+    will make sure the min value is < max value  
+    '''
+    back1 = self.ui.dataBackFromValue.value()
+    back2 = self.ui.dataBackToValue.value()
+    
+    if (back1 > back2):
+      back_min = back2
+      back_max = back1
+    else:
+      back_min = back1
+      back_max = back2
+      
+    self.ui.dataBackFromValue.setValue(back_min)
+    self.ui.dataBackToValue.setValue(back_max)
+
+  # data low resolution spinboxes
+  def data_lowres_spinbox_validation(self):
+    '''
+    This function, reached when the user is done editing the
+    spinboxes (ENTER, leaving the spinbox) 
+    will make sure the min value is < max value  
+    '''
+    lowres1 = self.ui.dataLowResFromValue.value()
+    lowres2 = self.ui.dataLowResToValue.value()
+    
+    if (lowres1 > lowres2):
+      lowres_min = lowres2
+      lowres_max = lowres1
+    else:
+      lowres_min = lowres1
+      lowres_max = lowres2
+    
+    self.ui.dataLowResFromValue.setValue(lowres_min)
+    self.ui.dataLowResToValue.setValue(lowres_max)
+    
+  def norm_spinbox(self, value):
+    '''
+    This function will update the selection on the normalization plot
+    '''
+    pass
+
+  # norm peak spinboxes
+  def norm_peak_spinbox_validation(self):
+    '''
+    This function, reached when the user is done editing the
+    spinboxes (ENTER, leaving the spinbox) 
+    will make sure the min value is < max value    
+    '''
+    peak1 = self.ui.normPeakFromValue.value()
+    peak2 = self.ui.normPeakToValue.value()
+    
+    if (peak1 > peak2):
+      peak_min = peak2
+      peak_max = peak1
+    else:
+      peak_min = peak1
+      peak_max = peak2
+      
+    self.ui.normPeakFromValue.setValue(peak_min)
+    self.ui.normPeakToValue.setValue(peak_max)
+    
+  # norm back spinboxes
+  def norm_back_spinbox_validation(self):
+    '''
+    This function, reached when the user is done editing the
+    spinboxes (ENTER, leaving the spinbox) 
+    will make sure the min value is < max value  
+    '''
+    back1 = self.ui.normBackFromValue.value()
+    back2 = self.ui.normBackToValue.value()
+    
+    if (back1 > back2):
+      back_min = back2
+      back_max = back1
+    else:
+      back_min = back1
+      back_max = back2
+      
+    self.ui.normBackFromValue.setValue(back_min)
+    self.ui.normBackToValue.setValue(back_max)
+
+  # data low resolution spinboxes
+  def norm_lowres_spinbox_validation(self):
+    '''
+    This function, reached when the user is done editing the
+    spinboxes (ENTER, leaving the spinbox) 
+    will make sure the min value is < max value  
+    '''
+    lowres1 = self.ui.normLowResFromValue.value()
+    lowres2 = self.ui.normLowResToValue.value()
+    
+    if (lowres1 > lowres2):
+      lowres_min = lowres2
+      lowres_max = lowres1
+    else:
+      lowres_min = lowres1
+      lowres_max = lowres2
+    
+    self.ui.normLowResFromValue.setValue(lowres_min)
+    self.ui.normLowResToValue.setValue(lowres_max)
+
   @log_call
   def open_reduction_preview(self):
     dia=ReductionPreviewDialog(self)
