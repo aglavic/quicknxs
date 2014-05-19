@@ -163,7 +163,8 @@ class MainGUI(QtGui.QMainWindow):
                         'Norm. Run #']
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reductionTable.resizeColumnsToContents()
-      self.ui.TOFmanualMicrosValue.setText(u'\u03bcs')
+      self.ui.dataTOFmanualMicrosValue.setText(u'\u03bcs')
+      self.ui.normTOFmanualMicrosValue.setText(u'\u03bcs')
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -174,10 +175,13 @@ class MainGUI(QtGui.QMainWindow):
     if instrument.NAME == "REF_M":
       self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
       self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
-
+      self.connect_plot_events()
+    else:
+      self.connect_plot_events_refl()
+      
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
-    self.connect_plot_events()
+
     # watch folder for changes
     self.auto_change_active=False
 
@@ -270,14 +274,15 @@ class MainGUI(QtGui.QMainWindow):
     Connect matplotlib mouse events.
     '''
     for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-           self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-           self.ui.xy_overview, self.ui.xtof_overview,
-           self.ui.x_project, self.ui.y_project, self.ui.refl]:
+                 self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
+                 self.ui.xy_overview, self.ui.xtof_overview,
+                 self.ui.x_project, self.ui.y_project, self.ui.refl]:
       plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
     for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
                  self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
                  self.ui.xy_overview, self.ui.xtof_overview]:
       plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
+
     self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
     self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
     self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotRelese)
@@ -291,6 +296,47 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
     self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
     self.ui.xtof_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
+
+  def connect_plot_events_refl(self):
+    '''
+    Connect matplotlib mouse events.
+    '''
+    for plot in [self.ui.data_yt_plot, 
+                 self.ui.data_yi_plot,
+                 self.ui.data_it_plot,
+                 self.ui.data_ix_plot,
+                 self.ui.norm_yt_plot, 
+                 self.ui.norm_yi_plot,
+                 self.ui.norm_it_plot,
+                 self.ui.norm_ix_plot]:
+      plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
+    
+    for plot in [self.ui.data_yt_plot, 
+                 self.ui.data_yi_plot,
+                 self.ui.data_it_plot,
+                 self.ui.data_ix_plot,
+                 self.ui.norm_yt_plot, 
+                 self.ui.norm_yi_plot,
+                 self.ui.norm_it_plot,
+                 self.ui.norm_ix_plot]:
+      plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
+
+#    self.ui.data_yt_plot.canvas.mpl_connect('motion_notify_event', self.plotPickyt)
+
+    #self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
+    #self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
+    #self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotRelese)
+    #self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
+    #self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
+    #self.ui.y_project.canvas.mpl_connect('button_release_event', self.plotRelese)
+    #self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
+    #self.ui.xy_overview.canvas.mpl_connect('button_press_event', self.plotPickXY)
+    #self.ui.xy_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXY)
+    #self.ui.xy_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
+    #self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
+    #self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
+    #self.ui.xtof_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
+
 
   @log_input
   def fileOpen(self, filename, do_plot=True):
@@ -2240,7 +2286,7 @@ class MainGUI(QtGui.QMainWindow):
     _live_y = event.ydata
     _live_x = event.xdata
 
-    if event.button == 1:
+    if event.button == 1 and self._live_selection is None:
 
       peak_min = self.ui.dataPeakFromValue.value()
       if abs(peak_min - _live_y) <= offset:
@@ -2280,6 +2326,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataLowResToValue.setValue(_live_y)
 
     else:
+      
       self._live_selection = None  
 
     return
@@ -2502,19 +2549,19 @@ Do you want to try to restore the working reduction list?""",
     if gui.state is not None: self.restoreState(QtCore.QByteArray(gui.state))
     if hasattr(self.ui, 'mainSplitter'):
       self.ui.mainSplitter.setSizes(gui.splitters[0])
-      self.ui.plotSplitter.setSizes(gui.splitters[2])
-    self.ui.overviewSplitter.setSizes(gui.splitters[1])
+#      self.ui.plotSplitter.setSizes(gui.splitters[2])
+#    self.ui.overviewSplitter.setSizes(gui.splitters[1])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
     self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
-    for i, fig in enumerate([
-                            self.ui.xy_overview,
-                            self.ui.xtof_overview,
-                            self.ui.refl,
-                            self.ui.x_project,
-                            self.ui.y_project,
-                            ]):
-      fig.set_config(gui.figure_params[i])
+    #for i, fig in enumerate([
+                            #self.ui.xy_overview,
+                            #self.ui.xtof_overview,
+                            #self.ui.refl,
+                            #self.ui.x_project,
+                            #self.ui.y_project,
+                            #]):
+      #fig.set_config(gui.figure_params[i])
 
   def closeEvent(self, event=None):
     '''
