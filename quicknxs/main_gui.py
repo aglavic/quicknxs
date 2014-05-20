@@ -164,7 +164,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reductionTable.resizeColumnsToContents()
       self.ui.dataTOFmanualMicrosValue.setText(u'\u03bcs')
-      self.ui.normTOFmanualMicrosValue.setText(u'\u03bcs')
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -2567,6 +2566,9 @@ Do you want to try to restore the working reduction list?""",
     '''
     Save window and dock geometry.
     '''
+
+    return  ##FIXME
+
     # join delay thread
     debug('Shutting down delay trigger')
     self.trigger.stay_alive=False
@@ -2648,7 +2650,7 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataBackToValue.setEnabled(flag)
 
     # refresh plot
-    self.plot_overview_REFL()
+#    self.plot_overview_REFL()
 
   def data_low_res_switch(self,int):
     '''
@@ -2665,7 +2667,7 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataLowResToValue.setEnabled(flag)
 
     # refresh plot
-    self.plot_overview_REFL()
+#    self.plot_overview_REFL()
 
   def normalization_switch(self, int):
     '''
