@@ -2073,7 +2073,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLabel" name="dataTOFmanualFromLabel">
+                       <widget class="QLabel" name="TOFmanualFromLabel">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -2083,7 +2083,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataTOFmanualFromValue">
+                       <widget class="QLineEdit" name="TOFmanualFromValue">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -2111,7 +2111,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="dataTOFmanualFromUnitsValue">
+                       <widget class="QLabel" name="TOFmanualFromUnitsValue">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -2137,7 +2137,7 @@ p, li { white-space: pre-wrap; }
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QLabel" name="dataTOFmanualToLabel">
+                       <widget class="QLabel" name="TOFmanualToLabel">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -2147,7 +2147,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="dataTOFmanualToValue">
+                       <widget class="QLineEdit" name="TOFmanualToValue">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -2175,7 +2175,7 @@ p, li { white-space: pre-wrap; }
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="dataTOFmanualToUnitsValue">
+                       <widget class="QLabel" name="TOFmanualToUnitsValue">
                         <property name="enabled">
                          <bool>false</bool>
                         </property>
@@ -2212,7 +2212,7 @@ p, li { white-space: pre-wrap; }
                          <item>
                           <layout class="QHBoxLayout" name="horizontalLayout_41">
                            <item>
-                            <widget class="QRadioButton" name="dataTOFmanualMsValue">
+                            <widget class="QRadioButton" name="TOFmanualMsValue">
                              <property name="enabled">
                               <bool>false</bool>
                              </property>
@@ -2228,7 +2228,7 @@ p, li { white-space: pre-wrap; }
                             </widget>
                            </item>
                            <item>
-                            <widget class="QRadioButton" name="dataTOFmanualMicrosValue">
+                            <widget class="QRadioButton" name="TOFmanualMicrosValue">
                              <property name="enabled">
                               <bool>false</bool>
                              </property>
@@ -4354,6 +4354,70 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>1286</x>
      <y>613</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataTOFautoMode</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>auto_tof_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>398</x>
+     <y>680</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataTOFmanualMode</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>manual_tof_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>680</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TOFmanualMicrosValue</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tof_micros_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1049</x>
+     <y>680</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TOFmanualMsValue</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tof_ms_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>982</x>
+     <y>680</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>

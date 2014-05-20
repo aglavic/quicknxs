@@ -163,7 +163,7 @@ class MainGUI(QtGui.QMainWindow):
                         'Norm. Run #']
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reductionTable.resizeColumnsToContents()
-      self.ui.dataTOFmanualMicrosValue.setText(u'\u03bcs')
+      self.ui.TOFmanualMicrosValue.setText(u'\u03bcs')
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -1163,7 +1163,6 @@ class MainGUI(QtGui.QMainWindow):
     Reached by the TOF auto switch
     '''
     if not self._auto_tof_flag:
-      self.ui.TOFmanualLabel.setEnabled(not bool)
       self.ui.TOFmanualFromLabel.setEnabled(not bool)
       self.ui.TOFmanualFromValue.setEnabled(not bool)
       self.ui.TOFmanualFromUnitsValue.setEnabled(not bool)
@@ -1179,7 +1178,6 @@ class MainGUI(QtGui.QMainWindow):
     Reached by the TOF manual switch
     '''
     if self._auto_tof_flag:
-      self.ui.TOFmanualLabel.setEnabled(bool)
       self.ui.TOFmanualFromLabel.setEnabled(bool)
       self.ui.TOFmanualFromValue.setEnabled(bool)
       self.ui.TOFmanualFromUnitsValue.setEnabled(bool)
