@@ -1564,7 +1564,7 @@ p, li { white-space: pre-wrap; }
                                </widget>
                               </item>
                               <item>
-                               <widget class="QSpinBox" name="normFromValue">
+                               <widget class="QSpinBox" name="normPeakFromValue">
                                 <property name="palette">
                                  <palette>
                                   <active>
@@ -4418,6 +4418,22 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>982</x>
      <y>680</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useNormalizationFlag</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>396</x>
+     <y>165</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>

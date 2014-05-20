@@ -2667,29 +2667,29 @@ Do you want to try to restore the working reduction list?""",
     # refresh plot
 #    self.plot_overview_REFL()
 
-  def normalization_switch(self, int):
+  def normalization_switch(self, flag):
     '''
     With or without normalization
     '''
 
-    if int==2:
-      flag = True
+    if flag:
       # need to check status of over flags here
       flagLowRes = self.ui.normLowResFlag.isChecked()
-      flagBack = self.ui.normBackFlag.isChecked()
+      flagBack = self.ui.normBackgroundFlag.isChecked()
     else:
-      flag = False
       flagLowRes = False
       flagBack = False
 
-    self.ui.normRunNumberLabel.setEnabled(flag)
-    self.ui.normRunNumberValue.setEnabled(flag)
-    self.ui.normPeakLabel.setEnabled(flag)
+    self.ui.norm_yt_plot.setEnabled(flag)
+    self.ui.norm_yi_plot.setEnabled(flag)
+    self.ui.norm_it_plot.setEnabled(flag)
+    self.ui.norm_ix_plot.setEnabled(flag)
+
     self.ui.normPeakFromLabel.setEnabled(flag)
     self.ui.normPeakFromValue.setEnabled(flag)
     self.ui.normPeakToLabel.setEnabled(flag)
     self.ui.normPeakToValue.setEnabled(flag)
-    self.ui.normBackFlag.setEnabled(flag)
+    self.ui.normBackgroundFlag.setEnabled(flag)
     self.ui.normBackFromLabel.setEnabled(flagBack)
     self.ui.normBackFromValue.setEnabled(flagBack)
     self.ui.normBackToLabel.setEnabled(flagBack)

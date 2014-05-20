@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue May 20 10:00:43 2014
+# Created: Tue May 20 10:51:10 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -642,7 +642,7 @@ class Ui_MainWindow(object):
         self.normPeakToLabel = QtGui.QLabel(self.frame_16)
         self.normPeakToLabel.setObjectName("normPeakToLabel")
         self.horizontalLayout_46.addWidget(self.normPeakToLabel)
-        self.normFromValue = QtGui.QSpinBox(self.frame_16)
+        self.normPeakFromValue = QtGui.QSpinBox(self.frame_16)
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 255, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -653,11 +653,11 @@ class Ui_MainWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(118, 118, 117))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
-        self.normFromValue.setPalette(palette)
-        self.normFromValue.setMaximum(255)
-        self.normFromValue.setProperty("value", 50)
-        self.normFromValue.setObjectName("normFromValue")
-        self.horizontalLayout_46.addWidget(self.normFromValue)
+        self.normPeakFromValue.setPalette(palette)
+        self.normPeakFromValue.setMaximum(255)
+        self.normPeakFromValue.setProperty("value", 50)
+        self.normPeakFromValue.setObjectName("normPeakFromValue")
+        self.horizontalLayout_46.addWidget(self.normPeakFromValue)
         self.verticalLayout_32.addLayout(self.horizontalLayout_46)
         self.horizontalLayout_47 = QtGui.QHBoxLayout()
         self.horizontalLayout_47.setObjectName("horizontalLayout_47")
@@ -1494,6 +1494,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.dataTOFmanualMode, QtCore.SIGNAL("toggled(bool)"), MainWindow.manual_tof_switch)
         QtCore.QObject.connect(self.TOFmanualMicrosValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_micros_switch)
         QtCore.QObject.connect(self.TOFmanualMsValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_ms_switch)
+        QtCore.QObject.connect(self.useNormalizationFlag, QtCore.SIGNAL("toggled(bool)"), MainWindow.normalization_switch)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
