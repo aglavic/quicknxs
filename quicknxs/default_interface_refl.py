@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue May 20 16:33:00 2014
+# Created: Wed May 21 17:03:19 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1495,6 +1495,18 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.TOFmanualMicrosValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_micros_switch)
         QtCore.QObject.connect(self.TOFmanualMsValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_ms_switch)
         QtCore.QObject.connect(self.useNormalizationFlag, QtCore.SIGNAL("toggled(bool)"), MainWindow.normalization_switch)
+        QtCore.QObject.connect(self.dataBackToValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
+        QtCore.QObject.connect(self.dataBackFromValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
+        QtCore.QObject.connect(self.dataPeakFromValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
+        QtCore.QObject.connect(self.dataPeakToValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
+        QtCore.QObject.connect(self.dataLowResFromValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
+        QtCore.QObject.connect(self.dataLowResToValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
+        QtCore.QObject.connect(self.dataBackToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_back_spinbox_validation)
+        QtCore.QObject.connect(self.dataBackFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_back_spinbox_validation)
+        QtCore.QObject.connect(self.dataPeakFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_peak_spinbox_validation)
+        QtCore.QObject.connect(self.dataPeakToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_peak_spinbox_validation)
+        QtCore.QObject.connect(self.dataLowResFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_lowres_spinbox_validation)
+        QtCore.QObject.connect(self.dataLowResToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_lowres_spinbox_validation)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

@@ -528,7 +528,7 @@ class MainGUI(QtGui.QMainWindow):
       self.plot_overview_REFL()
 
   @log_call
-  def plot_overview_REFL(self):
+  def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
     
     # check witch tab is activated (data or norm)
     if self.ui.dataNormTabWidget.currentIndex() == 0: #data
@@ -617,36 +617,58 @@ class MainGUI(QtGui.QMainWindow):
 
 
     # display yt
-    yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
-                   aspect='auto', cmap=self.color, origin='lower',
-                   extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
-    yt_plot.set_xlabel(u't (ms)')
-    yt_plot.set_ylabel(u'y (pixel)')
-
-    # display tof range in auto/manual TOF range    #FIXME
-    autotmin = data.auto_tof_range[0]
-    autotmax = data.auto_tof_range[1]
-    self.display_tof_range(autotmin, autotmax, 'ms')
-
-    tmin = data.tof_edges[0]
-    tmax = data.tof_edges[-1]
-
-    y1 = yt_plot.canvas.ax.axhline(peak1, color='#00aa00')
-    y2 = yt_plot.canvas.ax.axhline(peak2, color='#00aa00')
-
-    if back_flag:
-      yb1 = yt_plot.canvas.ax.axhline(back1, color='#aa0000')
-      yb2 = yt_plot.canvas.ax.axhline(back2, color='#aa0000')
-
-    yt_plot.draw()
+    if plot_yt:
+      yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
+                     aspect='auto', cmap=self.color, origin='lower',
+                     extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
+      yt_plot.set_xlabel(u't (ms)')
+      yt_plot.set_ylabel(u'y (pixel)')
+  
+      # display tof range in auto/manual TOF range    #FIXME
+      autotmin = data.auto_tof_range[0]
+      autotmax = data.auto_tof_range[1]
+      self.display_tof_range(autotmin, autotmax, 'ms')
+  
+      tmin = data.tof_edges[0]
+      tmax = data.tof_edges[-1]
+  
+      y1 = yt_plot.canvas.ax.axhline(peak1, color='#00aa00')
+      y2 = yt_plot.canvas.ax.axhline(peak2, color='#00aa00')
+  
+      if back_flag:
+        yb1 = yt_plot.canvas.ax.axhline(back1, color='#aa0000')
+        yb2 = yt_plot.canvas.ax.axhline(back2, color='#aa0000')
+  
+      yt_plot.draw()
 
     # display it
-    it_plot.plot(data.tof_edges[0:-1],countstofdata)
-    it_plot.set_xlabel(u't (ms)')
-    it_plot.set_ylabel(u'Counts')
-    ta = it_plot.canvas.ax.axvline(autotmin, color='#00aa00')
-    tb = it_plot.canvas.ax.axvline(autotmax, color='#00aa00')
-    it_plot.draw()
+    if plot_it:
+      it_plot.plot(data.tof_edges[0:-1],countstofdata)
+      it_plot.set_xlabel(u't (ms)')
+      it_plot.set_ylabel(u'Counts')
+      ta = it_plot.canvas.ax.axvline(autotmin, color='#00aa00')
+      tb = it_plot.canvas.ax.axvline(autotmax, color='#00aa00')
+      it_plot.draw()
+
+    # display yi
+    if plot_yi:
+      xaxis = range(len(data.ycountsdata))
+      yi_plot.plot(data.ycountsdata,xaxis)
+      yi_plot.set_xlabel(u'pixels')
+      yi_plot.set_ylabel(u'Counts')
+      yi_plot.canvas.ax.set_ylim(0,255)
+      
+      y1peak = yi_plot.canvas.ax.axhline(peak1, color='#00aa00')
+      y2peak = yi_plot.canvas.ax.axhline(peak2, color='#00aa00')
+  
+      if back_flag:
+        y1back = yi_plot.canvas.ax.axhline(back1, color='#aa0000')
+        y2back = yi_plot.canvas.ax.axhline(back2, color='#aa0000')
+
+      yi_plot.draw()
+
+
+
 
     return
 
@@ -2496,6 +2518,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Change the intensity limits of a map plot with the mouse wheel.
     '''
+    return #FIXME
     canvas=None
     for plot in [self.ui.xy_overview, self.ui.xtof_overview]:
       if plot.canvas is event.canvas:
@@ -2735,7 +2758,7 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataBackToValue.setEnabled(flag)
 
     # refresh plot
-#    self.plot_overview_REFL()
+    self.plot_overview_REFL(plot_yi=True, plot_yt=True)
 
   def data_low_res_switch(self,int):
     '''
@@ -2752,7 +2775,7 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataLowResToValue.setEnabled(flag)
 
     # refresh plot
-#    self.plot_overview_REFL()
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
   def normalization_switch(self, flag):
     '''
@@ -2801,6 +2824,8 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normBackToLabel.setEnabled(flag)
     self.ui.normBackToValue.setEnabled(flag)
     
+    self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
+    
   def normalization_low_res_switch(self, int):
     '''
     With or without normalization low resolution range
@@ -2814,12 +2839,17 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normLowResFromValue.setEnabled(flag)
     self.ui.normLowResToLabel.setEnabled(flag)
     self.ui.normLowResToValue.setEnabled(flag)
+
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    
     
   def data_spinbox(self, value):
     '''
     This function will update the selection on the data plot
     '''
-    self.plot_overview_REFL()
+    self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
+
 
   # data peak spinboxes
   def data_peak_spinbox_validation(self):
@@ -2885,7 +2915,8 @@ Do you want to try to restore the working reduction list?""",
     '''
     This function will update the selection on the normalization plot
     '''
-    pass
+    self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
+    
 
   # norm peak spinboxes
   def norm_peak_spinbox_validation(self):
