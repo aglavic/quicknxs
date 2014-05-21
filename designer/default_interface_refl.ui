@@ -747,9 +747,9 @@ p, li { white-space: pre-wrap; }
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QTabWidget" name="tabWidget">
+               <widget class="QTabWidget" name="dataNormTabWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <attribute name="title">
@@ -954,7 +954,7 @@ p, li { white-space: pre-wrap; }
                                </widget>
                               </item>
                               <item>
-                               <widget class="QSpinBox" name="dataFromValue">
+                               <widget class="QSpinBox" name="dataPeakFromValue">
                                 <property name="palette">
                                  <palette>
                                   <active>

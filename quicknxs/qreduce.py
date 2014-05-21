@@ -1058,6 +1058,7 @@ class LRDataset(object):
   total_counts=0 #: total counts on detector
   total_time=0 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
+  auto_tof_range=None #: min and max value of the auto TOF range defined by the program
   dangle=0. #: detector arm angle value in [°]
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
   sangle=0. #: sample angle [°]
@@ -1096,8 +1097,12 @@ class LRDataset(object):
   lambda_center=3.37 #: central wavelength of measurement band [Å]
 
   xydata=None #: 2D array of intensity projected on X-Y
-  xtofdata=None #: 2D array of intensity projected on X-TOF
+  ytofdata=None #: 2D array of intensity projected on X-TOF
   data=None #: 3D array of intensity in X, Y and TOF
+  countstofdata = None
+  countsxdata = None
+  ycountsdata = None
+
   xyerror=None #: 2D array of the error projected on X-Y
   xtoferror=None #: 2D array of error projected on X-TOF
   error=None #: 3D array of error in X, Y and TOF
@@ -1189,8 +1194,10 @@ class LRDataset(object):
     # retrieve the metadata from the nexus file
     output._collect_info(nxs)
 
-    tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
-    tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
+    autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
+    autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
+    tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 2.5) * 1e-4
+    tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
     tbin = int(read_options["bins"])
     
     # rebin event nexus to get histogram
@@ -1216,15 +1223,24 @@ class LRDataset(object):
     
     # create projections for the 2D datasets
     Ixy = Ixyt.sum(axis=2)
-    Ixt = Ixyt.sum(axis=0)
+    Iyt = Ixyt.sum(axis=0)
+    Iit = Iyt.sum(axis=0)
+    Iix = Ixy.sum(axis=1)
+    Iyi = Iyt.sum(axis=1)
    # Exy = Exyt.sum(axis=2)    # FIXME
    # Ext = Exyt.sum(axis=1)    # FIXME
     
     # store the data
+    output.auto_tof_range = [autotmin,autotmax]
     output.tof_edges=_tof_axis
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
-    output.xtofdata=Ixt.astype(float) # 2D dataset
+    output.ytofdata=Iyt.astype(float) # 2D dataset
+
+    output.countstofdata = Iit.astype(float)
+    output.countsxdata = Iix.astype(float)
+    output.ycountsdata = Iyi.astype(float)
+
    # output.error=Exyt.astype(float)
    # output.xyerror=Exy.transpose().astype(float)
    # output.xtoferror=Ext.astype(float)

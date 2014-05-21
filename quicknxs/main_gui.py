@@ -530,35 +530,80 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_overview_REFL(self):
     
-    # clear previous plot
-    self.ui.xy_overview.clear()
-    self.ui.xtof_overview.clear()
+    # check witch tab is activated (data or norm)
+    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+      isDataSelected = True
+    else:
+      isDataSelected = False
+      
+    if isDataSelected:
+      # clear previous plot
+      self.ui.data_yt_plot.clear()
+      self.ui.data_yi_plot.clear()
+      self.ui.data_it_plot.clear()
+      self.ui.data_ix_plot.clear()
+    else:
+      self.ui.norm_yt_plot.clear()
+      self.ui.norm_yi_plot.clear()
+      self.ui.norm_it_plot.clear()
+      self.ui.norm_ix_plot.clear()
 
     data = self.active_data
     xy = data.xydata
-    xtof = data.xtofdata
+    ytof = data.ytofdata
+    countstofdata = data.countstofdata
+    countsxdata = data.countsxdata
+    ycountsdata = data.ycountsdata
     
-    # min and max of xy and xtof 2D arrays
-    xy_imin=xy[xy>0].min()
-    xy_imax=xy.max()
-    tof_imin=xtof[xtof>0].min()
-    tof_imax=xtof.max()
+    ## min and max of xy and xtof 2D arrays
+    #xy_imin=xy[xy>0].min()
+    #xy_imax=xy.max()
+    #tof_imin=xtof[xtof>0].min()
+    #tof_imax=xtof.max()
 
-    # for lines of the current extraction area
-    peak1 = int(self.ui.dataPeakFromValue.value())
-    peak2 = int(self.ui.dataPeakToValue.value())
-    peak_min = min([peak1, peak2])
-    peak_max = max([peak1, peak2])
+    if isDataSelected:
 
-    back1 = int(self.ui.dataBackFromValue.value())
-    back2 = int(self.ui.dataBackToValue.value())
-    back_min = min([back1, back2])
-    back_max = max([back1, back2])
+      # for lines of the current extraction area
+      peak1 = int(self.ui.dataPeakFromValue.value())
+      peak2 = int(self.ui.dataPeakToValue.value())
+      peak_min = min([peak1, peak2])
+      peak_max = max([peak1, peak2])
+  
+      back1 = int(self.ui.dataBackFromValue.value())
+      back2 = int(self.ui.dataBackToValue.value())
+      back_min = min([back1, back2])
+      back_max = max([back1, back2])
+      
+      back_flag = self.ui.dataBackgroundFlag.isChecked()
+      
+      lowRes1 = int(self.ui.dataLowResFromValue.value())
+      lowRes2 = int(self.ui.dataLowResToValue.value())
+      lowRes_min = min([lowRes1, lowRes2])
+      lowRes_max = max([lowRes1, lowRes2])
+      
+      yt_plot = self.ui.data_yt_plot
+      yi_plot = self.ui.data_yi_plot
+      it_plot = self.ui.data_it_plot
+      ix_plot = self.ui.data_ix_plot
     
-    lowRes1 = int(self.ui.dataLowResFromValue.value())
-    lowRes2 = int(self.ui.dataLowResToValue.value())
-    lowRes_min = min([lowRes1, lowRes2])
-    lowRes_max = max([lowRes1, lowRes2])
+    else:
+
+      # for lines of the current extraction area
+      peak1 = int(self.ui.normPeakFromValue.value())
+      peak2 = int(self.ui.normPeakToValue.value())
+  
+      back1 = int(self.ui.normBackFromValue.value())
+      back2 = int(self.ui.normBackToValue.value())
+
+      back_flag = self.ui.normBackgroundFlag.isChecked()
+      
+      lowRes1 = int(self.ui.normLowResFromValue.value())
+      lowRes2 = int(self.ui.normLowResToValue.value())
+    
+      yt_plot = self.ui.norm_yt_plot
+      yi_plot = self.ui.norm_yi_plot
+      it_plot = self.ui.norm_it_plot
+      ix_plot = self.ui.norm_ix_plot
     
 #    self.ui.dataPeakFromValue.setText(peak_min)
 #    self.ui.dataPeakToValue.setText(peak_max)
@@ -569,6 +614,41 @@ class MainGUI(QtGui.QMainWindow):
     #bg_width = self.ui.bgWidth.value()
 
 # if (self.overview_lines is None) or (len(self.overview_lines) == 2):
+
+
+    # display yt
+    yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
+                   aspect='auto', cmap=self.color, origin='lower',
+                   extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
+    yt_plot.set_xlabel(u't (ms)')
+    yt_plot.set_ylabel(u'y (pixel)')
+
+    # display tof range in auto/manual TOF range    #FIXME
+    autotmin = data.auto_tof_range[0]
+    autotmax = data.auto_tof_range[1]
+    self.display_tof_range(autotmin, autotmax, 'ms')
+
+    tmin = data.tof_edges[0]
+    tmax = data.tof_edges[-1]
+
+    y1 = yt_plot.canvas.ax.axhline(peak1, color='#00aa00')
+    y2 = yt_plot.canvas.ax.axhline(peak2, color='#00aa00')
+
+    if back_flag:
+      yb1 = yt_plot.canvas.ax.axhline(back1, color='#aa0000')
+      yb2 = yt_plot.canvas.ax.axhline(back2, color='#aa0000')
+
+    yt_plot.draw()
+
+    # display it
+    it_plot.plot(data.tof_edges[0:-1],countstofdata)
+    it_plot.set_xlabel(u't (ms)')
+    it_plot.set_ylabel(u'Counts')
+    ta = it_plot.canvas.ax.axvline(autotmin, color='#00aa00')
+    tb = it_plot.canvas.ax.axvline(autotmax, color='#00aa00')
+    it_plot.draw()
+
+    return
 
     # display xy
     self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
@@ -638,13 +718,17 @@ class MainGUI(QtGui.QMainWindow):
     will display the TOF min and max value in the metadata field
     according to the units selected
     '''
+
+    _tmin = tmin.copy()
+    _tmax = tmax.copy()
+
     is_ms_selected = self.ui.TOFmanualMsValue.isChecked()
     if is_ms_selected:
-      tmin *= 1e-3
-      tmax *= 1e-3
+      _tmin *= 1e-3
+      _tmax *= 1e-3
     
-    stmin = str("%.2f" % tmin)
-    stmax = str("%.2f" % tmax)
+    stmin = str("%.2f" % _tmin)
+    stmax = str("%.2f" % _tmax)
     
     self.ui.TOFmanualFromValue.setText(stmin)
     self.ui.TOFmanualToValue.setText(stmax)
@@ -1727,7 +1811,10 @@ class MainGUI(QtGui.QMainWindow):
     else: #REF_L
       
       d = self.active_data
-      self.ui.dataFileNameValue.setText('%s'%self.filename)
+      if self.ui.dataNormTabWidget.currentIndex() == 0:
+        self.ui.dataNameOfFile.setText('%s'%self.filename)
+      else:
+        self.ui.normNameOfFile.setText('%s'%self.filename)
       self.ui.metadataProtonChargeValue.setText('%.3e'%d.proton_charge)
       self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)
       self.ui.metadataLambdaRequestedValue.setText('%.2f'%d.lambda_requested)
