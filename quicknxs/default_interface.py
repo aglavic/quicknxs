@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface.ui'
 #
-# Created: Thu Apr 17 09:42:44 2014
+# Created: Mon May 19 16:43:54 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1336,6 +1336,13 @@ class Ui_MainWindow(object):
     self.actionFilter_Points.setObjectName(_fromUtf8("actionFilter_Points"))
     self.actionOpen_Reduction_Preview = QtGui.QAction(MainWindow)
     self.actionOpen_Reduction_Preview.setObjectName(_fromUtf8("actionOpen_Reduction_Preview"))
+    self.actionAutoNorm = QtGui.QAction(MainWindow)
+    self.actionAutoNorm.setCheckable(True)
+    self.actionAutoNorm.setChecked(True)
+    icon17 = QtGui.QIcon()
+    icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/autoNorm.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.actionAutoNorm.setIcon(icon17)
+    self.actionAutoNorm.setObjectName(_fromUtf8("actionAutoNorm"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1371,6 +1378,7 @@ class Ui_MainWindow(object):
     self.menuReduction.addAction(self.actionQuick_Reduce)
     self.menuAutomatics.addAction(self.actionAutomaticXPeak)
     self.menuAutomatics.addAction(self.actionAutoYLimits)
+    self.menuAutomatics.addAction(self.actionAutoNorm)
     self.menuAutomatics.addSeparator()
     self.menuAutomatics.addAction(self.actionAuto_Reflectivity)
     self.menuAutomatics.addSeparator()
@@ -1406,6 +1414,7 @@ class Ui_MainWindow(object):
     self.mainToolbar.addSeparator()
     self.mainToolbar.addAction(self.actionAutomaticXPeak)
     self.mainToolbar.addAction(self.actionAutoYLimits)
+    self.mainToolbar.addAction(self.actionAutoNorm)
     self.mainToolbar.addSeparator()
     self.mainToolbar.addAction(self.actionAuto_Reflectivity)
     self.mainToolbar.addSeparator()
@@ -1863,6 +1872,8 @@ class Ui_MainWindow(object):
     self.actionFilter_Points.setText(_translate("MainWindow", "Filter Points...", None))
     self.actionFilter_Points.setToolTip(_translate("MainWindow", "Remove points from already exported reflectivity datasets", None))
     self.actionOpen_Reduction_Preview.setText(_translate("MainWindow", "Open Reduction Preview...", None))
+    self.actionAutoNorm.setText(_translate("MainWindow", "AutoNorm", None))
+    self.actionAutoNorm.setToolTip(_translate("MainWindow", "Automatically select normalization file with closest slit sizes", None))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

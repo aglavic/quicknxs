@@ -1400,7 +1400,10 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
     self.ui.datasetTime.setText(u"%i s"%d.total_time)
     self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
-    self.ui.datasetRate.setText(u"%.1f cps"%(d.total_counts/d.total_time))
+    try:
+      self.ui.datasetRate.setText(u"%.1f cps"%(d.total_counts/d.total_time))
+    except ZeroDivisionError:
+      self.ui.datasetRate.setText(u"NaN")
     self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
     self.ui.datasetDangle0.setText(dangle0)
     self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
@@ -1569,6 +1572,18 @@ class MainGUI(QtGui.QMainWindow):
       return fittings[0]
     elif str(self.active_data.number) in indices:
       return fittings[indices.index(str(self.active_data.number))]
+    elif self.ui.actionAutoNorm.isChecked():
+      # select normalization file with closest slit sizes
+      weights=[]
+      s1, s2, s3=data.slit1_width, data.slit2_width, data.slit3_width
+      for norm in fittings:
+        normds=NXSData(norm.origin[0], **norm.read_options)[norm.origin[1]]
+        ns1, ns2, ns3=normds.slit1_width, normds.slit2_width, normds.slit3_width
+        sdiff=abs(s1-ns1)+abs(s2-ns2)+abs(s3-ns3)
+        weights.append(sdiff)
+      normidx=weights.index(min(weights))
+      self._norm_selected=normidx
+      return fittings[self._norm_selected]
     else:
       if self._norm_selected is None:
         result=QtGui.QInputDialog.getItem(self, 'Select Normalization',

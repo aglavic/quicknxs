@@ -2743,6 +2743,7 @@
     </property>
     <addaction name="actionAutomaticXPeak"/>
     <addaction name="actionAutoYLimits"/>
+    <addaction name="actionAutoNorm"/>
     <addaction name="separator"/>
     <addaction name="actionAuto_Reflectivity"/>
     <addaction name="separator"/>
@@ -2802,6 +2803,7 @@
    <addaction name="separator"/>
    <addaction name="actionAutomaticXPeak"/>
    <addaction name="actionAutoYLimits"/>
+   <addaction name="actionAutoNorm"/>
    <addaction name="separator"/>
    <addaction name="actionAuto_Reflectivity"/>
    <addaction name="separator"/>
@@ -3146,6 +3148,24 @@
   <action name="actionOpen_Reduction_Preview">
    <property name="text">
     <string>Open Reduction Preview...</string>
+   </property>
+  </action>
+  <action name="actionAutoNorm">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/autoNorm.png</normaloff>:/General/autoNorm.png</iconset>
+   </property>
+   <property name="text">
+    <string>AutoNorm</string>
+   </property>
+   <property name="toolTip">
+    <string>Automatically select normalization file with closest slit sizes</string>
    </property>
   </action>
  </widget>

@@ -22,4 +22,5 @@ DETECTOR_REGION={
                  # geometry file: (x, y)
                  'REF_M_geom_2009_03_19.xml': ((8, 295) , (8, 246)), # Brookhaven 304x256 detector
                  'REF_M_geom_2010_05_11.xml': ((8, 295) , (8, 246)), # Brookhaven 304x256 detector
+                 'REF_M_geom_2014_04_24.xml': ((8, 295) , (8, 246)), # Brookhaven 304x256 detector
                  }

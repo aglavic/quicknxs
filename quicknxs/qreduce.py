@@ -830,7 +830,8 @@ class MRDataset(object):
         return None
     # calculate total proton charge in the selected area
     output.proton_charge=tof_pc.sum()
-    Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges,
+    dimension=data['bank1/data_x_y'].shape
+    Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges, dimension,
                               callback, callback_offset, callback_scaling)
 
     # create projections for the 2D datasets
@@ -917,7 +918,7 @@ class MRDataset(object):
     return output
 
   @staticmethod
-  def bin_events(tof_ids, tof_time, tof_edges,
+  def bin_events(tof_ids, tof_time, tof_edges, dimension,
                  callback=None, callback_offset=0., callback_scaling=1.):
     '''
     Filter events outside the tof_edges region and calculate the binning with devide_bin.
@@ -925,13 +926,12 @@ class MRDataset(object):
     @return: 3D array of dimensions (x, y, tof)
     '''
     region=(tof_time>=tof_edges[0])&(tof_time<=tof_edges[-1])
-    result=array(MRDataset.devide_bin(tof_ids[region], tof_time[region], tof_edges,
+    result=array(MRDataset.devide_bin(tof_ids[region], tof_time[region], tof_edges, dimension,
                                 callback, callback_offset, callback_scaling/len(tof_edges)))
     return result.transpose((1, 2, 0))
 
-  #TODO: Implement this for arbitrary detector size
   @staticmethod
-  def devide_bin(tof_ids, tof_time, tof_edges, 
+  def devide_bin(tof_ids, tof_time, tof_edges, dimension,
                  callback=None, callback_offset=0., callback_scaling=1., cbidx=0):
     '''
     Use a divide and conquer strategy to bin the data. For the actual binning the
@@ -941,6 +941,7 @@ class MRDataset(object):
     @param tof_ids: Array of positional indices for each event
     @param tof_time: Array of time of flight for each event
     @param tof_edges: The edges of bins to be used for the histogram
+    @param dimension: x,y pixel size of detector
     @keyword callback: Optional callback function for the progress
     @keyword callback_offset: Offset for calling the function
     @keyword callback_scaling: Factor to multiply the counting index when calling the function
@@ -952,16 +953,17 @@ class MRDataset(object):
       # deepest recursion reached, all items should be within the two ToF edges
       if callback is not None:
         callback(callback_offset+callback_scaling*cbidx)
-      return [bincount(tof_ids, minlength=304*256).reshape(304, 256).tolist()]
+      return [bincount(tof_ids, minlength=dimension[0]*dimension[1]).reshape(
+                                                  dimension[0], dimension[1]).tolist()]
     # split all events into two time of flight regions
     split_idx=len(tof_edges)/2
     left_region=tof_time<tof_edges[split_idx]
     left_list=MRDataset.devide_bin(tof_ids[left_region], tof_time[left_region],
-                              tof_edges[:split_idx+1],
+                              tof_edges[:split_idx+1], dimension,
                               callback, callback_offset, callback_scaling, cbidx)
     right_region=logical_not(left_region)
     right_list=MRDataset.devide_bin(tof_ids[right_region], tof_time[right_region],
-                              tof_edges[split_idx:],
+                              tof_edges[split_idx:], dimension,
                               callback, callback_offset, callback_scaling, split_idx+cbidx)
     return left_list+right_list
 
@@ -1266,13 +1268,14 @@ def time_from_header(filename, nxs=None):
     nxs.close()
   return etime-stime
 
-def locate_file(number, histogram=True, old_format=False):
+def locate_file(number, histogram=True, old_format=False, verbose=True):
     '''
     Search the data folders for a specific file number and open it.
     
     :param int number: Run number
     '''
-    info('Trying to locate file number %s...'%number)
+    if verbose:
+      info('Trying to locate file number %s...'%number)
     if histogram:
       search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
     elif old_format:

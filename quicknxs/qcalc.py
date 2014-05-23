@@ -150,11 +150,16 @@ def get_yregion(data):
   if type(data) is not MRDataset:
     raise ValueError, "'data' needs to be a MRDataset object"
   yproj=data.ydata
-  # find the central peak reagion with intensities larger than the median
+  # find the central peak region with intensities larger than the median
   y_bg=median(yproj)
-  y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
-  yregion=(y_peak_region[0], y_peak_region[-1])
-  return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
+  try:
+    y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
+    yregion=(y_peak_region[0], y_peak_region[-1])
+  except IndexError:
+    # there are no points in this region, return full detector size:
+    return len(yproj)/2., len(yproj)/2., 0.
+  else:
+    return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
 
 @log_input
 def refine_gauss(data, pos, width, return_params=False):
@@ -166,6 +171,8 @@ def refine_gauss(data, pos, width, return_params=False):
   :param float width: Starting value for the peak width
   :param bool return_params: Return full parameter array, if False only return position
   '''
+  if pos<0 or pos>(len(data)-1):
+    pos=len(data)/2
   p0=[data[int(pos)], pos, max(1., width)]
   parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
             'limits':[0., 0.]} for i in range(3)]
@@ -178,11 +185,15 @@ def refine_gauss(data, pos, width, return_params=False):
   parinfo[2]['fixed']=False
   parinfo[2]['limited']=[True, True]
   parinfo[2]['limits']=[1., 4.*width]
-  p0=[data[int(res.params[1])], res.params[1], width]
-  res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-  debug('Result 2: I=%g  x0=%g w=%g niter=%i msg="%s"'%(res.params[0], res.params[1],
-                                                res.params[2], res.niter,
-                                                res.errmsg))
+  try:
+    p0=[data[int(res.params[1])], res.params[1], width]
+  except IndexError:
+    pass
+  else:
+    res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
+    debug('Result 2: I=%g  x0=%g w=%g niter=%i msg="%s"'%(res.params[0], res.params[1],
+                                                  res.params[2], res.niter,
+                                                  res.errmsg))
   if return_params:
     return res.params
   else:
