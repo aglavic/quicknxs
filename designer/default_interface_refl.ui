@@ -749,7 +749,7 @@ p, li { white-space: pre-wrap; }
               <item>
                <widget class="QTabWidget" name="dataNormTabWidget">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <attribute name="title">
@@ -1107,7 +1107,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_6">
                       <layout class="QVBoxLayout" name="verticalLayout_29">
                        <item>
-                        <widget class="MPLWidget" name="data_it_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="data_it_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1121,7 +1121,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_7">
                       <layout class="QVBoxLayout" name="verticalLayout_30">
                        <item>
-                        <widget class="MPLWidget" name="data_ix_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="data_ix_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1402,7 +1402,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_11">
                       <layout class="QHBoxLayout" name="horizontalLayout_43">
                        <item>
-                        <widget class="MPLWidget" name="norm_yi_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="norm_yi_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1744,7 +1744,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_12">
                       <layout class="QVBoxLayout" name="verticalLayout_33">
                        <item>
-                        <widget class="MPLWidget" name="norm_it_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="norm_it_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1758,7 +1758,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_13">
                       <layout class="QVBoxLayout" name="verticalLayout_34">
                        <item>
-                        <widget class="MPLWidget" name="norm_ix_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="norm_ix_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -2773,7 +2773,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -2782,22 +2782,40 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
-                    <attribute name="verticalHeaderVisible">
+                    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
                      <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderStretchLastSection">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
                     </attribute>
                     <attribute name="horizontalHeaderMinimumSectionSize">
                      <number>25</number>
+                    </attribute>
+                    <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                     <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderStretchLastSection">
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -4538,6 +4556,102 @@ p, li { white-space: pre-wrap; }
    <signal>editingFinished()</signal>
    <receiver>MainWindow</receiver>
    <slot>data_lowres_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1586</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normBackToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_back_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1626</x>
+     <y>298</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normBackFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_back_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1626</x>
+     <y>403</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normPeakToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1626</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normPeakFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1626</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLowResFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_lowres_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1463</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLowResToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_lowres_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1586</x>

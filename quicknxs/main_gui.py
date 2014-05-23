@@ -2941,6 +2941,9 @@ Do you want to try to restore the working reduction list?""",
       
     self.ui.normPeakFromValue.setValue(peak_min)
     self.ui.normPeakToValue.setValue(peak_max)
+
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
   # norm back spinboxes
   def norm_back_spinbox_validation(self):
@@ -2962,6 +2965,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normBackFromValue.setValue(back_min)
     self.ui.normBackToValue.setValue(back_max)
 
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+
   # data low resolution spinboxes
   def norm_lowres_spinbox_validation(self):
     '''
@@ -2981,6 +2987,9 @@ Do you want to try to restore the working reduction list?""",
     
     self.ui.normLowResFromValue.setValue(lowres_min)
     self.ui.normLowResToValue.setValue(lowres_max)
+
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
   @log_call
   def open_reduction_preview(self):
