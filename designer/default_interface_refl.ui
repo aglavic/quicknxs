@@ -786,12 +786,18 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_5">
                       <layout class="QHBoxLayout" name="horizontalLayout_31">
                        <item>
-                        <widget class="MPLWidget" name="data_yi_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="data_yi_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
+                         </property>
+                         <property name="statusTip">
+                          <string extracomment="yo"/>
+                         </property>
+                         <property name="whatsThis">
+                          <string extracomment="ya"/>
                          </property>
                         </widget>
                        </item>
@@ -3601,6 +3607,12 @@ p, li { white-space: pre-wrap; }
    <header location="global">.compare_plots.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>MPLWidgetXLog</class>
+   <extends>QWidget</extends>
+   <header location="global">.mplwidgetxlog.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>numberSearchEntry</tabstop>
@@ -4434,102 +4446,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>396</x>
      <y>165</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataBackToValue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_spinbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1626</x>
-     <y>294</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataBackFromValue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_spinbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1626</x>
-     <y>399</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataPeakFromValue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_spinbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1626</x>
-     <y>364</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataPeakToValue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_spinbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1626</x>
-     <y>329</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataLowResFromValue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_spinbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1463</x>
-     <y>614</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataLowResToValue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_spinbox()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1586</x>
-     <y>614</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>

@@ -27,6 +27,7 @@
   </qresource>
   <qresource prefix="MPL Toolbar">
     <file>toggle-log.png</file>
+    <file>toggle-xlog.png</file>
     <file>edit-guides.png</file>
     <file>go-home.png</file>
     <file>zoom-original.png</file>

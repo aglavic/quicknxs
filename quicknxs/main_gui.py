@@ -667,8 +667,17 @@ class MainGUI(QtGui.QMainWindow):
 
       yi_plot.draw()
 
-
-
+    # display ix
+    if plot_ix:
+      ix_plot.plot(data.countsxdata)
+      ix_plot.set_xlabel(u'pixels')
+      ix_plot.set_ylabel(u'counts')
+      ix_plot.canvas.ax.set_xlim(0,303)
+      
+      x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#072be2')
+      x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#072be2')
+      
+      ix_plot.draw()
 
     return
 
@@ -2843,13 +2852,6 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
-    
-  def data_spinbox(self, value):
-    '''
-    This function will update the selection on the data plot
-    '''
-    self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
-
 
   # data peak spinboxes
   def data_peak_spinbox_validation(self):
@@ -2870,6 +2872,9 @@ Do you want to try to restore the working reduction list?""",
       
     self.ui.dataPeakFromValue.setValue(peak_min)
     self.ui.dataPeakToValue.setValue(peak_max)
+
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
   # data back spinboxes
   def data_back_spinbox_validation(self):
@@ -2891,6 +2896,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataBackFromValue.setValue(back_min)
     self.ui.dataBackToValue.setValue(back_max)
 
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+
   # data low resolution spinboxes
   def data_lowres_spinbox_validation(self):
     '''
@@ -2910,14 +2918,10 @@ Do you want to try to restore the working reduction list?""",
     
     self.ui.dataLowResFromValue.setValue(lowres_min)
     self.ui.dataLowResToValue.setValue(lowres_max)
+  
+    # refresh plots
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
-  def norm_spinbox(self, value):
-    '''
-    This function will update the selection on the normalization plot
-    '''
-    self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
-    
-
   # norm peak spinboxes
   def norm_peak_spinbox_validation(self):
     '''

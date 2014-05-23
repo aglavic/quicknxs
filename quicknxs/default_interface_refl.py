@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed May 21 17:03:19 2014
+# Created: Fri May 23 13:56:49 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -334,12 +334,14 @@ class Ui_MainWindow(object):
         self.layoutWidget_5.setObjectName("layoutWidget_5")
         self.horizontalLayout_31 = QtGui.QHBoxLayout(self.layoutWidget_5)
         self.horizontalLayout_31.setObjectName("horizontalLayout_31")
-        self.data_yi_plot = MPLWidget(self.layoutWidget_5)
+        self.data_yi_plot = MPLWidgetXLog(self.layoutWidget_5)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.data_yi_plot.sizePolicy().hasHeightForWidth())
         self.data_yi_plot.setSizePolicy(sizePolicy)
+        self.data_yi_plot.setStatusTip("")
+        self.data_yi_plot.setWhatsThis("")
         self.data_yi_plot.setObjectName("data_yi_plot")
         self.horizontalLayout_31.addWidget(self.data_yi_plot)
         self.frame_11 = QtGui.QFrame(self.layoutWidget_5)
@@ -1495,12 +1497,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.TOFmanualMicrosValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_micros_switch)
         QtCore.QObject.connect(self.TOFmanualMsValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_ms_switch)
         QtCore.QObject.connect(self.useNormalizationFlag, QtCore.SIGNAL("toggled(bool)"), MainWindow.normalization_switch)
-        QtCore.QObject.connect(self.dataBackToValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
-        QtCore.QObject.connect(self.dataBackFromValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
-        QtCore.QObject.connect(self.dataPeakFromValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
-        QtCore.QObject.connect(self.dataPeakToValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
-        QtCore.QObject.connect(self.dataLowResFromValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
-        QtCore.QObject.connect(self.dataLowResToValue, QtCore.SIGNAL("valueChanged(int)"), MainWindow.data_spinbox)
         QtCore.QObject.connect(self.dataBackToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_back_spinbox_validation)
         QtCore.QObject.connect(self.dataBackFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_back_spinbox_validation)
         QtCore.QObject.connect(self.dataPeakFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_peak_spinbox_validation)
@@ -1745,4 +1741,5 @@ class Ui_MainWindow(object):
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget
 from .persistentframe import PersistentFrame
+from .mplwidgetxlog import MPLWidgetXLog
 import icons_rc
