@@ -1846,7 +1846,7 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.dataNameOfFile.setText('%s'%self.filename)
       else:
         self.ui.normNameOfFile.setText('%s'%self.filename)
-      self.ui.metadataProtonChargeValue.setText('%.3e'%d.proton_charge)
+      self.ui.metadataProtonChargeValue.setText('%.2e'%d.proton_charge)
       self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)
       self.ui.metadataLambdaRequestedValue.setText('%.2f'%d.lambda_requested)
       self.ui.metadataLambdaRequestedUnits.setText('%s'%d.lambda_requested_units)
@@ -2400,6 +2400,8 @@ class MainGUI(QtGui.QMainWindow):
 
     _live_y = event.ydata
     _live_x = event.xdata
+
+    print 'here'
 
     if event.button == 1 and self._live_selection is None:
 

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri May 23 15:42:23 2014
+# Created: Mon May 26 08:50:01 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -938,6 +938,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_75.addWidget(self.metadataLambdaRequestedUnits)
         self.verticalLayout_47.addLayout(self.horizontalLayout_75)
         self.horizontalLayout_9.addLayout(self.verticalLayout_47)
+        self.line_4 = QtGui.QFrame(self.layoutWidget_3)
+        self.line_4.setFrameShape(QtGui.QFrame.VLine)
+        self.line_4.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_9.addWidget(self.line_4)
         self.verticalLayout_48 = QtGui.QVBoxLayout()
         self.verticalLayout_48.setObjectName("verticalLayout_48")
         self.horizontalLayout_76 = QtGui.QHBoxLayout()
@@ -1024,6 +1029,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_79.addWidget(self.label_15)
         self.verticalLayout_49.addLayout(self.horizontalLayout_79)
         self.horizontalLayout_14.addLayout(self.verticalLayout_49)
+        self.line_5 = QtGui.QFrame(self.layoutWidget_3)
+        self.line_5.setFrameShape(QtGui.QFrame.VLine)
+        self.line_5.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_5.setObjectName("line_5")
+        self.horizontalLayout_14.addWidget(self.line_5)
         self.verticalLayout_50 = QtGui.QVBoxLayout()
         self.verticalLayout_50.setObjectName("verticalLayout_50")
         self.horizontalLayout_80 = QtGui.QHBoxLayout()

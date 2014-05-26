@@ -1206,9 +1206,13 @@ class LRDataset(object):
     
     # normalize by proton charge
     nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
+
+    _proton_charge = float(nxs.getRun().getProperty('gd_prtn_chrg').value)
+    _proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
+    new_proton_charge_units = 'mC'
     
-    output.proton_charge = nxs.getRun().getProperty('gd_prtn_chrg').value
-    output.proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
+    output.proton_charge = _proton_charge * 3.6   # to go from microA/h to mC
+    output.proton_charge_units = new_proton_charge_units
     
     # retrieve 3D array
     [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
