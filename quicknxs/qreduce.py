@@ -1063,6 +1063,7 @@ class LRDataset(object):
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
   sangle=0. #: sample angle [°]
   mon_data=None #: array of monitor counts per ToF bin
+  run_number = '' #: NeXus run number
 
   # for resolution calculation
   slit1_width=3. #: first slit width [mm]
@@ -1330,6 +1331,8 @@ class LRDataset(object):
     :param h5py._hl.group.Group data:
     '''
     mt_run = nxs.getRun()
+    
+    self.run_number = mt_run.getProperty('run_number').value
     self.lambda_requested = mt_run.getProperty('LambdaRequest').value
     self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units
     self.thi = mt_run.getProperty('thi').value[0]

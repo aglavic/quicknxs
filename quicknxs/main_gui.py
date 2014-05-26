@@ -422,10 +422,49 @@ class MainGUI(QtGui.QMainWindow):
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))    
     
     self.fileLoaded.emit()
+    
+    #populate table
+    self.populateReflectivityTable(data)
+    
+
     if do_plot:
       pass
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
+
+
+  def populateReflectivityTable(self, data):
+    # will populate the recap table
+    
+    _selected_row = self.ui.reductionTable.selectedRanges()
+    
+    # new row each time a data is selected
+    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+      _column = 0
+    else:
+      _column = 6
+
+
+
+    # empty table, let's add a row
+    if _selected_row == []:
+      self.ui.reductionTable.insertRow(0)
+      _selected_row = 0
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,_column,0,_column), True)
+    else:
+      _selected_row = _selected_row[0].topRow()
+
+    # if selected row has already a data run number -> create a new row
+    _current_item = self.ui.reductionTable.item(_selected_row, 0)
+    
+    # insert new item (data or normalization run number)
+    _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+    self.ui.reductionTable.setItem(_selected_row, _column, _item)
+    
+  
+    
+    
+
     
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
@@ -2400,8 +2439,6 @@ class MainGUI(QtGui.QMainWindow):
 
     _live_y = event.ydata
     _live_x = event.xdata
-
-    print 'here'
 
     if event.button == 1 and self._live_selection is None:
 

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon May 26 08:57:43 2014
+# Created: Mon May 26 10:51:25 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -984,6 +984,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_77.addWidget(self.metadatatthdUnits)
         self.verticalLayout_48.addLayout(self.horizontalLayout_77)
         self.horizontalLayout_9.addLayout(self.verticalLayout_48)
+        spacerItem19 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem19)
         self.verticalLayout_25.addLayout(self.horizontalLayout_9)
         self.line_2 = QtGui.QFrame(self.layoutWidget_3)
         self.line_2.setFrameShape(QtGui.QFrame.HLine)
@@ -1071,13 +1073,18 @@ class Ui_MainWindow(object):
         self.horizontalLayout_81.addWidget(self.label_17)
         self.verticalLayout_50.addLayout(self.horizontalLayout_81)
         self.horizontalLayout_14.addLayout(self.verticalLayout_50)
+        spacerItem20 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_14.addItem(spacerItem20)
         self.verticalLayout_25.addLayout(self.horizontalLayout_14)
         self.verticalLayout_24.addLayout(self.verticalLayout_25)
         self.reductionTable = QtGui.QTableWidget(self.layoutWidget_3)
         self.reductionTable.setMinimumSize(QtCore.QSize(0, 200))
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
-        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed)
+        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.reductionTable.setProperty("showDropIndicator", False)
+        self.reductionTable.setDragDropOverwriteMode(False)
+        self.reductionTable.setAlternatingRowColors(True)
+        self.reductionTable.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.reductionTable.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
         self.reductionTable.setWordWrap(False)
         self.reductionTable.setRowCount(0)
