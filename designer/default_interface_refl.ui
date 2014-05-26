@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../icons/icons.qrc">
-    <normaloff>:/General/logo.png</normaloff>:/General/logo.png</iconset>
+    <normaloff>:/General/logo_refl.png</normaloff>:/General/logo_refl.png</iconset>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonIconOnly</enum>

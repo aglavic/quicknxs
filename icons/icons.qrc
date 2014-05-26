@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="General">
+    <file>logo_refl.png</file>
     <file>flat_data_group_background.png</file>
     <file>metadata_background.png</file>
     <file>logo_refl_hq.png</file>
