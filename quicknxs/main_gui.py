@@ -444,25 +444,28 @@ class MainGUI(QtGui.QMainWindow):
     else:
       _column = 6
 
-
-
     # empty table, let's add a row
     if _selected_row == []:
       self.ui.reductionTable.insertRow(0)
       _selected_row = 0
-      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,_column,0,_column), True)
     else:
       _selected_row = _selected_row[0].topRow()
 
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,_column,0,_column), True)
+
+    _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+
     # if selected row has already a data run number -> create a new row
     _current_item = self.ui.reductionTable.item(_selected_row, 0)
-    
-    # insert new item (data or normalization run number)
-    _item = QtGui.QTableWidgetItem(data.active_data.run_number)
-    self.ui.reductionTable.setItem(_selected_row, _column, _item)
-    
-  
-    
+    if _current_item is None:
+      # insert new item (data or normalization run number)
+      _row = _selected_row
+    else:
+      # find out last row
+      _row = self.ui.reductionTable.rowCount()
+      self.ui.reductionTable.insertRow(_row)
+
+    self.ui.reductionTable.setItem(_row, _column, _item)
     
 
     
