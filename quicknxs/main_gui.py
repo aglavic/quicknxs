@@ -425,13 +425,11 @@ class MainGUI(QtGui.QMainWindow):
     
     #populate table
     self.populateReflectivityTable(data)
-    
 
     if do_plot:
       pass
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
-
 
   def populateReflectivityTable(self, data):
     # will populate the recap table
@@ -449,24 +447,34 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reductionTable.insertRow(0)
       _selected_row = 0
     else:
-      _selected_row = _selected_row[0].topRow()
-
-    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,_column,0,_column), True)
+      _selected_row = _selected_row[0].bottomRow()
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,0,
+                                                                               _selected_row,0), False)
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,6,
+                                                                               _selected_row,6), False)
 
     _item = QtGui.QTableWidgetItem(data.active_data.run_number)
 
-    # if selected row has already a data run number -> create a new row
-    _current_item = self.ui.reductionTable.item(_selected_row, 0)
-    if _current_item is None:
-      # insert new item (data or normalization run number)
+    # if run is normalization, do not create a new row
+    if _column == 6:
       _row = _selected_row
     else:
-      # find out last row
-      _row = self.ui.reductionTable.rowCount()
-      self.ui.reductionTable.insertRow(_row)
+      # if selected row has already a data run number -> create a new row
+      _current_item = self.ui.reductionTable.item(_selected_row, 0)
+      if _current_item is None:
+        # insert new item (data or normalization run number)
+        _row = _selected_row
+      else:
+        # find out last row
+        _row = self.ui.reductionTable.rowCount()
+        self.ui.reductionTable.insertRow(_row)
 
     self.ui.reductionTable.setItem(_row, _column, _item)
     
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
+                                                                             _column,
+                                                                             _row,
+                                                                             _column), True)
 
     
   @log_call
