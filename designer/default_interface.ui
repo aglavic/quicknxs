@@ -570,7 +570,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>251</width>
+             <width>256</width>
              <height>129</height>
             </rect>
            </property>
@@ -753,7 +753,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>145</width>
+             <width>256</width>
              <height>128</height>
             </rect>
            </property>
@@ -2757,6 +2757,8 @@
     <addaction name="actionOpen_Reduction_Preview"/>
     <addaction name="separator"/>
     <addaction name="actionFilter_Points"/>
+    <addaction name="separator"/>
+    <addaction name="actionSearch_Database"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuReduction"/>
@@ -3166,6 +3168,11 @@
    </property>
    <property name="toolTip">
     <string>Automatically select normalization file with closest slit sizes</string>
+   </property>
+  </action>
+  <action name="actionSearch_Database">
+   <property name="text">
+    <string>Search Database...</string>
    </property>
   </action>
  </widget>
@@ -4617,6 +4624,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSearch_Database</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_database_search()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4669,5 +4692,6 @@
   <slot>open_filter_dialog()</slot>
   <slot>open_reduction_preview()</slot>
   <slot>live_open()</slot>
+  <slot>open_database_search()</slot>
  </slots>
 </ui>

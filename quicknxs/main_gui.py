@@ -27,6 +27,7 @@ from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from
                      GISANS, XMLData
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
+from .database_dialog import DatabaseDialog
 from .version import str_version
 from logging import info, warning, debug
 
@@ -2279,6 +2280,11 @@ Do you want to try to restore the working reduction list?""",
   def open_nxs_dialog(self):
     if self.active_data is None: return
     dia=NXSDialog(self, self.active_data.origin)
+    dia.show()
+
+  def open_database_search(self):
+    dia=DatabaseDialog(self)
+    dia.datasetSelected.connect(self.fileOpen)
     dia.show()
 
   @log_call

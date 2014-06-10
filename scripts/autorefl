@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+#-*- coding: utf8 -*-
+'''
+Background program to automatically create reflectivities from the most recent datasets.
+'''
+
+import logging
+import os
+import sys
+
+# if script was run from commandline
+try:
+  if os.path.abspath(__file__).endswith('scripts/autorefl'):
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+except NameError:
+  pass
+
+from quicknxs.console_logging import setup_logging
+from quicknxs.database_updater import DatabaseUpdater
+from quicknxs.auto_reflectivity import ReflectivityBuilder
+from quicknxs.version import str_version
+
+if __name__=='__main__':
+  setup_logging()
+  logging.info('*** QuickNXS AutoRefl %s Logging started ***'%str_version)
+  if len(sys.argv)>1:
+    dbu=DatabaseUpdater(int(sys.argv[1]))
+  else:
+    dbu=DatabaseUpdater()
+  dbu.start()
+  rb=ReflectivityBuilder()
+  rb.run() # this is not a thread, it will block until killed with ctrl+C
+
+  # shutdown the database updater
+  dbu.quit_event.set()
+  dbu.join(10.)
+  logging.info('*** QuickNXS AutoRefl %s Logging ended ***'%str_version)

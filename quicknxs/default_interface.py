@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface.ui'
 #
-# Created: Mon May 19 16:43:54 2014
+# Created: Mon Jun  9 12:58:15 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -259,7 +259,7 @@ class Ui_MainWindow(object):
     self.gridLayout_3.addWidget(self.bgActive, 3, 1, 1, 1)
     self.toolBox.addItem(self.page, _fromUtf8(""))
     self.page_2 = QtGui.QWidget()
-    self.page_2.setGeometry(QtCore.QRect(0, 0, 251, 129))
+    self.page_2.setGeometry(QtCore.QRect(0, 0, 256, 129))
     self.page_2.setObjectName(_fromUtf8("page_2"))
     self.gridLayout_15 = QtGui.QGridLayout(self.page_2)
     self.gridLayout_15.setMargin(2)
@@ -325,7 +325,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 145, 128))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 256, 128))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1343,6 +1343,8 @@ class Ui_MainWindow(object):
     icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/autoNorm.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.actionAutoNorm.setIcon(icon17)
     self.actionAutoNorm.setObjectName(_fromUtf8("actionAutoNorm"))
+    self.actionSearch_Database = QtGui.QAction(MainWindow)
+    self.actionSearch_Database.setObjectName(_fromUtf8("actionSearch_Database"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1387,6 +1389,8 @@ class Ui_MainWindow(object):
     self.menuTools.addAction(self.actionOpen_Reduction_Preview)
     self.menuTools.addSeparator()
     self.menuTools.addAction(self.actionFilter_Points)
+    self.menuTools.addSeparator()
+    self.menuTools.addAction(self.actionSearch_Database)
     self.menubar.addAction(self.menuFile.menuAction())
     self.menubar.addAction(self.menuReduction.menuAction())
     self.menubar.addAction(self.menuAutomatics.menuAction())
@@ -1509,6 +1513,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.actionFilter_Points, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_filter_dialog)
     QtCore.QObject.connect(self.actionOpen_Reduction_Preview, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_reduction_preview)
     QtCore.QObject.connect(self.pushButton_3, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.live_open)
+    QtCore.QObject.connect(self.actionSearch_Database, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_database_search)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1874,6 +1879,7 @@ class Ui_MainWindow(object):
     self.actionOpen_Reduction_Preview.setText(_translate("MainWindow", "Open Reduction Preview...", None))
     self.actionAutoNorm.setText(_translate("MainWindow", "AutoNorm", None))
     self.actionAutoNorm.setToolTip(_translate("MainWindow", "Automatically select normalization file with closest slit sizes", None))
+    self.actionSearch_Database.setText(_translate("MainWindow", "Search Database...", None))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

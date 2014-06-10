@@ -554,7 +554,7 @@ class XMLData(NXSData):
     for item in finfo.getElementsByTagName('entry'):
       channels.append(item.getAttribute('name'))
       xmlfiles.append((os.path.join(path, item.getAttribute('xy_file')), 
-                       os.path.join(path, item.getAttribute('xtof_file'))))
+                       os.path.join(path, item.getAttribute('tofx_file'))))
     
     # collect meta information
     daslogs={}
@@ -628,8 +628,8 @@ class XMLData(NXSData):
     for dest, channel in mapping:
       if channel not in channels:
         continue
-      xyfile, xtoffile=xmlfiles[channels.index(channel)]
-      data=MRDataset.from_xml(xyfile, xtoffile, daslogs, self._options,
+      xyfile, tofxfile=xmlfiles[channels.index(channel)]
+      data=MRDataset.from_xml(xyfile, tofxfile, daslogs, self._options,
                               callback=self._options['callback'],
                               callback_offset=progress,
                               callback_scaling=0.9/len(channels),
@@ -846,7 +846,7 @@ class MRDataset(object):
 
   @classmethod
   @log_call
-  def from_xml(cls, xyfile, xtoffile, daslogs,
+  def from_xml(cls, xyfile, tofxfile, daslogs,
                read_options, callback=None, callback_offset=0.,
                callback_scaling=1., tof_overwrite=None):
     '''
@@ -880,8 +880,8 @@ class MRDataset(object):
     output.slit3_width=daslogs['S3HWidth']
 
     xydata=MRDataset._getxml_data(xyxml)
-    xtofxml=minidom.parse(xtoffile)
-    xtofdata=MRDataset._getxml_data(xtofxml).T
+    tofxxml=minidom.parse(tofxfile)
+    tofxdata=MRDataset._getxml_data(tofxxml).T
     
     output.xydata=xydata.T.astype(float)
 
@@ -901,13 +901,13 @@ class MRDataset(object):
     else:
       tof_edges=tof_overwrite
     
-    tmin=float(xtofxml.getElementsByTagName('TOFMin')[0].childNodes[0].data[:-3])
-    tstep=float(xtofxml.getElementsByTagName('TOFBinSize')[0].childNodes[0].data[:-3])
-    tof_bins=arange(tmin, tmin+tstep*xtofdata.shape[1], tstep)
+    tmin=float(tofxxml.getElementsByTagName('TOFMin')[0].childNodes[0].data[:-3])
+    tstep=float(tofxxml.getElementsByTagName('TOFBinSize')[0].childNodes[0].data[:-3])
+    tof_bins=arange(tmin, tmin+tstep*tofxdata.shape[1], tstep)
 
-    newxtofdata=zeros((xtofdata.shape[0], tof_edges.shape[0]-1), dtype=float)
+    newxtofdata=zeros((tofxdata.shape[0], tof_edges.shape[0]-1), dtype=float)
     for i, (tfrom, tto) in enumerate(zip(tof_edges[:-1], tof_edges[1:])):
-      newxtofdata[:, i]=xtofdata[:, (tof_bins>=tfrom)&(tof_bins<tto)].sum(axis=1)
+      newxtofdata[:, i]=tofxdata[:, (tof_bins>=tfrom)&(tof_bins<tto)].sum(axis=1)
 
     output.xtofdata=newxtofdata
     yscale=zeros(xydata.shape[1])
