@@ -135,8 +135,8 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
     # refine position with gaussian after background subtraction, FWHM=2.355*sigma
     # use limited range around the peak to avoid fitting into a different peak
     fit_halfwidth=int(wpeak)
-    fit_range=xproj[x_peak-fit_halfwidth:x_peak+fit_halfwidth+1]
-    x_peak=refine_gauss(fit_range-median(fit_range), fit_halfwidth, wpeak)-fit_halfwidth+x_peak
+    fit_data=(xproj-median(xproj))[x_peak-fit_halfwidth:x_peak+fit_halfwidth+1]
+    x_peak=refine_gauss(fit_data, fit_halfwidth, wpeak)-fit_halfwidth+x_peak
   if return_pf:
     return float(x_peak), pf
   else:
