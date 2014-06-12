@@ -125,14 +125,18 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
     x_peaks=array([p[0] for p in peaks])+data.active_area_x[0]
     wpeaks=array([p[1] for p in peaks])
     delta_pix=abs(pix_position-x_peaks)
-    x_peak=x_peaks[delta_pix==delta_pix.min()][0]
-    wpeak=wpeaks[delta_pix==delta_pix.min()][0]
+    x_peak=x_peaks[delta_pix.argmin()]
+    wpeak=wpeaks[delta_pix.argmin()]
   except:
     x_peak=pix_position
     wpeak=min_width
+    debug('Error in getting pixel from detected peaks, taking default value:', exc_info=True)
   if refine:
     # refine position with gaussian after background subtraction, FWHM=2.355*sigma
-    x_peak=refine_gauss(xproj-median(xproj), x_peak, wpeak)
+    # use limited range around the peak to avoid fitting into a different peak
+    fit_halfwidth=int(wpeak)
+    fit_range=xproj[x_peak-fit_halfwidth:x_peak+fit_halfwidth+1]
+    x_peak=refine_gauss(fit_range-median(fit_range), fit_halfwidth, wpeak)-fit_halfwidth+x_peak
   if return_pf:
     return float(x_peak), pf
   else:

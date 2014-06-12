@@ -1006,6 +1006,8 @@ class mpfit:
                         qllim=qulim
                         llim=x*0.
                         qanylim=0
+                ulim[numpy.isnan(ulim)]=numpy.inf
+                llim[numpy.isnan(llim)]=-numpy.inf
 
                 n=len(x)
                 # Check input parameters for errors
