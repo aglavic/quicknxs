@@ -9,15 +9,15 @@ import sys
 import logging
 from .config import paths
 
-def setup_logging():
+def setup_logging(log_level=logging.INFO):
   logger=logging.getLogger()#logging.getLogger('quicknxs')
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(min(logging.DEBUG, log_level))
 
   # no console logger for windows (py2exe)
   console=logging.StreamHandler(sys.__stdout__)
   formatter=logging.Formatter('%(levelname) 7s - %(threadName)s: %(message)s')
   console.setFormatter(formatter)
-  console.setLevel(logging.INFO)
+  console.setLevel(log_level)
   logger.addHandler(console)
 
   logfile=logging.FileHandler(paths.AUTOREFL_LOG_FILE, 'w')

@@ -175,5 +175,9 @@ class HiddenResizeTableWidget(QTableWidget):
 
   def sizeHintForColumn(self, column):
     fm=self.fontMetrics()
-    max_width=max([fm.width(self.item(i, column).text())+10 for i in range(self.rowCount())])
+    widths=[fm.width(self.item(i, column).text())+10 for i in range(self.rowCount())]
+    if len(widths)>0:
+      max_width=max([fm.width(self.item(i, column).text())+10 for i in range(self.rowCount())])
+    else:
+      max_width=50
     return max_width

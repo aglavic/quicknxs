@@ -16,12 +16,16 @@ class DatabaseUpdater(Thread):
   dataset is available.
   '''
   current_index=None
-  sleep_time=1.#30.
+  sleep_time=30.
   live_data_last_index=0
   live_data_last_mtime=0
 
   def __init__(self, start_idx=None):
-    Thread.__init__(self)
+    '''
+    Create the thread with a database handle and quit event and
+    initialize the first index to look for.
+    '''
+    Thread.__init__(self, name='DatabaseUpdateThread')
     self.quit_event=Event()
     self.quit_event.clear()
     self.db=database.DatabaseHandler()
@@ -48,16 +52,34 @@ class DatabaseUpdater(Thread):
         logging.warning('Error in DatabaseUpdater thread:', exc_info=True)
       self.quit_event.wait(self.sleep_time)
 
+  def in_db(self, idx=None):
+    '''
+    Check if file index is in database without trying to add it.
+    '''
+    if idx is None:
+      return len(self.db(file_id=self.current_index))>0
+    else:
+      return len(self.db(file_id=idx))>0
+
   def check(self):
     '''
     Increase current_index as long as there are data files available.
     '''
+    # don't try to locate a file that's already in the database
+    while self.in_db(): self.current_index+=1
+
+    # check if the file actually exists before trying to add it
     fname=qreduce.locate_file(self.current_index, verbose=False)
     while fname is not None and not self.quit_event.is_set():
       res=self.db.add_record(self.current_index)
       if res:
         logging.info('New file added with index %i.'%self.current_index)
       self.current_index+=1
+
+      # don't try to locate a file that's already in the database
+      while self.in_db(): self.current_index+=1
+
+      # check if the file actually exists before trying to add it
       fname=qreduce.locate_file(self.current_index, verbose=False)
 
   def check_live_index(self):
@@ -77,6 +99,9 @@ class DatabaseUpdater(Thread):
     if live_ds is not None and live_ds.number>(self.current_index+1)\
         and not self.quit_event.is_set():
       for i in range(self.current_index, live_ds.number):
+        if self.in_db(i):
+          self.current_index=i+1
+          return
         res=self.db.add_record(i)
         if res:
           logging.info('New file found with index %i.'%i)

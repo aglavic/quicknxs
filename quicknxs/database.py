@@ -88,13 +88,13 @@ class DatabaseHandler(object):
     
     :param NXSData dataset: the dataset to add
     
-    :returns bool: If the operation whas successful
+    :returns bool: If the dataset is in the database after this operation
     '''
     db=self.get_database()
     if type(dataset) is int:
       if len(db(file_id=dataset))>0:
         debug('Item already in database %s'%repr(dataset))
-        return False
+        return True
       try:
         dataset=NXSData(dataset, use_caching=False)
       except KeyboardInterrupt:
@@ -112,7 +112,7 @@ class DatabaseHandler(object):
       return False
     if len(db(file_id=dataset.number))>0:
       debug('Item already in database %s'%repr(dataset))
-      return False
+      return True
     db.insert(*record)
     return True
 
@@ -156,7 +156,7 @@ class DatabaseHandler(object):
     lambda_center=float(data.lambda_center)
 
     cmp_vals={'ai': [-0.1, 0.1],
-              'lambda_center': [lambda_center-0.1, lambda_center+0.1],
+              'lambda_center': [lambda_center-0.01, lambda_center+0.01],
               'no_bins': len(data.tof),
               'first_bin': float(data.tof[0]),
               'last_bin': float(data.tof[-1])}
