@@ -338,8 +338,8 @@ class ReflectivityBuilder(object):
       data=self.combine_reflectivity()
       title='+'.join([r[0].options['number'] for r in self.reflectivity_items])
       fpath=instrument.AUTOREFL_RESULT_IMAGE%{
-                                             'origin_path': '',
-                                             'title':title,
+               'origin_path': os.path.basename(self.reflectivity_items[0][0].origin[0]),
+               'title':title,
                                              }
       self.plot_reflectivity(data, fpath, title, True)
 
@@ -364,7 +364,11 @@ class ReflectivityBuilder(object):
   def get_cut_pts(self, ds):
     l=ds.lambda_center
     res=numpy.where((ds[0].lamda>=(l-1.45))&(ds[0].lamda<=(l+1.25)))[0]
-    return len(ds[0].lamda)-res[-1], res[0]
+    if len(res)<3:
+      return 0, 0
+    P0=len(ds[0].lamda)-res[-1]
+    PN=res[0]
+    return P0, PN
 
   def combine_reflectivity(self, live_add=[]):
     '''

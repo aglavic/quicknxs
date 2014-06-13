@@ -64,12 +64,17 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   dR1=refl1.dR[last:first][R1>0]
   Q1=refl1.Q[last:first][R1>0]
   R1=R1[R1>0]
+
   last=refl2.options['PN']
   first=len(refl2.R)-refl2.options['P0']
   R2=refl2.R[last:first]
   dR2=refl2.dR[last:first][R2>0]
   Q2=refl2.Q[last:first][R2>0]
   R2=R2[R2>0]
+
+  if len(R1)==0 or len(R2)==0:
+    # if either reflectivity has only zero intensity, return a scaling factor of 1.
+    return 1., array([refl1.Q[0], refl2.Q[-1]]), array([0., 0.])
   try:
     reg1=max(0, where(Q1<=Q2.max())[0][0]-add_points)
     reg2=where(Q2>=Q1.min())[0][-1]+1+add_points
