@@ -83,9 +83,10 @@ class PositionTest(FakeData, unittest.TestCase):
     self.ds.dpix=220.
     self.ds.dangle=self.ds.dangle0
     self.ds.sangle=0.5
-    self.ds.xydata[:, 180:211]+=50*exp(-0.5*((arange(31)-15.)/2.)**2)
+    self.ds.xydata[:, 180:211]*=1.+5.*exp(-0.5*((arange(31)-15.25)/2.)**2) # reflected beam
+    self.ds.xydata[:, 220:251]*=1.+1000.*exp(-0.5*((arange(31)-15.25)/2.)**2) # transmitted beam
     x_pos=get_xpos(self.ds)
-    self.assertAlmostEqual(x_pos, 195., places=8)
+    self.assertAlmostEqual(x_pos, 195.25, places=1)
   
   def test_ypos(self):
     y_pos, y_width, bg=get_yregion(self.ds)
