@@ -163,11 +163,12 @@ class ConfigProxy(object):
       match_key=match.groups()[0]
       match_end=match.span()[1]
       match=self._KEYCRE.search(value[match_start+match_end:])
+      match_start+=match_end
       if not '.' in match_key:
         # search same config for value
         if match_key in self.tmp_storages[storage][config]:
           value=value.replace(match_str, vtype(self.tmp_storages[storage][config][match_key]))
-        if match_key in self.storages[storage][config]:
+        elif match_key in self.storages[storage][config]:
           value=value.replace(match_str, vtype(self.storages[storage][config][match_key]))
       else:
         # search other config for values

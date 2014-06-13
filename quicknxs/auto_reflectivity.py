@@ -336,12 +336,12 @@ class ReflectivityBuilder(object):
         # don't export empty reflectivityies
         return
       data=self.combine_reflectivity()
-      title='+'.join([r[0].options['number'] for r in self.reflectivity_items])
+      numbers='+'.join([r[0].options['number'] for r in self.reflectivity_items])
       fpath=instrument.AUTOREFL_RESULT_IMAGE%{
-               'origin_path': os.path.basename(self.reflectivity_items[0][0].origin[0]),
-               'title':title,
+               'origin_path': os.path.dirname(self.reflectivity_items[0][0].origin[0]),
+               'numbers': numbers,
                                              }
-      self.plot_reflectivity(data, fpath, title, True)
+      self.plot_reflectivity(data, fpath, numbers, True)
 
   def get_dsinfo(self, index):
     '''
