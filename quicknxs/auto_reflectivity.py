@@ -397,9 +397,10 @@ class ReflectivityBuilder(object):
     logging.info('Saving plot to "%s".'%fname)
     if highres:
       fig=Figure(figsize=(10.667, 8.), dpi=150, facecolor='#FFFFFF')
+      fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
     else:
       fig=Figure(figsize=(6., 4.), dpi=72, facecolor='#FFFFFF')
-    fig.subplots_adjust(left=0.12, bottom=0.13, top=0.94, right=0.98)
+      fig.subplots_adjust(left=0.12, bottom=0.13, top=0.94, right=0.98)
     canvas=FigureCanvasAgg(fig)
     ax=fig.add_subplot(111)
 

@@ -23,4 +23,4 @@ DIRECT_BEAM_COMPARE=[
                     ('s2h', 'S2VHeight', float, 1.0),
                      ]
 
-db_file=u'%(paths.CFG_PATH)s/database'
+db_file=u'%(paths.CFG_PATH)s/%(NAME)s/shared/quicknxs_database'
