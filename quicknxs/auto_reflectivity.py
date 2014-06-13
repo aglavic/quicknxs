@@ -395,7 +395,10 @@ class ReflectivityBuilder(object):
 
   def plot_reflectivity(self, data, fname, title='', highres=False):
     logging.info('Saving plot to "%s".'%fname)
-    fig=Figure(figsize=(5.334, 4.), dpi=(highres and 300) or 72, facecolor='#FFFFFF')
+    if highres:
+      fig=Figure(figsize=(10.667, 8.), dpi=150, facecolor='#FFFFFF')
+    else:
+      fig=Figure(figsize=(6., 4.), dpi=72, facecolor='#FFFFFF')
     fig.subplots_adjust(left=0.12, bottom=0.13, top=0.94, right=0.98)
     canvas=FigureCanvasAgg(fig)
     ax=fig.add_subplot(111)
@@ -403,7 +406,11 @@ class ReflectivityBuilder(object):
     ymin=1e10
     ymax=1e-10
     for x, y, label in data:
-      ymin=min(y[y>0].min(), ymin)
+      try:
+        ymin=min(y[y>0].min(), ymin)
+      except ValueError:
+        # ignore plots with zero intensity
+        continue
       ymax=max(y.max(), ymax)
       ax.semilogy(x, y, label=label)
     ax.set_xlim(x.min()-x.min()%0.005, x.max()-x.max()%0.005+0.005)
