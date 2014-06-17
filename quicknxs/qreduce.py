@@ -956,7 +956,7 @@ class MRDataset(object):
       return [bincount(tof_ids, minlength=dimension[0]*dimension[1]).reshape(
                                                   dimension[0], dimension[1]).tolist()]
     # split all events into two time of flight regions
-    split_idx=len(tof_edges)/2
+    split_idx=len(tof_edges)//2
     left_region=tof_time<tof_edges[split_idx]
     left_list=MRDataset.devide_bin(tof_ids[left_region], tof_time[left_region],
                               tof_edges[:split_idx+1], dimension,

@@ -433,7 +433,7 @@ class DetectorTailCorrector(object):
       else:
         last_diff=abs_diff
     debug('difference at end %g'%last_diff)
-    return result[lendiff/2:outshape+lendiff/2]
+    return result[lendiff//2:outshape+lendiff//2]
 
   def correct_shape_set(self, data):
     output=[]
@@ -453,7 +453,7 @@ class DetectorTailCorrector(object):
 
   def convole_data(self, data):
     conv=convolve(data, self.shape_function, mode='same')
-    return conv[self.mshape/2+1:-self.mshape/2+1]
+    return conv[self.mshape//2+1:-self.mshape//2+1]
 
   def __call__(self, data):
     return self.correct_shape_set(data.transpose()).transpose()

@@ -149,7 +149,7 @@ class PeakFinder(object):
     for i in range(steps):
       windows.append(data[i:(-(steps-i-1) or None)])
     windows=numpy.vstack(windows)
-    lmax=windows[(steps+1)/2-1]==windows.max(axis=0)
+    lmax=windows[(steps+1)//2-1]==windows.max(axis=0)
     return numpy.hstack([numpy.zeros(steps//2),
                          lmax,
                          numpy.zeros(steps//2)])
@@ -376,9 +376,9 @@ class Cwt:
         # create a grid twice the size of the original grid to remove boundary
         # effects in the convolution
         scaled_data=numpy.zeros(ndata*2)
-        scaled_data[ndata/2:ndata/2+ndata]=data
-        scaled_data[ndata/2+ndata:]=data[-10:].mean()
-        scaled_data[:ndata/2]=data[:10].mean()
+        scaled_data[ndata//2:ndata//2+ndata]=data
+        scaled_data[ndata//2+ndata:]=data[-10:].mean()
+        scaled_data[:ndata//2]=data[:10].mean()
         datahat=numpy.fft.rfft(scaled_data)
         self.fftdata=datahat
         #self.psihat0=self.wf(omega*self.scales[3*self.nscale/4])
@@ -393,7 +393,7 @@ class Cwt:
             #psihat*=numpy.sqrt(2.0*numpy.pi*currentscale)
             convhat=psihat*datahat
             W=numpy.fft.irfft(convhat)
-            self.cwt[scaleindex, :]=W[ndata/2:ndata/2+ndata]
+            self.cwt[scaleindex, :]=W[ndata//2:ndata//2+ndata]
         return
 
     def _setscales(self, ndata, largestscale, notes, scaling):
