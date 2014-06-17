@@ -9,7 +9,7 @@ from numpy import *
 from .buzhug import Base
 from .qreduce import NXSData
 from .qcalc import get_xpos, get_yregion
-from .config import database as config
+from .config import instrument as config
 from .decorators import log_call
 from logging import debug
 
@@ -26,16 +26,16 @@ class DatabaseHandler(object):
             ('no_states', int), ('no_bins', int), ('first_bin', float), ('last_bin', float),
             ('xpix', float), ('ycenter', float), ('ywidth', float),
             ('ai', float), ('lambda_center', float)]
-    self.fields+=[(item[0], item[2]) for item in config.ADDITIONAL_FIELDS]
+    self.fields+=[(item[0], item[2]) for item in config.DATABASE_ADDITIONAL_FIELDS]
 
   @log_call
   def create_db(self):
-    self.db=Base(config.db_file)
+    self.db=Base(config.database_file)
     self.db.create(*self.fields)
 
   @log_call
   def load_db(self):
-    self.db=Base(config.db_file)
+    self.db=Base(config.database_file)
     self.db.open()
 
   @log_call
@@ -45,7 +45,7 @@ class DatabaseHandler(object):
       self.db=None
 
   def get_database(self):
-    if self.db is None and os.path.exists(config.db_file):
+    if self.db is None and os.path.exists(config.database_file):
       self.load_db()
     elif self.db is None:
       self.create_db()
@@ -77,7 +77,7 @@ class DatabaseHandler(object):
     output.append(float(tth/2.)) # ai
     output.append(float(data.lambda_center))
   
-    for ignore, key, ftype in config.ADDITIONAL_FIELDS:
+    for ignore, key, ftype in config.DATABASE_ADDITIONAL_FIELDS:
       output.append(ftype(data.logs[key]))
     return output
   
@@ -161,7 +161,7 @@ class DatabaseHandler(object):
               'first_bin': float(data.tof[0]),
               'last_bin': float(data.tof[-1])}
 
-    for key, log, ctype, diff in config.DIRECT_BEAM_COMPARE:
+    for key, log, ctype, diff in config.DATABASE_DIRECT_BEAM_COMPARE:
       val=ctype(data.logs[log])
       cmp_vals[key]=[val-diff, val+diff]
 

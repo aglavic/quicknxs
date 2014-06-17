@@ -23,14 +23,6 @@ config Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`database` Module
-----------------------
-
-.. automodule:: quicknxs.config.database
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    
 :mod:`email` Module
 -------------------
 
