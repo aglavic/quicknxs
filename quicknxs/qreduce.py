@@ -938,16 +938,16 @@ class MRDataset(object):
     numpy bincount function is used, as it is much faster then histogram for
     counting of integer values.
     
-    @param tof_ids: Array of positional indices for each event
-    @param tof_time: Array of time of flight for each event
-    @param tof_edges: The edges of bins to be used for the histogram
-    @param dimension: x,y pixel size of detector
-    @keyword callback: Optional callback function for the progress
-    @keyword callback_offset: Offset for calling the function
-    @keyword callback_scaling: Factor to multiply the counting index when calling the function
-    @keyword cbidx: Current counting index for this recursive call
+    :param tof_ids: Array of positional indices for each event
+    :param tof_time: Array of time of flight for each event
+    :param tof_edges: The edges of bins to be used for the histogram
+    :param dimension: x,y pixel size of detector
+    :keyword callback: Optional callback function for the progress
+    :keyword callback_offset: Offset for calling the function
+    :keyword callback_scaling: Factor to multiply the counting index when calling the function
+    :keyword cbidx: Current counting index for this recursive call
     
-    @return: 3D list of dimensions (tof, x, y)
+    :return: 3D list of dimensions (tof, x, y)
     '''
     if len(tof_edges)==2:
       # deepest recursion reached, all items should be within the two ToF edges

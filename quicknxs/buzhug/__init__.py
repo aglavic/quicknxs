@@ -1,1 +1,1 @@
-from buzhug import *
+from .buzhug import *

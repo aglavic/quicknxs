@@ -119,9 +119,15 @@ class ExportTest(FakeData, unittest.TestCase):
     exporter.extract_reflectivity()
     exporter.extract_offspecular()
     expfile=os.path.join(tempfile.gettempdir(), 'testexport.dat')
-    exporter.export_data(tempfile.gettempdir(), 'testexport.dat',
-                      multi_ascii=True, combined_ascii=True,
-                      matlab_data=True, numpy_data=True)
+    if sys.version_info[0]<3:
+      exporter.export_data(tempfile.gettempdir(), 'testexport.dat',
+                        multi_ascii=True, combined_ascii=True,
+                        matlab_data=True, numpy_data=True)
+    else:
+      # python3 from travis has problems with scipy, so we don't use matlab export
+      exporter.export_data(tempfile.gettempdir(), 'testexport.dat',
+                        multi_ascii=True, combined_ascii=True,
+                        matlab_data=False, numpy_data=True)
     exporter.create_gnuplot_scripts(tempfile.gettempdir(), 'testexport.dat')
     exporter.create_genx_file(tempfile.gettempdir(), 'testexport.dat')
     os.remove(expfile)

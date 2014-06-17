@@ -478,7 +478,7 @@ def quantile(a, prob):
     # find the two bounds we're interpreting between:
     # that is, find i such that (i+.5) / n <= prob <= (i+1.5)/n
     t=n*prob-.5
-    i=numpy.floor(t)
+    i=int(t)
 
     # partial sort so that the ith element is at position i, with bigger ones
     # to the right and smaller to the left

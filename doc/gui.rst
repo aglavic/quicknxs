@@ -25,6 +25,14 @@ GUI Modules
     :undoc-members:
     :show-inheritance:
 
+:mod:`database_dialog` Module
+-----------------------------
+
+.. automodule:: quicknxs.database_dialog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`gisans_dialog` Module
 ---------------------------
 
@@ -116,6 +124,14 @@ GUI Modules
 ------------------------------
 
 .. automodule:: quicknxs.rawcompare_plots
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`separate_plots` Module
+----------------------------
+
+.. automodule:: quicknxs.separate_plots
     :members:
     :undoc-members:
     :show-inheritance:

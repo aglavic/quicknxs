@@ -25,6 +25,14 @@ Analysis Modules
     :private-members:
     :show-inheritance:
 
+:mod:`auto_reflectivity` Module
+-------------------------------
+
+.. automodule:: quicknxs.auto_reflectivity
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`decorators` Module
 ------------------------
 

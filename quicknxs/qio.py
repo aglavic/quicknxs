@@ -784,6 +784,7 @@ class Exporter(object):
                 np.savetxt(of, scan, delimiter='\t', fmt='%-18e')
                 of.write(u'\n'.encode('utf8'))
             of.write(u'\n\n'.encode('utf8'))
+          of.close()
           self.exported_files_all.append(output);self.exported_files_data.append(output)
       if combined_ascii:
         debug('Export multi_ascii')

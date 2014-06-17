@@ -12,8 +12,8 @@ from .qreduce import NXSData, NXSMultiData, Reflectivity
 
 class ReductionPreviewDialog(QDialog):
   '''
-  A simple plot dialog which connects to the ... signal from the main gui to
-  plot the reduced reflectivity of all states.
+  A simple plot dialog which connects to the initiateReflectivityPlot signal from the
+  main gui to plot the reduced reflectivity of all states.
   '''
 
   def __init__(self, parent, *args, **opts):
@@ -89,6 +89,9 @@ class ReductionPreviewDialog(QDialog):
     return QDialog.closeEvent(self, *args, **kwargs)
 
 class ProjectionPlotDialog(QDialog):
+  '''
+  Dialog to show a map graph together with projections on it's x and y axes.
+  '''
   xline=None
   yline=None
 
