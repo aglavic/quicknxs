@@ -98,7 +98,7 @@ class SmoothTest(unittest.TestCase):
   def setUp(self):
     self._progress=None
     self.x, self.y=meshgrid(arange(100), arange(100))
-    self.I=(self.x-50.)**2+(self.y-50.)**2+random.randn(1e4).reshape((100, 100))
+    self.I=(self.x-50.)**2+(self.y-50.)**2+random.randn(10000).reshape((100, 100))
     self.settings={
                    'grid': (20, 20),
                    'sigma': (3., 3.),

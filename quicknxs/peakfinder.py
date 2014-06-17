@@ -10,7 +10,7 @@ Implemented by Artur Glavic (artur.glavic@gmail.com) 2012-2013
 import numpy
 try:
   from scipy.stats.mstats import mquantiles
-except ImportError:
+except (ImportError, RuntimeError):
   # use the slightly slower quantiles function that does not rely on scipy
   def mquantiles(data, prob, *ignore): return quantile(data, prob)
 
