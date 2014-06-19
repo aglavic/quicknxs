@@ -165,6 +165,14 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reductionTable.resizeColumnsToContents()
       self.ui.TOFmanualMicrosValue.setText(u'\u03bcs')
       
+      # define the context menu of the recap table
+      self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+      self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
+      
+                                                  
+      
+      
+      
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
@@ -215,6 +223,18 @@ class MainGUI(QtGui.QMainWindow):
         self.trigger('automaticExtraction', argv)
     else:
       self.ui.numberSearchEntry.setFocus()
+
+  def handleReductionTableMenu(self, pos):
+    '''
+    Context menu of the Reduction table
+    '''
+    menu = QtGui.QMenu()
+    menu.addAction('Delete Row')
+    menu.addAction('Delete Data')
+    menu.addAction('Delete Normalization')
+#    menu.exec_(self.mapToGlobal(pos))
+    
+
 
   def run_ipython(self):
     '''
@@ -319,6 +339,10 @@ class MainGUI(QtGui.QMainWindow):
                  self.ui.norm_it_plot,
                  self.ui.norm_ix_plot]:
       plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
+
+    self.ui.norm_yt_plot.canvas.mpl_connect('motion_notify_event', self.mouseNormPlotyt)
+    self.ui.norm_yt_plot.canvas.mpl_connect('button_press_event', self.mouseNormPlotyt)
+    self.ui.norm_yt_plot.canvas.mpl_connect('button_release_event', self.mouseNormPlotyt)
 
 #    self.ui.data_yt_plot.canvas.mpl_connect('motion_notify_event', self.plotPickyt)
 
@@ -599,6 +623,9 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.norm_ix_plot.clear()
 
     data = self.active_data
+    if data is None:
+      return
+  
     xy = data.xydata
     ytof = data.ytofdata
     countstofdata = data.countstofdata
@@ -2369,6 +2396,97 @@ class MainGUI(QtGui.QMainWindow):
 
   def plotRelese(self, event):
     self._picked_line=None
+
+  def mouseNormPlotyt(self, event):
+    '''
+    user is moving the mouse in the plot_yt canvas
+    '''
+    # event.button == 1 -> mouse is moving with left button pressed
+    # event.button == 3 -> mouse is moving with right button pressed
+
+    return
+
+    # clicked outside region, nothing should be done
+    if event.button is not None and \
+       (event.xdata is None or event.ydata is None):
+      return
+
+    offset = 4    # click within 2 pixels of current selection will move this selection
+
+    _live_y = event.ydata
+    _live_x = event.xdata
+
+    if event.button == 1 and self._live_selection is None:
+
+      peak_min = self.ui.normPeakFromValue.value()
+      if abs(peak_min - _live_y) <= offset:
+        self._live_selection = 'peak_min'
+
+      peak_max = self.ui.normPeakToValue.value()
+      if abs(peak_max - _live_y) <= offset:
+        self._live_selection = 'peak_max'
+        
+      back_min = self.ui.normBackFromValue.value()
+      if abs(back_min - _live_y) <= offset:
+        self._live_selection = 'back_min'
+      
+      back_max = self.ui.normBackToValue.value()
+      if abs(back_max - _live_y) <= offset:
+        self._live_selection = 'back_max'
+        
+      #lowres_min = self.ui.normLowResFromValue.value()
+      #if abs(lowres_min - _live_x) <= offset:
+        #self._live_selection = 'lowres_min'
+        
+      #lowres_max = self.ui.normLowResToValue.value()
+      #if abs(lowres_max - _live_x) <= offset:
+        #self._live_selection = 'lowres_max'
+
+      if self._live_selection == 'peak_min':
+        self.ui.normPeakFromValue.setValue(_live_y)
+      if self._live_selection == 'peak_max':
+        self.ui.normPeakToValue.setValue(_live_y)
+      if self._live_selection == 'back_min':
+        self.ui.normBackFromValue.setValue(_live_y)
+      if self._live_selection == 'back_max':
+        self.ui.normBackToValue.setValue(_live_y)
+      #if self._live_selection == 'lowres_min':
+        #self.ui.normLowResFromValue.setValue(_live_y)
+      #if self._live_selection == 'lowres_max':
+        #self.ui.normLowResToValue.setValue(_live_y)
+
+    else:
+      
+      self._live_selection = None  
+
+    
+    if event.button is not None:
+      self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=False, plot_ix=False)
+          
+
+    #if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
+        #event.xdata is not None:
+      #self.ui.refXPos.setValue(event.xdata)
+    #elif event.button==3 and self.ui.xy_overview.toolbar._active is None and \
+        #event.ydata is not None:
+      #ypos=self.ui.refYPos.value()
+      #yw=self.ui.refYWidth.value()
+      #yl=ypos-yw/2.
+      #yr=ypos+yw/2.
+      #pl=self._picked_line
+      #if pl=='yl' or (pl is None and abs(event.ydata-yl)<abs(event.ydata-yr)):
+        #yl=event.ydata
+        #self._picked_line='yl'
+      #else:
+        #yr=event.ydata
+        #self._picked_line='yr'
+      #ypos=(yr+yl)/2.
+      #yw=(yr-yl)
+      #self.auto_change_active=True
+      #self.ui.refYPos.setValue(ypos)
+      #self.auto_change_active=False
+      #self.ui.refYWidth.setValue(yw)
+    
 
   def plotPickX(self, event):
     '''
