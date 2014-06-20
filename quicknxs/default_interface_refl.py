@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue May 27 10:54:15 2014
+# Created: Fri Jun 20 09:21:36 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -842,8 +842,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.TOFmanualFromValue.sizePolicy().hasHeightForWidth())
         self.TOFmanualFromValue.setSizePolicy(sizePolicy)
-        self.TOFmanualFromValue.setMinimumSize(QtCore.QSize(60, 0))
-        self.TOFmanualFromValue.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.TOFmanualFromValue.setMinimumSize(QtCore.QSize(100, 0))
+        self.TOFmanualFromValue.setMaximumSize(QtCore.QSize(100, 16777215))
         self.TOFmanualFromValue.setObjectName("TOFmanualFromValue")
         self.horizontalLayout_37.addWidget(self.TOFmanualFromValue)
         self.TOFmanualFromUnitsValue = QtGui.QLabel(self.layoutWidget_3)
@@ -863,8 +863,8 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.TOFmanualToValue.sizePolicy().hasHeightForWidth())
         self.TOFmanualToValue.setSizePolicy(sizePolicy)
-        self.TOFmanualToValue.setMinimumSize(QtCore.QSize(60, 0))
-        self.TOFmanualToValue.setMaximumSize(QtCore.QSize(60, 16777215))
+        self.TOFmanualToValue.setMinimumSize(QtCore.QSize(100, 0))
+        self.TOFmanualToValue.setMaximumSize(QtCore.QSize(100, 16777215))
         self.TOFmanualToValue.setObjectName("TOFmanualToValue")
         self.horizontalLayout_37.addWidget(self.TOFmanualToValue)
         self.TOFmanualToUnitsValue = QtGui.QLabel(self.layoutWidget_3)
@@ -1465,7 +1465,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(0)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.plotTab, QtCore.SIGNAL("currentChanged(int)"), MainWindow.plotActiveTab)
         QtCore.QObject.connect(self.actionNext_File, QtCore.SIGNAL("triggered()"), MainWindow.nextFile)

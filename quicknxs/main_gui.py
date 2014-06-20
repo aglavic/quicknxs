@@ -721,7 +721,8 @@ class MainGUI(QtGui.QMainWindow):
     # display it
     if plot_it:
       it_plot.plot(data.tof_edges[0:-1],countstofdata)
-      it_plot.set_xlabel(u't (ms)')
+      it_plot.set_xlabel(u't (\u00b5s)')
+#      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
       ta = it_plot.canvas.ax.axvline(autotmin, color='#00aa00')
       tb = it_plot.canvas.ax.axvline(autotmax, color='#00aa00')
@@ -1385,12 +1386,33 @@ class MainGUI(QtGui.QMainWindow):
     Will change the ms->micros labels in the TOF widgets
     and the value of tof fields
     '''
+    
     _units = u'\u03bcs'
     self.ui.TOFmanualFromUnitsValue.setText(_units)
     self.ui.TOFmanualToUnitsValue.setText(_units) 
     # change units
     self.change_tof_units('micros')
  
+    # change value as well from ms -> microS
+    # if bool == true => ms -> microS
+    # if bool == false => microS -> ms
+    
+    _valueFrom = float(self.ui.TOFmanualFromValue.text())
+    if bool: # ms -> microS
+      new_valueFrom = _valueFrom * 1000
+    else: # microS -> ms
+      new_valueFrom = _valueFrom / 1000
+    newStr = "%.2f"%new_valueFrom
+    self.ui.TOFmanualFromValue.setText(newStr)
+ 
+    _valueTo = float(self.ui.TOFmanualToValue.text())
+    if bool: # ms -> microS
+      new_valueTo = _valueTo * 1000
+    else: # microS -> ms
+      new_valueTo = _valueTo / 1000
+    newStr = "%.2f"%new_valueTo
+    self.ui.TOFmanualToValue.setText(newStr)
+
   def tof_ms_switch(self, bool):
     '''
     Will change the microS->ms labels in the TOF widgets

@@ -749,7 +749,7 @@ p, li { white-space: pre-wrap; }
               <item>
                <widget class="QTabWidget" name="dataNormTabWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <attribute name="title">
@@ -2101,13 +2101,13 @@ p, li { white-space: pre-wrap; }
                         </property>
                         <property name="minimumSize">
                          <size>
-                          <width>60</width>
+                          <width>100</width>
                           <height>0</height>
                          </size>
                         </property>
                         <property name="maximumSize">
                          <size>
-                          <width>60</width>
+                          <width>100</width>
                           <height>16777215</height>
                          </size>
                         </property>
@@ -2165,13 +2165,13 @@ p, li { white-space: pre-wrap; }
                         </property>
                         <property name="minimumSize">
                          <size>
-                          <width>60</width>
+                          <width>100</width>
                           <height>0</height>
                          </size>
                         </property>
                         <property name="maximumSize">
                          <size>
-                          <width>60</width>
+                          <width>100</width>
                           <height>16777215</height>
                          </size>
                         </property>
