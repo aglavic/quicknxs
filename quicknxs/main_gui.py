@@ -1,9 +1,12 @@
+#-*- coding: utf-8 -*-
+
 '''
 Module including main GUI class with all signal handling and plot creation.
 '''
 
 import os
 import sys
+from math import radians, fabs
 from glob import glob
 from numpy import where, pi, newaxis, log10
 from matplotlib.lines import Line2D
@@ -499,6 +502,34 @@ class MainGUI(QtGui.QMainWindow):
                                                                              _row,
                                                                              _column), True)
 
+    if _column == 0:
+      # add incident angle
+      incident_angle = self.getIncidentAngle(data.active_data)
+      _item_angle = QtGui.QTableWidgetItem(incident_angle)
+      self.ui.reductionTable.setItem(_row,1,_item_angle)
+
+  def getIncidentAngle(self, active_data):
+    '''
+    Using the metadata, will return the incident angle in degrees
+    '''
+    
+    angle = 1.2345
+    
+    _tthd = active_data.tthd
+    _tthd_units = active_data.tthd_units
+    
+    _ths = active_data.thi
+    _ths_units = active_data.thi_units
+    
+    if _tthd_units != 'degree':
+      _tthd = radians(_tthd)
+    
+    if _ths_units != 'degree':
+      _ths = radians(_ths)
+      
+    angle = fabs(_tthd - _ths)
+    _value = "%.2f" % angle
+    return _value
     
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
@@ -1364,6 +1395,9 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.TOFmanualMsValue.setEnabled(not bool)
       self.ui.TOFmanualMicrosValue.setEnabled(not bool)
       self._auto_tof_flag = True
+ 
+  def manual_tof_selection(self, bool):
+    pass
  
   def manual_tof_switch(self, bool):
     '''
