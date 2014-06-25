@@ -2394,7 +2394,7 @@ p, li { white-space: pre-wrap; }
                              </size>
                             </property>
                             <property name="text">
-                             <string>thi:</string>
+                             <string>ths:</string>
                             </property>
                             <property name="alignment">
                              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -4712,6 +4712,38 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>TOFmanualFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>manual_tof_selection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>703</x>
+     <y>680</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TOFmanualToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>manual_tof_selection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>900</x>
+     <y>680</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4780,5 +4812,6 @@ p, li { white-space: pre-wrap; }
   <slot>norm_back_spinbox_validation()</slot>
   <slot>norm_lowres_spinbox_validation()</slot>
   <slot>norm_spinbox()</slot>
+  <slot>manual_tof_selection()</slot>
  </slots>
 </ui>

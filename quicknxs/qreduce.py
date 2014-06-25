@@ -1093,6 +1093,8 @@ class LRDataset(object):
   dMD=0 # distance Moderator-Detector
   dMD_units = ''
 
+  nxs=None # Mantid NeXus workspace
+
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
   lambda_center=3.37 #: central wavelength of measurement band [Å]
@@ -1191,6 +1193,9 @@ class LRDataset(object):
     output.read_options=read_options
     output.from_event_mode=True
     bin_type=0
+
+    # we will need to access nxs if the user decides to manually select the TOF range
+    output.nxs = nxs;
 
     # retrieve the metadata from the nexus file
     output._collect_info(nxs)

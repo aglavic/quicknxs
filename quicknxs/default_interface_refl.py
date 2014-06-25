@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Jun 20 09:21:36 2014
+# Created: Wed Jun 25 10:42:46 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1529,6 +1529,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.normPeakFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.norm_peak_spinbox_validation)
         QtCore.QObject.connect(self.normLowResFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.norm_lowres_spinbox_validation)
         QtCore.QObject.connect(self.normLowResToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.norm_lowres_spinbox_validation)
+        QtCore.QObject.connect(self.TOFmanualFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.manual_tof_selection)
+        QtCore.QObject.connect(self.TOFmanualToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.manual_tof_selection)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
@@ -1648,7 +1650,7 @@ class Ui_MainWindow(object):
         self.label_148.setText(QtGui.QApplication.translate("MainWindow", "Lambda Requested:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataLambdaRequestedValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataLambdaRequestedUnits.setText(QtGui.QApplication.translate("MainWindow", "units", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_151.setText(QtGui.QApplication.translate("MainWindow", "thi:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_151.setText(QtGui.QApplication.translate("MainWindow", "ths:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadatathiValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.metadatathiUnits.setText(QtGui.QApplication.translate("MainWindow", "rad", None, QtGui.QApplication.UnicodeUTF8))
         self.label_153.setText(QtGui.QApplication.translate("MainWindow", "tthd:", None, QtGui.QApplication.UnicodeUTF8))
