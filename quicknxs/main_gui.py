@@ -762,8 +762,8 @@ class MainGUI(QtGui.QMainWindow):
     if plot_yi:
       xaxis = range(len(data.ycountsdata))
       yi_plot.plot(data.ycountsdata,xaxis)
-      yi_plot.set_xlabel(u'pixels')
-      yi_plot.set_ylabel(u'Counts')
+      yi_plot.set_xlabel(u'counts')
+      yi_plot.set_ylabel(u'y (pixel)')
       yi_plot.canvas.ax.set_ylim(0,255)
       
       y1peak = yi_plot.canvas.ax.axhline(peak1, color='#00aa00')
