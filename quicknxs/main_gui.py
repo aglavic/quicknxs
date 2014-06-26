@@ -8,9 +8,10 @@ import os
 import sys
 from math import radians, fabs
 from glob import glob
-from numpy import where, pi, newaxis, log10
+from numpy import where, pi, newaxis, log10, array
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
+from mantid.simpleapi import *
 #QtWebKit
 
 #from logging import info, debug
@@ -26,7 +27,7 @@ from .point_picker import PointPicker
 from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION, LRDataset
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
 from .version import str_version
@@ -640,8 +641,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       isDataSelected = False
       
+    # clear previous plot
     if isDataSelected:
-      # clear previous plot
       self.ui.data_yt_plot.clear()
       self.ui.data_yi_plot.clear()
       self.ui.data_it_plot.clear()
@@ -655,12 +656,59 @@ class MainGUI(QtGui.QMainWindow):
     data = self.active_data
     if data is None:
       return
+
+    if self.ui.dataTOFmanualMode.isChecked(): # manual mode
   
-    xy = data.xydata
-    ytof = data.ytofdata
-    countstofdata = data.countstofdata
-    countsxdata = data.countsxdata
-    ycountsdata = data.ycountsdata
+      nxs = data.nxs
+      
+      # retrieve tof parameters defined by user
+      _valueFrom = float(self.ui.TOFmanualFromValue.text())
+      _valueTo = float(self.ui.TOFmanualToValue.text())
+      if self.ui.TOFmanualMsValue.isChecked(): # ms units
+        _valueFrom *= 1000
+        _valueTo *= 1000 
+      
+      tbin = data.read_options["bins"]  
+      params = [float(_valueFrom), float(tbin), float(_valueTo)]
+      
+      nxs_histo = Rebin(InputWorkspace=nxs, Params=params, PreserveEvents=True)
+      nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
+      
+      [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
+      
+      Ixy = Ixyt.sum(axis=2)
+      Iyt = Ixyt.sum(axis=0)
+      Iit = Iyt.sum(axis=0)
+      Iix = Ixy.sum(axis=1)
+      Iyi = Iyt.sum(axis=1)
+     # Exy = Exyt.sum(axis=2)    # FIXME
+     # Ext = Exyt.sum(axis=1)    # FIXME
+      
+      # store the data
+      auto_tof_range = array([_valueFrom,_valueTo])
+      
+      tof_edges = _tof_axis
+      tof_edges_full = data.tof_edges
+#      data = Ixyt.astype(float) # 3D dataset
+      xy  = Ixy.transpose().astype(float) # 2D dataset
+      ytof = Iyt.astype(float) # 2D dataset
+  
+#      countstofdata = Iit.astype(float)
+      countstofdata = data.countstofdata
+      countsxdata = Iix.astype(float)
+      ycountsdata = Iyi.astype(float)
+            
+    else: # auto mode
+
+      xy = data.xydata
+      ytof = data.ytofdata
+      countstofdata = data.countstofdata
+      countsxdata = data.countsxdata
+      ycountsdata = data.ycountsdata
+      auto_tof_range = data.auto_tof_range
+    
+      tof_edges_full = data.tof_edges
+      tof_edges = tof_edges_full
     
     ## min and max of xy and xtof 2D arrays
     #xy_imin=xy[xy>0].min()
@@ -727,17 +775,17 @@ class MainGUI(QtGui.QMainWindow):
     if plot_yt:
       yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
                      aspect='auto', cmap=self.color, origin='lower',
-                     extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
+                     extent=[tof_edges[0]*1e-3, tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
       yt_plot.set_xlabel(u't (ms)')
       yt_plot.set_ylabel(u'y (pixel)')
   
       # display tof range in auto/manual TOF range    #FIXME
-      autotmin = data.auto_tof_range[0]
-      autotmax = data.auto_tof_range[1]
+      autotmin = auto_tof_range[0]
+      autotmax = auto_tof_range[1]
       self.display_tof_range(autotmin, autotmax, 'ms')
   
-      tmin = data.tof_edges[0]
-      tmax = data.tof_edges[-1]
+      tmin = tof_edges[0]
+      tmax = tof_edges[-1]
   
       y1 = yt_plot.canvas.ax.axhline(peak1, color='#00aa00')
       y2 = yt_plot.canvas.ax.axhline(peak2, color='#00aa00')
@@ -750,7 +798,7 @@ class MainGUI(QtGui.QMainWindow):
 
     # display it
     if plot_it:
-      it_plot.plot(data.tof_edges[0:-1],countstofdata)
+      it_plot.plot(tof_edges_full[0:-1],countstofdata)
       it_plot.set_xlabel(u't (\u00b5s)')
 #      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
@@ -760,8 +808,8 @@ class MainGUI(QtGui.QMainWindow):
 
     # display yi
     if plot_yi:
-      xaxis = range(len(data.ycountsdata))
-      yi_plot.plot(data.ycountsdata,xaxis)
+      xaxis = range(len(ycountsdata))
+      yi_plot.plot(ycountsdata,xaxis)
       yi_plot.set_xlabel(u'counts')
       yi_plot.set_ylabel(u'y (pixel)')
       yi_plot.canvas.ax.set_ylim(0,255)
@@ -777,7 +825,7 @@ class MainGUI(QtGui.QMainWindow):
 
     # display ix
     if plot_ix:
-      ix_plot.plot(data.countsxdata)
+      ix_plot.plot(countsxdata)
       ix_plot.set_xlabel(u'pixels')
       ix_plot.set_ylabel(u'counts')
       ix_plot.canvas.ax.set_xlim(0,303)
@@ -857,7 +905,6 @@ class MainGUI(QtGui.QMainWindow):
     will display the TOF min and max value in the metadata field
     according to the units selected
     '''
-
     _tmin = tmin.copy()
     _tmax = tmax.copy()
 
@@ -1396,9 +1443,9 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.TOFmanualMicrosValue.setEnabled(not bool)
       self._auto_tof_flag = True
  
-  def manual_tof_selection(self, bool):
-    pass
- 
+  def manual_tof_selection(self):
+    self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
+
   def manual_tof_switch(self, bool):
     '''
     Reached by the TOF manual switch
@@ -1419,7 +1466,6 @@ class MainGUI(QtGui.QMainWindow):
     Will change the ms->micros labels in the TOF widgets
     and the value of tof fields
     '''
-    
     _units = u'\u03bcs'
     self.ui.TOFmanualFromUnitsValue.setText(_units)
     self.ui.TOFmanualToUnitsValue.setText(_units) 
