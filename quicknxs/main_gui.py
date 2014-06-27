@@ -3322,6 +3322,27 @@ Do you want to try to restore the working reduction list?""",
           filtered_points=dia.filtered_idxs
 
   @log_call
+  def loading_configuration(self):
+    '''
+    Reached by the Load Configuration button
+    will populate the GUI with the data retrieved from the configuration file
+    '''
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')
+    
+  
+  
+  @log_call
+  def saving_configuration(self):
+    '''
+    Reached by the Save Configuration button
+    will retrieve all the data from the application and will save them using the 
+    same format as Mantid
+    '''
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', '.')
+    print filename
+
+
+  @log_call
   def helpDialog(self):
     '''
     Open a HTML page with the program documentation and place it on the right

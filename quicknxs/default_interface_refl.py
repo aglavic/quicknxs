@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Jun 25 13:16:41 2014
+# Created: Fri Jun 27 14:56:51 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1394,6 +1394,10 @@ class Ui_MainWindow(object):
         self.actionFilter_Points.setObjectName("actionFilter_Points")
         self.actionOpen_Reduction_Preview = QtGui.QAction(MainWindow)
         self.actionOpen_Reduction_Preview.setObjectName("actionOpen_Reduction_Preview")
+        self.actionLoadConfiguration = QtGui.QAction(MainWindow)
+        self.actionLoadConfiguration.setObjectName("actionLoadConfiguration")
+        self.actionSaveConfiguration = QtGui.QAction(MainWindow)
+        self.actionSaveConfiguration.setObjectName("actionSaveConfiguration")
         self.menuDebug.addAction(self.actionLog_Debug_Messages)
         self.menuDebug.addAction(self.actionRaise_Error)
         self.menuAdvanced.addAction(self.actionAdvanced_Background)
@@ -1421,6 +1425,9 @@ class Ui_MainWindow(object):
         self.menuReduction.addSeparator()
         self.menuReduction.addAction(self.actionReduce)
         self.menuReduction.addAction(self.actionQuick_Reduce)
+        self.menuReduction.addSeparator()
+        self.menuReduction.addAction(self.actionLoadConfiguration)
+        self.menuReduction.addAction(self.actionSaveConfiguration)
         self.menuAutomatics.addAction(self.actionAutomaticXPeak)
         self.menuAutomatics.addAction(self.actionAutoYLimits)
         self.menuAutomatics.addSeparator()
@@ -1531,6 +1538,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.normLowResToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.norm_lowres_spinbox_validation)
         QtCore.QObject.connect(self.TOFmanualFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.manual_tof_selection)
         QtCore.QObject.connect(self.TOFmanualToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.manual_tof_selection)
+        QtCore.QObject.connect(self.actionLoadConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loading_configuration)
+        QtCore.QObject.connect(self.actionSaveConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.saving_configuration)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
@@ -1765,6 +1774,8 @@ class Ui_MainWindow(object):
         self.actionFilter_Points.setText(QtGui.QApplication.translate("MainWindow", "Filter Points...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFilter_Points.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove points from already exported reflectivity datasets", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Reduction_Preview.setText(QtGui.QApplication.translate("MainWindow", "Open Reduction Preview...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSaveConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration...", None, QtGui.QApplication.UnicodeUTF8))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

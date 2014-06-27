@@ -313,7 +313,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>158</width>
+             <width>258</width>
              <height>156</height>
             </rect>
            </property>
@@ -416,8 +416,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>258</width>
+             <height>136</height>
             </rect>
            </property>
            <attribute name="label">
@@ -503,8 +503,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>258</width>
+             <height>136</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3243,6 +3243,9 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="actionReduce"/>
     <addaction name="actionQuick_Reduce"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoadConfiguration"/>
+    <addaction name="actionSaveConfiguration"/>
    </widget>
    <widget class="QMenu" name="menuAutomatics">
     <property name="title">
@@ -3652,6 +3655,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionOpen_Reduction_Preview">
    <property name="text">
     <string>Open Reduction Preview...</string>
+   </property>
+  </action>
+  <action name="actionLoadConfiguration">
+   <property name="text">
+    <string>Load Configuration...</string>
+   </property>
+  </action>
+  <action name="actionSaveConfiguration">
+   <property name="text">
+    <string>Save Configuration...</string>
    </property>
   </action>
  </widget>
@@ -4744,6 +4757,38 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoadConfiguration</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loading_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveConfiguration</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saving_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4813,5 +4858,7 @@ p, li { white-space: pre-wrap; }
   <slot>norm_lowres_spinbox_validation()</slot>
   <slot>norm_spinbox()</slot>
   <slot>manual_tof_selection()</slot>
+  <slot>loading_configuration()</slot>
+  <slot>saving_configuration()</slot>
  </slots>
 </ui>
