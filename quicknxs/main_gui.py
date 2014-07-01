@@ -12,6 +12,7 @@ from numpy import where, pi, newaxis, log10, array
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
 from mantid.simpleapi import *
+from xml.dom import minidom
 #QtWebKit
 
 #from logging import info, debug
@@ -463,7 +464,7 @@ class MainGUI(QtGui.QMainWindow):
     
     _selected_row = self.ui.reductionTable.selectedRanges()
     
-    # new row each time a data is selected
+    # add new row each time a data is selected
     if self.ui.dataNormTabWidget.currentIndex() == 0: #data
       _column = 0
     else:
@@ -3025,11 +3026,17 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without data background
     '''
+
+    data = self.active_data
+
     if int==2:
       flag = True
     else:
       flag = False
       
+    data.data_back_flag = flag
+    self.active_data = data
+
     self.ui.dataBackFromLabel.setEnabled(flag)
     self.ui.dataBackFromValue.setEnabled(flag)
     self.ui.dataBackToLabel.setEnabled(flag)
@@ -3042,10 +3049,16 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without data low resolution range
     '''
+    
+    data = self.active_data
+
     if int==2:
       flag = True
     else:
       flag = False
+            
+    data.data_low_res_flag = flag
+    self.active_data = data
             
     self.ui.dataLowResFromLabel.setEnabled(flag)
     self.ui.dataLowResFromValue.setEnabled(flag)
@@ -3068,6 +3081,10 @@ Do you want to try to restore the working reduction list?""",
       flagLowRes = False
       flagBack = False
 
+    data = self.active_data
+    data.norm_flag = flag
+    self.active_data = data
+    
     self.ui.norm_yt_plot.setEnabled(flag)
     self.ui.norm_yi_plot.setEnabled(flag)
     self.ui.norm_it_plot.setEnabled(flag)
@@ -3108,10 +3125,16 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without normalization low resolution range
     '''
+
+    data = self.active_data
+
     if int==2:
       flag = True
     else:
       flag = False
+
+    data.norm_low_res_flag = flag
+    self.active_data = data
 
     self.ui.normLowResFromLabel.setEnabled(flag)
     self.ui.normLowResFromValue.setEnabled(flag)
@@ -3129,6 +3152,9 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value    
     '''
+
+    data = self.active_data
+
     peak1 = self.ui.dataPeakFromValue.value()
     peak2 = self.ui.dataPeakToValue.value()
     
@@ -3139,6 +3165,9 @@ Do you want to try to restore the working reduction list?""",
       peak_min = peak1
       peak_max = peak2
       
+    data.data_peak = [str(peak_min),str(peak_max)]
+    self.active_data = data
+    
     self.ui.dataPeakFromValue.setValue(peak_min)
     self.ui.dataPeakToValue.setValue(peak_max)
 
@@ -3152,6 +3181,8 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
+    data = self.active_data
+    
     back1 = self.ui.dataBackFromValue.value()
     back2 = self.ui.dataBackToValue.value()
     
@@ -3162,6 +3193,9 @@ Do you want to try to restore the working reduction list?""",
       back_min = back1
       back_max = back2
       
+    data.data_back = [str(back_min),str(back_max)]
+    self.active_data = data
+
     self.ui.dataBackFromValue.setValue(back_min)
     self.ui.dataBackToValue.setValue(back_max)
 
@@ -3175,6 +3209,9 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
+
+    data = self.active_data
+
     lowres1 = self.ui.dataLowResFromValue.value()
     lowres2 = self.ui.dataLowResToValue.value()
     
@@ -3184,6 +3221,9 @@ Do you want to try to restore the working reduction list?""",
     else:
       lowres_min = lowres1
       lowres_max = lowres2
+    
+    data.data_low_res = [str(lowres_min),str(lowres_max)]
+    self.active_data = data
     
     self.ui.dataLowResFromValue.setValue(lowres_min)
     self.ui.dataLowResToValue.setValue(lowres_max)
@@ -3198,6 +3238,9 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value    
     '''
+
+    data = self.active_data
+
     peak1 = self.ui.normPeakFromValue.value()
     peak2 = self.ui.normPeakToValue.value()
     
@@ -3208,6 +3251,9 @@ Do you want to try to restore the working reduction list?""",
       peak_min = peak1
       peak_max = peak2
       
+    data.norm_peak = [str(peak_min),str(peak_max)]
+    self.active_data = data
+    
     self.ui.normPeakFromValue.setValue(peak_min)
     self.ui.normPeakToValue.setValue(peak_max)
 
@@ -3221,6 +3267,9 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
+
+    data = self.active_data
+
     back1 = self.ui.normBackFromValue.value()
     back2 = self.ui.normBackToValue.value()
     
@@ -3231,6 +3280,9 @@ Do you want to try to restore the working reduction list?""",
       back_min = back1
       back_max = back2
       
+    data.norm_back = [str(back_min),str(back_max)]
+    self.active_data = data
+    
     self.ui.normBackFromValue.setValue(back_min)
     self.ui.normBackToValue.setValue(back_max)
 
@@ -3244,6 +3296,9 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
+
+    data = self.active_data
+    
     lowres1 = self.ui.normLowResFromValue.value()
     lowres2 = self.ui.normLowResToValue.value()
     
@@ -3253,6 +3308,9 @@ Do you want to try to restore the working reduction list?""",
     else:
       lowres_min = lowres1
       lowres_max = lowres2
+    
+    data.norm_low_res = [str(lowres_min),str(lowres_max)]
+    self.active_data = data
     
     self.ui.normLowResFromValue.setValue(lowres_min)
     self.ui.normLowResToValue.setValue(lowres_max)
@@ -3328,8 +3386,7 @@ Do you want to try to restore the working reduction list?""",
     will populate the GUI with the data retrieved from the configuration file
     '''
     filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')
-    
-  
+    self.loadConfigAndPopulateGui(filename)
   
   @log_call
   def saving_configuration(self):
@@ -3341,6 +3398,55 @@ Do you want to try to restore the working reduction list?""",
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', '.')
     print filename
 
+  @log_call
+  def loadConfigAndPopulateGui(self, filename):
+    '''
+    This function will parse the XML config file (Mantid format) and will populate the 
+    GUI
+    '''
+    dom = minidom.parse(filename)
+    RefLData = dom.getElementsByTagName('RefLData')
+    nbrRowBigTable = len(RefLData)
+    
+    # reset bigTable
+    self.ui.reductionTable.clearContents()
+    
+    # start parsing xml file
+    _row = 0
+    for node in RefLData:
+      
+      self.ui.reductionTable.insertRow(_row)
+
+      # data 
+      _data_sets = self.getNodeValue(node,'data_sets')
+      self.addItemToBigTable(_data_sets, _row, 0)
+      
+      # norm
+      _norm_sets = self.getNodeValue(node,'norm_dataset')
+      self.addItemToBigTable(_norm_sets, _row, 6)
+      
+      # incident angle
+      try:
+        _incident_angle = self.getNodeValue(node,'incident_angle')
+      except:
+        _incident_angle = 'N/A'
+      self.addItemToBigTable(_incident_angle, _row, 1)
+      
+      _row += 1
+      	
+  def addItemToBigTable(self, value, row, column):
+    '''
+    Add element by element in the BigTable
+    '''
+    _item = QtGui.QTableWidgetItem(str(value))
+    self.ui.reductionTable.setItem(row, column, _item)
+
+  def getNodeValue(self,node,flag):
+    '''
+    get the value of the node from the dom (config file)
+    '''
+    _tmp = node.getElementsByTagName(flag)
+    return _tmp[0].childNodes[0].nodeValue
 
   @log_call
   def helpDialog(self):

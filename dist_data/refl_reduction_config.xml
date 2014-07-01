@@ -67,6 +67,7 @@
 <from_tof_range>40670.0</from_tof_range>
 <to_tof_range>53321.0</to_tof_range>
 <data_sets>115269</data_sets>
+<incident_angle>1.4</incident_angle>
 <x_min_pixel>123</x_min_pixel>
 <x_max_pixel>187</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -113,6 +114,7 @@
 <from_tof_range>29642.0</from_tof_range>
 <to_tof_range>42328.0</to_tof_range>
 <data_sets>115270</data_sets>
+<incident_angle>1.6</incident_angle>
 <x_min_pixel>125</x_min_pixel>
 <x_max_pixel>185</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -159,6 +161,7 @@
 <from_tof_range>18500.0</from_tof_range>
 <to_tof_range>30833.0</to_tof_range>
 <data_sets>115271</data_sets>
+<incident_angle>1.8</incident_angle>
 <x_min_pixel>124</x_min_pixel>
 <x_max_pixel>184</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -205,6 +208,7 @@
 <from_tof_range>9806.0</from_tof_range>
 <to_tof_range>21991.0</to_tof_range>
 <data_sets>115272</data_sets>
+<incident_angle>2.0</incident_angle>
 <x_min_pixel>124</x_min_pixel>
 <x_max_pixel>186</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -251,6 +255,7 @@
 <from_tof_range>9893.0</from_tof_range>
 <to_tof_range>21991.0</to_tof_range>
 <data_sets>115273</data_sets>
+<incident_angle>2.2</incident_angle>
 <x_min_pixel>125</x_min_pixel>
 <x_max_pixel>187</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -297,6 +302,7 @@
 <from_tof_range>9850.0</from_tof_range>
 <to_tof_range>21991.0</to_tof_range>
 <data_sets>115274</data_sets>
+<incident_angle>2.4</incident_angle>
 <x_min_pixel>118</x_min_pixel>
 <x_max_pixel>191</x_max_pixel>
 <x_range_flag>True</x_range_flag>

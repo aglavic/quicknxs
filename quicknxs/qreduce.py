@@ -1093,6 +1093,23 @@ class LRDataset(object):
   dMD=0 # distance Moderator-Detector
   dMD_units = ''
 
+  # will be used to keep the GUI in the same state
+  data_peak = ['123','456']
+  data_back = ['','']
+  data_low_res = ['','']
+  data_back_flag = True
+  data_low_res_flag = True
+  tof = ['',''] 
+  tof_units = 'ms'
+  tof_auto_flag = True
+  
+  norm_flag = True
+  norm_peak = ['','']
+  norm_back = ['','']
+  norm_back_flag = True
+  norm_low_res = ['','']
+  norm_low_res_flag = True
+  
   nxs=None # Mantid NeXus workspace
 
   ai=None #: incident angle
