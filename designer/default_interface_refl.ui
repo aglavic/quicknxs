@@ -4789,6 +4789,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>cellClicked(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>bigTable_selection_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>812</x>
+     <y>935</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4860,5 +4876,6 @@ p, li { white-space: pre-wrap; }
   <slot>manual_tof_selection()</slot>
   <slot>loading_configuration()</slot>
   <slot>saving_configuration()</slot>
+  <slot>bigTable_selection_changed()</slot>
  </slots>
 </ui>

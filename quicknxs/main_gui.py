@@ -89,6 +89,10 @@ class MainGUI(QtGui.QMainWindow):
   # colors for the reflecitivy lines
   _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
 
+  # interaction with big table
+  _prev_row_selected = 0
+  _prev_col_selected = 0
+
   # current TOF status
   _auto_tof_flag = True
   _ms_tof_flag = True
@@ -503,6 +507,8 @@ class MainGUI(QtGui.QMainWindow):
                                                                              _column,
                                                                              _row,
                                                                              _column), True)
+    self._prev_row_selected = _row
+    self._prev_col_selected = _column
 
     if _column == 0:
       # add incident angle
@@ -632,6 +638,18 @@ class MainGUI(QtGui.QMainWindow):
       self.plot_overview_REFM()
     else:
       self.plot_overview_REFL()
+
+  def clear_plot_overview_REFL(self, isData):
+    if isData:
+      self.ui.data_yt_plot.clear()
+      self.ui.data_yi_plot.clear()
+      self.ui.data_it_plot.clear()
+      self.ui.data_ix_plot.clear()      
+    else:
+      self.ui.norm_yt_plot.clear()
+      self.ui.norm_yi_plot.clear()
+      self.ui.norm_it_plot.clear()
+      self.ui.norm_ix_plot.clear()
 
   @log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
@@ -2323,6 +2341,34 @@ class MainGUI(QtGui.QMainWindow):
     self.reflectivityUpdated.emit(do_plot)
     if do_plot:
       self.initiateReflectivityPlot.emit(True)
+
+  def bigTable_selection_changed(self, row, column):
+
+    # if selection of same row and not data or column column
+    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
+      return
+    
+    # same row and same column selected
+    if (self._prev_row_selected == row) and (self._prev_col_selected == column):
+      return
+
+    # display norm tab
+    if column == 6:
+      self.ui.dataNormTabWidget.setCurrentIndex(1)
+      # if cell is empty
+      cell = self.ui.reductionTable.selectedItems()
+      if cell == []:
+        self.clear_plot_overview_REFL(isData=False)
+      else:
+        self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    else:
+      self.ui.dataNormTabWidget.setCurrentIndex(0)
+      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+
+
+
+    self._prev_row_selected = row
+    self._prev_col_selected = column
 
   @log_input
   def reductionTableChanged(self, item):
