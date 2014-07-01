@@ -62,6 +62,9 @@ class MainGUI(QtGui.QMainWindow):
   active_file=u''
   last_mtime=0. #: Stores the last time the current file has been modified
   _active_data=None
+  
+  bigTableData = [] # Will store all the data objects indexes just like the BigTable
+  
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
   ref_norm={} #: Store normalization data with extraction information
@@ -412,10 +415,15 @@ class MainGUI(QtGui.QMainWindow):
           event_split_bins=event_split_bins,
           event_split_index=event_split_index)
 
+    # save the data 
+    self.bigTableData.append(data)
+    print len(self.bigTableData)
+
     if instrument.NAME == 'REF_M':
       self._fileOpenDone(data, filename, do_plot)
     else:
       self._fileOpenDoneREFL(data, filename, do_plot)
+
 
   @log_input
   def fileOpenSum(self, filenames, do_plot=True):
@@ -462,7 +470,7 @@ class MainGUI(QtGui.QMainWindow):
       pass
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
-
+ 
   def populateReflectivityTable(self, data):
     # will populate the recap table
     
@@ -2365,7 +2373,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataNormTabWidget.setCurrentIndex(0)
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
-
+    _data = self.bigTableData[row]
+    self.active_data = _data.active_data
 
     self._prev_row_selected = row
     self._prev_col_selected = column
