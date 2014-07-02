@@ -8,7 +8,7 @@ import os
 import sys
 from math import radians, fabs
 from glob import glob
-from numpy import where, pi, newaxis, log10, array
+from numpy import where, pi, newaxis, log10, array, empty
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
 from mantid.simpleapi import *
@@ -63,8 +63,11 @@ class MainGUI(QtGui.QMainWindow):
   last_mtime=0. #: Stores the last time the current file has been modified
   _active_data=None
   
-  bigTableData = [] # Will store all the data objects indexes just like the BigTable
+  #bigTableData = [] # Will store all the data objects indexes just like the BigTable
   
+  # will save the data and norm objects according to their position in the bigTable
+  bigTableData = empty((20,2), dtype=object)
+
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
   ref_norm={} #: Store normalization data with extraction information
@@ -415,8 +418,10 @@ class MainGUI(QtGui.QMainWindow):
           event_split_bins=event_split_bins,
           event_split_index=event_split_index)
 
-    # save the data 
-    self.bigTableData.append(data)
+    # save the data in the right spot (row, column)
+    
+    [r,c] = self.getRowColumnNextDataSet()
+    self.bigTableData[r,c] = data
 
     if instrument.NAME == 'REF_M':
       self._fileOpenDone(data, filename, do_plot)
@@ -469,6 +474,40 @@ class MainGUI(QtGui.QMainWindow):
       pass
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
+ 
+  def getRowColumnNextDataSet(self):
+    '''
+    this routine will determine where the data set, just loaded
+    will be saved in the 2D data set array
+    '''
+    _selected_row = self.ui.reductionTable.selectedRanges()
+    
+    # add new row each time a data is selected
+    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+      _column = 0
+    else:
+      _column = 6
+
+    # empty table, let's add a row
+    if _selected_row == []:
+      _selected_row = 0
+    else:
+      _selected_row = _selected_row[0].bottomRow()
+
+    # if run is normalization, do not create a new row
+    if _column == 6:
+      _row = _selected_row
+    else:
+      # if selected row has already a data run number -> create a new row
+      _current_item = self.ui.reductionTable.item(_selected_row, 0)
+      if _current_item is None:
+        # insert new item (data or normalization run number)
+        _row = _selected_row
+      else:
+        # find out last row
+        _row = self.ui.reductionTable.rowCount()
+
+    return [_row, _column]
  
   def populateReflectivityTable(self, data):
     # will populate the recap table
