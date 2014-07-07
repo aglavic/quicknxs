@@ -2434,8 +2434,12 @@ class MainGUI(QtGui.QMainWindow):
     if column is not 0:
       column = 1
     _data = self.bigTableData[row,column]
-    self.active_data = _data.active_data
-
+    
+    try:
+      self.active_data = _data.active_data
+    except:
+      self.active_data = None
+      
     self._prev_row_selected = row
     self._prev_col_selected = column
 
