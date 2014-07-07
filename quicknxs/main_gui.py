@@ -3300,7 +3300,11 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
-    data = self.active_data
+
+    # get current row and column selected
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
     
     back1 = self.ui.dataBackFromValue.value()
     back2 = self.ui.dataBackToValue.value()
@@ -3313,7 +3317,9 @@ Do you want to try to restore the working reduction list?""",
       back_max = back2
       
     data.data_back = [str(back_min),str(back_max)]
-    self.active_data = data
+    
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
 
     self.ui.dataBackFromValue.setValue(back_min)
     self.ui.dataBackToValue.setValue(back_max)
@@ -3436,6 +3442,20 @@ Do you want to try to restore the working reduction list?""",
 
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+
+
+  def getCurrentRowColumnSelected(self):
+    '''
+    will determine the current row and column selected in the big Table.
+    '''
+    rangeSelected = self.ui.reductionTable.selectedRanges()
+    col = rangeSelected[0].leftColumn()
+    row = rangeSelected[0].topRow()
+    if col < 6:
+      col = 0
+    else:
+      col = 1
+    return [row, col]
 
   @log_call
   def open_reduction_preview(self):
@@ -3601,6 +3621,9 @@ Do you want to try to restore the working reduction list?""",
       pyqtversion=Configuration().pyqt_version_str
     except ImportError:
       pyqtversion='Unknown'
+
+
+
 
     QtGui.QMessageBox.about(self, 'About QuickNXS',
 '''
