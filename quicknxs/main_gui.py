@@ -421,10 +421,11 @@ class MainGUI(QtGui.QMainWindow):
     # save the data in the right spot (row, column)
     
     [r,c] = self.getRowColumnNextDataSet()
-#    print("r: %i"%r)
     if c is not 0:
       c=1
     self.bigTableData[r,c] = data
+    self._prev_row_selected = r
+    self._prev_col_selected = c
 
     if instrument.NAME == 'REF_M':
       self._fileOpenDone(data, filename, do_plot)
@@ -2418,8 +2419,17 @@ class MainGUI(QtGui.QMainWindow):
     if (self._prev_row_selected == row) and (self._prev_col_selected == column):
       return
 
+    if column is not 0:
+      column = 1
+
+    _data = self.bigTableData[row,column]
+    try:
+      self.active_data = _data.active_data
+    except:
+      self.active_data = None
+
     # display norm tab
-    if column == 6:
+    if column == 1:
       self.ui.dataNormTabWidget.setCurrentIndex(1)
       # if cell is empty
       cell = self.ui.reductionTable.selectedItems()
@@ -2427,18 +2437,9 @@ class MainGUI(QtGui.QMainWindow):
         self.clear_plot_overview_REFL(isData=False)
       else:
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-    else:
+    else: # display data tab
       self.ui.dataNormTabWidget.setCurrentIndex(0)
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-
-    if column is not 0:
-      column = 1
-    _data = self.bigTableData[row,column]
-    
-    try:
-      self.active_data = _data.active_data
-    except:
-      self.active_data = None
       
     self._prev_row_selected = row
     self._prev_col_selected = column
