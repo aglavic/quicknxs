@@ -421,6 +421,9 @@ class MainGUI(QtGui.QMainWindow):
     # save the data in the right spot (row, column)
     
     [r,c] = self.getRowColumnNextDataSet()
+#    print("r: %i"%r)
+    if c is not 0:
+      c=1
     self.bigTableData[r,c] = data
 
     if instrument.NAME == 'REF_M':
@@ -2428,7 +2431,9 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataNormTabWidget.setCurrentIndex(0)
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
-    _data = self.bigTableData[row]
+    if column is not 0:
+      column = 1
+    _data = self.bigTableData[row,column]
     self.active_data = _data.active_data
 
     self._prev_row_selected = row
