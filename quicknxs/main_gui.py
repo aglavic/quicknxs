@@ -692,14 +692,23 @@ class MainGUI(QtGui.QMainWindow):
   def clear_plot_overview_REFL(self, isData):
     if isData:
       self.ui.data_yt_plot.clear()
+      self.ui.data_yt_plot.draw()
       self.ui.data_yi_plot.clear()
+      self.ui.data_yi_plot.draw()
       self.ui.data_it_plot.clear()
-      self.ui.data_ix_plot.clear()      
+      self.ui.data_it_plot.draw()
+      self.ui.data_ix_plot.clear()
+      self.ui.data_ix_plot.draw()
     else:
+      print 'clearing the clear_plot_overview_REFL'
       self.ui.norm_yt_plot.clear()
+      self.ui.norm_yt_plot.draw()
       self.ui.norm_yi_plot.clear()
+      self.ui.norm_yi_plot.draw()
       self.ui.norm_it_plot.clear()
+      self.ui.norm_it_plot.draw()
       self.ui.norm_ix_plot.clear()
+      self.ui.norm_ix_plot.draw()
 
   @log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
@@ -713,14 +722,23 @@ class MainGUI(QtGui.QMainWindow):
     # clear previous plot
     if isDataSelected:
       self.ui.data_yt_plot.clear()
+      self.ui.data_yt_plot.draw()
       self.ui.data_yi_plot.clear()
+      self.ui.data_yi_plot.draw()
       self.ui.data_it_plot.clear()
+      self.ui.data_it_plot.draw()
       self.ui.data_ix_plot.clear()
+      self.ui.data_ix_plot.draw()
     else:
+      print 'I should be clearing the norm plots now !!!!'
       self.ui.norm_yt_plot.clear()
+      self.ui.norm_yt_plot.draw()
       self.ui.norm_yi_plot.clear()
+      self.ui.norm_yi_plot.draw()
       self.ui.norm_it_plot.clear()
+      self.ui.norm_it_plot.draw()
       self.ui.norm_ix_plot.clear()
+      self.ui.norm_ix_plot.draw()
 
     data = self.active_data
     if data is None:
@@ -2420,22 +2438,27 @@ class MainGUI(QtGui.QMainWindow):
       return
 
     if column is not 0:
-      column = 1
+      col = 1
+    else:
+      col = 0
 
-    _data = self.bigTableData[row,column]
+    _data = self.bigTableData[row,col]
     try:
       self.active_data = _data.active_data
     except:
       self.active_data = None
 
     # display norm tab
-    if column == 1:
+    if column == 6:
+      print 'column 6 selected'
       self.ui.dataNormTabWidget.setCurrentIndex(1)
       # if cell is empty
       cell = self.ui.reductionTable.selectedItems()
       if cell == []:
+        print 'cell is empty'
         self.clear_plot_overview_REFL(isData=False)
       else:
+        print 'cell is NOT empty'
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     else: # display data tab
       self.ui.dataNormTabWidget.setCurrentIndex(0)

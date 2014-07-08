@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Jul  1 12:52:41 2014
+# Created: Tue Jul  8 13:50:00 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1541,7 +1541,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionLoadConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loading_configuration)
         QtCore.QObject.connect(self.actionSaveConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.saving_configuration)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellClicked(int,int)"), MainWindow.bigTable_selection_changed)
-        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellChanged(int,int)"), MainWindow.bigTable_selection_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
