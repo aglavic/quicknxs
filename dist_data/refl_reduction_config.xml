@@ -21,6 +21,7 @@
 <from_tof_range>50349.0</from_tof_range>
 <to_tof_range>62787.0</to_tof_range>
 <data_sets>115268</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115268_event.nxs</data_full_file_name>
 <x_min_pixel>123</x_min_pixel>
 <x_max_pixel>187</x_max_pixel>
 <x_range_flag>True</x_range_flag>
@@ -36,6 +37,7 @@
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115275</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115275_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -67,6 +69,7 @@
 <from_tof_range>40670.0</from_tof_range>
 <to_tof_range>53321.0</to_tof_range>
 <data_sets>115269</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115269_event.nxs</data_full_file_name>
 <incident_angle>1.4</incident_angle>
 <x_min_pixel>123</x_min_pixel>
 <x_max_pixel>187</x_max_pixel>
@@ -83,6 +86,7 @@
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115276</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115276_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -114,6 +118,7 @@
 <from_tof_range>29642.0</from_tof_range>
 <to_tof_range>42328.0</to_tof_range>
 <data_sets>115270</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115270_event.nxs</data_full_file_name>
 <incident_angle>1.6</incident_angle>
 <x_min_pixel>125</x_min_pixel>
 <x_max_pixel>185</x_max_pixel>
@@ -130,6 +135,7 @@
 <norm_from_back_pixels>108</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115277</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115277_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -161,6 +167,7 @@
 <from_tof_range>18500.0</from_tof_range>
 <to_tof_range>30833.0</to_tof_range>
 <data_sets>115271</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115271_event.nxs</data_full_file_name>
 <incident_angle>1.8</incident_angle>
 <x_min_pixel>124</x_min_pixel>
 <x_max_pixel>184</x_max_pixel>
@@ -177,6 +184,7 @@
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115278</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115278_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -208,6 +216,7 @@
 <from_tof_range>9806.0</from_tof_range>
 <to_tof_range>21991.0</to_tof_range>
 <data_sets>115272</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115272_event.nxs</data_full_file_name>
 <incident_angle>2.0</incident_angle>
 <x_min_pixel>124</x_min_pixel>
 <x_max_pixel>186</x_max_pixel>
@@ -224,6 +233,7 @@
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115279</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -255,6 +265,7 @@
 <from_tof_range>9893.0</from_tof_range>
 <to_tof_range>21991.0</to_tof_range>
 <data_sets>115273</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115273_event.nxs</data_full_file_name>
 <incident_angle>2.2</incident_angle>
 <x_min_pixel>125</x_min_pixel>
 <x_max_pixel>187</x_max_pixel>
@@ -271,6 +282,7 @@
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115279</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>
@@ -302,6 +314,7 @@
 <from_tof_range>9850.0</from_tof_range>
 <to_tof_range>21991.0</to_tof_range>
 <data_sets>115274</data_sets>
+<data_full_file_name>/home/j35/NeXus/REF_L_115274_event.nxs</data_full_file_name>
 <incident_angle>2.4</incident_angle>
 <x_min_pixel>118</x_min_pixel>
 <x_max_pixel>191</x_max_pixel>
@@ -318,6 +331,7 @@
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
 <norm_dataset>115279</norm_dataset>
+<norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>
 <auto_q_binning>False</auto_q_binning>

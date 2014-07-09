@@ -700,7 +700,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.data_ix_plot.clear()
       self.ui.data_ix_plot.draw()
     else:
-      print 'clearing the clear_plot_overview_REFL'
       self.ui.norm_yt_plot.clear()
       self.ui.norm_yt_plot.draw()
       self.ui.norm_yi_plot.clear()
@@ -730,7 +729,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.data_ix_plot.clear()
       self.ui.data_ix_plot.draw()
     else:
-      print 'I should be clearing the norm plots now !!!!'
       self.ui.norm_yt_plot.clear()
       self.ui.norm_yt_plot.draw()
       self.ui.norm_yi_plot.clear()
@@ -2450,16 +2448,13 @@ class MainGUI(QtGui.QMainWindow):
 
     # display norm tab
     if column == 6:
-      print 'column 6 selected'
       self.ui.dataNormTabWidget.setCurrentIndex(1)
       # if cell is empty
       cell = self.ui.reductionTable.selectedItems()
       if cell == []:
-        print 'cell is empty'
         self.clear_plot_overview_REFL(isData=False)
       else:
-        print 'cell is NOT empty'
-        self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     else: # display data tab
       self.ui.dataNormTabWidget.setCurrentIndex(0)
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
@@ -3596,7 +3591,37 @@ Do you want to try to restore the working reduction list?""",
       self.addItemToBigTable(_incident_angle, _row, 1)
       
       _row += 1
-      	
+
+    # select first data file
+    self.ui.dataNormTabWidget.setCurrentIndex(0)
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,0,0),True)                                                                                   	
+    
+    # load the first data and display it
+    self.bigTableData = empty((20,2), dtype=object)
+    
+    first_node = RefLData[0]
+    first_file_name = self.getNodeValue(first_node, 'data_full_file_name')
+
+    event_split_bins = None
+    event_split_index = 0
+    bin_type = 0
+    data = NXSData(first_file_name, 
+                   bin_type = bin_type,
+                   bins = self.ui.eventTofBins.value(),
+                   callback = self.updateEventReadout,
+                   event_split_bins = event_split_bins,
+                   event_split_index = event_split_index)
+    
+    r=0
+    c=0
+    self.bigTableData[r,c] = data
+    self._prev_row_selected = r
+    self._prev_col_selected = c
+    
+    self._fileOpenDoneREFL(data, first_file_name, True)
+    
+
+
   def addItemToBigTable(self, value, row, column):
     '''
     Add element by element in the BigTable
