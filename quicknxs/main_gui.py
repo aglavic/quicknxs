@@ -454,7 +454,7 @@ class MainGUI(QtGui.QMainWindow):
     self._fileOpenDone(data, filenames[0], do_plot)
 
   @log_call
-  def _fileOpenDoneREFL(self, data=None, filename=None, do_plot=None):
+  def _fileOpenDoneREFL(self, data=None, filename=None, do_plot=True, update_table=True):
     '''
     plot the REFL data
     '''
@@ -472,7 +472,8 @@ class MainGUI(QtGui.QMainWindow):
     self.fileLoaded.emit()
     
     #populate table
-    self.populateReflectivityTable(data)
+    if update_table:
+      self.populateReflectivityTable(data)
 
     if do_plot:
       pass
@@ -3569,6 +3570,8 @@ Do you want to try to restore the working reduction list?""",
     # reset bigTable
     self.ui.reductionTable.clearContents()
     
+    _first_file_name = ''
+    
     # start parsing xml file
     _row = 0
     for node in RefLData:
@@ -3590,6 +3593,12 @@ Do you want to try to restore the working reduction list?""",
         _incident_angle = 'N/A'
       self.addItemToBigTable(_incident_angle, _row, 1)
       
+      if _row == 0:
+        try:
+          _first_file_name = self.getNodeValue(node, 'data_full_file_name')
+        except:
+          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
+      
       _row += 1
 
     # select first data file
@@ -3599,13 +3608,10 @@ Do you want to try to restore the working reduction list?""",
     # load the first data and display it
     self.bigTableData = empty((20,2), dtype=object)
     
-    first_node = RefLData[0]
-    first_file_name = self.getNodeValue(first_node, 'data_full_file_name')
-
     event_split_bins = None
     event_split_index = 0
     bin_type = 0
-    data = NXSData(first_file_name, 
+    data = NXSData(_first_file_name, 
                    bin_type = bin_type,
                    bins = self.ui.eventTofBins.value(),
                    callback = self.updateEventReadout,
@@ -3618,9 +3624,10 @@ Do you want to try to restore the working reduction list?""",
     self._prev_row_selected = r
     self._prev_col_selected = c
     
-    self._fileOpenDoneREFL(data, first_file_name, True)
-    
-
+    self._fileOpenDoneREFL(data=data, 
+                           filename=_first_file_name, 
+                           do_plot=True,
+                           update_table=False)
 
   def addItemToBigTable(self, value, row, column):
     '''

@@ -21,7 +21,6 @@
 <from_tof_range>50349.0</from_tof_range>
 <to_tof_range>62787.0</to_tof_range>
 <data_sets>115268</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115268_event.nxs</data_full_file_name>
 <x_min_pixel>123</x_min_pixel>
 <x_max_pixel>187</x_max_pixel>
 <x_range_flag>True</x_range_flag>
