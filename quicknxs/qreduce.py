@@ -273,6 +273,7 @@ class NXSData(object):
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
 #      self._channel_data.append(data)
+      data.filename = filename
       self.active_data = data
 
           #if data is None:
@@ -1092,7 +1093,8 @@ class LRDataset(object):
   dSD_units = ''
   dMD=0 # distance Moderator-Detector
   dMD_units = ''
-
+  filename= ''
+  
   # will be used to keep the GUI in the same state
   data_peak = ['0','0']
   data_back = ['0','0']

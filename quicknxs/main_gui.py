@@ -743,6 +743,8 @@ class MainGUI(QtGui.QMainWindow):
     if data is None:
       return
 
+    filename = data.filename
+
     if self.ui.dataTOFmanualMode.isChecked(): # manual mode
   
       nxs = data.nxs
@@ -798,6 +800,8 @@ class MainGUI(QtGui.QMainWindow):
     
     if isDataSelected: # data
 
+      self.ui.dataNameOfFile.setText('%s'%filename)
+
       # repopulate the tab
       [peak1, peak2] = data.data_peak
       peak1 = int(peak1)
@@ -835,6 +839,8 @@ class MainGUI(QtGui.QMainWindow):
       ix_plot = self.ui.data_ix_plot
     
     else: # normalization
+
+      self.ui.normNameOfFile.setText('%s'%filename)
 
       norm_flag = data.norm_flag
       self.ui.useNormalizationFlag.setChecked(norm_flag)
@@ -2124,9 +2130,10 @@ class MainGUI(QtGui.QMainWindow):
       
       d = self.active_data
       if self.ui.dataNormTabWidget.currentIndex() == 0:
-        self.ui.dataNameOfFile.setText('%s'%self.filename)
+        self.ui.dataNameOfFile.setText('%s'%d.filename)
       else:
-        self.ui.normNameOfFile.setText('%s'%self.filename)
+        self.ui.normNameOfFile.setText('%s'%d.filename)
+
       self.ui.metadataProtonChargeValue.setText('%.2e'%d.proton_charge)
       self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)
       self.ui.metadataLambdaRequestedValue.setText('%.2f'%d.lambda_requested)
@@ -2455,7 +2462,34 @@ class MainGUI(QtGui.QMainWindow):
       if cell == []:
         self.clear_plot_overview_REFL(isData=False)
       else:
-         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+        if (self.active_data is not None) and (_data.active_data.nxs is not None):
+          self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+        else: #load the data
+          _run_number = int(cell[0].text())
+          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+          
+          event_split_bins = None
+          event_split_index = 0
+          bin_type = 0
+          data = NXSData(_first_file_name, 
+                         bin_type = bin_type,
+                         bins = self.ui.eventTofBins.value(),
+                         callback = self.updateEventReadout,
+                         event_split_bins = event_split_bins,
+                         event_split_index = event_split_index)
+          
+          r=row
+          c=col
+
+          self.bigTableData[r,c] = data
+          self._prev_row_selected = r
+          self._prev_col_selected = c
+          
+          self._fileOpenDoneREFL(data=data, 
+                                 filename=_first_file_name, 
+                                 do_plot=True,
+                                 update_table=False)
+
     else: # display data tab
       self.ui.dataNormTabWidget.setCurrentIndex(0)
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
