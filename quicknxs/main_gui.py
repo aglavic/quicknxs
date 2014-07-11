@@ -28,7 +28,7 @@ from .point_picker import PointPicker
 from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION, LRDataset
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION, LRDataset, LConfigDataset
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
 from .version import str_version
@@ -66,7 +66,8 @@ class MainGUI(QtGui.QMainWindow):
   #bigTableData = [] # Will store all the data objects indexes just like the BigTable
   
   # will save the data and norm objects according to their position in the bigTable
-  bigTableData = empty((20,2), dtype=object)
+  # [data, norm, metadata from config file]
+  bigTableData = empty((20,3), dtype=object)
 
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
@@ -182,10 +183,6 @@ class MainGUI(QtGui.QMainWindow):
       # define the context menu of the recap table
       self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
       self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
-      
-                                                  
-      
-      
       
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -3606,6 +3603,9 @@ Do you want to try to restore the working reduction list?""",
     
     _first_file_name = ''
     
+    # load the first data and display it
+    self.bigTableData = empty((20,3), dtype=object)
+    
     # start parsing xml file
     _row = 0
     for node in RefLData:
@@ -3633,15 +3633,16 @@ Do you want to try to restore the working reduction list?""",
         except:
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
       
+      _metadataObject = self.getMetadataObject(node)
+      self.bigTableData[_row,2] = _metadataObject
+      
       _row += 1
 
     # select first data file
     self.ui.dataNormTabWidget.setCurrentIndex(0)
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,0,0),True)                                                                                   	
     
-    # load the first data and display it
-    self.bigTableData = empty((20,2), dtype=object)
-    
+    # load first data file
     event_split_bins = None
     event_split_index = 0
     bin_type = 0
@@ -3657,11 +3658,69 @@ Do you want to try to restore the working reduction list?""",
     self.bigTableData[r,c] = data
     self._prev_row_selected = r
     self._prev_col_selected = c
-    
+
     self._fileOpenDoneREFL(data=data, 
                            filename=_first_file_name, 
                            do_plot=True,
                            update_table=False)
+
+
+  def getMetadataObject(self, node):
+    '''
+    will retrieve the metadata from the XML and will create an instance of LConfigDataset
+    '''
+    iMetadata = LConfigDataset()
+    
+    _peak_min = self.getNodeValue(node, 'from_peak_pixels')
+    _peak_max = self.getNodeValue(node, 'to_peak_pixels')
+    iMetadata.data_peak = [_peak_min, _peak_max]
+    
+    _back_min = self.getNodeValue(node, 'back_roi1_from')
+    _back_max = self.getNodeValue(node, 'back_roi1_to')
+    iMetadata.data_back = [_back_min, _back_max]
+    
+    _low_res_min = self.getNodeValue(node, 'x_min_pixel')
+    _low_res_max = self.getNodeValue(node, 'x_max_pixel')
+    iMetadata.data_low_res = [_low_res_min, _low_res_max]
+    
+    _back_flag = self.getNodeValue(node, 'background_flag')
+    iMetadata.data_back_flag = _back_flag
+    
+    _low_res_flag = self.getNodeValue(node, 'x_range_flag')
+    iMetadata.data_low_res_flag = _low_res_flag
+    
+    _tof_min = self.getNodeValue(node, 'from_tof_range')
+    _tof_max = self.getNodeValue(node, 'to_tof_range')
+    iMetadata.tof = [_tof_min, _tof_max]
+    
+    iMetadata.tof_units = 'micros'
+    
+    _tof_auto = self.getNodeValue(node, 'tof_range_flag')
+    iMetadata.tof_auto_flag = _tof_auto
+    
+    _norm_flag = self.getNodeValue(node, 'norm_flag')
+    iMetadata.norm_flag = _norm_flag
+    
+    _peak_min = self.getNodeValue(node, 'norm_from_peak_pixels')
+    _peak_max = self.getNodeValue(node, 'norm_to_peak_pixels')
+    iMetadata.norm_peak = [_peak_min, _peak_max]
+    
+    _back_min = self.getNodeValue(node, 'norm_from_back_pixels')
+    _back_max = self.getNodeValue(node, 'norm_to_back_pixels')
+    iMetadata.norm_back = [_back_min, _back_max]
+    
+    _low_res_min = self.getNodeValue(node, 'norm_x_min')
+    _low_res_max = self.getNodeValue(node, 'norm_x_max')
+    iMetadata.norm_low_res = [_low_res_min, _low_res_max]
+
+    _back_flag = self.getNodeValue(node, 'norm_background_flag')
+    iMetadata.norm_back_flag = _back_flag
+    
+    _low_res_flag = self.getNodeValue(node, 'norm_x_range_flag')
+    iMetadata.norm_low_res_flag = _low_res_flag
+
+    return iMetadata
+
 
   def addItemToBigTable(self, value, row, column):
     '''

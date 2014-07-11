@@ -1050,7 +1050,28 @@ class MRDataset(object):
     '''A attribute to quickly plot data in the qt console'''
     return AttributePloter(self, ['xdata', 'xydata', 'ydata', 'xtofdata', 'tofdata', 'data'])
 
-
+class LConfigDataset(object):
+  '''
+  This class will be used when loading an XML configuration file and will
+  keep record of all the information loaded, such as peak, back, TOF range...
+  until the data/norm file has been loaded
+  '''
+  data_peak = ['0','0']
+  data_back = ['0','0']
+  data_low_res = ['0','0']
+  data_back_flag = True
+  data_low_res_flag = True
+  tof = ['0','0'] 
+  tof_units = 'ms'
+  tof_auto_flag = True
+  
+  norm_flag = True
+  norm_peak = ['0','0']
+  norm_back = ['0','0']
+  norm_back_flag = True
+  norm_low_res = ['0','0']
+  norm_low_res_flag = True
+ 
 class LRDataset(object):
   '''
   Representation of one measurement channel of the reflectometer
