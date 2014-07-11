@@ -2465,6 +2465,8 @@ class MainGUI(QtGui.QMainWindow):
           _run_number = int(cell[0].text())
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
           
+          _configDataset = self.bigTableData[row,2]
+          
           event_split_bins = None
           event_split_index = 0
           bin_type = 0
@@ -2473,7 +2475,8 @@ class MainGUI(QtGui.QMainWindow):
                          bins = self.ui.eventTofBins.value(),
                          callback = self.updateEventReadout,
                          event_split_bins = event_split_bins,
-                         event_split_index = event_split_index)
+                         event_split_index = event_split_index,
+                         metadata_config_object = _configDataset)
           
           r=row
           c=col
@@ -3646,12 +3649,14 @@ Do you want to try to restore the working reduction list?""",
     event_split_bins = None
     event_split_index = 0
     bin_type = 0
+    _configDataset = self.bigTableData[0,2]
     data = NXSData(_first_file_name, 
                    bin_type = bin_type,
                    bins = self.ui.eventTofBins.value(),
                    callback = self.updateEventReadout,
                    event_split_bins = event_split_bins,
-                   event_split_index = event_split_index)
+                   event_split_index = event_split_index,
+                   metadata_config_object = _configDataset)
     
     r=0
     c=0

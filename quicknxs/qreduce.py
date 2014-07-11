@@ -173,7 +173,8 @@ class NXSData(object):
 
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0, low_res_range=[0,303],
-                       event_tof_overwrite=None)
+                       event_tof_overwrite=None, 
+                       metadata_config_object=None)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
@@ -182,6 +183,7 @@ class NXSData(object):
     event_split_index='Index of the splitted item to be returned, when event_split_bin is not None',
     low_res_range='Pixel range of the low resolution axis (0->304 for the REF_L)',
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
+    metadata_config_object='LConfigDataset that is only present when the data comes from a config file',
     callback='Function called to update e.g. a progress bar',
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
@@ -1122,7 +1124,7 @@ class LRDataset(object):
   data_low_res = ['0','0']
   data_back_flag = True
   data_low_res_flag = True
-  tof = ['0','0'] 
+  tof_range = ['0','0'] 
   tof_units = 'ms'
   tof_auto_flag = True
   
@@ -1217,6 +1219,46 @@ class LRDataset(object):
     output.xtofdata=output.data.sum(axis=1)
     return output
 
+  @staticmethod
+  def populateOutputWithMetadata(output):
+    '''
+    Will retrieve the metadata from LConfigDataset and will place them into
+    the output object
+    '''
+    _iDataset = output.read_options['metadata_config_object']
+    
+    _data_peak = _iDataset.data_peak
+    output.data_peak = _data_peak
+    _data_back = _iDataset.data_back
+    output.data_back = _data_back
+    _data_low_res = _iDataset.data_low_res
+    output.data_low_res = _data_low_res
+    _data_back_flag = bool(_iDataset.data_back_flag)
+    output.data_back_flag = _data_back_flag
+    _data_low_res_flag = bool(_iDataset.data_low_res_flag)
+    output.data_low_res_flag = _data_low_res_flag
+    _tof = _iDataset.tof
+    output.tof_range = _tof
+    _tof_units = _iDataset.tof_units
+    output.tof_units = _tof_units
+    _tof_auto_flag = bool(_iDataset.tof_auto_flag)
+    output.tof_auto_flag = _tof_auto_flag
+    
+    _norm_flag = bool(_iDataset.norm_flag)
+    output.norm_flag = _norm_flag
+    _norm_peak = _iDataset.norm_peak
+    output.norm_peak = _norm_peak
+    _norm_back = _iDataset.norm_back
+    output.norm_back = _norm_back
+    _norm_back_flag = bool(_iDataset.norm_back_flag)
+    output.norm_back_flag = _norm_back_flag
+    _norm_low_res = _iDataset.norm_low_res
+    output.norm_low_res = _norm_low_res
+    _norm_low_res_flag = bool(_iDataset.norm_low_res_flag)
+    output.norm_low_res_flag = _norm_low_res_flag
+
+    return output
+
   @classmethod
   @log_call
   def from_event(cls, nxs, read_options,
@@ -1234,6 +1276,9 @@ class LRDataset(object):
     output.from_event_mode=True
     bin_type=0
 
+    if output.read_options['metadata_config_object'] is not None:
+      output = LRDataset.populateOutputWithMetadata(output)
+    
     # we will need to access nxs if the user decides to manually select the TOF range
     output.nxs = nxs;
 
