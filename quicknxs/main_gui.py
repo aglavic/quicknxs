@@ -471,6 +471,9 @@ class MainGUI(QtGui.QMainWindow):
     #populate table
     if update_table:
       self.populateReflectivityTable(data)
+    else: #update gui
+      print 'update gui here'
+      
 
     if do_plot:
       pass
@@ -823,7 +826,6 @@ class MainGUI(QtGui.QMainWindow):
       lowRes_max = max([lowRes1, lowRes2])
       self.ui.dataLowResFromValue.setValue(lowRes_min)
       self.ui.dataLowResToValue.setValue(lowRes_max)
-
       back_flag = data.data_back_flag
       self.ui.dataBackgroundFlag.setChecked(back_flag)
 
@@ -866,7 +868,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normLowResFromValue.setValue(lowRes_min)
       self.ui.normLowResToValue.setValue(lowRes_max)
 
-      norm_low_res_flag = data.norm_low_res_flag
+      norm_low_res_flag = ata.norm_low_res_flag
       self.ui.normLowResFlag.setChecked(norm_low_res_flag)
 
       back_flag = data.norm_back_flag
@@ -2143,7 +2145,11 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.metadataS2WValue.setText('%.2f'%d.S2W)
       self.ui.metadataS1HValue.setText('%.2f'%d.S1H)
       self.ui.metadataS2HValue.setText('%.2f'%d.S2H)
-
+      
+      print 'update labels'
+      print d.data_back_flag
+      
+      
   @log_call
   def toggleColorbars(self):
     if not self.auto_change_active:
@@ -3589,7 +3595,14 @@ Do you want to try to restore the working reduction list?""",
     same format as Mantid
     '''
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', '.')
-    print filename
+    self.saveConfig(filename)
+
+  @log_call
+  def saveConfig(self, filename):
+    pass
+    
+    
+    
 
   @log_call
   def loadConfigAndPopulateGui(self, filename):
@@ -3657,6 +3670,7 @@ Do you want to try to restore the working reduction list?""",
                    event_split_bins = event_split_bins,
                    event_split_index = event_split_index,
                    metadata_config_object = _configDataset)
+    
     
     r=0
     c=0

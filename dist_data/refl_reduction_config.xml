@@ -12,7 +12,7 @@
 <from_peak_pixels>112</from_peak_pixels>
 <to_peak_pixels>125</to_peak_pixels>
 <peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
+<background_flag>False</background_flag>
 <back_roi1_from>109</back_roi1_from>
 <back_roi1_to>128</back_roi1_to>
 <back_roi2_from>0</back_roi2_from>

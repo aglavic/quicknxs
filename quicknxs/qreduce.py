@@ -24,6 +24,7 @@ from numpy.version import version as npversion
 from platform import node
 from time import time, strptime, mktime
 from mantid.simpleapi import *
+from distutils.util import strtobool
 # ignore zero devision error
 #seterr(invalid='ignore')
 
@@ -198,7 +199,9 @@ class NXSData(object):
       if fn is None:
         raise RuntimeError, 'No file found for index %i'%filename
       filename=fn
+    
     all_options=cls._get_all_options(options)
+    
     filename=os.path.abspath(filename)
     cached_names=[item.origin for item in cls._cache]
     if all_options['use_caching'] and filename in cached_names:
@@ -233,6 +236,7 @@ class NXSData(object):
       cls._cache.append(self)
     # remove callback function to make the object Pickleable
     self._options['callback']=None
+
     return self
 
   @classmethod
@@ -274,6 +278,8 @@ class NXSData(object):
 #      print self._options['low_res_range']
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
+
+
 #      self._channel_data.append(data)
       data.filename = filename
       self.active_data = data
@@ -1220,11 +1226,13 @@ class LRDataset(object):
     return output
 
   @staticmethod
-  def populateOutputWithMetadata(output):
+  def populateOutputWithMetadata(_output):
     '''
     Will retrieve the metadata from LConfigDataset and will place them into
     the output object
     '''
+    output = _output
+
     _iDataset = output.read_options['metadata_config_object']
     
     _data_peak = _iDataset.data_peak
@@ -1233,29 +1241,29 @@ class LRDataset(object):
     output.data_back = _data_back
     _data_low_res = _iDataset.data_low_res
     output.data_low_res = _data_low_res
-    _data_back_flag = bool(_iDataset.data_back_flag)
-    output.data_back_flag = _data_back_flag
-    _data_low_res_flag = bool(_iDataset.data_low_res_flag)
-    output.data_low_res_flag = _data_low_res_flag
+    _data_back_flag = _iDataset.data_back_flag
+    output.data_back_flag = strtobool(_data_back_flag)
+    _data_low_res_flag = _iDataset.data_low_res_flag
+    output.data_low_res_flag = strtobool(_data_low_res_flag)
     _tof = _iDataset.tof
     output.tof_range = _tof
     _tof_units = _iDataset.tof_units
     output.tof_units = _tof_units
-    _tof_auto_flag = bool(_iDataset.tof_auto_flag)
-    output.tof_auto_flag = _tof_auto_flag
+    _tof_auto_flag = _iDataset.tof_auto_flag
+    output.tof_auto_flag = strtobool(_tof_auto_flag)
     
-    _norm_flag = bool(_iDataset.norm_flag)
-    output.norm_flag = _norm_flag
+    _norm_flag = _iDataset.norm_flag
+    output.norm_flag = strtobool(_norm_flag)
     _norm_peak = _iDataset.norm_peak
     output.norm_peak = _norm_peak
     _norm_back = _iDataset.norm_back
     output.norm_back = _norm_back
-    _norm_back_flag = bool(_iDataset.norm_back_flag)
-    output.norm_back_flag = _norm_back_flag
+    _norm_back_flag = _iDataset.norm_back_flag
+    output.norm_back_flag = strtobool(_norm_back_flag)
     _norm_low_res = _iDataset.norm_low_res
     output.norm_low_res = _norm_low_res
-    _norm_low_res_flag = bool(_iDataset.norm_low_res_flag)
-    output.norm_low_res_flag = _norm_low_res_flag
+    _norm_low_res_flag = _iDataset.norm_low_res_flag
+    output.norm_low_res_flag = strtobool(_norm_low_res_flag)
 
     return output
 
@@ -1278,7 +1286,7 @@ class LRDataset(object):
 
     if output.read_options['metadata_config_object'] is not None:
       output = LRDataset.populateOutputWithMetadata(output)
-    
+
     # we will need to access nxs if the user decides to manually select the TOF range
     output.nxs = nxs;
 
