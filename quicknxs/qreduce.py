@@ -1064,6 +1064,7 @@ class LConfigDataset(object):
   keep record of all the information loaded, such as peak, back, TOF range...
   until the data/norm file has been loaded
   '''
+  data_full_file_name = ''
   data_peak = ['0','0']
   data_back = ['0','0']
   data_low_res = ['0','0']
@@ -1073,6 +1074,7 @@ class LConfigDataset(object):
   tof_units = 'ms'
   tof_auto_flag = True
   
+  norm_full_file_name = ''
   norm_flag = True
   norm_peak = ['0','0']
   norm_back = ['0','0']
@@ -1125,6 +1127,7 @@ class LRDataset(object):
   filename= ''
   
   # will be used to keep the GUI in the same state
+  data_full_file_name = ''
   data_peak = ['0','0']
   data_back = ['0','0']
   data_low_res = ['0','0']
@@ -1134,6 +1137,7 @@ class LRDataset(object):
   tof_units = 'ms'
   tof_auto_flag = True
   
+  norm_full_file_name = ''
   norm_flag = True
   norm_peak = ['0','0']
   norm_back = ['0','0']
@@ -1235,6 +1239,9 @@ class LRDataset(object):
 
     _iDataset = output.read_options['metadata_config_object']
     
+    _data_full_file_name = _iDataset.data_full_file_name
+    output.data_full_file_name = _data_full_file_name
+    
     _data_peak = _iDataset.data_peak
     output.data_peak = _data_peak
     _data_back = _iDataset.data_back
@@ -1251,6 +1258,9 @@ class LRDataset(object):
     output.tof_units = _tof_units
     _tof_auto_flag = _iDataset.tof_auto_flag
     output.tof_auto_flag = strtobool(_tof_auto_flag)
+    
+    _norm_full_file_name = _iDataset.norm_full_file_name
+    output.norm_full_file_name = _norm_full_file_name
     
     _norm_flag = _iDataset.norm_flag
     output.norm_flag = strtobool(_norm_flag)

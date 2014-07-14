@@ -472,8 +472,7 @@ class MainGUI(QtGui.QMainWindow):
     if update_table:
       self.populateReflectivityTable(data)
     else: #update gui
-      print 'update gui here'
-      
+      pass
 
     if do_plot:
       pass
@@ -2146,10 +2145,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.metadataS1HValue.setText('%.2f'%d.S1H)
       self.ui.metadataS2HValue.setText('%.2f'%d.S2H)
       
-      print 'update labels'
-      print d.data_back_flag
-      
-      
   @log_call
   def toggleColorbars(self):
     if not self.auto_change_active:
@@ -3599,10 +3594,116 @@ Do you want to try to restore the working reduction list?""",
 
   @log_call
   def saveConfig(self, filename):
-    pass
+    
+    strArray = []
+    strArray.append('<Reduction>\n')
+    strArray.append(' <instrument_name>REFL</instrument_name>\n')
+
+    # time stamp
+    import datetime
+    strArray.append(' <timestamp>' + datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p") + '</timestamp>\n')
+    
+    # python version
+    import sys
+    strArray.append(' <python_version>' + sys.version + '</python_version>\n')
+    
+    # platform
+    import platform
+    strArray.append(' <platform>' + platform.system() + '</platform>\n')
+    
+    # architecture
+    strArray.append(' <architecture>' + platform.machine() + '</architecture>\n')
+    
+    # mantid version
+    import mantid
+    strArray.append(' <mantid_version>' + mantid.__version__ + '</mantid_version>\n')
+    
+    # metadata
+    strArray.append(' <DataSeries>\n')
+    
+    nbrRow = self.ui.reductionTable.rowCount()
+    _bigTableData = self.bigTableData
+    for row in range(nbrRow):
+      
+      strArray.append('  <RefLData>\n')
+      strArray.append('   <peak_selection_type>narrow</peak_selection_type>\n')
+
+      _metadata = _bigTableData[row,2]
+      if _metadata is not None:
+        data_full_file_name = _metadata.data_full_file_name
+        data_peak = _metadata.data_peak
+        data_back = _metadata.data_back
+        data_low_res = _metadata.data_low_res
+        data_back_flag = _metadata.data_back_flag
+        data_low_res_flag = _metadata.data_low_res_flag
+        tof = _metadata.tof
+        tof_units = _metadata.tof_units
+        tof_auto_flag = _metadata.tof_auto_flag
+        norm_full_file_name = _metadata.norm_full_file_name
+        norm_flag = _metadata.norm_flag
+        norm_peak = _metadata.norm_peak
+        norm_back = _metadata.norm_back
+        norm_back_flag = _metadata.norm_back_flag
+        norm_low_res = _metadata.norm_low_res
+        norm_low_res_flag = _metadata.norm_low_res_flag
+      else:
+        pass 
+        
+      strArray.append('   <from_peak_pixels>' + str(data_peak[0]) + '</from_peak_pixels>\n')
+      strArray.append('   <to_peak_pixels>' + str(data_peak[1]) + '</to_peak_pixels>\n')
+      strArray.append('   <peak_discrete_selection>N/A</peak_discrete_selection>\n')
+      strArray.append('   <background_flag>' + str(data_back_flag) + '</background_flag>\n')
+      strArray.append('   <back_roi1_from>' + str(data_back[0]) + '</back_roi1_from>\n')
+      strArray.append('   <back_roi1_to>' + str(data_back[1]) + '</back_roi1_to>\n')
+      strArray.append('   <back_roi2_from>0</back_roi2_from>\n')
+      strArray.append('   <back_roi2_to>0</back_roi2_to>\n')
+      strArray.append('   <tof_range_flag>True</tof_range_flag>\n')
+      strArray.append('   <from_tof_range>' + str(tof[0]) + '</from_tof_range>\n')
+      strArray.append('   <to_tof_range>' + str(tof[1]) + '</to_tof_range>\n')
+
+      _data_run_number = self.ui.reductionTable.item(row,0).text()
+      strArray.append('   <data_sets>' + _data_run_number + '</data_sets>\n')
+      strArray.append('   <data_full_file_name>' + data_full_file_name + '</data_full_file_name>\n')
+      
+      strArray.append('   <x_min_pixel>' + str(data_low_res[0]) + '</x_min_pixel>\n')
+      strArray.append('   <x_max_pixel>' + str(data_low_res[1]) + '</x_max_pixel>\n')
+      strArray.append('   <x_range_flag>' + str(data_low_res_flag) + '</x_range_flag>\n')
+      
+      tthd = self.ui.metadatatthdValue.text()
+      strArray.append('   <tthd_value>' + tthd + '</tthd_value>\n')
+      ths = self.ui.metadatathiValue.text()
+      strArray.append('   <ths_value>' + ths + '</ths_value>\n')
+    
+      strArray.append('   <norm_flag>' + str(norm_flag) + '</norm_flag>\n')
+      strArray.append('   <norm_x_range_flag>' + str(norm_low_res_flag) + '</norm_x_range_flag>\n')
+      strArray.append('   <norm_x_max>' + str(norm_low_res[1]) + '</norm_x_max>\n')
+      strArray.append('   <norm_x_min>' + str(norm_low_res[0]) + '</norm_x_min>\n')
+      strArray.append('   <norm_from_peak_pixels>' + str(norm_peak[0]) + '</norm_from_peak_pixels>\n')
+      strArray.append('   <norm_to_peak_pixels>' + str(norm_peak[1]) + '</norm_to_peak_pixels>\n')
+      strArray.append('   <norm_background_flag>' + str(norm_back_flag) + '</norm_background_flag>\n')
+      strArray.append('   <norm_from_back_pixels>' + str(norm_back[0]) + '</norm_from_back_pixels>\n')
+      strArray.append('   <norm_to_back_pixels>' + str(norm_back[1]) + '</norm_to_back_pixels>\n')
+      
+      _norm_run_number = self.ui.reductionTable.item(row,6).text()
+      strArray.append('   <norm_dataset>' + _norm_run_number + '</norm_dataset>\n')
+      strArray.append('   <norm_full_file_name>' + norm_full_file_name + '</norm_full_file_name>\n')
+      
+      q_min = '0'   #FIXME
+      q_max = '0'   #FIXME
+      
+      
     
     
     
+    
+    
+    strArray.append('  </DataSeries>\n')
+    strArray.append('</Reduction>\n')
+
+    # write out XML file
+    f = open(filename, 'w')
+    f.writelines(strArray)
+    f.close()
 
   @log_call
   def loadConfigAndPopulateGui(self, filename):
@@ -3648,8 +3749,20 @@ Do you want to try to restore the working reduction list?""",
           _first_file_name = self.getNodeValue(node, 'data_full_file_name')
         except:
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
-      
+
+      try:
+        _data_full_file_name = self.getNodeValue(node, 'data_full_file_name')
+      except:
+        _data_full_file_name = ''
+        
+        try:
+          _norm_full_file_name = self.getNodeValue(node, 'norm_full_file_name')
+        except:
+          _norm_full_file_name = ''
+
       _metadataObject = self.getMetadataObject(node)
+      _metadataObject.data_full_file_name = _data_full_file_name
+      _metadataObject.norm_full_file_name = _norm_full_file_name
       self.bigTableData[_row,2] = _metadataObject
       
       _row += 1
