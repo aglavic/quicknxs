@@ -13,6 +13,7 @@ from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
 from mantid.simpleapi import *
 from xml.dom import minidom
+from distutils.util import strtobool
 #QtWebKit
 
 #from logging import info, debug
@@ -3691,11 +3692,26 @@ Do you want to try to restore the working reduction list?""",
       q_min = '0'   #FIXME
       q_max = '0'   #FIXME
       
+      strArray.append('   <auto_q_binning>False</auto_q_binning>\n')
+      strArray.append('   <overlap_lowest_error>True</overlap_lowest_error>\n')
+      strArray.append('   <overlap_mean_value>False</overlap_mean_value>\n');
+
+      angleValue = self.ui.angleOffsetValue.text()
+      angleError = self.ui.angleOffsetError.text()
+      strArray.append('   <angle_offset>' + angleValue + '</angle_offset>\n')
+      strArray.append('   <angle_offset_error>' + angleError + '</angle_offset_error>\n')
       
-    
-    
-    
-    
+      scalingFactorFlag = self.ui.scalingFactorFlag.isChecked()
+      strArray.append('   <scaling_factor_flag>' + str(scalingFactorFlag) + '</scaling_factor_flag>\n')
+      scalingFactorFile = self.ui.scalingFactorFile.text()
+      strArray.append('   <scaling_factor_file>' + scalingFactorFile + '</scaling_factor_file>\n')
+      scalingFactorSlitsFlag = self.ui.scalingFactorSlitsFlag.isChecked()
+      strArray.append('   <slits_width_flag>' + str(scalingFactorSlitsFlag) + '</slits_width_flag>\n')
+      
+      geometryCorrectionFlag = self.ui.geometryCorrectionFlag.isChecked()
+      strArray.append('   <geometry_correction_switch>' + geometryCorrectionFlag + '</geometry_correction_flag>\n')
+      
+      
     
     strArray.append('  </DataSeries>\n')
     strArray.append('</Reduction>\n')
@@ -3744,21 +3760,46 @@ Do you want to try to restore the working reduction list?""",
         _incident_angle = 'N/A'
       self.addItemToBigTable(_incident_angle, _row, 1)
       
+      # only for first row
       if _row == 0:
         try:
           _first_file_name = self.getNodeValue(node, 'data_full_file_name')
         except:
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
 
+        # load general settings for first row only
+        scaling_factor_file = self.getNodeValue(node, 'scaling_factor_file')
+        self.ui.scalingFactorFile.setText(scaling_factor_file)
+
+        scaling_factor_flag = self.getNodeValue(node, 'scaling_factor_flag')
+        self.ui.scalingFactorFlag.setChecked(strtobool(scaling_factor_flag))
+        
+        slits_width_flag = self.getNodeValue(node, 'slits_width_flag')
+        self.ui.scalingFactorSlitsFlag.setChecked(strtobool(slits_width_flag))
+
+        incident_medium_list = self.getNodeValue(node, 'incident_medium_list')
+        im_list = incident_medium_list.split(',')
+        self.ui.SelectIncidentMediumList.addItems(im_list)
+
+        incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')
+        self.ui.SelectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected)+1)
+        
+        fourth_column_flag = self.getNodeValue(node, 'fourth_column_flag')
+        self.ui.output4thColumnFlag.setChecked(strtobool(fourth_column_flag))
+        fourth_column_dq0 = self.getNodeValue(node, 'fourth_column_dq0')
+        self.ui.dq0Value.setText(fourth_column_dq0)
+        fourth_column_dq_over_q = self.getNodeValue(node, 'fourth_column_dq_over_q')
+        self.ui.dQoverQvalue.setText(fourth_column_dq_over_q)
+
       try:
         _data_full_file_name = self.getNodeValue(node, 'data_full_file_name')
       except:
         _data_full_file_name = ''
         
-        try:
-          _norm_full_file_name = self.getNodeValue(node, 'norm_full_file_name')
-        except:
-          _norm_full_file_name = ''
+      try:
+        _norm_full_file_name = self.getNodeValue(node, 'norm_full_file_name')
+      except:
+        _norm_full_file_name = ''
 
       _metadataObject = self.getMetadataObject(node)
       _metadataObject.data_full_file_name = _data_full_file_name
