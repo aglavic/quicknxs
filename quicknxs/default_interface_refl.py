@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Jul 15 11:05:36 2014
+# Created: Sun Jul 20 08:38:58 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -227,10 +227,10 @@ class Ui_MainWindow(object):
         self.scalingFactorSlitsFlag = QtGui.QCheckBox(self.page_4)
         self.scalingFactorSlitsFlag.setGeometry(QtCore.QRect(110, 1, 141, 20))
         self.scalingFactorSlitsFlag.setObjectName("scalingFactorSlitsFlag")
-        self.SelectIncidentMediumList = QtGui.QComboBox(self.page_4)
-        self.SelectIncidentMediumList.setGeometry(QtCore.QRect(10, 98, 242, 27))
-        self.SelectIncidentMediumList.setObjectName("SelectIncidentMediumList")
-        self.SelectIncidentMediumList.addItem("")
+        self.selectIncidentMediumList = QtGui.QComboBox(self.page_4)
+        self.selectIncidentMediumList.setGeometry(QtCore.QRect(10, 98, 242, 27))
+        self.selectIncidentMediumList.setObjectName("selectIncidentMediumList")
+        self.selectIncidentMediumList.addItem("")
         self.toolBox.addItem(self.page_4, "")
         self.page_5 = QtGui.QWidget()
         self.page_5.setObjectName("page_5")
@@ -1498,7 +1498,7 @@ class Ui_MainWindow(object):
         self.mainToolbar.addAction(self.actionAdjust_Dirct_Beam)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(4)
+        self.toolBox.setCurrentIndex(3)
         self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
@@ -1629,7 +1629,7 @@ class Ui_MainWindow(object):
         self.scalingFactorFlag.setText(QtGui.QApplication.translate("MainWindow", "Use it", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_3.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.scalingFactorSlitsFlag.setText(QtGui.QApplication.translate("MainWindow", "Match slits width", None, QtGui.QApplication.UnicodeUTF8))
-        self.SelectIncidentMediumList.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select Incident Medium ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.selectIncidentMediumList.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select Incident Medium ...", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), QtGui.QApplication.translate("MainWindow", "Scaling Factor", None, QtGui.QApplication.UnicodeUTF8))
         self.output4thColumnFlag.setText(QtGui.QApplication.translate("MainWindow", "4th column (precision)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

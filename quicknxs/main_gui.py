@@ -3709,9 +3709,28 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <slits_width_flag>' + str(scalingFactorSlitsFlag) + '</slits_width_flag>\n')
       
       geometryCorrectionFlag = self.ui.geometryCorrectionFlag.isChecked()
-      strArray.append('   <geometry_correction_switch>' + geometryCorrectionFlag + '</geometry_correction_flag>\n')
+      strArray.append('   <geometry_correction_switch>' + str(geometryCorrectionFlag) + '</geometry_correction_switch>\n')
       
+      # incident medium
+      allItems = [self.ui.selectIncidentMediumList.itemText(i) for i in range(self.ui.selectIncidentMediumList.count())] 
+      finalList = allItems[1:]
+      strFinalList = ",".join(finalList)
+      strArray.append('   <incident_medium_list>' + strFinalList + '</incident_medium_list>\n')
       
+      imIndex = self.ui.selectIncidentMediumList.currentIndex()
+      strArray.append('   <incident_medium_index_selected>' + str(imIndex) + '</incident_medium_index_selected>\n')
+      
+      # output
+      fcFlag = self.ui.output4thColumnFlag.isChecked()
+      strArray.append('   <fourth_column_flag>' + str(fcFlag) + '</fourth_column_flag>\n')
+      
+      fcdq0 = self.ui.dq0Value.text()
+      strArray.append('   <fourth_column_dq0>' + str(fcdq0) + '</fourth_column_dq0>\n')
+      
+      fcdqoverq = self.ui.dQoverQvalue.text()
+      strArray.append('   <fourth_column_dq_over_q>' + str(fcdqoverq) + '</fourth_column_dq_over_q>\n')
+    
+      strArray.append('  </RefLData>\n')
     
     strArray.append('  </DataSeries>\n')
     strArray.append('</Reduction>\n')
@@ -3779,10 +3798,10 @@ Do you want to try to restore the working reduction list?""",
 
         incident_medium_list = self.getNodeValue(node, 'incident_medium_list')
         im_list = incident_medium_list.split(',')
-        self.ui.SelectIncidentMediumList.addItems(im_list)
+        self.ui.selectIncidentMediumList.addItems(im_list)
 
         incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')
-        self.ui.SelectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected)+1)
+        self.ui.selectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected)+1)
         
         fourth_column_flag = self.getNodeValue(node, 'fourth_column_flag')
         self.ui.output4thColumnFlag.setChecked(strtobool(fourth_column_flag))
