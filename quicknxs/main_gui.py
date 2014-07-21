@@ -376,7 +376,14 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Open a new datafile and plot the data.
     '''
-    folder, base=os.path.split(filename)
+    
+    # check if we have a string or a string array
+    if type(filename) == type(""):
+      _filename = filename
+    else:
+      _filename = filename[0]
+
+    folder, base=os.path.split(_filename)
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     else:
@@ -405,7 +412,12 @@ class MainGUI(QtGui.QMainWindow):
 #      low_res_range = [low_res_px_min, low_res_px_max]
 
     self._norm_selected=None
-    info(u"Reading file %s..."%(filename))
+    if type(filename) == type(""):
+      info(u"Reading file %s ..." % filename)
+    else: # more than 1 file
+      strFilename = ",".join(filename)
+      info(u"Reading files %s ..." % strFilename)
+      
     data=NXSData(filename,
           bin_type=bin_type,
           bins=self.ui.eventTofBins.value(),
@@ -413,19 +425,19 @@ class MainGUI(QtGui.QMainWindow):
           event_split_bins=event_split_bins,
           event_split_index=event_split_index)
 
-    # save the data in the right spot (row, column)
-    
-    [r,c] = self.getRowColumnNextDataSet()
-    if c is not 0:
-      c=1
-    self.bigTableData[r,c] = data
-    self._prev_row_selected = r
-    self._prev_col_selected = c
-
-    if instrument.NAME == 'REF_M':
-      self._fileOpenDone(data, filename, do_plot)
-    else:
-      self._fileOpenDoneREFL(data, filename, do_plot)
+    if data is not None:
+      # save the data in the right spot (row, column)
+      [r,c] = self.getRowColumnNextDataSet()
+      if c is not 0:
+        c=1
+      self.bigTableData[r,c] = data
+      self._prev_row_selected = r
+      self._prev_col_selected = c
+  
+      if instrument.NAME == 'REF_M':
+        self._fileOpenDone(data, filename, do_plot)
+      else:
+        self._fileOpenDoneREFL(data, filename, do_plot)
 
 
   @log_input
@@ -1872,8 +1884,31 @@ class MainGUI(QtGui.QMainWindow):
           self.fileOpen(fullFileName, do_plot=do_plot)
           self.ui.numberSearchEntry.setText('')
         except:
-          info('Could not locate %s...'%listNumber[0])
+          info('Could not locate runs %s ...'%listNumber[0])
           return False
+      else: # more than 1 file loaded
+        notFoundRun = []
+        foundRun = []
+        for i in range(len(listNumber)):
+          try:
+            _fullFileName = FileFinder.findRuns("REF_L%d"%int(listNumber[i]))[0]
+            foundRun.append(_fullFileName)
+          except:
+            notFoundRun.append(listNumber[i])
+        
+        # inform user of file not found
+        if notFoundRun:
+          if len(notFoundRun)>1:
+            _strListNumber = ",".join(notFoundRun)
+          else:
+            _strListNumber = notFoundRun[0]
+          info('Could not locate runs %s ...' %_strListNumber)
+        
+        # load runs if any file found
+        if foundRun is not None:
+          self.fileOpen(foundRun, do_plot=do_plot)
+
+        self.ui.numberSearchEntry.setText('')
 
   @log_call
   def nextFile(self):

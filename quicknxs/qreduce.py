@@ -202,15 +202,20 @@ class NXSData(object):
     
     all_options=cls._get_all_options(options)
     
-    filename=os.path.abspath(filename)
-    cached_names=[item.origin for item in cls._cache]
-    if all_options['use_caching'] and filename in cached_names:
-      cache_index=cached_names.index(filename)
-      cached_object=cls._cache[cache_index]
-      compare_options=dict(all_options)
-      compare_options['callback']=None
-      if cached_object._options==compare_options:
-        return cached_object
+    if type(filename) == type(""):
+      filename=os.path.abspath(filename)
+      cached_names=[item.origin for item in cls._cache]
+      if all_options['use_caching'] and filename in cached_names:
+        cache_index=cached_names.index(filename)
+        cached_object=cls._cache[cache_index]
+        compare_options=dict(all_options)
+        compare_options['callback']=None
+        if cached_object._options==compare_options:
+          return cached_object
+    else:
+      for i in range(len(filename)):
+        filename[i] = os.path.abspath(filename[i])
+    
     # else
     self=object.__new__(cls)
     self._options=all_options
@@ -268,12 +273,52 @@ class NXSData(object):
       start=time()
       if self._options['callback']:
         self._options['callback'](0.)
-      try:
-#        nxs=h5py.File(filename, mode='r')
-        nxs = LoadEventNexus(Filename=str(filename))
-      except IOError:
-        debug('Could not read nxs file %s'%filename, exc_info=True)
-        return False
+
+      if type(filename) == type(""):
+
+        try:
+          nxs = LoadEventNexus(Filename=str(filename))
+        except IOError:
+          debug('Could not read nxs file %s'%filename, exc_info=True)
+          return False
+
+      else: # list of runs
+
+        _index = 0
+        _lambda_requested_1 = ''
+        _lambda_requested_2 = ''
+        for _filename in filename:
+          
+          try:
+            
+            nxs = 'ws_event'
+            if _index == 0:
+              nxs=LoadEventNexus(Filename=str(_filename))
+              
+              # retrieve lambda requested value
+              mt_run = nxs.getRun()
+              _lambda_requested_1 = mt_run.getProperty('LambdaRequest').value
+              _index += 1
+            else:
+              tmp=LoadEventNexus(Filename=str(_filename))
+              
+              # make sure that the files have the same lambda requested
+              mt_run = tmp.getRun()
+              _lambda_requested_2 = mt_run.getProperty('LambdaRequest').value
+              if _lambda_requested_1 != _lambda_requested_2:
+                debug('Lambda Requested of files do not match!')
+                info('Lambda Requested do not match!')
+                return False
+
+              nxs=Plus(LHSWorkspace='nxs',
+                   RHSWorkspace='tmp')
+              DeleteWorkspace(tmp)
+            
+          except IOError:
+            strFilename = ",".join(filename)
+            debug('Could not read nxs files %s' % strFilename, exc_info=True)
+            return False
+
 
 #      print self._options['low_res_range']
       data=LRDataset.from_event(nxs, self._options,
