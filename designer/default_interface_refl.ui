@@ -76,7 +76,7 @@
              <string>Search for a file by measurement number</string>
             </property>
             <property name="text">
-             <string>Open Number:</string>
+             <string>Run #:</string>
             </property>
            </widget>
           </item>
@@ -84,6 +84,13 @@
            <widget class="QLineEdit" name="numberSearchEntry">
             <property name="toolTip">
              <string>Search for a file by measurement number</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="addRunNumbers">
+            <property name="text">
+             <string>Add</string>
             </property>
            </widget>
           </item>
@@ -186,14 +193,14 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>264</width>
              <height>120</height>
             </rect>
            </property>
@@ -313,7 +320,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>264</width>
              <height>156</height>
             </rect>
            </property>
@@ -416,7 +423,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>264</width>
              <height>145</height>
             </rect>
            </property>
@@ -503,7 +510,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>264</width>
              <height>145</height>
             </rect>
            </property>
@@ -576,6 +583,14 @@ p, li { white-space: pre-wrap; }
            </widget>
           </widget>
           <widget class="QWidget" name="page_5">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>264</width>
+             <height>145</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Output</string>
            </attribute>
@@ -4180,7 +4195,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>file_list</sender>
-   <signal>itemSelectionChanged()</signal>
+   <signal>doubleClicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
    <slot>fileOpenList()</slot>
    <hints>

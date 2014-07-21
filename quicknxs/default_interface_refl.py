@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Sun Jul 20 08:38:58 2014
+# Created: Mon Jul 21 09:49:58 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,6 +47,9 @@ class Ui_MainWindow(object):
         self.numberSearchEntry = QtGui.QLineEdit(self.leftEntries)
         self.numberSearchEntry.setObjectName("numberSearchEntry")
         self.horizontalLayout_12.addWidget(self.numberSearchEntry)
+        self.addRunNumbers = QtGui.QCheckBox(self.leftEntries)
+        self.addRunNumbers.setObjectName("addRunNumbers")
+        self.horizontalLayout_12.addWidget(self.addRunNumbers)
         self.verticalLayout_5.addLayout(self.horizontalLayout_12)
         self.eventModeEntries = QtGui.QWidget(self.leftEntries)
         self.eventModeEntries.setToolTip("")
@@ -92,7 +95,7 @@ class Ui_MainWindow(object):
         self.toolBox.setLineWidth(0)
         self.toolBox.setObjectName("toolBox")
         self.page = QtGui.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 258, 120))
+        self.page.setGeometry(QtCore.QRect(0, 0, 264, 120))
         self.page.setMaximumSize(QtCore.QSize(16777215, 120))
         self.page.setObjectName("page")
         self.gridLayout_3 = QtGui.QGridLayout(self.page)
@@ -135,7 +138,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.checkBox_6, 1, 0, 1, 1)
         self.toolBox.addItem(self.page, "")
         self.page_3 = QtGui.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 258, 156))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 264, 156))
         self.page_3.setObjectName("page_3")
         self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
         self.gridLayout_17.setMargin(2)
@@ -181,7 +184,7 @@ class Ui_MainWindow(object):
         self.gridLayout_17.addWidget(self.pfRidgeLength, 4, 1, 1, 1)
         self.toolBox.addItem(self.page_3, "")
         self.page_2 = QtGui.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 258, 145))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 264, 145))
         self.page_2.setObjectName("page_2")
         self.layoutWidget_2 = QtGui.QWidget(self.page_2)
         self.layoutWidget_2.setGeometry(QtCore.QRect(0, 20, 251, 59))
@@ -213,7 +216,7 @@ class Ui_MainWindow(object):
         self.label_30.setObjectName("label_30")
         self.toolBox.addItem(self.page_2, "")
         self.page_4 = QtGui.QWidget()
-        self.page_4.setGeometry(QtCore.QRect(0, 0, 258, 145))
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 264, 145))
         self.page_4.setObjectName("page_4")
         self.scalingFactorFlag = QtGui.QCheckBox(self.page_4)
         self.scalingFactorFlag.setGeometry(QtCore.QRect(10, 0, 87, 20))
@@ -233,6 +236,7 @@ class Ui_MainWindow(object):
         self.selectIncidentMediumList.addItem("")
         self.toolBox.addItem(self.page_4, "")
         self.page_5 = QtGui.QWidget()
+        self.page_5.setGeometry(QtCore.QRect(0, 0, 264, 145))
         self.page_5.setObjectName("page_5")
         self.output4thColumnFlag = QtGui.QCheckBox(self.page_5)
         self.output4thColumnFlag.setGeometry(QtCore.QRect(9, 5, 171, 22))
@@ -1498,7 +1502,7 @@ class Ui_MainWindow(object):
         self.mainToolbar.addAction(self.actionAdjust_Dirct_Beam)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(3)
+        self.toolBox.setCurrentIndex(4)
         self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
@@ -1523,7 +1527,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.color_selector, QtCore.SIGNAL("currentIndexChanged(int)"), MainWindow.toggleColorbars)
         QtCore.QObject.connect(self.show_colorbars, QtCore.SIGNAL("stateChanged(int)"), MainWindow.toggleColorbars)
         QtCore.QObject.connect(self.hide_plots, QtCore.SIGNAL("stateChanged(int)"), MainWindow.toggleHide)
-        QtCore.QObject.connect(self.file_list, QtCore.SIGNAL("itemSelectionChanged()"), MainWindow.fileOpenList)
+        QtCore.QObject.connect(self.file_list, QtCore.SIGNAL("doubleClicked(QModelIndex)"), MainWindow.fileOpenList)
         QtCore.QObject.connect(self.normalizeXTof, QtCore.SIGNAL("stateChanged(int)"), MainWindow.toggleColorbars)
         QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"), MainWindow.visualizePeakfinding)
         QtCore.QObject.connect(self.logarithmic_colorscale, QtCore.SIGNAL("stateChanged(int)"), MainWindow.toggleColorbars)
@@ -1590,8 +1594,9 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QuickNXS REF_L", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Open Number:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Run #:", None, QtGui.QApplication.UnicodeUTF8))
         self.numberSearchEntry.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))
+        self.addRunNumbers.setText(QtGui.QApplication.translate("MainWindow", "Add", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setToolTip(QtGui.QApplication.translate("MainWindow", "The number of bins for the Time of Flight channels", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("MainWindow", "TOF bins", None, QtGui.QApplication.UnicodeUTF8))
         self.eventTofBins.setToolTip(QtGui.QApplication.translate("MainWindow", "The number of bins for the Time of Flight channels", None, QtGui.QApplication.UnicodeUTF8))

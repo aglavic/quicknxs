@@ -246,8 +246,6 @@ class MainGUI(QtGui.QMainWindow):
     menu.addAction('Delete Normalization')
 #    menu.exec_(self.mapToGlobal(pos))
     
-
-
   def run_ipython(self):
     '''
       Startup the IPython console within the program.
@@ -409,7 +407,6 @@ class MainGUI(QtGui.QMainWindow):
     self._norm_selected=None
     info(u"Reading file %s..."%(filename))
     data=NXSData(filename,
-#          low_res_range=low_res_range,
           bin_type=bin_type,
           bins=self.ui.eventTofBins.value(),
           callback=self.updateEventReadout,
@@ -1838,23 +1835,45 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Search the data folders for a specific file number and open it.
     '''
-    if number is None:
-      number=self.ui.numberSearchEntry.text()
-    info('Trying to locate file number %s...'%number)
-    QtGui.QApplication.instance().processEvents()
-    if self.ui.histogramActive.isChecked():
-      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
-    elif self.ui.oldFormatActive.isChecked():
-      search=glob(os.path.join(instrument.data_base, (instrument.OLD_BASE_SEARCH%(number, number))+u'.nxs'))
-    else:
-      search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'event.nxs'))
-    if search:
-      self.ui.numberSearchEntry.setText('')
-      self.fileOpen(os.path.abspath(search[0]), do_plot=do_plot)
-      return True
-    else:
-      info('Could not locate %s...'%number)
-      return False
+    if instrument.NAME == "REF_M":
+    
+      if number is None:
+        number=self.ui.numberSearchEntry.text()
+      info('Trying to locate file number %s...'%number)
+      QtGui.QApplication.instance().processEvents()
+      if self.ui.histogramActive.isChecked():
+        search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
+      elif self.ui.oldFormatActive.isChecked():
+        search=glob(os.path.join(instrument.data_base, (instrument.OLD_BASE_SEARCH%(number, number))+u'.nxs'))
+      else:
+        search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'event.nxs'))
+      if search:
+        self.ui.numberSearchEntry.setText('')
+        self.fileOpen(os.path.abspath(search[0]), do_plot=do_plot)
+        return True
+      else:
+        info('Could not locate %s...'%number)
+        return False
+
+    else: # REF_L instrument
+
+      if number is None:
+        number = self.ui.numberSearchEntry.text()
+        
+      # check if we are looking at 1 file or more than 1
+      listNumber = number.split(',')
+      # removing empty element (in case user put too many ',')
+      listNumber = filter(None, listNumber)
+
+      # only 1 run number to load
+      if len(listNumber) == 1:
+        try:
+          fullFileName = FileFinder.findRuns("REF_L%d"%int(listNumber[0]))[0]
+          self.fileOpen(fullFileName, do_plot=do_plot)
+          self.ui.numberSearchEntry.setText('')
+        except:
+          info('Could not locate %s...'%listNumber[0])
+          return False
 
   @log_call
   def nextFile(self):
@@ -2084,6 +2103,7 @@ class MainGUI(QtGui.QMainWindow):
           self.ui.file_list.setCurrentItem(listitem)
     else:
       try:
+        pass
         self.ui.file_list.setCurrentRow(newlist.index(base))
       except ValueError:
         pass
