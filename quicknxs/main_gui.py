@@ -415,7 +415,7 @@ class MainGUI(QtGui.QMainWindow):
     if type(filename) == type(u""):
       info(u"Reading file %s ..." % filename)
     else: # more than 1 file
-      strFilename = ",".join(filename)
+      strFilename = ", ".join(filename)
       info(u"Reading files %s ..." % strFilename)
       
     data=NXSData(filename,
@@ -466,7 +466,7 @@ class MainGUI(QtGui.QMainWindow):
     plot the REFL data
     '''
     if data is None:
-      self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
+      info('Data file is empty!')
       return
     
     self.active_data = data.active_data

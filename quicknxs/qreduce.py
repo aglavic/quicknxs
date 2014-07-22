@@ -205,6 +205,7 @@ class NXSData(object):
     if type(filename) == type([]):
       for i in range(len(filename)):
         filename[i] = os.path.abspath(filename[i])
+        cached_names=[] #fixme (add cached names when loading more than 1 file)
     else:
       filename=os.path.abspath(filename)
       cached_names=[item.origin for item in cls._cache]
@@ -288,7 +289,7 @@ class NXSData(object):
         _lambda_requested_1 = ''
         _lambda_requested_2 = ''
         for _filename in filename:
-          
+
           try:
             
             nxs = 'ws_event'
@@ -1486,16 +1487,16 @@ class LRDataset(object):
     mt_run = nxs.getRun()
     
     self.run_number = mt_run.getProperty('run_number').value
-    self.lambda_requested = mt_run.getProperty('LambdaRequest').value
-    self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units
+    self.lambda_requested = mt_run.getProperty('LambdaRequest').value[0]
+    self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units[0]
     self.thi = mt_run.getProperty('thi').value[0]
-    self.thi_units = mt_run.getProperty('thi').units
+    self.thi_units = mt_run.getProperty('thi').units[0]
     self.tthd = mt_run.getProperty('tthd').value[0]
-    self.tthd_units = mt_run.getProperty('tthd').units
-    self.S1W = mt_run.getProperty('S1HWidth').value
-    self.S2W = mt_run.getProperty('S2HWidth').value
-    self.S1H = mt_run.getProperty('S1VHeight').value
-    self.S2H = mt_run.getProperty('S2VHeight').value
+    self.tthd_units = mt_run.getProperty('tthd').units[0]
+    self.S1W = mt_run.getProperty('S1HWidth').value[0]
+    self.S2W = mt_run.getProperty('S2HWidth').value[0]
+    self.S1H = mt_run.getProperty('S1VHeight').value[0]
+    self.S2H = mt_run.getProperty('S2VHeight').value[0]
 
     sample = nxs.getInstrument().getSample()
     source = nxs.getInstrument().getSource()
