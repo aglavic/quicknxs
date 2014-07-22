@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Jul 21 09:49:58 2014
+# Created: Tue Jul 22 11:10:26 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,6 +48,7 @@ class Ui_MainWindow(object):
         self.numberSearchEntry.setObjectName("numberSearchEntry")
         self.horizontalLayout_12.addWidget(self.numberSearchEntry)
         self.addRunNumbers = QtGui.QCheckBox(self.leftEntries)
+        self.addRunNumbers.setEnabled(False)
         self.addRunNumbers.setObjectName("addRunNumbers")
         self.horizontalLayout_12.addWidget(self.addRunNumbers)
         self.verticalLayout_5.addLayout(self.horizontalLayout_12)

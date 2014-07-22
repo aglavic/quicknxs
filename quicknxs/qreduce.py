@@ -202,7 +202,10 @@ class NXSData(object):
     
     all_options=cls._get_all_options(options)
     
-    if type(filename) == type(""):
+    if type(filename) == type([]):
+      for i in range(len(filename)):
+        filename[i] = os.path.abspath(filename[i])
+    else:
       filename=os.path.abspath(filename)
       cached_names=[item.origin for item in cls._cache]
       if all_options['use_caching'] and filename in cached_names:
@@ -212,9 +215,6 @@ class NXSData(object):
         compare_options['callback']=None
         if cached_object._options==compare_options:
           return cached_object
-    else:
-      for i in range(len(filename)):
-        filename[i] = os.path.abspath(filename[i])
     
     # else
     self=object.__new__(cls)
@@ -274,7 +274,7 @@ class NXSData(object):
       if self._options['callback']:
         self._options['callback'](0.)
 
-      if type(filename) == type(""):
+      if type(filename) == type(u""):
 
         try:
           nxs = LoadEventNexus(Filename=str(filename))

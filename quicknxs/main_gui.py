@@ -378,7 +378,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     
     # check if we have a string or a string array
-    if type(filename) == type(""):
+    if type(filename) == type(u""):
       _filename = filename
     else:
       _filename = filename[0]
@@ -412,7 +412,7 @@ class MainGUI(QtGui.QMainWindow):
 #      low_res_range = [low_res_px_min, low_res_px_max]
 
     self._norm_selected=None
-    if type(filename) == type(""):
+    if type(filename) == type(u""):
       info(u"Reading file %s ..." % filename)
     else: # more than 1 file
       strFilename = ",".join(filename)
@@ -2505,8 +2505,12 @@ class MainGUI(QtGui.QMainWindow):
     _data = self.bigTableData[row,col]
     try:
       self.active_data = _data.active_data
+      addButtonStatus = True
     except:
       self.active_data = None
+      addButtonStatus = False
+
+    self.ui.addRunNumbers.setEnabled(addButtonStatus)
 
     # display norm tab
     if column == 6:
