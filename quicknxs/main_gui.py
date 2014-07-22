@@ -424,20 +424,20 @@ class MainGUI(QtGui.QMainWindow):
           callback=self.updateEventReadout,
           event_split_bins=event_split_bins,
           event_split_index=event_split_index)
-
-    if data is not None:
-      # save the data in the right spot (row, column)
-      [r,c] = self.getRowColumnNextDataSet()
-      if c is not 0:
-        c=1
-      self.bigTableData[r,c] = data
-      self._prev_row_selected = r
-      self._prev_col_selected = c
   
-      if instrument.NAME == 'REF_M':
-        self._fileOpenDone(data, filename, do_plot)
-      else:
-        self._fileOpenDoneREFL(data, filename, do_plot)
+    if instrument.NAME == 'REF_M':
+      self._fileOpenDone(data, filename, do_plot)
+    else:
+      if data is not None:
+        # save the data in the right spot (row, column)
+        [r,c] = self.getRowColumnNextDataSet()
+        if c is not 0:
+          c=1
+        self.bigTableData[r,c] = data
+        self._prev_row_selected = r
+        self._prev_col_selected = c
+      
+      self._fileOpenDoneREFL(data, filename, do_plot)
 
 
   @log_input
@@ -481,9 +481,10 @@ class MainGUI(QtGui.QMainWindow):
     #populate table
     if update_table:
       self.populateReflectivityTable(data)
+      self.ui.addRunNumbers.setEnabled(True)
     else: #update gui
       pass
-
+    
     if do_plot:
       pass
       #self.initiateProjectionPlot.emit(False)
