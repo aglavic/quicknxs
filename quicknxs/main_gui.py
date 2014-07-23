@@ -378,7 +378,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     
     # check if we have a string or a string array
-    if type(filename) == type(u""):
+    if type(filename) == type(u"") or type(filename) == type(""):
       _filename = filename
     else:
       _filename = filename[0]
@@ -412,7 +412,7 @@ class MainGUI(QtGui.QMainWindow):
 #      low_res_range = [low_res_px_min, low_res_px_max]
 
     self._norm_selected=None
-    if type(filename) == type(u""):
+    if type(filename) == type(u"") or type(filename) == type(""):
       info(u"Reading file %s ..." % filename)
     else: # more than 1 file
       strFilename = ", ".join(filename)
@@ -878,7 +878,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normLowResFromValue.setValue(lowRes_min)
       self.ui.normLowResToValue.setValue(lowRes_max)
 
-      norm_low_res_flag = ata.norm_low_res_flag
+      norm_low_res_flag = data.norm_low_res_flag
       self.ui.normLowResFlag.setChecked(norm_low_res_flag)
 
       back_flag = data.norm_back_flag

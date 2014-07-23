@@ -275,7 +275,7 @@ class NXSData(object):
       if self._options['callback']:
         self._options['callback'](0.)
 
-      if type(filename) == type(u""):
+      if type(filename) == type(u"") or type(filename) == type(""):
 
         try:
           nxs = LoadEventNexus(Filename=str(filename))
@@ -1486,13 +1486,16 @@ class LRDataset(object):
     '''
     mt_run = nxs.getRun()
     
+    lr = mt_run.getProperty('LambdaRequest').value
     self.run_number = mt_run.getProperty('run_number').value
+    if len(lr) > 1:
+      self.run_number += ' ...'
     self.lambda_requested = mt_run.getProperty('LambdaRequest').value[0]
-    self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units[0]
+    self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units
     self.thi = mt_run.getProperty('thi').value[0]
-    self.thi_units = mt_run.getProperty('thi').units[0]
+    self.thi_units = mt_run.getProperty('thi').units
     self.tthd = mt_run.getProperty('tthd').value[0]
-    self.tthd_units = mt_run.getProperty('tthd').units[0]
+    self.tthd_units = mt_run.getProperty('tthd').units
     self.S1W = mt_run.getProperty('S1HWidth').value[0]
     self.S2W = mt_run.getProperty('S2HWidth').value[0]
     self.S1H = mt_run.getProperty('S1VHeight').value[0]
