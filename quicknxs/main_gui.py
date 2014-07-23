@@ -372,9 +372,10 @@ class MainGUI(QtGui.QMainWindow):
 
 
   @log_input
-  def fileOpen(self, filename, do_plot=True):
+  def fileOpen(self, filename, do_plot=True, do_add=False):
     '''
     Open a new datafile and plot the data.
+    Also will add those new files to previously loaded files if do_add flag is provided
     '''
     
     # check if we have a string or a string array
@@ -401,6 +402,7 @@ class MainGUI(QtGui.QMainWindow):
         event_split_bins=None
         event_split_index=0
       bin_type=self.ui.eventBinMode.currentIndex()
+
     else: #REF_L
       event_split_bins=None
       event_split_index=0      
@@ -411,6 +413,17 @@ class MainGUI(QtGui.QMainWindow):
 #      low_res_px_max = float(low_res_px_center) + float(low_res_px_width)
 #      low_res_range = [low_res_px_min, low_res_px_max]
 
+    # we want to add those runs to selected data/norm cell runs
+    if do_add:
+
+      # get list of previously loaded runs
+      [r,c] = self.getCurrentRowColumnSelected()
+      if c is not 0:
+        c=1
+      data = self.bigTableData[r,c]
+      _prevLoadedFullFile = data.active_data.filename
+      filename = [_prevLoadedFullFile, filename]
+    
     self._norm_selected=None
     if type(filename) == type(u"") or type(filename) == type(""):
       info(u"Reading file %s ..." % filename)
@@ -430,7 +443,10 @@ class MainGUI(QtGui.QMainWindow):
     else:
       if data is not None:
         # save the data in the right spot (row, column)
-        [r,c] = self.getRowColumnNextDataSet()
+        if do_add:
+          [r,c] = self.getCurrentRowColumnSelected()
+        else:
+          [r,c] = self.getRowColumnNextDataSet()
         if c is not 0:
           c=1
         self.bigTableData[r,c] = data
@@ -529,47 +545,69 @@ class MainGUI(QtGui.QMainWindow):
     
     _selected_row = self.ui.reductionTable.selectedRanges()
     
-    # add new row each time a data is selected
-    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
-      _column = 0
-    else:
-      _column = 6
+    # are we replacing or adding a new entry
+    do_add = False
+    if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+      do_add = True
+      
+    if do_add:
+      [r,c] = self.getCurrentRowColumnSelected()
 
-    # empty table, let's add a row
-    if _selected_row == []:
-      self.ui.reductionTable.insertRow(0)
-      _selected_row = 0
-    else:
-      _selected_row = _selected_row[0].bottomRow()
-      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,0,
-                                                                               _selected_row,0), False)
-      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,6,
-                                                                               _selected_row,6), False)
+      if c !=0:
+        _column = 6
+      else:
+        _column = 0
 
-    _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+      _row = r
 
-    # if run is normalization, do not create a new row
-    if _column == 6:
-      _row = _selected_row
+      _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+      self.ui.reductionTable.setItem(r, _column, _item)
+      
+      self._prev_row_selected = _row
+      self._prev_col_selected = _column      
+      
     else:
-      # if selected row has already a data run number -> create a new row
-      _current_item = self.ui.reductionTable.item(_selected_row, 0)
-      if _current_item is None:
-        # insert new item (data or normalization run number)
+      # add new row each time a data is selected
+      if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+        _column = 0
+      else:
+        _column = 6
+  
+      # empty table, let's add a row
+      if _selected_row == []:
+        self.ui.reductionTable.insertRow(0)
+        _selected_row = 0
+      else:
+        _selected_row = _selected_row[0].bottomRow()
+        self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,0,
+                                                                                 _selected_row,0), False)
+        self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,6,
+                                                                                 _selected_row,6), False)
+
+      _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+  
+      # if run is normalization, do not create a new row
+      if _column == 6:
         _row = _selected_row
       else:
-        # find out last row
-        _row = self.ui.reductionTable.rowCount()
-        self.ui.reductionTable.insertRow(_row)
-
-    self.ui.reductionTable.setItem(_row, _column, _item)
-    
-    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
-                                                                             _column,
-                                                                             _row,
-                                                                             _column), True)
-    self._prev_row_selected = _row
-    self._prev_col_selected = _column
+        # if selected row has already a data run number -> create a new row
+        _current_item = self.ui.reductionTable.item(_selected_row, 0)
+        if _current_item is None:
+          # insert new item (data or normalization run number)
+          _row = _selected_row
+        else:
+          # find out last row
+          _row = self.ui.reductionTable.rowCount()
+          self.ui.reductionTable.insertRow(_row)
+  
+      self.ui.reductionTable.setItem(_row, _column, _item)
+      
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
+                                                                               _column,
+                                                                               _row,
+                                                                               _column), True)
+      self._prev_row_selected = _row
+      self._prev_col_selected = _column
 
     if _column == 0:
       # add incident angle
@@ -1840,8 +1878,14 @@ class MainGUI(QtGui.QMainWindow):
       return
     item=self.ui.file_list.currentItem()
     name=unicode(item.text())
+
+    # check if user wants to add this/those files to a previous selected box
+    do_add = False
+    if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+      do_add = True
+    
     # only reload if filename was actually changed or file was modified
-    self.fileOpen(os.path.join(self.active_folder, name))
+    self.fileOpen(os.path.join(self.active_folder, name), do_add)
 
   @log_call
   def openByNumber(self, number=None, do_plot=True):
@@ -1877,16 +1921,21 @@ class MainGUI(QtGui.QMainWindow):
       listNumber = number.split(',')
       # removing empty element (in case user put too many ',')
       listNumber = filter(None, listNumber)
-
+      
+      # check if user wants to add this/those files to a previous selected box
+      do_add = False
+      if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+        do_add = True
+      
       # only 1 run number to load
       if len(listNumber) == 1:
-        try:
-          fullFileName = FileFinder.findRuns("REF_L%d"%int(listNumber[0]))[0]
-          self.fileOpen(fullFileName, do_plot=do_plot)
-          self.ui.numberSearchEntry.setText('')
-        except:
-          info('Could not locate runs %s ...'%listNumber[0])
-          return False
+#        try:
+        fullFileName = FileFinder.findRuns("REF_L%d"%int(listNumber[0]))[0]
+        self.fileOpen(fullFileName, do_plot=do_plot, do_add=do_add)
+        self.ui.numberSearchEntry.setText('')
+#        except:
+#          info('Could not locate runs %s ...'%listNumber[0])
+#          return False
       else: # more than 1 file loaded
         notFoundRun = []
         foundRun = []
@@ -1907,7 +1956,7 @@ class MainGUI(QtGui.QMainWindow):
         
         # load runs if any file found
         if foundRun is not None:
-          self.fileOpen(foundRun, do_plot=do_plot)
+          self.fileOpen(foundRun, do_plot=do_plot, do_add=do_add)
 
         self.ui.numberSearchEntry.setText('')
 
