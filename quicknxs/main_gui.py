@@ -407,53 +407,49 @@ class MainGUI(QtGui.QMainWindow):
       event_split_bins=None
       event_split_index=0      
       bin_type=0
-#      low_res_px_center = self.ui.refXPos.text()
-#      low_res_px_width = self.ui.refXWidth.text()
-#      low_res_px_min = float(low_res_px_center) - float(low_res_px_width)
-#      low_res_px_max = float(low_res_px_center) + float(low_res_px_width)
-#      low_res_range = [low_res_px_min, low_res_px_max]
 
     # we want to add those runs to selected data/norm cell runs
-    if do_add:
-
-      # get list of previously loaded runs
-      [r,c] = self.getCurrentRowColumnSelected()
-      if c is not 0:
-        c=1
-      data = self.bigTableData[r,c]
-      _prevLoadedFullFile = data.active_data.filename
-      filename = [_prevLoadedFullFile, filename]
-    
-    self._norm_selected=None
-    if type(filename) == type(u"") or type(filename) == type(""):
-      info(u"Reading file %s ..." % filename)
-    else: # more than 1 file
-      strFilename = ", ".join(filename)
-      info(u"Reading files %s ..." % strFilename)
-      
-    data=NXSData(filename,
-          bin_type=bin_type,
-          bins=self.ui.eventTofBins.value(),
-          callback=self.updateEventReadout,
-          event_split_bins=event_split_bins,
-          event_split_index=event_split_index)
+      if do_add:
   
-    if instrument.NAME == 'REF_M':
-      self._fileOpenDone(data, filename, do_plot)
-    else:
-      if data is not None:
-        # save the data in the right spot (row, column)
-        if do_add:
-          [r,c] = self.getCurrentRowColumnSelected()
-        else:
-          [r,c] = self.getRowColumnNextDataSet()
+        # get list of previously loaded runs
+        [r,c] = self.getCurrentRowColumnSelected()
         if c is not 0:
           c=1
-        self.bigTableData[r,c] = data
-        self._prev_row_selected = r
-        self._prev_col_selected = c
+        
+        data = self.bigTableData[r,c]
+        _prevLoadedFullFile = data.active_data.filename
+        filename = [_prevLoadedFullFile, filename]
       
-      self._fileOpenDoneREFL(data, filename, do_plot)
+      self._norm_selected=None
+      if type(filename) == type(u"") or type(filename) == type(""):
+        info(u"Reading file %s ..." % filename)
+      else: # more than 1 file
+        strFilename = ", ".join(filename)
+        info(u"Reading files %s ..." % strFilename)
+        
+      data=NXSData(filename,
+            bin_type=bin_type,
+            bins=self.ui.eventTofBins.value(),
+            callback=self.updateEventReadout,
+            event_split_bins=event_split_bins,
+            event_split_index=event_split_index)
+    
+      if instrument.NAME == 'REF_M':
+        self._fileOpenDone(data, filename, do_plot)
+      else:
+        if data is not None:
+          # save the data in the right spot (row, column)
+          if do_add:
+            [r,c] = self.getCurrentRowColumnSelected()
+          else:
+            [r,c] = self.getRowColumnNextDataSet()
+          if c is not 0:
+            c=1
+          self.bigTableData[r,c] = data
+          self._prev_row_selected = r
+          self._prev_col_selected = c
+        
+        self._fileOpenDoneREFL(data, filename, do_plot)
 
 
   @log_input
@@ -1883,9 +1879,9 @@ class MainGUI(QtGui.QMainWindow):
     do_add = False
     if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
       do_add = True
-    
+
     # only reload if filename was actually changed or file was modified
-    self.fileOpen(os.path.join(self.active_folder, name), do_add)
+    self.fileOpen(os.path.join(self.active_folder, name), do_add=do_add)
 
   @log_call
   def openByNumber(self, number=None, do_plot=True):
