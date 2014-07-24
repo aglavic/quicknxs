@@ -180,7 +180,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reductionTable.resizeColumnsToContents()
       self.ui.TOFmanualMicrosValue.setText(u'\u03bcs')
-      
+            
       # define the context menu of the recap table
       self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
       self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
@@ -3820,6 +3820,8 @@ Do you want to try to restore the working reduction list?""",
 
       _data_run_number = self.ui.reductionTable.item(row,0).text()
       strArray.append('   <data_sets>' + _data_run_number + '</data_sets>\n')
+      if type(data_full_file_name) == type([]):
+        data_full_file_name = ','.join(data_full_file_name)
       strArray.append('   <data_full_file_name>' + data_full_file_name + '</data_full_file_name>\n')
       
       strArray.append('   <x_min_pixel>' + str(data_low_res[0]) + '</x_min_pixel>\n')
@@ -3847,6 +3849,8 @@ Do you want to try to restore the working reduction list?""",
       else:
         _norm_run_number = ''
       strArray.append('   <norm_dataset>' + _norm_run_number + '</norm_dataset>\n')
+      if type(norm_full_file_name) == type([]):
+        norm_full_file_name = ','.join(norm_full_file_name)
       strArray.append('   <norm_full_file_name>' + norm_full_file_name + '</norm_full_file_name>\n')
       
       q_min = '0'   #FIXME
@@ -3946,10 +3950,11 @@ Do you want to try to restore the working reduction list?""",
       
       # only for first row
       if _row == 0:
-        try:
-          _first_file_name = self.getNodeValue(node, 'data_full_file_name')
-        except:
+        _first_file_name = self.getNodeValue(node, 'data_full_file_name')
+        if _first_file_name == '': # no full_file_name defined
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
+        else:
+          _first_file_name = _first_file_name.split(',')
 
         # load general settings for first row only
         scaling_factor_file = self.getNodeValue(node, 'scaling_factor_file')
@@ -3977,11 +3982,13 @@ Do you want to try to restore the working reduction list?""",
 
       try:
         _data_full_file_name = self.getNodeValue(node, 'data_full_file_name')
+        _data_full_file_name = _data_full_file_name.split(',')
       except:
         _data_full_file_name = ''
         
       try:
         _norm_full_file_name = self.getNodeValue(node, 'norm_full_file_name')
+        _norm_full_file_name = _norm_full_file_name.split(',')
       except:
         _norm_full_file_name = ''
 
@@ -4090,9 +4097,13 @@ Do you want to try to restore the working reduction list?""",
     '''
     get the value of the node from the dom (config file)
     '''
-    _tmp = node.getElementsByTagName(flag)
-    return _tmp[0].childNodes[0].nodeValue
-
+    try:
+      _tmp = node.getElementsByTagName(flag)
+      _value = _tmp[0].childNodes[0].nodeValue
+    except:
+      _value = ''
+    return _value
+  
   @log_call
   def helpDialog(self):
     '''
