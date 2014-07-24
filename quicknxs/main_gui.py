@@ -3735,7 +3735,7 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <peak_selection_type>narrow</peak_selection_type>\n')
 
       _metadata = _bigTableData[row,2]
-      if _metadata is not None:
+      if _metadata is not None: # collect data via previously loaded config
         data_full_file_name = _metadata.data_full_file_name
         data_peak = _metadata.data_peak
         data_back = _metadata.data_back
@@ -3752,8 +3752,59 @@ Do you want to try to restore the working reduction list?""",
         norm_back_flag = _metadata.norm_back_flag
         norm_low_res = _metadata.norm_low_res
         norm_low_res_flag = _metadata.norm_low_res_flag
-      else:
-        pass 
+      else: # collect information via bigTableData
+        
+        data_info = _bigTableData[row,0]
+        if data_info is not None:
+          _data = data_info.active_data
+        
+          data_full_file_name = _data.filename
+          if type(data_full_file_name) == type([]):
+            data_full_file_name = ','.join(data_full_file_name)
+          data_peak = _data.data_peak
+          data_back = _data.data_back
+          data_low_res = _data.data_low_res
+          data_back_flag = _data.data_back_flag
+          data_low_res_flag = _data.data_low_res_flag
+          tof = _data.tof_range
+          tof_units = _data.tof_units
+          tof_auto_flag = _data.tof_auto_flag
+        
+        else:
+        
+          data_full_file_name = ''
+          data_peak = ['0','0']
+          data_back = ['0','0']
+          data_low_res = ['0','0']
+          data_back_flag = True
+          data_low_res_flag = True
+          tof = ['0','0']
+          tof_units = 'ms'
+          tof_auto_flag = True
+        
+        norm_info = _bigTableData[row,1]
+        if norm_info is not None:
+          _norm = norm_info.active_data
+        
+          norm_full_file_name = _norm.filename
+          if type(norm_full_file_name) == type([]):
+            norm_full_file_name = ','.join(norm_full_file_name)
+          norm_flag = _norm.norm_flag
+          norm_peak = _norm.norm_peak
+          norm_back = _norm.norm_back
+          norm_back_flag = _norm.norm_back_flag
+          norm_low_res = _norm.norm_low_res
+          norm_low_res_flag = _norm.norm_low_res_flag
+        
+        else:
+          
+          norm_full_file_name = ''
+          norm_flag = True
+          norm_peak = ['0','0']
+          norm_back = ['0','0']
+          norm_back_flag = True
+          norm_low_res = ['0','0']
+          norm_low_res_flag = True
         
       strArray.append('   <from_peak_pixels>' + str(data_peak[0]) + '</from_peak_pixels>\n')
       strArray.append('   <to_peak_pixels>' + str(data_peak[1]) + '</to_peak_pixels>\n')
@@ -3790,7 +3841,11 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <norm_from_back_pixels>' + str(norm_back[0]) + '</norm_from_back_pixels>\n')
       strArray.append('   <norm_to_back_pixels>' + str(norm_back[1]) + '</norm_to_back_pixels>\n')
       
-      _norm_run_number = self.ui.reductionTable.item(row,6).text()
+      _norm_run_number_cell = self.ui.reductionTable.item(row,6)
+      if _norm_run_number_cell is not None:
+        _norm_run_number = _norm_run_number_cell.text()
+      else:
+        _norm_run_number = ''
       strArray.append('   <norm_dataset>' + _norm_run_number + '</norm_dataset>\n')
       strArray.append('   <norm_full_file_name>' + norm_full_file_name + '</norm_full_file_name>\n')
       
@@ -3851,7 +3906,12 @@ Do you want to try to restore the working reduction list?""",
     This function will parse the XML config file (Mantid format) and will populate the 
     GUI
     '''
-    dom = minidom.parse(filename)
+    try:
+      dom = minidom.parse(filename)
+    except:
+      info('No configuration file loaded!')
+      return
+    
     RefLData = dom.getElementsByTagName('RefLData')
     nbrRowBigTable = len(RefLData)
     
