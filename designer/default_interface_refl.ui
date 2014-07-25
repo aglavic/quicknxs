@@ -875,10 +875,16 @@ p, li { white-space: pre-wrap; }
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
                <widget class="QTabWidget" name="dataNormTabWidget">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
                 <property name="currentIndex">
                  <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <attribute name="title">
                   <string>  D A T A  </string>
                  </attribute>
@@ -1469,6 +1475,9 @@ p, li { white-space: pre-wrap; }
                  </layout>
                 </widget>
                 <widget class="QWidget" name="tab_2">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <attribute name="title">
                   <string>  N O R M A L I Z A T I O N  </string>
                  </attribute>

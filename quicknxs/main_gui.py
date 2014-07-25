@@ -3709,7 +3709,7 @@ Do you want to try to restore the working reduction list?""",
     # put back info in right place
     data.active_data = _active_data
     self.bigTableData[r,c] = data
-    
+
 
   def getCurrentRowColumnSelected(self):
     '''

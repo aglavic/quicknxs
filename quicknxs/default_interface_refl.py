@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Jul 24 14:38:58 2014
+# Created: Fri Jul 25 16:51:52 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -340,8 +340,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_10 = QtGui.QVBoxLayout()
         self.verticalLayout_10.setObjectName("verticalLayout_10")
         self.dataNormTabWidget = QtGui.QTabWidget(self.widget)
+        self.dataNormTabWidget.setEnabled(True)
         self.dataNormTabWidget.setObjectName("dataNormTabWidget")
         self.tab = QtGui.QWidget()
+        self.tab.setEnabled(False)
         self.tab.setObjectName("tab")
         self.verticalLayout_12 = QtGui.QVBoxLayout(self.tab)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
@@ -575,6 +577,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_12.addWidget(self.splitter_3)
         self.dataNormTabWidget.addTab(self.tab, "")
         self.tab_2 = QtGui.QWidget()
+        self.tab_2.setEnabled(False)
         self.tab_2.setObjectName("tab_2")
         self.verticalLayout_17 = QtGui.QVBoxLayout(self.tab_2)
         self.verticalLayout_17.setObjectName("verticalLayout_17")
