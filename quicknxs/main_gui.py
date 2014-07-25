@@ -764,24 +764,7 @@ class MainGUI(QtGui.QMainWindow):
       isDataSelected = False
       
     # clear previous plot
-    if isDataSelected:
-      self.ui.data_yt_plot.clear()
-      self.ui.data_yt_plot.draw()
-      self.ui.data_yi_plot.clear()
-      self.ui.data_yi_plot.draw()
-      self.ui.data_it_plot.clear()
-      self.ui.data_it_plot.draw()
-      self.ui.data_ix_plot.clear()
-      self.ui.data_ix_plot.draw()
-    else:
-      self.ui.norm_yt_plot.clear()
-      self.ui.norm_yt_plot.draw()
-      self.ui.norm_yi_plot.clear()
-      self.ui.norm_yi_plot.draw()
-      self.ui.norm_it_plot.clear()
-      self.ui.norm_it_plot.draw()
-      self.ui.norm_ix_plot.clear()
-      self.ui.norm_ix_plot.draw()
+    self.clear_plot_overview_REFL(isDataSelected)
 
     data = self.active_data
     if data is None:
@@ -3308,6 +3291,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
 
     if int==2:
       flag = True
@@ -3322,6 +3307,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataBackToLabel.setEnabled(flag)
     self.ui.dataBackToValue.setEnabled(flag)
 
+    # save new settings
+    self.save_new_settings()
+
     # refresh plot
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)
 
@@ -3331,6 +3319,8 @@ Do you want to try to restore the working reduction list?""",
     '''
     
     data = self.active_data
+    if data is None:
+      return
 
     if int==2:
       flag = True
@@ -3344,6 +3334,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataLowResFromValue.setEnabled(flag)
     self.ui.dataLowResToLabel.setEnabled(flag)
     self.ui.dataLowResToValue.setEnabled(flag)
+
+    # save new settings
+    self.save_new_settings()
 
     # refresh plot
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
@@ -3362,6 +3355,8 @@ Do you want to try to restore the working reduction list?""",
       flagBack = False
 
     data = self.active_data
+    if data is None:
+      return
     data.norm_flag = flag
     self.active_data = data
     
@@ -3384,6 +3379,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normLowResFromValue.setEnabled(flagLowRes)
     self.ui.normLowResToLabel.setEnabled(flagLowRes)
     self.ui.normLowResToValue.setEnabled(flagLowRes)
+
+    # save new settings
+    self.save_new_settings()
     
   def normalization_background_switch(self, int):
     '''
@@ -3399,6 +3397,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normBackToLabel.setEnabled(flag)
     self.ui.normBackToValue.setEnabled(flag)
     
+    # save new settings
+    self.save_new_settings()
+    
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
     
   def normalization_low_res_switch(self, int):
@@ -3407,6 +3408,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
 
     if int==2:
       flag = True
@@ -3421,9 +3424,11 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normLowResToLabel.setEnabled(flag)
     self.ui.normLowResToValue.setEnabled(flag)
 
+    # save new settings
+    self.save_new_settings()
+
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-    
 
   # data peak spinboxes
   def data_peak_spinbox_validation(self):
@@ -3434,6 +3439,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
 
     peak1 = self.ui.dataPeakFromValue.value()
     peak2 = self.ui.dataPeakToValue.value()
@@ -3454,6 +3461,9 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
+    # save new settings
+    self.save_new_settings()
+    
   # data back spinboxes
   def data_back_spinbox_validation(self):
     '''
@@ -3466,6 +3476,8 @@ Do you want to try to restore the working reduction list?""",
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
     data = _data.active_data
+    if data is None:
+      return
     
     back1 = self.ui.dataBackFromValue.value()
     back2 = self.ui.dataBackToValue.value()
@@ -3485,6 +3497,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataBackFromValue.setValue(back_min)
     self.ui.dataBackToValue.setValue(back_max)
 
+    # save new settings
+    self.save_new_settings()
+
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
@@ -3497,6 +3512,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
 
     lowres1 = self.ui.dataLowResFromValue.value()
     lowres2 = self.ui.dataLowResToValue.value()
@@ -3514,6 +3531,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataLowResFromValue.setValue(lowres_min)
     self.ui.dataLowResToValue.setValue(lowres_max)
   
+    # save new settings
+    self.save_new_settings()
+
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
@@ -3526,6 +3546,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
 
     peak1 = self.ui.normPeakFromValue.value()
     peak2 = self.ui.normPeakToValue.value()
@@ -3543,6 +3565,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normPeakFromValue.setValue(peak_min)
     self.ui.normPeakToValue.setValue(peak_max)
 
+    # save new settings
+    self.save_new_settings()
+
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
@@ -3555,6 +3580,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
 
     back1 = self.ui.normBackFromValue.value()
     back2 = self.ui.normBackToValue.value()
@@ -3572,6 +3599,9 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normBackFromValue.setValue(back_min)
     self.ui.normBackToValue.setValue(back_max)
 
+    # save new settings
+    self.save_new_settings()
+
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
@@ -3584,6 +3614,8 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     data = self.active_data
+    if data is None:
+      return
     
     lowres1 = self.ui.normLowResFromValue.value()
     lowres2 = self.ui.normLowResToValue.value()
@@ -3601,9 +3633,83 @@ Do you want to try to restore the working reduction list?""",
     self.ui.normLowResFromValue.setValue(lowres_min)
     self.ui.normLowResToValue.setValue(lowres_max)
 
+    # save new settings
+    self.save_new_settings()
+
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
+  def save_new_settings(self):
+    '''
+    This function will retrieve all the settings (peak, background...)
+    and will save them in the corresponding data or norm file (if any)
+    '''
+    
+    [r,c] = self.getCurrentRowColumnSelected()
+    data = self.bigTableData[r,c]
+
+    if data is None:
+      return
+
+    _active_data = data.active_data
+
+    data_peak = [self.ui.dataPeakFromValue.value(), 
+                 self.ui.dataPeakToValue.value()]
+    
+    data_back = [self.ui.dataBackFromValue.value(),
+                 self.ui.dataBackToValue.value()]
+    
+    data_low_res = [self.ui.dataLowResFromValue.value(),
+                    self.ui.dataLowResToValue.value()]
+    
+    data_back_flag = self.ui.dataBackgroundFlag.isChecked()
+    
+    data_low_res_flag = self.ui.dataLowResFlag.isChecked()
+    
+    tof_range = [self.ui.TOFmanualFromValue.text(),
+                 self.ui.TOFmanualToValue.text()]
+    
+    if self.ui.TOFmanualMsValue.isChecked():
+      tof_units = 'ms'
+    else:
+      tof_units = 'micros'
+      
+    tof_auto_flag = self.ui.dataTOFautoMode.isChecked()
+    
+    norm_flag = self.ui.useNormalizationFlag.isChecked()
+    
+    norm_peak = [self.ui.normPeakFromValue.value(),
+                 self.ui.normPeakToValue.value()]
+    
+    norm_back = [self.ui.normBackFromValue.value(),
+                 self.ui.normBackToValue.value()]
+    
+    norm_back_flag = self.ui.normBackgroundFlag.isChecked()
+    
+    norm_low_res = [self.ui.normLowResFromValue.value(),
+                    self.ui.normLowResToValue.value()]
+    
+    norm_low_res_flag = self.ui.normLowResFlag.isChecked()
+    
+    _active_data.data_peak = data_peak
+    _active_data.data_back = data_back
+    _active_data.data_low_res = data_low_res
+    _active_data.data_back_flag = data_back_flag
+    _active_data.data_low_res_flag = data_low_res_flag
+    _active_data.tof_range = tof_range
+    _active_data.tof_units = tof_units
+    _active_data.tof_auto_flag = tof_auto_flag
+    _active_data.norm_flag = norm_flag
+    _active_data.norm_peak = norm_peak
+    _active_data.norm_back = norm_back
+    _active_data.norm_back_flag = norm_back_flag
+    _active_data.norm_low_res = norm_low_res
+    _active_data.norm_low_res_flag = norm_low_res_flag
+    
+    # put back info in right place
+    data.active_data = _active_data
+    self.bigTableData[r,c] = data
+    
 
   def getCurrentRowColumnSelected(self):
     '''
