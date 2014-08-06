@@ -879,7 +879,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -4941,6 +4941,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dataNormTabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_norm_tab_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>986</x>
+     <y>382</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5013,5 +5029,6 @@ p, li { white-space: pre-wrap; }
   <slot>loading_configuration()</slot>
   <slot>saving_configuration()</slot>
   <slot>bigTable_selection_changed()</slot>
+  <slot>data_norm_tab_changed()</slot>
  </slots>
 </ui>

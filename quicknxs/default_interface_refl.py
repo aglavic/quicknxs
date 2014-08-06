@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Jul 25 16:51:52 2014
+# Created: Wed Aug  6 16:13:14 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1508,7 +1508,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(4)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.plotTab, QtCore.SIGNAL("currentChanged(int)"), MainWindow.plotActiveTab)
         QtCore.QObject.connect(self.actionNext_File, QtCore.SIGNAL("triggered()"), MainWindow.nextFile)
@@ -1577,6 +1577,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionLoadConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loading_configuration)
         QtCore.QObject.connect(self.actionSaveConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.saving_configuration)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellClicked(int,int)"), MainWindow.bigTable_selection_changed)
+        QtCore.QObject.connect(self.dataNormTabWidget, QtCore.SIGNAL("currentChanged(int)"), MainWindow.data_norm_tab_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

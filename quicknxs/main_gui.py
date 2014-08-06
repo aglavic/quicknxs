@@ -528,7 +528,7 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.tab_2.setEnabled(status)
           
-   def getRowColumnNextDataSet(self):
+  def getRowColumnNextDataSet(self):
     '''
     this routine will determine where the data set, just loaded
     will be saved in the 2D data set array
@@ -2614,6 +2614,17 @@ class MainGUI(QtGui.QMainWindow):
     self._prev_col_selected = column
 
     self.enableWidgets(checkStatus=True)
+
+  @log_input
+  def data_norm_tab_changed(self):
+    if self.ui.dataNormTabWidget.currentIndex() == 0:
+      c=0
+    else:
+      c=6
+    [r,col] = self.getCurrentRowColumnSelected()
+
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,c,r,c),True)                                                                                   	
 
   @log_input
   def reductionTableChanged(self, item):
