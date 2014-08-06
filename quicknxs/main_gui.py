@@ -453,7 +453,6 @@ class MainGUI(QtGui.QMainWindow):
         
         self._fileOpenDoneREFL(data, filename, do_plot)
 
-
   @log_input
   def fileOpenSum(self, filenames, do_plot=True):
     '''
@@ -500,7 +499,7 @@ class MainGUI(QtGui.QMainWindow):
       pass
     
     if do_plot:
-      pass
+      self.plot_overview_REFL()
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
 
@@ -720,6 +719,11 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Select the appropriate function to plot all visible images.
     '''
+
+    # FIXME
+    if instrument.NAME == 'REF_L':
+      return
+    
     if self.auto_change_active or not self.active_data:
       return
     color=str(self.ui.color_selector.currentText())
@@ -782,6 +786,8 @@ class MainGUI(QtGui.QMainWindow):
 
   @log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
+    
+    print 'plot_overview_REFL'
     
     # check witch tab is activated (data or norm)
     if self.ui.dataNormTabWidget.currentIndex() == 0: #data
@@ -2617,14 +2623,20 @@ class MainGUI(QtGui.QMainWindow):
 
   @log_input
   def data_norm_tab_changed(self):
+
+    if self.bigTableData[0,0] == None and self.bigTableData[0,1] == None:
+      return
+    
     if self.ui.dataNormTabWidget.currentIndex() == 0:
       c=0
     else:
       c=6
     [r,col] = self.getCurrentRowColumnSelected()
-
+    
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,c,r,c),True)                                                                                   	
+
+    self.bigTable_selection_changed(r,col)
 
   @log_input
   def reductionTableChanged(self, item):
