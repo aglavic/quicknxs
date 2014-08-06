@@ -448,6 +448,8 @@ class MainGUI(QtGui.QMainWindow):
           self.bigTableData[r,c] = data
           self._prev_row_selected = r
           self._prev_col_selected = c
+          
+          self.enableWidgets(status=True)
         
         self._fileOpenDoneREFL(data, filename, do_plot)
 
@@ -501,8 +503,32 @@ class MainGUI(QtGui.QMainWindow):
       pass
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
- 
-  def getRowColumnNextDataSet(self):
+
+  def enableWidgets(self, status=False, checkStatus=False):
+    '''
+    Will enable or not the widgets of the curren tab. 
+    If checkStatus is True, will overwrite the status flag and
+    will check itself what should be done (enable or not).
+    '''
+
+    isData = False
+    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+      isData = True
+
+    if checkStatus:
+      [r,c] = self.getCurrentRowColumnSelected()
+      data = self.bigTableData[r,c]
+      if data is None:
+        status = False
+      else:
+        status = True
+
+    if isData:
+      self.ui.tab.setEnabled(status)
+    else:
+      self.ui.tab_2.setEnabled(status)
+          
+   def getRowColumnNextDataSet(self):
     '''
     this routine will determine where the data set, just loaded
     will be saved in the 2D data set array
@@ -2586,6 +2612,8 @@ class MainGUI(QtGui.QMainWindow):
       
     self._prev_row_selected = row
     self._prev_col_selected = column
+
+    self.enableWidgets(checkStatus=True)
 
   @log_input
   def reductionTableChanged(self, item):
