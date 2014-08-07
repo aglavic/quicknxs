@@ -787,8 +787,6 @@ class MainGUI(QtGui.QMainWindow):
   @log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
     
-    print 'plot_overview_REFL'
-    
     # check witch tab is activated (data or norm)
     if self.ui.dataNormTabWidget.currentIndex() == 0: #data
       isDataSelected = True
@@ -2621,22 +2619,51 @@ class MainGUI(QtGui.QMainWindow):
 
     self.enableWidgets(checkStatus=True)
 
-  @log_input
   def data_norm_tab_changed(self):
+    '''
+    When user switch data - Norm, the selection should follow accordingly
+    and the display of all the plots as well
+    '''
+    [r,col] = self.getTrueCurrentRowColumnSelected()
 
-    if self.bigTableData[0,0] == None and self.bigTableData[0,1] == None:
+    # no data loaded yet
+    if r == -1:
       return
-    
-    if self.ui.dataNormTabWidget.currentIndex() == 0:
-      c=0
+
+    tabIndex = self.ui.dataNormTabWidget.currentIndex()
+
+    # data
+    if tabIndex == 0:
+      if col == 6:
+        col = 0
     else:
-      c=6
-    [r,col] = self.getCurrentRowColumnSelected()
+      if col != 6:
+        col = 6
     
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
-    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,c,r,c),True)                                                                                   	
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,col,r,col),True)                                                                                   	
+    
 
-    self.bigTable_selection_changed(r,col)
+    
+
+
+    #if self.bigTableData[0,0] == None and self.bigTableData[0,1] == None:
+      #return
+        
+    #if self.ui.dataNormTabWidget.currentIndex() == 0:
+      #c=0
+    #else:
+      #c=6
+    #[r,col] = self.getCurrentRowColumnSelected()
+    
+    #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
+    #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,c,r,c),True)                                                                                   	
+
+    #self._prev_row_selected = r
+    #self._prev_col_selected = col
+
+    #self.bigTable_selection_changed(r,col)
+        
 
   @log_input
   def reductionTableChanged(self, item):
@@ -3762,6 +3789,18 @@ Do you want to try to restore the working reduction list?""",
     self.bigTableData[r,c] = data
 
 
+  def getTrueCurrentRowColumnSelected(self):
+    '''
+    will determine the current row and column selected in the big Table.
+    '''
+    rangeSelected = self.ui.reductionTable.selectedRanges()
+    if rangeSelected == []:
+      return [-1, -1]
+
+    col = rangeSelected[0].leftColumn()
+    row = rangeSelected[0].topRow()
+    return [row, col]
+
   def getCurrentRowColumnSelected(self):
     '''
     will determine the current row and column selected in the big Table.
@@ -3844,7 +3883,8 @@ Do you want to try to restore the working reduction list?""",
     '''
     filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')
     self.loadConfigAndPopulateGui(filename)
-  
+    self.enableWidgets(checkStatus=True)
+    
   @log_call
   def saving_configuration(self):
     '''
