@@ -2578,6 +2578,7 @@ class MainGUI(QtGui.QMainWindow):
       cell = self.ui.reductionTable.selectedItems()
       if cell == []:
         self.clear_plot_overview_REFL(isData=False)
+        self.ui.normNameOfFile.setText('')
       else:
         if (self.active_data is not None) and (_data.active_data.nxs is not None):
           self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
@@ -2643,27 +2644,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,col,r,col),True)                                                                                   	
     
-
-    
-
-
-    #if self.bigTableData[0,0] == None and self.bigTableData[0,1] == None:
-      #return
-        
-    #if self.ui.dataNormTabWidget.currentIndex() == 0:
-      #c=0
-    #else:
-      #c=6
-    #[r,col] = self.getCurrentRowColumnSelected()
-    
-    #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
-    #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,c,r,c),True)                                                                                   	
-
-    #self._prev_row_selected = r
-    #self._prev_col_selected = col
-
-    #self.bigTable_selection_changed(r,col)
-        
+    self.bigTable_selection_changed(r, col)
 
   @log_input
   def reductionTableChanged(self, item):
