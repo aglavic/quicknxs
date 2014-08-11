@@ -2548,7 +2548,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def bigTable_selection_changed(self, row, column):
 
-    # if selection of same row and not data or column column
+    # if selection of same row and not data or column 0 and 6
     if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
       return
     
@@ -2582,7 +2582,7 @@ class MainGUI(QtGui.QMainWindow):
       else:
         if (self.active_data is not None) and (_data.active_data.nxs is not None):
           self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-        else: #load the data
+        else: # load the data
           _run_number = int(cell[0].text())
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
           
@@ -2613,7 +2613,39 @@ class MainGUI(QtGui.QMainWindow):
 
     else: # display data tab
       self.ui.dataNormTabWidget.setCurrentIndex(0)
-      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+      # if cell is empty
+      cell = self.ui.reductionTable.selectedItems()
+      if (self.active_data is not None) and (_data.active_data.nxs is not None):
+        self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+      else: # load the data
+        
+        _run_number = int(cell[0].text())
+        _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+        
+        _configDataset = self.bigTableData[row,1]
+        
+        event_split_bins = None
+        event_split_index = 0
+        bin_type = 0
+        data = NXSData(_first_file_name, 
+                       bin_type = bin_type,
+                       bins = self.ui.eventTofBins.value(),
+                       callback = self.updateEventReadout,
+                       event_split_bins = event_split_bins,
+                       event_split_index = event_split_index,
+                       metadata_config_object = _configDataset)
+        
+        r=row
+        c=col
+
+        self.bigTableData[r,c] = data
+        self._prev_row_selected = r
+        self._prev_col_selected = c
+        
+        self._fileOpenDoneREFL(data=data, 
+                               filename=_first_file_name, 
+                               do_plot=True,
+                               update_table=False)
       
     self._prev_row_selected = row
     self._prev_col_selected = column
