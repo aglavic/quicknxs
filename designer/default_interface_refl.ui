@@ -3059,14 +3059,7 @@ p, li { white-space: pre-wrap; }
                 <item>
                  <widget class="QPushButton" name="reduceButton">
                   <property name="text">
-                   <string>Reduce...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="reduceLastButton">
-                  <property name="text">
-                   <string>Quick-Reduce (use last options)</string>
+                   <string>Reduce</string>
                   </property>
                  </widget>
                 </item>
@@ -4957,6 +4950,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reduceButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>runReduction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>986</x>
+     <y>1057</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5030,5 +5039,6 @@ p, li { white-space: pre-wrap; }
   <slot>saving_configuration()</slot>
   <slot>bigTable_selection_changed()</slot>
   <slot>data_norm_tab_changed()</slot>
+  <slot>runReduction()</slot>
  </slots>
 </ui>

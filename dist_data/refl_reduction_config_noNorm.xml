@@ -35,7 +35,7 @@
 <norm_background_flag>True</norm_background_flag>
 <norm_from_back_pixels>109</norm_from_back_pixels>
 <norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115275</norm_dataset>
+<norm_dataset></norm_dataset>
 <norm_full_file_name></norm_full_file_name>
 <q_min>0.005</q_min>
 <q_step>0.02</q_step>

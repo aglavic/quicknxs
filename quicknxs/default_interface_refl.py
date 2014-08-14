@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Aug  6 16:13:14 2014
+# Created: Tue Aug 12 15:43:25 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1159,9 +1159,6 @@ class Ui_MainWindow(object):
         self.reduceButton = QtGui.QPushButton(self.widget)
         self.reduceButton.setObjectName("reduceButton")
         self.horizontalLayout_11.addWidget(self.reduceButton)
-        self.reduceLastButton = QtGui.QPushButton(self.widget)
-        self.reduceLastButton.setObjectName("reduceLastButton")
-        self.horizontalLayout_11.addWidget(self.reduceLastButton)
         self.verticalLayout_10.addLayout(self.horizontalLayout_11)
         self.verticalLayout_23.addLayout(self.verticalLayout_10)
         self.verticalLayout_11.addWidget(self.widget)
@@ -1578,6 +1575,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionSaveConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.saving_configuration)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellClicked(int,int)"), MainWindow.bigTable_selection_changed)
         QtCore.QObject.connect(self.dataNormTabWidget, QtCore.SIGNAL("currentChanged(int)"), MainWindow.data_norm_tab_changed)
+        QtCore.QObject.connect(self.reduceButton, QtCore.SIGNAL("clicked()"), MainWindow.runReduction)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
@@ -1734,8 +1732,7 @@ class Ui_MainWindow(object):
         self.reductionTable.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
-        self.reduceButton.setText(QtGui.QApplication.translate("MainWindow", "Reduce...", None, QtGui.QApplication.UnicodeUTF8))
-        self.reduceLastButton.setText(QtGui.QApplication.translate("MainWindow", "Quick-Reduce (use last options)", None, QtGui.QApplication.UnicodeUTF8))
+        self.reduceButton.setText(QtGui.QApplication.translate("MainWindow", "Reduce", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.Overview_Tab), QtGui.QApplication.translate("MainWindow", "Overview", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabToolTip(self.plotTab.indexOf(self.Overview_Tab), QtGui.QApplication.translate("MainWindow", "Show the active dataset and information about the datasets selected for normalization and reduction", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.XY_Tab), QtGui.QApplication.translate("MainWindow", "X-Y", None, QtGui.QApplication.UnicodeUTF8))

@@ -34,6 +34,7 @@ from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
 from .version import str_version
 from logging import info, warning, debug
+from reduction import REFLReduction
 
 class gisansCalcThread(QtCore.QThread):
   '''
@@ -108,6 +109,8 @@ class MainGUI(QtGui.QMainWindow):
   # live selection of peak, back and low_res
   _live_selection = None # 'peak_min','peak_max','back_min','back_max','lowres_min','lowres_max'
   
+  # to skip data_norm_tab_changed when user clicked table
+  userClickedInTable = False
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -2546,7 +2549,7 @@ class MainGUI(QtGui.QMainWindow):
     if do_plot:
       self.initiateReflectivityPlot.emit(True)
 
-  def bigTable_selection_changed(self, row, column):
+  def bigTable_selection_changed(self, row, column):    
 
     # if selection of same row and not data or column 0 and 6
     if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
@@ -2571,12 +2574,14 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ui.addRunNumbers.setEnabled(addButtonStatus)
 
+    self.userClickedInTable = True
+
     # display norm tab
     if column == 6:
-      self.ui.dataNormTabWidget.setCurrentIndex(1)
+      self.ui.dataNormTabWidget.setCurrentIndex(1)  #FIXME
       # if cell is empty
-      cell = self.ui.reductionTable.selectedItems()
-      if cell == []:
+      cell = self.ui.reductionTable.selectedItems()[0]
+      if cell.text() == '':
         self.clear_plot_overview_REFL(isData=False)
         self.ui.normNameOfFile.setText('')
       else:
@@ -2647,16 +2652,22 @@ class MainGUI(QtGui.QMainWindow):
                                do_plot=True,
                                update_table=False)
       
+    self.userClickedInTable = False
+
     self._prev_row_selected = row
     self._prev_col_selected = column
 
     self.enableWidgets(checkStatus=True)
 
-  def data_norm_tab_changed(self):
+  def data_norm_tab_changed(self, index):
     '''
     When user switch data - Norm, the selection should follow accordingly
     and the display of all the plots as well
     '''
+    
+    if self.userClickedInTable:
+      return
+
     [r,col] = self.getTrueCurrentRowColumnSelected()
 
     # no data loaded yet
@@ -4295,6 +4306,19 @@ Do you want to try to restore the working reduction list?""",
 
     return iMetadata
 
+
+  @log_call
+  def runReduction(self):
+    '''
+    Run the full reduction
+    '''
+    bigTableData = self.bigTableData
+    if bigTableData[0,0] is None:
+      warning(u'Define at least one data run to reduce.',
+              extra={'title': u'Define a dataset'})
+      return
+    
+    _reduction = REFLReduction(self)
 
   def addItemToBigTable(self, value, row, column):
     '''
