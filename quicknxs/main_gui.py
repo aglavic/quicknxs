@@ -452,6 +452,7 @@ class MainGUI(QtGui.QMainWindow):
             [r,c] = self.getCurrentRowColumnSelected()
           else:
             [r,c] = self.getRowColumnNextDataSet()
+
           if c is not 0:
             c=1
           self.bigTableData[r,c] = data
@@ -952,9 +953,6 @@ class MainGUI(QtGui.QMainWindow):
       yi_plot = self.ui.norm_yi_plot
       it_plot = self.ui.norm_it_plot
       ix_plot = self.ui.norm_ix_plot
-
-
-
 
     # display yt
     if plot_yt:
@@ -2590,6 +2588,15 @@ class MainGUI(QtGui.QMainWindow):
       addButtonStatus = False
 
     self.ui.addRunNumbers.setEnabled(addButtonStatus)
+
+    if column == 6:
+      self.ui.dataNormTabWidget.setCurrentIndex(1)  #FIXME      
+    else:
+      self.ui.dataNormTabWidget.setCurrentIndex(0)  #FIXME
+
+    self._prev_row_selected = row
+    self._prev_col_selected = col
+
 
     self.userClickedInTable = True
     cell = self.ui.reductionTable.selectedItems()
