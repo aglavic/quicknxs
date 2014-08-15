@@ -864,12 +864,18 @@ class MainGUI(QtGui.QMainWindow):
       tof_edges_full = data.tof_edges
       tof_edges = tof_edges_full
     
+      [peak1, peak2] = data.peak
+      [back1, back2] = data.back
+      [lowRes1, lowRes2] = data.low_res
+      back_flag = data.back_flag
+      low_res_flag = data.low_res_flag
+
     if isDataSelected: # data
 
       self.ui.dataNameOfFile.setText('%s'%filename)
 
       # repopulate the tab
-      [peak1, peak2] = data.data_peak
+#      [peak1, peak2] = data.data_peak
       peak1 = int(peak1)
       peak2 = int(peak2)
       peak_min = min([peak1, peak2])
@@ -877,7 +883,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataPeakFromValue.setValue(peak_min)
       self.ui.dataPeakToValue.setValue(peak_max)
 
-      [back1, back2] = data.data_back
+#      [back1, back2] = data.data_back
       back1 = int(back1)
       back2 = int(back2)
       back_min = min([back1, back2])
@@ -885,18 +891,19 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataBackFromValue.setValue(back_min)
       self.ui.dataBackToValue.setValue(back_max)
 
-      [lowRes1, lowRes2] = data.data_low_res
+#      [lowRes1, lowRes2] = data.data_low_res
       lowRes1 = int(lowRes1)
       lowRes2 = int(lowRes2)
       lowRes_min = min([lowRes1, lowRes2])
       lowRes_max = max([lowRes1, lowRes2])
       self.ui.dataLowResFromValue.setValue(lowRes_min)
       self.ui.dataLowResToValue.setValue(lowRes_max)
-      back_flag = data.data_back_flag
+#      back_flag = data.data_back_flag
       self.ui.dataBackgroundFlag.setChecked(back_flag)
 
-      data_low_res_flag = data.data_low_res_flag
-      self.ui.dataLowResFlag.setChecked(data_low_res_flag)
+#      data_low_res_flag = data.data_low_res_flag
+#      self.ui.dataLowResFlag.setChecked(data_low_res_flag)
+      self.ui.dataLowResFlag.setChecked(low_res_flag)
       
       yt_plot = self.ui.data_yt_plot
       yi_plot = self.ui.data_yi_plot
@@ -907,10 +914,10 @@ class MainGUI(QtGui.QMainWindow):
 
       self.ui.normNameOfFile.setText('%s'%filename)
 
-      norm_flag = data.norm_flag
-      self.ui.useNormalizationFlag.setChecked(norm_flag)
+      flag = data.use_it_flag
+      self.ui.useNormalizationFlag.setChecked(flag)
 
-      [peak1,peak2] = data.norm_peak
+#      [peak1,peak2] = data.norm_peak
       peak1 = int(peak1)
       peak2 = int(peak2)
       peak_min = min([peak1, peak2])
@@ -918,7 +925,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normPeakFromValue.setValue(peak_min)
       self.ui.normPeakToValue.setValue(peak_max)
       
-      [back1, back2] = data.norm_back
+#      [back1, back2] = data.norm_back
       back1 = int(back1)
       back2 = int(back2)
       back_min = min([back1, back2])
@@ -926,7 +933,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normBackFromValue.setValue(back_min)
       self.ui.normBackToValue.setValue(back_max)
 
-      [lowRes1, lowRes2] = data.norm_low_res
+#      [lowRes1, lowRes2] = data.norm_low_res
       lowRes1 = int(lowRes1)
       lowRes2 = int(lowRes2)
       lowRes_min = min([lowRes1, lowRes2])
@@ -934,16 +941,20 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normLowResFromValue.setValue(lowRes_min)
       self.ui.normLowResToValue.setValue(lowRes_max)
 
-      norm_low_res_flag = data.norm_low_res_flag
-      self.ui.normLowResFlag.setChecked(norm_low_res_flag)
+#      norm_low_res_flag = data.norm_low_res_flag
+#      self.ui.normLowResFlag.setChecked(norm_low_res_flag)
+      self.ui.normLowResFlag.setChecked(low_res_flag)
 
-      back_flag = data.norm_back_flag
+#      back_flag = data.norm_back_flag
       self.ui.normBackgroundFlag.setChecked(back_flag)
       
       yt_plot = self.ui.norm_yt_plot
       yi_plot = self.ui.norm_yi_plot
       it_plot = self.ui.norm_it_plot
       ix_plot = self.ui.norm_ix_plot
+
+
+
 
     # display yt
     if plot_yt:

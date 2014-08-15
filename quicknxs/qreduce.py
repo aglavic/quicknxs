@@ -1190,25 +1190,23 @@ class LRDataset(object):
   tof_units = 'ms'
   tof_auto_flag = True
 
-
-
-  data_full_file_name = ''
-  data_peak = ['0','0']
-  data_back = ['0','0']
-  data_low_res = ['0','0']
-  data_back_flag = True
-  data_low_res_flag = True
-  tof_range = ['0','0'] 
-  tof_units = 'ms'
-  tof_auto_flag = True
+  #data_full_file_name = ''
+  #data_peak = ['0','0']
+  #data_back = ['0','0']
+  #data_low_res = ['0','0']
+  #data_back_flag = True
+  #data_low_res_flag = True
+  #tof_range = ['0','0'] 
+  #tof_units = 'ms'
+  #tof_auto_flag = True
   
-  norm_full_file_name = ''
-  norm_flag = True
-  norm_peak = ['0','0']
-  norm_back = ['0','0']
-  norm_back_flag = True
-  norm_low_res = ['0','0']
-  norm_low_res_flag = True
+  #norm_full_file_name = ''
+  #norm_flag = True
+  #norm_peak = ['0','0']
+  #norm_back = ['0','0']
+  #norm_back_flag = True
+  #norm_low_res = ['0','0']
+  #norm_low_res_flag = True
   
   nxs=None # Mantid NeXus workspace
 
