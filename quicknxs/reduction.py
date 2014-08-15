@@ -25,6 +25,7 @@ class ReductionObject(object):
 
         # if the oData is empty, retrieve info from oConfig
         if oData is None:
+            print 'oData is None so we need to retrieve it from oConfig'
             oData = self.populate_data_object(main_gui, oConfig, 'data')
         self.oData = oData
         
@@ -38,10 +39,7 @@ class ReductionObject(object):
                 print '-> check that we want normalization in our reduction'
                 bNormFlag = oNorm.active_data.norm_flag
                 print bNormFlag
-        
-            
-            
-            
+                    
 
     def populate_data_object(self, main_gui, oConfig, type):
         '''
@@ -52,11 +50,14 @@ class ReductionObject(object):
         # check first if we have a full file name already
         if oConfig is not None:
             if type == 'data':
+                print '-> type is data'
                 full_file_name = oConfig.data_full_file_name
                 if full_file_name == u'':
+                    print 'full_file_name'
                     _run_number = oConfig.data_sets
                     full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
             else:
+                print '-> type is norm'
                 if oConfig.norm_flag:
                     full_file_name = oConfig.norm_full_file_name
                     if full_file_name == u'':
@@ -64,19 +65,19 @@ class ReductionObject(object):
                         full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
 
             
-                    event_split_bins = None
-                    event_split_index = 0
-                    bin_type = 0
-                    
-                    oData = NXSData(full_file_name,
-                                    bin_type = bin_type,
-                                    bins = main_gui.ui.eventTofBins.value(),
-                                    callback = None,
-                                    event_split_bins = event_split_bins,
-                                    event_split_index = event_split_index,
-                                    metadata_config_object = oConfig)
+            event_split_bins = None
+            event_split_index = 0
+            bin_type = 0
+            
+            oData = NXSData(full_file_name,
+                            bin_type = bin_type,
+                            bins = main_gui.ui.eventTofBins.value(),
+                            callback = None,
+                            event_split_bins = event_split_bins,
+                            event_split_index = event_split_index,
+                            metadata_config_object = oConfig)
         
-                    return oData
+            return oData
 
         return None
 
