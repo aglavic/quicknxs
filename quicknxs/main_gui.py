@@ -2598,7 +2598,7 @@ class MainGUI(QtGui.QMainWindow):
         if (self.active_data is not None) and (_data.active_data.nxs is not None):
           self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
         else: # load the data
-          _run_number = int(cell[0].text())
+          _run_number = int(cell.text())
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
           
           _configDataset = self.bigTableData[row,2]
