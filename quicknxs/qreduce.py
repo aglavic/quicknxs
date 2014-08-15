@@ -175,7 +175,8 @@ class NXSData(object):
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0, low_res_range=[0,303],
                        event_tof_overwrite=None, 
-                       metadata_config_object=None)
+                       metadata_config_object=None,
+                       isData = True)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
@@ -186,6 +187,7 @@ class NXSData(object):
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
     metadata_config_object='LConfigDataset that is only present when the data comes from a config file',
     callback='Function called to update e.g. a progress bar',
+    isData='True or False (if file is a direct beam data set)',
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=100 #: Number of datasets that are kept in the cache
@@ -1104,6 +1106,7 @@ class MRDataset(object):
     '''A attribute to quickly plot data in the qt console'''
     return AttributePloter(self, ['xdata', 'xydata', 'ydata', 'xtofdata', 'tofdata', 'data'])
 
+
 class LConfigDataset(object):
   '''
   This class will be used when loading an XML configuration file and will
@@ -1127,6 +1130,7 @@ class LConfigDataset(object):
   norm_back_flag = True
   norm_low_res = ['0','0']
   norm_low_res_flag = True
+ 
  
 class LRDataset(object):
   '''
@@ -1172,7 +1176,22 @@ class LRDataset(object):
   dMD_units = ''
   filename= ''
   
+  low_resolution_range = [0,303]
+  
   # will be used to keep the GUI in the same state
+  full_file_name = ''
+  use_it_flag = True
+  peak = ['0','0']
+  back = ['0','0']
+  low_res = ['0','0']
+  back_flag = True
+  low_res_flag = True
+  tof = ['0','0'] 
+  tof_units = 'ms'
+  tof_auto_flag = True
+
+
+
   data_full_file_name = ''
   data_peak = ['0','0']
   data_back = ['0','0']
@@ -1203,6 +1222,9 @@ class LRDataset(object):
   countstofdata = None
   countsxdata = None
   ycountsdata = None
+
+  Ixyt = None
+  Exyt = None
 
   xyerror=None #: 2D array of the error projected on X-Y
   xtoferror=None #: 2D array of error projected on X-TOF
@@ -1340,6 +1362,9 @@ class LRDataset(object):
     output.from_event_mode=True
     bin_type=0
 
+    print 'is this file a data file'
+    print output.read_options['isData']
+
     if output.read_options['metadata_config_object'] is not None:
       output = LRDataset.populateOutputWithMetadata(output)
 
@@ -1373,12 +1398,16 @@ class LRDataset(object):
     [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
     
     ## keep only the low resolution range requested
-    #low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
-    #from_pixel = min(low_res_range)
-    #to_pixel = max(low_res_range)
+#    print read_options['low_res_range_flag']
+    low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
+    from_pixel = min(low_res_range)
+    to_pixel = max(low_res_range)
         
-    #Ixyt = Ixyt[from_pixel:to_pixel,:,:]
-    #Exyt = Exyt[from_pixel:to_pixel,:,:]
+    Ixyt = Ixyt[from_pixel:to_pixel,:,:]
+    Exyt = Exyt[from_pixel:to_pixel,:,:]
+    
+    output.Ixyt = Ixyt
+    output.Exyt = Exyt
     
     # create projections for the 2D datasets
     Ixy = Ixyt.sum(axis=2)

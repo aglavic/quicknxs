@@ -413,12 +413,12 @@ class MainGUI(QtGui.QMainWindow):
 
     # we want to add those runs to selected data/norm cell runs
       if do_add:
-  
+
         # get list of previously loaded runs
         [r,c] = self.getCurrentRowColumnSelected()
         if c is not 0:
           c=1
-        
+          
         data = self.bigTableData[r,c]
         _prevLoadedFullFile = data.active_data.filename
         filename = [_prevLoadedFullFile, filename]
@@ -429,13 +429,19 @@ class MainGUI(QtGui.QMainWindow):
       else: # more than 1 file
         strFilename = ", ".join(filename)
         info(u"Reading files %s ..." % strFilename)
+       
+      if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+        isData = True
+      else:
+        isData = False
         
       data=NXSData(filename,
             bin_type=bin_type,
             bins=self.ui.eventTofBins.value(),
             callback=self.updateEventReadout,
             event_split_bins=event_split_bins,
-            event_split_index=event_split_index)
+            event_split_index=event_split_index,
+            isData = isData)
     
       if instrument.NAME == 'REF_M':
         self._fileOpenDone(data, filename, do_plot)
@@ -2575,7 +2581,11 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.addRunNumbers.setEnabled(addButtonStatus)
 
     self.userClickedInTable = True
-
+    cell = self.ui.reductionTable.selectedItems()
+    if cell == []:
+      self.userClickedInTable = False
+      return
+      
     # display norm tab
     if column == 6:
       self.ui.dataNormTabWidget.setCurrentIndex(1)  #FIXME
