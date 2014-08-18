@@ -62,9 +62,9 @@ class ReductionObject(object):
         data = self.oData.active_data       
 #        print 'data: '
 #        print '-> data_low_res_flag: %s' %data.data_low_res_flag
-        if data.data_low_res_flag:
-            from_pixel = int(data.data_low_res[0])
-            to_pixel = int(data.data_low_res[1])
+        if data.low_res_flag:
+            from_pixel = int(data.low_res[0])
+            to_pixel = int(data.low_res[1])
         else:
             from_pixel = int(data.low_resolution_range[0])
             to_pixel = int(data.low_resolution_range[1])
@@ -99,6 +99,13 @@ class ReductionObject(object):
         if self.oNorm is not None:
             norm = self.oNorm.active_data
         
+            if data.low_res_flag:
+                from_pixel = int(data.low_res[0])
+                to_pixel = int(data.low_res[1])
+            else:
+                from_pixel = int(data.low_resolution_range[0])
+                to_pixel = int(data.low_resolution_range[1])
+        
             # calculate y axis
             Ixyt_crop = Ixyt[from_pixel:to_pixel+1,:,:]
             self.norm_y_axis = Ixyt_crop.sum(axis=0)
@@ -125,6 +132,11 @@ class ReductionObject(object):
         data_y_axis = self.data_y_axis
         data_y_error_axis = self.data_y_error_axis
 
+        peak_min = peak[0]
+        peak_max = peak[1]
+        back_min = back[0]
+        back_max = back[1]
+
         # retrieve data peak range
         data = self.oData.active_data       
         if data.back_flag:
@@ -132,11 +144,6 @@ class ReductionObject(object):
             back = data.back
 
             error_0 = self.get_error_0counts(data)
-
-            peak_min = peak[0]
-            peak_max = peak[1]
-            back_min = back[0]
-            back_max = back[1]
             
             tof_dim = np.size(data_y_axis,1)
             
@@ -238,6 +245,8 @@ class ReductionObject(object):
         type is either 'data' or 'norm'
         '''
         
+        isData = True
+        
         # check first if we have a full file name already
         if oConfig is not None:
             if type == 'data':
@@ -246,9 +255,10 @@ class ReductionObject(object):
                     _run_number = oConfig.data_sets
                     full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
             else:
+                isData = False
                 if oConfig.norm_flag:
                     full_file_name = oConfig.norm_full_file_name
-                    if full_file_name == u'':
+                    if full_file_name == u'' or full_file_name == ['']:
                         _run_number = oConfig.norm_sets
                         full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
 
@@ -262,7 +272,8 @@ class ReductionObject(object):
                             callback = None,
                             event_split_bins = event_split_bins,
                             event_split_index = event_split_index,
-                            metadata_config_object = oConfig)
+                            metadata_config_object = oConfig,
+                            isData = isData)
         
             return oData
 
@@ -287,7 +298,10 @@ class REFLReduction(object):
         for row in range(nbrRow):
 
             dataCell = main_gui.ui.reductionTable.item(row,0).text()
-            normCell = main_gui.ui.reductionTable.item(row,6).text()
+            if main_gui.ui.reductionTable.item(row,6) is not None:
+                normCell = main_gui.ui.reductionTable.item(row,6).text()
+            else:
+                normCell = ''
             
             print 'working with DATA %s and NORM %s' %(dataCell, normCell)
             

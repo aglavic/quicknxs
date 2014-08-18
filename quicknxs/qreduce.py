@@ -1186,7 +1186,7 @@ class LRDataset(object):
   low_res = ['0','0']
   back_flag = True
   low_res_flag = True
-  tof = ['0','0'] 
+  tof_range = ['0','0'] 
   tof_units = 'ms'
   tof_auto_flag = True
 
@@ -1302,44 +1302,61 @@ class LRDataset(object):
     the output object
     '''
     output = _output
+    _isData = output.read_options['isData']
 
     _iDataset = output.read_options['metadata_config_object']
     
-    _data_full_file_name = _iDataset.data_full_file_name
-    output.data_full_file_name = _data_full_file_name
+    if _isData:
+     
+      _data_full_file_name = _iDataset.data_full_file_name
+      output.full_file_name = _data_full_file_name
     
-    _data_peak = _iDataset.data_peak
-    output.data_peak = _data_peak
-    _data_back = _iDataset.data_back
-    output.data_back = _data_back
-    _data_low_res = _iDataset.data_low_res
-    output.data_low_res = _data_low_res
-    _data_back_flag = _iDataset.data_back_flag
-    output.data_back_flag = strtobool(_data_back_flag)
-    _data_low_res_flag = _iDataset.data_low_res_flag
-    output.data_low_res_flag = strtobool(_data_low_res_flag)
+      _data_peak = _iDataset.data_peak
+      output.peak = _data_peak
+   
+      _data_back = _iDataset.data_back
+      output.back = _data_back
+
+      _data_low_res = _iDataset.data_low_res
+      output.low_res = _data_low_res
+
+      _data_back_flag = _iDataset.data_back_flag
+      output.back_flag = strtobool(_data_back_flag)
+
+      _data_low_res_flag = _iDataset.data_low_res_flag
+      output.low_res_flag = strtobool(_data_low_res_flag)
+
+    else:    
+
+      _norm_full_file_name = _iDataset.norm_full_file_name
+      output.full_file_name = _norm_full_file_name
+      
+      _norm_flag = _iDataset.norm_flag
+      output.use_it_flag = strtobool(_norm_flag)
+
+      _norm_peak = _iDataset.norm_peak
+      output.peak = _norm_peak
+
+      _norm_back = _iDataset.norm_back
+      output.back = _norm_back
+
+      _norm_back_flag = _iDataset.norm_back_flag
+      output.back_flag = strtobool(_norm_back_flag)
+
+      _norm_low_res = _iDataset.norm_low_res
+      output.low_res = _norm_low_res
+
+      _norm_low_res_flag = _iDataset.norm_low_res_flag
+      output.low_res_flag = strtobool(_norm_low_res_flag)
+
     _tof = _iDataset.tof
     output.tof_range = _tof
+
     _tof_units = _iDataset.tof_units
     output.tof_units = _tof_units
+
     _tof_auto_flag = _iDataset.tof_auto_flag
     output.tof_auto_flag = strtobool(_tof_auto_flag)
-    
-    _norm_full_file_name = _iDataset.norm_full_file_name
-    output.norm_full_file_name = _norm_full_file_name
-    
-    _norm_flag = _iDataset.norm_flag
-    output.norm_flag = strtobool(_norm_flag)
-    _norm_peak = _iDataset.norm_peak
-    output.norm_peak = _norm_peak
-    _norm_back = _iDataset.norm_back
-    output.norm_back = _norm_back
-    _norm_back_flag = _iDataset.norm_back_flag
-    output.norm_back_flag = strtobool(_norm_back_flag)
-    _norm_low_res = _iDataset.norm_low_res
-    output.norm_low_res = _norm_low_res
-    _norm_low_res_flag = _iDataset.norm_low_res_flag
-    output.norm_low_res_flag = strtobool(_norm_low_res_flag)
 
     return output
 

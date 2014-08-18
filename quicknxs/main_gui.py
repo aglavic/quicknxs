@@ -4313,6 +4313,9 @@ Do you want to try to restore the working reduction list?""",
     
     iMetadata.tof_units = 'micros'
     
+    _data_sets = self.getNodeValue(node, 'data_sets')
+    iMetadata.data_sets = _data_sets
+    
     _tof_auto = self.getNodeValue(node, 'tof_range_flag')
     iMetadata.tof_auto_flag = _tof_auto
     
@@ -4327,6 +4330,9 @@ Do you want to try to restore the working reduction list?""",
     _back_max = self.getNodeValue(node, 'norm_to_back_pixels')
     iMetadata.norm_back = [_back_min, _back_max]
     
+    _norm_sets = self.getNodeValue(node, 'norm_dataset')
+    iMetadata.norm_sets = _norm_sets
+
     _low_res_min = self.getNodeValue(node, 'norm_x_min')
     _low_res_max = self.getNodeValue(node, 'norm_x_max')
     iMetadata.norm_low_res = [_low_res_min, _low_res_max]
