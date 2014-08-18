@@ -1360,9 +1360,6 @@ class LRDataset(object):
     output.from_event_mode=True
     bin_type=0
 
-    print 'is this file a data file'
-    print output.read_options['isData']
-
     if output.read_options['metadata_config_object'] is not None:
       output = LRDataset.populateOutputWithMetadata(output)
 

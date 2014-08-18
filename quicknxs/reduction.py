@@ -1,5 +1,6 @@
 from mantid.simpleapi import *
 from .qreduce import NXSData
+import numpy as np
 
 class ReductionObject(object):
 
@@ -11,6 +12,19 @@ class ReductionObject(object):
     oData = None
     oNorm = None
     oConfig = None
+    
+    # after integration over low res range
+    data_y_axis = None
+    data_y_error_axis = None
+    norm_y_axis = None
+    norm_y_error_axis = None
+    
+    # data and norm axis after background subtraction
+    data_y_axis = []
+    data_y_error_axis = []
+    
+    norm_y_axis = []
+    norm_y_error_axis = []
     
     def __init__(self, main_gui, dataCell, normCell, oData, oNorm, oConfig):
         '''
@@ -43,28 +57,180 @@ class ReductionObject(object):
         '''
         This will integrate over the low resolution range of the data and norm objects
         '''
-#        print 'integrate_over_low_res_range'
+        print 'integrate_over_low_res_range'
+
         data = self.oData.active_data       
 #        print 'data: '
 #        print '-> data_low_res_flag: %s' %data.data_low_res_flag
         if data.data_low_res_flag:
-            from_pixel = data.data_low_res[0]
-            to_pixel = data.data_low_res[1]
+            from_pixel = int(data.data_low_res[0])
+            to_pixel = int(data.data_low_res[1])
         else:
-            from_pixel = data.low_resolution_range[0]
-            to_pixel = data.low_resolution_range[1]
+            from_pixel = int(data.low_resolution_range[0])
+            to_pixel = int(data.low_resolution_range[1])
             
 #        print '-> from_pixel: %d' % from_pixel
 #        print '-> to_pixel: %d' % to_pixel
 
-        Ixyt = data.Ixyt
-        print len(Ixyt)
+        Ixyt = data.Ixyt   # for example [303,256,471]
+        Exyt = data.Exyt
+         
+#        x_dim = np.size(Ixyt,0)
+#        y_dim = np.size(Ixyt,1)
+#        tof_dim = np.size(Ixyt,2)
         
+#        _y_error_axis = np.zeros((y_dim, tof_dim))
         
+#        x_size = to_pixel - from_pixel + 1
+#        x_range = np.arange(x_size) + from_pixel
+        
+#        y_range = np.arange(y_dim)
+
+        # calculate y axis
+        Ixyt_crop = Ixyt[from_pixel:to_pixel+1,:,:]
+        self.data_y_axis = Ixyt_crop.sum(axis=0)
+        
+        # calculate error axis
+        Exyt_crop = Exyt[from_pixel:to_pixel+1,:,:]
+        Exyt_crop_sq = Exyt_crop * Exyt_crop
+        _y_error_axis = Exyt_crop_sq.sum(axis=0)
+        self.data_y_error_axis = np.sqrt(_y_error_axis)
+
         if self.oNorm is not None:
             norm = self.oNorm.active_data
         
-            print norm.norm_low_res_flag
+            # calculate y axis
+            Ixyt_crop = Ixyt[from_pixel:to_pixel+1,:,:]
+            self.norm_y_axis = Ixyt_crop.sum(axis=0)
+            
+            # calculate error axis
+            Exyt_crop = Exyt[from_pixel:to_pixel+1,:,:]
+            Exyt_crop_sq = Exyt_crop * Exyt_crop
+            _y_error_axis = Exyt_crop_sq.sum(axis=0)
+            self.norm_y_error_axis = np.sqrt(_y_error_axis)
+
+    def get_error_0counts(self, data):
+        '''
+        return the default error value when error of data is 0
+        '''
+        _proton_charge_nxs = data.proton_charge / 3.6
+        return 1./float(_proton_charge_nxs)
+
+    def substract_data_background(self):
+        '''
+        substract background of data and norm
+        '''
+        print 'substract_background'
+        
+        data_y_axis = self.data_y_axis
+        data_y_error_axis = self.data_y_error_axis
+
+        # retrieve data peak range
+        data = self.oData.active_data       
+        if data.back_flag:
+            peak = data.peak
+            back = data.back
+
+            error_0 = self.get_error_0counts(data)
+
+            peak_min = peak[0]
+            peak_max = peak[1]
+            back_min = back[0]
+            back_max = back[1]
+            
+            tof_dim = np.size(data_y_axis,1)
+            
+            szPeak = int(peak_max) - int(peak_min) + 1
+            
+            final_y_axis = np.zeros((szPeak, tof_dim))
+            final_y_error_axis = np.zeros((szPeak, tof_dim))
+            
+            for t in range(tof_dim):
+                
+                # by default, no space for background subtraction below and above peak
+                bMinBack = False
+                bMaxBack = False
+                
+                if back_min < peak_min:
+
+                    bMinBack = True
+                    _backMinArray = data_y_axis[back_min:peak_min, t]
+                    _backMinErrorArray = data_y_error_axis[back_min:peak_min, t]
+                    [_backMin, _backMinError] = self.weighted_mean(_backMinArray, 
+                                                                   _backMinErrorArray,
+                                                                   error_0)
+                if peak_max < back_max:
+                    
+                    bMaxBack = True
+                    _backMaxArray = data_y_axis[peak_max+1:back_max+1, t]
+                    _backMaxErrorArray = data_y_error_axis[peak_max+1:back_max+1, t]
+                    [_backMax, _backMaxError] = self.weighted_mean(_backMaxArray,
+                                                                   _backMaxErrorArray,
+                                                                   error_0)
+
+                # if no max background use min background only
+                if not bMaxBack:
+                    background = _backMin
+                    background_error = _backMinError
+                
+                # if no min background use max background only
+                if not bMinBack:
+                    background = _backMax
+                    background_error = _backMaxError
+                
+                if bMinBack and bMaxBack:
+                    [background, background_error] = self.weighted_mean([_backMin, _backMax], 
+                                                                        [_backMinError, _backMaxError],
+                                                                        error_0)
+
+                # remove background for each pixel of the peak
+                for x in range(szPeak):
+                    final_y_axis[x,t] = float(data_y_axis[peak_min+x,t]) - float(background)
+                    final_y_error_axis[x,t] = float(np.sqrt(pow(data_y_error_axis[peak_min + x, t],2) +
+                                                            pow(background_error,2)))
+            
+        else: # no background
+            
+            final_y_axis = data_y_axis[peak_min:peak_max+1,:]
+            final_y_error_axis = data_y_error_axis[peak_min:peak_max+1,:]
+            
+        
+        self.data_y_axis = final_y_axis
+        self.data_y_error_axis = final_y_error_axis
+
+
+    def weighted_mean(self, data_array, error_array, error_0):
+        '''
+        weighted mean of an array        
+        '''
+        sz = len(data_array)
+            
+        # calculate the numerator of mean
+        dataNum = 0;
+        for i in range(sz):
+            if (error_array[i] == 0):
+                error_array[i] = error_0
+                
+            tmpFactor = float(data_array[i]) / float((pow(error_array[i],2)))
+            dataNum += tmpFactor
+        
+        # calculate denominator
+        dataDen = 0;
+        for i in range(sz):
+            if (error_array[i] == 0):
+                error_array[i] = error_0
+            tmpFactor = 1./float((pow(error_array[i],2)))
+            dataDen += tmpFactor
+    
+        if dataDen == 0:
+            data_mean = np.NAN
+            mean_error = np.NAN
+        else:            
+            data_mean = float(dataNum) / float(dataDen)
+            mean_error = math.sqrt(1/dataDen)     
+    
+        return [data_mean, mean_error]        
+
 
     def populate_data_object(self, main_gui, oConfig, type):
         '''
@@ -136,7 +302,8 @@ class REFLReduction(object):
             # integrate low res range of data and norm
             red1.integrate_over_low_res_range()
             
-            
+            # subtract background
+            red1.substract_data_background()
             
 
 

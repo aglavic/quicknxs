@@ -3429,7 +3429,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       flag = False
       
-    data.data_back_flag = flag
+    data.back_flag = flag
     self.active_data = data
 
     self.ui.dataBackFromLabel.setEnabled(flag)
@@ -3457,7 +3457,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       flag = False
             
-    data.data_low_res_flag = flag
+    data.low_res_flag = flag
     self.active_data = data
             
     self.ui.dataLowResFromLabel.setEnabled(flag)
@@ -3487,7 +3487,7 @@ Do you want to try to restore the working reduction list?""",
     data = self.active_data
     if data is None:
       return
-    data.norm_flag = flag
+    data.use_it_flag = flag
     self.active_data = data
     
     self.ui.norm_yt_plot.setEnabled(flag)
@@ -3546,7 +3546,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       flag = False
 
-    data.norm_low_res_flag = flag
+    data.low_res_flag = flag
     self.active_data = data
 
     self.ui.normLowResFromLabel.setEnabled(flag)
@@ -3582,7 +3582,7 @@ Do you want to try to restore the working reduction list?""",
       peak_min = peak1
       peak_max = peak2
       
-    data.data_peak = [str(peak_min),str(peak_max)]
+    data.peak = [str(peak_min),str(peak_max)]
     self.active_data = data
     
     self.ui.dataPeakFromValue.setValue(peak_min)
@@ -3619,7 +3619,7 @@ Do you want to try to restore the working reduction list?""",
       back_min = back1
       back_max = back2
       
-    data.data_back = [str(back_min),str(back_max)]
+    data.back = [str(back_min),str(back_max)]
     
     _data.active_data = data
     self.bigTableData[r,c] = _data
@@ -3655,7 +3655,7 @@ Do you want to try to restore the working reduction list?""",
       lowres_min = lowres1
       lowres_max = lowres2
     
-    data.data_low_res = [str(lowres_min),str(lowres_max)]
+    data.low_res = [str(lowres_min),str(lowres_max)]
     self.active_data = data
     
     self.ui.dataLowResFromValue.setValue(lowres_min)
@@ -3689,7 +3689,7 @@ Do you want to try to restore the working reduction list?""",
       peak_min = peak1
       peak_max = peak2
       
-    data.norm_peak = [str(peak_min),str(peak_max)]
+    data.peak = [str(peak_min),str(peak_max)]
     self.active_data = data
     
     self.ui.normPeakFromValue.setValue(peak_min)
@@ -3723,7 +3723,7 @@ Do you want to try to restore the working reduction list?""",
       back_min = back1
       back_max = back2
       
-    data.norm_back = [str(back_min),str(back_max)]
+    data.back = [str(back_min),str(back_max)]
     self.active_data = data
     
     self.ui.normBackFromValue.setValue(back_min)
@@ -3757,7 +3757,7 @@ Do you want to try to restore the working reduction list?""",
       lowres_min = lowres1
       lowres_max = lowres2
     
-    data.norm_low_res = [str(lowres_min),str(lowres_max)]
+    data.low_res = [str(lowres_min),str(lowres_max)]
     self.active_data = data
     
     self.ui.normLowResFromValue.setValue(lowres_min)
@@ -3983,44 +3983,38 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('  <RefLData>\n')
       strArray.append('   <peak_selection_type>narrow</peak_selection_type>\n')
 
-      _metadata = _bigTableData[row,2]
-      if _metadata is not None: # collect data via previously loaded config
-        data_full_file_name = _metadata.data_full_file_name
-        data_peak = _metadata.data_peak
-        data_back = _metadata.data_back
-        data_low_res = _metadata.data_low_res
-        data_back_flag = _metadata.data_back_flag
-        data_low_res_flag = _metadata.data_low_res_flag
-        tof = _metadata.tof
-        tof_units = _metadata.tof_units
-        tof_auto_flag = _metadata.tof_auto_flag
-        norm_full_file_name = _metadata.norm_full_file_name
-        norm_flag = _metadata.norm_flag
-        norm_peak = _metadata.norm_peak
-        norm_back = _metadata.norm_back
-        norm_back_flag = _metadata.norm_back_flag
-        norm_low_res = _metadata.norm_low_res
-        norm_low_res_flag = _metadata.norm_low_res_flag
-      else: # collect information via bigTableData
-        
-        data_info = _bigTableData[row,0]
-        if data_info is not None:
-          _data = data_info.active_data
-        
-          data_full_file_name = _data.filename
-          if type(data_full_file_name) == type([]):
-            data_full_file_name = ','.join(data_full_file_name)
-          data_peak = _data.data_peak
-          data_back = _data.data_back
-          data_low_res = _data.data_low_res
-          data_back_flag = _data.data_back_flag
-          data_low_res_flag = _data.data_low_res_flag
-          tof = _data.tof_range
-          tof_units = _data.tof_units
-          tof_auto_flag = _data.tof_auto_flag
-        
+      # retrieve info from data or norm object in priority
+      data_info = _bigTableData[row,0]
+      if data_info is not None:
+        _data = data_info.active_data
+      
+        data_full_file_name = _data.filename
+        if type(data_full_file_name) == type([]):
+          data_full_file_name = ','.join(full_file_name)
+        data_peak = _data.peak
+        data_back = _data.back
+        data_low_res = _data.low_res
+        data_back_flag = _data.back_flag
+        data_low_res_flag = _data.low_res_flag
+        tof = _data.tof
+        tof_units = _data.tof_units
+        tof_auto_flag = _data.tof_auto_flag
+      
+      else:
+
+        _metadata = _bigTableData[row,2]
+        if _metadata is not None: # collect data via previously loaded config
+          data_full_file_name = _metadata.data_full_file_name
+          data_peak = _metadata.data_peak
+          data_back = _metadata.data_back
+          data_low_res = _metadata.data_low_res
+          data_back_flag = _metadata.data_back_flag
+          data_low_res_flag = _metadata.data_low_res_flag
+          tof = _metadata.tof
+          tof_units = _metadata.tof_units
+          tof_auto_flag = _metadata.tof_auto_flag
+
         else:
-        
           data_full_file_name = ''
           data_peak = ['0','0']
           data_back = ['0','0']
@@ -4030,30 +4024,41 @@ Do you want to try to restore the working reduction list?""",
           tof = ['0','0']
           tof_units = 'ms'
           tof_auto_flag = True
-        
-        norm_info = _bigTableData[row,1]
-        if norm_info is not None:
-          _norm = norm_info.active_data
-        
-          norm_full_file_name = _norm.filename
-          if type(norm_full_file_name) == type([]):
-            norm_full_file_name = ','.join(norm_full_file_name)
-          norm_flag = _norm.norm_flag
-          norm_peak = _norm.norm_peak
-          norm_back = _norm.norm_back
-          norm_back_flag = _norm.norm_back_flag
-          norm_low_res = _norm.norm_low_res
-          norm_low_res_flag = _norm.norm_low_res_flag
-        
-        else:
+
+      norm_info = _bigTableData[row,1]
+      if norm_info is not None:
+        _norm = norm_info.active_data
+               
+        norm_full_file_name = _norm.filename
+        if type(norm_full_file_name) == type([]):
+          norm_full_file_name = ','.join(norm_full_file_name)
+        norm_flag = _norm.norm_flag
+        norm_peak = _norm.norm_peak
+        norm_back = _norm.norm_back
+        norm_back_flag = _norm.norm_back_flag
+        norm_low_res = _norm.norm_low_res
+        norm_low_res_flag = _norm.norm_low_res_flag
           
-          norm_full_file_name = ''
-          norm_flag = True
-          norm_peak = ['0','0']
-          norm_back = ['0','0']
-          norm_back_flag = True
-          norm_low_res = ['0','0']
-          norm_low_res_flag = True
+      else:
+
+        _metadata = _bigTableData[row,2]
+        if _metadata is not None: # collect data via previously loaded config
+          norm_full_file_name = _metadata.norm_full_file_name
+          norm_flag = _metadata.norm_flag
+          norm_peak = _metadata.norm_peak
+          norm_back = _metadata.norm_back
+          norm_back_flag = _metadata.norm_back_flag
+          norm_low_res = _metadata.norm_low_res
+          norm_low_res_flag = _metadata.norm_low_res_flag
+
+        else:
+            norm_full_file_name = ''
+            norm_flag = True
+            norm_peak = ['0','0']
+            norm_back = ['0','0']
+            norm_back_flag = True
+            norm_low_res = ['0','0']
+            norm_low_res_flag = True
         
       strArray.append('   <from_peak_pixels>' + str(data_peak[0]) + '</from_peak_pixels>\n')
       strArray.append('   <to_peak_pixels>' + str(data_peak[1]) + '</to_peak_pixels>\n')
