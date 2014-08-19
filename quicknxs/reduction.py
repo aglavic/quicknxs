@@ -27,6 +27,11 @@ class ReductionObject(object):
     norm_y_axis = []
     norm_y_error_axis = []
     
+    # normalized data (data / normalization file)
+    normalized_data = []
+    normalized_data_error = []
+    
+    
     def __init__(self, main_gui, dataCell, normCell, oData, oNorm, oConfig):
         '''
         Initialize the reduction object by 
@@ -58,7 +63,7 @@ class ReductionObject(object):
         '''
         This will integrate over the low resolution range of the data and norm objects
         '''
-        print 'integrate_over_low_res_range'
+        print 'integrate_over_low_res_range ... PROCESSING'
 
         data = self.oData.active_data       
 #        print 'data: '
@@ -116,6 +121,8 @@ class ReductionObject(object):
             Exyt_crop_sq = Exyt_crop * Exyt_crop
             _y_error_axis = Exyt_crop_sq.sum(axis=0)
             self.norm_y_error_axis = np.sqrt(_y_error_axis)
+
+        print 'integrate_over_low_res_range ... DONE !'
 
     def get_error_0counts(self, data):
         '''
@@ -180,6 +187,47 @@ class ReductionObject(object):
         self.norm_y_axis = final_y_axis_integrated
         self.norm_y_error_axis = final_y_error_axis_integrated
 
+
+    def data_over_normalization(self):
+        '''
+        Divide data by normalization
+        '''
+        
+        print 'data_over_normalization .... PROCESSING'
+        
+        data = self.data_y_axis
+        data_error = self.data_y_error_axis
+        
+        norm = self.norm_y_axis
+        norm_error = self.norm_y_error_axis
+        
+        # get size of data
+        [nbr_pixel, nbr_tof] = np.shape(data)
+
+        normalized_data = np.zeros((nbr_pixel, nbr_tof))
+        normalized_data_error = np.zeros((nbr_pixel, nbr_tof))
+        
+        for t in range(nbr_tof):
+
+            if (norm[t] != 0):
+                tmp_error2 = pow(float(norm_error[t]) / float(norm[t]),2)
+    
+                for x in range(nbr_pixel):
+    
+                    if (norm[t] != 0) and (data[x,t] != 0):
+                        
+                        tmp_value = float(data[x,t]) / float(norm[t])
+                        
+                        tmp_error1 = pow(float(data_error[x,t]) / float(data[x,t]),2)
+                        tmp_error = math.sqrt(tmp_error1 + tmp_error2) * abs(float(data[x,t]) / float(norm[t]))
+                        
+                        normalized_data[x,t] = tmp_value
+                        normalized_data_error[x,t] = tmp_error
+                    
+        self.normalized_data = normalized_data
+        self.normalized_data_error = normalized_data_error
+
+        print 'data_over_normalization .... DONE !'
 
     def full_sum_with_error(self, data, error):
         '''
@@ -400,7 +448,8 @@ class REFLReduction(object):
             # subtract background
             red1.substract_background()
             
-             
+            # data / normalization 
+            red1.data_over_normalization()
 
 
 
