@@ -1,6 +1,7 @@
 from mantid.simpleapi import *
 from .qreduce import NXSData
 import numpy as np
+import math
 
 class ReductionObject(object):
 
@@ -123,30 +124,73 @@ class ReductionObject(object):
         _proton_charge_nxs = data.proton_charge / 3.6
         return 1./float(_proton_charge_nxs)
 
-    def substract_data_background(self):
+
+    def substract_background(self):
+        '''
+        Substract background of data and normalization
+        '''
+        
+        # work with data ===========
+        data_y_axis = self.data_y_axis
+        data_y_error_axis = self.data_y_error_axis
+        
+        # retrieve data peak range
+        data = self.oData.active_data       
+        peak = data.peak
+        back = data.back
+        back_flag = data.back_flag
+        
+        [final_y_axis, final_y_error_axis] = self.substract_data_background(peak, back,
+                                                                            data_y_axis,
+                                                                            data_y_error_axis,
+                                                                            back_flag)
+        self.data_y_axis = final_y_axis
+        self.data_y_error_axis = final_y_error_axis
+        
+        # work with normalizaton =========
+
+        # we don't have a norm object
+        if self.oNorm is None:
+            return
+        
+        # we don't want to use the normalization file
+        if not self.oNorm.active_data.use_it_flag:
+            return
+        
+        norm_y_axis = self.norm_y_axis
+        norm_y_error_axis = self.norm_y_error_axis
+        
+        # retrieve data peak range
+        norm = self.oNorm.active_data       
+        peak = norm.peak
+        back = norm.back
+        back_flag = norm.back_flag
+        
+        [final_y_axis, final_y_error_axis] = self.substract_data_background(peak, back,
+                                                                            norm_y_axis,
+                                                                            norm_y_error_axis,
+                                                                            back_flag)
+        self.norm_y_axis = final_y_axis
+        self.norm_y_error_axis = final_y_error_axis
+        
+        
+        
+
+    def substract_data_background(self, peak, back, data_y_axis, data_y_error_axis, back_flag):
         '''
         substract background of data and norm
         '''
-        print 'substract_background'
+        print 'substract_background ... PROCESSING'
         
-        data_y_axis = self.data_y_axis
-        data_y_error_axis = self.data_y_error_axis
+        peak_min = int(peak[0])
+        peak_max = int(peak[1])
+        back_min = int(back[0])
+        back_max = int(back[1])
 
-        peak_min = peak[0]
-        peak_max = peak[1]
-        back_min = back[0]
-        back_max = back[1]
+        if back_flag:
 
-        # retrieve data peak range
-        data = self.oData.active_data       
-        if data.back_flag:
-            peak = data.peak
-            back = data.back
-
-            error_0 = self.get_error_0counts(data)
-            
+            error_0 = self.get_error_0counts(data)            
             tof_dim = np.size(data_y_axis,1)
-            
             szPeak = int(peak_max) - int(peak_min) + 1
             
             final_y_axis = np.zeros((szPeak, tof_dim))
@@ -200,10 +244,9 @@ class ReductionObject(object):
             
             final_y_axis = data_y_axis[peak_min:peak_max+1,:]
             final_y_error_axis = data_y_error_axis[peak_min:peak_max+1,:]
-            
         
-        self.data_y_axis = final_y_axis
-        self.data_y_error_axis = final_y_error_axis
+        print 'substract_background ... DONE !'
+        return [final_y_axis, final_y_error_axis]
 
 
     def weighted_mean(self, data_array, error_array, error_0):
@@ -317,9 +360,9 @@ class REFLReduction(object):
             red1.integrate_over_low_res_range()
             
             # subtract background
-            red1.substract_data_background()
-            
+            red1.substract_background()
 
+             
 
 
 
