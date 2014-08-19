@@ -141,6 +141,7 @@ class ReductionObject(object):
         back_flag = data.back_flag
         
         [final_y_axis, final_y_error_axis] = self.substract_data_background(peak, back,
+                                                                            data,
                                                                             data_y_axis,
                                                                             data_y_error_axis,
                                                                             back_flag)
@@ -167,16 +168,53 @@ class ReductionObject(object):
         back_flag = norm.back_flag
         
         [final_y_axis, final_y_error_axis] = self.substract_data_background(peak, back,
+                                                                            norm,
                                                                             norm_y_axis,
                                                                             norm_y_error_axis,
                                                                             back_flag)
-        self.norm_y_axis = final_y_axis
-        self.norm_y_error_axis = final_y_error_axis
-        
-        
-        
 
-    def substract_data_background(self, peak, back, data_y_axis, data_y_error_axis, back_flag):
+        # integrate norm data 2D -> 1D
+        [final_y_axis_integrated, final_y_error_axis_integrated] = self.full_sum_with_error(final_y_axis,
+                                                                                            final_y_error_axis)
+        
+        self.norm_y_axis = final_y_axis_integrated
+        self.norm_y_error_axis = final_y_error_axis_integrated
+
+
+    def full_sum_with_error(self, data, error):
+        '''
+        Integrate data with error
+        '''
+
+        [nbr_pixel, nbr_tof] = np.shape(data)
+        
+        final_data = np.zeros(nbr_tof)
+        final_error = np.zeros(nbr_tof)
+        
+        for t in range(nbr_tof):
+            [tmp_data, tmp_error] = self.sum_with_error(data[:,t], error[:,t])
+
+            final_data[t] = tmp_data
+            final_error[t] = tmp_error
+
+        return [final_data, final_error]
+
+
+    def sum_with_error(self, data, error):
+        
+        sum_value = sum(data)
+        
+        tmp_sum_error = 0
+        for i in range(len(data)):
+            tmp_value = pow(error[i],2)
+            tmp_sum_error += tmp_value
+        
+        sum_error = math.sqrt(tmp_sum_error)
+        
+        return [sum_value, sum_error]
+
+
+    def substract_data_background(self, peak, back, data, data_y_axis, data_y_error_axis, back_flag):
         '''
         substract background of data and norm
         '''
@@ -361,7 +399,7 @@ class REFLReduction(object):
             
             # subtract background
             red1.substract_background()
-
+            
              
 
 
