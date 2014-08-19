@@ -45,7 +45,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
@@ -94,7 +94,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
@@ -143,7 +143,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
@@ -192,7 +192,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
@@ -241,7 +241,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
@@ -290,7 +290,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
@@ -339,7 +339,7 @@
 <angle_offset>0.008</angle_offset>
 <angle_offset_error>0.001</angle_offset_error>
 <scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
 <slits_width_flag>True</slits_width_flag>
 <geometry_correction_switch>False</geometry_correction_switch>
 <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>

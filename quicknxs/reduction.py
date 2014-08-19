@@ -2,6 +2,7 @@ from mantid.simpleapi import *
 from .qreduce import NXSData
 import numpy as np
 import math
+import os
 
 class ReductionObject(object):
 
@@ -58,6 +59,54 @@ class ReductionObject(object):
                     oNorm = None
                 
         self.oNorm = oNorm
+
+    def apply_sclaing_factor(self, main_gui):
+        '''
+        This function will apply the scaling factor of the scaling factor file (.txt)
+        which has been created by the sfCalculator program
+        '''
+        
+        if not main_gui.ui.scalingFactorFlag.isChecked():
+            return
+        
+        print 'apply_scaling_factor ... PROCESSING'
+        
+        sf_full_file_name = main_gui.ui.scalingFactorFile.text()
+        if os.path.isfile(sf_full_file_name):
+            print '-> scaling factor file FOUND! (', sf_full_file_name, ')'
+            
+            # parse file and put info into an array
+            sfFactorTable = self.parse_scaling_factor_file(sf_full_file_name)
+            
+            # incident medium selected
+            _incident_medium = main_gui.ui.selectIncidentMediumList.currentText().strip()
+            
+            # get lambda requested
+            _lambda_requested = self.oData.active_data.lambda_requested
+
+            # retrieve slits parameters
+            s1h_value = abs(self.oData.active_data.S1H)
+            s2h_value = abs(self.oData.active_data.S2H)
+            s1w_value = abs(self.oData.active_data.S1W)
+            s2w_value = abs(self.oData.active_data.S2W)
+            
+        else:
+            print '-> scaling factor file for requested lambda NOT FOUND !'
+        
+        
+            
+    def parse_scaling_factor_file(self, sf_full_file_name):
+        '''
+        will parse the scaling factor file
+        '''
+        f = open(sf_full_file_name,'r')
+        sfFactorTable = []
+        for line in f.read().split('\n'):
+            if (len(line) > 0) and (line[0] != '#'):
+                sfFactorTable.append(line.split(' '))
+        f.close()
+        return sfFactorTable
+
 
     def integrate_over_low_res_range(self):
         '''
@@ -451,7 +500,9 @@ class REFLReduction(object):
             # data / normalization 
             red1.data_over_normalization()
 
-
+            # apply scaling factor
+            red1.apply_sclaing_factor(main_gui)
+            
 
 
 
