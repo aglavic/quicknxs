@@ -1,5 +1,6 @@
 from mantid.simpleapi import *
 from .qreduce import NXSData
+import logbook
 import numpy as np
 import math
 import os
@@ -32,69 +33,202 @@ class ReductionObject(object):
     normalized_data = []
     normalized_data_error = []
     
+    # scaled data (after normalization)
+    scaled_normalized_data = []
+    scaled_normalized_data_error = []
+    
+    main_gui = None
     
     def __init__(self, main_gui, dataCell, normCell, oData, oNorm, oConfig):
         '''
         Initialize the reduction object by 
         setting data and normalization files
         '''
+        self.main_gui = main_gui
+        
         self.dataCell = dataCell
         self.normCell = normCell
         
         self.oConfig = oConfig
 
+        self.logbook('Initialize reduction objects (data and norm)')
+
         # if the oData is empty, retrieve info from oConfig
         if oData is None:
+            self.logbook('-> data: oData is None => we need to retrieve it from config object')
             oData = self.populate_data_object(main_gui, oConfig, 'data')
         self.oData = oData
         
         # retrieve norm if user wants norm and if normCell is not empty
         if normCell != '':
+            self.logbook('-> normCell is not empty: %s'% normCell)
             if oNorm is None:
+                self.logbook('--> oNorm is None')
                 # make sure the norm flag is on in the config file
                 if oConfig.norm_flag:
+                    self.logbook('---> yes, we want to use normalization file')
                     oNorm = self.populate_data_object(main_gui, oConfig, 'norm')
+                else:
+                    self.logbook('---> no, we do not want to use normalization file')
             else: # make sure the flag is ON         
-                if not(oNorm.active_data.norm_flag):
+                self.logbook('--> oNorm exist')
+                if not(oNorm.active_data.use_it_flag):
+                    self.logbook('---> no, we do not want to use normalization file')
                     oNorm = None
-                
+                else:
+                    self.logbook('---> yes, we want to use normalization file')
+                                    
         self.oNorm = oNorm
 
-    def apply_sclaing_factor(self, main_gui):
+    def logbook(self, text, appendFlag=True):
+        if appendFlag:
+            self.main_gui.ui.logbook.append(text)
+        else:
+            self.main_gui.ui.logbook.undo()
+            self.main_gui.ui.logbook.append(text)
+
+    def apply_scaling_factor(self, main_gui):
         '''
         This function will apply the scaling factor of the scaling factor file (.txt)
         which has been created by the sfCalculator program
         '''
         
+        self.logbook('-> Apply scaling factor')
+        
         if not main_gui.ui.scalingFactorFlag.isChecked():
+            self.logbook('--> User do not want scaling factor!')
+            self.scaled_normalized_data = self.normalized_data
+            self.scaled_normalized_data_error = self.normalized_data_error
             return
         
-        print 'apply_scaling_factor ... PROCESSING'
-        
         sf_full_file_name = main_gui.ui.scalingFactorFile.text()
+        self.logbook('--> scaling factor file: ' + sf_full_file_name)
         if os.path.isfile(sf_full_file_name):
-            print '-> scaling factor file FOUND! (', sf_full_file_name, ')'
+            self.logbook('---> scaling factor file FOUND!')
             
             # parse file and put info into an array
             sfFactorTable = self.parse_scaling_factor_file(sf_full_file_name)
+            [nbr_row, nbr_column] = np.shape(sfFactorTable)
+            self.logbook('---> File has ' + str(nbr_row) + ' incident media listed')
             
             # incident medium selected
             _incident_medium = main_gui.ui.selectIncidentMediumList.currentText().strip()
+            self.logbook('---> incident medium: ' + _incident_medium)
             
             # get lambda requested
             _lambda_requested = self.oData.active_data.lambda_requested
+            self.logbook('---> lambda requested: ' + str(_lambda_requested) + ' lambda')
 
             # retrieve slits parameters
             s1h_value = abs(self.oData.active_data.S1H)
             s2h_value = abs(self.oData.active_data.S2H)
             s1w_value = abs(self.oData.active_data.S1W)
             s2w_value = abs(self.oData.active_data.S2W)
+            self.logbook('---> s1h: ' + str(s1h_value))
+            self.logbook('---> s2h: ' + str(s2h_value))
+            self.logbook('---> s1w: ' + str(s1w_value))
+            self.logbook('---> s2w: ' + str(s2w_value))
             
+            # precision requested
+            value_precision = float(self.main_gui.ui.sfPrecision.text())
+            
+            self.logbook('---> looping through all media listed in file:')
+            for i in range(nbr_row):
+                
+                _file_incident_medium = self.get_table_field_value(sfFactorTable, i, 0)
+                self.logbook('----> ' + _file_incident_medium)
+                if (_file_incident_medium.strip() == _incident_medium.strip()):
+
+                    self.logbook('----> ' + _file_incident_medium + '-' + _incident_medium + ' => FOUND MATCH!')
+                    # check that lambda requested match
+                    _file_lambda_requested = self.get_table_field_value(sfFactorTable, i, 1)
+                    if (self.is_within_precision_range(_file_lambda_requested, 
+                                                       _lambda_requested,
+                                                       value_precision)):
+                        
+                        self.logbook('----> lambda_requested => FOUND MATCH!')
+                        # check that s1h match
+                        _file_s1h = self.get_table_field_value(sfFactorTable, i, 2)
+                        if (self.is_within_precision_range(_file_s1h,
+                                                           s1h_value,
+                                                           value_precision)):
+                            
+                            self.logbook('----> s1h => FOUND MATCH!')
+                            # check that s2h match
+                            _file_s2h = self.get_table_field_value(sfFactorTable, i, 3)
+                            if (self.is_within_precision_range(_file_s2h,
+                                                               s2h_value,
+                                                               value_precision)):
+            
+                                self.logbook('----> s2h => FOUND MATCH!')
+                                if self.main_gui.ui.scalingFactorSlitsWidthFlag.isChecked():
+
+                                    # check that s1w match
+                                    _file_s1w = self.get_table_field_value(sfFactorTable, i, 4)
+                                    if (self.is_within_precision_range(_file_s1w,
+                                                                       s1w_value,
+                                                                       value_precision)):
+                
+                                        self.logbook('----> s1w => FOUND MATCH!')
+                                        # check that s2w match
+                                        _file_s2w = self.get_table_field_value(sfFactorTable, i, 5)
+                                        if (self.is_within_precision_range(_file_s2w,
+                                                                           s2w_value,
+                                                                           value_precision)):
+                
+                                            self.logbook('----> s2w => FOUND MATCH!')
+                                            self.logbook('----> Found a perfect match !')
+                                            
+                                            # retrieve parameters
+                                            a = float(self.get_table_field_value(sfFactorTable, i, 6))
+                                            b = float(self.get_table_field_value(sfFactorTable, i, 7))
+                                            a_error = float(self.get_table_field_value(sfFactorTable, i, 8))
+                                            b_error = float(self.get_table_field_value(sfFactorTable, i, 9))
+                                            
+                                            self.apply_scaling_factor_to_data(a, b, a_error, b_error)
+                                        
+                                else:
+                                    
+                                    self.logbook('----> Found a perfect match !')
+                                    
+                                    # retrieve parameters
+                                    a = float(self.get_table_field_value(sfFactorTable, i, 6))
+                                    b = float(self.get_table_field_value(sfFactorTable, i, 7))
+                                    a_error = float(self.get_table_field_value(sfFactorTable, i, 8))
+                                    b_error = float(self.get_table_field_value(sfFactorTable, i, 9))
+                                    
+                                    self.apply_scaling_factor_to_data(a, b, a_error, b_error)
+                                    
         else:
-            print '-> scaling factor file for requested lambda NOT FOUND !'
+            self.logbook('---> scaling factor file for requested lambda NOT FOUND !')
+        
+
+    def apply_scaling_factor_to_data(self, a, b, a_error, b_error):
+        '''
+        This function will create for each x-axis value, the corresponding
+        scaling factor using the formula y=a+bx
+        '''
+        tof_axis = self.oData.active_data.tof_edges
+        print tof_axis
         
         
-            
+        
+        
+        
+
+    def is_within_precision_range(self, value1, value2, precision):
+        diff = abs(float(value2))-abs(float(value1))
+        if abs(diff) <= precision:
+            return True
+        else:
+            return False
+        
+
+    def get_table_field_value(self, table, row, column):
+        _tag_value = table[row][column]
+        _tag_value_split = _tag_value.split('=')
+        return _tag_value_split[1]
+
     def parse_scaling_factor_file(self, sf_full_file_name):
         '''
         will parse the scaling factor file
@@ -112,7 +246,7 @@ class ReductionObject(object):
         '''
         This will integrate over the low resolution range of the data and norm objects
         '''
-        print 'integrate_over_low_res_range ... PROCESSING'
+        self.logbook('-> integrate_over_low_res_range ... PROCESSING')
 
         data = self.oData.active_data       
 #        print 'data: '
@@ -171,7 +305,7 @@ class ReductionObject(object):
             _y_error_axis = Exyt_crop_sq.sum(axis=0)
             self.norm_y_error_axis = np.sqrt(_y_error_axis)
 
-        print 'integrate_over_low_res_range ... DONE !'
+        self.logbook('-> integrate_over_low_res_range ... DONE !', False)
 
     def get_error_0counts(self, data):
         '''
@@ -185,6 +319,8 @@ class ReductionObject(object):
         '''
         Substract background of data and normalization
         '''
+        
+        self.logbook('-> substract background ... PROCESSING')
         
         # work with data ===========
         data_y_axis = self.data_y_axis
@@ -236,13 +372,14 @@ class ReductionObject(object):
         self.norm_y_axis = final_y_axis_integrated
         self.norm_y_error_axis = final_y_error_axis_integrated
 
+        self.logbook('-> substract background ... DONE!', False)
 
     def data_over_normalization(self):
         '''
         Divide data by normalization
         '''
         
-        print 'data_over_normalization .... PROCESSING'
+        self.logbook('-> data_over_normalization .... PROCESSING')
         
         data = self.data_y_axis
         data_error = self.data_y_error_axis
@@ -276,7 +413,7 @@ class ReductionObject(object):
         self.normalized_data = normalized_data
         self.normalized_data_error = normalized_data_error
 
-        print 'data_over_normalization .... DONE !'
+        self.logbook('-> data_over_normalization .... DONE!', False)
 
     def full_sum_with_error(self, data, error):
         '''
@@ -315,7 +452,6 @@ class ReductionObject(object):
         '''
         substract background of data and norm
         '''
-        print 'substract_background ... PROCESSING'
         
         peak_min = int(peak[0])
         peak_max = int(peak[1])
@@ -380,7 +516,6 @@ class ReductionObject(object):
             final_y_axis = data_y_axis[peak_min:peak_max+1,:]
             final_y_error_axis = data_y_error_axis[peak_min:peak_max+1,:]
         
-        print 'substract_background ... DONE !'
         return [final_y_axis, final_y_error_axis]
 
 
@@ -459,12 +594,19 @@ class ReductionObject(object):
 
 class REFLReduction(object):
 
-    # bigTableData = None
+    main_gui = None
+
+    def logbook(cls, text):
+        # add log book message
+        cls.main_gui.ui.logbook.append(text)
 
     def __init__(cls, main_gui):
         '''
         Initialize the REFL reduction
         '''
+
+        cls.main_gui = main_gui
+        cls.logbook('Running data reduction ...')
 
         # retrive full data to reduce
         bigTableData = main_gui.bigTableData
@@ -472,44 +614,42 @@ class REFLReduction(object):
         # number of reduction process to run
         nbrRow = main_gui.ui.reductionTable.rowCount()
         
-        nbrRow = 1 #FIXME
-        for row in range(nbrRow):
+#        nbrRow = 1 #FIXME
+#        for row in range(nbrRow):
 
-            dataCell = main_gui.ui.reductionTable.item(row,0).text()
-            if main_gui.ui.reductionTable.item(row,6) is not None:
-                normCell = main_gui.ui.reductionTable.item(row,6).text()
-            else:
-                normCell = ''
+        row = 3
+
+        dataCell = main_gui.ui.reductionTable.item(row,0).text()
+        if main_gui.ui.reductionTable.item(row,6) is not None:
+            normCell = main_gui.ui.reductionTable.item(row,6).text()
+        else:
+            normCell = ''
+        
+        cls.logbook('Working with DATA: %s and NORM: %s' %(dataCell, normCell))
+        
+        dataObject = bigTableData[row,0]
+        normObject = bigTableData[row,1]
+        configObject = bigTableData[row,2]
+        
+        red1 = ReductionObject(main_gui, dataCell, normCell, dataObject, normObject, configObject)
+        bigTableData[row,0] = red1.oData
+        bigTableData[row,1] = red1.oNorm
+
+        # integrate low res range of data and norm
+        red1.integrate_over_low_res_range()
+        
+        # subtract background
+        red1.substract_background()
+        
+        # data / normalization 
+        red1.data_over_normalization()
+
+        # apply scaling factor
+        red1.apply_scaling_factor(main_gui)
+
+
+        cls.logbook('')
             
-            print 'working with DATA %s and NORM %s' %(dataCell, normCell)
-            
-            dataObject = bigTableData[row,0]
-            normObject = bigTableData[row,1]
-            configObject = bigTableData[row,2]
-            
-            red1 = ReductionObject(main_gui, dataCell, normCell, dataObject, normObject, configObject)
-            bigTableData[row,0] = red1.oData
-            bigTableData[row,1] = red1.oNorm
-
-            # integrate low res range of data and norm
-            red1.integrate_over_low_res_range()
-            
-            # subtract background
-            red1.substract_background()
-            
-            # data / normalization 
-            red1.data_over_normalization()
-
-            # apply scaling factor
-            red1.apply_sclaing_factor(main_gui)
-            
-
-
-
-
-
-
-
 
         # put back the object created in the bigTable to speed up next preview / load
         main_gui.bigTableData = bigTableData

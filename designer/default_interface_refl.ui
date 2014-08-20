@@ -186,7 +186,7 @@ p, li { white-space: pre-wrap; }
           <property name="minimumSize">
            <size>
             <width>258</width>
-            <height>300</height>
+            <height>320</height>
            </size>
           </property>
           <property name="frameShape">
@@ -196,7 +196,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
@@ -324,7 +324,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>156</height>
+             <height>165</height>
             </rect>
            </property>
            <attribute name="label">
@@ -427,7 +427,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>145</height>
+             <height>165</height>
             </rect>
            </property>
            <attribute name="label">
@@ -514,7 +514,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>145</height>
+             <height>165</height>
             </rect>
            </property>
            <attribute name="label">
@@ -536,10 +536,10 @@ p, li { white-space: pre-wrap; }
            <widget class="QPushButton" name="pushButton_3">
             <property name="geometry">
              <rect>
-              <x>9</x>
-              <y>27</y>
+              <x>6</x>
+              <y>71</y>
               <width>114</width>
-              <height>32</height>
+              <height>27</height>
              </rect>
             </property>
             <property name="text">
@@ -549,18 +549,18 @@ p, li { white-space: pre-wrap; }
            <widget class="QLineEdit" name="scalingFactorFile">
             <property name="geometry">
              <rect>
-              <x>9</x>
-              <y>66</y>
+              <x>6</x>
+              <y>105</y>
               <width>244</width>
               <height>22</height>
              </rect>
             </property>
            </widget>
-           <widget class="QCheckBox" name="scalingFactorSlitsFlag">
+           <widget class="QCheckBox" name="scalingFactorSlitsWidthFlag">
             <property name="geometry">
              <rect>
-              <x>110</x>
-              <y>1</y>
+              <x>9</x>
+              <y>23</y>
               <width>141</width>
               <height>20</height>
              </rect>
@@ -572,8 +572,8 @@ p, li { white-space: pre-wrap; }
            <widget class="QComboBox" name="selectIncidentMediumList">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>98</y>
+              <x>8</x>
+              <y>133</y>
               <width>242</width>
               <height>27</height>
              </rect>
@@ -584,6 +584,38 @@ p, li { white-space: pre-wrap; }
              </property>
             </item>
            </widget>
+           <widget class="QLabel" name="label_6">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>48</y>
+              <width>84</width>
+              <height>17</height>
+             </rect>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Precision:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+           <widget class="QLineEdit" name="sfPrecision">
+            <property name="geometry">
+             <rect>
+              <x>102</x>
+              <y>42</y>
+              <width>76</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>0.010</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="page_5">
            <property name="geometry">
@@ -591,7 +623,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>145</height>
+             <height>165</height>
             </rect>
            </property>
            <attribute name="label">
@@ -855,7 +887,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -2958,7 +2990,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -2988,7 +3020,7 @@ p, li { white-space: pre-wrap; }
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3309,6 +3341,16 @@ p, li { white-space: pre-wrap; }
          </property>
          <item>
           <widget class="CompareWidget" name="widget_5" native="true"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="logbookTab">
+        <attribute name="title">
+         <string>Logbook</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QTextEdit" name="logbook"/>
          </item>
         </layout>
        </widget>

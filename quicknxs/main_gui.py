@@ -4123,7 +4123,7 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <scaling_factor_flag>' + str(scalingFactorFlag) + '</scaling_factor_flag>\n')
       scalingFactorFile = self.ui.scalingFactorFile.text()
       strArray.append('   <scaling_factor_file>' + scalingFactorFile + '</scaling_factor_file>\n')
-      scalingFactorSlitsFlag = self.ui.scalingFactorSlitsFlag.isChecked()
+      scalingFactorSlitsFlag = self.ui.scalingFactorSlitsWidthFlag.isChecked()
       strArray.append('   <slits_width_flag>' + str(scalingFactorSlitsFlag) + '</slits_width_flag>\n')
       
       geometryCorrectionFlag = self.ui.geometryCorrectionFlag.isChecked()
@@ -4218,7 +4218,7 @@ Do you want to try to restore the working reduction list?""",
         self.ui.scalingFactorFlag.setChecked(strtobool(scaling_factor_flag))
         
         slits_width_flag = self.getNodeValue(node, 'slits_width_flag')
-        self.ui.scalingFactorSlitsFlag.setChecked(strtobool(slits_width_flag))
+        self.ui.scalingFactorSlitsWidthFlag.setChecked(strtobool(slits_width_flag))
 
         incident_medium_list = self.getNodeValue(node, 'incident_medium_list')
         im_list = incident_medium_list.split(',')
