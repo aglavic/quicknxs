@@ -186,6 +186,11 @@ class ReductionObject(object):
                                             b_error = float(self.get_table_field_value(sfFactorTable, i, 9))
                                             
                                             self.apply_scaling_factor_to_data(a, b, a_error, b_error)
+                                            return
+                                        
+                                        else:
+                                            
+                                            self.logbook('----> DID NOT FIND A PERFECT MATCH!')
                                         
                                 else:
                                     
@@ -198,6 +203,7 @@ class ReductionObject(object):
                                     b_error = float(self.get_table_field_value(sfFactorTable, i, 9))
                                     
                                     self.apply_scaling_factor_to_data(a, b, a_error, b_error)
+                                    return
                                     
         else:
             self.logbook('---> scaling factor file for requested lambda NOT FOUND !')
@@ -209,12 +215,70 @@ class ReductionObject(object):
         scaling factor using the formula y=a+bx
         '''
         tof_axis = self.oData.active_data.tof_edges
-        print tof_axis
+        nbr_tof = len(tof_axis)
         
+        x_axis_factor = np.zeros(nbr_tof)
+        x_axis_factor_error = np.zeros(nbr_tof)
         
+        _scaled_normalized_data = self.normalized_data
+        _scaled_normalized_data_error = self.normalized_data_error
         
+        for i in range(nbr_tof):
+            
+            _x_value = float(tof_axis[i])
+            _factor = _x_value * b + a
+            x_axis_factor[i] = _factor
+            _factor_error = _x_value * b_error + a_error
+            x_axis_factor_error[i] = _factor_error
+            
+        [nbr_pixel, nbr_tof] = np.shape(_scaled_normalized_data)
         
+        scaled_normalized_data = np.zeros((nbr_pixel, nbr_tof))
+        scaled_normalized_data_error = np.zeros((nbr_pixel, nbr_tof))
         
+        for x in range(nbr_pixel):
+            
+            [ratio_array, ratio_array_error] = self.divide_arrays(_scaled_normalized_data[x,:],
+                                                                  _scaled_normalized_data_error[x,:],
+                                                                  x_axis_factor,
+                                                                  x_axis_factor_error)
+            
+            scaled_normalized_data[x,:] = ratio_array[:]
+            scaled_normalized_data_error[x,:] = ratio_array_error[:]
+        
+        self.scaled_normalized_data = scaled_normalized_data
+        self.scaled_normalized_data_error = scaled_normalized_data_error
+
+
+    def divide_arrays(self, num_array, num_array_error, den_array, den_array_error):
+        '''
+        This function calculates the ratio of two arrays and calculate the respective error values
+        '''
+
+        nbr_elements = np.shape(num_array)[0]
+        
+        # calculate the ratio array
+        ratio_array = np.zeros(nbr_elements)
+        for i in range(nbr_elements):
+            if den_array[i] is 0:
+                _tmp_ratio = 0
+            else:
+                _tmp_ratio = num_array[i] / den_array[i]
+            ratio_array[i] = _tmp_ratio
+            
+        # calculate the error of the ratio array
+        ratio_error_array = np.zeros(nbr_elements)
+        for i in range(nbr_elements):
+            
+            if (num_array[i] == 0) or (den_array[i] == 0): 
+                ratio_error_array[i] = 0 
+            else:
+                tmp1 = pow(num_array_error[i] / num_array[i],2)
+                tmp2 = pow(den_array_error[i] / den_array[i],2)
+                ratio_error_array[i] = math.sqrt(tmp1+tmp2)*(num_array[i]/den_array[i])
+    
+        return [ratio_array, ratio_error_array]        
+
 
     def is_within_precision_range(self, value1, value2, precision):
         diff = abs(float(value2))-abs(float(value1))
