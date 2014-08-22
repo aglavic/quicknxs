@@ -8,7 +8,7 @@ import os
 import sys
 from math import radians, fabs
 from glob import glob
-from numpy import where, pi, newaxis, log10, array, empty
+from numpy import where, pi, newaxis, log10, array, empty, shape
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore
 from mantid.simpleapi import *
@@ -4345,6 +4345,51 @@ Do you want to try to restore the working reduction list?""",
 
     return iMetadata
 
+  def sf_browse_button(self):
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open scaling factor file', '.',"sfConfig (*.cfg)")
+    if filename is not '':
+      self.ui.scalingFactorFile.setText(filename)
+      self.populate_sf_widgets(filename)
+
+
+  def populate_sf_widgets(self, filename):
+    listMedium = self.parse_scaling_factor_file(filename)
+    self.ui.selectIncidentMediumList.addItems(listMedium)
+
+
+  def parse_scaling_factor_file(self, filename):
+    '''
+    will parse the scaling factor file
+    '''
+    f = open(filename,'r')
+    sfFactorTable = []
+    for line in f.read().split('\n'):
+      if (len(line) > 0) and (line[0] != '#'):
+        sfFactorTable.append(line.split(' '))
+    f.close()
+    
+    uniqIncidentMedium = self.list_uniq_incident_medium(sfFactorTable)
+    return uniqIncidentMedium
+
+
+  def list_uniq_incident_medium(self, table):
+    
+    [nbr_row, nbr_column] = shape(table)
+    first_column_only = []
+    for i in range(nbr_row):
+      _line_split = table[i][0].split('=')
+      first_column_only.append(_line_split[1])
+    
+    return sorted(set(first_column_only))
+    
+
+  def sf_widgets_status(self, bool):
+    self.ui.label_sf_precision.setEnabled(bool)
+    self.ui.sfPrecision.setEnabled(bool)
+    self.ui.scalingFactorSlitsWidthFlag.setEnabled(bool)
+    self.ui.scalingFactorFile.setEnabled(bool)
+    self.ui.selectIncidentMediumList.setEnabled(bool)
+    self.ui.sfBrowseButton.setEnabled(bool)
 
   @log_call
   def runReduction(self):

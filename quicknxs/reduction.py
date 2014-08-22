@@ -4,6 +4,7 @@ import logbook
 import numpy as np
 import math
 import os
+import constants
 
 class ReductionObject(object):
 
@@ -80,6 +81,38 @@ class ReductionObject(object):
                                     
         self.oNorm = oNorm
 
+    def convert_to_Q(self):
+        '''
+        function convert to Q data
+        '''
+        
+        self.logbook('-> Convert to Q')
+        
+        if self.main_gui.ui.geometryCorrectionFlag.isChecked():
+#            convert_to_Q_with_geometry_correction()
+            self.logbook('--> With geometry correction')
+        else:
+            self.logbook('--> Without geometry correction')
+            self.convert_to_Q_no_geometry_correction()
+            
+            
+            
+            
+
+    def convert_to_Q_no_geometry_correction(self):
+        '''
+        No geometry correction
+        Will convert the tof axis into a Q axis using Q range specified
+        '''
+        
+        _const = 4. * math.pi * constants.mn * self.oData.active_data.dSD / constants.h
+        print _const
+#        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.)
+        
+
+
+
+
     def logbook(self, text, appendFlag=True):
         if appendFlag:
             self.main_gui.ui.logbook.append(text)
@@ -87,13 +120,14 @@ class ReductionObject(object):
             self.main_gui.ui.logbook.undo()
             self.main_gui.ui.logbook.append(text)
 
-    def apply_scaling_factor(self, main_gui):
+    def apply_scaling_factor(self):
         '''
         This function will apply the scaling factor of the scaling factor file (.txt)
         which has been created by the sfCalculator program
         '''
         
         self.logbook('-> Apply scaling factor')
+        main_gui = self.main_gui
         
         if not main_gui.ui.scalingFactorFlag.isChecked():
             self.logbook('--> User do not want scaling factor!')
@@ -709,10 +743,13 @@ class REFLReduction(object):
         red1.data_over_normalization()
 
         # apply scaling factor
-        red1.apply_scaling_factor(main_gui)
+        red1.apply_scaling_factor()
+
+        # convert to Q
+        red1.convert_to_Q()
 
 
-        cls.logbook('')
+        cls.logbook('================================================')
             
 
         # put back the object created in the bigTable to speed up next preview / load

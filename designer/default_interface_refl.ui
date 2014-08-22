@@ -533,11 +533,14 @@ p, li { white-space: pre-wrap; }
              <string>Use it</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="sfBrowseButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
-              <x>6</x>
-              <y>71</y>
+              <x>7</x>
+              <y>54</y>
               <width>114</width>
               <height>27</height>
              </rect>
@@ -547,16 +550,22 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
            <widget class="QLineEdit" name="scalingFactorFile">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
-              <x>6</x>
-              <y>105</y>
+              <x>4</x>
+              <y>97</y>
               <width>244</width>
               <height>22</height>
              </rect>
             </property>
            </widget>
            <widget class="QCheckBox" name="scalingFactorSlitsWidthFlag">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>9</x>
@@ -570,6 +579,9 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
            <widget class="QComboBox" name="selectIncidentMediumList">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>8</x>
@@ -584,11 +596,14 @@ p, li { white-space: pre-wrap; }
              </property>
             </item>
            </widget>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_sf_precision">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>48</y>
+              <x>100</x>
+              <y>3</y>
               <width>84</width>
               <height>17</height>
              </rect>
@@ -604,11 +619,14 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
            <widget class="QLineEdit" name="sfPrecision">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
-              <x>102</x>
-              <y>42</y>
-              <width>76</width>
+              <x>191</x>
+              <y>0</y>
+              <width>52</width>
               <height>27</height>
              </rect>
             </property>
@@ -5008,6 +5026,38 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>scalingFactorFlag</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>sf_widgets_status()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>54</x>
+     <y>757</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sfBrowseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>sf_browse_button()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>815</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5082,5 +5132,7 @@ p, li { white-space: pre-wrap; }
   <slot>bigTable_selection_changed()</slot>
   <slot>data_norm_tab_changed()</slot>
   <slot>runReduction()</slot>
+  <slot>sf_widgets_status()</slot>
+  <slot>sf_browse_button()</slot>
  </slots>
 </ui>
