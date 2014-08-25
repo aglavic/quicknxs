@@ -4216,6 +4216,7 @@ Do you want to try to restore the working reduction list?""",
 
         scaling_factor_flag = self.getNodeValue(node, 'scaling_factor_flag')
         self.ui.scalingFactorFlag.setChecked(strtobool(scaling_factor_flag))
+        self.sf_widgets_status(strtobool(scaling_factor_flag))
         
         slits_width_flag = self.getNodeValue(node, 'slits_width_flag')
         self.ui.scalingFactorSlitsWidthFlag.setChecked(strtobool(slits_width_flag))
