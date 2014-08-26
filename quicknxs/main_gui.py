@@ -2612,6 +2612,8 @@ class MainGUI(QtGui.QMainWindow):
 
   def bigTable_selection_changed(self, row, column):    
 
+    print 'in bigTable_selection_changed'
+
     # if selection of same row and not data or column 0 and 6
     if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
       return
@@ -2635,16 +2637,15 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ui.addRunNumbers.setEnabled(addButtonStatus)
 
+    self.userClickedInTable = True # this avoid to re-rerun this method a second time
     if column == 6:
-      self.ui.dataNormTabWidget.setCurrentIndex(1)  #FIXME      
+      self.ui.dataNormTabWidget.setCurrentIndex(1)      
     else:
-      self.ui.dataNormTabWidget.setCurrentIndex(0)  #FIXME
+      self.ui.dataNormTabWidget.setCurrentIndex(0)  
 
     self._prev_row_selected = row
     self._prev_col_selected = col
 
-
-    self.userClickedInTable = True
     cell = self.ui.reductionTable.selectedItems()
     if cell == []:
       self.userClickedInTable = False
