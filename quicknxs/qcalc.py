@@ -140,7 +140,7 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
     # refine position with gaussian after background subtraction, FWHM=2.355*sigma
     # use limited range around the peak to avoid fitting into a different peak
     fit_halfwidth=int(wpeak)
-    fit_data=(xproj-median(xproj))[x_peak-fit_halfwidth:x_peak+fit_halfwidth+1]
+    fit_data=(xproj-median(xproj))[max(0, x_peak-fit_halfwidth):x_peak+fit_halfwidth+1]
     x_peak=refine_gauss(fit_data, fit_halfwidth, wpeak)-fit_halfwidth+x_peak
   if return_pf:
     return float(x_peak), pf
@@ -169,6 +169,14 @@ def get_yregion(data):
     return len(yproj)/2., len(yproj)/2., 0.
   else:
     return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
+
+@log_both
+def get_BGscale(data, pos, width, bg_pos, bg_width):
+  xproj=data.xdata
+  refI=xproj[max(0, int(bg_pos-bg_width/2)):int(bg_pos+bg_width/2)].mean()
+  bgI=(xproj[int(pos-1.5*width):int(pos-0.5*width)].mean()+
+       xproj[int(pos+0.5*width):int(pos+1.5*width)].mean())/2.
+  return bgI/refI
 
 @log_input
 def refine_gauss(data, pos, width, return_params=False):

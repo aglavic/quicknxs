@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/background_dialog.ui'
 #
-# Created: Sun May 19 11:19:19 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Tue Aug 26 16:16:48 2014
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -142,7 +142,20 @@ class Ui_Dialog(object):
     self.presumeIofLambda = QtGui.QCheckBox(self.widget)
     self.presumeIofLambda.setObjectName(_fromUtf8("presumeIofLambda"))
     self.horizontalLayout_3.addWidget(self.presumeIofLambda)
+    self.calcAutoBackground = QtGui.QPushButton(self.widget)
+    sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+    sizePolicy.setHeightForWidth(self.calcAutoBackground.sizePolicy().hasHeightForWidth())
+    self.calcAutoBackground.setSizePolicy(sizePolicy)
+    self.calcAutoBackground.setObjectName(_fromUtf8("calcAutoBackground"))
+    self.horizontalLayout_3.addWidget(self.calcAutoBackground)
     self.label = QtGui.QLabel(self.widget)
+    sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+    sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+    self.label.setSizePolicy(sizePolicy)
     self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
     self.label.setObjectName(_fromUtf8("label"))
     self.horizontalLayout_3.addWidget(self.label)
@@ -175,6 +188,7 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.optionChanged)
     QtCore.QObject.connect(self.polyregionActive, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.drawXTof)
     QtCore.QObject.connect(self.scaleFactor, QtCore.SIGNAL(_fromUtf8("valueChanged(double)")), Dialog.optionChanged)
+    QtCore.QObject.connect(self.calcAutoBackground, QtCore.SIGNAL(_fromUtf8("pressed()")), Dialog.calcAutoBackground)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
     Dialog.setTabOrder(self.polyregionActive, self.addPoly)
     Dialog.setTabOrder(self.addPoly, self.delPoly)
@@ -204,6 +218,7 @@ class Ui_Dialog(object):
     item = self.polyTable.horizontalHeaderItem(7)
     item.setText(_translate("Dialog", "x4", None))
     self.presumeIofLambda.setText(_translate("Dialog", "Presume BG~I(λ)", None))
+    self.calcAutoBackground.setText(_translate("Dialog", "Auto", None))
     self.label.setText(_translate("Dialog", "Scale Backgound", None))
 
 from .mplwidget import MPLWidget

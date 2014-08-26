@@ -207,7 +207,26 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="calcAutoBackground">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Scale Backgound</string>
               </property>
@@ -273,8 +292,8 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>113</x>
-     <y>411</y>
+     <x>133</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>248</x>
@@ -289,12 +308,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>233</x>
-     <y>411</y>
+     <x>213</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
-     <x>474</x>
-     <y>413</y>
+     <x>469</x>
+     <y>392</y>
     </hint>
    </hints>
   </connection>
@@ -305,12 +324,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>166</x>
-     <y>411</y>
+     <x>186</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
-     <x>414</x>
-     <y>413</y>
+     <x>388</x>
+     <y>392</y>
     </hint>
    </hints>
   </connection>
@@ -321,12 +340,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>411</y>
+     <x>160</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
-     <x>345</x>
-     <y>413</y>
+     <x>307</x>
+     <y>392</y>
     </hint>
    </hints>
   </connection>
@@ -337,8 +356,8 @@
    <slot>addPolygon()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>413</y>
+     <x>307</x>
+     <y>392</y>
     </hint>
     <hint type="destinationlabel">
      <x>491</x>
@@ -354,7 +373,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>81</x>
-     <y>634</y>
+     <y>632</y>
     </hint>
     <hint type="destinationlabel">
      <x>109</x>
@@ -370,7 +389,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>388</x>
-     <y>398</y>
+     <y>392</y>
     </hint>
     <hint type="destinationlabel">
      <x>493</x>
@@ -385,8 +404,8 @@
    <slot>clearPolygons()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>459</x>
-     <y>399</y>
+     <x>469</x>
+     <y>392</y>
     </hint>
     <hint type="destinationlabel">
      <x>492</x>
@@ -417,8 +436,8 @@
    <slot>optionChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>404</y>
+     <x>79</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>-3</x>
@@ -433,8 +452,8 @@
    <slot>drawXTof()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>83</x>
-     <y>407</y>
+     <x>103</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -450,11 +469,27 @@
    <hints>
     <hint type="sourcelabel">
      <x>445</x>
-     <y>635</y>
+     <y>633</y>
     </hint>
     <hint type="destinationlabel">
      <x>492</x>
      <y>653</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>calcAutoBackground</sender>
+   <signal>pressed()</signal>
+   <receiver>Dialog</receiver>
+   <slot>calcAutoBackground()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>626</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>663</y>
     </hint>
    </hints>
   </connection>
@@ -466,5 +501,6 @@
   <slot>clearPolygons()</slot>
   <slot>polygonChanged(QTableWidgetItem*)</slot>
   <slot>drawXTof()</slot>
+  <slot>calcAutoBackground()</slot>
  </slots>
 </ui>

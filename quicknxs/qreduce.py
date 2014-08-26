@@ -2000,7 +2000,9 @@ class GISANS(Reflectivity):
     # calculate reciprocal space, incident and outgoing perpendicular wave vectors
     self.Qx=k[newaxis, newaxis, PN:P0]*(cos(phi)*cos(af)[:, newaxis]-cos(ai)[:, newaxis])[:, :, newaxis]
     self.Qy=k[newaxis, newaxis, PN:P0]*(sin(phi)*cos(af)[:, newaxis])[:, :, newaxis]
-    self.Qz=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(af)[:, newaxis]+sin(ai)[:, newaxis])[:, :, newaxis]
+    self.pi=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(ai)[:, newaxis])[:, :, newaxis]
+    self.pf=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(af)[:, newaxis])[:, :, newaxis]
+    self.Qz=self.pi+self.pf
 
     self.Iraw=Idata
     self.dIraw=sqrt(self.Iraw)
@@ -2043,6 +2045,8 @@ class GISANS(Reflectivity):
       self.Qx=self.Qx[:, :, fidx]
       self.Qy=self.Qy[:, :, fidx]
       self.Qz=self.Qz[:, :, fidx]
+      self.pi=self.pi[:, :, fidx]
+      self.pf=self.pf[:, :, fidx]
 
     # create grid
     self.SGrid, qy, qz=histogram2d(self.Qy.flatten(), self.Qz.flatten(),
