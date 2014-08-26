@@ -2612,8 +2612,6 @@ class MainGUI(QtGui.QMainWindow):
 
   def bigTable_selection_changed(self, row, column):    
 
-    print 'in bigTable_selection_changed'
-
     # if selection of same row and not data or column 0 and 6
     if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
       return
@@ -2662,6 +2660,7 @@ class MainGUI(QtGui.QMainWindow):
       else:
         if (self.active_data is not None) and (_data.active_data.nxs is not None):
           self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+
         else: # load the data
           _run_number = int(cell.text())
           _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
@@ -2695,14 +2694,16 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataNormTabWidget.setCurrentIndex(0)
       # if cell is empty
       cell = self.ui.reductionTable.selectedItems()
+
       if (self.active_data is not None) and (_data.active_data.nxs is not None):
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-      else: # load the data
+      
+      else: # load the data because cell is empty so far
         
         _run_number = int(cell[0].text())
         _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
         
-        _configDataset = self.bigTableData[row,1]
+        _configDataset = self.bigTableData[row,2]
         
         event_split_bins = None
         event_split_index = 0
