@@ -172,10 +172,23 @@ def get_yregion(data):
 
 @log_both
 def get_BGscale(data, pos, width, bg_pos, bg_width):
+  """
+  Estimate a scaling factor for the background by comparing the average
+  background intensity in the x-projection with the intensity left and right
+  of the reflected beam.
+  
+  :param quicknxs.qreduce.MRDataset data: Raw data used to find the y-region
+  :param float pos: position of the reflected beam
+  :param float width: width of reflected beam
+  :param float bg_pos: central position of the background region
+  :param float bg_width: width of the background region
+  
+  :returns: scaling factor
+  """
   xproj=data.xdata
   refI=xproj[max(0, int(bg_pos-bg_width/2)):int(bg_pos+bg_width/2)].mean()
-  bgI=(xproj[int(pos-1.5*width):int(pos-0.5*width)].mean()+
-       xproj[int(pos+0.5*width):int(pos+1.5*width)].mean())/2.
+  bgI=(xproj[int(round(pos-1.5*width)):int(round(pos-0.5*width))].mean()+
+       xproj[int(round(pos+0.5*width)):int(round(pos+1.5*width))].mean())/2.
   return bgI/refI
 
 @log_input
