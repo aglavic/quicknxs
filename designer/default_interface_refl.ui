@@ -196,7 +196,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
@@ -453,6 +453,9 @@ p, li { white-space: pre-wrap; }
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="text">
+                  <string>0.008</string>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -473,6 +476,9 @@ p, li { white-space: pre-wrap; }
                    <width>50</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="text">
+                  <string>0.001</string>
                  </property>
                 </widget>
                </item>
@@ -686,6 +692,9 @@ p, li { white-space: pre-wrap; }
               <height>27</height>
              </rect>
             </property>
+            <property name="text">
+             <string>0.0009</string>
+            </property>
            </widget>
            <widget class="QLabel" name="label_4">
             <property name="geometry">
@@ -721,6 +730,9 @@ p, li { white-space: pre-wrap; }
               <width>113</width>
               <height>27</height>
              </rect>
+            </property>
+            <property name="text">
+             <string>0.045</string>
             </property>
            </widget>
            <widget class="QPushButton" name="createAsciiButton">
@@ -905,7 +917,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>5</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -3008,7 +3020,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3038,7 +3050,7 @@ p, li { white-space: pre-wrap; }
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>

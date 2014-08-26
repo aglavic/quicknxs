@@ -6,6 +6,7 @@ Module including main GUI class with all signal handling and plot creation.
 
 import os
 import sys
+import math
 from math import radians, fabs
 from glob import glob
 from numpy import where, pi, newaxis, log10, array, empty, shape
@@ -35,6 +36,8 @@ from .separate_plots import ReductionPreviewDialog
 from .version import str_version
 from logging import info, warning, debug
 from reduction import REFLReduction
+from utilities import convert_angle
+import constants
 
 class gisansCalcThread(QtCore.QThread):
   '''
@@ -911,6 +914,18 @@ class MainGUI(QtGui.QMainWindow):
       it_plot = self.ui.data_it_plot
       ix_plot = self.ui.data_ix_plot
     
+      # calculate and display Q range
+      [qmin, qmax] = self.calculate_q_range(tof_edges, data)
+      
+      qmin = "%.3f" % qmin
+      qmax = "%.3f" % qmax
+      
+      _item_min = QtGui.QTableWidgetItem(str(qmin))
+      _item_max = QtGui.QTableWidgetItem(str(qmax))
+      [row, column] = self.getCurrentRowColumnSelected()
+      self.ui.reductionTable.setItem(row, 4, _item_min)
+      self.ui.reductionTable.setItem(row, 5, _item_max)
+
     else: # normalization
 
       self.ui.normNameOfFile.setText('%s'%filename)
@@ -1082,6 +1097,36 @@ class MainGUI(QtGui.QMainWindow):
         #new_xlabels.append(str(_value))
     #self.ui.xy_overview.canvas.ax.set_xticklabels(new_xlabels)
     #self.ui.xy_overview.draw()    
+
+  def calculate_q_range(self, tof_edges, data):
+    
+    # calculate theta
+    tthd = data.tthd
+    tthd_units = data.tthd_units
+    thi = data.thi
+    thi_units = data.thi_units
+    
+    tthd_rad = convert_angle(angle=tthd, from_units=tthd_units, to_units='rad')
+    thi_rad = convert_angle(angle=thi, from_units=thi_units, to_units='rad')
+    
+    theta_rad = fabs(tthd_rad - thi_rad) / float(2)
+    
+    angle_offset = float(self.ui.angleOffsetValue.text())
+    angle_offset_rad = convert_angle(angle=angle_offset, from_units='degree', to_units='rad')
+    
+    theta_rad += angle_offset_rad
+    
+    dMD = data.dMD
+    _const = float(4) * math.pi * constants.mn * dMD / constants.h
+    
+    tof_min = tof_edges[0]
+    tof_max = tof_edges[-1]
+
+    q_min = _const * math.sin(theta_rad) / (tof_max * 1e-6) * float(1e-10)
+    q_max = _const * math.sin(theta_rad) / (tof_min * 1e-6) * float(1e-10)
+
+    return [q_min, q_max]
+
 
   def display_tof_range(self, tmin, tmax, units):
     '''
@@ -3933,9 +3978,13 @@ Do you want to try to restore the working reduction list?""",
     Reached by the Load Configuration button
     will populate the GUI with the data retrieved from the configuration file
     '''
-    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')
-    self.loadConfigAndPopulateGui(filename)
-    self.enableWidgets(checkStatus=True)
+    try:
+      filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')      
+      if not(filename == ""):
+        self.loadConfigAndPopulateGui(filename)
+        self.enableWidgets(checkStatus=True)
+    except:
+      warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):
@@ -3945,7 +3994,8 @@ Do you want to try to restore the working reduction list?""",
     same format as Mantid
     '''
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', '.')
-    self.saveConfig(filename)
+    if not(filename == ""):
+      self.saveConfig(filename)
 
   @log_call
   def saveConfig(self, filename):

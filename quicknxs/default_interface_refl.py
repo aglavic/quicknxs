@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Aug 22 13:09:13 2014
+# Created: Tue Aug 26 10:20:11 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1155,7 +1155,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(False)
+        self.reductionTable.horizontalHeader().setVisible(True)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
         self.reductionTable.verticalHeader().setVisible(False)
@@ -1525,8 +1525,8 @@ class Ui_MainWindow(object):
         self.mainToolbar.addAction(self.actionAdjust_Dirct_Beam)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(3)
-        self.plotTab.setCurrentIndex(5)
+        self.toolBox.setCurrentIndex(4)
+        self.plotTab.setCurrentIndex(0)
         self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.plotTab, QtCore.SIGNAL("currentChanged(int)"), MainWindow.plotActiveTab)
@@ -1649,11 +1649,13 @@ class Ui_MainWindow(object):
         self.label_25.setText(QtGui.QApplication.translate("MainWindow", "Max. Width", None, QtGui.QApplication.UnicodeUTF8))
         self.label_26.setText(QtGui.QApplication.translate("MainWindow", "Min. Width", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), QtGui.QApplication.translate("MainWindow", "Peak Finder Algorithm", None, QtGui.QApplication.UnicodeUTF8))
+        self.angleOffsetValue.setText(QtGui.QApplication.translate("MainWindow", "0.008", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">&#177;</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.angleOffsetError.setText(QtGui.QApplication.translate("MainWindow", "0.001", None, QtGui.QApplication.UnicodeUTF8))
         self.label_19.setText(QtGui.QApplication.translate("MainWindow", "degrees", None, QtGui.QApplication.UnicodeUTF8))
         self.geometryCorrectionFlag.setText(QtGui.QApplication.translate("MainWindow", "With geometry correction", None, QtGui.QApplication.UnicodeUTF8))
         self.label_30.setText(QtGui.QApplication.translate("MainWindow", "Angle Offset", None, QtGui.QApplication.UnicodeUTF8))
@@ -1671,8 +1673,10 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">dQ<span style=\" vertical-align:sub;\">0</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.dq0Value.setText(QtGui.QApplication.translate("MainWindow", "0.0009", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("MainWindow", "1/Å", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("MainWindow", "dQ/Q", None, QtGui.QApplication.UnicodeUTF8))
+        self.dQoverQvalue.setText(QtGui.QApplication.translate("MainWindow", "0.045", None, QtGui.QApplication.UnicodeUTF8))
         self.createAsciiButton.setText(QtGui.QApplication.translate("MainWindow", "Create ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_5), QtGui.QApplication.translate("MainWindow", "Output", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "Reload Active File", None, QtGui.QApplication.UnicodeUTF8))
