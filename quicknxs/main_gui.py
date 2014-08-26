@@ -868,12 +868,13 @@ class MainGUI(QtGui.QMainWindow):
       tof_edges_full = data.tof_edges
       tof_edges = tof_edges_full
     
-      [peak1, peak2] = data.peak
-      [back1, back2] = data.back
-      [lowRes1, lowRes2] = data.low_res
-      back_flag = data.back_flag
-      low_res_flag = data.low_res_flag
-
+    [peak1, peak2] = data.peak
+    [back1, back2] = data.back
+    [lowRes1, lowRes2] = data.low_res
+    back_flag = data.back_flag
+    low_res_flag = data.low_res_flag
+    
+    
     if isDataSelected: # data
 
       self.ui.dataNameOfFile.setText('%s'%filename)
