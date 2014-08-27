@@ -5,6 +5,7 @@ import numpy as np
 import math
 import os
 import constants
+import utilities
 
 class ReductionObject(object):
 
@@ -511,6 +512,12 @@ class ReductionObject(object):
         self.normalized_data = normalized_data
         self.normalized_data_error = normalized_data_error
 
+        #data_tof_axis = self.oData.active_data.tof_edges
+        #utilities.ouput_big_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/quicknxs_data_divided_by_norm_not_integrated.txt',
+                                         #data_tof_axis,
+                                         #normalized_data,
+                                         #normalized_data_error)
+
         self.logbook('-> data_over_normalization .... DONE!', False)
 
     def full_sum_with_error(self, data, error):
@@ -715,7 +722,7 @@ class REFLReduction(object):
 #        nbrRow = 1 #FIXME
 #        for row in range(nbrRow):
 
-        row = 3
+        row = 0
 
         dataCell = main_gui.ui.reductionTable.item(row,0).text()
         if main_gui.ui.reductionTable.item(row,6) is not None:

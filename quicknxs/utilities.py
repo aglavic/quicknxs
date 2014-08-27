@@ -17,5 +17,24 @@ def convert_angle (angle=0, from_units='degree', to_units='rad'):
 
     return float(angle) * coeff
 
-    
-    
+  
+def ouput_big_ascii_file(file_name,
+                         x_axis,
+                         y_axis,
+                         y_error_axis):
+
+    f=open(file_name,'w')
+
+    sz = y_axis.shape # (nbr_pixel, nbr_tof)
+    nbr_tof = sz[1]
+    nbr_pixel = sz[0]
+
+    for t in range(nbr_tof):
+        _tmp_str = str(x_axis[t])
+        for x in range(nbr_pixel):
+            _tmp_str += ' ,' + str(y_axis[x,t]) + " ," + str(y_error_axis[x,t])
+
+        _tmp_str += '\n'
+        f.write(_tmp_str)
+
+    f.close
