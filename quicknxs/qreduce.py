@@ -1189,6 +1189,7 @@ class LRDataset(object):
   tof_range = ['0','0'] 
   tof_units = 'ms'
   tof_auto_flag = True
+  q_range = ['0','0']
 
   #data_full_file_name = ''
   #data_peak = ['0','0']

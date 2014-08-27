@@ -915,11 +915,21 @@ class MainGUI(QtGui.QMainWindow):
       it_plot = self.ui.data_it_plot
       ix_plot = self.ui.data_ix_plot
     
-      # calculate and display Q range
-      [qmin, qmax] = self.calculate_q_range(tof_edges, data)
-      
-      qmin = "%.3f" % qmin
-      qmax = "%.3f" % qmax
+      # calculate and display Q range if not calculated yet
+      [r,c] = self.getCurrentRowColumnSelected()
+      _data = self.bigTableData[r,c]
+      _active_data = _data.active_data
+
+      ## investigate why it seems like the code run this part twice !!!!!!  FIXME
+      if _active_data.q_range == ['0','0']:
+        [qmin, qmax] = self.calculate_q_range(tof_edges, data)
+        qmin = "%.3f" % qmin
+        qmax = "%.3f" % qmax
+        _active_data.q_range = [qmin, qmax]
+        _data.active_data = _active_data
+        self.bigTableData[r,c] = _data
+      else:
+        [qmin,qmax] = _active_data.q_range
       
       _item_min = QtGui.QTableWidgetItem(str(qmin))
       _item_max = QtGui.QTableWidgetItem(str(qmax))
@@ -4052,6 +4062,7 @@ Do you want to try to restore the working reduction list?""",
         tof = _data.tof
         tof_units = _data.tof_units
         tof_auto_flag = _data.tof_auto_flag
+        q_range = _data.q_range
       
       else:
 
@@ -4064,6 +4075,13 @@ Do you want to try to restore the working reduction list?""",
           data_back_flag = _metadata.data_back_flag
           data_low_res_flag = _metadata.data_low_res_flag
           tof = _metadata.tof
+          
+          # for old config file that do not have this flag yet
+          try:
+            q_range = _metadata.q_range
+          except:
+            q_range = ['0','0']
+            
           tof_units = _metadata.tof_units
           tof_auto_flag = _metadata.tof_auto_flag
 
@@ -4077,6 +4095,7 @@ Do you want to try to restore the working reduction list?""",
           tof = ['0','0']
           tof_units = 'ms'
           tof_auto_flag = True
+          q_range = ['0','0']
 
       norm_info = _bigTableData[row,1]
       if norm_info is not None:
@@ -4124,6 +4143,8 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <tof_range_flag>True</tof_range_flag>\n')
       strArray.append('   <from_tof_range>' + str(tof[0]) + '</from_tof_range>\n')
       strArray.append('   <to_tof_range>' + str(tof[1]) + '</to_tof_range>\n')
+      strArray.append('   <from_q_range>' + str(q_range[0]) + '</from_q_range>\n')
+      strArray.append('   <to_q_range>' + str(q_range[1]) + '</to_q_range>\n')
 
       _data_run_number = self.ui.reductionTable.item(row,0).text()
       strArray.append('   <data_sets>' + _data_run_number + '</data_sets>\n')
@@ -4364,6 +4385,10 @@ Do you want to try to restore the working reduction list?""",
     _tof_min = self.getNodeValue(node, 'from_tof_range')
     _tof_max = self.getNodeValue(node, 'to_tof_range')
     iMetadata.tof = [_tof_min, _tof_max]
+    
+    _q_min = self.getNodeValue(node, 'from_q_range')
+    _q_max = self.getNodeValue(node, 'to_q_range')
+    iMetadata.q_range = [_q_min, _q_max]
     
     iMetadata.tof_units = 'micros'
     
