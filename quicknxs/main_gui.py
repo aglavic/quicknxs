@@ -866,8 +866,8 @@ class MainGUI(QtGui.QMainWindow):
       ycountsdata = data.ycountsdata
       auto_tof_range = data.auto_tof_range
     
-      tof_edges_full = data.tof_edges
-      tof_edges = tof_edges_full
+      tof_edges_full = data.tof_edges_full
+      tof_edges = data.tof_edges
     
     [peak1, peak2] = data.peak
     [back1, back2] = data.back
@@ -994,8 +994,11 @@ class MainGUI(QtGui.QMainWindow):
       autotmax = auto_tof_range[1]
       self.display_tof_range(autotmin, autotmax, 'ms')
   
-      tmin = tof_edges[0]
-      tmax = tof_edges[-1]
+      tmin = data.tof_edges_auto[0]*1e-3
+      tmax = data.tof_edges_auto[-1]*1e-3
+
+      t1 = yt_plot.canvas.ax.axvline(tmin, color='#072be2')
+      t2 = yt_plot.canvas.ax.axvline(tmax, color='#072be2')
   
       y1 = yt_plot.canvas.ax.axhline(peak1, color='#00aa00')
       y2 = yt_plot.canvas.ax.axhline(peak2, color='#00aa00')
@@ -1008,7 +1011,7 @@ class MainGUI(QtGui.QMainWindow):
 
     # display it
     if plot_it:
-      it_plot.plot(tof_edges_full[0:-1],countstofdata)
+      it_plot.plot(tof_edges[0:-1],countstofdata)
       it_plot.set_xlabel(u't (\u00b5s)')
 #      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
@@ -1042,7 +1045,6 @@ class MainGUI(QtGui.QMainWindow):
       
       x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#072be2')
       x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#072be2')
-      
       ix_plot.draw()
 
     return
@@ -3978,13 +3980,13 @@ Do you want to try to restore the working reduction list?""",
     Reached by the Load Configuration button
     will populate the GUI with the data retrieved from the configuration file
     '''
-    try:
-      filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')      
-      if not(filename == ""):
-        self.loadConfigAndPopulateGui(filename)
-        self.enableWidgets(checkStatus=True)
-    except:
-      warning('Could not open configuration file!')
+#    try:
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')      
+    if not(filename == ""):
+      self.loadConfigAndPopulateGui(filename)
+      self.enableWidgets(checkStatus=True)
+#    except:
+#      warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):

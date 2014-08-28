@@ -1143,6 +1143,7 @@ class LRDataset(object):
   total_counts=0 #: total counts on detector
   total_time=0 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
+  tof_edges_full = None
   auto_tof_range=None #: min and max value of the auto TOF range defined by the program
   dangle=0. #: detector arm angle value in [°]
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
@@ -1463,6 +1464,8 @@ class LRDataset(object):
     # store the data
     output.auto_tof_range = [autotmin,autotmax]
     output.tof_edges=_tof_axis
+    output.tof_edges_full = [tmin, tmax]
+    output.tof_edges_auto = [autotmin, autotmax]
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.ytofdata=Iyt.astype(float) # 2D dataset

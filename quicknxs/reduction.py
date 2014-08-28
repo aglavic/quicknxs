@@ -107,6 +107,11 @@ class ReductionObject(object):
         '''
         
         _const = 4. * math.pi * constants.mn * self.oData.active_data.dSD / constants.h
+        theta = self.oData.active_data.theta
+        
+        print self.oData.active_data.tof_edges
+
+        
 #        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.
         
 
