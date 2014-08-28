@@ -107,8 +107,7 @@ class ReductionObject(object):
         '''
         
         _const = 4. * math.pi * constants.mn * self.oData.active_data.dSD / constants.h
-        print _const
-#        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.)
+#        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.
         
 
 

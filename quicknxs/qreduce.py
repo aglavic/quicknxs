@@ -32,6 +32,7 @@ from logging import debug, info, warn #@Reimport
 from .config import instrument
 from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
+from utilities import convert_angle
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -176,6 +177,7 @@ class NXSData(object):
                        event_split_bins=None, event_split_index=0, low_res_range=[0,303],
                        event_tof_overwrite=None, 
                        metadata_config_object=None,
+                       angle_offset = 0,
                        isData = True)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
@@ -186,6 +188,7 @@ class NXSData(object):
     low_res_range='Pixel range of the low resolution axis (0->304 for the REF_L)',
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
     metadata_config_object='LConfigDataset that is only present when the data comes from a config file',
+    angle_offset='angle offset value defined in GUI',
     callback='Function called to update e.g. a progress bar',
     isData='True or False (if file is a direct beam data set)',
     )
@@ -1190,6 +1193,7 @@ class LRDataset(object):
   tof_units = 'ms'
   tof_auto_flag = True
   q_range = ['0','0']
+  theta = 0
 
   #data_full_file_name = ''
   #data_peak = ['0','0']
@@ -1361,6 +1365,28 @@ class LRDataset(object):
 
     return output
 
+  def calculate_theta(output):
+    '''
+    calculate theta
+    '''
+    tthd = output.tthd
+    tthd_units = output.tthd_units
+    thi = output.thi
+    thi_units = output.thi_units
+    
+    tthd_rad = convert_angle(angle=tthd, from_units=tthd_units, to_units='rad')
+    thi_rad = convert_angle(angle=thi, from_units=thi_units, to_units='rad')
+    
+    theta_rad = fabs(tthd_rad - thi_rad) / float(2)
+    
+    angle_offset = float(output.read_options['angle_offset'])
+    angle_offset_rad = convert_angle(angle=angle_offset, from_units='degree', to_units='rad')
+    
+    theta_rad += angle_offset_rad
+    
+    return theta_rad
+
+
   @classmethod
   @log_call
   def from_event(cls, nxs, read_options,
@@ -1386,6 +1412,9 @@ class LRDataset(object):
 
     # retrieve the metadata from the nexus file
     output._collect_info(nxs)
+
+    # calculate theta
+    output.theta = LRDataset.calculate_theta(output)
 
     autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
     autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4

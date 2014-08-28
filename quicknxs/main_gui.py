@@ -444,6 +444,7 @@ class MainGUI(QtGui.QMainWindow):
             callback=self.updateEventReadout,
             event_split_bins=event_split_bins,
             event_split_index=event_split_index,
+            angle_offset= self.ui.angleOffsetValue.text(),
             isData = isData)
     
       if instrument.NAME == 'REF_M':
@@ -923,8 +924,8 @@ class MainGUI(QtGui.QMainWindow):
       ## investigate why it seems like the code run this part twice !!!!!!  FIXME
       if _active_data.q_range == ['0','0']:
         [qmin, qmax] = self.calculate_q_range(tof_edges, data)
-        qmin = "%.3f" % qmin
-        qmax = "%.3f" % qmax
+        qmin = "%.5f" % qmin
+        qmax = "%.5f" % qmax
         _active_data.q_range = [qmin, qmax]
         _data.active_data = _active_data
         self.bigTableData[r,c] = _data
@@ -1111,21 +1112,7 @@ class MainGUI(QtGui.QMainWindow):
 
   def calculate_q_range(self, tof_edges, data):
     
-    # calculate theta
-    tthd = data.tthd
-    tthd_units = data.tthd_units
-    thi = data.thi
-    thi_units = data.thi_units
-    
-    tthd_rad = convert_angle(angle=tthd, from_units=tthd_units, to_units='rad')
-    thi_rad = convert_angle(angle=thi, from_units=thi_units, to_units='rad')
-    
-    theta_rad = fabs(tthd_rad - thi_rad) / float(2)
-    
-    angle_offset = float(self.ui.angleOffsetValue.text())
-    angle_offset_rad = convert_angle(angle=angle_offset, from_units='degree', to_units='rad')
-    
-    theta_rad += angle_offset_rad
+    theta_rad = data.theta
     
     dMD = data.dMD
     _const = float(4) * math.pi * constants.mn * dMD / constants.h

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Aug 26 10:20:11 2014
+# Created: Thu Aug 28 14:18:33 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1525,9 +1525,9 @@ class Ui_MainWindow(object):
         self.mainToolbar.addAction(self.actionAdjust_Dirct_Beam)
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(4)
+        self.toolBox.setCurrentIndex(2)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.plotTab, QtCore.SIGNAL("currentChanged(int)"), MainWindow.plotActiveTab)
         QtCore.QObject.connect(self.actionNext_File, QtCore.SIGNAL("triggered()"), MainWindow.nextFile)
