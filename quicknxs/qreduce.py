@@ -33,6 +33,7 @@ from .config import instrument
 from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 from utilities import convert_angle
+import numpy as np
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -1195,24 +1196,6 @@ class LRDataset(object):
   tof_auto_flag = True
   q_range = ['0','0']
   theta = 0
-
-  #data_full_file_name = ''
-  #data_peak = ['0','0']
-  #data_back = ['0','0']
-  #data_low_res = ['0','0']
-  #data_back_flag = True
-  #data_low_res_flag = True
-  #tof_range = ['0','0'] 
-  #tof_units = 'ms'
-  #tof_auto_flag = True
-  
-  #norm_full_file_name = ''
-  #norm_flag = True
-  #norm_peak = ['0','0']
-  #norm_back = ['0','0']
-  #norm_back_flag = True
-  #norm_low_res = ['0','0']
-  #norm_low_res_flag = True
   
   nxs=None # Mantid NeXus workspace
 
@@ -1229,6 +1212,9 @@ class LRDataset(object):
 
   Ixyt = None
   Exyt = None
+
+  Ixyt_reduction = None
+  Exyt_reduction = None
 
   xyerror=None #: 2D array of the error projected on X-Y
   xtoferror=None #: 2D array of error projected on X-TOF
@@ -1417,19 +1403,32 @@ class LRDataset(object):
     # calculate theta
     output.theta = LRDataset.calculate_theta(output)
 
-    autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
-    autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
-    tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 2.5) * 1e-4
-    tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
+    if output.tof_range == ['0','0']:
+
+      # auto t range
+      autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
+      autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
+    
+      # wider t range for display only
+      tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 2.5) * 1e-4
+      tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
+  
+    else:
+      
+      autotmin = np.float(output.tof_range[0])
+      autotmax = np.float(output.tof_range[1])
+      
+      tmin = np.float(autotmin - 0.4e4)
+      tmax = np.float(autotmax + 0.4e4)
+  
     tbin = int(read_options["bins"])
     
     # rebin event nexus to get histogram
     params = [float(tmin), float(tbin), float(tmax)]
     nxs_histo = Rebin(InputWorkspace=nxs,Params=params, PreserveEvents=True)
-    
     # normalize by proton charge
     nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
-
+        
     _proton_charge = float(nxs.getRun().getProperty('gd_prtn_chrg').value)
     _proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
     new_proton_charge_units = 'mC'
@@ -1474,10 +1473,23 @@ class LRDataset(object):
     output.countsxdata = Iix.astype(float)
     output.ycountsdata = Iyi.astype(float)
 
-   # output.error=Exyt.astype(float)
-   # output.xyerror=Exy.transpose().astype(float)
-   # output.xtoferror=Ext.astype(float)
+    ### work now with final data
 
+    ## rebin using final data reduction parameters
+    #params_reduction = [float(autotmin), float(tbin), float(autotmax)]
+    #nxs_histo_reduction = Rebin(InputWorkspace=nxs, Params=params_reduction, PreserveEvents=True)
+    ## normalize by proton charge
+    #nxs_histo_reduction = NormaliseByCurrent(InputWorkspace=nxs_histo_reduction)
+
+    ## retrieve 3D array
+    #[_tof_axis_reduction, Ixyt_reduction, Exyt_reduction] = LRDataset.getIxyt(nxs_histo_reduction)
+
+    #Ixyt_reduction = Ixyt_reduction[from_pixel:to_pixel,:,:]
+    #Exyt_reduction = Exyt_reduction[from_pixel:to_pixel,:,:]
+    
+    #output.Ixyt_reduction = Ixyt_reduction
+    #output.Exyt_reduction = Exyt_reduction
+    
     return output
 
   @staticmethod

@@ -109,7 +109,7 @@ class ReductionObject(object):
         _const = 4. * math.pi * constants.mn * self.oData.active_data.dSD / constants.h
         theta = self.oData.active_data.theta
         
-        print self.oData.active_data.tof_edges
+#        print self.oData.active_data.tof_edges
 
         
 #        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.
@@ -344,7 +344,26 @@ class ReductionObject(object):
         f.close()
         return sfFactorTable
 
+    def rebin(self):
+        '''
+        rebin the data according to parameters defined
+        '''
+        self.logbook('-> rebin ... PROCESSING')
 
+        data = self.oData.active_data
+        nxs = data.nxs
+        
+        tof_range = data.tof_range
+        print 'tof_range:'
+        print tof_range
+        print '---------'
+        
+
+
+
+        self.logbook('-> rebin ... DONE', False)
+        
+        
     def integrate_over_low_res_range(self):
         '''
         This will integrate over the low resolution range of the data and norm objects
@@ -360,7 +379,10 @@ class ReductionObject(object):
         else:
             from_pixel = int(data.low_resolution_range[0])
             to_pixel = int(data.low_resolution_range[1])
-            
+        
+        self.logbook('--> from pixel: ' + str(from_pixel))
+        self.logbook('--> to pixel: ' + str(to_pixel))
+        
 #        print '-> from_pixel: %d' % from_pixel
 #        print '-> to_pixel: %d' % to_pixel
 
@@ -408,7 +430,7 @@ class ReductionObject(object):
             _y_error_axis = Exyt_crop_sq.sum(axis=0)
             self.norm_y_error_axis = np.sqrt(_y_error_axis)
 
-        self.logbook('-> integrate_over_low_res_range ... DONE !', False)
+        self.logbook('-> integrate_over_low_res_range ... DONE !')
 
     def get_error_0counts(self, data):
         '''
@@ -743,6 +765,11 @@ class REFLReduction(object):
         red1 = ReductionObject(main_gui, dataCell, normCell, dataObject, normObject, configObject)
         bigTableData[row,0] = red1.oData
         bigTableData[row,1] = red1.oNorm
+
+        # rebin 
+        red1.rebin()
+        
+        return
 
         # integrate low res range of data and norm
         red1.integrate_over_low_res_range()

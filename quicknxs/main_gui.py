@@ -905,11 +905,11 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataLowResFromValue.setValue(lowRes_min)
       self.ui.dataLowResToValue.setValue(lowRes_max)
 #      back_flag = data.data_back_flag
-      self.ui.dataBackgroundFlag.setChecked(back_flag)
+#      self.ui.dataBackgroundFlag.setChecked(back_flag)
 
 #      data_low_res_flag = data.data_low_res_flag
 #      self.ui.dataLowResFlag.setChecked(data_low_res_flag)
-      self.ui.dataLowResFlag.setChecked(low_res_flag)
+#      self.ui.dataLowResFlag.setChecked(low_res_flag)
       
       yt_plot = self.ui.data_yt_plot
       yi_plot = self.ui.data_yi_plot
@@ -971,10 +971,10 @@ class MainGUI(QtGui.QMainWindow):
 
 #      norm_low_res_flag = data.norm_low_res_flag
 #      self.ui.normLowResFlag.setChecked(norm_low_res_flag)
-      self.ui.normLowResFlag.setChecked(low_res_flag)
+#      self.ui.normLowResFlag.setChecked(low_res_flag)
 
 #      back_flag = data.norm_back_flag
-      self.ui.normBackgroundFlag.setChecked(back_flag)
+#      self.ui.normBackgroundFlag.setChecked(back_flag)
       
       yt_plot = self.ui.norm_yt_plot
       yi_plot = self.ui.norm_yi_plot
@@ -1011,7 +1011,7 @@ class MainGUI(QtGui.QMainWindow):
 
     # display it
     if plot_it:
-      it_plot.plot(tof_edges[0:-1],countstofdata)
+      it_plot.plot(tof_edges[0:-1],countstofdata, color='#0000aa')
       it_plot.set_xlabel(u't (\u00b5s)')
 #      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
@@ -1038,13 +1038,13 @@ class MainGUI(QtGui.QMainWindow):
 
     # display ix
     if plot_ix:
-      ix_plot.plot(countsxdata)
+      ix_plot.plot(countsxdata, color='#0000aa')
       ix_plot.set_xlabel(u'pixels')
       ix_plot.set_ylabel(u'counts')
       ix_plot.canvas.ax.set_xlim(0,303)
       
-      x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#072be2')
-      x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#072be2')
+      x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#aa00aa')
+      x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#aa00aa')
       ix_plot.draw()
 
     return
@@ -1133,8 +1133,11 @@ class MainGUI(QtGui.QMainWindow):
     will display the TOF min and max value in the metadata field
     according to the units selected
     '''
-    _tmin = tmin.copy()
-    _tmax = tmax.copy()
+    #_tmin = tmin.copy()
+    #_tmax = tmax.copy()
+    
+    _tmin = tmin
+    _tmax = tmax
 
     is_ms_selected = self.ui.TOFmanualMsValue.isChecked()
     if is_ms_selected:
