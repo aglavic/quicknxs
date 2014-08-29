@@ -905,11 +905,11 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataLowResFromValue.setValue(lowRes_min)
       self.ui.dataLowResToValue.setValue(lowRes_max)
 #      back_flag = data.data_back_flag
-#      self.ui.dataBackgroundFlag.setChecked(back_flag)
+      self.ui.dataBackgroundFlag.setChecked(back_flag)
 
 #      data_low_res_flag = data.data_low_res_flag
 #      self.ui.dataLowResFlag.setChecked(data_low_res_flag)
-#      self.ui.dataLowResFlag.setChecked(low_res_flag)
+      self.ui.dataLowResFlag.setChecked(low_res_flag)
       
       yt_plot = self.ui.data_yt_plot
       yi_plot = self.ui.data_yi_plot
@@ -971,10 +971,10 @@ class MainGUI(QtGui.QMainWindow):
 
 #      norm_low_res_flag = data.norm_low_res_flag
 #      self.ui.normLowResFlag.setChecked(norm_low_res_flag)
-#      self.ui.normLowResFlag.setChecked(low_res_flag)
+      self.ui.normLowResFlag.setChecked(low_res_flag)
 
 #      back_flag = data.norm_back_flag
-#      self.ui.normBackgroundFlag.setChecked(back_flag)
+      self.ui.normBackgroundFlag.setChecked(back_flag)
       
       yt_plot = self.ui.norm_yt_plot
       yi_plot = self.ui.norm_yi_plot
@@ -1043,8 +1043,10 @@ class MainGUI(QtGui.QMainWindow):
       ix_plot.set_ylabel(u'counts')
       ix_plot.canvas.ax.set_xlim(0,303)
       
-      x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#aa00aa')
-      x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#aa00aa')
+      if low_res_flag:
+        x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#aa00aa')
+        x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#aa00aa')
+        
       ix_plot.draw()
 
     return
@@ -3465,7 +3467,7 @@ Do you want to try to restore the working reduction list?""",
     dia.show()
     self.open_plots.append(dia)
 
-  def data_background_switch(self,int):
+  def data_background_switch(self):
     '''
     With or without data background
     '''
@@ -3474,10 +3476,7 @@ Do you want to try to restore the working reduction list?""",
     if data is None:
       return
 
-    if int==2:
-      flag = True
-    else:
-      flag = False
+    flag = self.ui.dataBackgroundFlag.isChecked()
       
     data.back_flag = flag
     self.active_data = data
@@ -3493,20 +3492,17 @@ Do you want to try to restore the working reduction list?""",
     # refresh plot
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)
 
-  def data_low_res_switch(self,int):
+  def data_low_res_switch(self):
     '''
     With or without data low resolution range
     '''
-    
+        
     data = self.active_data
     if data is None:
       return
 
-    if int==2:
-      flag = True
-    else:
-      flag = False
-            
+    flag = self.ui.dataLowResFlag.isChecked()
+
     data.low_res_flag = flag
     self.active_data = data
             
@@ -3563,14 +3559,12 @@ Do you want to try to restore the working reduction list?""",
     # save new settings
     self.save_new_settings()
     
-  def normalization_background_switch(self, int):
+  def normalization_background_switch(self):
     '''
     With or without normalization background
     '''
-    if int==2:
-      flag = True
-    else:
-      flag = False
+    
+    flag = self.ui.normBackgroundFlag.isChecked()
     
     self.ui.normBackFromLabel.setEnabled(flag)
     self.ui.normBackFromValue.setEnabled(flag)
@@ -3582,7 +3576,7 @@ Do you want to try to restore the working reduction list?""",
     
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
     
-  def normalization_low_res_switch(self, int):
+  def normalization_low_res_switch(self):
     '''
     With or without normalization low resolution range
     '''
@@ -3591,10 +3585,7 @@ Do you want to try to restore the working reduction list?""",
     if data is None:
       return
 
-    if int==2:
-      flag = True
-    else:
-      flag = False
+    flag = self.ui.normLowResFlag.isChecked()
 
     data.low_res_flag = flag
     self.active_data = data

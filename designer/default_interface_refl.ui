@@ -4592,7 +4592,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>dataBackgroundFlag</sender>
-   <signal>stateChanged(int)</signal>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>data_background_switch()</slot>
    <hints>
@@ -4608,7 +4608,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>dataLowResFlag</sender>
-   <signal>stateChanged(int)</signal>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>data_low_res_switch()</slot>
    <hints>
@@ -4624,7 +4624,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>normBackgroundFlag</sender>
-   <signal>stateChanged(int)</signal>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>normalization_background_switch()</slot>
    <hints>
@@ -4640,7 +4640,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>normLowResFlag</sender>
-   <signal>stateChanged(int)</signal>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>normalization_low_res_switch()</slot>
    <hints>

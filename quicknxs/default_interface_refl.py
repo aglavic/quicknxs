@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Aug 28 14:18:33 2014
+# Created: Fri Aug 29 13:58:21 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1570,10 +1570,10 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionBrowse_NXS_File, QtCore.SIGNAL("triggered()"), MainWindow.open_nxs_dialog)
         QtCore.QObject.connect(self.actionFilter_Points, QtCore.SIGNAL("triggered()"), MainWindow.open_filter_dialog)
         QtCore.QObject.connect(self.actionOpen_Reduction_Preview, QtCore.SIGNAL("triggered()"), MainWindow.open_reduction_preview)
-        QtCore.QObject.connect(self.dataBackgroundFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.data_background_switch)
-        QtCore.QObject.connect(self.dataLowResFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.data_low_res_switch)
-        QtCore.QObject.connect(self.normBackgroundFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.normalization_background_switch)
-        QtCore.QObject.connect(self.normLowResFlag, QtCore.SIGNAL("stateChanged(int)"), MainWindow.normalization_low_res_switch)
+        QtCore.QObject.connect(self.dataBackgroundFlag, QtCore.SIGNAL("clicked()"), MainWindow.data_background_switch)
+        QtCore.QObject.connect(self.dataLowResFlag, QtCore.SIGNAL("clicked()"), MainWindow.data_low_res_switch)
+        QtCore.QObject.connect(self.normBackgroundFlag, QtCore.SIGNAL("clicked()"), MainWindow.normalization_background_switch)
+        QtCore.QObject.connect(self.normLowResFlag, QtCore.SIGNAL("clicked()"), MainWindow.normalization_low_res_switch)
         QtCore.QObject.connect(self.dataTOFautoMode, QtCore.SIGNAL("toggled(bool)"), MainWindow.auto_tof_switch)
         QtCore.QObject.connect(self.dataTOFmanualMode, QtCore.SIGNAL("toggled(bool)"), MainWindow.manual_tof_switch)
         QtCore.QObject.connect(self.TOFmanualMicrosValue, QtCore.SIGNAL("toggled(bool)"), MainWindow.tof_micros_switch)
