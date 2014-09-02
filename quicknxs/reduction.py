@@ -234,21 +234,18 @@ class ReductionObject(object):
                                                        _lambda_requested,
                                                        value_precision)):
                         
-                        self.logbook('----> lambda_requested => FOUND MATCH!')
                         # check that s1h match
                         _file_s1h = self.get_table_field_value(sfFactorTable, i, 2)
                         if (self.is_within_precision_range(_file_s1h,
                                                            s1h_value,
                                                            value_precision)):
                             
-                            self.logbook('----> s1h => FOUND MATCH!')
                             # check that s2h match
                             _file_s2h = self.get_table_field_value(sfFactorTable, i, 3)
                             if (self.is_within_precision_range(_file_s2h,
                                                                s2h_value,
                                                                value_precision)):
             
-                                self.logbook('----> s2h => FOUND MATCH!')
                                 if self.main_gui.ui.scalingFactorSlitsWidthFlag.isChecked():
 
                                     # check that s1w match
@@ -257,14 +254,12 @@ class ReductionObject(object):
                                                                        s1w_value,
                                                                        value_precision)):
                 
-                                        self.logbook('----> s1w => FOUND MATCH!')
                                         # check that s2w match
                                         _file_s2w = self.get_table_field_value(sfFactorTable, i, 5)
                                         if (self.is_within_precision_range(_file_s2w,
                                                                            s2w_value,
                                                                            value_precision)):
                 
-                                            self.logbook('----> s2w => FOUND MATCH!')
                                             self.logbook('----> Found a perfect match !')
                                             
                                             # retrieve parameters
@@ -798,8 +793,6 @@ class REFLReduction(object):
         # rebin 
         red1.rebin()
         
-        return
-
         # integrate low res range of data and norm
         red1.integrate_over_low_res_range()
         
@@ -815,9 +808,7 @@ class REFLReduction(object):
         # convert to Q
         red1.convert_to_Q()
 
-
         cls.logbook('================================================')
-            
 
         # put back the object created in the bigTable to speed up next preview / load
         main_gui.bigTableData = bigTableData
