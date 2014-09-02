@@ -85,9 +85,9 @@ class ReductionObject(object):
 
     def rebin(self):
         '''
-        rebin the data according to parameters defined
+        rebin the data and normalization according to parameters defined
         '''
-        self.logbook('-> rebin ... PROCESSING')
+        self.logbook('-> rebin DATA ... PROCESSING')
 
         data = self.oData.active_data
         nxs = data.nxs
@@ -96,13 +96,40 @@ class ReductionObject(object):
         tof_bin = float(self.main_gui.ui.eventTofBins.text())
         
         rebin_params = [float(tof_range[0]), tof_bin, float(tof_range[1])]
+        self.logbook('--> from TOF : \t' + tof_range[0] + ' microS')
+        self.logbook('-->   to TOF : \t' + tof_range[1] + ' microS')
+        self.logbook('-->  TOF bin : \t' + str(tof_bin) + ' microS')
+
         nxs_histo = Rebin(InputWorkspace=nxs, Params=rebin_params, PreserveEvents=True)
         nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
 
         [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
 
-        self.logbook('-> rebin ... DONE', False)
+        data.tof_axis = _tof_axis
+        data.Ixyt = Ixyt
+        data.Exyt = Exyt
+        self.oData.active_data = data
 
+        self.logbook('-> rebin DATA ... DONE')
+
+        if self.oNorm is not None:
+            
+            self.logbook('-> rebin NORMALIZATION ... PROCESSING')
+
+            norm = self.oNorm.active_data
+            norm_nxs = norm.nxs
+            
+            norm_nxs_histo = Rebin(InputWorkspace=norm_nxs, Params=rebin_params, PreserveEvents=True)
+            norm_nxs_histo = NormaliseByCurrent(InputWorkspace=norm_nxs_histo)
+            
+            [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(norm_nxs_histo)
+            
+            norm.tof_axis = _tof_axis
+            norm.Ixyt = Ixyt
+            norm.Exyt = Exyt
+            self.oNorm.active_data = norm
+            
+            self.logbook('-> rebin NORMALIZATION ... DONE')
 
     def convert_to_Q(self):
         '''

@@ -1234,6 +1234,7 @@ class LRDataset(object):
   countsxdata = None
   ycountsdata = None
 
+  tof_axis = None
   Ixyt = None
   Exyt = None
 
