@@ -144,10 +144,6 @@ class ReductionObject(object):
         else:
             self.logbook('--> Without geometry correction')
             self.convert_to_Q_no_geometry_correction()
-            
-            
-            
-            
 
     def convert_to_Q_no_geometry_correction(self):
         '''
@@ -155,14 +151,10 @@ class ReductionObject(object):
         Will convert the tof axis into a Q axis using Q range specified
         '''
         
-        _const = 4. * math.pi * constants.mn * self.oData.active_data.dSD / constants.h
+        _const = 4. * math.pi * constants.mn * self.oData.active_data.dMD / constants.h
         theta = self.oData.active_data.theta
-        
-#        print self.oData.active_data.tof_edges
+        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.theta) / (self.oData.active_data.tof_axis * 1e-6)
 
-        
-#        _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.
-        
 
 
 

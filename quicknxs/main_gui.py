@@ -4326,7 +4326,8 @@ Do you want to try to restore the working reduction list?""",
                    callback = self.updateEventReadout,
                    event_split_bins = event_split_bins,
                    event_split_index = event_split_index,
-                   metadata_config_object = _configDataset)
+                   metadata_config_object = _configDataset,
+                   angle_offset = self.ui.angleOffsetValue.text())
     
     
     r=0
