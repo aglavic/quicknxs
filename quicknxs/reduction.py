@@ -6,6 +6,7 @@ import math
 import os
 import constants
 import utilities
+from qreduce import LRDataset
 
 class ReductionObject(object):
 
@@ -81,6 +82,27 @@ class ReductionObject(object):
                     self.logbook('---> yes, we want to use normalization file')
                                     
         self.oNorm = oNorm
+
+    def rebin(self):
+        '''
+        rebin the data according to parameters defined
+        '''
+        self.logbook('-> rebin ... PROCESSING')
+
+        data = self.oData.active_data
+        nxs = data.nxs
+        
+        tof_range = data.tof_range
+        tof_bin = float(self.main_gui.ui.eventTofBins.text())
+        
+        rebin_params = [float(tof_range[0]), tof_bin, float(tof_range[1])]
+        nxs_histo = Rebin(InputWorkspace=nxs, Params=rebin_params, PreserveEvents=True)
+        nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
+
+        [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
+
+        self.logbook('-> rebin ... DONE', False)
+
 
     def convert_to_Q(self):
         '''
@@ -342,27 +364,7 @@ class ReductionObject(object):
             if (len(line) > 0) and (line[0] != '#'):
                 sfFactorTable.append(line.split(' '))
         f.close()
-        return sfFactorTable
-
-    def rebin(self):
-        '''
-        rebin the data according to parameters defined
-        '''
-        self.logbook('-> rebin ... PROCESSING')
-
-        data = self.oData.active_data
-        nxs = data.nxs
-        
-        tof_range = data.tof_range
-        print 'tof_range:'
-        print tof_range
-        print '---------'
-        
-
-
-
-        self.logbook('-> rebin ... DONE', False)
-        
+        return sfFactorTable        
         
     def integrate_over_low_res_range(self):
         '''

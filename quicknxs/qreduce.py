@@ -34,6 +34,7 @@ from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 from utilities import convert_angle
 import numpy as np
+from random import randint
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -174,6 +175,9 @@ class NXSData(object):
   '''
   __metaclass__=OptionsDocMeta
 
+  nexus = None
+  nxs = None
+
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0, low_res_range=[0,303],
                        event_tof_overwrite=None, 
@@ -271,6 +275,22 @@ class NXSData(object):
     else:
       return self._read_REFL_file(filename)
 
+  def generate_random_workspace_name(self):
+    '''
+    This will generate a random workspace name to avoid conflict names
+    '''
+    string = 'abcdefghijklmnopqrstuvwxyz1234567890'
+    stringList = list(string)
+    nbrPara = len(stringList)
+    
+    listRand = []
+    for i in range(5):
+      _tmp = stringList[randint(0,nbrPara-1)]
+      listRand.append(_tmp)
+    
+    randomString = ''.join(listRand)
+    return randomString
+
   def _read_REFL_file(self, filename):
       '''
       Load data from a REF_L Nexus file.
@@ -281,10 +301,12 @@ class NXSData(object):
       if self._options['callback']:
         self._options['callback'](0.)
 
+      randomString = self.generate_random_workspace_name()
+
       if type(filename) == type(u"") or type(filename) == type(""):
 
         try:
-          nxs = LoadEventNexus(Filename=str(filename))
+          nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
           return False
@@ -300,7 +322,7 @@ class NXSData(object):
             
             nxs = 'ws_event'
             if _index == 0:
-              nxs=LoadEventNexus(Filename=str(_filename))
+              nxs=LoadEventNexus(Filename=str(_filename),OutputWorkspace=randomString)
               
               # retrieve lambda requested value
               mt_run = nxs.getRun()
@@ -318,7 +340,7 @@ class NXSData(object):
                 return False
 
               nxs=Plus(LHSWorkspace='nxs',
-                   RHSWorkspace='tmp')
+                   RHSWorkspace='tmp',OutputWorksapce=randomString)
               DeleteWorkspace(tmp)
             
           except IOError:
@@ -331,6 +353,8 @@ class NXSData(object):
       data=LRDataset.from_event(nxs, self._options,
                                 callback=self._options['callback'])
 
+
+#      self.nexus = nxs
 
 #      self._channel_data.append(data)
       data.filename = filename
