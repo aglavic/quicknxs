@@ -1167,9 +1167,17 @@ class LRDataset(object):
   '''
   total_counts=0 #: total counts on detector
   total_time=0 #: time counted in this channal
-  tof_edges=None #: array of time of flight edges for the bins [µs]
-  tof_edges_full = None
-  auto_tof_range=None #: min and max value of the auto TOF range defined by the program
+
+  tof_axis_auto = None # full auto tof axis (estimated by program)
+  tof_range_auto = ['0','0'] # [tof_min_auto, tof_max_auto]
+  tof_axis_auto_with_margin = None # full auto tof axis with margin (for display)
+  tof_range_auto_with_margin = None # [tof_min_auto_margin, tof_max_auto_margin]
+  tof_range = ['0','0'] # [tof_min, tof_max] manual tof defined
+  tof_axis = None # manual tof axis
+
+  #tof_edges=None #: array of time of flight edges for the bins [µs]
+  #tof_edges_full = None
+
   dangle=0. #: detector arm angle value in [°]
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
   sangle=0. #: sample angle [°]
@@ -1215,7 +1223,7 @@ class LRDataset(object):
   low_res = ['0','0']
   back_flag = True
   low_res_flag = True
-  tof_range = ['0','0'] 
+  #tof_range = ['0','0'] 
   tof_units = 'ms'
   tof_auto_flag = True
   q_range = ['0','0']
@@ -1234,7 +1242,7 @@ class LRDataset(object):
   countsxdata = None
   ycountsdata = None
 
-  tof_axis = None
+#  tof_axis = None
   Ixyt = None
   Exyt = None
 
@@ -1446,6 +1454,10 @@ class LRDataset(object):
       tmin = np.float(autotmin - 0.4e4)
       tmax = np.float(autotmax + 0.4e4)
   
+    output.tof_range_auto = [autotmin, autotmax]
+    output.tof_range_auto_with_margin = [tmin, tmax]
+    output.tof_range = [autotmin, autotmax] # for the first time, initialize tof_range like auto (microS)
+    
     tbin = int(read_options["bins"])
     
     # rebin event nexus to get histogram
@@ -1463,6 +1475,7 @@ class LRDataset(object):
     
     # retrieve 3D array
     [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
+    output.tof_axis_auto_with_margin = _tof_axis
     
     ## keep only the low resolution range requested
 #    print read_options['low_res_range_flag']
@@ -1486,10 +1499,9 @@ class LRDataset(object):
    # Ext = Exyt.sum(axis=1)    # FIXME
     
     # store the data
-    output.auto_tof_range = [autotmin,autotmax]
-    output.tof_edges=_tof_axis
-    output.tof_edges_full = [tmin, tmax]
-    output.tof_edges_auto = [autotmin, autotmax]
+    #output.tof_edges=_tof_axis
+    #output.tof_edges_full = [tmin, tmax]
+    #output.tof_edges_auto = [autotmin, autotmax]
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.ytofdata=Iyt.astype(float) # 2D dataset

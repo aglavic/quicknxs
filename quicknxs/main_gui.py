@@ -798,7 +798,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.norm_ix_plot.clear()
       self.ui.norm_ix_plot.draw()
 
-  @log_call
+  #@log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
     
     # check witch tab is activated (data or norm)
@@ -818,63 +818,64 @@ class MainGUI(QtGui.QMainWindow):
 
     if self.ui.dataTOFmanualMode.isChecked(): # manual mode
   
-      nxs = data.nxs
+      #nxs = data.nxs
       
       # retrieve tof parameters defined by user
-      _valueFrom = float(self.ui.TOFmanualFromValue.text())
-      _valueTo = float(self.ui.TOFmanualToValue.text())
-      if self.ui.TOFmanualMsValue.isChecked(): # ms units
-        _valueFrom *= 1000
-        _valueTo *= 1000 
-      
-      tbin = data.read_options["bins"]  
-      params = [float(_valueFrom), float(tbin), float(_valueTo)]
-      
-      nxs_histo = Rebin(InputWorkspace=nxs, Params=params, PreserveEvents=True)
-      nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
-      
-      [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
-      
-      Ixy = Ixyt.sum(axis=2)
-      Iyt = Ixyt.sum(axis=0)
-      Iit = Iyt.sum(axis=0)
-      Iix = Ixy.sum(axis=1)
-      Iyi = Iyt.sum(axis=1)
-     # Exy = Exyt.sum(axis=2)    # FIXME
-     # Ext = Exyt.sum(axis=1)    # FIXME
-      
-      # store the data
-      auto_tof_range = array([_valueFrom,_valueTo])
-      
-      tof_edges = _tof_axis
-      tof_edges_full = data.tof_edges
-#      data = Ixyt.astype(float) # 3D dataset
-      xy  = Ixy.transpose().astype(float) # 2D dataset
-      ytof = Iyt.astype(float) # 2D dataset
-  
-#      countstofdata = Iit.astype(float)
-      countstofdata = data.countstofdata
-      countsxdata = Iix.astype(float)
-      ycountsdata = Iyi.astype(float)
+#      _valueFrom = float(self.ui.TOFmanualFromValue.text())
+#      _valueTo = float(self.ui.TOFmanualToValue.text())
             
+      tof_range_auto = data.tof_range
+      #if self.ui.TOFmanualMsValue.isChecked(): # ms units
+        #_valueFrom /= 1000
+        #_valueTo /= 1000 
+      
+      #tbin = data.read_options["bins"]  
+      #params = [float(_valueFrom), float(tbin), float(_valueTo)]
+      
+      #nxs_histo = Rebin(InputWorkspace=nxs, Params=params, PreserveEvents=True)
+      #nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
+      
+      #[_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
+      
+      #Ixy = Ixyt.sum(axis=2)
+      #Iyt = Ixyt.sum(axis=0)
+      #Iit = Iyt.sum(axis=0)
+      #Iix = Ixy.sum(axis=1)
+      #Iyi = Iyt.sum(axis=1)
+     ## Exy = Exyt.sum(axis=2)    # FIXME
+     ## Ext = Exyt.sum(axis=1)    # FIXME
+      
+      ## store the data
+      #tof_axis = _tof_axis
+
+##      tof_edges_full = data.tof_edges
+##      data = Ixyt.astype(float) # 3D dataset
+      #xy  = Ixy.transpose().astype(float) # 2D dataset
+      #ytof = Iyt.astype(float) # 2D dataset
+  
+##      countstofdata = Iit.astype(float)
+      #countstofdata = data.countstofdata
+      #countsxdata = Iix.astype(float)
+      #ycountsdata = Iyi.astype(float)
+ 
     else: # auto mode
 
-      xy = data.xydata
-      ytof = data.ytofdata
-      countstofdata = data.countstofdata
-      countsxdata = data.countsxdata
-      ycountsdata = data.ycountsdata
-      auto_tof_range = data.auto_tof_range
+      tof_range_auto = data.tof_range_auto
+      
+    #tof_edges_full = data.tof_edges_full
+    tof_axis = data.tof_axis_auto_with_margin
     
-      tof_edges_full = data.tof_edges_full
-      tof_edges = data.tof_edges
+    xy = data.xydata
+    ytof = data.ytofdata
+    countstofdata = data.countstofdata
+    countsxdata = data.countsxdata
+    ycountsdata = data.ycountsdata
     
     [peak1, peak2] = data.peak
     [back1, back2] = data.back
     [lowRes1, lowRes2] = data.low_res
     back_flag = data.back_flag
     low_res_flag = data.low_res_flag
-    
     
     if isDataSelected: # data
 
@@ -921,9 +922,8 @@ class MainGUI(QtGui.QMainWindow):
       _data = self.bigTableData[r,c]
       _active_data = _data.active_data
 
-      ## investigate why it seems like the code run this part twice !!!!!!  FIXME
       if _active_data.q_range == ['0','0']:
-        [qmin, qmax] = self.calculate_q_range(tof_edges, data)
+        [qmin, qmax] = self.calculate_q_range(data)
         qmin = "%.5f" % qmin
         qmax = "%.5f" % qmax
         _active_data.q_range = [qmin, qmax]
@@ -985,17 +985,17 @@ class MainGUI(QtGui.QMainWindow):
     if plot_yt:
       yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
                      aspect='auto', cmap=self.color, origin='lower',
-                     extent=[tof_edges[0]*1e-3, tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
+                     extent=[tof_axis[0]*1e-3, tof_axis[-1]*1e-3, 0, data.y.shape[0]-1])
       yt_plot.set_xlabel(u't (ms)')
       yt_plot.set_ylabel(u'y (pixel)')
   
       # display tof range in auto/manual TOF range    #FIXME
-      autotmin = auto_tof_range[0]
-      autotmax = auto_tof_range[1]
+      autotmin = tof_range_auto[0]
+      autotmax = tof_range_auto[1]
       self.display_tof_range(autotmin, autotmax, 'ms')
   
-      tmin = data.tof_edges_auto[0]*1e-3
-      tmax = data.tof_edges_auto[-1]*1e-3
+      tmin = autotmin*1e-3
+      tmax = autotmax*1e-3
 
       t1 = yt_plot.canvas.ax.axvline(tmin, color='#072be2')
       t2 = yt_plot.canvas.ax.axvline(tmax, color='#072be2')
@@ -1011,7 +1011,8 @@ class MainGUI(QtGui.QMainWindow):
 
     # display it
     if plot_it:
-      it_plot.plot(tof_edges[0:-1],countstofdata, color='#0000aa')
+
+      it_plot.plot(tof_axis[0:-1],countstofdata, color='#0000aa')
       it_plot.set_xlabel(u't (\u00b5s)')
 #      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
@@ -1049,81 +1050,37 @@ class MainGUI(QtGui.QMainWindow):
         
       ix_plot.draw()
 
-    return
 
-    # display xy
-    self.ui.xy_overview.imshow(xy, log=self.ui.logarithmic_colorscale.isChecked(),
-                             aspect='auto', cmap=self.color, origin='lower')
-    self.ui.xy_overview.set_xlabel(u'x [pix]')
-    self.ui.xy_overview.set_ylabel(u'y [pix]')
-#    self.ui.xy_overview.cplot.set_clim([xy_imin, xy_imax])
-        
-    # display xtof
-    tmin = data.tof_edges[0]
-    tmax = data.tof_edges[-1]
-    self.display_tof_range(tmin, tmax, 'micros')
-    
-    self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
-                                 aspect='auto', cmap=self.color,
-                                 extent=[data.tof_edges[0]*1e-3, data.tof_edges[-1]*1e-3, 0, data.y.shape[0]-1])
-    self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
-    self.ui.xtof_overview.set_ylabel(u'x [pix]')
+  def retrieve_tof_range(self, data):
+    '''
+    will retrieve the TOF (auto or manual) selected in microS
+    '''
 
-    # display various selection
-
-#    x1 = self.ui.xy_overview.canvas.ax.axvline(x_peak-x_width/2., color='#aa0000')
-#    x2 = self.ui.xy_overview.canvas.ax.axvline(x_peak+x_width/2., color='#aa0000')
-    # display peak selection
-    y1 = self.ui.xy_overview.canvas.ax.axhline(peak_min, color='#00aa00')
-    y2 = self.ui.xy_overview.canvas.ax.axhline(peak_max, color='#00aa00')
-    
-    # display background selection
-    if self.ui.dataBackgroundFlag.isChecked():
-      yb1 = self.ui.xy_overview.canvas.ax.axhline(back_min, color='#aa0000')
-      yb2 = self.ui.xy_overview.canvas.ax.axhline(back_max, color='#aa0000')
+    # auto
+    if self.ui.dataTOFautoMode.isChecked():
+      return data.tof_range_auto
       
-    # display low res selection
-    if self.ui.dataLowResFlag.isChecked():
-      x1 = self.ui.xy_overview.canvas.ax.axvline(lowRes_min, color='#0a25f3')
-      x2 = self.ui.xy_overview.canvas.ax.axvline(lowRes_max, color='#0a25f3')
-
-    # display peak selection
-    y1tof = self.ui.xtof_overview.canvas.ax.axhline(peak_min, color='#00aa00')
-    y2tof = self.ui.xtof_overview.canvas.ax.axhline(peak_max, color='#00aa00')
-    
-    # display background selection
-    if self.ui.dataBackgroundFlag.isChecked():
-      yb1tof = self.ui.xtof_overview.canvas.ax.axhline(back_min, color='#aa0000')
-      yb2tof = self.ui.xtof_overview.canvas.ax.axhline(back_max, color='#aa0000')
+    else: #manual
+      tof_min = self.ui.TOFmanualFromValue.value()
+      tof_max = self.ui.TOFmanualToValue.value()
       
-    # draw plots
-    self.ui.xy_overview.draw()
-    self.ui.xtof_overview.draw()
+      if TOFmanualMicrosValue.isChecked():
+        return [float(tof_min), float(tof_max)]
+      else:
+        tof_min = float(tof_min)*1000
+        tof_max = float(tof_max)*1000
+        return [tof_min, tof_max]
 
-    ## change xlabels of xy_overview to display right range
-    #low_res_range_min = float(self.ui.refXPos) - float(self.ui.refXWidth)
-    #xlabels = [item.get_text() for item in self.ui.xy_overview.canvas.ax.get_xticklabels()]
-    #new_xlabels = []
-    #for entry in xlabels:
-      #if entry == '':
-        #new_xlabels.append(entry)
-      #else:
-        #_value = int(entry)
-        #_value += int(low_res_range_min)
-        #new_xlabels.append(str(_value))
-    #self.ui.xy_overview.canvas.ax.set_xticklabels(new_xlabels)
-    #self.ui.xy_overview.draw()    
-
-  def calculate_q_range(self, tof_edges, data):
+  def calculate_q_range(self, data):
     
     theta_rad = data.theta
     
     dMD = data.dMD
     _const = float(4) * math.pi * constants.mn * dMD / constants.h
     
-    tof_min = tof_edges[0]
-    tof_max = tof_edges[-1]
-
+    # retrieve tof from GUI
+    [tof_min, tof_max] = self.retrieve_tof_range(data)
+      
     q_min = _const * math.sin(theta_rad) / (tof_max * 1e-6) * float(1e-10)
     q_max = _const * math.sin(theta_rad) / (tof_min * 1e-6) * float(1e-10)
 
@@ -1675,8 +1632,25 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.TOFmanualMsValue.setEnabled(not bool)
       self.ui.TOFmanualMicrosValue.setEnabled(not bool)
       self._auto_tof_flag = True
+    self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
  
   def manual_tof_selection(self):
+    # first save the manual parameters
+    [row,col] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[row,col]
+    _active_data = _data.active_data
+
+    # retrieve tof parameters defined by user
+    _valueFrom = float(self.ui.TOFmanualFromValue.text())
+    _valueTo = float(self.ui.TOFmanualToValue.text())
+    if self.ui.TOFmanualMsValue.isChecked(): # ms units
+      _valueFrom *= 1000
+      _valueTo *= 1000 
+
+    _active_data.tof_range = [_valueFrom, _valueTo]
+    _data.active_data = _active_data
+    self.bigTableData[row,col] = _data
+    
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
   def manual_tof_switch(self, bool):
@@ -1693,6 +1667,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.TOFmanualMsValue.setEnabled(bool)
       self.ui.TOFmanualMicrosValue.setEnabled(bool)
       self._auto_tof_flag = False
+    self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
  
   def tof_micros_switch(self, bool):
     '''

@@ -155,7 +155,7 @@ class ReductionObject(object):
         theta = self.oData.active_data.theta
         _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.theta) / (self.oData.active_data.tof_axis * 1e-6)
 
-
+        print _q_axis
 
 
 
