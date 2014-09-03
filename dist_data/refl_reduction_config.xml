@@ -1,352 +1,347 @@
 <Reduction>
-  <instrument_name>REFL</instrument_name>
-  <timestamp>Thu Jun 12 13:41:37 2014</timestamp>
-  <python_version>2.6.6 (r266:84292, Sep  4 2013, 07:46:00) 
-[GCC 4.4.7 20120313 (Red Hat 4.4.7-3)]</python_version>
-  <platform>Linux</platform>
-  <architecture>('64bit', 'ELF')</architecture>
-  <mantid_version>3.1.20140523.1928</mantid_version>
-<DataSeries>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>112</from_peak_pixels>
-<to_peak_pixels>125</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>False</background_flag>
-<back_roi1_from>109</back_roi1_from>
-<back_roi1_to>128</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>50349.0</from_tof_range>
-<to_tof_range>62787.0</to_tof_range>
-<data_sets>115268</data_sets>
-<x_min_pixel>123</x_min_pixel>
-<x_max_pixel>187</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>124</norm_x_min>
-<norm_from_peak_pixels>112</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>109</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115275</norm_dataset>
-<norm_full_file_name></norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>112</from_peak_pixels>
-<to_peak_pixels>126</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
-<back_roi1_from>109</back_roi1_from>
-<back_roi1_to>129</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>40670.0</from_tof_range>
-<to_tof_range>53321.0</to_tof_range>
-<data_sets>115269</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115269_event.nxs</data_full_file_name>
-<incident_angle>1.4</incident_angle>
-<x_min_pixel>123</x_min_pixel>
-<x_max_pixel>187</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>120</norm_x_min>
-<norm_from_peak_pixels>112</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>109</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115276</norm_dataset>
-<norm_full_file_name>/home/j35/NeXus/REF_L_115276_event.nxs</norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>113</from_peak_pixels>
-<to_peak_pixels>123</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
-<back_roi1_from>113</back_roi1_from>
-<back_roi1_to>126</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>29642.0</from_tof_range>
-<to_tof_range>42328.0</to_tof_range>
-<data_sets>115270</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115270_event.nxs</data_full_file_name>
-<incident_angle>1.6</incident_angle>
-<x_min_pixel>125</x_min_pixel>
-<x_max_pixel>185</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>123</norm_x_min>
-<norm_from_peak_pixels>111</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>108</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115277</norm_dataset>
-<norm_full_file_name>/home/j35/NeXus/REF_L_115277_event.nxs</norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>114</from_peak_pixels>
-<to_peak_pixels>124</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
-<back_roi1_from>111</back_roi1_from>
-<back_roi1_to>127</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>18500.0</from_tof_range>
-<to_tof_range>30833.0</to_tof_range>
-<data_sets>115271</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115271_event.nxs</data_full_file_name>
-<incident_angle>1.8</incident_angle>
-<x_min_pixel>124</x_min_pixel>
-<x_max_pixel>184</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>-2.80</tthd_value>
-<ths_value>-3.40</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>123</norm_x_min>
-<norm_from_peak_pixels>112</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>109</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115278</norm_dataset>
-<norm_full_file_name>/home/j35/NeXus/REF_L_115278_event.nxs</norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>111</from_peak_pixels>
-<to_peak_pixels>127</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
-<back_roi1_from>101</back_roi1_from>
-<back_roi1_to>137</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>9806.0</from_tof_range>
-<to_tof_range>21991.0</to_tof_range>
-<data_sets>115272</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115272_event.nxs</data_full_file_name>
-<incident_angle>2.0</incident_angle>
-<x_min_pixel>124</x_min_pixel>
-<x_max_pixel>186</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>-2.62</tthd_value>
-<ths_value>-3.31</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>123</norm_x_min>
-<norm_from_peak_pixels>112</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>109</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115279</norm_dataset>
-<norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>112</from_peak_pixels>
-<to_peak_pixels>127</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
-<back_roi1_from>102</back_roi1_from>
-<back_roi1_to>137</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>9893.0</from_tof_range>
-<to_tof_range>21991.0</to_tof_range>
-<data_sets>115273</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115273_event.nxs</data_full_file_name>
-<incident_angle>2.2</incident_angle>
-<x_min_pixel>125</x_min_pixel>
-<x_max_pixel>187</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>-1.26</tthd_value>
-<ths_value>-2.63</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>123</norm_x_min>
-<norm_from_peak_pixels>112</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>109</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115279</norm_dataset>
-<norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-<RefLData>
-<peak_selection_type>narrow</peak_selection_type>
-<from_peak_pixels>113</from_peak_pixels>
-<to_peak_pixels>124</to_peak_pixels>
-<peak_discrete_selection>N/A</peak_discrete_selection>
-<background_flag>True</background_flag>
-<back_roi1_from>103</back_roi1_from>
-<back_roi1_to>134</back_roi1_to>
-<back_roi2_from>0</back_roi2_from>
-<back_roi2_to>0</back_roi2_to>
-<tof_range_flag>True</tof_range_flag>
-<from_tof_range>9850.0</from_tof_range>
-<to_tof_range>21991.0</to_tof_range>
-<data_sets>115274</data_sets>
-<data_full_file_name>/home/j35/NeXus/REF_L_115274_event.nxs</data_full_file_name>
-<incident_angle>2.4</incident_angle>
-<x_min_pixel>118</x_min_pixel>
-<x_max_pixel>191</x_max_pixel>
-<x_range_flag>True</x_range_flag>
-<tthd_value>1.42</tthd_value>
-<ths_value>-1.29</ths_value>
-<norm_flag>True</norm_flag>
-<norm_x_range_flag>True</norm_x_range_flag>
-<norm_x_max>186</norm_x_max>
-<norm_x_min>123</norm_x_min>
-<norm_from_peak_pixels>112</norm_from_peak_pixels>
-<norm_to_peak_pixels>122</norm_to_peak_pixels>
-<norm_background_flag>True</norm_background_flag>
-<norm_from_back_pixels>109</norm_from_back_pixels>
-<norm_to_back_pixels>125</norm_to_back_pixels>
-<norm_dataset>115279</norm_dataset>
-<norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
-<q_min>0.005</q_min>
-<q_step>0.02</q_step>
-<auto_q_binning>False</auto_q_binning>
-<overlap_lowest_error>True</overlap_lowest_error>
-<overlap_mean_value>False</overlap_mean_value>
-<angle_offset>0.008</angle_offset>
-<angle_offset_error>0.001</angle_offset_error>
-<scaling_factor_flag>True</scaling_factor_flag>
-<scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
-<slits_width_flag>True</slits_width_flag>
-<geometry_correction_switch>False</geometry_correction_switch>
-<incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
-<incident_medium_index_selected>3</incident_medium_index_selected>
-<fourth_column_flag>True</fourth_column_flag>
-<fourth_column_dq0>0.0002</fourth_column_dq0>
-<fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
- </RefLData>
-</DataSeries>
+ <instrument_name>REFL</instrument_name>
+ <timestamp>Wednesday, 03. September 2014 04:14PM</timestamp>
+ <python_version>2.6.6 (r266:84292, Jan 22 2014, 09:42:36) 
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]</python_version>
+ <platform>Linux</platform>
+ <architecture>x86_64</architecture>
+ <mantid_version>3.1.1</mantid_version>
+ <DataSeries>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>112</from_peak_pixels>
+   <to_peak_pixels>125</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>0</background_flag>
+   <back_roi1_from>109</back_roi1_from>
+   <back_roi1_to>128</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>50126.7181407</from_tof_range>
+   <to_tof_range>62941.067139</to_tof_range>
+   <from_q_range>0.00798</from_q_range>
+   <to_q_range>0.01002</to_q_range>
+   <from_lambda_range>13.30</from_lambda_range>   <to_lambda_range>16.70</to_lambda_range>   <data_sets>115268</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115268_event.nxs</data_full_file_name>
+   <x_min_pixel>123</x_min_pixel>
+   <x_max_pixel>187</x_max_pixel>
+   <x_range_flag>1</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>124</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115275</norm_dataset>
+   <norm_full_file_name></norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>112</from_peak_pixels>
+   <to_peak_pixels>126</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>True</background_flag>
+   <back_roi1_from>109</back_roi1_from>
+   <back_roi1_to>129</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>0</from_tof_range>
+   <to_tof_range>0</to_tof_range>
+   <from_q_range></from_q_range>
+   <to_q_range></to_q_range>
+   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115269</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115269_event.nxs</data_full_file_name>
+   <x_min_pixel>123</x_min_pixel>
+   <x_max_pixel>187</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>120</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115276</norm_dataset>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115276_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>113</from_peak_pixels>
+   <to_peak_pixels>123</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>True</background_flag>
+   <back_roi1_from>113</back_roi1_from>
+   <back_roi1_to>126</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>0</from_tof_range>
+   <to_tof_range>0</to_tof_range>
+   <from_q_range></from_q_range>
+   <to_q_range></to_q_range>
+   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115270</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115270_event.nxs</data_full_file_name>
+   <x_min_pixel>125</x_min_pixel>
+   <x_max_pixel>185</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>123</norm_x_min>
+   <norm_from_peak_pixels>111</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>108</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115277</norm_dataset>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115277_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>114</from_peak_pixels>
+   <to_peak_pixels>124</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>True</background_flag>
+   <back_roi1_from>111</back_roi1_from>
+   <back_roi1_to>127</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>0</from_tof_range>
+   <to_tof_range>0</to_tof_range>
+   <from_q_range></from_q_range>
+   <to_q_range></to_q_range>
+   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115271</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115271_event.nxs</data_full_file_name>
+   <x_min_pixel>124</x_min_pixel>
+   <x_max_pixel>184</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>123</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115278</norm_dataset>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115278_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>111</from_peak_pixels>
+   <to_peak_pixels>127</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>True</background_flag>
+   <back_roi1_from>101</back_roi1_from>
+   <back_roi1_to>137</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>0</from_tof_range>
+   <to_tof_range>0</to_tof_range>
+   <from_q_range></from_q_range>
+   <to_q_range></to_q_range>
+   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115272</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115272_event.nxs</data_full_file_name>
+   <x_min_pixel>124</x_min_pixel>
+   <x_max_pixel>186</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>123</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115279</norm_dataset>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>112</from_peak_pixels>
+   <to_peak_pixels>127</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>True</background_flag>
+   <back_roi1_from>102</back_roi1_from>
+   <back_roi1_to>137</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>0</from_tof_range>
+   <to_tof_range>0</to_tof_range>
+   <from_q_range></from_q_range>
+   <to_q_range></to_q_range>
+   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115273</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115273_event.nxs</data_full_file_name>
+   <x_min_pixel>125</x_min_pixel>
+   <x_max_pixel>187</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>123</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115279</norm_dataset>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>113</from_peak_pixels>
+   <to_peak_pixels>124</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>True</background_flag>
+   <back_roi1_from>103</back_roi1_from>
+   <back_roi1_to>134</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>0</from_tof_range>
+   <to_tof_range>0</to_tof_range>
+   <from_q_range></from_q_range>
+   <to_q_range></to_q_range>
+   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115274</data_sets>
+   <data_full_file_name>/home/j35/NeXus/REF_L_115274_event.nxs</data_full_file_name>
+   <x_min_pixel>118</x_min_pixel>
+   <x_max_pixel>191</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_x_max>186</norm_x_max>
+   <norm_x_min>123</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>122</norm_to_peak_pixels>
+   <norm_background_flag>True</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>125</norm_to_back_pixels>
+   <norm_dataset>115279</norm_dataset>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115279_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <overlap_mean_value>False</overlap_mean_value>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>AirNoFrameOverlap,Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>4</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+  </RefLData>
+  </DataSeries>
 </Reduction>

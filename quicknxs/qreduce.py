@@ -1227,6 +1227,7 @@ class LRDataset(object):
   tof_units = 'ms'
   tof_auto_flag = True
   q_range = ['0','0']
+  lambda_range = ['0','0']
   theta = 0
   
   nxs=None # Mantid NeXus workspace
@@ -1350,6 +1351,12 @@ class LRDataset(object):
 
       _data_low_res_flag = _iDataset.data_low_res_flag
       output.low_res_flag = strtobool(_data_low_res_flag)
+      
+      _data_q_range = _iDataset.q_range
+      output.q_range = _data_q_range
+      
+      _data_lambda_range = _iDataset.lambda_range
+      output.lambda_range = _data_lambda_range
 
     else:    
 

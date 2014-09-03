@@ -922,21 +922,33 @@ class MainGUI(QtGui.QMainWindow):
       _data = self.bigTableData[r,c]
       _active_data = _data.active_data
 
-      if _active_data.q_range == ['0','0']:
+      if (_active_data.q_range == ['0','0']) or (_active_data.q_range == ['','']):
         [qmin, qmax] = self.calculate_q_range(data)
         qmin = "%.5f" % qmin
         qmax = "%.5f" % qmax
         _active_data.q_range = [qmin, qmax]
+        
+        [lambdamin, lambdamax] = self.calculate_lambda_range(data)
+        lmin = "%.2f" % lambdamin
+        lmax = "%.2f" % lambdamax
+        _active_data.lambda_range = [lmin, lmax]
+        
         _data.active_data = _active_data
         self.bigTableData[r,c] = _data
       else:
+        
         [qmin,qmax] = _active_data.q_range
+        [lmin,lmax] = _active_data.lambda_range
       
       _item_min = QtGui.QTableWidgetItem(str(qmin))
       _item_max = QtGui.QTableWidgetItem(str(qmax))
+      _item_lmin = QtGui.QTableWidgetItem(str(lmin))
+      _item_lmax = QtGui.QTableWidgetItem(str(lmax))
       [row, column] = self.getCurrentRowColumnSelected()
       self.ui.reductionTable.setItem(row, 4, _item_min)
       self.ui.reductionTable.setItem(row, 5, _item_max)
+      self.ui.reductionTable.setItem(row, 2, _item_lmin)
+      self.ui.reductionTable.setItem(row, 3, _item_lmax)
 
     else: # normalization
 
@@ -1085,6 +1097,19 @@ class MainGUI(QtGui.QMainWindow):
     q_max = _const * math.sin(theta_rad) / (tof_min * 1e-6) * float(1e-10)
 
     return [q_min, q_max]
+
+  def calculate_lambda_range(self, data):
+
+    dMD = data.dMD
+    _const = constants.h / (constants.mn * dMD)
+    
+    # retrieve tof from GUI
+    [tof_min, tof_max] = self.retrieve_tof_range(data)
+
+    lambda_min = _const * (tof_min * 1e-6) / float(1e-10)
+    lambda_max = _const * (tof_max * 1e-6) / float(1e-10)
+    
+    return [lambda_min, lambda_max]
 
 
   def display_tof_range(self, tmin, tmax, units):
@@ -4017,10 +4042,11 @@ Do you want to try to restore the working reduction list?""",
         data_low_res = _data.low_res
         data_back_flag = _data.back_flag
         data_low_res_flag = _data.low_res_flag
-        tof = _data.tof
+        tof = _data.tof_range
         tof_units = _data.tof_units
         tof_auto_flag = _data.tof_auto_flag
         q_range = _data.q_range
+        lambda_range = _data.lambda_range
       
       else:
 
@@ -4040,6 +4066,11 @@ Do you want to try to restore the working reduction list?""",
           except:
             q_range = ['0','0']
             
+          try:
+            lambda_range = _metadata.lambda_range
+          except:
+            lambda_range = ['0','0']
+            
           tof_units = _metadata.tof_units
           tof_auto_flag = _metadata.tof_auto_flag
 
@@ -4054,6 +4085,7 @@ Do you want to try to restore the working reduction list?""",
           tof_units = 'ms'
           tof_auto_flag = True
           q_range = ['0','0']
+          lambda_range = ['0','0']
 
       norm_info = _bigTableData[row,1]
       if norm_info is not None:
@@ -4103,6 +4135,8 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <to_tof_range>' + str(tof[1]) + '</to_tof_range>\n')
       strArray.append('   <from_q_range>' + str(q_range[0]) + '</from_q_range>\n')
       strArray.append('   <to_q_range>' + str(q_range[1]) + '</to_q_range>\n')
+      strArray.append('   <from_lambda_range>' + str(lambda_range[0]) + '</from_lambda_range>')
+      strArray.append('   <to_lambda_range>' + str(lambda_range[1]) + '</to_lambda_range>')
 
       _data_run_number = self.ui.reductionTable.item(row,0).text()
       strArray.append('   <data_sets>' + _data_run_number + '</data_sets>\n')
@@ -4343,11 +4377,15 @@ Do you want to try to restore the working reduction list?""",
     
     _tof_min = self.getNodeValue(node, 'from_tof_range')
     _tof_max = self.getNodeValue(node, 'to_tof_range')
-    iMetadata.tof = [_tof_min, _tof_max]
+    iMetadata.tof_range = [_tof_min, _tof_max]
     
     _q_min = self.getNodeValue(node, 'from_q_range')
     _q_max = self.getNodeValue(node, 'to_q_range')
     iMetadata.q_range = [_q_min, _q_max]
+    
+    _lambda_min = self.getNodeValue(node, 'from_lambda_range')
+    _lambda_max = self.getNodeValue(node, 'to_lambda_range')
+    iMetadata.lambda_range = [_lambda_min, _lambda_max]
     
     iMetadata.tof_units = 'micros'
     
