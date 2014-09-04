@@ -13,7 +13,7 @@ from PyQt4 import QtGui, QtCore, QtWebKit
 #from logging import info, debug
 from .advanced_background import BackgroundDialog
 from .compare_plots import CompareDialog
-from .config import paths, instrument, gui, export
+from .config import paths, instrument, gui, export, misc
 from .decorators import log_call, log_input, log_both
 from .default_interface import Ui_MainWindow
 from .gui_logging import install_gui_handler, excepthook_overwrite
@@ -85,6 +85,7 @@ class MainGUI(QtGui.QMainWindow):
   overview_lines=None
   # colors for the reflecitivy lines
   _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
+  _extension_scripts=None
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -121,6 +122,19 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.setupUi(self)
     install_gui_handler(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
+
+    # widgets in the statusbar
+    self.x_position_indicator=QtGui.QLabel(u" x=%g"%0.)
+    self.x_position_indicator.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    self.x_position_indicator.setMaximumWidth(100)
+    self.x_position_indicator.setMinimumWidth(100)
+    self.ui.statusbar.addPermanentWidget(self.x_position_indicator)
+    self.y_position_indicator=QtGui.QLabel(u" y=%g"%0.)
+    self.y_position_indicator.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    self.y_position_indicator.setMaximumWidth(100)
+    self.y_position_indicator.setMinimumWidth(100)
+    self.ui.statusbar.addPermanentWidget(self.y_position_indicator)
+
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
     button=QtGui.QPushButton('Empty Cache')
@@ -133,10 +147,29 @@ class MainGUI(QtGui.QMainWindow):
     for i in range(1, 12):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
 
+    # create progress bar in statusbar
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(140, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
+
+    # create menu entries for scripts, if they exist
+    if os.path.exists(instrument.EXTENSION_SCRIPTS):
+      scripts=[]
+      for pyfile in glob(instrument.EXTENSION_SCRIPTS+u'/*.py'):
+        sinfo=self.get_script_info(pyfile)
+        if sinfo:
+          scripts.append(sinfo)
+      if len(scripts)>0:
+        scripts.sort()
+        self._extension_scripts={}
+
+        self.ui.menuTools.addSeparator()
+        smenu=self.ui.menuTools.addMenu(u'Extension Scripts')
+        for name, info, code in scripts:
+          self._extension_scripts[name]=code
+          mitem=smenu.addAction(name)
+          mitem.triggered.connect(self.run_script)
 
     self.toggleHide()
     self.readSettings()
@@ -261,6 +294,30 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
     self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
     self.ui.xtof_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
+
+  def get_script_info(self, sfile):
+    '''
+    Compile a python file and extract script information to be used.
+    '''
+    debug(u'Reding script file %s.'%sfile)
+    stxt=open(sfile, 'r').read()
+    try:
+      code=compile(stxt, sfile, 'exec')
+    except:
+      debug('Error in script:', exc_info=True)
+      return None
+    try:
+      script_info=[sline.strip('# ') for sline in stxt.splitlines()[1:4]]
+      if script_info[0]!=('QuickNXS script version '+misc.SCRIPT_VERSION):
+        return None
+      name=unicode(script_info[1].split('Name:', 1)[1].strip(), 'utf8', 'replace')
+      info=unicode(script_info[2].split('Info:', 1)[1].strip(), 'utf8', 'replace')
+    except:
+      debug("Can't parse script header:", exc_info=True)
+      return None
+    else:
+      return (name, info, code)
+
 
   @log_input
   def fileOpen(self, filename, do_plot=True):
@@ -1888,7 +1945,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if event.inaxes is None:
       return
-    self.ui.statusbar.showMessage(u"x=%15g    y=%15g"%(event.xdata, event.ydata))
+    self.x_position_indicator.setText(u" x=%g"%event.xdata)
+    self.y_position_indicator.setText(u" y=%g"%event.xdata)
 
   def plotRelese(self, event):
     self._picked_line=None
@@ -2327,6 +2385,14 @@ Do you want to try to restore the working reduction list?""",
           filtered_points=dia.filtered_idxs
 
   @log_call
+  def run_script(self):
+    trigger=self.sender()
+    name=unicode(trigger.text())
+    info(u'Executing script "%s"...'%name)
+    code=self._extension_scripts[name]
+    gls={'app': QtGui.QApplication.instance(), 'gui': self, 'data': self.active_data}
+    exec code in gls
+
   def helpDialog(self):
     '''
     Open a HTML page with the program documentation and place it on the right
