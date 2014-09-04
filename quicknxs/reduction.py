@@ -40,6 +40,13 @@ class ReductionObject(object):
     scaled_normalized_data = []
     scaled_normalized_data_error = []
     
+    # after conversion of axis from TOF to Q
+    scaled_normalized_data_reverse = []
+    scaled_normalized_data_error_reverse = []
+    q_axis = []
+    
+    q_workspace = None
+    
     main_gui = None
     
     def __init__(self, main_gui, dataCell, normCell, oData, oNorm, oConfig):
@@ -82,6 +89,55 @@ class ReductionObject(object):
                     self.logbook('---> yes, we want to use normalization file')
                                     
         self.oNorm = oNorm
+
+    def create_q_workspace(self):
+        '''
+        create the Q workspace that will be used to rebin the Q according to the parameters defined
+        by the user
+        '''
+        self.logbook('-> create Q workspace ... PROCESSING')
+        
+        data = self.scaled_normalized_data_reverse
+        error = self.scaled_normalized_data_error_reverse
+        q_axis = self.q_axis
+        
+        [nbr_pixel, nbr_q] = np.shape(q_axis)
+        
+        q_axis_1d = q_axis.flatten()
+        data_1d = data.flatten()
+        error_1d = error.flatten()
+        
+        q_workspace = CreateWorkspace(DataX = q_axis_1d,
+                                      DataY = data_1d,
+                                      DataE = error_1d,
+                                      Nspec = nbr_pixel,
+                                      UnitX = "Wavelength")
+        q_workspace.setDistribution(True)
+        self.q_workspace = q_workspace
+
+        self.logbook('-> create Q workspace ... DONE', False)
+        
+    def rebin_q_workspace(self):
+        '''
+        rebin q_workspace using binning paramter defined in main GUI
+        '''
+        
+        self.logbook('-> rebin q_workspace:')
+        q_range = self.oData.active_data.q_range
+        q_bin = self.main_gui.ui.qStep.text()
+        self.logbook('--> from q: %s' % q_range[0])
+        self.logbook('-->   to q: %s' % q_range[1])
+        self.logbook('-->    bin: %s' % q_bin)
+        
+        q_parameters = [float(q_range[0]), -float(q_bin), float(q_range[1])]
+        q_workspace = Rebin(InputWorkspace=self.q_workspace,
+                                 Params=q_parameters,
+                                 PreserveEvents = True)
+
+        
+        
+        
+        self.logbook('-> rebin q_workspace ... DONE')
 
     def rebin(self):
         '''
@@ -142,7 +198,7 @@ class ReductionObject(object):
 #            convert_to_Q_with_geometry_correction()
             self.logbook('--> With geometry correction')
         else:
-            self.logbook('--> Without geometry correction')
+            self.logbook('--> Without geometry correction --- PROCESSING')
             self.convert_to_Q_no_geometry_correction()
 
     def convert_to_Q_no_geometry_correction(self):
@@ -157,10 +213,21 @@ class ReductionObject(object):
 
         nbr_q = len(_q_axis)
         
-        scaled_normalized_data = self.scaled_normalized_data
-        scaled_normalized_data_error = self.scaled_normalized_data_error
+        [nbr_pixel, nbr_tof] = np.shape(self.scaled_normalized_data)
         
+        q_axis_2d = np.zeros((nbr_pixel, nbr_q))
+        for p in range(nbr_pixel):
+            q_axis_2d[p,:] = _q_axis
+            
+        q_axis_2d = np.fliplr(q_axis_2d)
+        scaled_normalized_data_reverse = np.fliplr(self.scaled_normalized_data)
+        scaled_normalized_data_error_reverse = np.fliplr(self.scaled_normalized_data_error)
         
+        self.q_axis = q_axis_2d
+        self.scaled_normalized_data_reverse = scaled_normalized_data_reverse
+        self.scaled_normalized_data_error_reverse = scaled_normalized_data_error_reverse
+        
+        self.logbook('--> Without geometry correction --- DONE', False)
 
 
     def logbook(self, text, appendFlag=True):
@@ -178,6 +245,9 @@ class ReductionObject(object):
         
         self.logbook('-> Apply scaling factor')
         main_gui = self.main_gui
+        
+        self.scaled_normalized_data = self.normalized_data
+        self.scaled_normalized_data_error = self.normalized_data_error
         
         if not main_gui.ui.scalingFactorFlag.isChecked():
             self.logbook('--> User do not want scaling factor!')
@@ -220,10 +290,8 @@ class ReductionObject(object):
             for i in range(nbr_row):
                 
                 _file_incident_medium = self.get_table_field_value(sfFactorTable, i, 0)
-                self.logbook('----> ' + _file_incident_medium)
                 if (_file_incident_medium.strip() == _incident_medium.strip()):
 
-                    self.logbook('----> ' + _file_incident_medium + '-' + _incident_medium + ' => FOUND MATCH!')
                     # check that lambda requested match
                     _file_lambda_requested = self.get_table_field_value(sfFactorTable, i, 1)
                     if (self.is_within_precision_range(_file_lambda_requested, 
@@ -256,7 +324,7 @@ class ReductionObject(object):
                                                                            s2w_value,
                                                                            value_precision)):
                 
-                                            self.logbook('----> Found a perfect match !')
+                                            self.logbook('----> Found a perfect match! (with slits width checked)')
                                             
                                             # retrieve parameters
                                             a = float(self.get_table_field_value(sfFactorTable, i, 6))
@@ -267,13 +335,9 @@ class ReductionObject(object):
                                             self.apply_scaling_factor_to_data(a, b, a_error, b_error)
                                             return
                                         
-                                        else:
-                                            
-                                            self.logbook('----> DID NOT FIND A PERFECT MATCH!')
-                                        
-                                else:
+                                else: # we do not want width precision
                                     
-                                    self.logbook('----> Found a perfect match !')
+                                    self.logbook('----> Found a perfect match ! (without slits width checked)')
                                     
                                     # retrieve parameters
                                     a = float(self.get_table_field_value(sfFactorTable, i, 6))
@@ -283,8 +347,13 @@ class ReductionObject(object):
                                     
                                     self.apply_scaling_factor_to_data(a, b, a_error, b_error)
                                     return
+                            
+                            else: # no s2h match
+                                
+                                self.logbook('----> DID NOT FIND A PERFECT MATCH')
                                     
         else:
+            
             self.logbook('---> scaling factor file for requested lambda NOT FOUND !')
         
 
@@ -808,6 +877,13 @@ class REFLReduction(object):
 
         # convert to Q
         red1.convert_to_Q()
+
+        # create workspace
+        red1.create_q_workspace()
+
+        # rebin Q workspace
+        red1.rebin_q_workspace()
+
 
         cls.logbook('================================================')
 

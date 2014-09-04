@@ -172,6 +172,18 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="widget_2" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="margin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QListWidget" name="file_list">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -180,6 +192,64 @@ p, li { white-space: pre-wrap; }
            </sizepolicy>
           </property>
          </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Q steps</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="qStep">
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>0.02</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>ΔQ/Q</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QToolBox" name="toolBox">
@@ -196,7 +266,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
@@ -651,7 +721,7 @@ p, li { white-space: pre-wrap; }
             </rect>
            </property>
            <attribute name="label">
-            <string>Output</string>
+            <string>Output ASCII</string>
            </attribute>
            <widget class="QCheckBox" name="output4thColumnFlag">
             <property name="geometry">
@@ -719,7 +789,7 @@ p, li { white-space: pre-wrap; }
              </rect>
             </property>
             <property name="text">
-             <string>dQ/Q</string>
+             <string>ΔQ/Q</string>
             </property>
            </widget>
            <widget class="QLineEdit" name="dQoverQvalue">
@@ -796,16 +866,6 @@ p, li { white-space: pre-wrap; }
            <property name="spacing">
             <number>1</number>
            </property>
-           <item row="5" column="0">
-            <widget class="QCheckBox" name="normalizeXTof">
-             <property name="toolTip">
-              <string>Normalize the intensity in the X-ToF maps by the incident beam measurement</string>
-             </property>
-             <property name="text">
-              <string>Norm. X-ToF/λ</string>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="1">
             <widget class="QCheckBox" name="logarithmic_y">
              <property name="toolTip">
@@ -826,26 +886,6 @@ p, li { white-space: pre-wrap; }
              </property>
              <property name="text">
               <string>Colorbars</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QCheckBox" name="tthPhi">
-             <property name="toolTip">
-              <string>Replace X and Y axes by the according scattering angle for the maps</string>
-             </property>
-             <property name="text">
-              <string>2θ-φ Maps</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QCheckBox" name="hide_plots">
-             <property name="toolTip">
-              <string>Hide empty channels in the X-Y and X-ToF tabs to make more space for the measured channels</string>
-             </property>
-             <property name="text">
-              <string>Hide Empty</string>
              </property>
             </widget>
            </item>
@@ -3908,9 +3948,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>color_selector</tabstop>
   <tabstop>logarithmic_colorscale</tabstop>
   <tabstop>logarithmic_y</tabstop>
-  <tabstop>hide_plots</tabstop>
-  <tabstop>normalizeXTof</tabstop>
-  <tabstop>tthPhi</tabstop>
   <tabstop>plotTab</tabstop>
   <tabstop>daslogTableBox</tabstop>
  </tabstops>
@@ -4255,22 +4292,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>hide_plots</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleHide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>133</x>
-     <y>1212</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>246</x>
-     <y>833</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>file_list</sender>
    <signal>doubleClicked(QModelIndex)</signal>
    <receiver>MainWindow</receiver>
@@ -4283,22 +4304,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>543</x>
      <y>418</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normalizeXTof</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>133</x>
-     <y>1235</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
     </hint>
    </hints>
   </connection>
@@ -4363,22 +4368,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>0</x>
      <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>tthPhi</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>1235</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -4640,7 +4629,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>normLowResFlag</sender>
-   <signal>clicked()</signal>
+   <signal>stateChanged(int)</signal>
    <receiver>MainWindow</receiver>
    <slot>normalization_low_res_switch()</slot>
    <hints>

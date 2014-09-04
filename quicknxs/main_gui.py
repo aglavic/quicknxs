@@ -3383,7 +3383,8 @@ Do you want to try to restore the working reduction list?""",
 #    self.ui.overviewSplitter.setSizes(gui.splitters[1])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
-    self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
+    if instrument.NAME is "REF_M":
+      self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
     #for i, fig in enumerate([
                             #self.ui.xy_overview,
                             #self.ui.xtof_overview,
