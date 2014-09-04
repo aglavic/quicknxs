@@ -1062,7 +1062,6 @@ class MainGUI(QtGui.QMainWindow):
         
       ix_plot.draw()
 
-
   def retrieve_tof_range(self, data):
     '''
     will retrieve the TOF (auto or manual) selected in microS
@@ -4135,8 +4134,8 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <to_tof_range>' + str(tof[1]) + '</to_tof_range>\n')
       strArray.append('   <from_q_range>' + str(q_range[0]) + '</from_q_range>\n')
       strArray.append('   <to_q_range>' + str(q_range[1]) + '</to_q_range>\n')
-      strArray.append('   <from_lambda_range>' + str(lambda_range[0]) + '</from_lambda_range>')
-      strArray.append('   <to_lambda_range>' + str(lambda_range[1]) + '</to_lambda_range>')
+      strArray.append('   <from_lambda_range>' + str(lambda_range[0]) + '</from_lambda_range>\n')
+      strArray.append('   <to_lambda_range>' + str(lambda_range[1]) + '</to_lambda_range>\n')
 
       _data_run_number = self.ui.reductionTable.item(row,0).text()
       strArray.append('   <data_sets>' + _data_run_number + '</data_sets>\n')

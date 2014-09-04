@@ -22,7 +22,9 @@
    <to_tof_range>62941.067139</to_tof_range>
    <from_q_range>0.00798</from_q_range>
    <to_q_range>0.01002</to_q_range>
-   <from_lambda_range>13.30</from_lambda_range>   <to_lambda_range>16.70</to_lambda_range>   <data_sets>115268</data_sets>
+   <from_lambda_range>13.30</from_lambda_range>   
+   <to_lambda_range>16.70</to_lambda_range>   
+   <data_sets>115268</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115268_event.nxs</data_full_file_name>
    <x_min_pixel>123</x_min_pixel>
    <x_max_pixel>187</x_max_pixel>
@@ -70,7 +72,9 @@
    <to_tof_range>0</to_tof_range>
    <from_q_range></from_q_range>
    <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115269</data_sets>
+   <from_lambda_range></from_lambda_range>   
+   <to_lambda_range></to_lambda_range>   
+   <data_sets>115269</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115269_event.nxs</data_full_file_name>
    <x_min_pixel>123</x_min_pixel>
    <x_max_pixel>187</x_max_pixel>
@@ -118,7 +122,9 @@
    <to_tof_range>0</to_tof_range>
    <from_q_range></from_q_range>
    <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115270</data_sets>
+   <from_lambda_range></from_lambda_range>   
+   <to_lambda_range></to_lambda_range>   
+   <data_sets>115270</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115270_event.nxs</data_full_file_name>
    <x_min_pixel>125</x_min_pixel>
    <x_max_pixel>185</x_max_pixel>
@@ -166,7 +172,9 @@
    <to_tof_range>0</to_tof_range>
    <from_q_range></from_q_range>
    <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115271</data_sets>
+   <from_lambda_range></from_lambda_range>  
+   <to_lambda_range></to_lambda_range>  
+   <data_sets>115271</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115271_event.nxs</data_full_file_name>
    <x_min_pixel>124</x_min_pixel>
    <x_max_pixel>184</x_max_pixel>
@@ -214,7 +222,9 @@
    <to_tof_range>0</to_tof_range>
    <from_q_range></from_q_range>
    <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115272</data_sets>
+   <from_lambda_range></from_lambda_range>  
+   <to_lambda_range></to_lambda_range>  
+   <data_sets>115272</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115272_event.nxs</data_full_file_name>
    <x_min_pixel>124</x_min_pixel>
    <x_max_pixel>186</x_max_pixel>
@@ -262,7 +272,9 @@
    <to_tof_range>0</to_tof_range>
    <from_q_range></from_q_range>
    <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115273</data_sets>
+   <from_lambda_range></from_lambda_range>  
+   <to_lambda_range></to_lambda_range>  
+   <data_sets>115273</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115273_event.nxs</data_full_file_name>
    <x_min_pixel>125</x_min_pixel>
    <x_max_pixel>187</x_max_pixel>
@@ -310,7 +322,9 @@
    <to_tof_range>0</to_tof_range>
    <from_q_range></from_q_range>
    <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>   <to_lambda_range></to_lambda_range>   <data_sets>115274</data_sets>
+   <from_lambda_range></from_lambda_range>  
+   <to_lambda_range></to_lambda_range>  
+   <data_sets>115274</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115274_event.nxs</data_full_file_name>
    <x_min_pixel>118</x_min_pixel>
    <x_max_pixel>191</x_max_pixel>

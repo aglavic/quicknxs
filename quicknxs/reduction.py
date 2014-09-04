@@ -96,8 +96,8 @@ class ReductionObject(object):
         tof_bin = float(self.main_gui.ui.eventTofBins.text())
         
         rebin_params = [float(tof_range[0]), tof_bin, float(tof_range[1])]
-        self.logbook('--> from TOF : \t' + tof_range[0] + ' microS')
-        self.logbook('-->   to TOF : \t' + tof_range[1] + ' microS')
+        self.logbook('--> from TOF : \t' + str(tof_range[0]) + ' microS')
+        self.logbook('-->   to TOF : \t' + str(tof_range[1]) + ' microS')
         self.logbook('-->  TOF bin : \t' + str(tof_bin) + ' microS')
 
         nxs_histo = Rebin(InputWorkspace=nxs, Params=rebin_params, PreserveEvents=True)
@@ -155,8 +155,12 @@ class ReductionObject(object):
         theta = self.oData.active_data.theta
         _q_axis = 1e-10 * _const * math.sin(self.oData.active_data.theta) / (self.oData.active_data.tof_axis * 1e-6)
 
-        print _q_axis
-
+        nbr_q = len(_q_axis)
+        
+        scaled_normalized_data = self.scaled_normalized_data
+        scaled_normalized_data_error = self.scaled_normalized_data_error
+        
+        
 
 
     def logbook(self, text, appendFlag=True):
@@ -521,6 +525,11 @@ class ReductionObject(object):
         '''
         
         self.logbook('-> data_over_normalization .... PROCESSING')
+
+        norm = self.oNorm
+        if norm is None:
+            self.logbook('-> data_over_normalization .... DONE! (no normalization file)', False)
+            return
         
         data = self.data_y_axis
         data_error = self.data_y_error_axis

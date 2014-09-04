@@ -316,11 +316,11 @@ class NXSData(object):
         _index = 0
         _lambda_requested_1 = ''
         _lambda_requested_2 = ''
+        nxs = 'ws_event'
         for _filename in filename:
 
           try:
             
-            nxs = 'ws_event'
             if _index == 0:
               nxs=LoadEventNexus(Filename=str(_filename),OutputWorkspace=randomString)
               
@@ -339,8 +339,8 @@ class NXSData(object):
                 info('Lambda Requested do not match!')
                 return False
 
-              nxs=Plus(LHSWorkspace='nxs',
-                   RHSWorkspace='tmp',OutputWorksapce=randomString)
+              nxs=Plus(LHSWorkspace=randomString,
+                   RHSWorkspace='tmp',OutputWorkspace=randomString)
               DeleteWorkspace(tmp)
             
           except IOError:
@@ -1381,7 +1381,7 @@ class LRDataset(object):
       _norm_low_res_flag = _iDataset.norm_low_res_flag
       output.low_res_flag = strtobool(_norm_low_res_flag)
 
-    _tof = _iDataset.tof
+    _tof = _iDataset.tof_range
     output.tof_range = _tof
 
     _tof_units = _iDataset.tof_units
@@ -1412,7 +1412,6 @@ class LRDataset(object):
     theta_rad += angle_offset_rad
     
     return theta_rad
-
 
   @classmethod
   @log_call
