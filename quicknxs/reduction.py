@@ -921,6 +921,7 @@ class REFLReduction(object):
 
         cls.main_gui = main_gui
         cls.logbook('Running data reduction ...')
+        cls.logbook('')
 
         # retrive full data to reduce
         bigTableData = main_gui.bigTableData
@@ -928,63 +929,63 @@ class REFLReduction(object):
         # number of reduction process to run
         nbrRow = main_gui.ui.reductionTable.rowCount()
         
-#        nbrRow = 1 #FIXME
-#        for row in range(nbrRow):
+        for row in range(nbrRow):
 
-        row = 0
+            dataCell = main_gui.ui.reductionTable.item(row,0).text()
+            if main_gui.ui.reductionTable.item(row,6) is not None:
+                normCell = main_gui.ui.reductionTable.item(row,6).text()
+            else:
+                normCell = ''
+            
+            cls.logbook('Working with DATA: %s and NORM: %s' %(dataCell, normCell))
+            
+            dataObject = bigTableData[row,0]
+            normObject = bigTableData[row,1]
+            configObject = bigTableData[row,2]
+            
+            red1 = ReductionObject(main_gui, dataCell, normCell, dataObject, normObject, configObject)
+            bigTableData[row,0] = red1.oData
+            bigTableData[row,1] = red1.oNorm
+    
+            # rebin 
+            red1.rebin()
+            
+            # integrate low res range of data and norm
+            red1.integrate_over_low_res_range()
+            
+            # subtract background
+            red1.substract_background()
+            
+            # data / normalization 
+            red1.data_over_normalization()
+    
+            # apply scaling factor
+            red1.apply_scaling_factor()
+    
+            # convert to Q
+            red1.convert_to_Q()
+    
+            # create workspace
+            red1.create_q_workspace()
+    
+            # rebin Q workspace
+            red1.rebin_q_workspace()
+    
+            # integrate spectra 
+            red1.mean_peak()
+            
+            # cleanup data
+            red1.cleanup()
+            
+            # save data back into bigTableData
+            red1.oData.reduce_q_axis = red1.final_q_axis
+            red1.oData.reduce_y_axis = red1.final_y_axis
+            red1.oData.reduce_e_axis = red1.final_e_axis
+            
+            bigTableData[row,0] = red1.oData
+            
+            cls.logbook('')
 
-        dataCell = main_gui.ui.reductionTable.item(row,0).text()
-        if main_gui.ui.reductionTable.item(row,6) is not None:
-            normCell = main_gui.ui.reductionTable.item(row,6).text()
-        else:
-            normCell = ''
-        
-        cls.logbook('Working with DATA: %s and NORM: %s' %(dataCell, normCell))
-        
-        dataObject = bigTableData[row,0]
-        normObject = bigTableData[row,1]
-        configObject = bigTableData[row,2]
-        
-        red1 = ReductionObject(main_gui, dataCell, normCell, dataObject, normObject, configObject)
-        bigTableData[row,0] = red1.oData
-        bigTableData[row,1] = red1.oNorm
-
-        # rebin 
-        red1.rebin()
-        
-        # integrate low res range of data and norm
-        red1.integrate_over_low_res_range()
-        
-        # subtract background
-        red1.substract_background()
-        
-        # data / normalization 
-        red1.data_over_normalization()
-
-        # apply scaling factor
-        red1.apply_scaling_factor()
-
-        # convert to Q
-        red1.convert_to_Q()
-
-        # create workspace
-        red1.create_q_workspace()
-
-        # rebin Q workspace
-        red1.rebin_q_workspace()
-
-        # integrate spectra 
-        red1.mean_peak()
-        
-        # cleanup data
-        red1.cleanup()
-        
-        # save data back into bigTableData
-        red1.oData.reduce_q_axis = red1.final_q_axis
-        red1.oData.reduce_y_axis = red1.final_y_axis
-        red1.oData.reduce_e_axis = red1.final_e_axis
-        
-        bigTableData[row,0] = red1.oData
         # put back the object created in the bigTable to speed up next preview / load
         main_gui.bigTableData = bigTableData
         

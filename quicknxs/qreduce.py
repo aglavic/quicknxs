@@ -35,6 +35,7 @@ from .ipython_tools import AttributePloter, StringRepr, NiceDict
 from utilities import convert_angle
 import numpy as np
 from random import randint
+import constants
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -1396,6 +1397,48 @@ class LRDataset(object):
 
     return output
 
+  def calculate_q_range(output):
+    '''
+    calculate q range
+    '''
+
+    theta_rad = output.theta
+    dMD = output.dMD
+    
+    _const = float(4) * math.pi * constants.mn * dMD / constants.h
+    
+    # retrieve tof from GUI
+    [tof_min, tof_max] = output.tof_range
+      
+    q_min = _const * math.sin(theta_rad) / (float(tof_max) * 1e-6) * float(1e-10)
+    q_max = _const * math.sin(theta_rad) / (float(tof_min) * 1e-6) * float(1e-10)
+
+    q_min = "%.5f" % q_min
+    q_max = "%.5f" % q_max
+
+    return [q_min, q_max]
+   
+
+  def calculate_lambda_range(output):
+    '''
+    calculate lambda range
+    '''
+    
+    dMD = output.dMD
+    _const = constants.h / (constants.mn * dMD)
+    
+    # retrieve tof from GUI
+    [tof_min, tof_max] = output.tof_range
+
+    lambda_min = _const * (tof_min * 1e-6) / float(1e-10)
+    lambda_max = _const * (tof_max * 1e-6) / float(1e-10)
+  
+    lambda_min = "%.2f" % lambda_min
+    lambda_max = "%2.f" % lambda_max
+    
+    return [lambda_min, lambda_max]
+
+
   def calculate_theta(output):
     '''
     calculate theta
@@ -1467,6 +1510,9 @@ class LRDataset(object):
     output.tof_range_auto = [autotmin, autotmax]
     output.tof_range_auto_with_margin = [tmin, tmax]
     output.tof_range = [autotmin, autotmax] # for the first time, initialize tof_range like auto (microS)
+    
+    output.q_range = LRDataset.calculate_q_range(output)
+    output.lambda_range = LRDataset.calculate_lambda_range(output)
     
     tbin = int(read_options["bins"])
     

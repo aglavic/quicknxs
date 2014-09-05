@@ -4479,6 +4479,12 @@ Do you want to try to restore the working reduction list?""",
       return
     
     _reduction = REFLReduction(self)
+    
+    # display data reduced
+    
+    
+    
+    
 
   def addItemToBigTable(self, value, row, column):
     '''
