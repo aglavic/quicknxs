@@ -49,6 +49,10 @@ class ReductionObject(object):
     
     main_gui = None
     
+    final_q_axis = []
+    final_y_axis = []
+    final_e_axis = []
+    
     def __init__(self, main_gui, dataCell, normCell, oData, oNorm, oConfig):
         '''
         Initialize the reduction object by 
@@ -89,6 +93,49 @@ class ReductionObject(object):
                     self.logbook('---> yes, we want to use normalization file')
                                     
         self.oNorm = oNorm
+
+    def cleanup(self):
+        '''
+        cleaning data
+        '''
+
+        self.logbook('-> cleaning up data (error>data or data<1e-12) ... PROCESSING')
+
+        q_axis = self.final_q_axis
+        y_axis = self.final_y_axis
+        e_axis = self.final_e_axis
+        
+        nbr_q = np.shape(q_axis)[0]
+        
+        for q in range(nbr_q):
+            
+            _data = y_axis[q]
+            _error = e_axis[q]
+            
+            if abs(_error) >= abs(_data):
+                
+                _data_tmp = 0
+                _error_tmp = 1
+                
+            elif (_data < 1e-12):
+                
+                _data_tmp = 0
+                _error_tmp = 1
+                
+            else:
+                
+                _data_tmp = _data
+                _error_tmp = _error
+                
+            y_axis[q] = _data_tmp
+            e_axis[q] = _error_tmp
+            
+        
+        self.final_y_axis = y_axis
+        self.final_e_axis = e_axis
+
+        self.logbook('-> cleaning up data (error>data or data<1e-12) ... DONE', False)
+
 
     def create_q_workspace(self):
         '''
@@ -133,12 +180,54 @@ class ReductionObject(object):
         q_workspace = Rebin(InputWorkspace=self.q_workspace,
                                  Params=q_parameters,
                                  PreserveEvents = True)
-
         
-        
+        self.q_workspace = q_workspace
         
         self.logbook('-> rebin q_workspace ... DONE')
 
+    def mean_peak(self):    
+        '''
+        getting the mean value of the peak
+        '''
+        
+        self.logbook('-> calculate mean of peak ... PROCESSING')
+        wks = self.q_workspace
+        
+        final_x_axis = wks.readX(0)[:]
+        nbr_q = np.shape(final_x_axis)[0]
+        
+        nbr_pixel = int(self.oData.active_data.peak[1]) - int(self.oData.active_data.peak[0]) + 1
+
+        big_y = np.zeros((nbr_pixel, nbr_q-1))
+        big_e = np.zeros((nbr_pixel, nbr_q-1))
+        
+        for x in range(nbr_pixel):
+            
+            _tmp_y = wks.readY(x)[:]
+            big_y[x,:] = _tmp_y
+            
+            _tmp_e = wks.readE(x)[:]
+            big_e[x,:] = _tmp_e
+
+        final_y = np.zeros(nbr_q)
+        final_e = np.zeros(nbr_q)
+        
+        for q in range(nbr_q-1):
+            
+            _tmp_y = big_y[:,q]
+            _tmp_y_error = big_e[:,q]
+            
+            [_y, _y_error] = self.sum_with_error(_tmp_y, _tmp_y_error)
+            
+            final_y[q] = _y
+            final_e[q] = _y_error
+
+        self.final_q_axis = final_x_axis
+        self.final_y_axis = final_y
+        self.final_e_axis = final_e
+    
+        self.logbook('-> calculate mean of peak ... DONE', False)
+    
     def rebin(self):
         '''
         rebin the data and normalization according to parameters defined
@@ -884,11 +973,20 @@ class REFLReduction(object):
         # rebin Q workspace
         red1.rebin_q_workspace()
 
-
-        cls.logbook('================================================')
-
+        # integrate spectra 
+        red1.mean_peak()
+        
+        # cleanup data
+        red1.cleanup()
+        
+        # save data back into bigTableData
+        red1.oData.reduce_q_axis = red1.final_q_axis
+        red1.oData.reduce_y_axis = red1.final_y_axis
+        red1.oData.reduce_e_axis = red1.final_e_axis
+        
+        bigTableData[row,0] = red1.oData
         # put back the object created in the bigTable to speed up next preview / load
         main_gui.bigTableData = bigTableData
         
-        
-        
+        cls.logbook('data reduction ... DONE !')
+        cls.logbook('================================================')
