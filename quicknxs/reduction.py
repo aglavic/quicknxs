@@ -929,7 +929,8 @@ class REFLReduction(object):
         # number of reduction process to run
         nbrRow = main_gui.ui.reductionTable.rowCount()
         
-        for row in range(nbrRow):
+#        for row in range(nbrRow):
+        for row in range(3,5):
 
             dataCell = main_gui.ui.reductionTable.item(row,0).text()
             if main_gui.ui.reductionTable.item(row,6) is not None:
@@ -978,9 +979,9 @@ class REFLReduction(object):
             red1.cleanup()
             
             # save data back into bigTableData
-            red1.oData.reduce_q_axis = red1.final_q_axis
-            red1.oData.reduce_y_axis = red1.final_y_axis
-            red1.oData.reduce_e_axis = red1.final_e_axis
+            red1.oData.reduce_q_axis = red1.final_q_axis.copy()
+            red1.oData.reduce_y_axis = red1.final_y_axis.copy()
+            red1.oData.reduce_e_axis = red1.final_e_axis.copy()
             
             bigTableData[row,0] = red1.oData
             

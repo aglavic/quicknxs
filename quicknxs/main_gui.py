@@ -15,6 +15,8 @@ from PyQt4 import QtGui, QtCore
 from mantid.simpleapi import *
 from xml.dom import minidom
 from distutils.util import strtobool
+import numpy as np
+#import pickle
 #QtWebKit
 
 #from logging import info, debug
@@ -38,6 +40,7 @@ from logging import info, warning, debug
 from reduction import REFLReduction
 from utilities import convert_angle
 import constants
+import colors
 
 class gisansCalcThread(QtCore.QThread):
   '''
@@ -3992,7 +3995,18 @@ Do you want to try to restore the working reduction list?""",
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', '.')
     if not(filename == ""):
       self.saveConfig(filename)
-
+#      self.saveReducedObject(filename)
+      
+  #@log_call
+  #def saveReducedObject(self, filename):
+    #'''
+    #save reduce data (biTableData)
+    #'''
+    #pickleFilename = createPickleFilename(filename)
+    #_bigTableData = self.bigTableData
+    #filehandler = open(pickleFilename, 'w')
+    #pickle.dump(_bigTableData, filehandler)
+      
   @log_call
   def saveConfig(self, filename):
     
@@ -4036,7 +4050,7 @@ Do you want to try to restore the working reduction list?""",
       
         data_full_file_name = _data.filename
         if type(data_full_file_name) == type([]):
-          data_full_file_name = ','.join(full_file_name)
+          data_full_file_name = ','.join(data_full_file_name)
         data_peak = _data.peak
         data_back = _data.back
         data_low_res = _data.low_res
@@ -4223,7 +4237,7 @@ Do you want to try to restore the working reduction list?""",
     f = open(filename, 'w')
     f.writelines(strArray)
     f.close()
-
+    
   @log_call
   def loadConfigAndPopulateGui(self, filename):
     '''
@@ -4481,7 +4495,36 @@ Do you want to try to restore the working reduction list?""",
     _reduction = REFLReduction(self)
     
     # display data reduced
+    self.plot_reduced_data()
+
+
+  def plot_reduced_data(self):
+    '''
+    plot the data after reduction
+    '''
+    bigTableData = self.bigTableData
     
+    [nbr_row, nbr_column] = np.shape(bigTableData)
+    
+    reflectivity_plot = self.ui.reflectivity_plot
+    
+    _colors = colors.COLOR_LIST
+    _colors.append(_colors)
+    
+#    for i in range(nbr_row):
+    for i in range(3,5):
+      _data = bigTableData[i,0]
+      _q_axis = _data.reduce_q_axis
+      _y_axis = _data.reduce_y_axis
+      _e_axis = _data.reduce_e_axis
+      
+      reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
+
+      reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
+      reflectivity_plot.set_ylabel(u'R')
+      
+      reflectivity_plot.draw()
+      
     
     
     

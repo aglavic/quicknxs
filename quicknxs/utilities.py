@@ -1,4 +1,5 @@
 import math
+import os
 
 def convert_angle (angle=0, from_units='degree', to_units='rad'):
     '''
@@ -38,3 +39,17 @@ def ouput_big_ascii_file(file_name,
         f.write(_tmp_str)
 
     f.close
+
+def createPickleFilename(filename):
+    '''
+    will create the new pickeFilename based on the filename given
+    (new extension but same base file name)
+    '''
+    
+    filename, fileExtension = os.path.splitext(filename)
+    new_fileExtension = '_quicknx.dat'
+    new_filename = filename +  new_fileExtension
+    return new_filename
+
+    
+    
