@@ -4511,12 +4511,18 @@ Do you want to try to restore the working reduction list?""",
     _colors = colors.COLOR_LIST
     _colors.append(_colors)
     
+    # start by clearing plot
+    reflectivity_plot.clear()
+    reflectivity_plot.draw()
+    
 #    for i in range(nbr_row):
     for i in range(3,5):
       _data = bigTableData[i,0]
       _q_axis = _data.reduce_q_axis
       _y_axis = _data.reduce_y_axis
       _e_axis = _data.reduce_e_axis
+      print _y_axis
+      print _e_axis
       
       reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
 

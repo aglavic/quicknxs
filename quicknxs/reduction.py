@@ -131,8 +131,14 @@ class ReductionObject(object):
             e_axis[q] = _error_tmp
             
         
-        self.final_y_axis = y_axis
-        self.final_e_axis = e_axis
+        # remove first and last point
+        new_q_axis = q_axis[1:-2]
+        new_y_axis = y_axis[1:-2]
+        new_e_axis = e_axis[1:-2]
+        
+        self.final_q_axis = new_q_axis
+        self.final_y_axis = new_y_axis
+        self.final_e_axis = new_e_axis
 
         self.logbook('-> cleaning up data (error>data or data<1e-12) ... DONE', False)
 
@@ -318,6 +324,12 @@ class ReductionObject(object):
         
         self.logbook('--> Without geometry correction --- DONE', False)
 
+        ## DEBUGGING
+        #utilities.output_big_Q_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_after_conversion_to_q_without_SF.txt',
+                                          #q_axis_2d,
+                                          #scaled_normalized_data_reverse,
+                                          #scaled_normalized_data_error_reverse)
+        
 
     def logbook(self, text, appendFlag=True):
         if appendFlag:
@@ -451,7 +463,7 @@ class ReductionObject(object):
         This function will create for each x-axis value, the corresponding
         scaling factor using the formula y=a+bx
         '''
-        tof_axis = self.oData.active_data.tof_edges
+        tof_axis = self.oData.active_data.tof_axis
         nbr_tof = len(tof_axis)
         
         x_axis_factor = np.zeros(nbr_tof)
@@ -588,15 +600,19 @@ class ReductionObject(object):
         _y_error_axis = Exyt_crop_sq.sum(axis=0)
         self.data_y_error_axis = np.sqrt(_y_error_axis)
 
+        # work with Normalization
         if self.oNorm is not None:
             norm = self.oNorm.active_data
         
-            if data.low_res_flag:
-                from_pixel = int(data.low_res[0])
-                to_pixel = int(data.low_res[1])
+            if norm.low_res_flag:
+                from_pixel = int(norm.low_res[0])
+                to_pixel = int(norm.low_res[1])
             else:
-                from_pixel = int(data.low_resolution_range[0])
-                to_pixel = int(data.low_resolution_range[1])
+                from_pixel = int(norm.low_resolution_range[0])
+                to_pixel = int(norm.low_resolution_range[1])
+        
+            Ixyt = norm.Ixyt   # for example [303,256,471]
+            Exyt = norm.Exyt
         
             # calculate y axis
             Ixyt_crop = Ixyt[from_pixel:to_pixel+1,:,:]
@@ -642,6 +658,7 @@ class ReductionObject(object):
                                                                             back_flag)
         self.data_y_axis = final_y_axis
         self.data_y_error_axis = final_y_error_axis
+                
         
         # work with normalizaton =========
 
@@ -675,6 +692,13 @@ class ReductionObject(object):
         self.norm_y_axis = final_y_axis_integrated
         self.norm_y_error_axis = final_y_error_axis_integrated
 
+        ## DEBUGGING
+        #data_tof_axis = self.oNorm.active_data.tof_axis
+        #utilities.output_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_data_divided_by_norm_integrated.txt',
+                                         #data_tof_axis,
+                                         #final_y_axis_integrated,
+                                         #final_y_error_axis_integrated)
+        
         self.logbook('-> substract background ... DONE!', False)
 
     def data_over_normalization(self):
@@ -721,8 +745,9 @@ class ReductionObject(object):
         self.normalized_data = normalized_data
         self.normalized_data_error = normalized_data_error
 
-        #data_tof_axis = self.oData.active_data.tof_edges
-        #utilities.ouput_big_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/quicknxs_data_divided_by_norm_not_integrated.txt',
+        ## DEBUGGING
+        #data_tof_axis = self.oData.active_data.tof_axis
+        #utilities.ouput_big_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_data_divided_by_norm_not_integrated.txt',
                                          #data_tof_axis,
                                          #normalized_data,
                                          #normalized_data_error)
@@ -983,6 +1008,12 @@ class REFLReduction(object):
             red1.oData.reduce_y_axis = red1.final_y_axis.copy()
             red1.oData.reduce_e_axis = red1.final_e_axis.copy()
             
+            ## DEBUGGING
+            #utilities.output_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_after_final_cleaning.txt',
+                                        #red1.final_q_axis,
+                                        #red1.final_y_axis,
+                                        #red1.final_e_axis)
+
             bigTableData[row,0] = red1.oData
             
             cls.logbook('')
