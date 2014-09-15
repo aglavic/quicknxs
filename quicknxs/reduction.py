@@ -954,8 +954,8 @@ class REFLReduction(object):
         # number of reduction process to run
         nbrRow = main_gui.ui.reductionTable.rowCount()
         
-#        for row in range(nbrRow):
-        for row in range(3,5):
+        for row in range(nbrRow):
+#        for row in range(3,4):
 
             dataCell = main_gui.ui.reductionTable.item(row,0).text()
             if main_gui.ui.reductionTable.item(row,6) is not None:

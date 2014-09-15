@@ -39,6 +39,7 @@ from .version import str_version
 from logging import info, warning, debug
 from reduction import REFLReduction
 from utilities import convert_angle
+import utilities
 import constants
 import colors
 
@@ -4306,7 +4307,7 @@ Do you want to try to restore the working reduction list?""",
         self.ui.selectIncidentMediumList.addItems(im_list)
 
         incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')
-        self.ui.selectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected)+1)
+        self.ui.selectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected))
         
         fourth_column_flag = self.getNodeValue(node, 'fourth_column_flag')
         self.ui.output4thColumnFlag.setChecked(strtobool(fourth_column_flag))
@@ -4503,8 +4504,7 @@ Do you want to try to restore the working reduction list?""",
     plot the data after reduction
     '''
     bigTableData = self.bigTableData
-    
-    [nbr_row, nbr_column] = np.shape(bigTableData)
+    nbr_row = self.ui.reductionTable.rowCount()
     
     reflectivity_plot = self.ui.reflectivity_plot
     
@@ -4515,14 +4515,12 @@ Do you want to try to restore the working reduction list?""",
     reflectivity_plot.clear()
     reflectivity_plot.draw()
     
-#    for i in range(nbr_row):
-    for i in range(3,5):
+    for i in range(nbr_row):
+#    for i in range(1,2):
       _data = bigTableData[i,0]
       _q_axis = _data.reduce_q_axis
       _y_axis = _data.reduce_y_axis
       _e_axis = _data.reduce_e_axis
-      print _y_axis
-      print _e_axis
       
       reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
 
@@ -4531,6 +4529,12 @@ Do you want to try to restore the working reduction list?""",
       
       reflectivity_plot.draw()
       
+      # DEBUGGING
+      tmp_filename = '/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quickns_full_reduction#' + str(i) + '.txt'
+      utilities.output_ascii_file(tmp_filename,
+                                  _q_axis,
+                                  _y_axis,
+                                  _e_axis)
     
     
     
