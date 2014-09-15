@@ -132,9 +132,9 @@ class ReductionObject(object):
             
         
         # remove first and last point
-        new_q_axis = q_axis[1:-2]
-        new_y_axis = y_axis[1:-2]
-        new_e_axis = e_axis[1:-2]
+        new_q_axis = q_axis[1:]
+        new_y_axis = y_axis[1:]
+        new_e_axis = e_axis[1:]
         
         self.final_q_axis = new_q_axis
         self.final_y_axis = new_y_axis
@@ -891,6 +891,23 @@ class ReductionObject(object):
         return [data_mean, mean_error]        
 
 
+    def histogram_q_axis(self):
+        '''
+        will take the center of each bin and will output this new array
+        '''
+
+        qaxis = self.oData.reduce_q_axis
+        sz = np.size(qaxis)
+        new_qaxis = np.zeros(sz-1)
+        for i in range(sz-1):
+            _left = qaxis[i]
+            _right = qaxis[i+1]
+            _center = (_left+_right)/2.
+            new_qaxis[i] = _center
+            
+        return new_qaxis
+
+
     def populate_data_object(self, main_gui, oConfig, type):
         '''
         will retrieve all the info from the oConfig table and will populate the oData object
@@ -1007,6 +1024,13 @@ class REFLReduction(object):
             red1.oData.reduce_q_axis = red1.final_q_axis.copy()
             red1.oData.reduce_y_axis = red1.final_y_axis.copy()
             red1.oData.reduce_e_axis = red1.final_e_axis.copy()
+            
+            # align data with center of Q axis
+            red1.oData.q_axis_for_display = red1.histogram_q_axis()
+            final_y_axis = red1.final_y_axis.copy()
+            final_e_axis = red1.final_e_axis.copy()
+            red1.oData.y_axis_for_display = final_y_axis[:-1]
+            red1.oData.e_axis_for_display = final_e_axis[:-1]
             
             ## DEBUGGING
             #utilities.output_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_after_final_cleaning.txt',

@@ -1,6 +1,6 @@
 <Reduction>
  <instrument_name>REFL</instrument_name>
- <timestamp>Friday, 12. September 2014 02:11PM</timestamp>
+ <timestamp>Monday, 15. September 2014 01:23PM</timestamp>
  <python_version>2.6.6 (r266:84292, Jan 22 2014, 09:42:36) 
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]</python_version>
  <platform>Linux</platform>
@@ -18,12 +18,12 @@
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
-   <from_q_range>7.97749</from_q_range>
-   <to_q_range>10.01602</to_q_range>
-   <from_lambda_range>0.01</from_lambda_range>
-   <to_lambda_range> 0</to_lambda_range>
+   <from_tof_range>50126.7181407</from_tof_range>
+   <to_tof_range>62941.067139</to_tof_range>
+   <from_q_range>0.00798</from_q_range>
+   <to_q_range>0.01002</to_q_range>
+   <from_lambda_range>13.30</from_lambda_range>
+   <to_lambda_range>17</to_lambda_range>
    <data_sets>115268</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115268_event.nxs</data_full_file_name>
    <x_min_pixel>123</x_min_pixel>
@@ -47,7 +47,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>
@@ -97,7 +97,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>
@@ -147,7 +147,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>
@@ -197,7 +197,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>
@@ -247,7 +247,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>
@@ -297,7 +297,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>
@@ -347,7 +347,7 @@
    <overlap_mean_value>False</overlap_mean_value>
    <angle_offset>0.008</angle_offset>
    <angle_offset_error>0.001</angle_offset_error>
-   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_flag>False</scaling_factor_flag>
    <scaling_factor_file>/home/j35/git/quicknxs/dist_data/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
    <slits_width_flag>True</slits_width_flag>
    <geometry_correction_switch>False</geometry_correction_switch>

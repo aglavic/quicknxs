@@ -256,7 +256,7 @@ p, li { white-space: pre-wrap; }
           <property name="minimumSize">
            <size>
             <width>258</width>
-            <height>320</height>
+            <height>350</height>
            </size>
           </property>
           <property name="frameShape">
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>165</height>
+             <height>164</height>
             </rect>
            </property>
            <attribute name="label">
@@ -497,7 +497,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>165</height>
+             <height>164</height>
             </rect>
            </property>
            <attribute name="label">
@@ -590,7 +590,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>165</height>
+             <height>164</height>
             </rect>
            </property>
            <attribute name="label">
@@ -711,13 +711,60 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </widget>
+          <widget class="QWidget" name="page_6">
+           <attribute name="label">
+            <string>Overlap Values</string>
+           </attribute>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>12</y>
+              <width>242</width>
+              <height>77</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>How to treat overlap values</string>
+            </property>
+            <widget class="QRadioButton" name="radioButton">
+             <property name="geometry">
+              <rect>
+               <x>25</x>
+               <y>24</y>
+               <width>199</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>use lowest error value</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="radioButton_2">
+             <property name="geometry">
+              <rect>
+               <x>25</x>
+               <y>51</y>
+               <width>199</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>use mean value</string>
+             </property>
+            </widget>
+           </widget>
+          </widget>
           <widget class="QWidget" name="page_5">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>165</height>
+             <height>164</height>
             </rect>
            </property>
            <attribute name="label">
@@ -756,9 +803,9 @@ p, li { white-space: pre-wrap; }
            <widget class="QLineEdit" name="dq0Value">
             <property name="geometry">
              <rect>
-              <x>51</x>
+              <x>37</x>
               <y>34</y>
-              <width>113</width>
+              <width>58</width>
               <height>27</height>
              </rect>
             </property>
@@ -769,7 +816,7 @@ p, li { white-space: pre-wrap; }
            <widget class="QLabel" name="label_4">
             <property name="geometry">
              <rect>
-              <x>174</x>
+              <x>96</x>
               <y>39</y>
               <width>29</width>
               <height>17</height>
@@ -782,8 +829,8 @@ p, li { white-space: pre-wrap; }
            <widget class="QLabel" name="label_5">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>79</y>
+              <x>155</x>
+              <y>39</y>
               <width>41</width>
               <height>17</height>
              </rect>
@@ -795,9 +842,9 @@ p, li { white-space: pre-wrap; }
            <widget class="QLineEdit" name="dQoverQvalue">
             <property name="geometry">
              <rect>
-              <x>51</x>
-              <y>72</y>
-              <width>113</width>
+              <x>197</x>
+              <y>33</y>
+              <width>50</width>
               <height>27</height>
              </rect>
             </property>
@@ -808,8 +855,8 @@ p, li { white-space: pre-wrap; }
            <widget class="QPushButton" name="createAsciiButton">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>108</y>
+              <x>12</x>
+              <y>71</y>
               <width>236</width>
               <height>27</height>
              </rect>
@@ -5059,6 +5106,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>createAsciiButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>output_data_into_ascii()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>946</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5135,5 +5198,6 @@ p, li { white-space: pre-wrap; }
   <slot>runReduction()</slot>
   <slot>sf_widgets_status()</slot>
   <slot>sf_browse_button()</slot>
+  <slot>output_data_into_ascii()</slot>
  </slots>
 </ui>

@@ -4518,9 +4518,9 @@ Do you want to try to restore the working reduction list?""",
     for i in range(nbr_row):
 #    for i in range(1,2):
       _data = bigTableData[i,0]
-      _q_axis = _data.reduce_q_axis
-      _y_axis = _data.reduce_y_axis
-      _e_axis = _data.reduce_e_axis
+      _q_axis = _data.q_axis_for_display
+      _y_axis = _data.y_axis_for_display
+      _e_axis = _data.e_axis_for_display
       
       reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
 
@@ -4529,15 +4529,78 @@ Do you want to try to restore the working reduction list?""",
       
       reflectivity_plot.draw()
       
-      # DEBUGGING
-      tmp_filename = '/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quickns_full_reduction#' + str(i) + '.txt'
-      utilities.output_ascii_file(tmp_filename,
-                                  _q_axis,
-                                  _y_axis,
-                                  _e_axis)
+      ## DEBUGGING
+      #tmp_filename = '/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quickns_full_reduction#' + str(i) + '.txt'
+      #utilities.output_ascii_file(tmp_filename,
+                                  #_q_axis,
+                                  #_y_axis,
+                                  #_e_axis)
+                               
+    # refresh reductionTable content (lambda range, Q range...etc)
+    self.update_reductionTable()
     
+
+  def output_data_into_ascii(self):
+    '''
+    will use ascii format to output the data
+    '''
+    cell0 = self.ui.reductionTable.item(0,0)
+    # nothing in big table
+    if cell0 is None:
+      return
     
+    run_number = self.ui.reductionTable.item(0,0).text()
+    default_filename = 'REFL_' + run_number + '_combined_data.txt'
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create ASCII file', default_filename)
+
+    # user cancelled request
+    if str(filename).strip() == '':
+      return
     
+    _4th_column_flag = self.ui.output4thColumnFlag.isChecked()
+    if _4th_column_flag:
+      dq0 = self.ui.dq0Value.text()
+      dq_over_q = self.ui.dQoverQvalue.text()
+      line1 = '#dQ0[1/Angstrom]=' + dq0
+      line2 = '#dQ/Q=' + dq_over_q
+      line3 = '#Q(1/Angstrom) R delta_R Precision'
+      text = [line1, line2, line3]
+    else:
+      text = ['#Q(1/Angstrom) R delta_R']
+
+    
+
+
+
+
+  def update_reductionTable(self):
+    '''
+    will refresh the content of the reductionTable (lambda, Q ranges...)
+    '''
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    
+    for i in range(nbr_row):
+
+      _data = bigTableData[i,0]
+      _active_data = _data.active_data
+      lambda_range = _active_data.lambda_range
+      q_range = _active_data.q_range
+      
+      lambda_min = lambda_range[0]
+      lambda_max = lambda_range[1]
+      q_min = q_range[0]
+      q_max = q_range[1]
+      
+      _item = QtGui.QTableWidgetItem(str(lambda_min))
+      self.ui.reductionTable.setItem(i,2,_item)
+      _item = QtGui.QTableWidgetItem(str(lambda_max))
+      self.ui.reductionTable.setItem(i,3,_item)
+
+      _item = QtGui.QTableWidgetItem(str(q_min))
+      self.ui.reductionTable.setItem(i,4,_item)
+      _item = QtGui.QTableWidgetItem(str(q_max))
+      self.ui.reductionTable.setItem(i,5,_item)
 
   def addItemToBigTable(self, value, row, column):
     '''

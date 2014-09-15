@@ -179,9 +179,15 @@ class NXSData(object):
   nexus = None
   nxs = None
 
+  # raw axis (where q axis has 1 more element that y and e)
   reduce_q_axis = []
   reduce_y_axis = []
   reduce_e_axis = []
+
+  # histogram q axis (same number of element as y and e)
+  q_axis_for_display = []
+  y_axis_for_display = []
+  e_axis_for_display = []
 
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0, low_res_range=[0,303],
