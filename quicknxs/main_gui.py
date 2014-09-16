@@ -4286,6 +4286,32 @@ Do you want to try to restore the working reduction list?""",
         _incident_angle = 'N/A'
       self.addItemToBigTable(_incident_angle, _row, 1)
       
+      # lambda range
+      try:
+        _from_l = self.getNodeValue(node, 'from_lambda_range')
+      except:
+        _from_l = 'N/A'
+      self.addItemToBigTable(_from_l, _row, 2)
+      
+      try:
+        _to_l = self.getNodeValue(node, 'to_lambda_range')
+      except:
+        _to_l = 'N/A'
+      self.addItemToBigTable(_to_l, _row, 3)
+      
+      # q range
+      try:
+        _from_q = self.getNodeValue(node,'from_q_range')
+      except:
+        _from_q = 'N/A'
+      self.addItemToBigTable(_from_q, _row, 4)
+      
+      try:
+        _to_q = self.getNodeValue(node,'to_q_range')
+      except:
+        _to_q = 'N/A'
+      self.addItemToBigTable(_to_q, _row, 5)
+      
       # only for first row
       if _row == 0:
         _first_file_name = self.getNodeValue(node, 'data_full_file_name')
