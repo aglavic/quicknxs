@@ -1,6 +1,6 @@
 <Reduction>
  <instrument_name>REFL</instrument_name>
- <timestamp>Monday, 15. September 2014 01:23PM</timestamp>
+ <timestamp>Tuesday, 16. September 2014 02:26PM</timestamp>
  <python_version>2.6.6 (r266:84292, Jan 22 2014, 09:42:36) 
 [GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]</python_version>
  <platform>Linux</platform>
@@ -24,6 +24,7 @@
    <to_q_range>0.01002</to_q_range>
    <from_lambda_range>13.30</from_lambda_range>
    <to_lambda_range>17</to_lambda_range>
+   <incident_angle>1.20</incident_angle>
    <data_sets>115268</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115268_event.nxs</data_full_file_name>
    <x_min_pixel>123</x_min_pixel>
@@ -31,17 +32,17 @@
    <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>124</norm_x_min>
    <norm_from_peak_pixels>112</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>109</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115275</norm_dataset>
-   <norm_full_file_name></norm_full_file_name>
+   <norm_full_file_name>/home/j35/NeXus/REF_L_115275_event.nxs</norm_full_file_name>
    <auto_q_binning>False</auto_q_binning>
    <overlap_lowest_error>True</overlap_lowest_error>
    <overlap_mean_value>False</overlap_mean_value>
@@ -62,32 +63,33 @@
    <from_peak_pixels>112</from_peak_pixels>
    <to_peak_pixels>126</to_peak_pixels>
    <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
+   <background_flag>1</background_flag>
    <back_roi1_from>109</back_roi1_from>
    <back_roi1_to>129</back_roi1_to>
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
-   <from_q_range></from_q_range>
-   <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>
-   <to_lambda_range></to_lambda_range>
+   <from_tof_range>40742.0919624</from_tof_range>
+   <to_tof_range>53556.4409608</to_tof_range>
+   <from_q_range>0.00925</from_q_range>
+   <to_q_range>0.01216</to_q_range>
+   <from_lambda_range>10.81</from_lambda_range>
+   <to_lambda_range>14</to_lambda_range>
+   <incident_angle>1.20</incident_angle>
    <data_sets>115269</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115269_event.nxs</data_full_file_name>
    <x_min_pixel>123</x_min_pixel>
    <x_max_pixel>187</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
+   <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>120</norm_x_min>
    <norm_from_peak_pixels>112</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>109</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115276</norm_dataset>
@@ -112,32 +114,33 @@
    <from_peak_pixels>113</from_peak_pixels>
    <to_peak_pixels>123</to_peak_pixels>
    <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
+   <background_flag>1</background_flag>
    <back_roi1_from>113</back_roi1_from>
    <back_roi1_to>126</back_roi1_to>
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
-   <from_q_range></from_q_range>
-   <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>
-   <to_lambda_range></to_lambda_range>
+   <from_tof_range>29623.7597433</from_tof_range>
+   <to_tof_range>42438.1087416</to_tof_range>
+   <from_q_range>0.01168</from_q_range>
+   <to_q_range>0.01673</to_q_range>
+   <from_lambda_range>7.86</from_lambda_range>
+   <to_lambda_range>11</to_lambda_range>
+   <incident_angle>1.20</incident_angle>
    <data_sets>115270</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115270_event.nxs</data_full_file_name>
    <x_min_pixel>125</x_min_pixel>
    <x_max_pixel>185</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
+   <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>123</norm_x_min>
    <norm_from_peak_pixels>111</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>108</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115277</norm_dataset>
@@ -168,12 +171,13 @@
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
+   <from_tof_range>18354.6704771</from_tof_range>
+   <to_tof_range>31169.0194754</to_tof_range>
    <from_q_range>0.01590</from_q_range>
    <to_q_range>0.02700</to_q_range>
    <from_lambda_range>4.87</from_lambda_range>
    <to_lambda_range> 8</to_lambda_range>
+   <incident_angle>1.20</incident_angle>
    <data_sets>115271</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115271_event.nxs</data_full_file_name>
    <x_min_pixel>124</x_min_pixel>
@@ -181,13 +185,13 @@
    <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>123</norm_x_min>
    <norm_from_peak_pixels>112</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>109</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115278</norm_dataset>
@@ -212,32 +216,33 @@
    <from_peak_pixels>111</from_peak_pixels>
    <to_peak_pixels>127</to_peak_pixels>
    <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
+   <background_flag>1</background_flag>
    <back_roi1_from>101</back_roi1_from>
    <back_roi1_to>137</back_roi1_to>
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
-   <from_q_range></from_q_range>
-   <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>
-   <to_lambda_range></to_lambda_range>
+   <from_tof_range>9610.76174877</from_tof_range>
+   <to_tof_range>22425.1107471</to_tof_range>
+   <from_q_range>0.02542</from_q_range>
+   <to_q_range>0.05931</to_q_range>
+   <from_lambda_range>2.55</from_lambda_range>
+   <to_lambda_range> 6</to_lambda_range>
+   <incident_angle>1.38</incident_angle>
    <data_sets>115272</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115272_event.nxs</data_full_file_name>
    <x_min_pixel>124</x_min_pixel>
    <x_max_pixel>186</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
+   <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>123</norm_x_min>
    <norm_from_peak_pixels>112</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>109</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115279</norm_dataset>
@@ -262,32 +267,33 @@
    <from_peak_pixels>112</from_peak_pixels>
    <to_peak_pixels>127</to_peak_pixels>
    <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
+   <background_flag>1</background_flag>
    <back_roi1_from>102</back_roi1_from>
    <back_roi1_to>137</back_roi1_to>
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
-   <from_q_range></from_q_range>
-   <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>
-   <to_lambda_range></to_lambda_range>
+   <from_tof_range>9610.76174877</from_tof_range>
+   <to_tof_range>22425.1107471</to_tof_range>
+   <from_q_range>0.05047</from_q_range>
+   <to_q_range>0.11777</to_q_range>
+   <from_lambda_range>2.55</from_lambda_range>
+   <to_lambda_range> 6</to_lambda_range>
+   <incident_angle>2.74</incident_angle>
    <data_sets>115273</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115273_event.nxs</data_full_file_name>
    <x_min_pixel>125</x_min_pixel>
    <x_max_pixel>187</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
+   <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>123</norm_x_min>
    <norm_from_peak_pixels>112</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>109</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115279</norm_dataset>
@@ -312,32 +318,33 @@
    <from_peak_pixels>113</from_peak_pixels>
    <to_peak_pixels>124</to_peak_pixels>
    <peak_discrete_selection>N/A</peak_discrete_selection>
-   <background_flag>True</background_flag>
+   <background_flag>1</background_flag>
    <back_roi1_from>103</back_roi1_from>
    <back_roi1_to>134</back_roi1_to>
    <back_roi2_from>0</back_roi2_from>
    <back_roi2_to>0</back_roi2_to>
    <tof_range_flag>True</tof_range_flag>
-   <from_tof_range>0</from_tof_range>
-   <to_tof_range>0</to_tof_range>
-   <from_q_range></from_q_range>
-   <to_q_range></to_q_range>
-   <from_lambda_range></from_lambda_range>
-   <to_lambda_range></to_lambda_range>
+   <from_tof_range>9610.76174877</from_tof_range>
+   <to_tof_range>22425.1107471</to_tof_range>
+   <from_q_range>0.09984</from_q_range>
+   <to_q_range>0.23296</to_q_range>
+   <from_lambda_range>2.55</from_lambda_range>
+   <to_lambda_range> 6</to_lambda_range>
+   <incident_angle>5.42</incident_angle>
    <data_sets>115274</data_sets>
    <data_full_file_name>/home/j35/NeXus/REF_L_115274_event.nxs</data_full_file_name>
    <x_min_pixel>118</x_min_pixel>
    <x_max_pixel>191</x_max_pixel>
-   <x_range_flag>True</x_range_flag>
+   <x_range_flag>1</x_range_flag>
    <tthd_value>-2.80</tthd_value>
    <ths_value>-4.00</ths_value>
-   <norm_flag>True</norm_flag>
-   <norm_x_range_flag>True</norm_x_range_flag>
+   <norm_flag>1</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
    <norm_x_max>186</norm_x_max>
    <norm_x_min>123</norm_x_min>
    <norm_from_peak_pixels>112</norm_from_peak_pixels>
    <norm_to_peak_pixels>122</norm_to_peak_pixels>
-   <norm_background_flag>True</norm_background_flag>
+   <norm_background_flag>1</norm_background_flag>
    <norm_from_back_pixels>109</norm_from_back_pixels>
    <norm_to_back_pixels>125</norm_to_back_pixels>
    <norm_dataset>115279</norm_dataset>

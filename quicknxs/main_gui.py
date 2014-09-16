@@ -653,28 +653,20 @@ class MainGUI(QtGui.QMainWindow):
       incident_angle = data.active_data.incident_angle
       _item_angle = QtGui.QTableWidgetItem(incident_angle)
       self.ui.reductionTable.setItem(_row,1,_item_angle)
-
-  #def getIncidentAngle(self, active_data):
-    #'''
-    #Using the metadata, will return the incident angle in degrees
-    #'''
-    
-    #_tthd = active_data.tthd
-    #_tthd_units = active_data.tthd_units
-    
-    #_ths = active_data.thi
-    #_ths_units = active_data.thi_units
-    
-    #if _tthd_units != 'degree':
-      #_tthd = radians(_tthd)
-    
-    #if _ths_units != 'degree':
-      #_ths = radians(_ths)
       
-    #angle = fabs(_tthd - _ths)
-    #_value = "%.2f" % angle
-    #return _value
-    
+      [from_l, to_l] = data.active_data.lambda_range
+      _item_from_l = QtGui.QTableWidgetItem(str(from_l))
+      self.ui.reductionTable.setItem(_row, 2, _item_from_l)
+      _item_to_l = QtGui.QTableWidgetItem(str(to_l))
+      self.ui.reductionTable.setItem(_row, 3, _item_to_l)
+
+      [from_q, to_q] = data.active_data.q_range
+      _item_from_q = QtGui.QTableWidgetItem(str(from_q))
+      self.ui.reductionTable.setItem(_row, 4, _item_from_q)
+      _item_to_q = QtGui.QTableWidgetItem(str(to_q))
+      self.ui.reductionTable.setItem(_row, 5, _item_to_q)
+      
+   
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
     base=os.path.basename(filename)
@@ -924,33 +916,37 @@ class MainGUI(QtGui.QMainWindow):
       _data = self.bigTableData[r,c]
       _active_data = _data.active_data
 
-      if (_active_data.q_range == ['0','0']) or (_active_data.q_range == ['','']):
-        [qmin, qmax] = self.calculate_q_range(data)
-        qmin = "%.5f" % qmin
-        qmax = "%.5f" % qmax
-        _active_data.q_range = [qmin, qmax]
+      #if (_active_data.q_range == ['0','0']) or (_active_data.q_range == ['','']):
+        #[qmin, qmax] = self.calculate_q_range(data)
+        #qmin = "%.5f" % qmin
+        #qmax = "%.5f" % qmax
+        #_active_data.q_range = [qmin, qmax]
         
-        [lambdamin, lambdamax] = self.calculate_lambda_range(data)
-        lmin = "%.2f" % lambdamin
-        lmax = "%.2f" % lambdamax
-        _active_data.lambda_range = [lmin, lmax]
+        #[lambdamin, lambdamax] = self.calculate_lambda_range(data)
+        #lmin = "%.2f" % lambdamin
+        #lmax = "%.2f" % lambdamax
+        #_active_data.lambda_range = [lmin, lmax]
         
-        _data.active_data = _active_data
-        self.bigTableData[r,c] = _data
-      else:
+        #_data.active_data = _active_data
+        #self.bigTableData[r,c] = _data
+      #else:
         
-        [qmin,qmax] = _active_data.q_range
-        [lmin,lmax] = _active_data.lambda_range
+      incident_angle = _active_data.incident_angle
+      [qmin,qmax] = _active_data.q_range
+      [lmin,lmax] = _active_data.lambda_range
       
       _item_min = QtGui.QTableWidgetItem(str(qmin))
       _item_max = QtGui.QTableWidgetItem(str(qmax))
       _item_lmin = QtGui.QTableWidgetItem(str(lmin))
       _item_lmax = QtGui.QTableWidgetItem(str(lmax))
+      _item_incident = QtGui.QTableWidgetItem(str(incident_angle))
+
       [row, column] = self.getCurrentRowColumnSelected()
       self.ui.reductionTable.setItem(row, 4, _item_min)
       self.ui.reductionTable.setItem(row, 5, _item_max)
       self.ui.reductionTable.setItem(row, 2, _item_lmin)
       self.ui.reductionTable.setItem(row, 3, _item_lmax)
+      self.ui.reductionTable.setItem(row, 1, _item_incident)
 
     else: # normalization
 
@@ -4060,6 +4056,7 @@ Do you want to try to restore the working reduction list?""",
         tof_auto_flag = _data.tof_auto_flag
         q_range = _data.q_range
         lambda_range = _data.lambda_range
+        incident_angle = _data.incident_angle
       
       else:
 
@@ -4083,7 +4080,12 @@ Do you want to try to restore the working reduction list?""",
             lambda_range = _metadata.lambda_range
           except:
             lambda_range = ['0','0']
-            
+          
+          try:
+            incident_angle = _metadata.incident_angle
+          except:
+            incident_angle = ''
+          
           tof_units = _metadata.tof_units
           tof_auto_flag = _metadata.tof_auto_flag
 
@@ -4099,6 +4101,7 @@ Do you want to try to restore the working reduction list?""",
           tof_auto_flag = True
           q_range = ['0','0']
           lambda_range = ['0','0']
+          incident_angle = ''
 
       norm_info = _bigTableData[row,1]
       if norm_info is not None:
@@ -4107,12 +4110,13 @@ Do you want to try to restore the working reduction list?""",
         norm_full_file_name = _norm.filename
         if type(norm_full_file_name) == type([]):
           norm_full_file_name = ','.join(norm_full_file_name)
-        norm_flag = _norm.norm_flag
-        norm_peak = _norm.norm_peak
-        norm_back = _norm.norm_back
-        norm_back_flag = _norm.norm_back_flag
-        norm_low_res = _norm.norm_low_res
-        norm_low_res_flag = _norm.norm_low_res_flag
+
+        norm_flag = _norm.use_it_flag
+        norm_peak = _norm.peak
+        norm_back = _norm.back
+        norm_back_flag = _norm.back_flag
+        norm_low_res = _norm.low_res
+        norm_low_res_flag = _norm.low_res_flag
           
       else:
 
@@ -4150,6 +4154,7 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <to_q_range>' + str(q_range[1]) + '</to_q_range>\n')
       strArray.append('   <from_lambda_range>' + str(lambda_range[0]) + '</from_lambda_range>\n')
       strArray.append('   <to_lambda_range>' + str(lambda_range[1]) + '</to_lambda_range>\n')
+      strArray.append('   <incident_angle>' + str(incident_angle) + '</incident_angle>\n')
 
       _data_run_number = self.ui.reductionTable.item(row,0).text()
       strArray.append('   <data_sets>' + _data_run_number + '</data_sets>\n')
@@ -4626,6 +4631,7 @@ Do you want to try to restore the working reduction list?""",
       _active_data = _data.active_data
       lambda_range = _active_data.lambda_range
       q_range = _active_data.q_range
+      incident_angle = _active_data.incident_angle
       
       lambda_min = lambda_range[0]
       lambda_max = lambda_range[1]
@@ -4641,6 +4647,10 @@ Do you want to try to restore the working reduction list?""",
       self.ui.reductionTable.setItem(i,4,_item)
       _item = QtGui.QTableWidgetItem(str(q_max))
       self.ui.reductionTable.setItem(i,5,_item)
+
+      _item = QtGui.QTableWidgetItem(str(incident_angle))
+      self.ui.reductionTable.setItem(i,1,_item)
+
 
   def addItemToBigTable(self, value, row, column):
     '''
