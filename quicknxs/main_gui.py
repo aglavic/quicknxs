@@ -650,32 +650,30 @@ class MainGUI(QtGui.QMainWindow):
 
     if _column == 0:
       # add incident angle
-      incident_angle = self.getIncidentAngle(data.active_data)
+      incident_angle = data.active_data.incident_angle
       _item_angle = QtGui.QTableWidgetItem(incident_angle)
       self.ui.reductionTable.setItem(_row,1,_item_angle)
 
-  def getIncidentAngle(self, active_data):
-    '''
-    Using the metadata, will return the incident angle in degrees
-    '''
+  #def getIncidentAngle(self, active_data):
+    #'''
+    #Using the metadata, will return the incident angle in degrees
+    #'''
     
-    angle = 1.2345
+    #_tthd = active_data.tthd
+    #_tthd_units = active_data.tthd_units
     
-    _tthd = active_data.tthd
-    _tthd_units = active_data.tthd_units
+    #_ths = active_data.thi
+    #_ths_units = active_data.thi_units
     
-    _ths = active_data.thi
-    _ths_units = active_data.thi_units
+    #if _tthd_units != 'degree':
+      #_tthd = radians(_tthd)
     
-    if _tthd_units != 'degree':
-      _tthd = radians(_tthd)
-    
-    if _ths_units != 'degree':
-      _ths = radians(_ths)
+    #if _ths_units != 'degree':
+      #_ths = radians(_ths)
       
-    angle = fabs(_tthd - _ths)
-    _value = "%.2f" % angle
-    return _value
+    #angle = fabs(_tthd - _ths)
+    #_value = "%.2f" % angle
+    #return _value
     
   @log_call
   def _fileOpenDone(self, data=None, filename=None, do_plot=None):
@@ -4353,7 +4351,49 @@ Do you want to try to restore the working reduction list?""",
                    metadata_config_object = _configDataset,
                    angle_offset = self.ui.angleOffsetValue.text())
     
+    # make sure that incident_angle, q_range and/or lambda_range have values
+    item = self.ui.reductionTable.item(0,1)
+    if item is None:
+      _item = QtGui.QTableWidgetItem(str(data.active_data.incident_angle))
+      self.ui.reductionTable.setItem(0, 1, _item)
+    else:    
+      incident_angle = item.text()
+      if incident_angle == 'N/A' or incident_angle == '':
+        _item = QtGui.QTableWidgetItem(str(data.active_data.incident_angle))
+        self.ui.reductionTable.setItem(0, 1, _item)
     
+    item = self.ui.reductionTable.item(0,4)
+    if item is None:
+      [_from_q, _to_q] = data.active_data.q_range
+      _item = QtGui.QTableWidgetItem(str(_from_q))
+      self.ui.reductionTable.setItem(0,4, _item)
+      _item = QtGui.QTableWidgetItem(str(_to_q))
+      self.ui.reductionTable.setItem(0,5, _item)
+    else:
+      from_q = item.text()
+      if from_q == '':
+        [_from_q, _to_q] = data.active_data.q_range
+        _item = QtGui.QTableWidgetItem(str(_from_q))
+        self.ui.reductionTable.setItem(0,4, _item)
+        _item = QtGui.QTableWidgetItem(str(_to_q))
+        self.ui.reductionTable.setItem(0,5, _item)
+    
+    item = self.ui.reductionTable.item(0,2)
+    if item is None:
+      [_from_l, _to_l] = data.active_data.lambda_range
+      _item = QtGui.QTableWidgetItem(str(_from_l))
+      self.ui.reductionTable.setItem(0,2, _item)
+      _item = QtGui.QTableWidgetItem(str(_to_l))
+      self.ui.reductionTable.setItem(0,3, _item)
+    else:
+      from_lambda = item.text()
+      if from_lambda == '':
+        [_from_l, _to_l] = data.active_data.lambda_range
+        _item = QtGui.QTableWidgetItem(str(_from_l))
+        self.ui.reductionTable.setItem(0,2, _item)
+        _item = QtGui.QTableWidgetItem(str(_to_l))
+        self.ui.reductionTable.setItem(0,3, _item)
+          
     r=0
     c=0
     self.bigTableData[r,c] = data

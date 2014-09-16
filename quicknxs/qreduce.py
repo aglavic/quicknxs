@@ -1240,6 +1240,7 @@ class LRDataset(object):
   q_range = ['0','0']
   lambda_range = ['0','0']
   theta = 0
+  incident_angle = 0
   
   nxs=None # Mantid NeXus workspace
 
@@ -1424,7 +1425,6 @@ class LRDataset(object):
 
     return [q_min, q_max]
    
-
   def calculate_lambda_range(output):
     '''
     calculate lambda range
@@ -1444,6 +1444,25 @@ class LRDataset(object):
     
     return [lambda_min, lambda_max]
 
+  def calculate_incident_angle(output):
+    '''
+    calculate the incident angle
+    '''
+    _tthd = output.tthd
+    _tthd_units = output.tthd_units
+      
+    _ths = output.thi
+    _ths_units = output.thi_units
+      
+    if _tthd_units != 'degree':
+      _tthd = radians(_tthd)
+      
+    if _ths_units != 'degree':
+      _ths = radians(_ths)
+        
+    angle = fabs(_tthd - _ths)
+    _value = "%.2f" % angle
+    return _value
 
   def calculate_theta(output):
     '''
@@ -1519,6 +1538,7 @@ class LRDataset(object):
     
     output.q_range = LRDataset.calculate_q_range(output)
     output.lambda_range = LRDataset.calculate_lambda_range(output)
+    output.incident_angle = LRDataset.calculate_incident_angle(output)
     
     tbin = int(read_options["bins"])
     
