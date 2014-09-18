@@ -87,4 +87,31 @@ def createPickleFilename(filename):
     return new_filename
 
     
-    
+def weighted_mean(data_array, error_array):
+    '''
+    weighted mean of an array        
+    '''
+    sz = len(data_array)
+
+    # calculate the numerator of mean
+    dataNum = 0;
+    for i in range(sz):
+        if not (data_array[i] == 0):
+            tmpFactor = float(data_array[i]) / float((pow(error_array[i],2)))
+            dataNum += tmpFactor
+
+    # calculate denominator
+    dataDen = 0;
+    for i in range(sz):
+        if not (error_array[i] == 0):
+            tmpFactor = 1./float((pow(error_array[i],2)))
+            dataDen += tmpFactor
+
+    if dataDen == 0:
+        mean = 0
+        mean_error = 0
+    else:
+        mean = float(dataNum) / float(dataDen)
+        mean_error = math.sqrt(1/dataDen)
+
+    return [mean, mean_error]

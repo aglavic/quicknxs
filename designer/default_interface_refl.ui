@@ -256,7 +256,7 @@ p, li { white-space: pre-wrap; }
           <property name="minimumSize">
            <size>
             <width>258</width>
-            <height>350</height>
+            <height>360</height>
            </size>
           </property>
           <property name="frameShape">
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>164</height>
+             <height>205</height>
             </rect>
            </property>
            <attribute name="label">
@@ -497,7 +497,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>164</height>
+             <height>205</height>
             </rect>
            </property>
            <attribute name="label">
@@ -590,7 +590,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>164</height>
+             <height>205</height>
             </rect>
            </property>
            <attribute name="label">
@@ -711,60 +711,13 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </widget>
-          <widget class="QWidget" name="page_6">
-           <attribute name="label">
-            <string>Overlap Values</string>
-           </attribute>
-           <widget class="QGroupBox" name="groupBox">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>12</y>
-              <width>242</width>
-              <height>77</height>
-             </rect>
-            </property>
-            <property name="title">
-             <string>How to treat overlap values</string>
-            </property>
-            <widget class="QRadioButton" name="radioButton">
-             <property name="geometry">
-              <rect>
-               <x>25</x>
-               <y>24</y>
-               <width>199</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>use lowest error value</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QRadioButton" name="radioButton_2">
-             <property name="geometry">
-              <rect>
-               <x>25</x>
-               <y>51</y>
-               <width>199</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>use mean value</string>
-             </property>
-            </widget>
-           </widget>
-          </widget>
           <widget class="QWidget" name="page_5">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
              <width>264</width>
-             <height>164</height>
+             <height>205</height>
             </rect>
            </property>
            <attribute name="label">
@@ -855,8 +808,8 @@ p, li { white-space: pre-wrap; }
            <widget class="QPushButton" name="createAsciiButton">
             <property name="geometry">
              <rect>
-              <x>12</x>
-              <y>71</y>
+              <x>16</x>
+              <y>74</y>
               <width>236</width>
               <height>27</height>
              </rect>
@@ -865,25 +818,50 @@ p, li { white-space: pre-wrap; }
              <string>Create ASCII ...</string>
             </property>
            </widget>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="geometry">
+             <rect>
+              <x>23</x>
+              <y>114</y>
+              <width>242</width>
+              <height>77</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>How to treat overlap values</string>
+            </property>
+            <widget class="QRadioButton" name="usingLessErrorValueFlag">
+             <property name="geometry">
+              <rect>
+               <x>25</x>
+               <y>24</y>
+               <width>199</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>use lowest error value</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="usingMeanValueFalg">
+             <property name="geometry">
+              <rect>
+               <x>25</x>
+               <y>51</y>
+               <width>199</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>use mean value</string>
+             </property>
+            </widget>
+           </widget>
           </widget>
          </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_15">
-          <item>
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Reload Active File</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
         <item>
          <widget class="Line" name="line">
@@ -4415,22 +4393,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>0</x>
      <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_2</sender>
-   <signal>pressed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>reloadFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>195</x>
-     <y>859</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>3</x>
-     <y>453</y>
     </hint>
    </hints>
   </connection>

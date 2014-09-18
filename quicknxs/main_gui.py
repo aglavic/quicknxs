@@ -4630,18 +4630,133 @@ Do you want to try to restore the working reduction list?""",
     
     _4th_column_flag = self.ui.output4thColumnFlag.isChecked()
     if _4th_column_flag:
-      dq0 = self.ui.dq0Value.text()
-      dq_over_q = self.ui.dQoverQvalue.text()
-      line1 = '#dQ0[1/Angstrom]=' + dq0
-      line2 = '#dQ/Q=' + dq_over_q
+      dq0 = float(self.ui.dq0Value.text())
+      dq_over_q = float(self.ui.dQoverQvalue.text())
+      line1 = '#dQ0[1/Angstrom]=' + str(dq0)
+      line2 = '#dQ/Q=' + str(dq_over_q)
       line3 = '#Q(1/Angstrom) R delta_R Precision'
       text = [line1, line2, line3]
     else:
       text = ['#Q(1/Angstrom) R delta_R']
 
+    [q_axis, y_axis, e_axis] = self.produce_workspace_with_common_q_axis()
     
+    sz = len(q_axis)-1
+    for i in range(sz):
+      
+      # do not display data where R < 1e-15
+      if (y_axis[i] > 1e-15):
+        _line = str(q_axis[i])
+        _line += ' ' + str(y_axis[i])
+        _line += ' ' + str(e_axis[i])
+        if _4th_column_flag:
+          _precision = str(dq0 + dq_over_q * q_axis[i])
+          _line += ' ' + _precision
+        text.append(_line)
+    
+    f = open(filename, 'w')
+    for _line in text:
+      f.write(_line + '\n')
+      
+    f.close()
 
 
+
+  def produce_workspace_with_common_q_axis(self):
+    '''
+    In order to produce output ascii file, we need to get all the data sets with a common q axis
+    '''
+
+    bigTableData = self.bigTableData
+    nbrRow = self.ui.reductionTable.rowCount()
+    
+    minQ = 100
+    maxQ = 0
+    
+    for i in range(nbrRow):
+      
+      tmp_wks_name = 'wks_' + str(i)
+      
+      _data = bigTableData[i,0]
+
+      _q_axis = _data.reduce_q_axis
+      _y_axis = _data.reduce_y_axis[:-1]
+      _e_axis = _data.reduce_e_axis[:-1]
+      
+      minQ = min([_q_axis[0], minQ])
+      maxQ = max([_q_axis[-1], maxQ])
+      
+      tmp_wks_name = CreateWorkspace(DataX = _q_axis,
+                                     DataY = _y_axis,
+                                     DataE = _e_axis,
+                                     Nspec = 1,
+                                     UnitX = "Wavelength",
+                                     OutputWorkspace = tmp_wks_name)
+      tmp_wks_name.setDistribution(True)
+          
+    # rebin everyting using the same Q binning parameters  
+    binQ = float(self.ui.qStep.text())
+    bin_parameters = str(minQ) + ',-' + str(binQ) + ',' + str(maxQ)
+    for i in range(nbrRow):  
+    
+      tmp_wks_name = 'wks_' + str(i)
+      ConvertToHistogram(InputWorkspace = tmp_wks_name,
+                         OutputWorkspace = tmp_wks_name)
+      
+      Rebin(InputWorkspace = tmp_wks_name, 
+            Params = bin_parameters,
+            OutputWorkspace = tmp_wks_name)
+     
+    # we use the first histo as output reference
+    data_y = mtd['wks_0'].dataY(0).copy()
+    data_e = mtd['wks_0'].dataE(0).copy()
+    
+    skip_index = 0
+    point_to_skip = 1
+    
+    isUsingLessErrorValue = self.ui.usingLessErrorValueFlag.isChecked()
+     
+    for k in range(1, nbrRow):
+      
+      skip_point = True
+      can_skip_last_point = False
+      
+      data_y_k = mtd['wks_' + str(k)].dataY(0)
+      data_e_k = mtd['wks_' + str(k)].dataE(0)
+      for j in range(len(data_y_k)-1):
+        
+        if data_y_k[j] > 0:
+          
+          can_skip_last_point = True
+          if skip_point:
+            skip_index += 1
+            if skip_index == point_to_skip:
+              skip_point = False
+              skip_index = 0
+            else:
+              continue
+            
+        if can_skip_last_point and (data_y_k[j+1] == 0):
+          break
+        
+        if data_y[j] > 0 and data_y_k[j] > 0:
+          
+          if isUsingLessErrorValue:
+            if (data_e[j] > data_e_k[j]):
+              data_y[j] = data_y_k[j]
+              data_e[j] = data_e_k[j]
+              
+          else:
+            [data_y[j], data_e[j]] = utilities.weighted_mean([data_y[j], data_y_k[j]],
+                                                             [data_e[j], data_e_k[j]])
+              
+        elif (data_y[j] == 0) and (data_y_k[j]>0):
+          data_y[j] = data_y_k[j]
+          data_e[j] = data_e_k[j]
+        
+    data_x = mtd['wks_1'].dataX(0)
+
+    return [data_x, data_y, data_e]
 
 
   def update_reductionTable(self):
