@@ -3048,6 +3048,9 @@ p, li { white-space: pre-wrap; }
                   </item>
                   <item>
                    <widget class="QTableWidget" name="reductionTable">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
@@ -5084,6 +5087,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>cellEntered(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>cell_editable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>816</x>
+     <y>935</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5161,5 +5180,6 @@ p, li { white-space: pre-wrap; }
   <slot>sf_widgets_status()</slot>
   <slot>sf_browse_button()</slot>
   <slot>output_data_into_ascii()</slot>
+  <slot>cell_editable()</slot>
  </slots>
 </ui>

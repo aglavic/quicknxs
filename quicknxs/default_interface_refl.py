@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Sep 17 13:52:40 2014
+# Created: Thu Sep 18 13:12:50 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1143,6 +1143,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_25.addLayout(self.horizontalLayout_14)
         self.verticalLayout_24.addLayout(self.verticalLayout_25)
         self.reductionTable = QtGui.QTableWidget(self.layoutWidget_3)
+        self.reductionTable.setEnabled(True)
         self.reductionTable.setMinimumSize(QtCore.QSize(0, 200))
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
         self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
@@ -1612,6 +1613,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.scalingFactorFlag, QtCore.SIGNAL("clicked(bool)"), MainWindow.sf_widgets_status)
         QtCore.QObject.connect(self.sfBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.sf_browse_button)
         QtCore.QObject.connect(self.createAsciiButton, QtCore.SIGNAL("clicked()"), MainWindow.output_data_into_ascii)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellEntered(int,int)"), MainWindow.cell_editable)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

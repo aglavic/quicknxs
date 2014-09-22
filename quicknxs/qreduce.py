@@ -1277,6 +1277,8 @@ class LRDataset(object):
   det_size_y=0.1792 #: vertical size of detector [m]
   from_event_mode=False #: was this dataset created from event mode nexus file
 
+  new_detector_geometry_flag = False #: True if run taken after constants.new_geometry_detector_date
+
   _Q=None
   _I=None
   _dI=None
@@ -1485,6 +1487,18 @@ class LRDataset(object):
     
     return theta_rad
 
+  def isNexusTakeAfterRefDate(output, ref_date):
+    '''
+    This function parses the output.date and returns true if this date is after the ref date
+    '''
+    nexus_date = output.date
+    nexus_date_acquistion = nexus_date.split('T')[0]
+    
+    if nexus_date_acquistion > ref_date:
+      return True
+    else:
+      return False
+
   @classmethod
   @log_call
   def from_event(cls, nxs, read_options,
@@ -1510,6 +1524,11 @@ class LRDataset(object):
 
     # retrieve the metadata from the nexus file
     output._collect_info(nxs)
+
+    # check if file is part of new rotated detector (date > 2014-10-05)
+    ref_date = constants.new_geometry_detector_date
+    output.new_detector_geometry_flag = LRDataset.isNexusTakeAfterRefDate(output, ref_date)
+    output.new_detector_geometry_flag = True
 
     # calculate theta
     output.theta = LRDataset.calculate_theta(output)
@@ -1556,7 +1575,7 @@ class LRDataset(object):
     output.proton_charge_units = new_proton_charge_units
     
     # retrieve 3D array
-    [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
+    [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, output.new_detector_geometry_flag)
     output.tof_axis_auto_with_margin = _tof_axis
     
     ## keep only the low resolution range requested
@@ -1612,22 +1631,32 @@ class LRDataset(object):
     return output
 
   @staticmethod
-  def getIxyt(nxs_histo):
+  def getIxyt(nxs_histo, new_detector_flag):
     '''
     will format the histogrma NeXus to retrieve the full 3D data set
     '''
     _tof_axis = nxs_histo.readX(0)[:].copy()
     nbr_tof = len(_tof_axis)
-        
-    _y_axis = zeros((304, 256, nbr_tof-1))
-    _y_error_axis = zeros((304, 256, nbr_tof-1))
     
-    x_range = range(304)
-    y_range = range(256)
-        
+    if new_detector_flag:
+
+      sz_y_axis = 304
+      sz_x_axis = 256
+      
+    else:
+      
+      sz_y_axis = 256
+      sz_x_axis = 304
+
+    _y_axis = zeros((sz_x_axis, sz_y_axis, nbr_tof-1))
+    _y_error_axis = zeros((sz_x_axis, sz_y_axis, nbr_tof-1))
+  
+    x_range = range(sz_x_axis)
+    y_range = range(sz_y_axis)
+      
     for x in x_range:
       for y in y_range:
-        _index = int(256*x+y)
+        _index = int(sz_y_axis*x+y)
         _tmp_data = nxs_histo.readY(_index)[:].copy()
         _y_axis[x,y,:] = _tmp_data
         _tmp_error = nxs_histo.readE(_index)[:].copy()
@@ -1705,6 +1734,7 @@ class LRDataset(object):
     self.S2W = mt_run.getProperty('S2HWidth').value[0]
     self.S1H = mt_run.getProperty('S1VHeight').value[0]
     self.S2H = mt_run.getProperty('S2VHeight').value[0]
+    self.date = mt_run.getProperty('run_start').value
 
     sample = nxs.getInstrument().getSample()
     source = nxs.getInstrument().getSource()

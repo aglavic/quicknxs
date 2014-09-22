@@ -579,6 +579,11 @@ class MainGUI(QtGui.QMainWindow):
 
     return [_row, _column]
  
+  def cell_editable(self, row, column):
+    print ' in cell editable'
+    print row
+    print column
+ 
   def populateReflectivityTable(self, data):
     # will populate the recap table
     
@@ -600,6 +605,7 @@ class MainGUI(QtGui.QMainWindow):
       _row = r
 
       _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+      _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
       self.ui.reductionTable.setItem(r, _column, _item)
       
       self._prev_row_selected = _row
@@ -639,8 +645,9 @@ class MainGUI(QtGui.QMainWindow):
           _row = self.ui.reductionTable.rowCount()
           self.ui.reductionTable.insertRow(_row)
   
+      _item.setFlags(QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
       self.ui.reductionTable.setItem(_row, _column, _item)
-      
+#      self.ui.reductionTable.editItem(_row, _column, _item)
       self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
                                                                                _column,
                                                                                _row,
@@ -991,6 +998,13 @@ class MainGUI(QtGui.QMainWindow):
       it_plot = self.ui.norm_it_plot
       ix_plot = self.ui.norm_ix_plot
 
+    if data.new_detector_geometry_flag:
+      ylim = 303
+      xlim = 255
+    else:
+      ylim = 255
+      xlim = 303
+
     # display yt
     if plot_yt:
       yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
@@ -1036,7 +1050,8 @@ class MainGUI(QtGui.QMainWindow):
       yi_plot.plot(ycountsdata,xaxis)
       yi_plot.set_xlabel(u'counts')
       yi_plot.set_ylabel(u'y (pixel)')
-      yi_plot.canvas.ax.set_ylim(0,255)
+
+      yi_plot.canvas.ax.set_ylim(0,ylim)
       
       y1peak = yi_plot.canvas.ax.axhline(peak1, color='#00aa00')
       y2peak = yi_plot.canvas.ax.axhline(peak2, color='#00aa00')
@@ -1052,7 +1067,7 @@ class MainGUI(QtGui.QMainWindow):
       ix_plot.plot(countsxdata, color='#0000aa')
       ix_plot.set_xlabel(u'pixels')
       ix_plot.set_ylabel(u'counts')
-      ix_plot.canvas.ax.set_xlim(0,303)
+      ix_plot.canvas.ax.set_xlim(0,xlim)
       
       if low_res_flag:
         x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#aa00aa')
