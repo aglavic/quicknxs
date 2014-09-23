@@ -3063,9 +3063,6 @@ p, li { white-space: pre-wrap; }
                       <height>300</height>
                      </size>
                     </property>
-                    <property name="editTriggers">
-                     <set>QAbstractItemView::NoEditTriggers</set>
-                    </property>
                     <property name="showDropIndicator" stdset="0">
                      <bool>false</bool>
                     </property>

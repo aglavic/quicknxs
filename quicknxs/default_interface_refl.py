@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Sep 18 13:12:50 2014
+# Created: Tue Sep 23 13:57:09 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1146,7 +1146,6 @@ class Ui_MainWindow(object):
         self.reductionTable.setEnabled(True)
         self.reductionTable.setMinimumSize(QtCore.QSize(0, 200))
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
-        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.reductionTable.setProperty("showDropIndicator", False)
         self.reductionTable.setDragDropOverwriteMode(False)
         self.reductionTable.setAlternatingRowColors(True)
