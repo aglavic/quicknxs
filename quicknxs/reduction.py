@@ -254,7 +254,7 @@ class ReductionObject(object):
         nxs_histo = Rebin(InputWorkspace=nxs, Params=rebin_params, PreserveEvents=True)
         nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
 
-        [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
+        [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, data.new_detector_geometry_flag)
 
         data.tof_axis = _tof_axis
         data.Ixyt = Ixyt
@@ -273,7 +273,7 @@ class ReductionObject(object):
             norm_nxs_histo = Rebin(InputWorkspace=norm_nxs, Params=rebin_params, PreserveEvents=True)
             norm_nxs_histo = NormaliseByCurrent(InputWorkspace=norm_nxs_histo)
             
-            [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(norm_nxs_histo)
+            [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(norm_nxs_histo, norm.new_detector_geometry_flag)
             
             norm.tof_axis = _tof_axis
             norm.Ixyt = Ixyt

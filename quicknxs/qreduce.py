@@ -1528,7 +1528,6 @@ class LRDataset(object):
     # check if file is part of new rotated detector (date > 2014-10-05)
     ref_date = constants.new_geometry_detector_date
     output.new_detector_geometry_flag = LRDataset.isNexusTakeAfterRefDate(output, ref_date)
-    output.new_detector_geometry_flag = True
 
     # calculate theta
     output.theta = LRDataset.calculate_theta(output)
