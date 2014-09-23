@@ -611,7 +611,7 @@ class ReductionObject(object):
                 from_pixel = int(norm.low_resolution_range[0])
                 to_pixel = int(norm.low_resolution_range[1])
         
-            Ixyt = norm.Ixyt   # for example [303,256,471]
+            Ixyt = norm.Ixyt   # for example [303,255,471]
             Exyt = norm.Exyt
         
             # calculate y axis
@@ -972,7 +972,6 @@ class REFLReduction(object):
         nbrRow = main_gui.ui.reductionTable.rowCount()
         
         for row in range(nbrRow):
-#        for row in range(3,4):
 
             dataCell = main_gui.ui.reductionTable.item(row,0).text()
             if main_gui.ui.reductionTable.item(row,6) is not None:

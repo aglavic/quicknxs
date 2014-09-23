@@ -1584,8 +1584,12 @@ class LRDataset(object):
     from_pixel = min(low_res_range)
     to_pixel = max(low_res_range)
         
-    Ixyt = Ixyt[from_pixel:to_pixel,:,:]
-    Exyt = Exyt[from_pixel:to_pixel,:,:]
+    if output.new_detector_geometry_flag:
+      Ixyt = Ixyt[:,from_pixel:to_pixel,:]
+      Exyt = Exyt[:,from_pixel:to_pixel,:]
+    else:
+      Ixyt = Ixyt[from_pixel:to_pixel,:,:]
+      Exyt = Exyt[from_pixel:to_pixel,:,:]
     
     output.Ixyt = Ixyt
     output.Exyt = Exyt
@@ -1596,6 +1600,7 @@ class LRDataset(object):
     Iit = Iyt.sum(axis=0)
     Iix = Ixy.sum(axis=1)
     Iyi = Iyt.sum(axis=1)
+
    # Exy = Exyt.sum(axis=2)    # FIXME
    # Ext = Exyt.sum(axis=1)    # FIXME
     
@@ -1639,10 +1644,10 @@ class LRDataset(object):
     nbr_tof = len(_tof_axis)
     
     if new_detector_flag:
-
+ 
       sz_y_axis = 304
       sz_x_axis = 256
-      
+       
     else:
       
       sz_y_axis = 256
