@@ -2629,14 +2629,17 @@ class MainGUI(QtGui.QMainWindow):
   def bigTable_selection_changed(self, row, column):    
 
     # if selection of same row and not data or column 0 and 6
-    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
-      return
+#    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
+#      return
     
     # same row and same column selected
     if (self._prev_row_selected == row) and (self._prev_col_selected == column):
       return
 
-    if column is not 0:
+    if (self._prev_row_selected == row) and (self._prev_col_selected < 6) and (column < 6):
+      return
+    
+    if column is 6:
       col = 1
     else:
       col = 0
@@ -2712,11 +2715,16 @@ class MainGUI(QtGui.QMainWindow):
       cell = self.ui.reductionTable.selectedItems()
 
       if (self.active_data is not None) and (_data.active_data.nxs is not None):
+        
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
       
-      else: # load the data because cell is empty so far
+      else: # load the data cell is empty or data not loaded yet
         
-        _run_number = int(cell[0].text())
+        [row,col] = self.getTrueCurrentRowColumnSelected()
+        if col < 6:
+          col = 0
+        item = self.ui.reductionTable.item(row,col)
+        _run_number = int(str(item.text()))
         _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
         
         _configDataset = self.bigTableData[row,2]
@@ -2750,6 +2758,18 @@ class MainGUI(QtGui.QMainWindow):
     self._prev_col_selected = column
 
     self.enableWidgets(checkStatus=True)
+
+    # select data or norm cell 
+    prev_range_selected = QtGui.QTableWidgetSelectionRange(row, 0, row, 6)
+    self.ui.reductionTable.setRangeSelected(prev_range_selected, False)
+
+    if column < 6:
+      _col = 0
+    else:
+      _col = 6
+
+    range_selected = QtGui.QTableWidgetSelectionRange(row, _col, row, _col)
+    self.ui.reductionTable.setRangeSelected(range_selected, True)
 
   def data_norm_tab_changed(self, index):
     '''
