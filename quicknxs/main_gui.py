@@ -453,6 +453,7 @@ class MainGUI(QtGui.QMainWindow):
     
       if instrument.NAME == 'REF_M':
         self._fileOpenDone(data, filename, do_plot)
+
       else:
         if data is not None:
           # save the data in the right spot (row, column)
@@ -605,6 +606,7 @@ class MainGUI(QtGui.QMainWindow):
       _row = r
 
       _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+      _item.setForeground(QtGui.QColor(13,24,241))
       _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
       self.ui.reductionTable.setItem(r, _column, _item)
       
@@ -645,7 +647,8 @@ class MainGUI(QtGui.QMainWindow):
           _row = self.ui.reductionTable.rowCount()
           self.ui.reductionTable.insertRow(_row)
   
-      _item.setFlags(QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+#      _item.setFlags(QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+      _item.setForeground(QtGui.QColor(13,24,241))
       self.ui.reductionTable.setItem(_row, _column, _item)
 #      self.ui.reductionTable.editItem(_row, _column, _item)
       self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
@@ -656,21 +659,29 @@ class MainGUI(QtGui.QMainWindow):
       self._prev_col_selected = _column
 
     if _column == 0:
+
+      color = QtGui.QColor(100,100,150)
+      
       # add incident angle
       incident_angle = data.active_data.incident_angle
       _item_angle = QtGui.QTableWidgetItem(incident_angle)
+      _item_angle.setForeground(color)
       self.ui.reductionTable.setItem(_row,1,_item_angle)
       
       [from_l, to_l] = data.active_data.lambda_range
       _item_from_l = QtGui.QTableWidgetItem(str(from_l))
+      _item_from_l.setForeground(color)
       self.ui.reductionTable.setItem(_row, 2, _item_from_l)
       _item_to_l = QtGui.QTableWidgetItem(str(to_l))
+      _item_to_l.setForeground(color)
       self.ui.reductionTable.setItem(_row, 3, _item_to_l)
 
       [from_q, to_q] = data.active_data.q_range
       _item_from_q = QtGui.QTableWidgetItem(str(from_q))
+      _item_from_q.setForeground(color)
       self.ui.reductionTable.setItem(_row, 4, _item_from_q)
       _item_to_q = QtGui.QTableWidgetItem(str(to_q))
+      _item_to_q.setForeground(color)
       self.ui.reductionTable.setItem(_row, 5, _item_to_q)
       
    
@@ -4308,11 +4319,11 @@ Do you want to try to restore the working reduction list?""",
 
       # data 
       _data_sets = self.getNodeValue(node,'data_sets')
-      self.addItemToBigTable(_data_sets, _row, 0)
+      self.addItemToBigTable(_data_sets, _row, 0, editableFlag=True)
       
       # norm
       _norm_sets = self.getNodeValue(node,'norm_dataset')
-      self.addItemToBigTable(_norm_sets, _row, 6)
+      self.addItemToBigTable(_norm_sets, _row, 6, editableFlag=True)
       
       # incident angle
       try:
@@ -4827,12 +4838,16 @@ Do you want to try to restore the working reduction list?""",
       _item = QtGui.QTableWidgetItem(str(incident_angle))
       self.ui.reductionTable.setItem(i,1,_item)
 
-
-  def addItemToBigTable(self, value, row, column):
+  def addItemToBigTable(self, value, row, column, editableFlag=False):
     '''
     Add element by element in the BigTable
     '''
     _item = QtGui.QTableWidgetItem(str(value))
+    if editableFlag:
+      color = QtGui.QColor(13,24,241)
+    else:
+      color = QtGui.QColor(100,100,150)
+    _item.setForeground(color)
     self.ui.reductionTable.setItem(row, column, _item)
 
   def getNodeValue(self,node,flag):
