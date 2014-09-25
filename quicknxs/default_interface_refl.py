@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Sep 23 13:57:09 2014
+# Created: Wed Sep 24 12:58:16 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1146,6 +1146,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setEnabled(True)
         self.reductionTable.setMinimumSize(QtCore.QSize(0, 200))
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
+        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked)
         self.reductionTable.setProperty("showDropIndicator", False)
         self.reductionTable.setDragDropOverwriteMode(False)
         self.reductionTable.setAlternatingRowColors(True)
@@ -1612,7 +1613,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.scalingFactorFlag, QtCore.SIGNAL("clicked(bool)"), MainWindow.sf_widgets_status)
         QtCore.QObject.connect(self.sfBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.sf_browse_button)
         QtCore.QObject.connect(self.createAsciiButton, QtCore.SIGNAL("clicked()"), MainWindow.output_data_into_ascii)
-        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellEntered(int,int)"), MainWindow.cell_editable)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.cell_editable)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("itemChanged(QTableWidgetItem*)"), MainWindow.cell_enter)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

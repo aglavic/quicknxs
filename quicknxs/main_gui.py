@@ -78,6 +78,9 @@ class MainGUI(QtGui.QMainWindow):
   # [data, norm, metadata from config file]
   bigTableData = empty((20,3), dtype=object)
 
+  # will be on when the user double click an editable cell
+  editing_flag = False
+
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
   ref_norm={} #: Store normalization data with extraction information
@@ -581,9 +584,83 @@ class MainGUI(QtGui.QMainWindow):
     return [_row, _column]
  
   def cell_editable(self, row, column):
-    print ' in cell editable'
-    print row
-    print column
+
+    if column == 0 or column == 6:
+      # we are now editing the cell if column is 0 or 6
+      self.editing_flag = True
+
+  def reductionTable_manual_entry(self, item):
+    '''
+    user manually modified data or norm run number in the reductionTable
+    '''
+
+    row = item.row()
+    column = item.column()
+    cell_content = str(item.text())
+
+    # data or norm
+    bigTableCol = 0
+    if column == 0:
+      isData = True
+    else:
+      isData = False
+      bigTableCol = 1
+    
+    # load object
+    info('Trying to locate file number %s...'% cell_content)
+    fullFileName = FileFinder.findRuns("REF_L%d" % int(cell_content))[0]
+    
+    data = NXSData(fullFileName,
+                   bin_type = 0,
+                   bins = self.ui.eventTofBins.value(),
+                   callback = self.updateEventReadout,
+                   event_split_bins = None,
+                   event_split_index = 0,
+                   angle_offset = self.ui.angleOffsetValue.text(),
+                   isData = isData)
+    
+    if self.bigTableData(row, bigTableCol) is None:
+      # use config file to populate metadata of file
+      
+    else:
+      # use previously loaded data object
+      prev_data = self.bigTableData(row, bigTableCol)
+      
+      data_active = data.active_data
+      prev_active = prev_data.active_data
+      
+      data_active.peak = prev_active.peak
+      data_active.back = prev_active.back
+      data_active.low_res = prev_active.low_res
+      data_active.back_flag = prev_active.back_flag
+      data_active.low_res_flag = prev_active.low_res_flag
+      data_active.tof_range = prev_active.tof_range
+      data_active.tof_units = prev_active.tof_units
+      data_active.tof_auto_flag = prev_active.tof_auto_flag
+        
+        
+      
+      
+    
+    
+    # if previously entry has been loaded, then recover metadata info (peak, back...etc)
+    # otherwise get them from config file bigTable[row,2]
+    
+    # replace entry in bigTable with new loaded object and display new data
+ 
+ 
+ 
+ 
+
+  def cell_enter(self, item):
+    
+    if self.editing_flag:
+      
+      self.reductionTable_manual_entry(item)
+
+      # we are done editing the cell
+      self.editing_flag = False
+ 
  
   def populateReflectivityTable(self, data):
     # will populate the recap table
@@ -607,7 +684,7 @@ class MainGUI(QtGui.QMainWindow):
 
       _item = QtGui.QTableWidgetItem(data.active_data.run_number)
       _item.setForeground(QtGui.QColor(13,24,241))
-      _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
+#      _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
       self.ui.reductionTable.setItem(r, _column, _item)
       
       self._prev_row_selected = _row
@@ -665,6 +742,7 @@ class MainGUI(QtGui.QMainWindow):
       # add incident angle
       incident_angle = data.active_data.incident_angle
       _item_angle = QtGui.QTableWidgetItem(incident_angle)
+      _item_angle.setFlags(QtCore.Qt.ItemIsEnabled)
       _item_angle.setForeground(color)
       self.ui.reductionTable.setItem(_row,1,_item_angle)
       

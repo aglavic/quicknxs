@@ -3063,6 +3063,9 @@ p, li { white-space: pre-wrap; }
                       <height>300</height>
                      </size>
                     </property>
+                    <property name="editTriggers">
+                     <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
+                    </property>
                     <property name="showDropIndicator" stdset="0">
                      <bool>false</bool>
                     </property>
@@ -5086,9 +5089,25 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>reductionTable</sender>
-   <signal>cellEntered(int,int)</signal>
+   <signal>cellDoubleClicked(int,int)</signal>
    <receiver>MainWindow</receiver>
    <slot>cell_editable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>816</x>
+     <y>935</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>itemChanged(QTableWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>cell_enter()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>816</x>
@@ -5178,5 +5197,6 @@ p, li { white-space: pre-wrap; }
   <slot>sf_browse_button()</slot>
   <slot>output_data_into_ascii()</slot>
   <slot>cell_editable()</slot>
+  <slot>cell_enter()</slot>
  </slots>
 </ui>
