@@ -23,7 +23,7 @@ import numpy as np
 from .advanced_background import BackgroundDialog
 from .compare_plots import CompareDialog
 from .config import paths, instrument, gui, export
-from .decorators import log_call, log_input, log_both
+from .decorators import log_call, log_input, log_both, waiting_effects
 from .default_interface import Ui_MainWindow
 from .gui_logging import install_gui_handler, excepthook_overwrite
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
@@ -585,14 +585,22 @@ class MainGUI(QtGui.QMainWindow):
  
   def cell_editable(self, row, column):
 
+    print 'cell_editable'
     if column == 0 or column == 6:
       # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
 
+  @waiting_effects
   def reductionTable_manual_entry(self, item):
     '''
     user manually modified data or norm run number in the reductionTable
     '''
+
+    print 'reductionTable_manual_entry'
+
+    if not self.editing_flag:
+      return
+    self.editing_flag = False
 
     row = item.row()
     column = item.column()
@@ -605,6 +613,10 @@ class MainGUI(QtGui.QMainWindow):
     else:
       isData = False
       bigTableCol = 1
+    
+    # keep going only for data and norm columns
+    if (column != 0) and (column != 6):
+      return
     
     # check if only 1 run number, or more
     str_split = cell_content.split(',')
@@ -682,10 +694,10 @@ class MainGUI(QtGui.QMainWindow):
 
   def cell_enter(self, item):
     
+    print 'cell_enter'
+    
     if self.editing_flag:
-      self.editing_flag = False
       self.reductionTable_manual_entry(item)
-
  
  
   def populateReflectivityTable(self, data):
@@ -2760,8 +2772,6 @@ class MainGUI(QtGui.QMainWindow):
 
     if (self._prev_row_selected == row) and (self._prev_col_selected < 6) and (column < 6):
       return
-    
-    print 'I should be updating something here!'
     
     if column is 6:
       col = 1

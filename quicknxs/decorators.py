@@ -7,12 +7,19 @@ import inspect
 import logging
 from time import time
 from StringIO import StringIO
-
+from PyQt4 import QtGui, QtCore
 
 #
 # Help functions adopted from Michele Simionato's decorator module 
 # http://www.phyast.pitt.edu/~micheles/python/decorator.zip
 #
+
+def waiting_effects(function):
+    def new_function(self, *args, **kw):
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        function(self, *args, **kw)
+        QtGui.QApplication.restoreOverrideCursor()
+    return new_function
 
 def getinfo(func):
     """
