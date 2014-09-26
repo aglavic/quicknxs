@@ -594,8 +594,6 @@ class MainGUI(QtGui.QMainWindow):
     user manually modified data or norm run number in the reductionTable
     '''
 
-    self.editing_flag = False
-
     row = item.row()
     column = item.column()
     cell_content = str(item.text())
@@ -608,9 +606,17 @@ class MainGUI(QtGui.QMainWindow):
       isData = False
       bigTableCol = 1
     
-    # load object
-    info('Trying to locate file number %s...'% cell_content)
-    fullFileName = FileFinder.findRuns("REF_L%d" % int(cell_content))[0]
+    # check if only 1 run number, or more
+    str_split = cell_content.split(',')
+    if len(str_split) == 1:
+      # load object
+      info('Trying to locate file number %s...'% cell_content)
+      fullFileName = FileFinder.findRuns("REF_L_%d" % int(cell_content))[0]
+    else:
+      fullFileName = []
+      for _run in str_split:
+        _fullFileName = FileFinder.findRuns("REF_L_%d" % int(_run))[0]
+        fullFileName.append(_fullFileName)
     
     data = NXSData(fullFileName,
                    bin_type = 0,
@@ -676,13 +682,10 @@ class MainGUI(QtGui.QMainWindow):
 
   def cell_enter(self, item):
     
-    
     if self.editing_flag:
-      
+      self.editing_flag = False
       self.reductionTable_manual_entry(item)
 
-      # we are done editing the cell
-      self.editing_flag = False
  
  
   def populateReflectivityTable(self, data):
@@ -2131,7 +2134,7 @@ class MainGUI(QtGui.QMainWindow):
       # only 1 run number to load
       if len(listNumber) == 1:
 #        try:
-        fullFileName = FileFinder.findRuns("REF_L%d"%int(listNumber[0]))[0]
+        fullFileName = FileFinder.findRuns("REF_L_%d"%int(listNumber[0]))[0]
         self.fileOpen(fullFileName, do_plot=do_plot, do_add=do_add)
         self.ui.numberSearchEntry.setText('')
 #        except:
@@ -2142,7 +2145,7 @@ class MainGUI(QtGui.QMainWindow):
         foundRun = []
         for i in range(len(listNumber)):
           try:
-            _fullFileName = FileFinder.findRuns("REF_L%d"%int(listNumber[i]))[0]
+            _fullFileName = FileFinder.findRuns("REF_L_%d"%int(listNumber[i]))[0]
             foundRun.append(_fullFileName)
           except:
             notFoundRun.append(listNumber[i])
@@ -2743,6 +2746,13 @@ class MainGUI(QtGui.QMainWindow):
     # if selection of same row and not data or column 0 and 6
 #    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
 #      return
+
+    #print '---'
+    #print self._prev_row_selected
+    #print row
+    #print self._prev_col_selected
+    #print column
+    #print
     
     # same row and same column selected
     if (self._prev_row_selected == row) and (self._prev_col_selected == column):
@@ -2750,6 +2760,8 @@ class MainGUI(QtGui.QMainWindow):
 
     if (self._prev_row_selected == row) and (self._prev_col_selected < 6) and (column < 6):
       return
+    
+    print 'I should be updating something here!'
     
     if column is 6:
       col = 1
@@ -2773,7 +2785,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataNormTabWidget.setCurrentIndex(0)  
 
     self._prev_row_selected = row
-    self._prev_col_selected = col
+    self._prev_col_selected = column
 
     cell = self.ui.reductionTable.selectedItems()
     if cell == []:

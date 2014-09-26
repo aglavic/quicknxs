@@ -314,7 +314,10 @@ class NXSData(object):
 
       randomString = self.generate_random_workspace_name()
 
-      if type(filename) == type(u"") or type(filename) == type(""):
+      if (type(filename) == type([])) and (len(filename) == 1):
+        filename = filename[0]
+
+      if (type(filename) == type(u"")) or (type(filename) == type("")):
 
         try:
           nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
