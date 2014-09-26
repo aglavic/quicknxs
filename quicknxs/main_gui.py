@@ -594,6 +594,8 @@ class MainGUI(QtGui.QMainWindow):
     user manually modified data or norm run number in the reductionTable
     '''
 
+    self.editing_flag = False
+
     row = item.row()
     column = item.column()
     cell_content = str(item.text())
@@ -619,14 +621,36 @@ class MainGUI(QtGui.QMainWindow):
                    angle_offset = self.ui.angleOffsetValue.text(),
                    isData = isData)
     
-    if self.bigTableData(row, bigTableCol) is None:
-      # use config file to populate metadata of file
+    # if previously entry has been loaded, then recover metadata info (peak, back...etc)
+    # otherwise get them from config file bigTable[row,2]
+    data_active = data.active_data
+    if self.bigTableData[row, bigTableCol] is None: # use config file to populate metadata of file
+
+      config_file = self.bigTableData[row, 2]
       
-    else:
-      # use previously loaded data object
-      prev_data = self.bigTableData(row, bigTableCol)
+      if isData:
+        
+        data_active.peak = config_file.data_peak
+        data_active.back = config_file.data_back
+        data_active.low_res = config_file.data_low_res
+        data_active.back_flag = config_file.data_back_flag
+        data_active.low_res_flag = config_file.data_low_res_flag
+
+      else:
+        
+        data_active.peak = config_file.norm_peak
+        data_active.back = config_file.norm_back
+        data_active.low_res = config_file.norm_low_res
+        data_active.back_flag = config_file.norm_back_flag
+        data_active.low_res_flag = config_file.norm_low_res_flag
+
+      data_active.tof_range = config_file.tof_Range
+      data_active.tof_units = config_file.tof_units
+      data_active.tof_auto_flag = config_file.tof_auto_flag
       
-      data_active = data.active_data
+    else: # use previously loaded data object
+      prev_data = self.bigTableData[row, bigTableCol]
+      
       prev_active = prev_data.active_data
       
       data_active.peak = prev_active.peak
@@ -637,22 +661,21 @@ class MainGUI(QtGui.QMainWindow):
       data_active.tof_range = prev_active.tof_range
       data_active.tof_units = prev_active.tof_units
       data_active.tof_auto_flag = prev_active.tof_auto_flag
-        
-        
-      
-      
     
-    
-    # if previously entry has been loaded, then recover metadata info (peak, back...etc)
-    # otherwise get them from config file bigTable[row,2]
     
     # replace entry in bigTable with new loaded object and display new data
+    data.active_data = data_active
+    self.bigTableData[row,bigTableCol] = data
  
+    self._prev_row_selected = -1
+    self._prev_col_selected = -1
  
- 
- 
+    self.bigTable_selection_changed(row, column)
+    
+
 
   def cell_enter(self, item):
+    
     
     if self.editing_flag:
       
