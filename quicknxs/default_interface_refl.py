@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Sep 24 12:58:16 2014
+# Created: Fri Sep 26 15:34:55 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1613,8 +1613,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.scalingFactorFlag, QtCore.SIGNAL("clicked(bool)"), MainWindow.sf_widgets_status)
         QtCore.QObject.connect(self.sfBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.sf_browse_button)
         QtCore.QObject.connect(self.createAsciiButton, QtCore.SIGNAL("clicked()"), MainWindow.output_data_into_ascii)
-        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.cell_editable)
-        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("itemChanged(QTableWidgetItem*)"), MainWindow.cell_enter)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.reduction_table_cell_double_clicked)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("itemChanged(QTableWidgetItem*)"), MainWindow.reduction_table_cell_modified)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

@@ -5091,7 +5091,7 @@ p, li { white-space: pre-wrap; }
    <sender>reductionTable</sender>
    <signal>cellDoubleClicked(int,int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>cell_editable()</slot>
+   <slot>reduction_table_cell_double_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>816</x>
@@ -5107,7 +5107,7 @@ p, li { white-space: pre-wrap; }
    <sender>reductionTable</sender>
    <signal>itemChanged(QTableWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
-   <slot>cell_enter()</slot>
+   <slot>reduction_table_cell_modified()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>816</x>
@@ -5196,7 +5196,7 @@ p, li { white-space: pre-wrap; }
   <slot>sf_widgets_status()</slot>
   <slot>sf_browse_button()</slot>
   <slot>output_data_into_ascii()</slot>
-  <slot>cell_editable()</slot>
-  <slot>cell_enter()</slot>
+  <slot>reduction_table_cell_modified()</slot>
+  <slot>reduction_table_cell_double_clicked()</slot>
  </slots>
 </ui>

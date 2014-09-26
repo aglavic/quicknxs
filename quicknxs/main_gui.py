@@ -583,9 +583,9 @@ class MainGUI(QtGui.QMainWindow):
 
     return [_row, _column]
  
-  def cell_editable(self, row, column):
+  def reduction_table_cell_double_clicked(self, row, column):
 
-    print 'cell_editable'
+    print 'entering -> reduction_table_cell_double_clicked'
     if column == 0 or column == 6:
       # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
@@ -596,7 +596,7 @@ class MainGUI(QtGui.QMainWindow):
     user manually modified data or norm run number in the reductionTable
     '''
 
-    print 'reductionTable_manual_entry'
+    print 'entering -> reductionTable_manual_entry'
 
     if not self.editing_flag:
       return
@@ -692,9 +692,9 @@ class MainGUI(QtGui.QMainWindow):
     
 
 
-  def cell_enter(self, item):
+  def reduction_table_cell_modified(self, item):
     
-    print 'cell_enter'
+    print 'running -> reduction_table_cell_modified'
     
     if self.editing_flag:
       self.reductionTable_manual_entry(item)
@@ -2753,6 +2753,7 @@ class MainGUI(QtGui.QMainWindow):
     if do_plot:
       self.initiateReflectivityPlot.emit(True)
 
+  @waiting_effects          
   def bigTable_selection_changed(self, row, column):    
 
     # if selection of same row and not data or column 0 and 6
@@ -2798,50 +2799,59 @@ class MainGUI(QtGui.QMainWindow):
     self._prev_col_selected = column
 
     cell = self.ui.reductionTable.selectedItems()
-    if cell == []:
-      self.userClickedInTable = False
-      return
+    #print cell
+    #if cell == []:
+      #self.userClickedInTable = False
+      #return
       
     # display norm tab
     if column == 6:
       self.ui.dataNormTabWidget.setCurrentIndex(1)  #FIXME
       # if cell is empty
-      cell = self.ui.reductionTable.selectedItems()[0]
-      if cell.text() == '':
+      if cell == []:
+        print 'clearing the plots'
         self.clear_plot_overview_REFL(isData=False)
         self.ui.normNameOfFile.setText('')
       else:
-        if (self.active_data is not None) and (_data.active_data.nxs is not None):
-          self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-
-        else: # load the data
-          _run_number = int(cell.text())
-          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
-          
-          _configDataset = self.bigTableData[row,2]
-          
-          event_split_bins = None
-          event_split_index = 0
-          bin_type = 0
-          data = NXSData(_first_file_name, 
-                         bin_type = bin_type,
-                         bins = self.ui.eventTofBins.value(),
-                         callback = self.updateEventReadout,
-                         event_split_bins = event_split_bins,
-                         event_split_index = event_split_index,
-                         metadata_config_object = _configDataset)
-          
-          r=row
-          c=col
-
-          self.bigTableData[r,c] = data
-          self._prev_row_selected = r
-          self._prev_col_selected = c
-          
-          self._fileOpenDoneREFL(data=data, 
-                                 filename=_first_file_name, 
-                                 do_plot=True,
-                                 update_table=False)
+        cell = self.ui.reductionTable.selectedItems()[0]
+        if cell.text() == '':
+  #      cell.text == ''
+          print 'clearing the plots'
+          self.clear_plot_overview_REFL(isData=False)
+          self.ui.normNameOfFile.setText('')
+        else:
+          cell = self.ui.reductionTable.selectedItems()[0]
+          if (self.active_data is not None) and (_data.active_data.nxs is not None):
+            self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+  
+          else: # load the data
+            _run_number = int(cell.text())
+            _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+            
+            _configDataset = self.bigTableData[row,2]
+            
+            event_split_bins = None
+            event_split_index = 0
+            bin_type = 0
+            data = NXSData(_first_file_name, 
+                           bin_type = bin_type,
+                           bins = self.ui.eventTofBins.value(),
+                           callback = self.updateEventReadout,
+                           event_split_bins = event_split_bins,
+                           event_split_index = event_split_index,
+                           metadata_config_object = _configDataset)
+            
+            r=row
+            c=col
+  
+            self.bigTableData[r,c] = data
+            self._prev_row_selected = r
+            self._prev_col_selected = c
+            
+            self._fileOpenDoneREFL(data=data, 
+                                   filename=_first_file_name, 
+                                   do_plot=True,
+                                   update_table=False)
 
     else: # display data tab
       self.ui.dataNormTabWidget.setCurrentIndex(0)
@@ -4411,6 +4421,7 @@ Do you want to try to restore the working reduction list?""",
     f.writelines(strArray)
     f.close()
     
+  @waiting_effects          
   @log_call
   def loadConfigAndPopulateGui(self, filename):
     '''
