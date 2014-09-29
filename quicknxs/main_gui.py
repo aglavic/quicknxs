@@ -2756,6 +2756,10 @@ class MainGUI(QtGui.QMainWindow):
   @waiting_effects          
   def bigTable_selection_changed(self, row, column):    
 
+    print 'in bigTable selection changed'
+    self.editing_flag = False
+    
+
     # if selection of same row and not data or column 0 and 6
 #    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
 #      return
@@ -2906,6 +2910,8 @@ class MainGUI(QtGui.QMainWindow):
     # select data or norm cell 
     prev_range_selected = QtGui.QTableWidgetSelectionRange(row, 0, row, 6)
     self.ui.reductionTable.setRangeSelected(prev_range_selected, False)
+
+    self.editing_flag = True
 
     if column < 6:
       _col = 0
