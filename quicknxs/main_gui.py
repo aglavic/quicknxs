@@ -666,6 +666,7 @@ class MainGUI(QtGui.QMainWindow):
       data_active.tof_units = config_file.tof_units
       data_active.tof_auto_flag = config_file.tof_auto_flag
       
+      
     else: # use previously loaded data object
       prev_data = self.bigTableData[row, bigTableCol]
       
@@ -691,6 +692,37 @@ class MainGUI(QtGui.QMainWindow):
     self.bigTable_selection_changed(row, column)
     
 
+  def remove_row_reductionTable(self):
+    nbrRow = self.ui.reductionTable.rowCount()
+    if nbrRow == 0:
+      return
+    
+    # remove row from table
+    [row,col] = self.getCurrentRowColumnSelected()
+    self.ui.reductionTable.removeRow(row)
+
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,
+                                                                             row,6), False)
+    nbrRow = self.ui.reductionTable.rowCount()
+    if nbrRow == 0:
+      # clear plot
+      self.clear_plot_overview_REFL(True)
+    elif row == (nbrRow-1): # last row selected => select previous row
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(row-1,0,
+                                                                               row-1,0), True)
+    else: # select same row
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(row,0,
+                                                                               row,0), True)
+
+    # update bigTableData
+    bigTableData = self.bigTableData
+    bigTableData = np.delete(bigTableData, (row), axis=0)
+    self.bigTableData = bigTableData
+    
+    # force update of plot
+    self._prev_row_selected = -1
+    self._prev_col_selected = -1
+    self.bigTable_selection_changed(row, col)   
 
   def reduction_table_cell_modified(self, item):
     
@@ -2756,7 +2788,6 @@ class MainGUI(QtGui.QMainWindow):
   @waiting_effects          
   def bigTable_selection_changed(self, row, column):    
 
-    print 'in bigTable selection changed'
     self.editing_flag = False
     
 
@@ -2863,11 +2894,9 @@ class MainGUI(QtGui.QMainWindow):
       cell = self.ui.reductionTable.selectedItems()
 
       if (self.active_data is not None) and (_data.active_data.nxs is not None):
-        
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
       
-      else: # load the data cell is empty or data not loaded yet
-        
+      else: # load (the data cell is empty or data not loaded yet)
         [row,col] = self.getTrueCurrentRowColumnSelected()
         if col < 6:
           col = 0

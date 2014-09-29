@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Sep 26 15:34:55 2014
+# Created: Mon Sep 29 14:56:25 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1146,6 +1146,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setEnabled(True)
         self.reductionTable.setMinimumSize(QtCore.QSize(0, 200))
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
+        self.reductionTable.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked)
         self.reductionTable.setProperty("showDropIndicator", False)
         self.reductionTable.setDragDropOverwriteMode(False)
@@ -1186,7 +1187,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addWidget(self.splitter)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        self.removeSelectedRow = QtGui.QPushButton(self.widget)
+        self.removeSelectedRow.setObjectName("removeSelectedRow")
+        self.horizontalLayout_11.addWidget(self.removeSelectedRow)
+        spacerItem21 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem21)
         self.reduceButton = QtGui.QPushButton(self.widget)
+        self.reduceButton.setMinimumSize(QtCore.QSize(600, 0))
         self.reduceButton.setObjectName("reduceButton")
         self.horizontalLayout_11.addWidget(self.reduceButton)
         self.verticalLayout_10.addLayout(self.horizontalLayout_11)
@@ -1615,6 +1622,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.createAsciiButton, QtCore.SIGNAL("clicked()"), MainWindow.output_data_into_ascii)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.reduction_table_cell_double_clicked)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("itemChanged(QTableWidgetItem*)"), MainWindow.reduction_table_cell_modified)
+        QtCore.QObject.connect(self.removeSelectedRow, QtCore.SIGNAL("clicked()"), MainWindow.remove_row_reductionTable)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
@@ -1773,7 +1781,8 @@ class Ui_MainWindow(object):
         self.reductionTable.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
-        self.reduceButton.setText(QtGui.QApplication.translate("MainWindow", "Reduce", None, QtGui.QApplication.UnicodeUTF8))
+        self.removeSelectedRow.setText(QtGui.QApplication.translate("MainWindow", "Remove Selected Row", None, QtGui.QApplication.UnicodeUTF8))
+        self.reduceButton.setText(QtGui.QApplication.translate("MainWindow", "REDUCE", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.Overview_Tab), QtGui.QApplication.translate("MainWindow", "Overview", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabToolTip(self.plotTab.indexOf(self.Overview_Tab), QtGui.QApplication.translate("MainWindow", "Show the active dataset and information about the datasets selected for normalization and reduction", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.XY_Tab), QtGui.QApplication.translate("MainWindow", "X-Y", None, QtGui.QApplication.UnicodeUTF8))

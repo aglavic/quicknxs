@@ -3063,6 +3063,9 @@ p, li { white-space: pre-wrap; }
                       <height>300</height>
                      </size>
                     </property>
+                    <property name="contextMenuPolicy">
+                     <enum>Qt::NoContextMenu</enum>
+                    </property>
                     <property name="editTriggers">
                      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
                     </property>
@@ -3187,9 +3190,35 @@ p, li { white-space: pre-wrap; }
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_11">
                 <item>
-                 <widget class="QPushButton" name="reduceButton">
+                 <widget class="QPushButton" name="removeSelectedRow">
                   <property name="text">
-                   <string>Reduce</string>
+                   <string>Remove Selected Row</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="reduceButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>600</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>REDUCE</string>
                   </property>
                  </widget>
                 </item>
@@ -5119,6 +5148,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>removeSelectedRow</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>remove_row_reductionTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>357</x>
+     <y>1057</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5198,5 +5243,6 @@ p, li { white-space: pre-wrap; }
   <slot>output_data_into_ascii()</slot>
   <slot>reduction_table_cell_modified()</slot>
   <slot>reduction_table_cell_double_clicked()</slot>
+  <slot>remove_row_reductionTable()</slot>
  </slots>
 </ui>
