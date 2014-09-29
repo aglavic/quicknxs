@@ -4189,6 +4189,14 @@ Do you want to try to restore the working reduction list?""",
 #    try:
     filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')      
     if not(filename == ""):
+      
+      # make sure the reductionTable is empty
+      nbrRow = self.ui.reductionTable.rowCount()
+      print nbrRow
+      if nbrRow > 0:
+        for _row in range(nbrRow):
+          self.ui.reductionTable.removeRow(0)
+      
       self.loadConfigAndPopulateGui(filename)
       self.enableWidgets(checkStatus=True)
 #    except:
