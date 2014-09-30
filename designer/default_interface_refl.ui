@@ -1006,7 +1006,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -1146,7 +1146,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>75</number>
+                                 <number>255</number>
                                 </property>
                                </widget>
                               </item>
@@ -1204,7 +1204,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>70</number>
+                                 <number>255</number>
                                 </property>
                                </widget>
                               </item>
@@ -1262,7 +1262,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>50</number>
+                                 <number>0</number>
                                 </property>
                                </widget>
                               </item>
@@ -1320,7 +1320,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>75</number>
+                                 <number>0</number>
                                 </property>
                                </widget>
                               </item>
@@ -1499,7 +1499,7 @@ p, li { white-space: pre-wrap; }
                                <number>255</number>
                               </property>
                               <property name="value">
-                               <number>50</number>
+                               <number>0</number>
                               </property>
                              </widget>
                             </item>
@@ -1569,7 +1569,7 @@ p, li { white-space: pre-wrap; }
                                <number>303</number>
                               </property>
                               <property name="value">
-                               <number>250</number>
+                               <number>303</number>
                               </property>
                              </widget>
                             </item>
@@ -1759,7 +1759,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>75</number>
+                                 <number>255</number>
                                 </property>
                                </widget>
                               </item>
@@ -1817,7 +1817,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>70</number>
+                                 <number>255</number>
                                 </property>
                                </widget>
                               </item>
@@ -1875,7 +1875,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>50</number>
+                                 <number>0</number>
                                 </property>
                                </widget>
                               </item>
@@ -1960,7 +1960,7 @@ p, li { white-space: pre-wrap; }
                                  <number>255</number>
                                 </property>
                                 <property name="value">
-                                 <number>30</number>
+                                 <number>0</number>
                                 </property>
                                </widget>
                               </item>
@@ -3193,6 +3193,13 @@ p, li { white-space: pre-wrap; }
                  <widget class="QPushButton" name="removeSelectedRow">
                   <property name="text">
                    <string>Remove Selected Row</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="clearTableButton">
+                  <property name="text">
+                   <string>Clear Table</string>
                   </property>
                  </widget>
                 </item>
@@ -5167,6 +5174,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>clearTableButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clear_reductionTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>504</x>
+     <y>1057</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5247,5 +5270,6 @@ p, li { white-space: pre-wrap; }
   <slot>reduction_table_cell_modified()</slot>
   <slot>reduction_table_cell_double_clicked()</slot>
   <slot>remove_row_reductionTable()</slot>
+  <slot>clear_reductionTable()</slot>
  </slots>
 </ui>

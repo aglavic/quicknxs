@@ -960,7 +960,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.norm_it_plot.draw()
       self.ui.norm_ix_plot.clear()
       self.ui.norm_ix_plot.draw()
-
+          
+      
   #@log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
     
@@ -5004,6 +5005,29 @@ Do you want to try to restore the working reduction list?""",
     data_x = mtd['wks_1'].dataX(0)
 
     return [data_x, data_y, data_e]
+
+  def clear_reductionTable(self):
+    '''
+    full clear of reductionTable and bigTableData
+    '''
+    self.bigTableData = empty((20,3), dtype=object)
+    self.ui.reductionTable.clearContents()
+    nbrRow = self.ui.reductionTable.rowCount()
+    if nbrRow > 0:
+      for _row in range(nbrRow):
+        self.ui.reductionTable.removeRow(0)
+    self.clear_plot_overview_REFL(True)
+
+    # clear metadata fields
+    cls = 'N/A'
+    self.ui.metadataProtonChargeValue.setText(cls)
+    self.ui.metadataLambdaRequestedValue.setText(cls)
+    self.ui.metadatathiValue.setText(cls)
+    self.ui.metadatatthdValue.setText(cls)
+    self.ui.metadataS1WValue.setText(cls)
+    self.ui.metadataS2WValue.setText(cls)
+    self.ui.metadataS1HValue.setText(cls)
+    self.ui.metadataS2HValue.setText(cls)
 
 
   def update_reductionTable(self):
