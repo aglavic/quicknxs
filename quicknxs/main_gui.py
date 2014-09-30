@@ -78,6 +78,10 @@ class MainGUI(QtGui.QMainWindow):
   # [data, norm, metadata from config file]
   bigTableData = empty((20,3), dtype=object)
 
+  # keep last folder used as default for next access
+  path_config = '.'
+  path_ascii = '.'
+
   # will be on when the user double click an editable cell
   editing_flag = False
 
@@ -4186,8 +4190,12 @@ Do you want to try to restore the working reduction list?""",
     will populate the GUI with the data retrieved from the configuration file
     '''
 #    try:
-    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', '.')      
+
+    _path = self.path_config
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
     if not(filename == ""):
+      
+      self.path_config = os.path.dirname(filename)
       
       # make sure the reductionTable is empty
       nbrRow = self.ui.reductionTable.rowCount()
@@ -4208,8 +4216,12 @@ Do you want to try to restore the working reduction list?""",
     will retrieve all the data from the application and will save them using the 
     same format as Mantid
     '''
-    filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', '.')
+    
+    _path = self.path_config
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', _path)
     if not(filename == ""):
+      
+      self.path = os.path.dirname(filename)
       self.saveConfig(filename)
 #      self.saveReducedObject(filename)
       
@@ -4838,17 +4850,31 @@ Do you want to try to restore the working reduction list?""",
     will use ascii format to output the data
     '''
     cell0 = self.ui.reductionTable.item(0,0)
-    # nothing in big table
+    # if nothing in big table, stop here
     if cell0 is None:
+      info('No Data Reduced!')
+      return
+    
+    # if no data reduced, stop here
+    bigTableData = self.bigTableData
+    _data = bigTableData[0,0]
+    _q_axis = _data.reduce_q_axis
+    if _q_axis is None:
+      info('No Data Reduced!')
       return
     
     run_number = self.ui.reductionTable.item(0,0).text()
     default_filename = 'REFL_' + run_number + '_combined_data.txt'
+    _path = self.path_ascii
+    default_filename = _path + '/' + default_filename
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Create ASCII file', default_filename)
 
     # user cancelled request
     if str(filename).strip() == '':
+      info('User Canceled Output Ascii!')
       return
+    
+    self.path_ascii = os.path.dirname(filename)
     
     _4th_column_flag = self.ui.output4thColumnFlag.isChecked()
     if _4th_column_flag:
@@ -4881,7 +4907,6 @@ Do you want to try to restore the working reduction list?""",
       f.write(_line + '\n')
       
     f.close()
-
 
 
   def produce_workspace_with_common_q_axis(self):
