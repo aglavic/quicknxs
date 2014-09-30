@@ -585,7 +585,6 @@ class MainGUI(QtGui.QMainWindow):
  
   def reduction_table_cell_double_clicked(self, row, column):
 
-    print 'entering -> reduction_table_cell_double_clicked'
     if column == 0 or column == 6:
       # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
@@ -595,8 +594,6 @@ class MainGUI(QtGui.QMainWindow):
     '''
     user manually modified data or norm run number in the reductionTable
     '''
-
-    print 'entering -> reductionTable_manual_entry'
 
     if not self.editing_flag:
       return
@@ -662,7 +659,7 @@ class MainGUI(QtGui.QMainWindow):
         data_active.back_flag = config_file.norm_back_flag
         data_active.low_res_flag = config_file.norm_low_res_flag
 
-      data_active.tof_range = config_file.tof_Range
+      data_active.tof_range = config_file.tof_range
       data_active.tof_units = config_file.tof_units
       data_active.tof_auto_flag = config_file.tof_auto_flag
       
@@ -680,7 +677,7 @@ class MainGUI(QtGui.QMainWindow):
       data_active.tof_range = prev_active.tof_range
       data_active.tof_units = prev_active.tof_units
       data_active.tof_auto_flag = prev_active.tof_auto_flag
-    
+      data_active.tof_range_auto = prev_active.tof_range_auto
     
     # replace entry in bigTable with new loaded object and display new data
     data.active_data = data_active
@@ -703,10 +700,19 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,
                                                                              row,6), False)
+    # update bigTableData
+    bigTableData = self.bigTableData
+    bigTableData = np.delete(bigTableData, (row), axis=0)
+    self.bigTableData = bigTableData
+
     nbrRow = self.ui.reductionTable.rowCount()
     if nbrRow == 0:
       # clear plot
       self.clear_plot_overview_REFL(True)
+      return
+    if nbrRow == 1:
+      self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,
+                                                                               0,0), True)
     elif row == (nbrRow-1): # last row selected => select previous row
       self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(row-1,0,
                                                                                row-1,0), True)
@@ -714,19 +720,12 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(row,0,
                                                                                row,0), True)
 
-    # update bigTableData
-    bigTableData = self.bigTableData
-    bigTableData = np.delete(bigTableData, (row), axis=0)
-    self.bigTableData = bigTableData
-    
     # force update of plot
     self._prev_row_selected = -1
     self._prev_col_selected = -1
     self.bigTable_selection_changed(row, col)   
 
   def reduction_table_cell_modified(self, item):
-    
-    print 'running -> reduction_table_cell_modified'
     
     if self.editing_flag:
       self.reductionTable_manual_entry(item)

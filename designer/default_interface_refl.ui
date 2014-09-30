@@ -3727,9 +3727,6 @@ p, li { white-space: pre-wrap; }
    <property name="toolTip">
     <string>Scale total reflection to 1/fit overlap to previous run (Ctrl+S)</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
   </action>
   <action name="actionRemove">
    <property name="icon">
@@ -3959,10 +3956,16 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Load Configuration...</string>
    </property>
+   <property name="shortcut">
+    <string>Meta+O</string>
+   </property>
   </action>
   <action name="actionSaveConfiguration">
    <property name="text">
     <string>Save Configuration...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Sep 29 14:56:25 2014
+# Created: Tue Sep 30 09:07:06 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1827,7 +1827,6 @@ class Ui_MainWindow(object):
         self.actionAdjust_Dirct_Beam.setToolTip(QtGui.QApplication.translate("MainWindow", "Use active dataset to set overwrite parameters for direct pixel and Dangle0", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNormalizeScaling.setText(QtGui.QApplication.translate("MainWindow", "Set Scaling", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNormalizeScaling.setToolTip(QtGui.QApplication.translate("MainWindow", "Scale total reflection to 1/fit overlap to previous run (Ctrl+S)", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNormalizeScaling.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRemove.setText(QtGui.QApplication.translate("MainWindow", "Remove Line", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRemove.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove selected plots from data reduction list", None, QtGui.QApplication.UnicodeUTF8))
         self.actionReduce.setText(QtGui.QApplication.translate("MainWindow", "Reduce...", None, QtGui.QApplication.UnicodeUTF8))
@@ -1873,7 +1872,9 @@ class Ui_MainWindow(object):
         self.actionFilter_Points.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove points from already exported reflectivity datasets", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Reduction_Preview.setText(QtGui.QApplication.translate("MainWindow", "Open Reduction Preview...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSaveConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget
