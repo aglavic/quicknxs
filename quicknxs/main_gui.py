@@ -2784,17 +2784,15 @@ class MainGUI(QtGui.QMainWindow):
       
     # display norm tab
     if column == 6:
-      self.ui.dataNormTabWidget.setCurrentIndex(1)  #FIXME
+      self.ui.dataNormTabWidget.setCurrentIndex(1)
       # if cell is empty
       if cell == []:
-        print 'clearing the plots'
         self.clear_plot_overview_REFL(isData=False)
         self.ui.normNameOfFile.setText('')
       else:
         cell = self.ui.reductionTable.selectedItems()[0]
         if cell.text() == '':
   #      cell.text == ''
-          print 'clearing the plots'
           self.clear_plot_overview_REFL(isData=False)
           self.ui.normNameOfFile.setText('')
         else:
@@ -2879,8 +2877,6 @@ class MainGUI(QtGui.QMainWindow):
     self._prev_row_selected = row
     self._prev_col_selected = column
 
-    self.enableWidgets(checkStatus=True)
-
     # select data or norm cell 
     prev_range_selected = QtGui.QTableWidgetSelectionRange(row, 0, row, 6)
     self.ui.reductionTable.setRangeSelected(prev_range_selected, False)
@@ -2894,6 +2890,8 @@ class MainGUI(QtGui.QMainWindow):
 
     range_selected = QtGui.QTableWidgetSelectionRange(row, _col, row, _col)
     self.ui.reductionTable.setRangeSelected(range_selected, True)
+
+    self.enableWidgets(checkStatus=True)
 
   def data_norm_tab_changed(self, index):
     '''
