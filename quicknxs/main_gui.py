@@ -196,7 +196,6 @@ class MainGUI(QtGui.QMainWindow):
                         'Norm. Run #']
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reductionTable.resizeColumnsToContents()
-      self.ui.TOFmanualMicrosValue.setText(u'\u03bcs')
             
       # define the context menu of the recap table
       self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -520,7 +519,7 @@ class MainGUI(QtGui.QMainWindow):
     #populate table
     if update_table:
       self.populateReflectivityTable(data)
-      self.ui.addRunNumbers.setEnabled(True)
+      #self.ui.addRunNumbers.setEnabled(True)
     else: #update gui
       pass
     
@@ -742,8 +741,8 @@ class MainGUI(QtGui.QMainWindow):
     
     # are we replacing or adding a new entry
     do_add = False
-    if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
-      do_add = True
+    #if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+      #do_add = True
       
     if do_add:
       [r,c] = self.getCurrentRowColumnSelected()
@@ -981,49 +980,9 @@ class MainGUI(QtGui.QMainWindow):
     filename = data.filename
 
     if self.ui.dataTOFmanualMode.isChecked(): # manual mode
-  
-      #nxs = data.nxs
-      
-      # retrieve tof parameters defined by user
-#      _valueFrom = float(self.ui.TOFmanualFromValue.text())
-#      _valueTo = float(self.ui.TOFmanualToValue.text())
-            
       tof_range_auto = data.tof_range
-      #if self.ui.TOFmanualMsValue.isChecked(): # ms units
-        #_valueFrom /= 1000
-        #_valueTo /= 1000 
-      
-      #tbin = data.read_options["bins"]  
-      #params = [float(_valueFrom), float(tbin), float(_valueTo)]
-      
-      #nxs_histo = Rebin(InputWorkspace=nxs, Params=params, PreserveEvents=True)
-      #nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
-      
-      #[_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo)
-      
-      #Ixy = Ixyt.sum(axis=2)
-      #Iyt = Ixyt.sum(axis=0)
-      #Iit = Iyt.sum(axis=0)
-      #Iix = Ixy.sum(axis=1)
-      #Iyi = Iyt.sum(axis=1)
-     ## Exy = Exyt.sum(axis=2)    # FIXME
-     ## Ext = Exyt.sum(axis=1)    # FIXME
-      
-      ## store the data
-      #tof_axis = _tof_axis
-
-##      tof_edges_full = data.tof_edges
-##      data = Ixyt.astype(float) # 3D dataset
-      #xy  = Ixy.transpose().astype(float) # 2D dataset
-      #ytof = Iyt.astype(float) # 2D dataset
   
-##      countstofdata = Iit.astype(float)
-      #countstofdata = data.countstofdata
-      #countsxdata = Iix.astype(float)
-      #ycountsdata = Iyi.astype(float)
- 
     else: # auto mode
-
       tof_range_auto = data.tof_range_auto
       
     #tof_edges_full = data.tof_edges_full
@@ -1085,21 +1044,6 @@ class MainGUI(QtGui.QMainWindow):
       [r,c] = self.getCurrentRowColumnSelected()
       _data = self.bigTableData[r,c]
       _active_data = _data.active_data
-
-      #if (_active_data.q_range == ['0','0']) or (_active_data.q_range == ['','']):
-        #[qmin, qmax] = self.calculate_q_range(data)
-        #qmin = "%.5f" % qmin
-        #qmax = "%.5f" % qmax
-        #_active_data.q_range = [qmin, qmax]
-        
-        #[lambdamin, lambdamax] = self.calculate_lambda_range(data)
-        #lmin = "%.2f" % lambdamin
-        #lmax = "%.2f" % lambdamax
-        #_active_data.lambda_range = [lmin, lmax]
-        
-        #_data.active_data = _active_data
-        #self.bigTableData[r,c] = _data
-      #else:
         
       incident_angle = _active_data.incident_angle
       [qmin,qmax] = _active_data.q_range
@@ -1199,12 +1143,12 @@ class MainGUI(QtGui.QMainWindow):
     # display it
     if plot_it:
 
-      it_plot.plot(tof_axis[0:-1],countstofdata, color='#0000aa')
-      it_plot.set_xlabel(u't (\u00b5s)')
+      it_plot.plot(tof_axis[0:-1]/1000,countstofdata, color='#0000aa')
+      it_plot.set_xlabel(u't (ms)')
 #      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
-      ta = it_plot.canvas.ax.axvline(autotmin, color='#00aa00')
-      tb = it_plot.canvas.ax.axvline(autotmax, color='#00aa00')
+      ta = it_plot.canvas.ax.axvline(autotmin/1000, color='#00aa00')
+      tb = it_plot.canvas.ax.axvline(autotmax/1000, color='#00aa00')
       it_plot.draw()
 
     # display yi
@@ -1295,14 +1239,9 @@ class MainGUI(QtGui.QMainWindow):
     #_tmin = tmin.copy()
     #_tmax = tmax.copy()
     
-    _tmin = tmin
-    _tmax = tmax
+    _tmin = 1e-3 * tmin
+    _tmax = 1e-3 * tmax
 
-    is_ms_selected = self.ui.TOFmanualMsValue.isChecked()
-    if is_ms_selected:
-      _tmin *= 1e-3
-      _tmax *= 1e-3
-    
     stmin = str("%.2f" % _tmin)
     stmax = str("%.2f" % _tmax)
     
@@ -1869,47 +1808,47 @@ class MainGUI(QtGui.QMainWindow):
       self._auto_tof_flag = False
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
  
-  def tof_micros_switch(self, bool):
-    '''
-    Will change the ms->micros labels in the TOF widgets
-    and the value of tof fields
-    '''
-    _units = u'\u03bcs'
-    self.ui.TOFmanualFromUnitsValue.setText(_units)
-    self.ui.TOFmanualToUnitsValue.setText(_units) 
-    # change units
-    self.change_tof_units('micros')
+  #def tof_micros_switch(self, bool):
+    #'''
+    #Will change the ms->micros labels in the TOF widgets
+    #and the value of tof fields
+    #'''
+    #_units = u'\u03bcs'
+    #self.ui.TOFmanualFromUnitsValue.setText(_units)
+    #self.ui.TOFmanualToUnitsValue.setText(_units) 
+    ## change units
+    #self.change_tof_units('micros')
  
-    # change value as well from ms -> microS
-    # if bool == true => ms -> microS
-    # if bool == false => microS -> ms
+    ## change value as well from ms -> microS
+    ## if bool == true => ms -> microS
+    ## if bool == false => microS -> ms
     
-    _valueFrom = float(self.ui.TOFmanualFromValue.text())
-    if bool: # ms -> microS
-      new_valueFrom = _valueFrom * 1000
-    else: # microS -> ms
-      new_valueFrom = _valueFrom / 1000
-    newStr = "%.2f"%new_valueFrom
-    self.ui.TOFmanualFromValue.setText(newStr)
+    #_valueFrom = float(self.ui.TOFmanualFromValue.text())
+    #if bool: # ms -> microS
+      #new_valueFrom = _valueFrom * 1000
+    #else: # microS -> ms
+      #new_valueFrom = _valueFrom / 1000
+    #newStr = "%.2f"%new_valueFrom
+    #self.ui.TOFmanualFromValue.setText(newStr)
  
-    _valueTo = float(self.ui.TOFmanualToValue.text())
-    if bool: # ms -> microS
-      new_valueTo = _valueTo * 1000
-    else: # microS -> ms
-      new_valueTo = _valueTo / 1000
-    newStr = "%.2f"%new_valueTo
-    self.ui.TOFmanualToValue.setText(newStr)
+    #_valueTo = float(self.ui.TOFmanualToValue.text())
+    #if bool: # ms -> microS
+      #new_valueTo = _valueTo * 1000
+    #else: # microS -> ms
+      #new_valueTo = _valueTo / 1000
+    #newStr = "%.2f"%new_valueTo
+    #self.ui.TOFmanualToValue.setText(newStr)
 
-  def tof_ms_switch(self, bool):
-    '''
-    Will change the microS->ms labels in the TOF widgets
-    and the value of tof fields
-    '''
-    _units = u'ms'
-    self.ui.TOFmanualFromUnitsValue.setText(_units)
-    self.ui.TOFmanualToUnitsValue.setText(_units) 
-    # change units
-    self.change_tof_units('ms')
+  #def tof_ms_switch(self, bool):
+    #'''
+    #Will change the microS->ms labels in the TOF widgets
+    #and the value of tof fields
+    #'''
+    #_units = u'ms'
+    #self.ui.TOFmanualFromUnitsValue.setText(_units)
+    #self.ui.TOFmanualToUnitsValue.setText(_units) 
+    ## change units
+    #self.change_tof_units('ms')
 
   def change_tof_units(self, new_units):
     '''
@@ -2133,8 +2072,8 @@ class MainGUI(QtGui.QMainWindow):
 
     # check if user wants to add this/those files to a previous selected box
     do_add = False
-    if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
-      do_add = True
+    #if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+      #do_add = True
 
     # only reload if filename was actually changed or file was modified
     self.fileOpen(os.path.join(self.active_folder, name), do_add=do_add)
@@ -2826,7 +2765,7 @@ class MainGUI(QtGui.QMainWindow):
       self.active_data = None
       addButtonStatus = False
 
-    self.ui.addRunNumbers.setEnabled(addButtonStatus)
+    #self.ui.addRunNumbers.setEnabled(addButtonStatus)
 
     self.userClickedInTable = True # this avoid to re-rerun this method a second time
     if column == 6:
@@ -2905,33 +2844,35 @@ class MainGUI(QtGui.QMainWindow):
         if col < 6:
           col = 0
         item = self.ui.reductionTable.item(row,col)
-        _run_number = int(str(item.text()))
-        _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
-        
-        _configDataset = self.bigTableData[row,2]
-        
-        event_split_bins = None
-        event_split_index = 0
-        bin_type = 0
-        data = NXSData(_first_file_name, 
-                       bin_type = bin_type,
-                       bins = self.ui.eventTofBins.value(),
-                       callback = self.updateEventReadout,
-                       event_split_bins = event_split_bins,
-                       event_split_index = event_split_index,
-                       metadata_config_object = _configDataset)
-        
-        r=row
-        c=col
 
-        self.bigTableData[r,c] = data
-        self._prev_row_selected = r
-        self._prev_col_selected = c
-        
-        self._fileOpenDoneREFL(data=data, 
-                               filename=_first_file_name, 
-                               do_plot=True,
-                               update_table=False)
+        if item is not None:
+          _run_number = int(str(item.text()))
+          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+          
+          _configDataset = self.bigTableData[row,2]
+          
+          event_split_bins = None
+          event_split_index = 0
+          bin_type = 0
+          data = NXSData(_first_file_name, 
+                         bin_type = bin_type,
+                         bins = self.ui.eventTofBins.value(),
+                         callback = self.updateEventReadout,
+                         event_split_bins = event_split_bins,
+                         event_split_index = event_split_index,
+                         metadata_config_object = _configDataset)
+          
+          r=row
+          c=col
+  
+          self.bigTableData[r,c] = data
+          self._prev_row_selected = r
+          self._prev_col_selected = c
+          
+          self._fileOpenDoneREFL(data=data, 
+                                 filename=_first_file_name, 
+                                 do_plot=True,
+                                 update_table=False)
       
     self.userClickedInTable = False
 
