@@ -3313,6 +3313,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionQuick_Reduce"/>
     <addaction name="separator"/>
     <addaction name="actionLoadConfiguration"/>
+    <addaction name="actionLoadFullConfiguration"/>
     <addaction name="actionSaveConfiguration"/>
    </widget>
    <widget class="QMenu" name="menuAutomatics">
@@ -3724,7 +3725,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionLoadConfiguration">
    <property name="text">
-    <string>Load Configuration...</string>
+    <string>Load Configuration (light and fast) ...</string>
    </property>
    <property name="shortcut">
     <string>Meta+O</string>
@@ -3736,6 +3737,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionLoadFullConfiguration">
+   <property name="text">
+    <string>Load Configuration (heavy and slow) ...</string>
    </property>
   </action>
  </widget>
@@ -4909,6 +4915,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoadFullConfiguration</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loading_full_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4990,5 +5012,6 @@ p, li { white-space: pre-wrap; }
   <slot>reduction_table_cell_double_clicked()</slot>
   <slot>remove_row_reductionTable()</slot>
   <slot>clear_reductionTable()</slot>
+  <slot>loading_full_configuration()</slot>
  </slots>
 </ui>

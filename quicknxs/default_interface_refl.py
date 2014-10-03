@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Oct  2 10:49:25 2014
+# Created: Thu Oct  2 14:39:03 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1360,6 +1360,8 @@ class Ui_MainWindow(object):
         self.actionLoadConfiguration.setObjectName("actionLoadConfiguration")
         self.actionSaveConfiguration = QtGui.QAction(MainWindow)
         self.actionSaveConfiguration.setObjectName("actionSaveConfiguration")
+        self.actionLoadFullConfiguration = QtGui.QAction(MainWindow)
+        self.actionLoadFullConfiguration.setObjectName("actionLoadFullConfiguration")
         self.menuDebug.addAction(self.actionLog_Debug_Messages)
         self.menuDebug.addAction(self.actionRaise_Error)
         self.menuAdvanced.addAction(self.actionAdvanced_Background)
@@ -1389,6 +1391,7 @@ class Ui_MainWindow(object):
         self.menuReduction.addAction(self.actionQuick_Reduce)
         self.menuReduction.addSeparator()
         self.menuReduction.addAction(self.actionLoadConfiguration)
+        self.menuReduction.addAction(self.actionLoadFullConfiguration)
         self.menuReduction.addAction(self.actionSaveConfiguration)
         self.menuAutomatics.addAction(self.actionAutomaticXPeak)
         self.menuAutomatics.addAction(self.actionAutoYLimits)
@@ -1506,6 +1509,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.reduction_table_cell_double_clicked)
         QtCore.QObject.connect(self.clearTableButton, QtCore.SIGNAL("clicked()"), MainWindow.clear_reductionTable)
         QtCore.QObject.connect(self.removeSelectedRow, QtCore.SIGNAL("clicked()"), MainWindow.remove_row_reductionTable)
+        QtCore.QObject.connect(self.actionLoadFullConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loading_full_configuration)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
@@ -1747,10 +1751,11 @@ class Ui_MainWindow(object):
         self.actionFilter_Points.setText(QtGui.QApplication.translate("MainWindow", "Filter Points...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFilter_Points.setToolTip(QtGui.QApplication.translate("MainWindow", "Remove points from already exported reflectivity datasets", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Reduction_Preview.setText(QtGui.QApplication.translate("MainWindow", "Open Reduction Preview...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLoadConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (light and fast) ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadFullConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (heavy and slow) ...", None, QtGui.QApplication.UnicodeUTF8))
 
 from .mplwidget import MPLWidget
 from .mplwidgetxlog import MPLWidgetXLog

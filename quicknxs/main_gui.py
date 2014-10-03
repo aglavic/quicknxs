@@ -4122,6 +4122,31 @@ Do you want to try to restore the working reduction list?""",
         result=dia.exec_()
         if result:
           filtered_points=dia.filtered_idxs
+    
+    
+
+  @log_call
+  def loading_full_configuration(self):
+    '''
+    Reached by the load full configuration button
+    will populate the GUI with the data retrieved from the configuration file 
+    but will also save into memory all the data loaded
+    '''
+    _path = self.path_config
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
+    if not(filename == ""):
+      
+      self.path_config = os.path.dirname(filename)
+      
+      # make sure the reductionTable is empty
+      nbrRow = self.ui.reductionTable.rowCount()
+      if nbrRow > 0:
+        for _row in range(nbrRow):
+          self.ui.reductionTable.removeRow(0)
+      
+      self.loadFullConfigAndPopulateGui(filename)
+      self.enableWidgets(checkStatus=True)
+
 
   @log_call
   def loading_configuration(self):
@@ -4415,6 +4440,225 @@ Do you want to try to restore the working reduction list?""",
     f.writelines(strArray)
     f.close()
     
+  @waiting_effects          
+  @log_call
+  def loadFullConfigAndPopulateGui(self, filename):
+    '''
+    This function will parse the XML config file (Mantid format) and will populate the 
+    GUI
+    '''
+    try:
+      dom = minidom.parse(filename)
+    except:
+      info('No configuration file loaded!')
+      return
+    
+    RefLData = dom.getElementsByTagName('RefLData')
+    nbrRowBigTable = len(RefLData)
+    
+    # reset bigTable
+    self.ui.reductionTable.clearContents()
+    
+    _first_file_name = ''
+    
+    # load the first data and display it
+    self.bigTableData = empty((20,3), dtype=object)
+    
+    # start parsing xml file
+    _row = 0
+    for node in RefLData:
+      
+      self.ui.reductionTable.insertRow(_row)
+
+      # data 
+      _data_sets = self.getNodeValue(node,'data_sets')
+      self.addItemToBigTable(_data_sets, _row, 0, editableFlag=True)
+      
+      # norm
+      _norm_sets = self.getNodeValue(node,'norm_dataset')
+      self.addItemToBigTable(_norm_sets, _row, 6, editableFlag=True)
+      
+      # incident angle
+      try:
+        _incident_angle = self.getNodeValue(node,'incident_angle')
+      except:
+        _incident_angle = 'N/A'
+      self.addItemToBigTable(_incident_angle, _row, 1)
+      
+      # lambda range
+      try:
+        _from_l = self.getNodeValue(node, 'from_lambda_range')
+      except:
+        _from_l = 'N/A'
+      self.addItemToBigTable(_from_l, _row, 2)
+      
+      try:
+        _to_l = self.getNodeValue(node, 'to_lambda_range')
+      except:
+        _to_l = 'N/A'
+      self.addItemToBigTable(_to_l, _row, 3)
+      
+      # q range
+      try:
+        _from_q = self.getNodeValue(node,'from_q_range')
+      except:
+        _from_q = 'N/A'
+      self.addItemToBigTable(_from_q, _row, 4)
+      
+      try:
+        _to_q = self.getNodeValue(node,'to_q_range')
+      except:
+        _to_q = 'N/A'
+      self.addItemToBigTable(_to_q, _row, 5)
+      
+      # only for first row
+      if _row == 0:
+        _first_file_name = self.getNodeValue(node, 'data_full_file_name')
+        if _first_file_name == '': # no full_file_name defined
+          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
+        else:
+          _first_file_name = _first_file_name.split(',')
+
+        # load general settings for first row only
+        scaling_factor_file = self.getNodeValue(node, 'scaling_factor_file')
+        self.ui.scalingFactorFile.setText(scaling_factor_file)
+
+        scaling_factor_flag = self.getNodeValue(node, 'scaling_factor_flag')
+        self.ui.scalingFactorFlag.setChecked(strtobool(scaling_factor_flag))
+        self.sf_widgets_status(strtobool(scaling_factor_flag))
+        
+        slits_width_flag = self.getNodeValue(node, 'slits_width_flag')
+        self.ui.scalingFactorSlitsWidthFlag.setChecked(strtobool(slits_width_flag))
+
+        incident_medium_list = self.getNodeValue(node, 'incident_medium_list')
+        im_list = incident_medium_list.split(',')
+        self.ui.selectIncidentMediumList.addItems(im_list)
+
+        incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')
+        self.ui.selectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected))
+        
+        fourth_column_flag = self.getNodeValue(node, 'fourth_column_flag')
+        self.ui.output4thColumnFlag.setChecked(strtobool(fourth_column_flag))
+        fourth_column_dq0 = self.getNodeValue(node, 'fourth_column_dq0')
+        self.ui.dq0Value.setText(fourth_column_dq0)
+        fourth_column_dq_over_q = self.getNodeValue(node, 'fourth_column_dq_over_q')
+        self.ui.dQoverQvalue.setText(fourth_column_dq_over_q)
+
+      try:
+        _data_full_file_name = self.getNodeValue(node, 'data_full_file_name')
+        _data_full_file_name = _data_full_file_name.split(',')
+      except:
+        _data_full_file_name = ''
+        
+      try:
+        _norm_full_file_name = self.getNodeValue(node, 'norm_full_file_name')
+        _norm_full_file_name = _norm_full_file_name.split(',')
+      except:
+        _norm_full_file_name = ''
+
+      _metadataObject = self.getMetadataObject(node)
+      _metadataObject.data_full_file_name = _data_full_file_name
+      _metadataObject.norm_full_file_name = _norm_full_file_name
+      self.bigTableData[_row,2] = _metadataObject
+      
+      _row += 1
+
+    # Load all the Data and Norm into memory
+
+    # default parameters
+    event_split_bins = None
+    event_split_index = 0
+    bin_type = 0
+    for j in range(_row):
+
+      # move by default to first data 
+      if j == 0:
+        # select first data file
+        self.ui.dataNormTabWidget.setCurrentIndex(0)
+        self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,0,0),True)                                                                                   	
+    
+      # load data file
+      _configDataset = self.bigTableData[j,2]
+      _full_file_name = _configDataset.data_full_file_name
+      
+      data = NXSData(_full_file_name, 
+                     bin_type = bin_type,
+                     bins = self.ui.eventTofBins.value(),
+                     callback = self.updateEventReadout,
+                     event_split_bins = event_split_bins,
+                     event_split_index = event_split_index,
+                     metadata_config_object = _configDataset,
+                     angle_offset = self.ui.angleOffsetValue.text())
+    
+      # make sure that incident_angle, q_range and/or lambda_range have values
+      item = self.ui.reductionTable.item(j,1)
+      if item is None:
+        _item = QtGui.QTableWidgetItem(str(data.active_data.incident_angle))
+        self.ui.reductionTable.setItem(j, 1, _item)
+      else:    
+        incident_angle = item.text()
+        if incident_angle == 'N/A' or incident_angle == '':
+          _item = QtGui.QTableWidgetItem(str(data.active_data.incident_angle))
+          self.ui.reductionTable.setItem(j, 1, _item)
+      
+      item = self.ui.reductionTable.item(j,4)
+      if item is None:
+        [_from_q, _to_q] = data.active_data.q_range
+        _item = QtGui.QTableWidgetItem(str(_from_q))
+        self.ui.reductionTable.setItem(j,4, _item)
+        _item = QtGui.QTableWidgetItem(str(_to_q))
+        self.ui.reductionTable.setItem(j,5, _item)
+      else:
+        from_q = item.text()
+        if from_q == '':
+          [_from_q, _to_q] = data.active_data.q_range
+          _item = QtGui.QTableWidgetItem(str(_from_q))
+          self.ui.reductionTable.setItem(j,4, _item)
+          _item = QtGui.QTableWidgetItem(str(_to_q))
+          self.ui.reductionTable.setItem(j,5, _item)
+      
+      item = self.ui.reductionTable.item(j,2)
+      if item is None:
+        [_from_l, _to_l] = data.active_data.lambda_range
+        _item = QtGui.QTableWidgetItem(str(_from_l))
+        self.ui.reductionTable.setItem(j,2, _item)
+        _item = QtGui.QTableWidgetItem(str(_to_l))
+        self.ui.reductionTable.setItem(j,3, _item)
+      else:
+        from_lambda = item.text()
+        if from_lambda == '':
+          [_from_l, _to_l] = data.active_data.lambda_range
+          _item = QtGui.QTableWidgetItem(str(_from_l))
+          self.ui.reductionTable.setItem(j,2, _item)
+          _item = QtGui.QTableWidgetItem(str(_to_l))
+          self.ui.reductionTable.setItem(j,3, _item)
+          
+      self.bigTableData[j,0] = data
+      
+      if j == 0:
+        self._prev_row_selected = 0
+        self._prev_col_selected = 0
+    
+        self._fileOpenDoneREFL(data=data, 
+                               filename=_first_file_name, 
+                               do_plot=True,
+                               update_table=False)
+        
+      ## load normalization file
+      #_configDataset = self.bigTableData[j,2]
+      #data = NXSData(_first_file_name, 
+                     #bin_type = bin_type,
+                     #bins = self.ui.eventTofBins.value(),
+                     #callback = self.updateEventReadout,
+                     #event_split_bins = event_split_bins,
+                     #event_split_index = event_split_index,
+                     #metadata_config_object = _configDataset,
+                     #angle_offset = self.ui.angleOffsetValue.text(),
+                     #isData = False)
+    
+      #self.bigTableData[j,1] = data
+
+
   @waiting_effects          
   @log_call
   def loadConfigAndPopulateGui(self, filename):
