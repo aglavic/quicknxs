@@ -36,6 +36,7 @@ from utilities import convert_angle
 import numpy as np
 from random import randint
 import constants
+import psutil
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -209,7 +210,8 @@ class NXSData(object):
     isData='True or False (if file is a direct beam data set)',
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
-  MAX_CACHE=100 #: Number of datasets that are kept in the cache
+  MAX_CACHE=20 #: Number of datasets that are kept in the cache
+  MAX_MEMORY_USED=80 #: percentage max of memory used
   _cache=[]
 
   @log_both
@@ -246,17 +248,29 @@ class NXSData(object):
     self._channel_origin=[]
     self._channel_data=[]
     self.measurement_type=""
-    self.origin=filename
+    self.origin=filename  # full file name of the file
     # process the file
     self._read_times=[]
 
     if not self._read_file(filename):
       return None
 
+    # memory debug code here
+    # psutil.disk_usage('/').percent
+    #print '***** Memory usage so far !!! *****'
+    #print psutil.virtual_memory()
+
     if all_options['use_caching']:
       if filename in cached_names:
         cache_index=cached_names.index(filename)
         cls._cache.pop(cache_index)
+        
+      # make sure we stay below the 80% of memory used
+      #while psutil.virtual_memory().percent >= cls.MAX_MEMORY_USED:
+        #print 'cls._cache:'
+        #print cls._cache
+        #cls._cache.pop(0)
+
       # make sure cache does not get bigger than MAX_CACHE items or 80% of available memory
       while len(cls._cache)>=cls.MAX_CACHE:
         cls._cache.pop(0)
@@ -1531,7 +1545,7 @@ class LRDataset(object):
     # check if file is part of new rotated detector (date > 2014-10-05)
     ref_date = constants.new_geometry_detector_date
     output.new_detector_geometry_flag = LRDataset.isNexusTakeAfterRefDate(output, ref_date)
-
+    
     # calculate theta
     output.theta = LRDataset.calculate_theta(output)
 
@@ -1567,14 +1581,16 @@ class LRDataset(object):
     params = [float(tmin), float(tbin), float(tmax)]
     nxs_histo = Rebin(InputWorkspace=nxs,Params=params, PreserveEvents=True)
     # normalize by proton charge
-    nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
-        
+
     _proton_charge = float(nxs.getRun().getProperty('gd_prtn_chrg').value)
     _proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
     new_proton_charge_units = 'mC'
     
     output.proton_charge = _proton_charge * 3.6   # to go from microA/h to mC
     output.proton_charge_units = new_proton_charge_units
+
+    if _proton_charge > 0:
+      nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
     
     # retrieve 3D array
     [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, output.new_detector_geometry_flag)
@@ -1585,13 +1601,9 @@ class LRDataset(object):
     low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
     from_pixel = min(low_res_range)
     to_pixel = max(low_res_range)
-        
-    if output.new_detector_geometry_flag:
-      Ixyt = Ixyt[:,from_pixel:to_pixel,:]
-      Exyt = Exyt[:,from_pixel:to_pixel,:]
-    else:
-      Ixyt = Ixyt[from_pixel:to_pixel,:,:]
-      Exyt = Exyt[from_pixel:to_pixel,:,:]
+
+    Ixyt = Ixyt[from_pixel:to_pixel,:,:]
+    Exyt = Exyt[from_pixel:to_pixel,:,:]
     
     output.Ixyt = Ixyt
     output.Exyt = Exyt
@@ -1603,9 +1615,6 @@ class LRDataset(object):
     Iix = Ixy.sum(axis=1)
     Iyi = Iyt.sum(axis=1)
 
-   # Exy = Exyt.sum(axis=2)    # FIXME
-   # Ext = Exyt.sum(axis=1)    # FIXME
-    
     # store the data
     #output.tof_edges=_tof_axis
     #output.tof_edges_full = [tmin, tmax]

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1702</width>
-    <height>1113</height>
+    <width>1889</width>
+    <height>1116</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -256,7 +256,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
@@ -438,13 +438,6 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_29">
-              <property name="text">
-               <string>Peak Finder</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_25">
               <property name="text">
@@ -476,6 +469,13 @@ p, li { white-space: pre-wrap; }
              <widget class="QSpinBox" name="pfRidgeLength">
               <property name="value">
                <number>15</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="2">
+             <widget class="QPushButton" name="findPeakBack">
+              <property name="text">
+               <string>Find Peak/Back </string>
               </property>
              </widget>
             </item>
@@ -3261,7 +3261,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1702</width>
+     <width>1889</width>
      <height>25</height>
     </rect>
    </property>
@@ -4931,6 +4931,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>findPeakBack</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>find_peak_back()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>744</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>944</x>
+     <y>557</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5013,5 +5029,6 @@ p, li { white-space: pre-wrap; }
   <slot>remove_row_reductionTable()</slot>
   <slot>clear_reductionTable()</slot>
   <slot>loading_full_configuration()</slot>
+  <slot>find_peak_back()</slot>
  </slots>
 </ui>

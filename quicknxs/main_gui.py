@@ -1114,6 +1114,11 @@ class MainGUI(QtGui.QMainWindow):
 
     # display yt
     if plot_yt:
+      
+      ## code used to debug XY view (new detector position)
+      #yt_plot.imshow(xy, aspect='auto', cmap=self.color, origin='lower',
+                     #extent=[0,255,0,303])
+
       yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
                      aspect='auto', cmap=self.color, origin='lower',
                      extent=[tof_axis[0]*1e-3, tof_axis[-1]*1e-3, 0, data.y.shape[0]-1])
@@ -1147,6 +1152,8 @@ class MainGUI(QtGui.QMainWindow):
       it_plot.set_xlabel(u't (ms)')
 #      u'\u03bcs
       it_plot.set_ylabel(u'Counts')
+      autotmin = tof_range_auto[0]
+      autotmax = tof_range_auto[1]
       ta = it_plot.canvas.ax.axvline(autotmin/1000, color='#00aa00')
       tb = it_plot.canvas.ax.axvline(autotmax/1000, color='#00aa00')
       it_plot.draw()
@@ -2115,8 +2122,8 @@ class MainGUI(QtGui.QMainWindow):
       
       # check if user wants to add this/those files to a previous selected box
       do_add = False
-      if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
-        do_add = True
+      #if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+        #do_add = True
       
       # only 1 run number to load
       if len(listNumber) == 1:
@@ -2150,6 +2157,11 @@ class MainGUI(QtGui.QMainWindow):
           self.fileOpen(foundRun, do_plot=do_plot, do_add=do_add)
 
         self.ui.numberSearchEntry.setText('')
+
+  @waiting_effects
+  def find_peak_back(self):
+    print 'find_peak_back'
+
 
   @log_call
   def nextFile(self):
@@ -4644,19 +4656,19 @@ Do you want to try to restore the working reduction list?""",
                                do_plot=True,
                                update_table=False)
         
-      ## load normalization file
-      #_configDataset = self.bigTableData[j,2]
-      #data = NXSData(_first_file_name, 
-                     #bin_type = bin_type,
-                     #bins = self.ui.eventTofBins.value(),
-                     #callback = self.updateEventReadout,
-                     #event_split_bins = event_split_bins,
-                     #event_split_index = event_split_index,
-                     #metadata_config_object = _configDataset,
-                     #angle_offset = self.ui.angleOffsetValue.text(),
-                     #isData = False)
-    
-      #self.bigTableData[j,1] = data
+        ## load normalization file
+        _configDataset = self.bigTableData[j,2]
+        data = NXSData(_first_file_name, 
+                       bin_type = bin_type,
+                       bins = self.ui.eventTofBins.value(),
+                       callback = self.updateEventReadout,
+                       event_split_bins = event_split_bins,
+                       event_split_index = event_split_index,
+                       metadata_config_object = _configDataset,
+                       angle_offset = self.ui.angleOffsetValue.text(),
+                       isData = False)
+      
+        self.bigTableData[j,1] = data
 
 
   @waiting_effects          
