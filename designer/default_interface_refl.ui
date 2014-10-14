@@ -972,7 +972,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -996,7 +996,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -3002,10 +3002,10 @@ p, li { white-space: pre-wrap; }
                      <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
                     </property>
                     <property name="showDropIndicator" stdset="0">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="dragDropOverwriteMode">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
@@ -3023,7 +3023,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3032,7 +3032,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3047,13 +3047,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3183,7 +3183,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
-              <widget class="QTableWidget" name="dataStichingTable">
+              <widget class="QTableWidget" name="dataStitchingTable">
                <property name="maximumSize">
                 <size>
                  <width>300</width>

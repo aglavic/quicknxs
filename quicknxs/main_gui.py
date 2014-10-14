@@ -202,10 +202,10 @@ class MainGUI(QtGui.QMainWindow):
 
       # set up the header of the scaling factor table
       verticalHeader = ["Data Run #","SF: auto","SF: manual","SF: 1"]
-      self.ui.dataStichingTable.setHorizontalHeaderLabels(verticalHeader)
-      self.ui.dataStichingTable.resizeColumnsToContents()
-#      self.ui.dataStichingTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-#      self.ui.dataStichingTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
+      self.ui.dataStitchingTable.setHorizontalHeaderLabels(verticalHeader)
+      self.ui.dataStitchingTable.resizeColumnsToContents()
+#      self.ui.dataStitchingTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+#      self.ui.dataStitchingTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
                   
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -257,6 +257,7 @@ class MainGUI(QtGui.QMainWindow):
         self.trigger('automaticExtraction', argv)
     else:
       self.ui.numberSearchEntry.setFocus()
+
 
   def handleReductionTableMenu(self, pos):
     '''
@@ -820,24 +821,28 @@ class MainGUI(QtGui.QMainWindow):
       # add incident angle
       incident_angle = data.active_data.incident_angle
       _item_angle = QtGui.QTableWidgetItem(incident_angle)
-      _item_angle.setFlags(QtCore.Qt.ItemIsEnabled)
+      _item_angle.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
       _item_angle.setForeground(color)
       self.ui.reductionTable.setItem(_row,1,_item_angle)
       
       [from_l, to_l] = data.active_data.lambda_range
       _item_from_l = QtGui.QTableWidgetItem(str(from_l))
       _item_from_l.setForeground(color)
+      _item_from_l.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
       self.ui.reductionTable.setItem(_row, 2, _item_from_l)
       _item_to_l = QtGui.QTableWidgetItem(str(to_l))
       _item_to_l.setForeground(color)
+      _item_to_l.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
       self.ui.reductionTable.setItem(_row, 3, _item_to_l)
 
       [from_q, to_q] = data.active_data.q_range
       _item_from_q = QtGui.QTableWidgetItem(str(from_q))
       _item_from_q.setForeground(color)
+      _item_from_q.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
       self.ui.reductionTable.setItem(_row, 4, _item_from_q)
       _item_to_q = QtGui.QTableWidgetItem(str(to_q))
       _item_to_q.setForeground(color)
+      _item_to_q.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
       self.ui.reductionTable.setItem(_row, 5, _item_to_q)
       
    
@@ -1056,12 +1061,18 @@ class MainGUI(QtGui.QMainWindow):
       [lmin,lmax] = _active_data.lambda_range
       
       _item_min = QtGui.QTableWidgetItem(str(qmin))
+      _item_min.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       _item_max = QtGui.QTableWidgetItem(str(qmax))
+      _item_max.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       _item_lmin = QtGui.QTableWidgetItem(str(lmin))
+      _item_lmin.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       _item_lmax = QtGui.QTableWidgetItem(str(lmax))
+      _item_lmax.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       _item_incident = QtGui.QTableWidgetItem(str(incident_angle))
+      _item_incident.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
 
       [row, column] = self.getCurrentRowColumnSelected()
+
       self.ui.reductionTable.setItem(row, 4, _item_min)
       self.ui.reductionTable.setItem(row, 5, _item_max)
       self.ui.reductionTable.setItem(row, 2, _item_lmin)
@@ -2750,7 +2761,6 @@ class MainGUI(QtGui.QMainWindow):
   def bigTable_selection_changed(self, row, column):    
 
     self.editing_flag = False
-    
 
     # if selection of same row and not data or column 0 and 6
 #    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
@@ -4182,7 +4192,6 @@ Do you want to try to restore the working reduction list?""",
       
       # make sure the reductionTable is empty
       nbrRow = self.ui.reductionTable.rowCount()
-      print nbrRow
       if nbrRow > 0:
         for _row in range(nbrRow):
           self.ui.reductionTable.removeRow(0)
@@ -4822,43 +4831,53 @@ Do you want to try to restore the working reduction list?""",
     item = self.ui.reductionTable.item(0,1)
     if item is None:
       _item = QtGui.QTableWidgetItem(str(data.active_data.incident_angle))
+      _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       self.ui.reductionTable.setItem(0, 1, _item)
     else:    
       incident_angle = item.text()
       if incident_angle == 'N/A' or incident_angle == '':
         _item = QtGui.QTableWidgetItem(str(data.active_data.incident_angle))
+        _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
         self.ui.reductionTable.setItem(0, 1, _item)
     
     item = self.ui.reductionTable.item(0,4)
     if item is None:
       [_from_q, _to_q] = data.active_data.q_range
       _item = QtGui.QTableWidgetItem(str(_from_q))
+      _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       self.ui.reductionTable.setItem(0,4, _item)
       _item = QtGui.QTableWidgetItem(str(_to_q))
+      _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       self.ui.reductionTable.setItem(0,5, _item)
     else:
       from_q = item.text()
       if from_q == '':
         [_from_q, _to_q] = data.active_data.q_range
         _item = QtGui.QTableWidgetItem(str(_from_q))
+        _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
         self.ui.reductionTable.setItem(0,4, _item)
         _item = QtGui.QTableWidgetItem(str(_to_q))
+        _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
         self.ui.reductionTable.setItem(0,5, _item)
     
     item = self.ui.reductionTable.item(0,2)
     if item is None:
       [_from_l, _to_l] = data.active_data.lambda_range
       _item = QtGui.QTableWidgetItem(str(_from_l))
+      _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       self.ui.reductionTable.setItem(0,2, _item)
       _item = QtGui.QTableWidgetItem(str(_to_l))
+      _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
       self.ui.reductionTable.setItem(0,3, _item)
     else:
       from_lambda = item.text()
       if from_lambda == '':
         [_from_l, _to_l] = data.active_data.lambda_range
         _item = QtGui.QTableWidgetItem(str(_from_l))
+        _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
         self.ui.reductionTable.setItem(0,2, _item)
         _item = QtGui.QTableWidgetItem(str(_to_l))
+        _item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
         self.ui.reductionTable.setItem(0,3, _item)
           
     r=0
@@ -5004,6 +5023,9 @@ Do you want to try to restore the working reduction list?""",
     
     # display data reduced
     self.plot_reduced_data()
+
+    # move to stitching table tab
+    self.ui.plotTab.setCurrentIndex(1)      
 
 
   def plot_reduced_data(self):
@@ -5245,8 +5267,25 @@ Do you want to try to restore the working reduction list?""",
     '''
     will refresh the table in the stitching table
     '''
-    pass
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    
+    for i in range(nbr_row):
+      
+      _data = bigTableData[i,0]
+      _active_data = _data.active_data
 
+      self.ui.dataStitchingTable.insertRow(i)
+
+      _run_number = self.ui.reductionTable.item(i,0).text()
+      _run_number_item = QtGui.QTableWidgetItem(_run_number)
+      _run_number.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+      self.ui.dataStitchingTable.setItem(i,0,_run_number_item)
+
+      _item_1 = QtGui.QTableWidgetItem(str(1))
+      _item_1.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+      self.ui.dataStitchingTable.setItem(i,3,_item_1)
+      
 
   def update_reductionTable(self):
     '''
@@ -5291,6 +5330,9 @@ Do you want to try to restore the working reduction list?""",
     else:
       color = QtGui.QColor(100,100,150)
     _item.setForeground(color)
+    if not editableFlag:
+      _item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+      
     self.ui.reductionTable.setItem(row, column, _item)
 
   def getNodeValue(self,node,flag):
