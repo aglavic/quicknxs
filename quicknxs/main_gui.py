@@ -5014,6 +5014,7 @@ Do you want to try to restore the working reduction list?""",
     nbr_row = self.ui.reductionTable.rowCount()
     
     reflectivity_plot = self.ui.reflectivity_plot
+    data_stitching_plot = self.ui.data_stitching_plot
     
     _colors = colors.COLOR_LIST
     _colors.append(_colors)
@@ -5021,6 +5022,8 @@ Do you want to try to restore the working reduction list?""",
     # start by clearing plot
     reflectivity_plot.clear()
     reflectivity_plot.draw()
+    data_stitching_plot.clear()
+    data_stitching_plot.draw()
     
     for i in range(nbr_row):
 #    for i in range(1,2):
@@ -5030,22 +5033,29 @@ Do you want to try to restore the working reduction list?""",
       _e_axis = _data.e_axis_for_display
       
       reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
-
-      reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
-      reflectivity_plot.set_ylabel(u'R')
-      
       reflectivity_plot.draw()
       
+      data_stitching_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
+      data_stitching_plot.draw()
+
       ## DEBUGGING
       #tmp_filename = '/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quickns_full_reduction#' + str(i) + '.txt'
       #utilities.output_ascii_file(tmp_filename,
                                   #_q_axis,
                                   #_y_axis,
                                   #_e_axis)
+
+    reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
+    reflectivity_plot.set_ylabel(u'R')
+    reflectivity_plot.draw()
                                
+    data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
+    data_stitching_plot.set_ylabel(u'R')
+    data_stitching_plot.draw()
+
     # refresh reductionTable content (lambda range, Q range...etc)
     self.update_reductionTable()
-    
+    self.update_stitchingTable()
 
   def output_data_into_ascii(self):
     '''
@@ -5229,6 +5239,13 @@ Do you want to try to restore the working reduction list?""",
     self.ui.metadataS2WValue.setText(cls)
     self.ui.metadataS1HValue.setText(cls)
     self.ui.metadataS2HValue.setText(cls)
+
+
+  def update_stitchingTable(self):
+    '''
+    will refresh the table in the stitching table
+    '''
+    pass
 
 
   def update_reductionTable(self):
