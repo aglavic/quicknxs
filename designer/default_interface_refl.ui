@@ -972,7 +972,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -3023,7 +3023,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3032,7 +3032,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3047,13 +3047,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -5066,6 +5066,54 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>autoSF</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_stitching_is_auto()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>423</x>
+     <y>601</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>936</x>
+     <y>557</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>manualSF</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_stitching_is_manual()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>678</x>
+     <y>601</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>936</x>
+     <y>557</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>oneSF</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_stitching_is_1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>932</x>
+     <y>601</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>936</x>
+     <y>557</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5149,5 +5197,8 @@ p, li { white-space: pre-wrap; }
   <slot>clear_reductionTable()</slot>
   <slot>loading_full_configuration()</slot>
   <slot>find_peak_back()</slot>
+  <slot>data_stitching_is_auto()</slot>
+  <slot>data_stitching_is_manual()</slot>
+  <slot>data_stitching_is_1()</slot>
  </slots>
 </ui>

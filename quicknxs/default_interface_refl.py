@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Oct 14 15:15:40 2014
+# Created: Wed Oct 15 16:05:05 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1146,10 +1146,10 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(True)
+        self.reductionTable.horizontalHeader().setVisible(False)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
-        self.reductionTable.verticalHeader().setVisible(True)
+        self.reductionTable.verticalHeader().setVisible(False)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1491,7 +1491,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(1)
-        self.plotTab.setCurrentIndex(0)
+        self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionNext_File, QtCore.SIGNAL("triggered()"), MainWindow.nextFile)
@@ -1566,6 +1566,9 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.removeSelectedRow, QtCore.SIGNAL("clicked()"), MainWindow.remove_row_reductionTable)
         QtCore.QObject.connect(self.actionLoadFullConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loading_full_configuration)
         QtCore.QObject.connect(self.findPeakBack, QtCore.SIGNAL("clicked()"), MainWindow.find_peak_back)
+        QtCore.QObject.connect(self.autoSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_auto)
+        QtCore.QObject.connect(self.manualSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_manual)
+        QtCore.QObject.connect(self.oneSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)

@@ -184,6 +184,9 @@ class NXSData(object):
   reduce_q_axis = []
   reduce_y_axis = []
   reduce_e_axis = []
+  sf_auto = 1  # automatic scaling factor calculated by program
+  sf_manual = 1 # manual scaling factor defined by user
+  sf = 1 # scaling factor apply to data (will be either the auto, manual or 1)
 
   # histogram q axis (same number of element as y and e)
   q_axis_for_display = []

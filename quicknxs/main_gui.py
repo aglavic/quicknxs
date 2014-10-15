@@ -206,6 +206,15 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataStitchingTable.resizeColumnsToContents()
 #      self.ui.dataStitchingTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #      self.ui.dataStitchingTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
+
+      #self.ui.dataStitchingTable.insertRow(0)
+      #widgetSpinBox = QtGui.QDoubleSpinBox()
+##      _item_auto_sf = QtGui.QTableWidget().setCellWidget(0, 0, widgetSpinBox)
+      #self.ui.dataStitchingTable.setCellWidget(0,0,widgetSpinBox)
+      
+
+
+
                   
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
@@ -5028,6 +5037,40 @@ Do you want to try to restore the working reduction list?""",
     self.ui.plotTab.setCurrentIndex(1)      
 
 
+  def plot_stitched_scaled_data(self):
+    
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    
+    _colors = colors.COLOR_LIST
+    _colors.append(_colors)
+
+    self.ui.data_stitching_plot.clear()
+    self.ui.data_stitching_plot.draw()
+    
+    for i in range(nbr_row):
+
+      _data = bigTableData[i,0]
+      _q_axis = _data.q_axis_for_display
+      _y_axis = _data.y_axis_for_display
+      _e_axis = _data.e_axis_for_display
+      
+      sf = _data.sf
+      
+      _y_axis = _y_axis / sf
+      _e_axis = _e_axis / sf
+      
+      self.ui.data_stitching_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
+      self.ui.data_stitching_plot.draw()
+
+    self.ui.data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
+    self.ui.data_stitching_plot.set_ylabel(u'R')
+    self.ui.data_stitching_plot.draw()
+    
+
+
+
+
   def plot_reduced_data(self):
     '''
     plot the data after reduction
@@ -5053,6 +5096,10 @@ Do you want to try to restore the working reduction list?""",
       _q_axis = _data.q_axis_for_display
       _y_axis = _data.y_axis_for_display
       _e_axis = _data.e_axis_for_display
+      sf = _data.sf
+      
+      _y_axis = _y_axis / sf
+      _e_axis = _e_axis / sf
       
       reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
       reflectivity_plot.draw()
@@ -5263,6 +5310,51 @@ Do you want to try to restore the working reduction list?""",
     self.ui.metadataS2HValue.setText(cls)
 
 
+  def data_stitching_is_auto(self):
+    self.data_stitching_mode('auto')
+
+  def data_stitching_is_manual(self):
+    self.data_stitching_mode('manual')
+    
+  def data_stitching_is_1(self):
+    self.data_stitching_mode('1')
+
+
+  def manual_entry_of_sf_table(self):
+    '''
+    update sf data of selected row
+    '''
+
+    # swtich to manual option
+    
+
+  def data_stitching_mode(self, type):
+    '''
+    auto, manual or 1
+    '''
+
+    # recovering data
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.dataStitchingTable.rowCount()
+
+    if type == "auto":
+      for i in range(nbr_row):
+        _data = bigTableData[i,0]
+        _data.sf = _data.sf_auto
+        
+    elif type == "manual":
+      # recover manual input 
+      for i in range(nbr_row):
+        _data = bigTableData[i,0]
+        _data.sf = _data.sf_manual
+
+    else: # no scaling apply, just plot data
+      for i in range(nbr_row):
+        _data = bigTableData[i,0]
+        _data.sf = 1
+    
+    self.plot_stitched_scaled_data()
+
   def update_stitchingTable(self):
     '''
     will refresh the table in the stitching table
@@ -5279,8 +5371,19 @@ Do you want to try to restore the working reduction list?""",
 
       _run_number = self.ui.reductionTable.item(i,0).text()
       _run_number_item = QtGui.QTableWidgetItem(_run_number)
-      _run_number.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+      _run_number_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
       self.ui.dataStitchingTable.setItem(i,0,_run_number_item)
+
+      _item_auto = QtGui.QTableWidgetItem(str(1.0))
+      _item_auto.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+      self.ui.dataStitchingTable.setItem(i,1,_item_auto)
+
+      _widget_manual = QtGui.QDoubleSpinBox()
+      _widget_manual.setMinimum(0)
+      _widget_manual.setValue(1.0)
+      _widget_manual.setSingleStep(0.01)
+      _widget_manual.valueChanged.connect(self.manual_entry_of_sf_table)
+      self.ui.dataStitchingTable.setCellWidget(i,2,_widget_manual)
 
       _item_1 = QtGui.QTableWidgetItem(str(1))
       _item_1.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
