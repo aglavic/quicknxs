@@ -256,7 +256,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page">
            <property name="geometry">
@@ -881,19 +881,6 @@ p, li { white-space: pre-wrap; }
            <property name="spacing">
             <number>1</number>
            </property>
-           <item row="3" column="1">
-            <widget class="QCheckBox" name="logarithmic_y">
-             <property name="toolTip">
-              <string>Logarithmic Y-scale for the projections and reflectivity</string>
-             </property>
-             <property name="text">
-              <string>Log Y for lines</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="QCheckBox" name="show_colorbars">
              <property name="toolTip">
@@ -972,7 +959,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -3289,77 +3276,6 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="daslogTab">
-        <attribute name="title">
-         <string>DAS Logs</string>
-        </attribute>
-        <attribute name="toolTip">
-         <string>Motor and parameter log read from the file</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_8">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QGroupBox" name="daslogBox">
-           <property name="title">
-            <string>Recorded values for all Motors/Devices:</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_19">
-            <property name="margin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QTableWidget" name="daslogTableBox">
-              <property name="editTriggers">
-               <set>QAbstractItemView::NoEditTriggers</set>
-              </property>
-              <property name="showDropIndicator" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="alternatingRowColors">
-               <bool>true</bool>
-              </property>
-              <property name="sortingEnabled">
-               <bool>true</bool>
-              </property>
-              <attribute name="verticalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="verticalHeaderDefaultSectionSize">
-               <number>25</number>
-              </attribute>
-              <attribute name="verticalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="verticalHeaderDefaultSectionSize">
-               <number>25</number>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>Name</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Value</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Unit</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="logbookTab">
         <attribute name="title">
          <string>Logbook</string>
@@ -3384,28 +3300,6 @@ p, li { white-space: pre-wrap; }
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuAdvanced">
-    <property name="title">
-     <string>Advanced</string>
-    </property>
-    <widget class="QMenu" name="menuDebug">
-     <property name="title">
-      <string>Debug</string>
-     </property>
-     <addaction name="actionLog_Debug_Messages"/>
-     <addaction name="actionRaise_Error"/>
-    </widget>
-    <addaction name="actionAdvanced_Background"/>
-    <addaction name="actionAdjust_Dirct_Beam"/>
-    <addaction name="actionClear_Overwrite"/>
-    <addaction name="separator"/>
-    <addaction name="actionPolarization"/>
-    <addaction name="actionRaw_Data_Comparison"/>
-    <addaction name="actionBrowse_NXS_File"/>
-    <addaction name="separator"/>
-    <addaction name="actionIPython_Console"/>
-    <addaction name="menuDebug"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
@@ -3418,92 +3312,15 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Reduction</string>
     </property>
-    <addaction name="actionNorm"/>
-    <addaction name="actionClear_Normalizations"/>
-    <addaction name="separator"/>
-    <addaction name="actionNormalizeScaling"/>
-    <addaction name="actionCut_Points"/>
-    <addaction name="separator"/>
-    <addaction name="actionAddPlot"/>
-    <addaction name="actionRemove"/>
-    <addaction name="actionClear"/>
-    <addaction name="separator"/>
-    <addaction name="actionReduce"/>
-    <addaction name="actionQuick_Reduce"/>
     <addaction name="separator"/>
     <addaction name="actionLoadConfiguration"/>
     <addaction name="actionLoadFullConfiguration"/>
     <addaction name="actionSaveConfiguration"/>
    </widget>
-   <widget class="QMenu" name="menuAutomatics">
-    <property name="title">
-     <string>Automatics</string>
-    </property>
-    <addaction name="actionAutomaticXPeak"/>
-    <addaction name="actionAutoYLimits"/>
-    <addaction name="separator"/>
-    <addaction name="actionAuto_Reflectivity"/>
-    <addaction name="separator"/>
-    <addaction name="actionStrip_Overlap"/>
-   </widget>
-   <widget class="QMenu" name="menuTools">
-    <property name="title">
-     <string>Tools</string>
-    </property>
-    <addaction name="actionOpen_Compare_Window"/>
-    <addaction name="actionOpen_Reduction_Preview"/>
-    <addaction name="separator"/>
-    <addaction name="actionFilter_Points"/>
-   </widget>
    <addaction name="menuReduction"/>
-   <addaction name="menuAutomatics"/>
-   <addaction name="menuTools"/>
-   <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="mainToolbar">
-   <property name="windowTitle">
-    <string>Main Toolbar</string>
-   </property>
-   <property name="movable">
-    <bool>false</bool>
-   </property>
-   <property name="floatable">
-    <bool>false</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionOpen"/>
-   <addaction name="actionPrevious_File"/>
-   <addaction name="actionNext_File"/>
-   <addaction name="actionReduce"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
-   <addaction name="actionNorm"/>
-   <addaction name="actionClear_Normalizations"/>
-   <addaction name="separator"/>
-   <addaction name="actionAddPlot"/>
-   <addaction name="actionRemove"/>
-   <addaction name="actionClear"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
-   <addaction name="actionNormalizeScaling"/>
-   <addaction name="actionCut_Points"/>
-   <addaction name="actionStrip_Overlap"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
-   <addaction name="actionAutomaticXPeak"/>
-   <addaction name="actionAutoYLimits"/>
-   <addaction name="separator"/>
-   <addaction name="actionAuto_Reflectivity"/>
-   <addaction name="separator"/>
-   <addaction name="actionAdjust_Dirct_Beam"/>
-  </widget>
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="../icons/icons.qrc">
@@ -3519,129 +3336,6 @@ p, li { white-space: pre-wrap; }
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionNext_File">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/listDown.png</normaloff>:/General/listDown.png</iconset>
-   </property>
-   <property name="text">
-    <string>Next File</string>
-   </property>
-   <property name="toolTip">
-    <string>Next file in active folder (Ctrl+D)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="actionPrevious_File">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/listUp.png</normaloff>:/General/listUp.png</iconset>
-   </property>
-   <property name="text">
-    <string>Previous File</string>
-   </property>
-   <property name="toolTip">
-    <string>Previous file in current foldet (Ctrl+Shift+D)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+D</string>
-   </property>
-  </action>
-  <action name="actionNorm">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/extractNormalization.png</normaloff>:/General/extractNormalization.png</iconset>
-   </property>
-   <property name="text">
-    <string>Set Normalization</string>
-   </property>
-   <property name="toolTip">
-    <string>Take current dataset as direct beam for wavelength normalization (Ctrl+W)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="actionAddPlot">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/addRef.png</normaloff>:/General/addRef.png</iconset>
-   </property>
-   <property name="text">
-    <string>Keep Item in List</string>
-   </property>
-   <property name="toolTip">
-    <string>Add current dataset to data reduction list (Ctrl+Q)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
-   </property>
-  </action>
-  <action name="actionClear">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/clearRef.png</normaloff>:/General/clearRef.png</iconset>
-   </property>
-   <property name="text">
-    <string>Clear List</string>
-   </property>
-   <property name="toolTip">
-    <string>Remove all plots from data reduction list (CTRL+SHIFT+Q)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+Q</string>
-   </property>
-  </action>
-  <action name="actionAdjust_Dirct_Beam">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/tthZero.png</normaloff>:/General/tthZero.png</iconset>
-   </property>
-   <property name="text">
-    <string>Adjust Dirct Beam</string>
-   </property>
-   <property name="toolTip">
-    <string>Use active dataset to set overwrite parameters for direct pixel and Dangle0</string>
-   </property>
-  </action>
-  <action name="actionNormalizeScaling">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/totalReflection.png</normaloff>:/General/totalReflection.png</iconset>
-   </property>
-   <property name="text">
-    <string>Set Scaling</string>
-   </property>
-   <property name="toolTip">
-    <string>Scale total reflection to 1/fit overlap to previous run (Ctrl+S)</string>
-   </property>
-  </action>
-  <action name="actionRemove">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/delRef.png</normaloff>:/General/delRef.png</iconset>
-   </property>
-   <property name="text">
-    <string>Remove Line</string>
-   </property>
-   <property name="toolTip">
-    <string>Remove selected plots from data reduction list</string>
-   </property>
-  </action>
-  <action name="actionReduce">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/reduce.png</normaloff>:/General/reduce.png</iconset>
-   </property>
-   <property name="text">
-    <string>Reduce...</string>
-   </property>
-   <property name="toolTip">
-    <string>Use the active table to extrac reduced datasets and save them</string>
-   </property>
-  </action>
   <action name="actionManual">
    <property name="text">
     <string>Manual...</string>
@@ -3650,42 +3344,6 @@ p, li { white-space: pre-wrap; }
   <action name="actionAbout">
    <property name="text">
     <string>About...</string>
-   </property>
-  </action>
-  <action name="actionAutoYLimits">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/limitYauto.png</normaloff>:/General/limitYauto.png</iconset>
-   </property>
-   <property name="text">
-    <string>Automatic Y Limits</string>
-   </property>
-   <property name="toolTip">
-    <string>Try to find the Y region of the beam automatically</string>
-   </property>
-  </action>
-  <action name="actionAutomaticXPeak">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/fitXPos.png</normaloff>:/General/fitXPos.png</iconset>
-   </property>
-   <property name="text">
-    <string>Automatic Peak Finder</string>
-   </property>
-   <property name="toolTip">
-    <string>Find the reflected peak automatically when loading a new file</string>
    </property>
   </action>
   <action name="actionClear_Overwrite">
@@ -3699,21 +3357,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
-   </property>
-  </action>
-  <action name="actionClear_Normalizations">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/clearNorm.png</normaloff>:/General/clearNorm.png</iconset>
-   </property>
-   <property name="text">
-    <string>Clear Normalizations</string>
-   </property>
-   <property name="toolTip">
-    <string>Remove all datasets from the direct beam list (CTRL+SHIFT+W)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+W</string>
    </property>
   </action>
   <action name="actionOpen_Compare_Window">
@@ -3735,51 +3378,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
-   </property>
-  </action>
-  <action name="actionCut_Points">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/cutPoints.png</normaloff>:/General/cutPoints.png</iconset>
-   </property>
-   <property name="text">
-    <string>Cut Points (L/R)</string>
-   </property>
-   <property name="toolTip">
-    <string>Change the left and right cutoff (Cut Pts) values for the active file from the normalization intensity (Ctrl+Shift+C)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+C</string>
-   </property>
-  </action>
-  <action name="actionAuto_Reflectivity">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/autoRef.png</normaloff>:/General/autoRef.png</iconset>
-   </property>
-   <property name="text">
-    <string>Auto Reflectivity</string>
-   </property>
-   <property name="toolTip">
-    <string>Start with active dataset as total reflectivity region and continue adding datasets until the incident angle gets lower than for the last dataset (Ctrl+Shift+A)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+A</string>
-   </property>
-  </action>
-  <action name="actionStrip_Overlap">
-   <property name="icon">
-    <iconset resource="../icons/icons.qrc">
-     <normaloff>:/General/stripOverlap.png</normaloff>:/General/stripOverlap.png</iconset>
-   </property>
-   <property name="text">
-    <string>Strip Overlap</string>
-   </property>
-   <property name="toolTip">
-    <string>Strip points from datasets that overlap with the subsequent dataset in the reflectivity (Ctrl+Shift+S)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionPolarization">
@@ -3890,9 +3488,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>show_colorbars</tabstop>
   <tabstop>color_selector</tabstop>
   <tabstop>logarithmic_colorscale</tabstop>
-  <tabstop>logarithmic_y</tabstop>
   <tabstop>plotTab</tabstop>
-  <tabstop>daslogTableBox</tabstop>
  </tabstops>
  <resources>
   <include location="../icons/icons.qrc"/>
@@ -3911,150 +3507,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>474</x>
      <y>372</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNext_File</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>nextFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionPrevious_File</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>prevFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNorm</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setNorm()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAddPlot</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>addRefList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionClear</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>clearRefList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAdjust_Dirct_Beam</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>overwriteDirectBeam()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNormalizeScaling</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>normalizeTotalReflection()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionRemove</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>removeRefList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionReduce</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>reduceDatasets()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
     </hint>
    </hints>
   </connection>
@@ -4123,22 +3575,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>actionClear_Normalizations</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>clearNormList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>435</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionOpen_Compare_Window</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -4194,7 +3630,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>258</x>
-     <y>1166</y>
+     <y>1067</y>
     </hint>
     <hint type="destinationlabel">
      <x>349</x>
@@ -4210,7 +3646,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>133</x>
-     <y>1163</y>
+     <y>1064</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
@@ -4242,7 +3678,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>123</x>
-     <y>1076</y>
+     <y>917</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -4258,23 +3694,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>133</x>
-     <y>1189</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logarithmic_y</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>replotProjections()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>1189</y>
+     <y>1090</y>
     </hint>
     <hint type="destinationlabel">
      <x>543</x>
@@ -4295,54 +3715,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>0</x>
      <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionCut_Points</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>cutPoints()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>494</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAuto_Reflectivity</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>autoRef()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>494</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionStrip_Overlap</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>stripOverlap()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>494</x>
-     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -4530,7 +3902,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>54</x>
-     <y>757</y>
+     <y>805</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4546,7 +3918,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>64</x>
-     <y>815</y>
+     <y>866</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4562,7 +3934,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>128</x>
-     <y>946</y>
+     <y>917</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4609,8 +3981,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_background_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1591</x>
-     <y>430</y>
+     <x>1830</x>
+     <y>442</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4625,8 +3997,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_low_res_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1286</x>
-     <y>613</y>
+     <x>743</x>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4641,8 +4013,8 @@ p, li { white-space: pre-wrap; }
    <slot>normalization_background_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1591</x>
-     <y>434</y>
+     <x>1830</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4657,8 +4029,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_peak_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>329</y>
+     <x>1829</x>
+     <y>343</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4689,8 +4061,8 @@ p, li { white-space: pre-wrap; }
    <slot>norm_lowres_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1463</x>
-     <y>614</y>
+     <x>1179</x>
+     <y>630</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4705,8 +4077,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_lowres_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1463</x>
-     <y>614</y>
+     <x>1179</x>
+     <y>630</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4737,8 +4109,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_back_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>399</y>
+     <x>1829</x>
+     <y>413</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4753,8 +4125,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_peak_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>364</y>
+     <x>1829</x>
+     <y>378</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4769,8 +4141,8 @@ p, li { white-space: pre-wrap; }
    <slot>data_back_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>294</y>
+     <x>1829</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4817,8 +4189,8 @@ p, li { white-space: pre-wrap; }
    <slot>normalization_low_res_switch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1286</x>
-     <y>613</y>
+     <x>743</x>
+     <y>627</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4833,8 +4205,8 @@ p, li { white-space: pre-wrap; }
    <slot>norm_back_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>298</y>
+     <x>1829</x>
+     <y>313</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4849,8 +4221,8 @@ p, li { white-space: pre-wrap; }
    <slot>norm_peak_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>333</y>
+     <x>1829</x>
+     <y>348</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4913,8 +4285,8 @@ p, li { white-space: pre-wrap; }
    <slot>norm_back_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>403</y>
+     <x>1829</x>
+     <y>418</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4929,8 +4301,8 @@ p, li { white-space: pre-wrap; }
    <slot>norm_peak_spinbox_validation()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1626</x>
-     <y>368</y>
+     <x>1829</x>
+     <y>383</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4961,8 +4333,8 @@ p, li { white-space: pre-wrap; }
    <slot>runReduction()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>986</x>
-     <y>1057</y>
+     <x>1852</x>
+     <y>1073</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
