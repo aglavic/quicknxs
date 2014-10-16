@@ -5325,8 +5325,26 @@ Do you want to try to restore the working reduction list?""",
     update sf data of selected row
     '''
 
-    # swtich to manual option
+    bigTableData = self.bigTableData
+
+    # switch to manual option
+    self.ui.manualSF.setChecked(True)
+    self.ui.autoSF.setChecked(False)
+    self.ui.oneSF.setChecked(False)
     
+    # save all manual parameters
+    nbr_row = self.ui.dataStitchingTable.rowCount()
+    for i in range(nbr_row):
+      
+      _data = bigTableData[i,0]
+      
+      _sf_manual = self.ui.dataStitchingTable.cellWidget(i,2).value()
+      _data.sf_manual = _sf_manual
+    
+      bigTableData[i,0] = _data
+
+    self.data_stitching_mode('manual')
+
 
   def data_stitching_mode(self, type):
     '''
