@@ -81,6 +81,7 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   return _refineOverlap(Q1[reg1:], R1[reg1:], dR1[reg1:],
                         Q2[:reg2], R2[:reg2], dR2[:reg2], polynom)
 
+
 @log_both
 def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
              snr=3., min_width=1.5, max_width=20, ridge_length=15, return_pf=False, refine=True):

@@ -263,8 +263,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>358</width>
-             <height>261</height>
+             <width>438</width>
+             <height>276</height>
             </rect>
            </property>
            <attribute name="label">
@@ -277,7 +277,7 @@ p, li { white-space: pre-wrap; }
             <property name="margin">
              <number>2</number>
             </property>
-            <item row="0" column="0">
+            <item row="0" column="0" colspan="2">
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -526,7 +526,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>438</width>
              <height>276</height>
             </rect>
            </property>
@@ -619,7 +619,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>438</width>
              <height>276</height>
             </rect>
            </property>
@@ -746,7 +746,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>258</width>
+             <width>438</width>
              <height>276</height>
             </rect>
            </property>
@@ -3911,7 +3911,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>actionSaveConfiguration_2</sender>
+   <sender>actionLoadConfiguration_2</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>loading_configuration()</slot>

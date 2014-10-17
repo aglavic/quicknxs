@@ -5190,6 +5190,26 @@ Do you want to try to restore the working reduction list?""",
     f.close()
 
 
+  def applySF(self, row, y_array, e_array):
+    """
+    Apply SF
+    """
+    
+    _data = self.bigTableData[row,0]
+    
+    if self.ui.autoSF.isChecked():
+      _sf = _data.sf_auto
+    elif self.ui.manualSF.isChecked():
+      _sf = _data.sf_manual
+    else:
+      _sf = 1
+    
+    y_array /= _sf
+    e_array /= _sf
+    
+    return [y_array, e_array]
+
+
   def produce_workspace_with_common_q_axis(self):
     '''
     In order to produce output ascii file, we need to get all the data sets with a common q axis
@@ -5210,6 +5230,9 @@ Do you want to try to restore the working reduction list?""",
       _q_axis = _data.reduce_q_axis
       _y_axis = _data.reduce_y_axis[:-1]
       _e_axis = _data.reduce_e_axis[:-1]
+      
+      [_y_axis, _e_axis] = self.applySF(i, _y_axis, _e_axis)
+      
       
       minQ = min([_q_axis[0], minQ])
       maxQ = max([_q_axis[-1], maxQ])
