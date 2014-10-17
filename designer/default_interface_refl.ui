@@ -263,7 +263,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>438</width>
+             <width>369</width>
              <height>276</height>
             </rect>
            </property>
@@ -526,7 +526,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>438</width>
+             <width>369</width>
              <height>276</height>
             </rect>
            </property>
@@ -619,7 +619,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>438</width>
+             <width>369</width>
              <height>276</height>
             </rect>
            </property>
@@ -746,7 +746,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>438</width>
+             <width>369</width>
              <height>276</height>
             </rect>
            </property>
@@ -1023,7 +1023,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -1384,7 +1384,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_6">
                       <layout class="QVBoxLayout" name="verticalLayout_29">
                        <item>
-                        <widget class="MPLWidgetXLog" name="data_it_plot" native="true">
+                        <widget class="MPLWidget" name="data_it_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1398,7 +1398,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_7">
                       <layout class="QVBoxLayout" name="verticalLayout_30">
                        <item>
-                        <widget class="MPLWidgetXLog" name="data_ix_plot" native="true">
+                        <widget class="MPLWidget" name="data_ix_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -2024,7 +2024,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_12">
                       <layout class="QVBoxLayout" name="verticalLayout_33">
                        <item>
-                        <widget class="MPLWidgetXLog" name="norm_it_plot" native="true">
+                        <widget class="MPLWidget" name="norm_it_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -2038,7 +2038,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_13">
                       <layout class="QVBoxLayout" name="verticalLayout_34">
                        <item>
-                        <widget class="MPLWidgetXLog" name="norm_ix_plot" native="true">
+                        <widget class="MPLWidget" name="norm_ix_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>

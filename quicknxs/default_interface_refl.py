@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Oct 16 16:55:20 2014
+# Created: Fri Oct 17 13:55:58 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -117,7 +117,7 @@ class Ui_MainWindow(object):
         self.toolBox.setLineWidth(0)
         self.toolBox.setObjectName("toolBox")
         self.page_3 = QtGui.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 438, 276))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 369, 276))
         self.page_3.setObjectName("page_3")
         self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
         self.gridLayout_17.setMargin(2)
@@ -218,7 +218,7 @@ class Ui_MainWindow(object):
         self.gridLayout_17.addWidget(self.pfRidgeLength, 5, 1, 1, 1)
         self.toolBox.addItem(self.page_3, "")
         self.page_2 = QtGui.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 438, 276))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 369, 276))
         self.page_2.setObjectName("page_2")
         self.layoutWidget_2 = QtGui.QWidget(self.page_2)
         self.layoutWidget_2.setGeometry(QtCore.QRect(0, 20, 251, 59))
@@ -250,7 +250,7 @@ class Ui_MainWindow(object):
         self.label_30.setObjectName("label_30")
         self.toolBox.addItem(self.page_2, "")
         self.page_4 = QtGui.QWidget()
-        self.page_4.setGeometry(QtCore.QRect(0, 0, 438, 276))
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 369, 276))
         self.page_4.setObjectName("page_4")
         self.scalingFactorFlag = QtGui.QCheckBox(self.page_4)
         self.scalingFactorFlag.setGeometry(QtCore.QRect(10, 0, 87, 20))
@@ -284,7 +284,7 @@ class Ui_MainWindow(object):
         self.sfPrecision.setObjectName("sfPrecision")
         self.toolBox.addItem(self.page_4, "")
         self.page_5 = QtGui.QWidget()
-        self.page_5.setGeometry(QtCore.QRect(0, 0, 438, 276))
+        self.page_5.setGeometry(QtCore.QRect(0, 0, 369, 276))
         self.page_5.setObjectName("page_5")
         self.output4thColumnFlag = QtGui.QCheckBox(self.page_5)
         self.output4thColumnFlag.setGeometry(QtCore.QRect(9, 5, 171, 22))
@@ -526,7 +526,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_6.setObjectName("layoutWidget_6")
         self.verticalLayout_29 = QtGui.QVBoxLayout(self.layoutWidget_6)
         self.verticalLayout_29.setObjectName("verticalLayout_29")
-        self.data_it_plot = MPLWidgetXLog(self.layoutWidget_6)
+        self.data_it_plot = MPLWidget(self.layoutWidget_6)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -538,7 +538,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_7.setObjectName("layoutWidget_7")
         self.verticalLayout_30 = QtGui.QVBoxLayout(self.layoutWidget_7)
         self.verticalLayout_30.setObjectName("verticalLayout_30")
-        self.data_ix_plot = MPLWidgetXLog(self.layoutWidget_7)
+        self.data_ix_plot = MPLWidget(self.layoutWidget_7)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -776,7 +776,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_12.setObjectName("layoutWidget_12")
         self.verticalLayout_33 = QtGui.QVBoxLayout(self.layoutWidget_12)
         self.verticalLayout_33.setObjectName("verticalLayout_33")
-        self.norm_it_plot = MPLWidgetXLog(self.layoutWidget_12)
+        self.norm_it_plot = MPLWidget(self.layoutWidget_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -788,7 +788,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_13.setObjectName("layoutWidget_13")
         self.verticalLayout_34 = QtGui.QVBoxLayout(self.layoutWidget_13)
         self.verticalLayout_34.setObjectName("verticalLayout_34")
-        self.norm_ix_plot = MPLWidgetXLog(self.layoutWidget_13)
+        self.norm_ix_plot = MPLWidget(self.layoutWidget_13)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1324,7 +1324,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(0)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)

@@ -90,7 +90,6 @@ class NavigationToolbar(NavigationToolbar2QT):
     a=self.addAction(icon, 'Log', self.toggle_log)
     a.setToolTip('Toggle logarithmic scale')
 
-
     self.buttons={}
 
     # Add the x,y location widget at the right side of the toolbar
