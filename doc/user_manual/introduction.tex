@@ -11,18 +11,18 @@
       While the X and Y position can be used in conjunction with the instrument motor positions to gain information about the scattering
       angle the time of flight (ToF) together with the moderator to detector distance allows to deduce the neutron wavelength.
       Combining these three degrees of freedom allows to transform the coordinates into reciprocal space coordinates (for reflectivity
-      only the \Qz coordinate is relevant.
+      only the \Qz coordinate is relevant).
       
       In order to derive the correct \Qz dependent intensities a normalization to the incident beam is necessary. 
       For this the direct beam intensity of the same wavelength band and with the same instrumental setup is measured
       prior to the actual data. This measurement is later used as reference when calculating the reflectivity.
       When different incident angles are measured (as is most often the case), each incident angle takes a different part out of
-      the direct beam and generally won't have the same scaling factor as the earlier measurement. For the extracted reflectivity
+      the direct beam and generally won't have the same overall scaling factor as the previous measurement. For the extracted reflectivity
       these different runs need to be combined.
   
   \section{What does QuickNXS data reduction do?}
       QuickNXS is a comprehensive tool to carry out the operations described above starting from the NeXus files and export the
-      data in a form usable for plotting and fit with reflectivity modeling software.
+      data in a form usable for plotting and fitting with reflectivity modeling software.
       The program includes real time plots of several projections of the raw file data and previews of the exported data.
       Several automated algorithms aid the process to improve the learning curve of non expert users and speed up
       the extraction process of normal datasets while keeping the flexibility to apply special treatments for more

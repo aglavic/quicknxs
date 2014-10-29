@@ -1,21 +1,11 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=latex 2013.6.5)  18 JUN 2013 16:55
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=latex 2014.3.25)  29 OCT 2014 15:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./images.tex
 (./images.tex
 LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, et
-hiopic, farsi, arabic, pinyin, croatian, bulgarian, ukrainian, russian, slovak,
- czech, danish, dutch, usenglishmax, ukenglish, finnish, french, basque, ngerma
-n, german, swissgerman, ngerman-x-2012-05-30, german-x-2012-05-30, monogreek, g
-reek, ibycus, ancientgreek, hungarian, bengali, tamil, hindi, telugu, gujarati,
- sanskrit, malayalam, kannada, assamese, marathi, oriya, panjabi, italian, lati
-n, latvian, lithuanian, mongolian, mongolianlmc, nynorsk, bokmal, indonesian, e
-speranto, coptic, welsh, irish, interlingua, serbian, serbianc, slovenian, friu
-lan, romansh, estonian, romanian, armenian, uppersorbian, turkish, afrikaans, i
-celandic, kurmanji, polish, portuguese, galician, catalan, spanish, swedish, th
-ai, loaded.
+Babel <3.9h> and hyphenation patterns for 78 languages loaded.
 
 
 ! LaTeX Error: \usepackage before \documentclass.
@@ -341,7 +331,7 @@ File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 \WF@everypar=\toks17
 Package: wrapfig 2003/01/31  v 3.6
 ) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
-Package: amsmath 2000/07/18 v2.13 AMS math features
+Package: amsmath 2013/01/14 v2.14 AMS math features
 \@mathmargin=\skip43
 For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
@@ -357,20 +347,20 @@ Package: amsbsy 1999/11/29 v1.2d
 Package: amsopn 1999/12/14 v2.01 operator names
 )
 \inf@bad=\count89
-LaTeX Info: Redefining \frac on input line 211.
+LaTeX Info: Redefining \frac on input line 210.
 \uproot@=\count90
 \leftroot@=\count91
-LaTeX Info: Redefining \overline on input line 307.
+LaTeX Info: Redefining \overline on input line 306.
 \classnum@=\count92
 \DOTSCASE@=\count93
-LaTeX Info: Redefining \ldots on input line 379.
-LaTeX Info: Redefining \dots on input line 382.
-LaTeX Info: Redefining \cdots on input line 467.
+LaTeX Info: Redefining \ldots on input line 378.
+LaTeX Info: Redefining \dots on input line 381.
+LaTeX Info: Redefining \cdots on input line 466.
 \Mathstrutbox@=\box27
 \strutbox@=\box28
 \big@size=\dimen109
-LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 \macc@depth=\count94
 \c@MaxMatrixCols=\count95
 \dotsspace@=\muskip10
@@ -391,16 +381,16 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
 \multlinegap=\skip44
 \multlinetaggap=\skip45
 \mathdisplay@stack=\toks22
-LaTeX Info: Redefining \[ on input line 2666.
-LaTeX Info: Redefining \] on input line 2667.
+LaTeX Info: Redefining \[ on input line 2665.
+LaTeX Info: Redefining \] on input line 2666.
 ) (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
-Package: amssymb 2009/06/22 v3.00
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
-Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup6
 \symAMSb=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
-(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 )) (/usr/share/texlive/texmf-dist/tex/latex/was/upgreek.sty
 Package: upgreek 2003/02/12 v2.0 (WaS)
 Package upgreek Info: Using Euler Roman for upright Greek on input line 31.
@@ -526,63 +516,63 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 205.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 205.
-l2hSize :tex2html_wrap_inline1582:8.09999pt::0.0pt::8.50151pt.
+l2hSize :tex2html_wrap_inline1069:8.09999pt::0.0pt::8.50151pt.
 [1
 
 
 
 ]
-l2hSize :tex2html_wrap_inline1584:8.79688pt::8.79688pt::8.55013pt.
+l2hSize :tex2html_wrap_inline1071:8.79688pt::8.79688pt::8.55013pt.
 [2
 
 
 ]
-l2hSize :tex2html_wrap_inline1586:8.59999pt::8.59999pt::7.90193pt.
+l2hSize :tex2html_wrap_inline1073:8.59999pt::8.59999pt::7.90193pt.
 [3
 
 
 ]
-l2hSize :tex2html_wrap_inline1588:8.29688pt::0.0pt::6.61203pt.
+l2hSize :tex2html_wrap_inline1075:8.29688pt::0.0pt::6.61203pt.
 [4
 
 
 ]
-l2hSize :tex2html_wrap_inline1590:8.29688pt::0.0pt::7.10141pt.
+l2hSize :tex2html_wrap_inline1077:8.29688pt::0.0pt::7.10141pt.
 [5
 
 
 ]
-l2hSize :tex2html_wrap_inline1592:8.09999pt::0.0pt::7.86304pt.
+l2hSize :tex2html_wrap_inline1079:8.09999pt::0.0pt::7.86304pt.
 [6
 
 
 ]
-l2hSize :tex2html_wrap_inline1594:8.59999pt::8.59999pt::7.17595pt.
+l2hSize :tex2html_wrap_inline1081:8.59999pt::8.59999pt::7.17595pt.
 [7
 
 
 ]
-l2hSize :tex2html_wrap_inline1596:8.29688pt::0.0pt::7.25049pt.
+l2hSize :tex2html_wrap_inline1083:8.29688pt::0.0pt::7.25049pt.
 [8
 
 
 ]
-l2hSize :tex2html_wrap_inline1598:8.69586pt::8.69586pt::9.49191pt.
+l2hSize :tex2html_wrap_inline1085:8.69586pt::8.69586pt::9.49191pt.
 [9
 
 
 ]
-l2hSize :tex2html_wrap_inline1600:8.09999pt::0.0pt::7.70393pt.
+l2hSize :tex2html_wrap_inline1087:8.09999pt::0.0pt::7.70393pt.
 [10
 
 
 ]
-l2hSize :tex2html_wrap_inline1602:8.19586pt::0.0pt::7.94403pt.
+l2hSize :tex2html_wrap_inline1089:8.19586pt::0.0pt::7.94403pt.
 [11
 
 
 ]
-l2hSize :tex2html_wrap_inline1604:8.09999pt::0.0pt::7.90842pt.
+l2hSize :tex2html_wrap_inline1091:8.09999pt::0.0pt::7.90842pt.
 [12
 
 
@@ -622,7 +612,7 @@ If that doesn't work, type  X <return>  to quit.
 
 File: ../../icons/logo.pdf Graphic file (type eps)
 <../../icons/logo.pdf>)
-l2hSize :figure1605:487.15965pt::0.0pt::349.0pt.
+l2hSize :figure1092:487.15965pt::0.0pt::349.0pt.
 [1
 
 
@@ -630,43 +620,53 @@ l2hSize :figure1605:487.15965pt::0.0pt::349.0pt.
 
 
 ]
-l2hSize :tex2html_wrap_inline1609:8.59999pt::8.59999pt::13.2649pt.
+l2hSize :tex2html_wrap_inline1096:8.59999pt::8.59999pt::13.2649pt.
 [2
 
 
 ]
-l2hSize :tex2html_wrap_inline1699:10.8768pt::10.8768pt::13.48398pt.
+l2hSize :tex2html_wrap_inline1193:10.8768pt::10.8768pt::13.48398pt.
 [3
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1702:11.47679pt::11.47679pt::40.12003pt.
+l2hSize :tex2html_wrap_indisplay1196:11.47679pt::11.47679pt::40.12003pt.
 [4
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1704:19.23732pt::19.23732pt::256.65932pt.
+l2hSize :tex2html_wrap_indisplay1198:19.23732pt::19.23732pt::256.65932pt.
 [5
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1706:9.5pt::9.5pt::37.46619pt.
+l2hSize :tex2html_wrap_indisplay1200:9.5pt::9.5pt::37.46619pt.
 [6
 
 
 ]
-l2hSize :tex2html_wrap_indisplay1708:11.47679pt::11.47679pt::78.88448pt.
+l2hSize :tex2html_wrap_indisplay1202:11.47679pt::11.47679pt::78.88448pt.
 [7
+
+
+]
+l2hSize :tex2html_wrap_inline1214:8.19586pt::0.0pt::7.94403pt.
+[8
+
+
+]
+l2hSize :tex2html_wrap_inline1218:9.43394pt::9.43394pt::30.07193pt.
+[9
 
 
 ] (./images.aux (./titlepage.aux)) ) 
 Here is how much of TeX's memory you used:
- 2517 strings out of 493486
- 30335 string characters out of 3143550
- 76945 words of memory out of 3000000
- 5759 multiletter control sequences out of 15000+200000
- 23177 words of font info for 48 fonts, out of 3000000 for 9000
+ 2516 strings out of 493305
+ 30344 string characters out of 6139897
+ 78632 words of memory out of 5000000
+ 5910 multiletter control sequences out of 15000+600000
+ 23177 words of font info for 48 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 27i,5n,24p,224b,372s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,5n,26p,224b,372s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on images.dvi (19 pages, 5280 bytes).
+Output written on images.dvi (21 pages, 5700 bytes).

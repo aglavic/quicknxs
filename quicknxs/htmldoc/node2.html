@@ -85,15 +85,15 @@ original version by:  Nikos Drakos, CBLU, University of Leeds
 </H1>
 
 <BIG CLASS="XXLARGE"><IMG
-  WIDTH="630" HEIGHT="497" ALIGN="BOTTOM" BORDER="0"
+  WIDTH="630" HEIGHT="500" ALIGN="BOTTOM" BORDER="0"
  SRC="./overview_labels.png"
  ALT="Image overview_labels"> 
 </BIG>
 
 <P>
 In addition to the default elements of a typical graphical user interface (GUI) like menu-, tool- and statusbar the QuickNXS program has a central area, which can be switch using the tab bar above, and several plot and option areas on the left and right side, always visible. Most users will work only with the "Overview" tab visible in the image above as it contains all valuable information about the current loaded dataset and the reduction parameters. 
-The on the left and right areas can be customized in size and hold parameter entries for the reduction as well as the projection and reflectivity plot, most important for the extraction.
-The other tabs, shown below, allow a parallel view on the 2D maps of all spin states in the active dataset as well as a preview of off-specular and GISANS scattering, motor/controller logs from the current file and a large plot area to compare different reflectivities extracted earlier.
+The left and right areas can be customized in size and hold parameter entries for the reduction as well as the projection and reflectivity plots, most important for the extraction.
+The other tabs, shown below, allow a parallel view of the 2D maps of all spin states in the active dataset as well as a preview of off-specular and GISANS scattering, motor/controller logs from the current file and a large plot area to compare different reflectivities extracted earlier.
 
 <P>
 <TABLE CELLPADDING=3>
@@ -124,9 +124,11 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
 <P>
 Each of the plots has its own toolbar described in the plots section and shows one specific aspect of your dataset. 
  It is often important to look not only on one of these plots to analyze the data, so it is good to familiarize with what you see there.
- All options available in the toolbar are duplicated somewhere in the menus, to make it easier to find what you need.
+
+<P>
+All options available in the main toolbar are duplicated somewhere in the menus, to make it easier to find what you need.
  The most important actions have <SPAN  CLASS="textbf">keystrokes</SPAN> assigned to them for convenience. 
- The keys have been chosen to be accessible only with the right hand, so you can use them together with the mouse.
+ The keys have been chosen to be accessible only with the left hand, so you can use them together with the mouse.
  <SPAN  CLASS="textbf">Most GUI elements have a tool tip</SPAN> assigned, so you can always position the <SPAN  CLASS="textbf">mouse cursor</SPAN> over <SPAN  CLASS="textbf">any element to get a more detailed description</SPAN>, what it is used for.
 
 <P>
@@ -145,7 +147,7 @@ Each of the plots has its own toolbar described in the plots section and shows o
    
 </DD>
 <DT><STRONG>File -&gt; Open Sum... (CTRL+SHIFT+O)</STRONG></DT>
-<DD>Allows to open several files to sum up their intensities
+<DD>Allows to open several files to sum up their intensities for measurements split in to multiple runs.
    
 </DD>
 <DT><STRONG><IMG
@@ -171,7 +173,7 @@ Each of the plots has its own toolbar described in the plots section and shows o
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./extractNormalization.png"
  ALT="Image extractNormalization"> Reduction -&gt; Set Normalization (CTRL+W)</STRONG></DT>
-<DD>Use the data extracted from the current file as a direct beam dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate direct beam run is selected using the number of time of flight channels in the file and the central wavelength, if this is ambiguous a dialog is shown to select one dataset.
+<DD>Use the data extracted from the current file as a direct beam dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate direct beam run is selected using the number of time of flight channels in the file and the central wavelength, if this is ambiguous a dialog is shown to select one dataset, unless the AutoNorm feature is active.
    
 </DD>
 <DT><STRONG><IMG
@@ -186,7 +188,7 @@ Each of the plots has its own toolbar described in the plots section and shows o
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./totalReflection.png"
  ALT="Image totalReflection"> Reduction -&gt; Set Scaling (CTRL+S)</STRONG></DT>
-<DD>For the first dataset this tries to find the edge of total reflection and fit a constant to all points before it normalizes it to one. For subsequent datasets it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
+<DD>For the first dataset this tries to find the edge of total reflection and fits a constant to all points before it to normalizes it to one. For subsequent datasets it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
    
 </DD>
 <DT><STRONG><IMG
@@ -214,7 +216,7 @@ Each of the plots has its own toolbar described in the plots section and shows o
   WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
  SRC="./clearRef.png"
  ALT="Image clearRef"> Reduction -&gt; Clear List (CTRL+SHIFT+Q)</STRONG></DT>
-<DD>Clear the full reduction list to start a new set of reflectivity.
+<DD>Clear the full reduction list to start a new reflectivity set.
 
 <P>
 </DD>
@@ -223,6 +225,67 @@ Each of the plots has its own toolbar described in the plots section and shows o
  SRC="./reduce.png"
  ALT="Image reduce"> Reduction -&gt; Reduce...</STRONG></DT>
 <DD>Use the items and options in the reduction table to export a dataset. Shows a dialog to select how the export should be done.
+    
+</DD>
+<DT><STRONG> Reduction -&gt; Quick-Reduce...</STRONG></DT>
+<DD>As Reduce but doesn't show the export dialog using the last set of options.
+
+<P>
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./findXauto.png"
+ ALT="Image findXauto"> Automatics -&gt; Automatic Peak Finder</STRONG></DT>
+<DD>If checked, the program runs a peak finder and peak fitting algorithm on the X-projection of the data each time a new dataset is loaded and sets the X-center parameter accordingly. This works very reliable in general and is activated by default.
+   
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./limitYauto.png"
+ ALT="Image limitYauto"> Automatics -&gt; Automatic Y Limits</STRONG></DT>
+<DD>If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly. After adding the first dataset to the reduction table the option is switched off automatically to prevent issues at higher incident angle, where the intensity is comparable with the background. Clearing the reduction list will reactivate the option.
+    
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./autoNorm.png"
+ ALT="Image autoNorm"> Automatics -&gt; AutoNorm</STRONG></DT>
+<DD>If more then one normalization datasets are defined that can be used for the current dataset the program will decide which to use based on slit settings.
+
+<P>
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./autoRef.png"
+ ALT="Image autoRef"> Automatics -&gt; Auto Reflectivity</STRONG></DT>
+<DD>When extracting several reflectivities with similar experimental setup the extraction parameters will likely be similar, as well. Activate this action at the total reflection run and it will use the current settings to subsequently scale and add all following datasets as long as the incident angle increases. Afterwards the <SPAN  CLASS="textbf">Strip Overlap</SPAN> action is invoked. For good quality data this is a convenient way to reduce the full reflectivity very quickly.
+   
+</DD>
+<DT><STRONG><IMG
+  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
+ SRC="./stripOverlap.png"
+ ALT="Image stripOverlap"> Automatics -&gt; Strip Overlap</STRONG></DT>
+<DD>This option can be invoked directly before reducing the data to remove overlapping points between subsequent runs. The points are removed from the lower <SPAN CLASS="MATH"><IMG
+ WIDTH="25" HEIGHT="34" ALIGN="MIDDLE" BORDER="0"
+ SRC="img14.png"
+ ALT="$ Q_z$"></SPAN> run, as these normally will have much lower statistics.
+
+<P>
+</DD>
+<DT><STRONG> Tools -&gt; Open Compare Window...</STRONG></DT>
+<DD>Open a dialog which allows the direct comparison of different reflectivity measurements, can be used several times and is equivalent to the Compare tab of the main window.
+   
+</DD>
+<DT><STRONG> Tools -&gt; Open Reduction Preview...</STRONG></DT>
+<DD>Open a dialog which shows a preview of the extracted reflectivity with all spin states. Keeping this window open will slow down some actions.
+   
+</DD>
+<DT><STRONG> Tools -&gt; Filter Points...</STRONG></DT>
+<DD>Allows you to post-process exported files by filtering specific data points.
+  
+</DD>
+<DT><STRONG> Tools -&gt; Search Database...</STRONG></DT>
+<DD>This options is not always possible. It opens a dialog that allows the search for datasets based on specific parameters of the measurement.
 
 <P>
 </DD>
@@ -248,42 +311,19 @@ Each of the plots has its own toolbar described in the plots section and shows o
 </DD>
 <DT><STRONG> Advanced -&gt; Raw Data Comparison...</STRONG></DT>
 <DD>Show a dialog to compare the raw data of the current run (not divided by direct beam) with the direct beam measurement and background. Can be helpful to identify problems with the direct beam normalization or the extraction window.
-   
+    
 </DD>
-<DT><STRONG> Advanced -&gt; Open Compare Window...</STRONG></DT>
-<DD>Open a dialog which allows the direct comparison of different reflectivity measurements, can be used several times and is equivalent to the Compare tab of the main window.
+<DT><STRONG> Advanced -&gt; Browse NXS file... (CTRL+N)</STRONG></DT>
+<DD>Show a dialog that accesses the raw NXS file with it's folder structure. This is only intended for beamline staff.
 
 <P>
 </DD>
-<DT><STRONG><IMG
-  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="./findXauto.png"
- ALT="Image findXauto"> Automatics -&gt; Automatic Peak Finder</STRONG></DT>
-<DD>If checked, the program runs a peak finder and peak fitting algorithm on the X-projection of the data each time a new dataset is loaded and sets the X-center parameter accordingly. This works very reliable in general and is activated by default.
+<DT><STRONG> Advanced -&gt; IPython Console...</STRONG></DT>
+<DD>Adds a new tab to the main window with an IPython interactive console, that can be used for advanced data treatment and scripting.
    
 </DD>
-<DT><STRONG><IMG
-  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="./limitYauto.png"
- ALT="Image limitYauto"> Automatics -&gt; Automatic Y Limits</STRONG></DT>
-<DD>If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly. After adding the first dataset to the reduction table the option is switched off automatically to prevent issues at higher incident angle, where the intensity is comparable with the background. Clearing the reduction list will reactivate the option.
-   
-</DD>
-<DT><STRONG><IMG
-  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="./autoRef.png"
- ALT="Image autoRef"> Automatics -&gt; Auto Reflectivity</STRONG></DT>
-<DD>When extracting several reflectivities with similar experimental setup the extraction parameters will likely be similar, as well. Activate this action at the total reflection run and it will use the current settings to subsequently scale and add all following datasets as long as the incident angle increases. Afterwards the <SPAN  CLASS="textbf">Strip Overlap</SPAN> action is invoked. For good quality data this is a convenient way to reduce the full reflectivity very quickly.
-   
-</DD>
-<DT><STRONG><IMG
-  WIDTH="16" HEIGHT="16" ALIGN="BOTTOM" BORDER="0"
- SRC="./stripOverlap.png"
- ALT="Image stripOverlap"> Automatics -&gt; Strip Overlap</STRONG></DT>
-<DD>This option can be invoked directly before reducing the data to remove overlapping points between subsequent runs. The points are removed from the lower <SPAN CLASS="MATH"><IMG
- WIDTH="25" HEIGHT="36" ALIGN="MIDDLE" BORDER="0"
- SRC="img14.png"
- ALT="$ Q_z$"></SPAN> run, as these normally will have much lower statistics.
+<DT><STRONG>Advanced -&gt; Debug Menu</STRONG></DT>
+<DD>Useful things for program debugging.
 
 <P>
 </DD>
@@ -291,10 +331,6 @@ Each of the plots has its own toolbar described in the plots section and shows o
 <DD>Online access to this manual and an about dialog.
 
 <P>
-</DD>
-<DT><STRONG>Debug Menu</STRONG></DT>
-<DD>Useful things for program debugging.
-   
 </DD>
 </DL>
 
@@ -311,7 +347,7 @@ Each of the plots has its own toolbar described in the plots section and shows o
 <P>
 At the bottom you can find the reduction table and an additional tab with a list of defined direct beam datasets.
   These tables show the parameters used for the respective intensity extractions.
-  These parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity area.
+  The parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity area.
   Directly above the table is a label showing the numbers of all defined direct beam runs and radio buttons to select the current datasets spin state shown in the Overview, projections and reflectivity plots.
 
 <P>
@@ -337,7 +373,7 @@ At the bottom you can find the reduction table and an additional tab with a list
 <DD>Settings to change the extraction method or overwrite parameters otherwise read from the datafile. Options for the stitching algorithm can be found here as well.
    
 </DD>
-<DT><STRONG>Algorithm Parameters</STRONG></DT>
+<DT><STRONG>Peak Finder Algorithm</STRONG></DT>
 <DD>Settings for the peak finder algorithm not important for normal user operation.
    
 </DD>
@@ -367,7 +403,18 @@ At the bottom you can find the reduction table and an additional tab with a list
 <H1><A NAME="SECTION00250000000000000000">
 <SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">5</SPAN> Convenient Parameter Alteration with the Mouse Wheel</A>
 </H1>
-  You can use the mouse wheel when your cursor is on top of a value entry to increase or decrease the according parameter. 
+    
+<DIV ALIGN="CENTER">
+l0.25
+        <IMG
+  WIDTH="241" HEIGHT="219" ALIGN="BOTTOM" BORDER="0"
+ SRC="./parameter_scroll.png"
+ ALT="Image parameter_scroll">
+    
+</DIV>
+
+<P>
+You can use the mouse wheel when your cursor is on top of a value entry to increase or decrease the according parameter. 
   This can be very convenient to see the result of e.g. changing the scaling factor for the current reflectivity. Holding down the CTRL key while scrolling increases the speed of the parameter changes.
   The same method can also be used to scale datasets in the reduction table, simply by moving the mouse at the curve in the reflectivity plot and scrolling with the mouse wheel.
 
@@ -383,7 +430,7 @@ At the bottom you can find the reduction table and an additional tab with a list
  ALT="Image plottoolbar">
 <BR>
 The first 5 items allow the navigation on the plot, like zooming in and out or moving the current view position.
-  The fourth icon from the left opens a dialog, which can be used to change the amount of frees pace around the plot to fit the current window scaling.
+  The fourth icon from the left opens a dialog, which can be used to change the amount of free space around the plot to fit the current window scaling.
   The following two icons can be used to save or print the plot. The last button allows to toggle between logarithmic and linear plotting (this is not persistent after changing the dataset).
 
 <P>

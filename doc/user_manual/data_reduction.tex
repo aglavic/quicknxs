@@ -50,12 +50,14 @@
   
         \textbf{Open your direct beam file} as described in section \ref{sec:open_file}. 
       Make sure the SANGLE-calc value shown in the overview tab is close to zero and that the X- and Y-projections show the correct regions indicated with vertical lines.
-      Activate the \textbf{Set Normalization action} \icon{extractNormalization}, this will add the current dataset to the "Direct Beam" list, the "Direct Beam Runs:" label will show the number of the dataset and the reflectivity will show the normalized intensities, which should all be one. You can use the \textbf{Cut Points (L/R) action} \icon{cutPoints} here to already set reasonable parameters for the Cut Pts entries.
+      Activate the \textbf{Set Normalization action} \icon{extractNormalization}. 
+      This will add the current dataset to the "Direct Beam" list and the "Direct Beam Runs:" label will show the number of the dataset and the reflectivity will show the normalized intensities, which should all be one. 
+      You can use the \textbf{Cut Points (L/R) action} \icon{cutPoints} here to already set reasonable parameters for the Cut Pts entries.
       Repeat this step for each direct beam measurement needed for your datasets.
 
   
   \subsection{Step 2: Define a suitable background- and y-region}
-    \begin{wrapfigure}[16]{r}{0.6\textwidth}
+    \begin{wrapfigure}[15]{r}{0.6\textwidth}
     \centering
       X-projection with background region (green)\\
       \includegraphics[width=155pt]{screenshots/background.png}
@@ -66,17 +68,17 @@
     \end{wrapfigure}
   
     Although it is in principle possible to define the extraction and background region for each dataset separately, it is recommended to use the same parameters for all files.
-    From this perspective it is often a good idea to start with the dataset with the highest incident angle, as the signal to background ration is the lowest there.
+    From this perspective it is often a good idea to start with the dataset with the highest incident angle for the background, as the signal to background ration is the lowest there.
     To produce the best results you should select a large region (statistics), keeping enough distance from the reflected beam (especially when off-specular Bragg-sheets are present) and to not include regions where the background drops (shadowed by the left detector slit for example).
     The Y-region, shown in the Y-projection of the first (low Q) dataset, is often detected very well automatically.
     Just check that it fits to the reflected intensity area. 
-    For very small samples it can sometimes make sense to manually restrain the area to the sample reflection using the right mouse button on X-Y map.
+    For very small samples it can sometimes make sense to manually restrain the area to the sample reflection using the right mouse button on the X-Y map.
   
   \subsection{Step 3: Normalize to total reflection and add the first dataset}
     \begin{wrapfigure}[12]{r}{0.4\textwidth}
      \includegraphics[width=165pt]{screenshots/totalreflection.png} 
     \end{wrapfigure}
-    Go to your dataset starting at the lowest \Qz value, remove points from the low \Qz region, which are not reasonable with the \textbf{Cut Pts parameters}:
+    Go to your dataset starting at the lowest \Qz value and remove points which are not reasonable from the low \Qz region with the \textbf{Cut Pts parameters}:
     \includegraphics[width=115pt]{screenshots/cutpoints.png} (can be done automatically with the \textbf{Cut Points (L/R)} \icon{cutPoints} action if not already performed after direct beam selection). Than activate the \textbf{Set Scaling action} \icon{totalReflection} to normalize the total reflection to one.
     This should now look like the image on the right.
     Next add the dataset to the refinement list using the \textbf{Keep Item in List action} \icon{addRef}, copying the current parameters to the list.
@@ -113,14 +115,14 @@
     \end{tabular}
     \end{wrapfigure}
     When all datasets of one measurement have been added, as can be seen in the image on the right, you can try to improve the scaling of the different parts, if needed, and change the cutting parameters.
-    To change the scaling of one dataset you can either change the value of the \textbf{I0 column} entry in the reduction list or move the mouse \textbf{cursor on top of the curve} you want to scale and \textbf{move the mouse wheel}.
-    To remove unwanted point you need to change the values of the \textbf{NL} and \textbf{NR column} entries as they define the number of points cut from the low- and hight-Q side respectively.
+    To change the scaling of one dataset you can either change the value of the \textbf{I0 column} entry in the reduction list or put the mouse \textbf{cursor on top of the curve} you want to scale and \textbf{move the mouse wheel}.
+    To remove unwanted points you need to change the values of the \textbf{NL} and \textbf{NR column} entries as they define the number of points cut from the low- and high-Q side respectively.
     If the number of time of flight channels in the dataset is larger than the wavelength window it is possible that large values are needed (<=60) to see changes in the dataset. 
     (Removing of overlapping points with low statistics can be done with \textbf{Strip Overlap} \icon{stripOverlap}.)
     
 \subsection{Step 6: Export your data}
   \label{sec:export}
-    \begin{wrapfigure}[14]{r}{0.35\textwidth}
+    \begin{wrapfigure}[13]{r}{0.35\textwidth}
     \centering
      \includegraphics[width=150pt]{screenshots/reduced.png}
     \end{wrapfigure}
@@ -141,6 +143,13 @@
   \begin{description}
    \item[Bend/Twisted samples] Samples which do not have a flat surface can produce "fan"-like or split reflections. In these cases the peak fitting can result in different extraction areas for different incident angles. Use a small X window and/or the \textbf{"Fan" Reflection} option (see section \ref{sec:fan}) from the \textbf{Reflectivity Extraction (Advanced)} tab and define the reflection position manually.
    
-   \item[Runs don't fit together] This often is caused by one of two reasons: One possibility is that there are very sharp features in the reflectivity which are measured differently for the different angles, as the resolution changes with the angle. In this case the only possibility is to try to merge the datasets manually as good as possible. If the measurement is polarized, take a look at the other spin state, sometimes the feature won't be as pronounced and make it easer to find the scaling factor. The other possibility is that the direct beam position, which should be measured before the experiment and written to the datafile, is not correct. This can be checked with the according direct beam run. If the \textbf{SANGLE-calc} value for the direct beam run is not close to zero you can use the \textbf{Adjust Direct Beam action} \icon{tthZero} to overwrite the values read from the datafile. Afterwards the it should be possible to extract the reflectivity normally. Don't forget to reset this overwrite afterwards using \textbf{Clear Overwrite} (see section \ref{sec:overwrite}).
+   \item[Runs don't fit together] This often is caused by one of two reasons: 
+   One possibility is that there are very sharp features in the reflectivity which are measured differently for the different angles, as the resolution changes with the angle.
+   In this case the only possibility is to try to merge the datasets manually as good as possible.
+   If the measurement is polarized, take a look at the other spin state, sometimes the feature won't be as pronounced and make it easer to find the scaling factor. 
+   The other possibility is that the direct beam position, which should be measured before the experiment and written to the datafile, is not correct. 
+   This can be checked with the according direct beam run. If the \textbf{SANGLE-calc} value for the direct beam run is not close to zero you can use the \textbf{Adjust Direct Beam action} \icon{tthZero} to overwrite the values read from the datafile. 
+   Afterwards it should be possible to extract the reflectivity normally. 
+   Don't forget to reset this overwrite afterwards using \textbf{Clear Overwrite} (see section \ref{sec:overwrite}).
   \end{description}
 
