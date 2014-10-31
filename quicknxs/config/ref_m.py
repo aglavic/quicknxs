@@ -45,7 +45,7 @@ DATABASE_ADDITIONAL_FIELDS=[
                             ('s3h', 'S3VHeight', float),
                            ]
 
-database_file=u'%(paths.CFG_PATH)s/database'
+database_file=u'/SNS/REF_M/shared/quicknxs_database'
 
 DATABASE_DIRECT_BEAM_COMPARE=[
                               ('s1h', 'S1VHeight', float, 1.0),

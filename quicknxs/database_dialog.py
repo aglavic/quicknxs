@@ -3,11 +3,24 @@
 A dialog to browse through the sample database created by the autorefl script.
 '''
 
+import tempfile
+import os
+import atexit
 from PyQt4.QtGui import QDialog, QWidget, QVBoxLayout, QTableWidgetItem
 from PyQt4.QtCore import pyqtSignal
 
+from .config import instrument as config
 from . import database
 from .database_widget import Ui_DatabaseWidget
+from logging import debug
+
+# temporary files for the database storage as only staff has write access
+tmp_db=tempfile.mkdtemp("_quicknxs_database")
+def clear_tmp():
+  for filename in os.listdir(tmp_db):
+    os.remove(os.path.join(tmp_db, filename))
+  os.rmdir(tmp_db)
+atexit.register(clear_tmp)
 
 class DatabaseWidget(QWidget):
   last_result=None
@@ -15,11 +28,25 @@ class DatabaseWidget(QWidget):
 
   def __init__(self, *args, **opts):
     QWidget.__init__(self, *args, **opts)
+    if not config.database_file==tmp_db:
+      self.copy_db()
     self.ui=Ui_DatabaseWidget()
     self.ui.setupUi(self)
     self.db=database.DatabaseHandler()
     self.buildTable()
     self.applyFilters()
+
+  def copy_db(self):
+    '''
+    Copy the database to a temporary directory to make sure we have write access.
+    '''
+    debug('Copy buzhug database to temporary folder:')
+    for filename in os.listdir(config.database_file):
+      to_=os.path.join(tmp_db, filename)
+      from_=os.path.join(config.database_file, filename)
+      debug(u'%s -> %s'%(from_, to_))
+      open(to_, 'wb').write(open(from_, 'rb').read())
+    config.temp.database_file=tmp_db
 
   def buildTable(self):
     tbl=self.ui.resultsTable
