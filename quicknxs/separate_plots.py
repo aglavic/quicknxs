@@ -86,7 +86,8 @@ class ReductionPreviewDialog(QDialog):
 
   def closeEvent(self, *args, **kwargs):
     self.parent_window.initiateReflectivityPlot.disconnect(self.plot_preview)
-    return QDialog.closeEvent(self, *args, **kwargs)
+    self.close()
+    #return QDialog.closeEvent(self, *args, **kwargs)
 
 class ProjectionPlotDialog(QDialog):
   '''

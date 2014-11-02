@@ -594,7 +594,8 @@ class PlotDialog(QDialog):
 
   def closeEvent(self, event):
     self._open_instances.remove(self)
-    return QDialog.closeEvent(self, event)
+    self.close()
+    #return QDialog.closeEvent(self, event)
 
 class SmoothDialog(QDialog):
   '''

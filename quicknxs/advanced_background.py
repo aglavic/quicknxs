@@ -192,4 +192,5 @@ class BackgroundDialog(QDialog):
     self.main_window.fileLoaded.disconnect(self.drawXTof)
     self.main_window.initiateReflectivityPlot.disconnect(self.drawBG)
     self.main_window.background_dialog=None
-    return QDialog.closeEvent(self, *args, **kwargs)
+    self.close()
+    #return QDialog.closeEvent(self, *args, **kwargs)

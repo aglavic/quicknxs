@@ -78,4 +78,5 @@ class RawCompare(QDialog):
   def closeEvent(self, *args, **kwargs):
     # disconnect when closed as object is not actually destroyed and will slow down plots
     self.parent_window.initiateReflectivityPlot.disconnect(self.draw_plot)
-    return QDialog.closeEvent(self, *args, **kwargs)
+    self.close()
+    #return QDialog.closeEvent(self, *args, **kwargs)
