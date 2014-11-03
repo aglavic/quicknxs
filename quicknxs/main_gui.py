@@ -999,10 +999,10 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.norm_yt_plot.draw()
       self.ui.norm_yi_plot.canvas.ax.clear()
       self.ui.norm_yi_plot.canvas.draw()
-      self.ui.norm_it_plot.clear()
-      self.ui.norm_it_plot.draw()
-      self.ui.norm_ix_plot.clear()
-      self.ui.norm_ix_plot.draw()
+      self.ui.norm_it_plot.canvas.ax.clear()
+      self.ui.norm_it_plot.canvas.draw()
+      self.ui.norm_ix_plot.canvas.ax.clear()
+      self.ui.norm_ix_plot.canvas.draw()
       
   #@log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
@@ -1152,8 +1152,8 @@ class MainGUI(QtGui.QMainWindow):
       yt_plot = self.ui.norm_yt_plot
 #      yi_plot = self.ui.norm_yi_plot
       yi_plot = self.ui.norm_yi_plot.canvas
-      it_plot = self.ui.norm_it_plot
-      ix_plot = self.ui.norm_ix_plot
+      it_plot = self.ui.norm_it_plot.canvas
+      ix_plot = self.ui.norm_ix_plot.canvas
 
     if data.new_detector_geometry_flag:
       ylim = 303
@@ -1198,60 +1198,47 @@ class MainGUI(QtGui.QMainWindow):
     # display it
     if plot_it:
 
-      it_plot.plot(tof_axis[0:-1]/1000,countstofdata, color='#0000aa')
-      it_plot.set_xlabel(u't (ms)')
+      it_plot.ax.plot(tof_axis[0:-1]/1000,countstofdata, color='#0000aa')
+      it_plot.ax.set_xlabel(u't (ms)')
 #      u'\u03bcs
-      it_plot.set_ylabel(u'Counts')
+      it_plot.ax.set_ylabel(u'Counts')
       autotmin = tof_range_auto[0]
       autotmax = tof_range_auto[1]
-      ta = it_plot.canvas.ax.axvline(autotmin/1000, color='#00aa00')
-      tb = it_plot.canvas.ax.axvline(autotmax/1000, color='#00aa00')
+      ta = it_plot.ax.axvline(autotmin/1000, color='#00aa00')
+      tb = it_plot.ax.axvline(autotmax/1000, color='#00aa00')
       it_plot.draw()
 
     # display yi
     if plot_yi:
       xaxis = range(len(ycountsdata))
-
-      # just for testing
-      import random
-      randomNumbers = random.sample(range(1,10),9)
-      yi_plot.ax.clear()
-      yi_plot.ax.plot(randomNumbers)
-
-      #yi_plot.ax.plot(ycountsdata,xaxis)
+      yi_plot.ax.plot(ycountsdata,xaxis)
       yi_plot.ax.set_xlabel(u'counts')
       yi_plot.ax.set_ylabel(u'y (pixel)')
+     
+      yi_plot.ax.set_ylim(0,ylim)      
+      y1peak = yi_plot.ax.axhline(peak1, color='#00aa00')
+      y2peak = yi_plot.ax.axhline(peak2, color='#00aa00')
+      if back_flag:
+        y1back = yi_plot.ax.axhline(back1, color='#aa0000')
+        y2back = yi_plot.ax.axhline(back2, color='#aa0000')
 
-#      yi_plot.ax.set_ylim(0,ylim)
-      
-#      y1peak = yi_plot.ax.axhline(peak1, color='#00aa00')
-#      y2peak = yi_plot.ax.axhline(peak2, color='#00aa00')
-  
-#      if back_flag:
-#        y1back = yi_plot.ax.axhline(back1, color='#aa0000')
-#        y2back = yi_plot.ax.axhline(back2, color='#aa0000')
-
-      print 'in plot_overview_REFL: '
-      print self.isLog
       if self.isLog:
-        print 'in log'
         yi_plot.ax.set_xscale('log')
       else:
-        print 'in linear'
         yi_plot.ax.set_xscale('linear')
-
+      
       yi_plot.draw()
 
     # display ix
     if plot_ix:
-      ix_plot.plot(countsxdata, color='#0000aa')
-      ix_plot.set_xlabel(u'pixels')
-      ix_plot.set_ylabel(u'counts')
-      ix_plot.canvas.ax.set_xlim(0,xlim)
+      ix_plot.ax.plot(countsxdata, color='#0000aa')
+      ix_plot.ax.set_xlabel(u'pixels')
+      ix_plot.ax.set_ylabel(u'counts')
+      ix_plot.ax.set_xlim(0,xlim)
       
       if low_res_flag:
-        x1low = ix_plot.canvas.ax.axvline(lowRes1, color='#aa00aa')
-        x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#aa00aa')
+        x1low = ix_plot.ax.axvline(lowRes1, color='#aa00aa')
+        x2low = ix_plot.ax.axvline(lowRes2, color='#aa00aa')
         
       ix_plot.draw()
 

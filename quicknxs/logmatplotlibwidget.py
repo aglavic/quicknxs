@@ -40,21 +40,21 @@ class logNavigationtoolbar(Navigationtoolbar):
                 self.clearButtons.append(c)
                 next = None
                 
-        icon=QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-xlog.png"), 
-                       QtGui.QIcon.Normal, 
-                       QtGui.QIcon.Off)
-        picker = QtGui.QAction("Pick", self)
-        picker.setIcon(icon)
-        picker.setCheckable(True)
-        picker.setToolTip("Toggle x-logarithmic scale")
-        self.picker = picker
-        button = QtGui.QToolButton(self)
-        button.setDefaultAction(self.picker)
+        #icon=QtGui.QIcon()
+        #icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-xlog.png"), 
+                       #QtGui.QIcon.Normal, 
+                       #QtGui.QIcon.Off)
+        #picker = QtGui.QAction("Pick", self)
+        #picker.setIcon(icon)
+        #picker.setCheckable(True)
+        #picker.setToolTip("Toggle x-logarithmic scale")
+        #self.picker = picker
+        #button = QtGui.QToolButton(self)
+        #button.setDefaultAction(self.picker)
         
         # add it to the toolbar, and connect event
-        self.insertWidget(next.defaultAction(), button)
-        picker.toggled.connect(self.logtoggle)
+#        self.insertWidget(next.defaultAction(), button)
+#        picker.toggled.connect(self.logtoggle)
         
     def logtoggle(self, checked):
         self.logtog.emit(checked)

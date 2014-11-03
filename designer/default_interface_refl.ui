@@ -2031,7 +2031,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_12">
                       <layout class="QVBoxLayout" name="verticalLayout_33">
                        <item>
-                        <widget class="MPLWidget" name="norm_it_plot" native="true">
+                        <widget class="logMatplotlibWidget" name="norm_it_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -2045,7 +2045,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_13">
                       <layout class="QVBoxLayout" name="verticalLayout_34">
                        <item>
-                        <widget class="MPLWidget" name="norm_ix_plot" native="true">
+                        <widget class="logMatplotlibWidget" name="norm_ix_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
