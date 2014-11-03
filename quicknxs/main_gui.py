@@ -24,7 +24,8 @@ from .advanced_background import BackgroundDialog
 from .compare_plots import CompareDialog
 from .config import paths, instrument, gui, export
 from .decorators import log_call, log_input, log_both, waiting_effects
-from .default_interface import Ui_MainWindow
+from .default_interface_refl import Ui_MainWindow
+#from .default_interface_refl import *
 from .gui_logging import install_gui_handler, excepthook_overwrite
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .nxs_gui import NXSDialog
@@ -43,6 +44,11 @@ import utilities
 import constants
 import colors
 
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
+#from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
+from matplotlib.figure import Figure
+
+
 class gisansCalcThread(QtCore.QThread):
   '''
   Perform GISANS scattering calculations in the background.
@@ -60,9 +66,8 @@ class gisansCalcThread(QtCore.QThread):
     for i, dataset in enumerate(self.dataset):
       gisans.append(GISANS(dataset, **self.options))
       self.updateProgress.emit(float(i+1)/len(self.dataset))
-    self.gisans=gisans
-
-
+    self.gisans=gisans            
+            
 class MainGUI(QtGui.QMainWindow):
   '''
   The program top level window with all direct event handling.
@@ -125,6 +130,9 @@ class MainGUI(QtGui.QMainWindow):
   
   # to skip data_norm_tab_changed when user clicked table
   userClickedInTable = False
+
+  # log/linear status of yi_plot
+  isLog = False
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -212,10 +220,22 @@ class MainGUI(QtGui.QMainWindow):
 ##      _item_auto_sf = QtGui.QTableWidget().setCellWidget(0, 0, widgetSpinBox)
       #self.ui.dataStitchingTable.setCellWidget(0,0,widgetSpinBox)
       
+#      self.frame = QtGui.QWidget()
+      #self.fig = Figure((5.0,5.0))
+      #self.canvas = FigureCanvasQTAgg(self.fig)
+      #self.canvas.setParent(self.ui.normalization_yi_plot)
+      #self.norm_yi_plot = self.fig.add_subplot(111)
+      
+      #self.toolbar = NavigationToolbar(self.canvas, self.ui.normalization_yi_plot)
+      #self.toolbar.logtog.connect(self.logtoggle)
+      
+      #vbox = QtGui.QVBoxLayout()
+      #vbox.addWidget(self.canvas)
+      #vbox.addWidget(self.toolbar)
+      #self.ui.normalization_yi_plot.setLayout(vbox)
+      
+      self.ui.norm_yi_plot.mpltoolbar.logtog.connect(self.logtoggle)
 
-
-
-                  
     self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
@@ -267,6 +287,10 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.numberSearchEntry.setFocus()
 
+
+  def logtoggle(self, checked):
+    self.isLog = checked
+    self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
   def handleReductionTableMenu(self, pos):
     '''
@@ -363,21 +387,21 @@ class MainGUI(QtGui.QMainWindow):
     Connect matplotlib mouse events.
     '''
     for plot in [self.ui.data_yt_plot, 
-                 self.ui.data_yi_plot,
+#                 self.ui.data_yi_plot,
                  self.ui.data_it_plot,
                  self.ui.data_ix_plot,
                  self.ui.norm_yt_plot, 
-                 self.ui.norm_yi_plot,
+#                 self.ui.norm_yi_plot,
                  self.ui.norm_it_plot,
                  self.ui.norm_ix_plot]:
       plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
     
     for plot in [self.ui.data_yt_plot, 
-                 self.ui.data_yi_plot,
+#                 self.ui.data_yi_plot,
                  self.ui.data_it_plot,
                  self.ui.data_ix_plot,
                  self.ui.norm_yt_plot, 
-                 self.ui.norm_yi_plot,
+#                 self.ui.norm_yi_plot,
                  self.ui.norm_it_plot,
                  self.ui.norm_ix_plot]:
       plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
@@ -973,13 +997,12 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.norm_yt_plot.clear()
       self.ui.norm_yt_plot.draw()
-      self.ui.norm_yi_plot.clear()
-      self.ui.norm_yi_plot.draw()
+      self.ui.norm_yi_plot.canvas.ax.clear()
+      self.ui.norm_yi_plot.canvas.draw()
       self.ui.norm_it_plot.clear()
       self.ui.norm_it_plot.draw()
       self.ui.norm_ix_plot.clear()
       self.ui.norm_ix_plot.draw()
-          
       
   #@log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
@@ -1127,7 +1150,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normBackgroundFlag.setChecked(back_flag)
       
       yt_plot = self.ui.norm_yt_plot
-      yi_plot = self.ui.norm_yi_plot
+#      yi_plot = self.ui.norm_yi_plot
+      yi_plot = self.ui.norm_yi_plot.canvas
       it_plot = self.ui.norm_it_plot
       ix_plot = self.ui.norm_ix_plot
 
@@ -1187,18 +1211,34 @@ class MainGUI(QtGui.QMainWindow):
     # display yi
     if plot_yi:
       xaxis = range(len(ycountsdata))
-      yi_plot.plot(ycountsdata,xaxis)
-      yi_plot.set_xlabel(u'counts')
-      yi_plot.set_ylabel(u'y (pixel)')
 
-      yi_plot.canvas.ax.set_ylim(0,ylim)
+      # just for testing
+      import random
+      randomNumbers = random.sample(range(1,10),9)
+      yi_plot.ax.clear()
+      yi_plot.ax.plot(randomNumbers)
+
+      #yi_plot.ax.plot(ycountsdata,xaxis)
+      yi_plot.ax.set_xlabel(u'counts')
+      yi_plot.ax.set_ylabel(u'y (pixel)')
+
+#      yi_plot.ax.set_ylim(0,ylim)
       
-      y1peak = yi_plot.canvas.ax.axhline(peak1, color='#00aa00')
-      y2peak = yi_plot.canvas.ax.axhline(peak2, color='#00aa00')
+#      y1peak = yi_plot.ax.axhline(peak1, color='#00aa00')
+#      y2peak = yi_plot.ax.axhline(peak2, color='#00aa00')
   
-      if back_flag:
-        y1back = yi_plot.canvas.ax.axhline(back1, color='#aa0000')
-        y2back = yi_plot.canvas.ax.axhline(back2, color='#aa0000')
+#      if back_flag:
+#        y1back = yi_plot.ax.axhline(back1, color='#aa0000')
+#        y2back = yi_plot.ax.axhline(back2, color='#aa0000')
+
+      print 'in plot_overview_REFL: '
+      print self.isLog
+      if self.isLog:
+        print 'in log'
+        yi_plot.ax.set_xscale('log')
+      else:
+        print 'in linear'
+        yi_plot.ax.set_xscale('linear')
 
       yi_plot.draw()
 
@@ -3375,6 +3415,11 @@ class MainGUI(QtGui.QMainWindow):
       self.auto_change_active=False
       self.ui.refYWidth.setValue(yw)
 
+  def lin_log_toggle(self):
+    
+    print 'lin_log_toggle'
+
+
   def plotPickXToF(self, event):
     if event.button==1 and self.ui.xtof_overview.toolbar._active is None and \
         event.ydata is not None:
@@ -4032,10 +4077,10 @@ Do you want to try to restore the working reduction list?""",
     tof_range = [self.ui.TOFmanualFromValue.text(),
                  self.ui.TOFmanualToValue.text()]
     
-    if self.ui.TOFmanualMsValue.isChecked():
-      tof_units = 'ms'
-    else:
-      tof_units = 'micros'
+#    if self.ui.TOFmanualMsValue.isChecked():
+    tof_units = 'ms'
+#    else:
+#      tof_units = 'micros'
       
     tof_auto_flag = self.ui.dataTOFautoMode.isChecked()
     
@@ -5187,8 +5232,7 @@ Do you want to try to restore the working reduction list?""",
     for _line in text:
       f.write(_line + '\n')
       
-    f.close()
-
+    f.close()  
 
   def applySF(self, row, y_array, e_array):
     """

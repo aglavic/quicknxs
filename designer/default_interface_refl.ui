@@ -1023,7 +1023,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -1356,6 +1356,13 @@ p, li { white-space: pre-wrap; }
                            </layout>
                           </item>
                           <item>
+                           <widget class="QRadioButton" name="radioButtonDataLog">
+                            <property name="text">
+                             <string>log</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
                            <spacer name="verticalSpacer_6">
                             <property name="orientation">
                              <enum>Qt::Vertical</enum>
@@ -1384,7 +1391,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_6">
                       <layout class="QVBoxLayout" name="verticalLayout_29">
                        <item>
-                        <widget class="MPLWidget" name="data_it_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="data_it_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1398,7 +1405,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_7">
                       <layout class="QVBoxLayout" name="verticalLayout_30">
                        <item>
-                        <widget class="MPLWidget" name="data_ix_plot" native="true">
+                        <widget class="MPLWidgetXLog" name="data_ix_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -1682,7 +1689,7 @@ p, li { white-space: pre-wrap; }
                      <widget class="QWidget" name="layoutWidget_11">
                       <layout class="QHBoxLayout" name="horizontalLayout_43">
                        <item>
-                        <widget class="MPLWidgetXLog" name="norm_yi_plot" native="true">
+                        <widget class="logMatplotlibWidget" name="norm_yi_plot" native="true">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -3538,6 +3545,12 @@ p, li { white-space: pre-wrap; }
    <class>MPLWidgetXLog</class>
    <extends>QWidget</extends>
    <header location="global">.mplwidgetxlog.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>logMatplotlibWidget</class>
+   <extends>QWidget</extends>
+   <header>.logmatplotlibwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
