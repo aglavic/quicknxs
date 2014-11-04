@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Nov  3 16:50:25 2014
+# Created: Tue Nov  4 09:24:37 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -529,7 +529,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_6.setObjectName("layoutWidget_6")
         self.verticalLayout_29 = QtGui.QVBoxLayout(self.layoutWidget_6)
         self.verticalLayout_29.setObjectName("verticalLayout_29")
-        self.data_it_plot = MPLWidgetXLog(self.layoutWidget_6)
+        self.data_it_plot = MPLWidget(self.layoutWidget_6)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -541,7 +541,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_7.setObjectName("layoutWidget_7")
         self.verticalLayout_30 = QtGui.QVBoxLayout(self.layoutWidget_7)
         self.verticalLayout_30.setObjectName("verticalLayout_30")
-        self.data_ix_plot = MPLWidgetXLog(self.layoutWidget_7)
+        self.data_ix_plot = MPLWidget(self.layoutWidget_7)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -648,7 +648,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_11.setObjectName("layoutWidget_11")
         self.horizontalLayout_43 = QtGui.QHBoxLayout(self.layoutWidget_11)
         self.horizontalLayout_43.setObjectName("horizontalLayout_43")
-        self.norm_yi_plot = logMatplotlibWidget(self.layoutWidget_11)
+        self.norm_yi_plot = MPLWidgetXLog(self.layoutWidget_11)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -779,7 +779,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_12.setObjectName("layoutWidget_12")
         self.verticalLayout_33 = QtGui.QVBoxLayout(self.layoutWidget_12)
         self.verticalLayout_33.setObjectName("verticalLayout_33")
-        self.norm_it_plot = logMatplotlibWidget(self.layoutWidget_12)
+        self.norm_it_plot = MPLWidget(self.layoutWidget_12)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -791,7 +791,7 @@ class Ui_MainWindow(object):
         self.layoutWidget_13.setObjectName("layoutWidget_13")
         self.verticalLayout_34 = QtGui.QVBoxLayout(self.layoutWidget_13)
         self.verticalLayout_34.setObjectName("verticalLayout_34")
-        self.norm_ix_plot = logMatplotlibWidget(self.layoutWidget_13)
+        self.norm_ix_plot = MPLWidget(self.layoutWidget_13)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1601,6 +1601,5 @@ class Ui_MainWindow(object):
         self.actionSaveConfiguration_2.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
 
 from .mplwidget import MPLWidget
-from .logmatplotlibwidget import logMatplotlibWidget
 from .mplwidgetxlog import MPLWidgetXLog
 import icons_rc
