@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1873</width>
-    <height>1116</height>
+    <width>1902</width>
+    <height>1220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -999,7 +999,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -3057,7 +3057,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3066,7 +3066,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3081,13 +3081,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3194,6 +3194,47 @@ p, li { white-space: pre-wrap; }
                    <string>REDUCE</string>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <item>
+                   <widget class="QRadioButton" name="RvsQ">
+                    <property name="text">
+                     <string>R vs Q</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="RQ4vsQ">
+                    <property name="text">
+                     <string>RQ^4 vs Q</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="LogRvsQ">
+                    <property name="text">
+                     <string>LogR vs Q</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -3321,6 +3362,47 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="RvsQ_2">
+             <property name="text">
+              <string>R vs Q</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="RQ4vsQ_2">
+             <property name="text">
+              <string>RQ^4 vs Q</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="LogRvsQ_2">
+             <property name="text">
+              <string>LogR vs Q</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="logbookTab">
@@ -3343,7 +3425,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1873</width>
+     <width>1902</width>
      <height>25</height>
     </rect>
    </property>
@@ -4541,6 +4623,102 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>RvsQ</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduce_plot_RvsQ_radiobutton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1641</x>
+     <y>1163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RQ4vsQ</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduce_plot_RQ4vsQ_radiobutton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1732</x>
+     <y>1163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LogRvsQ</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduce_plot_LogRvsQ_radiobutton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1834</x>
+     <y>1163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RvsQ_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduce_plot_RvsQ_2_radiobutton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1652</x>
+     <y>1176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RQ4vsQ_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduce_plot_RQ4vsQ_2_radiobutton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1743</x>
+     <y>1176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LogRvsQ_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduce_plot_LogRvsQ_2_radiobutton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1845</x>
+     <y>1176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4627,5 +4805,11 @@ p, li { white-space: pre-wrap; }
   <slot>data_stitching_is_auto()</slot>
   <slot>data_stitching_is_manual()</slot>
   <slot>data_stitching_is_1()</slot>
+  <slot>reduce_plot_RvsQ_radiobutton()</slot>
+  <slot>reduce_plot_RQ4vsQ_radiobutton()</slot>
+  <slot>reduce_plot_LogRvsQ_radiobutton()</slot>
+  <slot>reduce_plot_RvsQ_2_radiobutton()</slot>
+  <slot>reduce_plot_RQ4vsQ_2_radiobutton()</slot>
+  <slot>reduce_plot_LogRvsQ_2_radiobutton()</slot>
  </slots>
 </ui>

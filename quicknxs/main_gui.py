@@ -1215,7 +1215,7 @@ class MainGUI(QtGui.QMainWindow):
       yi_plot.canvas.ax.set_xlabel(u'counts')
       yi_plot.canvas.ax.set_ylabel(u'y (pixel)')
      
-      yi_plot.ax.set_ylim(0,ylim)      
+      yi_plot.canvas.ax.set_ylim(0,ylim)      
       y1peak = yi_plot.canvas.ax.axhline(peak1, color='#00aa00')
       y2peak = yi_plot.canvas.ax.axhline(peak2, color='#00aa00')
       if back_flag:
@@ -5100,8 +5100,59 @@ Do you want to try to restore the working reduction list?""",
     self.ui.data_stitching_plot.draw()
     
 
+  def reduce_plot_RvsQ_radiobutton(self):
+    self.reduce_plot_radiobuttons(option='RvsQ')
+    
+  def reduce_plot_RQ4vsQ_radiobutton(self):
+    self.reduce_plot_radiobuttons(option='RQ4vsQ')
+    
+  def reduce_plot_LogRvsQ_radiobutton(self):
+    self.reduce_plot_radiobuttons(option='LogRvsQ')
 
+  def reduce_plot_radiobuttons(self, option='RvsQ'):
+    status_RvsQ = False
+    status_RQ4vsQ = False
+    status_LogRvsQ = False
 
+    if option == 'RvsQ':
+      status_RvsQ = True
+    elif option == 'RQ4vsQ':
+      status_RQ4vsQ = True
+    else:
+      status_LogRvsQ = True
+
+    self.ui.RvsQ.setChecked(status_RvsQ)
+    self.ui.RQ4vsQ.setChecked(status_RQ4vsQ)
+    self.ui.LogRvsQ.setChecked(status_LogRvsQ)
+    
+    self.replot_reduced_data()
+
+  def reduce_plot_RvsQ_2_radiobutton(self):
+    self.stitching_plot_radiobuttons(option='RvsQ')
+    
+  def reduce_plot_RQ4vsQ_2_radiobutton(self):
+    self.stitching_plot_radiobuttons(option='RQ4vsQ')
+    
+  def reduce_plot_LogRvsQ_2_radiobutton(self):
+    self.stitching_plot_radiobuttons(option='LogRvsQ')
+
+  def stitching_plot_radiobuttons(self, option='RvsQ'):
+    status_RvsQ = False
+    status_RQ4vsQ = False
+    status_LogRvsQ = False
+
+    if option == 'RvsQ':
+      status_RvsQ = True
+    elif option == 'RQ4vsQ':
+      status_RQ4vsQ = True
+    else:
+      status_LogRvsQ = True
+
+    self.ui.RvsQ_2.setChecked(status_RvsQ)
+    self.ui.RQ4vsQ_2.setChecked(status_RQ4vsQ)
+    self.ui.LogRvsQ_2.setChecked(status_LogRvsQ)
+    
+    self.replot_stitched_data()
 
   def plot_reduced_data(self):
     '''
@@ -5133,10 +5184,19 @@ Do you want to try to restore the working reduction list?""",
       _y_axis = _y_axis / sf
       _e_axis = _e_axis / sf
       
-      reflectivity_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
+      [y_axis_red, e_axis_red] = self.plot_selected_output_reduced(_q_axis,
+                                                                   _y_axis, 
+                                                                   _e_axis)
+      
+      reflectivity_plot.errorbar(_q_axis, y_axis_red, yerr=e_axis_red, color=_colors[i])
       reflectivity_plot.draw()
       
-      data_stitching_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
+      [y_axis_stit, e_axis_stit] = self.plot_selected_output_stitched(_q_axis,
+                                                                      _y_axis, 
+                                                                      _e_axis)
+      
+      data_stitching_plot.errorbar(_q_axis, y_axis_stit, yerr=e_axis_stit, 
+                                   color=_colors[i])
       data_stitching_plot.draw()
 
       ## DEBUGGING
@@ -5147,7 +5207,12 @@ Do you want to try to restore the working reduction list?""",
                                   #_e_axis)
 
     reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
-    reflectivity_plot.set_ylabel(u'R')
+    if type == 'RvsQ':
+      reflectivity_plot.set_ylabel(u'R')
+    elif type == 'RQ4vsQ':
+      reflectivity_plot.set_ylabel(u'RQ4')
+    else:
+      reflectivity_plot.set_ylabel(u'Log(Q))')
     reflectivity_plot.draw()
                                
     data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
@@ -5157,6 +5222,147 @@ Do you want to try to restore the working reduction list?""",
     # refresh reductionTable content (lambda range, Q range...etc)
     self.update_reductionTable()
     self.update_stitchingTable()
+
+  def replot_reduced_data(self):
+    '''
+    plot the data after reduction
+    '''
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    
+    reflectivity_plot = self.ui.reflectivity_plot
+    
+    _colors = colors.COLOR_LIST
+    _colors.append(_colors)
+    
+    # start by clearing plot
+    reflectivity_plot.clear()
+    reflectivity_plot.draw()
+    
+    for i in range(nbr_row):
+      _data = bigTableData[i,0]
+      _q_axis = _data.q_axis_for_display
+      _y_axis = _data.y_axis_for_display
+      _e_axis = _data.e_axis_for_display
+      sf = _data.sf
+      
+      _y_axis = _y_axis / sf
+      _e_axis = _e_axis / sf
+      
+      [y_axis_red, e_axis_red] = self.plot_selected_output_reduced(_q_axis,
+                                                                   _y_axis, 
+                                                                   _e_axis)
+            
+      reflectivity_plot.errorbar(_q_axis, y_axis_red, yerr=e_axis_red, color=_colors[i])
+      reflectivity_plot.draw()
+      
+    reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
+    type = self.get_selected_output_reduced()    
+    if type == 'RvsQ':
+      reflectivity_plot.set_ylabel(u'R')
+    elif type == 'RQ4vsQ':
+      reflectivity_plot.set_ylabel(u'RQ4')
+    else:
+      reflectivity_plot.set_ylabel(u'Log(Q))')
+    reflectivity_plot.draw()
+                               
+
+  def replot_stitched_data(self):
+    '''
+    plot the data after stitching
+    '''
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    
+    data_stitching_plot = self.ui.data_stitching_plot
+    
+    _colors = colors.COLOR_LIST
+    _colors.append(_colors)
+    
+    # start by clearing plot
+    data_stitching_plot.clear()
+    data_stitching_plot.draw()
+    
+    for i in range(nbr_row):
+      _data = bigTableData[i,0]
+      _q_axis = _data.q_axis_for_display
+      _y_axis = _data.y_axis_for_display
+      _e_axis = _data.e_axis_for_display
+      sf = _data.sf
+      
+      _y_axis = _y_axis / sf
+      _e_axis = _e_axis / sf
+      
+      [y_axis_stit, e_axis_stit] = self.plot_selected_output_stitched(_q_axis,
+                                                                      _y_axis, 
+                                                                      _e_axis)
+      
+      data_stitching_plot.errorbar(_q_axis, y_axis_stit, yerr=e_axis_stit, color=_colors[i])
+      data_stitching_plot.draw()
+      
+    data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
+    type = self.get_selected_output_stitched()
+    if type == 'RvsQ':
+      data_stitching_plot.set_ylabel(u'R')
+    elif type == 'RQ4vsQ':
+      data_stitching_plot.set_ylabel(u'RQ4')
+    else:
+      data_stitching_plot.set_ylabel(u'Log(Q))')
+      
+    data_stitching_plot.draw()
+
+
+  def get_selected_output_reduced(self):
+    type = 'RvsQ'
+    if self.ui.RQ4vsQ.isChecked():
+      type = 'RQ4vsQ'
+    elif self.ui.LogRvsQ.isChecked():
+      type = 'LogRvsQ'
+    return type
+    
+  def plot_selected_output_reduced(self, _q_axis, _y_axis, _e_axis):
+    '''
+    will format the data to agree with the format (RvsQ, RQ^4 vs Q or LogR vs Q) selected
+    '''
+    type = self.get_selected_output_reduced()
+    [final_y_axis, final_e_axis] = self.get_selected_output(type, _q_axis, _y_axis, _e_axis)
+    return [final_y_axis, final_e_axis]
+
+  def get_selected_output_stitched(self):
+    type = 'RvsQ'
+    if self.ui.RQ4vsQ_2.isChecked():
+      type = 'RQ4vsQ'
+    elif self.ui.LogRvsQ_2.isChecked():
+      type = 'LogRvsQ'
+    return type    
+    
+  def plot_selected_output_stitched(self, _q_axis, _y_axis, _e_axis):
+    '''
+    will format the data to agree with the format (RvsQ, RQ^4 vs Q or LogR vs Q) selected
+    '''
+    type = self.get_selected_output_stitched()
+    [final_y_axis, final_e_axis] = self.get_selected_output(type, _q_axis, _y_axis, _e_axis)
+    return [final_y_axis, final_e_axis]
+
+
+  def get_selected_output(self, type, _q_axis, _y_axis, _e_axis):
+
+    # R vs Q selected
+    if type == 'RvsQ':
+      return [_y_axis, _e_axis]
+    
+    # RQ4 vs Q selected
+    if type == 'RQ4vsQ':
+      _q_axis_4 = _q_axis ** 4
+      _final_y_axis = _y_axis * _q_axis_4
+      _final_e_axis = _e_axis * _q_axis_4
+      return [_final_y_axis, _final_e_axis]
+
+    # Log(R) vs Q
+    _final_y_axis = np.log(_y_axis)
+    _final_e_axis = np.log(_e_axis)
+    return [_final_y_axis, _final_e_axis]
+
 
   def output_data_into_ascii(self):
     '''
