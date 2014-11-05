@@ -5381,7 +5381,7 @@ Do you want to try to restore the working reduction list?""",
     return [_final_y_axis, _final_e_axis]
 
 
-  def output_selected_data_into_rtof_ascii(self):
+  def output_selected_data_into_crtof_ascii(self):
     '''
     The RTOF of the selected data set (data or norm) will be output into an ASCII file
     '''
@@ -5396,10 +5396,53 @@ Do you want to try to restore the working reduction list?""",
     else:
       table_col = 0
     run_number = self.ui.reductionTable.item(row,table_col).text()
-    default_filename = 'REFL_' + run_number + '_rtof.txt'
+    default_filename = 'REFL_' + run_number + '_crtof.txt'
     _path = self.path_ascii
     default_filename = _path + '/' + default_filename
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Create RTOF ASCII file', default_filename)
+
+    # user cancelled request
+    if str(filename).strip() == '':
+      info('User Canceled Output Ascii!')
+      return
+    
+    self.path_ascii = os.path.dirname(filename)
+
+    bigTableData = self.bigTableData
+    _data = bigTableData[row,col]
+    _active_data = _data.active_data
+
+    tof_axis = _active_data.tof_axis_auto_with_margin[0:-1]/1000
+    countstofdata = _active_data.countstofdata
+    
+    text = ["Counts vs TOF", "TOF(ms) - Counts"]
+    sz = len(tof_axis)
+    for i in range(sz):
+      _line = str(tof_axis[i]) + ' ' + str(countstofdata[i])
+      text.append(_line)
+
+    self.write_ascii_file(filename, text)
+
+
+  def output_selected_data_into_ivspx_ascii(self):
+    '''
+    ascii of Counts vs Pixels 
+    '''
+    bigTableData = self.bigTableData
+    if bigTableData[0,0] is None and bigTableData[0,1] is None:
+      info('No Data!')
+      return
+
+    [row,col] = self.getCurrentRowColumnSelected()
+    if col == 1:
+      table_col = 6
+    else:
+      table_col = 0
+    run_number = self.ui.reductionTable.item(row,table_col).text()
+    default_filename = 'REFL_' + run_number + '_rpx.txt'
+    _path = self.path_ascii
+    default_filename = _path + '/' + default_filename
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel ASCII file', default_filename)
 
     # user cancelled request
     if str(filename).strip() == '':
@@ -5415,7 +5458,7 @@ Do you want to try to restore the working reduction list?""",
     ycountsdata = _active_data.ycountsdata
     xaxis = range(len(ycountsdata))
     
-    text = ["Pixels vs Counts integrated over TOF range", "Pixels - Counts"]
+    text = ["Counts vs pixel integrated over TOF range and x-axis", "Pixels - Counts"]
     sz = len(xaxis)
     for i in range(sz):
       _line = str(i) + ' ' + str(ycountsdata[i])

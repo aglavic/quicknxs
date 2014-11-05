@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Nov  5 09:47:43 2014
+# Created: Wed Nov  5 13:29:18 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -318,14 +318,17 @@ class Ui_MainWindow(object):
         self.usingMeanValueFalg = QtGui.QRadioButton(self.groupBox_3)
         self.usingMeanValueFalg.setGeometry(QtCore.QRect(25, 51, 199, 22))
         self.usingMeanValueFalg.setObjectName("usingMeanValueFalg")
-        self.createRTOFascii = QtGui.QPushButton(self.page_5)
-        self.createRTOFascii.setGeometry(QtCore.QRect(12, 231, 231, 27))
-        self.createRTOFascii.setObjectName("createRTOFascii")
+        self.createIvsPxAscii = QtGui.QPushButton(self.page_5)
+        self.createIvsPxAscii.setGeometry(QtCore.QRect(13, 206, 172, 27))
+        self.createIvsPxAscii.setObjectName("createIvsPxAscii")
         self.line_6 = QtGui.QFrame(self.page_5)
-        self.line_6.setGeometry(QtCore.QRect(20, 203, 225, 16))
+        self.line_6.setGeometry(QtCore.QRect(22, 188, 225, 16))
         self.line_6.setFrameShape(QtGui.QFrame.HLine)
         self.line_6.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_6.setObjectName("line_6")
+        self.createRvsTOFAscii = QtGui.QPushButton(self.page_5)
+        self.createRvsTOFAscii.setGeometry(QtCore.QRect(13, 238, 171, 27))
+        self.createRvsTOFAscii.setObjectName("createRvsTOFAscii")
         self.toolBox.addItem(self.page_5, "")
         self.verticalLayout_5.addWidget(self.toolBox)
         self.line = QtGui.QFrame(self.leftEntries)
@@ -1434,7 +1437,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.RvsQ_2, QtCore.SIGNAL("clicked()"), MainWindow.reduce_plot_RvsQ_2_radiobutton)
         QtCore.QObject.connect(self.RQ4vsQ_2, QtCore.SIGNAL("clicked()"), MainWindow.reduce_plot_RQ4vsQ_2_radiobutton)
         QtCore.QObject.connect(self.LogRvsQ_2, QtCore.SIGNAL("clicked()"), MainWindow.reduce_plot_LogRvsQ_2_radiobutton)
-        QtCore.QObject.connect(self.createRTOFascii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_rtof_ascii)
+        QtCore.QObject.connect(self.createIvsPxAscii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_ivspx_ascii)
+        QtCore.QObject.connect(self.createRvsTOFAscii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_crtof_ascii)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.file_list)
@@ -1516,7 +1520,8 @@ class Ui_MainWindow(object):
         self.groupBox_3.setTitle(QtGui.QApplication.translate("MainWindow", "How to treat overlap values", None, QtGui.QApplication.UnicodeUTF8))
         self.usingLessErrorValueFlag.setText(QtGui.QApplication.translate("MainWindow", "use lowest error value", None, QtGui.QApplication.UnicodeUTF8))
         self.usingMeanValueFalg.setText(QtGui.QApplication.translate("MainWindow", "use mean value", None, QtGui.QApplication.UnicodeUTF8))
-        self.createRTOFascii.setText(QtGui.QApplication.translate("MainWindow", "Create RTOF ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.createIvsPxAscii.setText(QtGui.QApplication.translate("MainWindow", "Create IvsPx ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.createRvsTOFAscii.setText(QtGui.QApplication.translate("MainWindow", "Create CRTOF ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_5), QtGui.QApplication.translate("MainWindow", "Output ASCII", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Plot Options", None, QtGui.QApplication.UnicodeUTF8))
         self.show_colorbars.setToolTip(QtGui.QApplication.translate("MainWindow", "Show a colorbar for the map plots", None, QtGui.QApplication.UnicodeUTF8))
