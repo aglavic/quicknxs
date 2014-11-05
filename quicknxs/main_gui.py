@@ -1151,9 +1151,9 @@ class MainGUI(QtGui.QMainWindow):
       
       yt_plot = self.ui.norm_yt_plot
 #      yi_plot = self.ui.norm_yi_plot
-      yi_plot = self.ui.norm_yi_plot.canvas
-      it_plot = self.ui.norm_it_plot.canvas
-      ix_plot = self.ui.norm_ix_plot.canvas
+      yi_plot = self.ui.norm_yi_plot
+      it_plot = self.ui.norm_it_plot
+      ix_plot = self.ui.norm_ix_plot
 
     if data.new_detector_geometry_flag:
       ylim = 303
@@ -5049,6 +5049,20 @@ Do you want to try to restore the working reduction list?""",
     self.ui.selectIncidentMediumList.setEnabled(bool)
     self.ui.sfBrowseButton.setEnabled(bool)
 
+  def calculate_autoSF(self):
+    '''
+    Determine the auto SF coefficient to stitch the data
+    '''
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    
+    for i in range(nbr_row):
+      _data = bigTableData[i,0]
+      sf = _data.sf_auto
+      
+    
+    
+
   @log_call
   def runReduction(self):
     '''
@@ -5061,6 +5075,9 @@ Do you want to try to restore the working reduction list?""",
       return
     
     _reduction = REFLReduction(self)
+    
+    # calculate auto SF coefficient
+    self.calculate_autoSF()
     
     # display data reduced
     self.plot_reduced_data()
@@ -5364,6 +5381,58 @@ Do you want to try to restore the working reduction list?""",
     return [_final_y_axis, _final_e_axis]
 
 
+  def output_selected_data_into_rtof_ascii(self):
+    '''
+    The RTOF of the selected data set (data or norm) will be output into an ASCII file
+    '''
+    bigTableData = self.bigTableData
+    if bigTableData[0,0] is None and bigTableData[0,1] is None:
+      info('No Data!')
+      return
+
+    [row,col] = self.getCurrentRowColumnSelected()
+    if col == 1:
+      table_col = 6
+    else:
+      table_col = 0
+    run_number = self.ui.reductionTable.item(row,table_col).text()
+    default_filename = 'REFL_' + run_number + '_rtof.txt'
+    _path = self.path_ascii
+    default_filename = _path + '/' + default_filename
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create RTOF ASCII file', default_filename)
+
+    # user cancelled request
+    if str(filename).strip() == '':
+      info('User Canceled Output Ascii!')
+      return
+    
+    self.path_ascii = os.path.dirname(filename)
+
+    bigTableData = self.bigTableData
+    _data = bigTableData[row,col]
+    _active_data = _data.active_data
+    
+    ycountsdata = _active_data.ycountsdata
+    xaxis = range(len(ycountsdata))
+    
+    text = ["Pixels vs Counts integrated over TOF range", "Pixels - Counts"]
+    sz = len(xaxis)
+    for i in range(sz):
+      _line = str(i) + ' ' + str(ycountsdata[i])
+      text.append(_line)
+
+    self.write_ascii_file(filename, text)
+
+  def write_ascii_file(self, filename, text):
+    '''
+    produce the output ascii file
+    '''    
+    f = open(filename, 'w')
+    for _line in text:
+      f.write(_line + '\n')
+    f.close()
+
+
   def output_data_into_ascii(self):
     '''
     will use ascii format to output the data
@@ -5421,11 +5490,8 @@ Do you want to try to restore the working reduction list?""",
           _line += ' ' + _precision
         text.append(_line)
     
-    f = open(filename, 'w')
-    for _line in text:
-      f.write(_line + '\n')
-      
-    f.close()  
+    self.write_ascii_file(filename, text)
+
 
   def applySF(self, row, y_array, e_array):
     """

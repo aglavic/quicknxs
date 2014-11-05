@@ -40,6 +40,12 @@
        <bool>false</bool>
       </property>
       <widget class="QFrame" name="leftEntries">
+       <property name="minimumSize">
+        <size>
+         <width>250</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -245,7 +251,7 @@ p, li { white-space: pre-wrap; }
          <widget class="QToolBox" name="toolBox">
           <property name="minimumSize">
            <size>
-            <width>258</width>
+            <width>220</width>
             <height>400</height>
            </size>
           </property>
@@ -256,7 +262,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="page_3">
            <property name="geometry">
@@ -840,12 +846,12 @@ p, li { white-space: pre-wrap; }
              <rect>
               <x>16</x>
               <y>74</y>
-              <width>236</width>
+              <width>232</width>
               <height>27</height>
              </rect>
             </property>
             <property name="text">
-             <string>Create ASCII ...</string>
+             <string>Create Reduce ASCII ...</string>
             </property>
            </widget>
            <widget class="QGroupBox" name="groupBox_3">
@@ -889,6 +895,32 @@ p, li { white-space: pre-wrap; }
               <string>use mean value</string>
              </property>
             </widget>
+           </widget>
+           <widget class="QPushButton" name="createRTOFascii">
+            <property name="geometry">
+             <rect>
+              <x>12</x>
+              <y>231</y>
+              <width>231</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Create RTOF ASCII ...</string>
+            </property>
+           </widget>
+           <widget class="Line" name="line_6">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>203</y>
+              <width>225</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
            </widget>
           </widget>
          </widget>
@@ -999,7 +1031,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -3057,7 +3089,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3066,7 +3098,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3081,13 +3113,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -4719,6 +4751,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>createRTOFascii</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>output_selected_data_into_rtof_ascii()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>1095</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4811,5 +4859,6 @@ p, li { white-space: pre-wrap; }
   <slot>reduce_plot_RvsQ_2_radiobutton()</slot>
   <slot>reduce_plot_RQ4vsQ_2_radiobutton()</slot>
   <slot>reduce_plot_LogRvsQ_2_radiobutton()</slot>
+  <slot>output_selected_data_into_rtof_ascii()</slot>
  </slots>
 </ui>
