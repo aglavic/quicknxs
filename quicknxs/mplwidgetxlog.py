@@ -254,31 +254,24 @@ class NavigationToolbar(NavigationToolbar2QT):
                   QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
   def toggle_log(self, *args):
-
-    self.canvas.ax.xaxis_style = 'log'
-#    self.canvas.ax.set_xscale('log')
-    self.canvas.draw()
-    return
-
     ax=self.canvas.ax
     if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
-      logstate=ax.get_xscale()
+      logstate=ax.get_yscale()
       if logstate=='linear':
-#        self.canvas.xaxis_style = 'log'
         ax.set_xscale('log')
       else:
-#        self.canvas.xaxis_style = 'linear'
         ax.set_xscale('linear')
+        self.canvas.draw()
     else:
       imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
       norm=imgs[0].norm
       if norm.__class__ is LogNorm:
         for img in imgs:
           img.set_norm(Normalize(norm.vmin, norm.vmax))
-      else:
-        for img in imgs:
-          img.set_norm(LogNorm(norm.vmin, norm.vmax))
-    self.canvas.draw()
+        else:
+          for img in imgs:
+            img.set_norm(LogNorm(norm.vmin, norm.vmax))
+    elf.canvas.draw()
 
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
