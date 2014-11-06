@@ -1068,7 +1068,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -1399,13 +1399,6 @@ p, li { white-space: pre-wrap; }
                              </widget>
                             </item>
                            </layout>
-                          </item>
-                          <item>
-                           <widget class="QRadioButton" name="radioButtonDataLog">
-                            <property name="text">
-                             <string>log</string>
-                            </property>
-                           </widget>
                           </item>
                           <item>
                            <spacer name="verticalSpacer_6">
