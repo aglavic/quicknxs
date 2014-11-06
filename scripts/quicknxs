@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 '''
-  Small program for quick access to SNS magnetism reflectometer raw data.
+  Small program for quick access to SNS liquids reflectometer raw data.
 '''
 
 import os
@@ -11,6 +11,10 @@ import sys
 try:
   if os.path.abspath(__file__).endswith('scripts/quicknxs'):
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
+    sys.path.append(os.path.dirname("/opt/Mantid/bin"))
+    sys.path.append(os.path.dirname("/opt/Mantid/plugins"))
+    
 except NameError:
   pass
 
@@ -36,6 +40,8 @@ def _run(argv=[]):
   # set instrument configuration
   from quicknxs import config
   config.instrument=config.proxy.add_alias('ref_l', 'instrument')
+
+  
 
   from quicknxs.main_gui import MainGUI
   window=MainGUI(argv)
