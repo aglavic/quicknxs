@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Nov  5 13:29:18 2014
+# Created: Thu Nov  6 15:13:43 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -528,9 +528,6 @@ class Ui_MainWindow(object):
         self.dataBackgroundFlag.setObjectName("dataBackgroundFlag")
         self.verticalLayout_28.addWidget(self.dataBackgroundFlag)
         self.verticalLayout_26.addLayout(self.verticalLayout_28)
-        self.radioButtonDataLog = QtGui.QRadioButton(self.frame_11)
-        self.radioButtonDataLog.setObjectName("radioButtonDataLog")
-        self.verticalLayout_26.addWidget(self.radioButtonDataLog)
         spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_26.addItem(spacerItem5)
         self.horizontalLayout_31.addWidget(self.frame_11)
@@ -1369,7 +1366,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(3)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
@@ -1541,7 +1538,6 @@ class Ui_MainWindow(object):
         self.dataPeakToLabel.setText(QtGui.QApplication.translate("MainWindow", "Peak2", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackToLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackgroundFlag.setText(QtGui.QApplication.translate("MainWindow", "with background", None, QtGui.QApplication.UnicodeUTF8))
-        self.radioButtonDataLog.setText(QtGui.QApplication.translate("MainWindow", "log", None, QtGui.QApplication.UnicodeUTF8))
         self.dataLowResFlag.setText(QtGui.QApplication.translate("MainWindow", "Low Resolution", None, QtGui.QApplication.UnicodeUTF8))
         self.dataLowResFromLabel.setText(QtGui.QApplication.translate("MainWindow", "From Pixel", None, QtGui.QApplication.UnicodeUTF8))
         self.dataLowResToLabel.setText(QtGui.QApplication.translate("MainWindow", "To Pixel", None, QtGui.QApplication.UnicodeUTF8))

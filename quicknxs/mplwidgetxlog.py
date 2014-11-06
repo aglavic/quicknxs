@@ -34,11 +34,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     A small change to the original navigation toolbar.
   '''
   _auto_toggle=False
-  logtog = QtCore.pyqtSignal(bool)
 
-  
-  
-  
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
     self.setIconSize(QtCore.QSize(20, 20))
@@ -92,11 +88,8 @@ class NavigationToolbar(NavigationToolbar2QT):
     icon=QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-xlog.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.addSeparator()
-#    a=self.addAction(icon, 'Log', self.toggle_log)
+    a=self.addAction(icon, 'Log', self.toggle_log)
     a.setToolTip('Toggle logarithmic scale')
-    ac=self.addAction(icon, "Toggle Log")
-    ac.setCheckable(True)
-    ac.toggled.connect(self.logtoogle)
     
     self.buttons={}
 
@@ -117,9 +110,6 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     # reference holder for subplots_adjust window
     self.adj_window=None
-
-  def logtoogle(self, checked):
-    self.logtog.emit(checked)
 
   if matplotlib.__version__<'1.2':
     def pan(self, *args):
@@ -254,6 +244,8 @@ class NavigationToolbar(NavigationToolbar2QT):
                   QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
   def toggle_log(self, *args):
+    print 'here'
+
     ax=self.canvas.ax
     if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
       logstate=ax.get_yscale()
@@ -271,7 +263,7 @@ class NavigationToolbar(NavigationToolbar2QT):
         else:
           for img in imgs:
             img.set_norm(LogNorm(norm.vmin, norm.vmax))
-    elf.canvas.draw()
+    self.canvas.draw()
 
 class MplCanvas(FigureCanvas):
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
