@@ -180,16 +180,6 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="file_list">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_13">
           <property name="leftMargin">
            <number>4</number>
@@ -269,8 +259,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>369</width>
-             <height>276</height>
+             <width>241</width>
+             <height>216</height>
             </rect>
            </property>
            <attribute name="label">
@@ -532,8 +522,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>369</width>
-             <height>276</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -625,8 +615,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>369</width>
-             <height>276</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -752,8 +742,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>369</width>
-             <height>276</height>
+             <width>256</width>
+             <height>920</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3464,7 +3454,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1902</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -3671,7 +3661,6 @@ p, li { white-space: pre-wrap; }
  <tabstops>
   <tabstop>numberSearchEntry</tabstop>
   <tabstop>eventTofBins</tabstop>
-  <tabstop>file_list</tabstop>
   <tabstop>pfSNR</tabstop>
   <tabstop>pfMinWidth</tabstop>
   <tabstop>pfMaxWidth</tabstop>
@@ -3842,22 +3831,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>134</x>
      <y>833</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>file_list</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>fileOpenList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>456</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>418</y>
     </hint>
    </hints>
   </connection>
