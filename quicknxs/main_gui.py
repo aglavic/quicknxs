@@ -264,6 +264,7 @@ class MainGUI(QtGui.QMainWindow):
 
     if instrument.NAME=="REF_L":
       self.folderModified()
+      self.defineRightDefaultPath()
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -287,6 +288,12 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.numberSearchEntry.setFocus()
 
+  def defineRightDefaultPath(self):
+    
+    import socket
+    if socket.gethostname() == 'lrac.sns.gov':
+      self.path_config = '/SNS/REF_L/'
+      self.path_ascii = '/SNS/REF_L'
 
   def logtoggle(self, checked):
     self.isLog = checked
@@ -5086,9 +5093,7 @@ Do you want to try to restore the working reduction list?""",
       warning(u'Define at least one data run to reduce.',
               extra={'title': u'Define a dataset'})
       return
-    
-    
-    
+
     _reduction = REFLReduction(self)
     
     # calculate auto SF coefficient
