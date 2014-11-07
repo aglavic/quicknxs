@@ -11,10 +11,7 @@ import sys
 try:
   if os.path.abspath(__file__).endswith('scripts/quicknxs'):
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    
-    sys.path.append(os.path.dirname("/opt/Mantid/bin"))
-    sys.path.append(os.path.dirname("/opt/Mantid/plugins"))
-    
+
 except NameError:
   pass
 

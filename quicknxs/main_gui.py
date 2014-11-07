@@ -568,6 +568,20 @@ class MainGUI(QtGui.QMainWindow):
       #self.initiateProjectionPlot.emit(False)
       #self.initiateReflectivityPlot.emit(False)    
 
+  def allTabWidgetsEnabler(self, enableFlag = False):
+    self.ui.tab.setEnabled(enableFlag)
+    self.ui.tab_2.setEnabled(enableFlag)
+
+  def clearMetadataWidgets(self):
+    self.ui.metadataProtonChargeValue.setText('N/A')
+    self.ui.metadataLambdaRequestedValue.setText('N/A')
+    self.ui.metadataS1HValue.setText('N/A')
+    self.ui.metadataS1WValue.setText('N/A')
+    self.ui.metadataS2HValue.setText('N/A')
+    self.ui.metadataS2WValue.setText('N/A')
+    self.ui.metadatathiValue.setText('N/A')
+    self.ui.metadatatthdValue.setText('N/A')
+
   def enableWidgets(self, status=False, checkStatus=False):
     '''
     Will enable or not the widgets of the curren tab. 
@@ -750,8 +764,9 @@ class MainGUI(QtGui.QMainWindow):
 
     nbrRow = self.ui.reductionTable.rowCount()
     if nbrRow == 0:
-      # clear plot
       self.clear_plot_overview_REFL(True)
+      self.allTabWidgetsEnabler(enableFlag=False)
+      self.clearMetadataWidgets()
       return
     if nbrRow == 1:
       self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,
@@ -1828,8 +1843,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.TOFmanualToLabel.setEnabled(not bool)
       self.ui.TOFmanualToValue.setEnabled(not bool)
       self.ui.TOFmanualToUnitsValue.setEnabled(not bool)
-      self.ui.TOFmanualMsValue.setEnabled(not bool)
-      self.ui.TOFmanualMicrosValue.setEnabled(not bool)
+#      self.ui.TOFmanualMsValue.setEnabled(not bool)
+#      self.ui.TOFmanualMicrosValue.setEnabled(not bool)
       self._auto_tof_flag = True
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
  
@@ -1842,9 +1857,9 @@ class MainGUI(QtGui.QMainWindow):
     # retrieve tof parameters defined by user
     _valueFrom = float(self.ui.TOFmanualFromValue.text())
     _valueTo = float(self.ui.TOFmanualToValue.text())
-    if self.ui.TOFmanualMsValue.isChecked(): # ms units
-      _valueFrom *= 1000
-      _valueTo *= 1000 
+#    if self.ui.TOFmanualMsValue.isChecked(): # ms units
+    _valueFrom *= 1000
+    _valueTo *= 1000 
 
     _active_data.tof_range = [_valueFrom, _valueTo]
     _data.active_data = _active_data
@@ -1863,8 +1878,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.TOFmanualToLabel.setEnabled(bool)
       self.ui.TOFmanualToValue.setEnabled(bool)
       self.ui.TOFmanualToUnitsValue.setEnabled(bool)
-      self.ui.TOFmanualMsValue.setEnabled(bool)
-      self.ui.TOFmanualMicrosValue.setEnabled(bool)
+#      self.ui.TOFmanualMsValue.setEnabled(bool)
+#      self.ui.TOFmanualMicrosValue.setEnabled(bool)
       self._auto_tof_flag = False
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
  
@@ -5059,11 +5074,9 @@ Do you want to try to restore the working reduction list?""",
     for i in range(nbr_row):
       _data = bigTableData[i,0]
       sf = _data.sf_auto
-      
-    
-    
 
   @log_call
+  @waiting_effects
   def runReduction(self):
     '''
     Run the full reduction
@@ -5073,6 +5086,8 @@ Do you want to try to restore the working reduction list?""",
       warning(u'Define at least one data run to reduce.',
               extra={'title': u'Define a dataset'})
       return
+    
+    
     
     _reduction = REFLReduction(self)
     
@@ -5842,6 +5857,9 @@ Do you want to try to restore the working reduction list?""",
     Open a HTML page with the program documentation and place it on the right
     side of the current screen.
     '''
+    if instrument.NAME == "REF_L":
+      return
+    
     dia=QtGui.QDialog(self)
     dia.setWindowTitle(u'QuickNXS Manual')
     verticalLayout=QtGui.QVBoxLayout(dia)
@@ -5871,20 +5889,34 @@ Do you want to try to restore the working reduction list?""",
     except ImportError:
       pyqtversion='Unknown'
 
-
-
-
-    QtGui.QMessageBox.about(self, 'About QuickNXS',
-'''
-QuickNXS - SNS Magnetism Reflectometer data reduction program
-  Version %s on Python %s
-
-Library Versions:
-  Numpy %s
-  Matplotlib %s
-  Qt %s
-  PyQt4 %s
-  H5py %s
-  HDF5 %s
-'''%(str_version, sys.version, npversion, mplversion,
-     QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
+    if instrument.NAME == 'REF_M':
+      QtGui.QMessageBox.about(self, 'About QuickNXS',
+  '''
+  QuickNXS - SNS Magnetism Reflectometer data reduction program
+    Version %s on Python %s
+  
+  Library Versions:
+    Numpy %s
+    Matplotlib %s
+    Qt %s
+    PyQt4 %s
+    H5py %s
+    HDF5 %s
+  '''%(str_version, sys.version, npversion, mplversion,
+       QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
+    else:
+      QtGui.QMessageBox.about(self, 'About QuickNXS',
+  '''
+  QuickNXS - SNS Liquids Reflectometer data reduction program
+    Version %s on Python %s
+  
+  Library Versions:
+    Numpy %s
+    Matplotlib %s
+    Qt %s
+    PyQt4 %s
+    H5py %s
+    HDF5 %s
+  '''%(str_version, sys.version, npversion, mplversion,
+       QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
+      
