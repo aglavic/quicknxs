@@ -5,8 +5,8 @@
 
 config_file=''
 
-ADMIN=u'Artur Glavic'
-ADMIN_EMAIL=u'agf@ornl.gov'
+ADMIN=u'Jean Bilheux'
+ADMIN_EMAIL=u'j35@ornl.gov'
 SMTP_SERVER='160.91.4.26'
 
 debug_mode=False
