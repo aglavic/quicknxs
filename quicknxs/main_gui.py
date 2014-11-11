@@ -2828,13 +2828,6 @@ class MainGUI(QtGui.QMainWindow):
 #    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
 #      return
 
-    #print '---'
-    #print self._prev_row_selected
-    #print row
-    #print self._prev_col_selected
-    #print column
-    #print
-    
     # same row and same column selected
     if (self._prev_row_selected == row) and (self._prev_col_selected == column):
       return
@@ -2896,6 +2889,11 @@ class MainGUI(QtGui.QMainWindow):
             
             _configDataset = self.bigTableData[row,2]
             
+            if col == 1:
+              isData = False
+            else:
+              isData = True
+            
             event_split_bins = None
             event_split_index = 0
             bin_type = 0
@@ -2905,7 +2903,8 @@ class MainGUI(QtGui.QMainWindow):
                            callback = self.updateEventReadout,
                            event_split_bins = event_split_bins,
                            event_split_index = event_split_index,
-                           metadata_config_object = _configDataset)
+                           metadata_config_object = _configDataset,
+                           isData = isData)
             
             r=row
             c=col
@@ -4242,31 +4241,30 @@ Do you want to try to restore the working reduction list?""",
       self.loadFullConfigAndPopulateGui(filename)
       self.enableWidgets(checkStatus=True)
 
-
   @log_call
+  @waiting_effects
   def loading_configuration(self):
     '''
     Reached by the Load Configuration button
     will populate the GUI with the data retrieved from the configuration file
     '''
-#    try:
-
-    _path = self.path_config
-    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
-    if not(filename == ""):
-      
-      self.path_config = os.path.dirname(filename)
-      
-      # make sure the reductionTable is empty
-      nbrRow = self.ui.reductionTable.rowCount()
-      if nbrRow > 0:
-        for _row in range(nbrRow):
-          self.ui.reductionTable.removeRow(0)
-      
-      self.loadConfigAndPopulateGui(filename)
-      self.enableWidgets(checkStatus=True)
-#    except:
-#      warning('Could not open configuration file!')
+    try:
+      _path = self.path_config
+      filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
+      if not(filename == ""):
+        
+        self.path_config = os.path.dirname(filename)
+        
+        # make sure the reductionTable is empty
+        nbrRow = self.ui.reductionTable.rowCount()
+        if nbrRow > 0:
+          for _row in range(nbrRow):
+            self.ui.reductionTable.removeRow(0)
+        
+        self.loadConfigAndPopulateGui(filename)
+        self.enableWidgets(checkStatus=True)
+    except:
+      warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):
@@ -4740,16 +4738,20 @@ Do you want to try to restore the working reduction list?""",
         
         ## load normalization file
         _configDataset = self.bigTableData[j,2]
-        data = NXSData(_first_file_name, 
-                       bin_type = bin_type,
-                       bins = self.ui.eventTofBins.value(),
-                       callback = self.updateEventReadout,
-                       event_split_bins = event_split_bins,
-                       event_split_index = event_split_index,
-                       metadata_config_object = _configDataset,
-                       angle_offset = self.ui.angleOffsetValue.text(),
-                       isData = False)
-      
+        try:
+          data = NXSData(_first_file_name, 
+                         bin_type = bin_type,
+                         bins = self.ui.eventTofBins.value(),
+                         callback = self.updateEventReadout,
+                         event_split_bins = event_split_bins,
+                         event_split_index = event_split_index,
+                         metadata_config_object = _configDataset,
+                         angle_offset = self.ui.angleOffsetValue.text(),
+                         isData = False)
+        except:
+          warning('Could not open file:', exc_info=True)
+          return
+          
         self.bigTableData[j,1] = data
 
 
@@ -5198,10 +5200,22 @@ Do you want to try to restore the working reduction list?""",
     
     self.replot_stitched_data()
 
+  def clearStitchingTable(self):
+    
+    self.ui.dataStitchingTable.clearContents()
+    nbrRow = self.ui.dataStitchingTable.rowCount()
+    if nbrRow > 0:
+        for _row in range(nbrRow):
+          self.ui.dataStitchingTable.removeRow(0)
+    
+
   def plot_reduced_data(self):
     '''
     plot the data after reduction
     '''
+    
+    self.clearStitchingTable()
+    
     bigTableData = self.bigTableData
     nbr_row = self.ui.reductionTable.rowCount()
     
@@ -5404,7 +5418,8 @@ Do you want to try to restore the working reduction list?""",
 
     # Log(R) vs Q
     _final_y_axis = np.log(_y_axis)
-    _final_e_axis = np.log(_e_axis)
+#    _final_e_axis = np.log(_e_axis)
+    _final_e_axis = _e_axis  ## FIXME
     return [_final_y_axis, _final_e_axis]
 
 
