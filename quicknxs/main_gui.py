@@ -451,6 +451,7 @@ class MainGUI(QtGui.QMainWindow):
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
     else:
+      pass
       self.updateFileList(base, folder)
     self.active_file=base
     
@@ -2202,13 +2203,13 @@ class MainGUI(QtGui.QMainWindow):
       
       # only 1 run number to load
       if len(listNumber) == 1:
-#        try:
+        #try:
         fullFileName = FileFinder.findRuns("REF_L_%d"%int(listNumber[0]))[0]
         self.fileOpen(fullFileName, do_plot=do_plot, do_add=do_add)
         self.ui.numberSearchEntry.setText('')
-#        except:
-#          info('Could not locate runs %s ...'%listNumber[0])
-#          return False
+        #except:
+        #  info('Could not locate runs %s ...'%listNumber[0])
+        #  return False
       else: # more than 1 file loaded
         notFoundRun = []
         foundRun = []
@@ -2414,7 +2415,8 @@ class MainGUI(QtGui.QMainWindow):
     created.
     '''
     self._path_watcher.removePath(self.active_folder)
-    self.updateFileList(base, folder)
+    if instrument.NAME == "REF_M":
+      self.updateFileList(base, folder)
     self.active_folder=folder
     self._path_watcher.addPath(self.active_folder)
 
@@ -2424,6 +2426,8 @@ class MainGUI(QtGui.QMainWindow):
     Called by the path watcher to update the file list when the folder
     has been modified.
     '''
+    if instrument.NAME == "REF_L":
+      return
     self.updateFileList(self.active_file, self.active_folder)
 
   @log_call
@@ -4981,6 +4985,9 @@ Do you want to try to restore the working reduction list?""",
     
     _tof_min = self.getNodeValue(node, 'from_tof_range')
     _tof_max = self.getNodeValue(node, 'to_tof_range')
+    if float(_tof_min) < 500:  # ms
+      _tof_min = str(float(_tof_min) * 1000)
+      _tof_max = str(float(_tof_max) * 1000)
     iMetadata.tof_range = [_tof_min, _tof_max]
     
     _q_min = self.getNodeValue(node, 'from_q_range')
