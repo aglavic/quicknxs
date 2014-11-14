@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Nov 14 13:45:02 2014
+# Created: Fri Nov 14 13:51:41 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1439,7 +1439,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.LogRvsQ_2, QtCore.SIGNAL("clicked()"), MainWindow.reduce_plot_LogRvsQ_2_radiobutton)
         QtCore.QObject.connect(self.createIvsPxAscii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_ivspx_ascii)
         QtCore.QObject.connect(self.createRvsTOFAscii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_crtof_ascii)
-        QtCore.QObject.connect(self.splitter_5, QtCore.SIGNAL("splitterMoved(int,int)"), MainWindow.move_vertical_normalization_splitter)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.pfSNR)

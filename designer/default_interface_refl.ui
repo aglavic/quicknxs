@@ -4817,22 +4817,6 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>splitter_5</sender>
-   <signal>splitterMoved(int,int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>move_vertical_normalization_splitter()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1078</x>
-     <y>446</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>950</x>
-     <y>609</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4927,6 +4911,5 @@ p, li { white-space: pre-wrap; }
   <slot>reduce_plot_LogRvsQ_2_radiobutton()</slot>
   <slot>output_selected_data_into_ivspx_ascii()</slot>
   <slot>output_selected_data_into_crtof_ascii()</slot>
-  <slot>move_vertical_normalization_splitter()</slot>
  </slots>
 </ui>
