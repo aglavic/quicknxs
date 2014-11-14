@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Nov 10 15:07:20 2014
+# Created: Wed Nov 12 12:59:46 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1159,10 +1159,10 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(True)
+        self.reductionTable.horizontalHeader().setVisible(False)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
-        self.reductionTable.verticalHeader().setVisible(True)
+        self.reductionTable.verticalHeader().setVisible(False)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1237,13 +1237,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setContentsMargins(15, -1, -1, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.autoSF = QtGui.QRadioButton(self.groupBox)
+        self.autoSF.setChecked(True)
         self.autoSF.setObjectName("autoSF")
         self.horizontalLayout.addWidget(self.autoSF)
         self.manualSF = QtGui.QRadioButton(self.groupBox)
         self.manualSF.setObjectName("manualSF")
         self.horizontalLayout.addWidget(self.manualSF)
         self.oneSF = QtGui.QRadioButton(self.groupBox)
-        self.oneSF.setChecked(True)
+        self.oneSF.setChecked(False)
         self.oneSF.setObjectName("oneSF")
         self.horizontalLayout.addWidget(self.oneSF)
         self.verticalLayout_4.addWidget(self.groupBox)
@@ -1358,7 +1359,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(3)
-        self.plotTab.setCurrentIndex(0)
+        self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
@@ -1453,7 +1454,7 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">µs</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("MainWindow", "Q steps", None, QtGui.QApplication.UnicodeUTF8))
-        self.qStep.setText(QtGui.QApplication.translate("MainWindow", "0.02", None, QtGui.QApplication.UnicodeUTF8))
+        self.qStep.setText(QtGui.QApplication.translate("MainWindow", "0.01", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("MainWindow", "ΔQ/Q", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAutomaticPeakFinder.setText(QtGui.QApplication.translate("MainWindow", "Auto. peak selection", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

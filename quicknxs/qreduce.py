@@ -193,6 +193,10 @@ class NXSData(object):
   y_axis_for_display = []
   e_axis_for_display = []
 
+  # use in the auto SF class
+  tmp_y_axis = []
+  tmp_e_axis = []
+
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
                        event_split_bins=None, event_split_index=0, low_res_range=[0,303],
                        event_tof_overwrite=None, 

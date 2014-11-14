@@ -43,6 +43,7 @@ from utilities import convert_angle
 import utilities
 import constants
 import colors
+from calculate_SF import CalculateSF
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -5080,12 +5081,39 @@ Do you want to try to restore the working reduction list?""",
     self.ui.selectIncidentMediumList.setEnabled(bool)
     self.ui.sfBrowseButton.setEnabled(bool)
 
+  def select_current_SF(self):
+  
+    sf_status = 'auto'
+    if self.ui.manualSF.isChecked(): 
+      sf_status = 'manual'
+    elif self.ui.oneSF.isChecked():
+      sf_status = '1'
+      
+    bigTableData = self.bigTableData
+    nbr_row = self.ui.reductionTable.rowCount()
+    for i in range(nbr_row):
+      _data = bigTableData[i,0]
+      if sf_status == 'auto':
+        _data.sf = _data.sf_auto
+      elif sf_status == 'manual':
+        _data.sf = _data.sf_manual
+      else:
+        _data.sf = 1
+        bigTableData[i,0] = _data
+  
+      self.bigTableData = bigTableData
+
+
   def calculate_autoSF(self):
     '''
     Determine the auto SF coefficient to stitch the data
     '''
     bigTableData = self.bigTableData
     nbr_row = self.ui.reductionTable.rowCount()
+    
+    _myReduction = CalculateSF(bigTableData, self)
+    bigTableData = _myReduction.getAutoScaledData()
+    self.bigTableData = bigTableData
     
     for i in range(nbr_row):
       _data = bigTableData[i,0]
@@ -5107,6 +5135,10 @@ Do you want to try to restore the working reduction list?""",
     
     # calculate auto SF coefficient
     self.calculate_autoSF()
+    bigTableData = self.bigTableData
+    
+    # select right SF
+    self.select_current_SF()
     
     # display data reduced
     self.plot_reduced_data()
@@ -5232,7 +5264,6 @@ Do you want to try to restore the working reduction list?""",
     data_stitching_plot.draw()
     
     for i in range(nbr_row):
-#    for i in range(1,2):
       _data = bigTableData[i,0]
       _q_axis = _data.q_axis_for_display
       _y_axis = _data.y_axis_for_display
@@ -5803,13 +5834,14 @@ Do you want to try to restore the working reduction list?""",
       _run_number_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
       self.ui.dataStitchingTable.setItem(i,0,_run_number_item)
 
-      _item_auto = QtGui.QTableWidgetItem(str(1.0))
+      str_sf_auto = "%.2f" % _data.sf_auto
+      _item_auto = QtGui.QTableWidgetItem(str_sf_auto)
       _item_auto.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
       self.ui.dataStitchingTable.setItem(i,1,_item_auto)
 
       _widget_manual = QtGui.QDoubleSpinBox()
       _widget_manual.setMinimum(0)
-      _widget_manual.setValue(1.0)
+      _widget_manual.setValue(_data.sf_manual)
       _widget_manual.setSingleStep(0.01)
       _widget_manual.valueChanged.connect(self.manual_entry_of_sf_table)
       self.ui.dataStitchingTable.setCellWidget(i,2,_widget_manual)
