@@ -33,6 +33,12 @@
     </property>
     <item>
      <widget class="QSplitter" name="mainSplitter">
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>100</height>
+       </size>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -1047,7 +1053,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -1071,7 +1077,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -1096,9 +1102,15 @@ p, li { white-space: pre-wrap; }
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
+                    <property name="childrenCollapsible">
+                     <bool>false</bool>
+                    </property>
                     <widget class="QSplitter" name="splitter_2">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="childrenCollapsible">
+                      <bool>false</bool>
                      </property>
                      <widget class="MPLWidget" name="data_yt_plot" native="true">
                       <property name="sizePolicy">
@@ -1429,6 +1441,9 @@ p, li { white-space: pre-wrap; }
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
+                     <property name="childrenCollapsible">
+                      <bool>false</bool>
+                     </property>
                      <widget class="QWidget" name="layoutWidget_6">
                       <layout class="QVBoxLayout" name="verticalLayout_29">
                        <item>
@@ -1712,12 +1727,24 @@ p, li { white-space: pre-wrap; }
                   </item>
                   <item>
                    <widget class="QSplitter" name="splitter_5">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>100</height>
+                     </size>
+                    </property>
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="childrenCollapsible">
+                     <bool>false</bool>
                     </property>
                     <widget class="QSplitter" name="splitter_8">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="childrenCollapsible">
+                      <bool>false</bool>
                      </property>
                      <widget class="MPLWidget" name="norm_yt_plot" native="true">
                       <property name="sizePolicy">
@@ -2066,8 +2093,17 @@ p, li { white-space: pre-wrap; }
                      </widget>
                     </widget>
                     <widget class="QSplitter" name="splitter_9">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>100</height>
+                      </size>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="childrenCollapsible">
+                      <bool>false</bool>
                      </property>
                      <widget class="QWidget" name="layoutWidget_12">
                       <layout class="QVBoxLayout" name="verticalLayout_33">
@@ -2312,6 +2348,9 @@ p, li { white-space: pre-wrap; }
                <widget class="QSplitter" name="splitter">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="childrenCollapsible">
+                 <bool>false</bool>
                 </property>
                 <widget class="QWidget" name="layoutWidget_3">
                  <layout class="QVBoxLayout" name="verticalLayout_24">
@@ -3098,7 +3137,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3107,7 +3146,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3122,13 +3161,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -4778,6 +4817,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>splitter_5</sender>
+   <signal>splitterMoved(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>move_vertical_normalization_splitter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1078</x>
+     <y>446</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4872,5 +4927,6 @@ p, li { white-space: pre-wrap; }
   <slot>reduce_plot_LogRvsQ_2_radiobutton()</slot>
   <slot>output_selected_data_into_ivspx_ascii()</slot>
   <slot>output_selected_data_into_crtof_ascii()</slot>
+  <slot>move_vertical_normalization_splitter()</slot>
  </slots>
 </ui>

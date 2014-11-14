@@ -5241,6 +5241,10 @@ Do you want to try to restore the working reduction list?""",
           self.ui.dataStitchingTable.removeRow(0)
     
 
+  def move_vertical_normalization_splitter(self):
+    pass
+    
+
   def plot_reduced_data(self):
     '''
     plot the data after reduction
