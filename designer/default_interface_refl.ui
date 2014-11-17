@@ -84,6 +84,12 @@
           </property>
           <item>
            <widget class="QLabel" name="label_28">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="toolTip">
              <string>Search for a file by measurement number</string>
             </property>
@@ -95,7 +101,10 @@
           <item>
            <widget class="QLineEdit" name="numberSearchEntry">
             <property name="toolTip">
-             <string>Search for a file by measurement number</string>
+             <string>ex: 3454    or     3454,3456,3457</string>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -291,8 +300,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>248</width>
-             <height>406</height>
+             <width>289</width>
+             <height>365</height>
             </rect>
            </property>
            <attribute name="label">
@@ -555,7 +564,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>406</height>
+             <height>380</height>
             </rect>
            </property>
            <attribute name="label">
@@ -648,7 +657,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>406</height>
+             <height>380</height>
             </rect>
            </property>
            <attribute name="label">
@@ -775,7 +784,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>406</height>
+             <height>380</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3330,7 +3339,7 @@ p, li { white-space: pre-wrap; }
          <bool>false</bool>
         </property>
         <attribute name="title">
-         <string>Data Stiching</string>
+         <string>Data Stitching</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
@@ -3509,7 +3518,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1902</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">

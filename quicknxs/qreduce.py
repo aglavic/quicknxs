@@ -1597,8 +1597,8 @@ class LRDataset(object):
     output.proton_charge = _proton_charge * 3.6   # to go from microA/h to mC
     output.proton_charge_units = new_proton_charge_units
 
-    if _proton_charge > 0:
-      nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
+    #if _proton_charge > 0:
+      #nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
     
     # retrieve 3D array
     [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, output.new_detector_geometry_flag)

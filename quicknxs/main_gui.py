@@ -200,7 +200,7 @@ class MainGUI(QtGui.QMainWindow):
     
     if instrument.NAME=="REF_L":
       #set up the header of the big table
-      verticalHeader = ["Data Run #",u'Incident Angle (\u00b0)',u'\u03bbmin(\u00c5)',
+      verticalHeader = ["Data Run #",u'2\u03b8 (\u00B0)',u'\u03bbmin(\u00c5)',
                         u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)',
                         'Norm. Run #']
       self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
@@ -2458,24 +2458,24 @@ class MainGUI(QtGui.QMainWindow):
     else: 
       self.ui.eventModeEntries.show()
       newlist=glob(os.path.join(folder, '*event.nxs'))
-
-    newlist.sort()
-    newlist=map(lambda name: os.path.basename(name), newlist)
-    oldlist=[self.ui.file_list.item(i).text() for i in range(self.ui.file_list.count())]
-    if newlist!=oldlist:
-      # only update the list if it has changed
-      self.ui.file_list.clear()
-      for item in newlist:
-        listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
-        if item==base:
-          self.ui.file_list.setCurrentItem(listitem)
-    else:
-      try:
-        pass
-        self.ui.file_list.setCurrentRow(newlist.index(base))
-      except ValueError:
-        pass
-    if instrument.NAME=="REF_M":
+      
+    if instrument.NAME == 'REF_M':
+      newlist.sort()
+      newlist=map(lambda name: os.path.basename(name), newlist)
+      oldlist=[self.ui.file_list.item(i).text() for i in range(self.ui.file_list.count())]
+      if newlist!=oldlist:
+        # only update the list if it has changed
+        self.ui.file_list.clear()
+        for item in newlist:
+          listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
+          if item==base:
+            self.ui.file_list.setCurrentItem(listitem)
+      else:
+        try:
+          pass
+          self.ui.file_list.setCurrentRow(newlist.index(base))
+        except ValueError:
+          pass
       self.auto_change_active=was_active
 
   @log_call
@@ -4148,14 +4148,17 @@ Do you want to try to restore the working reduction list?""",
     '''
     will determine the current row and column selected in the big Table.
     '''
-    rangeSelected = self.ui.reductionTable.selectedRanges()
-    col = rangeSelected[0].leftColumn()
-    row = rangeSelected[0].topRow()
-    if col < 6:
-      col = 0
-    else:
-      col = 1
-    return [row, col]
+    try:
+      rangeSelected = self.ui.reductionTable.selectedRanges()
+      col = rangeSelected[0].leftColumn()
+      row = rangeSelected[0].topRow()
+      if col < 6:
+        col = 0
+      else:
+        col = 1
+      return [row, col]
+    except IndexError:
+      return [self._prev_row_selected, self._prev_col_selected]
 
   @log_call
   def open_reduction_preview(self):

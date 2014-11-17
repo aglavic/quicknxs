@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Nov 14 13:51:41 2014
+# Created: Mon Nov 17 13:04:03 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,9 +43,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.setContentsMargins(4, 4, 4, 2)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.label_28 = QtGui.QLabel(self.leftEntries)
+        font = QtGui.QFont()
+        font.setWeight(75)
+        font.setBold(True)
+        self.label_28.setFont(font)
         self.label_28.setObjectName("label_28")
         self.horizontalLayout_12.addWidget(self.label_28)
         self.numberSearchEntry = QtGui.QLineEdit(self.leftEntries)
+        self.numberSearchEntry.setAutoFillBackground(False)
         self.numberSearchEntry.setObjectName("numberSearchEntry")
         self.horizontalLayout_12.addWidget(self.numberSearchEntry)
         self.verticalLayout_5.addLayout(self.horizontalLayout_12)
@@ -122,7 +127,7 @@ class Ui_MainWindow(object):
         self.toolBox.setLineWidth(0)
         self.toolBox.setObjectName("toolBox")
         self.page_3 = QtGui.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 248, 406))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 289, 365))
         self.page_3.setObjectName("page_3")
         self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
         self.gridLayout_17.setMargin(2)
@@ -223,7 +228,7 @@ class Ui_MainWindow(object):
         self.gridLayout_17.addWidget(self.pfRidgeLength, 5, 1, 1, 1)
         self.toolBox.addItem(self.page_3, "")
         self.page_2 = QtGui.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 248, 406))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 248, 380))
         self.page_2.setObjectName("page_2")
         self.layoutWidget_2 = QtGui.QWidget(self.page_2)
         self.layoutWidget_2.setGeometry(QtCore.QRect(0, 20, 251, 59))
@@ -255,7 +260,7 @@ class Ui_MainWindow(object):
         self.label_30.setObjectName("label_30")
         self.toolBox.addItem(self.page_2, "")
         self.page_4 = QtGui.QWidget()
-        self.page_4.setGeometry(QtCore.QRect(0, 0, 248, 406))
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 248, 380))
         self.page_4.setObjectName("page_4")
         self.scalingFactorFlag = QtGui.QCheckBox(self.page_4)
         self.scalingFactorFlag.setGeometry(QtCore.QRect(10, 0, 87, 20))
@@ -289,7 +294,7 @@ class Ui_MainWindow(object):
         self.sfPrecision.setObjectName("sfPrecision")
         self.toolBox.addItem(self.page_4, "")
         self.page_5 = QtGui.QWidget()
-        self.page_5.setGeometry(QtCore.QRect(0, 0, 248, 406))
+        self.page_5.setGeometry(QtCore.QRect(0, 0, 248, 380))
         self.page_5.setObjectName("page_5")
         self.output4thColumnFlag = QtGui.QCheckBox(self.page_5)
         self.output4thColumnFlag.setGeometry(QtCore.QRect(9, 5, 171, 22))
@@ -1297,7 +1302,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.mainSplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1902, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1902, 25))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
@@ -1454,7 +1459,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QuickNXS REF_L", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Run #:", None, QtGui.QApplication.UnicodeUTF8))
-        self.numberSearchEntry.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))
+        self.numberSearchEntry.setToolTip(QtGui.QApplication.translate("MainWindow", "ex: 3454    or     3454,3456,3457", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setToolTip(QtGui.QApplication.translate("MainWindow", "The number of bins for the Time of Flight channels", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("MainWindow", "TOF bins", None, QtGui.QApplication.UnicodeUTF8))
         self.eventTofBins.setToolTip(QtGui.QApplication.translate("MainWindow", "The number of bins for the Time of Flight channels", None, QtGui.QApplication.UnicodeUTF8))
@@ -1613,7 +1618,7 @@ class Ui_MainWindow(object):
         self.RvsQ_2.setText(QtGui.QApplication.translate("MainWindow", "R vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.RQ4vsQ_2.setText(QtGui.QApplication.translate("MainWindow", "RQ^4 vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.LogRvsQ_2.setText(QtGui.QApplication.translate("MainWindow", "LogR vs Q", None, QtGui.QApplication.UnicodeUTF8))
-        self.plotTab.setTabText(self.plotTab.indexOf(self.data_stitching_Tab), QtGui.QApplication.translate("MainWindow", "Data Stiching", None, QtGui.QApplication.UnicodeUTF8))
+        self.plotTab.setTabText(self.plotTab.indexOf(self.data_stitching_Tab), QtGui.QApplication.translate("MainWindow", "Data Stitching", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.logbookTab), QtGui.QApplication.translate("MainWindow", "Logbook", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
