@@ -425,7 +425,7 @@ class ReductionObject(object):
                                                                            s2w_value,
                                                                            value_precision)):
                 
-                                            self.logbook('----> Found a perfect match! (with slits width checked)')
+                                            self.logbook('----> Perfect Match (with slits width checked): FOUND !')
                                             
                                             # retrieve parameters
                                             a = float(self.get_table_field_value(sfFactorTable, i, 6))
@@ -438,7 +438,7 @@ class ReductionObject(object):
                                         
                                 else: # we do not want width precision
                                     
-                                    self.logbook('----> Found a perfect match ! (without slits width checked)')
+                                    self.logbook('----> Perfect Match (without slits width checked): FOUND !')
                                     
                                     # retrieve parameters
                                     a = float(self.get_table_field_value(sfFactorTable, i, 6))
@@ -451,11 +451,11 @@ class ReductionObject(object):
                             
                             else: # no s2h match
                                 
-                                self.logbook('----> DID NOT FIND A PERFECT MATCH')
+                                self.logbook('----> Perfect Match: NOT FOUND !')
                                     
-        else:
             
-            self.logbook('---> scaling factor file for requested lambda NOT FOUND !')
+            self.logbook('---> Perfect Match:  NOT FOUND !')
+        
         
 
     def apply_scaling_factor_to_data(self, a, b, a_error, b_error):
@@ -920,7 +920,7 @@ class ReductionObject(object):
         if oConfig is not None:
             if type == 'data':
                 full_file_name = oConfig.data_full_file_name
-                if full_file_name == u'':
+                if full_file_name == u'' or full_file_name == [''] :
                     _run_number = oConfig.data_sets
                     full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
             else:

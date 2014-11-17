@@ -341,6 +341,7 @@ class NXSData(object):
       if (type(filename) == type(u"")) or (type(filename) == type("")):
 
         try:
+          print '------> filename is: ' + str(filename)
           nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
