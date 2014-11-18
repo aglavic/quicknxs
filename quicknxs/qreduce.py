@@ -185,6 +185,7 @@ class NXSData(object):
   reduce_y_axis = []
   reduce_e_axis = []
   sf_auto = 1  # automatic scaling factor calculated by program
+  sf_auto_found_match = False
   sf_manual = 1 # manual scaling factor defined by user
   sf = 1 # scaling factor apply to data (will be either the auto, manual or 1)
 
@@ -1610,6 +1611,7 @@ class LRDataset(object):
     from_pixel = min(low_res_range)
     to_pixel = max(low_res_range)
 
+    # keep only low resolution range defined
     Ixyt = Ixyt[from_pixel:to_pixel,:,:]
     Exyt = Exyt[from_pixel:to_pixel,:,:]
     

@@ -213,6 +213,15 @@ class MainGUI(QtGui.QMainWindow):
       verticalHeader = ["Data Run #","SF: auto","SF: manual","SF: 1"]
       self.ui.dataStitchingTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.dataStitchingTable.resizeColumnsToContents()
+      
+      palette_green = QtGui.QPalette()
+      palette_green.setColor(QtGui.QPalette.Foreground, QtCore.Qt.green)
+      self.ui.sf_found_label.setPalette(palette_green)
+      
+      palette_red = QtGui.QPalette()
+      palette_red.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
+      self.ui.sf_not_found_label.setPalette(palette_red)
+
 #      self.ui.dataStitchingTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #      self.ui.dataStitchingTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
 
@@ -5842,9 +5851,16 @@ Do you want to try to restore the working reduction list?""",
       _run_number_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
       self.ui.dataStitchingTable.setItem(i,0,_run_number_item)
 
+      _brush = QtGui.QBrush()
+      if _data.sf_auto_found_match:
+        _brush.setColor(QtCore.Qt.green)
+      else:
+        _brush.setColor(QtCore.Qt.red)
+
       str_sf_auto = "%.2f" % _data.sf_auto
       _item_auto = QtGui.QTableWidgetItem(str_sf_auto)
       _item_auto.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+      _item_auto.setForeground(_brush)
       self.ui.dataStitchingTable.setItem(i,1,_item_auto)
 
       _widget_manual = QtGui.QDoubleSpinBox()

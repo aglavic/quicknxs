@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Nov 17 13:04:03 2014
+# Created: Tue Nov 18 17:03:53 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1174,10 +1174,10 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(True)
+        self.reductionTable.horizontalHeader().setVisible(False)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
-        self.reductionTable.verticalHeader().setVisible(True)
+        self.reductionTable.verticalHeader().setVisible(False)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1246,6 +1246,18 @@ class Ui_MainWindow(object):
         self.dataStitchingTable.setHorizontalHeaderItem(3, item)
         self.dataStitchingTable.verticalHeader().setVisible(False)
         self.verticalLayout_4.addWidget(self.dataStitchingTable)
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.sf_found_label = QtGui.QLabel(self.data_stitching_Tab)
+        self.sf_found_label.setObjectName("sf_found_label")
+        self.horizontalLayout_8.addWidget(self.sf_found_label)
+        self.label_12 = QtGui.QLabel(self.data_stitching_Tab)
+        self.label_12.setObjectName("label_12")
+        self.horizontalLayout_8.addWidget(self.label_12)
+        self.sf_not_found_label = QtGui.QLabel(self.data_stitching_Tab)
+        self.sf_not_found_label.setObjectName("sf_not_found_label")
+        self.horizontalLayout_8.addWidget(self.sf_not_found_label)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_8)
         self.groupBox = QtGui.QGroupBox(self.data_stitching_Tab)
         self.groupBox.setObjectName("groupBox")
         self.horizontalLayout = QtGui.QHBoxLayout(self.groupBox)
@@ -1374,7 +1386,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(3)
-        self.plotTab.setCurrentIndex(0)
+        self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
@@ -1611,6 +1623,9 @@ class Ui_MainWindow(object):
         self.dataStitchingTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.dataStitchingTable.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.dataStitchingTable.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
+        self.sf_found_label.setText(QtGui.QApplication.translate("MainWindow", "SF found", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_12.setText(QtGui.QApplication.translate("MainWindow", "/", None, QtGui.QApplication.UnicodeUTF8))
+        self.sf_not_found_label.setText(QtGui.QApplication.translate("MainWindow", " SF not found", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "   Scaling Factor (SF)", None, QtGui.QApplication.UnicodeUTF8))
         self.autoSF.setText(QtGui.QApplication.translate("MainWindow", "auto", None, QtGui.QApplication.UnicodeUTF8))
         self.manualSF.setText(QtGui.QApplication.translate("MainWindow", "manual", None, QtGui.QApplication.UnicodeUTF8))

@@ -49,6 +49,8 @@ class ReductionObject(object):
     
     main_gui = None
     
+    sf_auto_found_match = False
+    
     final_q_axis = []
     final_y_axis = []
     final_e_axis = []
@@ -426,6 +428,7 @@ class ReductionObject(object):
                                                                            value_precision)):
                 
                                             self.logbook('----> Perfect Match (with slits width checked): FOUND !')
+                                            self.sf_auto_found_match = True
                                             
                                             # retrieve parameters
                                             a = float(self.get_table_field_value(sfFactorTable, i, 6))
@@ -439,6 +442,7 @@ class ReductionObject(object):
                                 else: # we do not want width precision
                                     
                                     self.logbook('----> Perfect Match (without slits width checked): FOUND !')
+                                    self.sf_auto_found_match = True
                                     
                                     # retrieve parameters
                                     a = float(self.get_table_field_value(sfFactorTable, i, 6))
@@ -1023,6 +1027,7 @@ class REFLReduction(object):
             red1.oData.reduce_q_axis = red1.final_q_axis.copy()
             red1.oData.reduce_y_axis = red1.final_y_axis.copy()
             red1.oData.reduce_e_axis = red1.final_e_axis.copy()
+            red1.oData.sf_auto_found_match = red1.sf_auto_found_match
             
             # align data with center of Q axis
             red1.oData.q_axis_for_display = red1.histogram_q_axis()
@@ -1030,6 +1035,7 @@ class REFLReduction(object):
             final_e_axis = red1.final_e_axis.copy()
             red1.oData.y_axis_for_display = final_y_axis[:-1]
             red1.oData.e_axis_for_display = final_e_axis[:-1]
+
             
             ## DEBUGGING
             #utilities.output_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_after_final_cleaning.txt',
