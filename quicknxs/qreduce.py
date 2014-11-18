@@ -32,7 +32,7 @@ from logging import debug, info, warn #@Reimport
 from .config import instrument
 from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
-from utilities import convert_angle
+from utilities import convert_angle, weighted_sum
 import numpy as np
 from random import randint
 import constants
@@ -1618,6 +1618,9 @@ class LRDataset(object):
     
     # create projections for the 2D datasets
     Ixy = Ixyt.sum(axis=2)
+    #axisToSum = 2
+    #[Ixy, Exy] = weighted_sum(Ixyt, Exyt, axisToSum)
+    
     Iyt = Ixyt.sum(axis=0)
     Iit = Iyt.sum(axis=0)
     Iix = Ixy.sum(axis=1)

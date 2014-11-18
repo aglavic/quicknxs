@@ -5456,7 +5456,7 @@ Do you want to try to restore the working reduction list?""",
     _final_e_axis = _e_axis  ## FIXME
     return [_final_y_axis, _final_e_axis]
 
-
+  @waiting_effects
   def output_selected_data_into_crtof_ascii(self):
     '''
     The RTOF of the selected data set (data or norm) will be output into an ASCII file
@@ -5489,17 +5489,24 @@ Do you want to try to restore the working reduction list?""",
     _active_data = _data.active_data
 
     tof_axis = _active_data.tof_axis_auto_with_margin[0:-1]/1000
-    countstofdata = _active_data.countstofdata
     
+    countstofdata = _active_data.countstofdata
+#    Ixyt = _active_data.Ixyt
+  #  Exyt = _active_data.Exyt
+
+  #  [_Ixt, _Ext] = utilities.weighted_sum_dim3(Ixyt, Exyt, 1)
+   # [_It, _Et] = utilities.weighted_sum_dim2(_Ixt, _Ext, 0)
+
     text = ["Counts vs TOF", "TOF(ms) - Counts"]
     sz = len(tof_axis)
     for i in range(sz):
+#      _line = str(tof_axis[i]) + ' ' + str(_It[i]) + ' ' + str(_Et[i])
       _line = str(tof_axis[i]) + ' ' + str(countstofdata[i])
       text.append(_line)
 
-    self.write_ascii_file(filename, text)
+    utilities.write_ascii_file(filename, text)
 
-
+  @waiting_effects
   def output_selected_data_into_ivspx_ascii(self):
     '''
     ascii of Counts vs Pixels 
@@ -5531,25 +5538,23 @@ Do you want to try to restore the working reduction list?""",
     _data = bigTableData[row,col]
     _active_data = _data.active_data
     
+    #Ixyt = _active_data.Ixyt
+    #Exyt = _active_data.Exyt
+    
+    #[_Ixy, _Exy] = utilities.weighted_sum_dim3(Ixyt, Exyt, 2)
+    #[_Iy, _Ey] = utilities.weighted_sum_dim2(_Ixy, _Exy, 0)
+    
     ycountsdata = _active_data.ycountsdata
     xaxis = range(len(ycountsdata))
     
     text = ["Counts vs pixel integrated over TOF range and x-axis", "Pixels - Counts"]
     sz = len(xaxis)
     for i in range(sz):
+#      _line = str(i) + ' ' + str(_Iy[i]) + ' ' + str(_Ey[i])
       _line = str(i) + ' ' + str(ycountsdata[i])
       text.append(_line)
 
-    self.write_ascii_file(filename, text)
-
-  def write_ascii_file(self, filename, text):
-    '''
-    produce the output ascii file
-    '''    
-    f = open(filename, 'w')
-    for _line in text:
-      f.write(_line + '\n')
-    f.close()
+    utilities.write_ascii_file(filename, text)
 
 
   def output_data_into_ascii(self):
