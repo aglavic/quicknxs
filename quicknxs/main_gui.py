@@ -44,6 +44,8 @@ import utilities
 import constants
 import colors
 from calculate_SF import CalculateSF
+from reduced_ascii_loader import reducedAsciiLoader
+from stitching_ascii_widget import stitchingAsciiWidgetObject
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -135,6 +137,8 @@ class MainGUI(QtGui.QMainWindow):
   # log/linear status of yi_plot
   isLog = False
 
+  stitchingAsciiWidgetObject = None
+
   ##### for IPython mode, keep namespace up to date ######
   @property
   def active_data(self): return self._active_data
@@ -221,6 +225,12 @@ class MainGUI(QtGui.QMainWindow):
       palette_red = QtGui.QPalette()
       palette_red.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
       self.ui.sf_not_found_label.setPalette(palette_red)
+
+      # set up header for reduced ascii table
+      verticalHeader = ["ASCII files", "Active"]
+      self.ui.reducedAsciiDataSetTable.setHorizontalHeaderLabels(verticalHeader)
+      self.ui.reducedAsciiDataSetTable.setColumnWidth(0,249)
+      self.ui.reducedAsciiDataSetTable.setColumnWidth(1,49)
 
 #      self.ui.dataStitchingTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #      self.ui.dataStitchingTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
@@ -5506,7 +5516,7 @@ Do you want to try to restore the working reduction list?""",
   #  [_Ixt, _Ext] = utilities.weighted_sum_dim3(Ixyt, Exyt, 1)
    # [_It, _Et] = utilities.weighted_sum_dim2(_Ixt, _Ext, 0)
 
-    text = ["Counts vs TOF", "TOF(ms) - Counts"]
+    text = ["#Counts vs TOF", "TOF(ms) - Counts"]
     sz = len(tof_axis)
     for i in range(sz):
 #      _line = str(tof_axis[i]) + ' ' + str(_It[i]) + ' ' + str(_Et[i])
@@ -5556,7 +5566,7 @@ Do you want to try to restore the working reduction list?""",
     ycountsdata = _active_data.ycountsdata
     xaxis = range(len(ycountsdata))
     
-    text = ["Counts vs pixel integrated over TOF range and x-axis", "Pixels - Counts"]
+    text = ["#Counts vs pixel integrated over TOF range and x-axis", "Pixels - Counts"]
     sz = len(xaxis)
     for i in range(sz):
 #      _line = str(i) + ' ' + str(_Iy[i]) + ' ' + str(_Ey[i])
@@ -5623,7 +5633,7 @@ Do you want to try to restore the working reduction list?""",
           _line += ' ' + _precision
         text.append(_line)
     
-    self.write_ascii_file(filename, text)
+    utilities.write_ascii_file(filename, text)
 
 
   def applySF(self, row, y_array, e_array):
@@ -5922,6 +5932,26 @@ Do you want to try to restore the working reduction list?""",
       _item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
       
     self.ui.reductionTable.setItem(row, column, _item)
+
+  def load_reduced_ascii(self):
+    
+#    try:
+      _path = self.path_config
+      filename = QtGui.QFileDialog.getOpenFileName(self,'Open Reduced Data Set', _path)      
+      if not(filename == ""):
+        self.path_config = os.path.dirname(filename)
+      
+        loadedAscii = reducedAsciiLoader(self, filename)
+        if self.stitchingAsciiWidgetObject is None:
+          self.stitchingAsciiWidgetObject = stitchingAsciiWidgetObject(self, loadedAscii)
+        else:
+          self.stitchingAsciiWidgetObject.addData(loadedAscii)
+        
+        self.stitchingAsciiWidgetObject.updateDisplay()
+          
+  #  except:
+   #   warning('Could not open ASCII file!')
+    
 
   def getNodeValue(self,node,flag):
     '''

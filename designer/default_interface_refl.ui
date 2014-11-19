@@ -3398,16 +3398,12 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_12">
-                 <property name="text">
-                  <string>/</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QLabel" name="sf_not_found_label">
                  <property name="text">
                   <string>auto SF not found</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -3464,6 +3460,55 @@ p, li { white-space: pre-wrap; }
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <widget class="QPushButton" name="loadReducedAsciiDataSet">
+                 <property name="minimumSize">
+                  <size>
+                   <width>300</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>300</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Load Reduced Data Set ...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableWidget" name="reducedAsciiDataSetTable">
+                 <property name="minimumSize">
+                  <size>
+                   <width>300</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>300</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <column>
+                  <property name="text">
+                   <string>New Column</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>New Column</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -4852,6 +4897,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>loadReducedAsciiDataSet</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>load_reduced_ascii()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>417</x>
+     <y>841</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4946,5 +5007,6 @@ p, li { white-space: pre-wrap; }
   <slot>reduce_plot_LogRvsQ_2_radiobutton()</slot>
   <slot>output_selected_data_into_ivspx_ascii()</slot>
   <slot>output_selected_data_into_crtof_ascii()</slot>
+  <slot>load_reduced_ascii()</slot>
  </slots>
 </ui>
