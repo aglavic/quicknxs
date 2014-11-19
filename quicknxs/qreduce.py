@@ -978,37 +978,38 @@ class MRDataset(object):
     self.log_minmax=NiceDict()
     self.log_units=NiceDict()
     if 'DASlogs' in data:  # the old format does not include the DAS logs
-      # get an array of all pulses to make it possible to correlate values with states
-      stimes=data['DASlogs/proton_charge/time'].value
-      stimes=stimes[::10] # reduce the number of items to speed up the correlation
-      # use only values that are not directly before or after a state change
-      stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
-      stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
-      for motor, item in data['DASlogs'].items():
-        if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
-          continue
-        try:
-          if 'units' in item['value'].attrs:
-            self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
-          else:
-            self.log_units[motor]=u''
-          val=item['value'].value
-          if val.shape[0]==1:
-            self.logs[motor]=val[0]
-            self.log_minmax[motor]=(val[0], val[0])
-          else:
-            vtime=item['time'].value
-            sidx=searchsorted(vtime, stimes, side='right')
-            sidx=maximum(sidx-1, 0)
-            val=val[sidx]
-            if len(val)==0:
-              self.logs[motor]=NaN
-              self.log_minmax[motor]=(NaN, NaN)
+      if 'proton_charge' in data['DASlogs']: # some intermediate format has DASlogs but no pc
+        # get an array of all pulses to make it possible to correlate values with states
+        stimes=data['DASlogs/proton_charge/time'].value
+        stimes=stimes[::10] # reduce the number of items to speed up the correlation
+        # use only values that are not directly before or after a state change
+        stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
+        stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
+        for motor, item in data['DASlogs'].items():
+          if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
+            continue
+          try:
+            if 'units' in item['value'].attrs:
+              self.log_units[motor]=unicode(item['value'].attrs['units'], encoding='utf8')
             else:
-              self.logs[motor]=val.mean()
-              self.log_minmax[motor]=(val.min(), val.max())
-        except:
-          continue
+              self.log_units[motor]=u''
+            val=item['value'].value
+            if val.shape[0]==1:
+              self.logs[motor]=val[0]
+              self.log_minmax[motor]=(val[0], val[0])
+            else:
+              vtime=item['time'].value
+              sidx=searchsorted(vtime, stimes, side='right')
+              sidx=maximum(sidx-1, 0)
+              val=val[sidx]
+              if len(val)==0:
+                self.logs[motor]=NaN
+                self.log_minmax[motor]=(NaN, NaN)
+              else:
+                self.logs[motor]=val.mean()
+                self.log_minmax[motor]=(val.min(), val.max())
+          except:
+            continue
       self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
     self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
     if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
