@@ -7,22 +7,32 @@ class reducedAsciiLoader(object):
 	asciiFilename = ''
 	shortAsciiFilename = ''
 	
+	# used when data comes from ascii file
 	col1 = []
 	col2 = []
 	col3 = []
 	col4 = []
 	
-	isEnabled = True
+	# used when data comes from Live Reduced Set
+	bigTableData = []
 	
-	def __init__(self, mainGui, asciiFilename):
+	isEnabled = True
+	isLiveReduced = False
+	
+	def __init__(self, mainGui, asciiFilename='', isLiveReduced=False, bigTableData=None):
 		
 		self.mainGui = mainGui
-		self.asciiFilename = asciiFilename
-		self.shortAsciiFilename = self.getShortAsciiFilename(asciiFilename)
+		self.isLiveReduced = isLiveReduced
+		if isLiveReduced:
+			self.asciiFilename = 'LAST REDUCED SET'
+			self.shortAsciiFilename = 'LAST REDUCED SET'
+			self.bigTableData = bigTableData
+		else:
+			self.asciiFilename = asciiFilename
+			self.shortAsciiFilename = self.get_short_ascii_filename(asciiFilename)
+			self.retrieve_ascii_data()
 		
-		self.retrieve_ascii_data()
-		
-	def getShortAsciiFilename(self, fullFilename):
+	def get_short_ascii_filename(self, fullFilename):
 		return os.path.basename(fullFilename)
 	
 	def retrieve_ascii_data(self):
