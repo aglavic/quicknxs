@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Nov 19 10:10:06 2014
+# Created: Thu Nov 20 17:34:04 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1174,10 +1174,10 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(False)
+        self.reductionTable.horizontalHeader().setVisible(True)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
-        self.reductionTable.verticalHeader().setVisible(False)
+        self.reductionTable.verticalHeader().setVisible(True)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1293,6 +1293,10 @@ class Ui_MainWindow(object):
         item = QtGui.QTableWidgetItem()
         self.reducedAsciiDataSetTable.setHorizontalHeaderItem(1, item)
         self.verticalLayout_7.addWidget(self.reducedAsciiDataSetTable)
+        self.refreshStitchingAsciiPlot = QtGui.QPushButton(self.data_stitching_Tab)
+        self.refreshStitchingAsciiPlot.setMaximumSize(QtCore.QSize(300, 16777215))
+        self.refreshStitchingAsciiPlot.setObjectName("refreshStitchingAsciiPlot")
+        self.verticalLayout_7.addWidget(self.refreshStitchingAsciiPlot)
         self.verticalLayout_4.addLayout(self.verticalLayout_7)
         self.horizontalLayout_2.addLayout(self.verticalLayout_4)
         self.data_stitching_plot = MPLWidget(self.data_stitching_Tab)
@@ -1403,8 +1407,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(3)
-        self.plotTab.setCurrentIndex(1)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.plotTab.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
@@ -1474,6 +1478,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.createIvsPxAscii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_ivspx_ascii)
         QtCore.QObject.connect(self.createRvsTOFAscii, QtCore.SIGNAL("clicked()"), MainWindow.output_selected_data_into_crtof_ascii)
         QtCore.QObject.connect(self.loadReducedAsciiDataSet, QtCore.SIGNAL("clicked()"), MainWindow.load_reduced_ascii)
+        QtCore.QObject.connect(self.refreshStitchingAsciiPlot, QtCore.SIGNAL("clicked()"), MainWindow.refresh_stitching_ascii_plot)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.pfSNR)
@@ -1650,6 +1655,7 @@ class Ui_MainWindow(object):
         self.loadReducedAsciiDataSet.setText(QtGui.QApplication.translate("MainWindow", "Load Reduced Data Set ...", None, QtGui.QApplication.UnicodeUTF8))
         self.reducedAsciiDataSetTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reducedAsciiDataSetTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
+        self.refreshStitchingAsciiPlot.setText(QtGui.QApplication.translate("MainWindow", "Refresh Plot", None, QtGui.QApplication.UnicodeUTF8))
         self.RvsQ_2.setText(QtGui.QApplication.translate("MainWindow", "R vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.RQ4vsQ_2.setText(QtGui.QApplication.translate("MainWindow", "RQ^4 vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.LogRvsQ_2.setText(QtGui.QApplication.translate("MainWindow", "LogR vs Q", None, QtGui.QApplication.UnicodeUTF8))

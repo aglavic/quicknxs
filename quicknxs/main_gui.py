@@ -2211,6 +2211,9 @@ class MainGUI(QtGui.QMainWindow):
       if number is None:
         number = self.ui.numberSearchEntry.text()
         
+      if number.strip() == '':
+        return
+        
       # check if we are looking at 1 file or more than 1
       listNumber = number.split(',')
       # removing empty element (in case user put too many ',')
@@ -5277,70 +5280,18 @@ Do you want to try to restore the working reduction list?""",
       self.stitchingAsciiWidgetObject.addData(loadedAscii)
     
     self.stitchingAsciiWidgetObject.updateDisplay()
-    
-    #bigTableData = self.bigTableData
-    #nbr_row = self.ui.reductionTable.rowCount()
-    
-    #reflectivity_plot = self.ui.reflectivity_plot
-    #data_stitching_plot = self.ui.data_stitching_plot
-    
-    #_colors = colors.COLOR_LIST
-    #_colors.append(_colors)
-    
-    ## start by clearing plot
-    #reflectivity_plot.clear()
-    #reflectivity_plot.draw()
-    #data_stitching_plot.clear()
-    #data_stitching_plot.draw()
-    
-    #for i in range(nbr_row):
-      #_data = bigTableData[i,0]
-      #_q_axis = _data.q_axis_for_display
-      #_y_axis = _data.y_axis_for_display
-      #_e_axis = _data.e_axis_for_display
-      #sf = _data.sf
-      
-      #_y_axis = _y_axis / sf
-      #_e_axis = _e_axis / sf
-      
-      #[y_axis_red, e_axis_red] = self.plot_selected_output_reduced(_q_axis,
-                                                                   #_y_axis, 
-                                                                   #_e_axis)
-      
-      #reflectivity_plot.errorbar(_q_axis, y_axis_red, yerr=e_axis_red, color=_colors[i])
-      #reflectivity_plot.draw()
-      
-      #[y_axis_stit, e_axis_stit] = self.plot_selected_output_stitched(_q_axis,
-                                                                      #_y_axis, 
-                                                                      #_e_axis)
-      
-      #data_stitching_plot.errorbar(_q_axis, y_axis_stit, yerr=e_axis_stit, 
-                                   #color=_colors[i])
-      #data_stitching_plot.draw()
-
-      ### DEBUGGING
-      ##tmp_filename = '/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quickns_full_reduction#' + str(i) + '.txt'
-      ##utilities.output_ascii_file(tmp_filename,
-                                  ##_q_axis,
-                                  ##_y_axis,
-                                  ##_e_axis)
-
-    #reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
-    #if type == 'RvsQ':
-      #reflectivity_plot.set_ylabel(u'R')
-    #elif type == 'RQ4vsQ':
-      #reflectivity_plot.set_ylabel(u'RQ4')
-    #else:
-      #reflectivity_plot.set_ylabel(u'Log(Q))')
-    #reflectivity_plot.draw()
-                               
-    #data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
-    #data_stitching_plot.set_ylabel(u'R')
-    #data_stitching_plot.draw()
-
+  
     # refresh reductionTable content (lambda range, Q range...etc)
     self.update_reductionTable()
     self.update_stitchingTable()
+
+  def refresh_stitching_ascii_plot(self):
+    if self.stitchingAsciiWidgetObject is None:
+      return
+    
+    self.stitchingAsciiWidgetObject.updateStatus()
+    self.stitchingAsciiWidgetObject.updateDisplay()
+
 
   def replot_reduced_data(self):
     '''
@@ -5794,6 +5745,8 @@ Do you want to try to restore the working reduction list?""",
     self.ui.metadataS1HValue.setText(cls)
     self.ui.metadataS2HValue.setText(cls)
 
+    # switch to first tab
+    self.ui.dataNormTabWidget.setCurrentIndex(0)  
 
   def data_stitching_is_auto(self):
     self.data_stitching_mode('auto')
@@ -5840,6 +5793,13 @@ Do you want to try to restore the working reduction list?""",
     bigTableData = self.bigTableData
     nbr_row = self.ui.dataStitchingTable.rowCount()
 
+    _data = bigTableData[0,0]
+    if _data is None:
+      return
+    
+    if _data.q_axis_for_display == []:
+      return
+    
     if type == "auto":
       for i in range(nbr_row):
         _data = bigTableData[i,0]
@@ -5900,7 +5860,7 @@ Do you want to try to restore the working reduction list?""",
       _item_1.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
       self.ui.dataStitchingTable.setItem(i,3,_item_1)
       
-
+      
   def update_reductionTable(self):
     '''
     will refresh the content of the reductionTable (lambda, Q ranges...)

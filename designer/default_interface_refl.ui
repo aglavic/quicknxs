@@ -1062,7 +1062,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -1086,7 +1086,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -3146,7 +3146,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3155,7 +3155,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3170,13 +3170,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3506,6 +3506,19 @@ p, li { white-space: pre-wrap; }
                    <string>New Column</string>
                   </property>
                  </column>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="refreshStitchingAsciiPlot">
+                 <property name="maximumSize">
+                  <size>
+                   <width>300</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Refresh Plot</string>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -4913,6 +4926,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>refreshStitchingAsciiPlot</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>refresh_stitching_ascii_plot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>417</x>
+     <y>1142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -5008,5 +5037,6 @@ p, li { white-space: pre-wrap; }
   <slot>output_selected_data_into_ivspx_ascii()</slot>
   <slot>output_selected_data_into_crtof_ascii()</slot>
   <slot>load_reduced_ascii()</slot>
+  <slot>refresh_stitching_ascii_plot()</slot>
  </slots>
 </ui>

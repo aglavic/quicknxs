@@ -7,9 +7,11 @@ class stitchingAsciiWidgetObject(object):
 	loadedAsciiArray = []
 	tableUi = None
 	stitchingPlot = None
+	mainGui = None
 	
 	def __init__(self, mainGui, loadedAscii):
 		
+		self.mainGui = mainGui
 		self.loadedAsciiArray.append(loadedAscii)
 		self.tableUi = mainGui.ui.reducedAsciiDataSetTable
 		self.stitchingPlot = mainGui.ui.data_stitching_plot
@@ -37,6 +39,23 @@ class stitchingAsciiWidgetObject(object):
 				return i
 			
 		return -1
+			
+	def updateStatus(self):
+		
+		nbrRow = len(self.loadedAsciiArray)
+		for i in range(nbrRow):
+			
+			_object = self.loadedAsciiArray[i]
+			
+			_item_state = self.mainGui.ui.reducedAsciiDataSetTable.cellWidget(i,1).checkState()
+			if _item_state == 2:
+				_object.isEnabled = True
+			else:
+				_object.isEnabled = False
+			
+			self.loadedAsciiArray[i] = _object
+		
+		
 			
 	def updateDisplay(self):
 		
@@ -77,7 +96,7 @@ class stitchingAsciiWidgetObject(object):
 				
 					self.stitchingPlot.errorbar(_q_axis, _y_axis, yerr=_e_axis)
 					self.stitchingPlot.draw()
-		
+
 
 	def displayLiveData(self, _object):
 		'''
