@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Nov 21 15:07:26 2014
+# Created: Fri Nov 21 15:54:44 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -166,16 +166,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.addItem(spacerItem1)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_19)
         self.verticalLayout_8.addLayout(self.horizontalLayout_4)
+        self.findPeakBack = QtGui.QPushButton(self.page_3)
+        self.findPeakBack.setObjectName("findPeakBack")
+        self.verticalLayout_8.addWidget(self.findPeakBack)
+        self.gridLayout_17.addLayout(self.verticalLayout_8, 0, 0, 1, 2)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.gridLayout_17.addItem(spacerItem2, 2, 0, 1, 1)
         self.autoTofFlag = QtGui.QCheckBox(self.page_3)
         self.autoTofFlag.setChecked(True)
         self.autoTofFlag.setObjectName("autoTofFlag")
-        self.verticalLayout_8.addWidget(self.autoTofFlag)
-        self.gridLayout_17.addLayout(self.verticalLayout_8, 0, 0, 1, 2)
-        self.findPeakBack = QtGui.QPushButton(self.page_3)
-        self.findPeakBack.setObjectName("findPeakBack")
-        self.gridLayout_17.addWidget(self.findPeakBack, 1, 0, 1, 2)
-        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_17.addItem(spacerItem2, 2, 0, 1, 1)
+        self.gridLayout_17.addWidget(self.autoTofFlag, 1, 0, 1, 1)
         self.toolBox.addItem(self.page_3, "")
         self.page_2 = QtGui.QWidget()
         self.page_2.setGeometry(QtCore.QRect(0, 0, 248, 380))
@@ -1460,8 +1460,8 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" vertical-align:super;\">+</span>/<span style=\" vertical-align:sub;\">-</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("MainWindow", "px", None, QtGui.QApplication.UnicodeUTF8))
-        self.autoTofFlag.setText(QtGui.QApplication.translate("MainWindow", "Auto TOF selection", None, QtGui.QApplication.UnicodeUTF8))
         self.findPeakBack.setText(QtGui.QApplication.translate("MainWindow", "Find Peak/Back ", None, QtGui.QApplication.UnicodeUTF8))
+        self.autoTofFlag.setText(QtGui.QApplication.translate("MainWindow", "Auto TOF selection", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), QtGui.QApplication.translate("MainWindow", "Peak Finder Algorithm", None, QtGui.QApplication.UnicodeUTF8))
         self.angleOffsetValue.setText(QtGui.QApplication.translate("MainWindow", "0.008", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

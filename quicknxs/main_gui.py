@@ -46,6 +46,7 @@ import colors
 from calculate_SF import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
+from peakfinder import PeakFinder
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -2272,8 +2273,34 @@ class MainGUI(QtGui.QMainWindow):
 
   @waiting_effects
   def find_peak_back(self):
-    print 'find_peak_back'
-
+    
+    bigTableData = self.bigTableData
+    if bigTableData[0,0] is None:
+      return
+    
+    [row,col] = self.getCurrentRowColumnSelected()
+    _data = bigTableData[row, col]
+    _active_data = _data.active_data
+    
+    ycountsdata = _active_data.ycountsdata
+    pf = PeakFinder(range(len(ycountsdata)), ycountsdata)
+    peaks = pf.get_peaks()
+    main_peak = peaks[0]
+    peak1 = int(main_peak[0] - main_peak[1])
+    peak2 = int(main_peak[0] + main_peak[1])
+    _active_data.peak  = [peak1, peak2]
+    
+    backOffsetFromPeak = self.ui.autoBackSelectionWidth.value()
+    back1 = int(peak1 - backOffsetFromPeak)
+    back2 = int(peak2 + backOffsetFromPeak)
+    _active_data.back = [back1, back2]
+    
+    _data.active_data = _active_data
+    bigTableData[row, col] = _data
+    self.bigTableData = bigTableData
+    
+    self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
+    
 
   @log_call
   def nextFile(self):
