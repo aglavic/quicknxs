@@ -206,7 +206,8 @@ class NXSData(object):
                        angle_offset = 0,
                        isData = True,
                        isAutoPeakFinder = False,
-                       backOffsetFromPeak = 4)
+                       backOffsetFromPeak = 4,
+                       isAutoTofFinder = True)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
@@ -220,7 +221,8 @@ class NXSData(object):
     callback='Function called to update e.g. a progress bar',
     isData='True or False (if file is a direct beam data set)',
     isAutoPeakFinder='True or False',
-    backOffsetFromPeak = 'pixel distance of background from peak'
+    backOffsetFromPeak = 'pixel distance of background from peak',
+    isAutoTofFinder = 'True or False'
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=20 #: Number of datasets that are kept in the cache
@@ -1563,8 +1565,8 @@ class LRDataset(object):
     # calculate theta
     output.theta = LRDataset.calculate_theta(output)
 
-    if output.tof_range == ['0','0']:
-
+    if (output.read_options['isAutoTofFinder']) or (output.tof_range == ['0','0']):
+      
       # auto t range
       autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
       autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
@@ -1572,9 +1574,9 @@ class LRDataset(object):
       # wider t range for display only
       tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 2.5) * 1e-4
       tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
-  
+    
     else:
-      
+        
       autotmin = np.float(output.tof_range[0])
       autotmax = np.float(output.tof_range[1])
       

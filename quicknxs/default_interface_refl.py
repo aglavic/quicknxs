@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Nov 21 14:42:59 2014
+# Created: Fri Nov 21 15:07:26 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -166,9 +166,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.addItem(spacerItem1)
         self.horizontalLayout_4.addLayout(self.horizontalLayout_19)
         self.verticalLayout_8.addLayout(self.horizontalLayout_4)
-        self.checkBox_7 = QtGui.QCheckBox(self.page_3)
-        self.checkBox_7.setObjectName("checkBox_7")
-        self.verticalLayout_8.addWidget(self.checkBox_7)
+        self.autoTofFlag = QtGui.QCheckBox(self.page_3)
+        self.autoTofFlag.setChecked(True)
+        self.autoTofFlag.setObjectName("autoTofFlag")
+        self.verticalLayout_8.addWidget(self.autoTofFlag)
         self.gridLayout_17.addLayout(self.verticalLayout_8, 0, 0, 1, 2)
         self.findPeakBack = QtGui.QPushButton(self.page_3)
         self.findPeakBack.setObjectName("findPeakBack")
@@ -1459,7 +1460,7 @@ class Ui_MainWindow(object):
 "</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" vertical-align:super;\">+</span>/<span style=\" vertical-align:sub;\">-</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("MainWindow", "px", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBox_7.setText(QtGui.QApplication.translate("MainWindow", "Auto TOF selection", None, QtGui.QApplication.UnicodeUTF8))
+        self.autoTofFlag.setText(QtGui.QApplication.translate("MainWindow", "Auto TOF selection", None, QtGui.QApplication.UnicodeUTF8))
         self.findPeakBack.setText(QtGui.QApplication.translate("MainWindow", "Find Peak/Back ", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), QtGui.QApplication.translate("MainWindow", "Peak Finder Algorithm", None, QtGui.QApplication.UnicodeUTF8))
         self.angleOffsetValue.setText(QtGui.QApplication.translate("MainWindow", "0.008", None, QtGui.QApplication.UnicodeUTF8))

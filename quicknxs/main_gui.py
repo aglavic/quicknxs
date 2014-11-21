@@ -521,6 +521,8 @@ class MainGUI(QtGui.QMainWindow):
         isAutoPeakFinder = True
       else:
         isAutoPeakFinder = False
+
+      isAutoTofFinder = self.ui.autoTofFlag.isChecked()
         
       data=NXSData(filename,
             bin_type=bin_type,
@@ -531,7 +533,8 @@ class MainGUI(QtGui.QMainWindow):
             angle_offset= self.ui.angleOffsetValue.text(),
             isData = isData,
             isAutoPeakFinder = isAutoPeakFinder,
-            backOffsetFromPeak = backOffsetFromPeak
+            backOffsetFromPeak = backOffsetFromPeak,
+            isAutoTofFinder = isAutoTofFinder
             )
     
       if instrument.NAME == 'REF_M':

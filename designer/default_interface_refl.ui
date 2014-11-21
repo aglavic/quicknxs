@@ -393,9 +393,12 @@ p, li { white-space: pre-wrap; }
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBox_7">
+               <widget class="QCheckBox" name="autoTofFlag">
                 <property name="text">
                  <string>Auto TOF selection</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
