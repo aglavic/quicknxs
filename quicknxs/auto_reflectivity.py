@@ -31,7 +31,7 @@ class ReflectivityBuilder(object):
   reflectivity_active=False
   state_names=None
 
-  MAX_RETRIES=10
+  MAX_RETRIES=120 # retry loading translated dataset for 20min
 
   live_data_tof_overwrite=None
   live_data_last_mtime=0
@@ -65,7 +65,7 @@ class ReflectivityBuilder(object):
       while self.live_data_idx>self.current_index:
         if not self.reflectivity_active:
           self.start_new_reflectivity()
-        if self.get_dsinfo(self.current_index) is None:
+        if not self.get_dsinfo(self.current_index):
           # if for some reason the run never existed, continue directly
           if len(self.db('file_id>fid', fid=self.current_index))>0:
             retries=0
@@ -75,7 +75,7 @@ class ReflectivityBuilder(object):
 
           # if dataset not yet available, wait for translation service to create the file
           retries+=1
-          sleep(60.)
+          sleep(10.)
           continue
         if retries>self.MAX_RETRIES:
           # give up when adding reflectivity was not successful after a few tries
@@ -182,7 +182,11 @@ class ReflectivityBuilder(object):
     else:
       # the first dataset is already translated, use database information to begin reflecitvity
       dsinfo=self.get_dsinfo(self.current_index)
+      if dsinfo is False:
+        return False
       if dsinfo is None:
+        # dataset could not be processed properly, increment index
+        self.current_index+=1
         return False
       elif dsinfo.ai<0.1:
         self.current_index+=1
@@ -206,9 +210,14 @@ class ReflectivityBuilder(object):
       # nothing to do, as there is no reflectivity beeing created
       return False
     dsinfo=self.get_dsinfo(self.current_index)
-    if dsinfo is None:
+    if dsinfo is False:
       # dataset is not yet in database, go back to the main loop, which will wait for it
       return False
+    if dsinfo is None:
+      # current dataset was not readable properly, finish reflectivity and increment index
+      self.finish_reflectivity()
+      self.current_index+=1
+      return True
     if dsinfo.ai<(self.reflectivity_last_ai*0.95) or dsinfo.no_states!=self.reflectivity_states:
       # The currenct reflectivity is finished, as this dataset does not correspond to
       # it. Return to the main loop, which will try to add the dataset again.
@@ -308,6 +317,11 @@ class ReflectivityBuilder(object):
                             normalization=norm,
                             P0=P0, PN=PN,
                             )
+
+    if (r0.ai*180./numpy.pi)<(self.reflectivity_last_ai*0.95):
+      logging.debug('Live dataset has lower ai, finish current reflectivity')
+      self.finish_reflectivity()
+      self.start_new_reflectivity(live_ds)
     if len(self.reflectivity_items)==0:
       self.state_names=live_ds.keys()
       scale=qcalc.get_total_reflection(r0, return_npoints=False)
@@ -357,7 +371,7 @@ class ReflectivityBuilder(object):
       if res:
         return self.db(file_id=index)[0]
       else:
-        return None
+        return res
     else:
       return dsinfo
 
