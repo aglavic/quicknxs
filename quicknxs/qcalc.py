@@ -106,6 +106,13 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   """
   if type(data) is not MRDataset:
     raise ValueError, "'data' needs to be a MRDataset object"
+  if data.total_counts==0:
+    # for datasets with no counts return the direct pixel from the metadata
+    if return_pf:
+      pf=PeakFinder(arange(data.active_area_x[1]-data.active_area_x[0]), data.xdata)
+      return data.dpix, pf
+    else:
+      return data.dpix
   xproj=data.xdata
   # calculate approximate peak position
   if dangle0_overwrite is not None:

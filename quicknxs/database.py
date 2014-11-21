@@ -109,7 +109,7 @@ class DatabaseHandler(object):
       record=self.get_record(dataset)
     except:
       debug('Could not create record for dataset %s:'%repr(dataset), exc_info=True)
-      return False
+      return None
     if len(db(file_id=dataset.number))>0:
       debug('Item already in database %s'%repr(dataset))
       return True

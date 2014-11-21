@@ -487,6 +487,13 @@ class MainGUI(QtGui.QMainWindow):
     X vs. Y and X vs. Tof for main channel.
     '''
     data=self.active_data[self.active_channel]
+    if data.total_counts==0:
+      self.ui.xy_overview.clear()
+      self.ui.xtof_overview.clear()
+
+      self.ui.xy_overview.draw()
+      self.ui.xtof_overview.draw()
+      return
     xy=data.xydata
     xtof=data.xtofdata
     ref_norm=self.getNorm()
@@ -595,6 +602,8 @@ class MainGUI(QtGui.QMainWindow):
     for dataset in self.active_data[:4]:
       d=dataset.xydata/dataset.proton_charge
       xynormed.append(d)
+      if dataset.total_counts==0:
+        continue
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
 
@@ -609,6 +618,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.frame_xy_sf.hide()
 
     for i, datai in enumerate(xynormed):
+      if self.active_data[i].total_counts==0:
+        continue
       if self.ui.tthPhi.isChecked():
         plots[i].clear()
         rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
@@ -653,6 +664,8 @@ class MainGUI(QtGui.QMainWindow):
         # normalize all datasets for wavelength distribution
         d=d/ref_norm[newaxis, :]
       xtofnormed.append(d)
+      if dataset.total_counts==0:
+        continue
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
     lamda=self.active_data[self.active_channel].lamda
@@ -674,6 +687,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.frame_xtof_mm.hide()
       self.ui.frame_xtof_sf.hide()
     for i, datai in enumerate(xtofnormed):
+      if self.active_data[i].total_counts==0:
+        continue
       if self.ui.xLamda.isChecked():
         plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, extent=[lamda[0], lamda[-1], 0, datai.shape[0]-1])
@@ -702,6 +717,13 @@ class MainGUI(QtGui.QMainWindow):
     if self.active_data is None:
       return
     data=self.active_data[self.active_channel]
+    if data.total_counts==0:
+      self.ui.x_project.clear()
+      self.ui.x_project.draw()
+      self.ui.y_project.clear()
+      self.ui.y_project.draw()
+      return
+
     xproj=data.xdata
     yproj=data.ydata
 
@@ -852,7 +874,15 @@ class MainGUI(QtGui.QMainWindow):
       view=None
 
     self.ui.refl.clear()
-    if options['normalization']:
+    if self.active_data[self.active_channel].total_counts==0:
+      self.ui.refl.canvas.ax.text(0.5, 0.5,
+                                  u'No points to show\nin active dataset!',
+                                  horizontalalignment='center',
+                                  verticalalignment='center',
+                                  fontsize=14,
+                                  transform=self.ui.refl.canvas.ax.transAxes)
+
+    elif options['normalization']:
       ymin=1e50
       ymax=1e-50
       ynormed=self.refl.R[PN:P0]
