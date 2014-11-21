@@ -516,6 +516,12 @@ class MainGUI(QtGui.QMainWindow):
       else:
         isData = False
         
+      backOffsetFromPeak = self.ui.autoBackSelectionWidth.value()
+      if self.ui.actionAutomaticPeakFinder.isChecked():
+        isAutoPeakFinder = True
+      else:
+        isAutoPeakFinder = False
+        
       data=NXSData(filename,
             bin_type=bin_type,
             bins=self.ui.eventTofBins.value(),
@@ -523,7 +529,10 @@ class MainGUI(QtGui.QMainWindow):
             event_split_bins=event_split_bins,
             event_split_index=event_split_index,
             angle_offset= self.ui.angleOffsetValue.text(),
-            isData = isData)
+            isData = isData,
+            isAutoPeakFinder = isAutoPeakFinder,
+            backOffsetFromPeak = backOffsetFromPeak
+            )
     
       if instrument.NAME == 'REF_M':
         self._fileOpenDone(data, filename, do_plot)
@@ -1253,6 +1262,7 @@ class MainGUI(QtGui.QMainWindow):
 
     # display yi
     if plot_yi:
+      
       xaxis = range(len(ycountsdata))
       yi_plot.canvas.ax.plot(ycountsdata,xaxis)
       yi_plot.canvas.ax.set_xlabel(u'counts')

@@ -37,6 +37,7 @@ import numpy as np
 from random import randint
 import constants
 import psutil
+from peakfinder import PeakFinder
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -203,7 +204,9 @@ class NXSData(object):
                        event_tof_overwrite=None, 
                        metadata_config_object=None,
                        angle_offset = 0,
-                       isData = True)
+                       isData = True,
+                       isAutoPeakFinder = False,
+                       backOffsetFromPeak = 4)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
@@ -216,6 +219,8 @@ class NXSData(object):
     angle_offset='angle offset value defined in GUI',
     callback='Function called to update e.g. a progress bar',
     isData='True or False (if file is a direct beam data set)',
+    isAutoPeakFinder='True or False',
+    backOffsetFromPeak = 'pixel distance of background from peak'
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=20 #: Number of datasets that are kept in the cache
@@ -1639,6 +1644,19 @@ class LRDataset(object):
     output.countstofdata = Iit.astype(float)
     output.countsxdata = Iix.astype(float)
     output.ycountsdata = Iyi.astype(float)
+
+    if read_options['isAutoPeakFinder']:
+      pf = PeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
+      peaks=pf.get_peaks()
+      main_peak = peaks[0]
+      peak1 = int(main_peak[0] - main_peak[1])
+      peak2 = int(main_peak[0] + main_peak[1])
+      output.peak = [str(peak1), str(peak2)]
+
+      backOffsetFromPeak = read_options['backOffsetFromPeak']
+      back1 = int(peak1 - backOffsetFromPeak)
+      back2 = int(peak2 + backOffsetFromPeak)
+      output.back = [str(back1), str(back2)]
 
     ### work now with final data
 
