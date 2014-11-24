@@ -2300,8 +2300,8 @@ class MainGUI(QtGui.QMainWindow):
     self.bigTableData = bigTableData
     
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
-    
-
+  
+  
   @log_call
   def nextFile(self):
     item=self.ui.file_list.currentRow()

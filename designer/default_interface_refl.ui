@@ -4808,6 +4808,7 @@ p, li { white-space: pre-wrap; }
   </connection>
  </connections>
  <slots>
+  <signal>signal1()</signal>
   <slot>fileOpenDialog()</slot>
   <slot>plotActiveTab()</slot>
   <slot>fileOpenList()</slot>
