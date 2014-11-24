@@ -33,12 +33,14 @@ class ConfigProxy(object):
   default_storage='general'
   config_path=''
   configs={}
+  path_configs={}
   storages={}
   aliases={}
 
   def __init__(self, config_path):
     self._PARSE_ERRORS=[]
     self.configs={}
+    self.path_configs={}
     self.aliases={}
     self.storages={}
     self.tmp_storages={}
@@ -89,6 +91,115 @@ class ConfigProxy(object):
     return self[name]
 
   @log_input
+  def add_path_config(self, name, items, cpath):
+    '''
+    Crate a new dictionary connected to a storage config file.
+    
+    :returns: The corresponding :class:`ConfigHolder` object.
+    '''
+    # get last config from file, if it exists
+    ccfile=os.path.join(cpath, 'config_path_options.ini')
+    if os.path.exists(ccfile):
+      ccopts=ConfigObj(infile=ccfile, unrepr=True, encoding='utf8',
+                       indent_type='    ', interpolation=False)
+      last_cfile=ccopts['last_file']
+    else:
+      try:
+        os.makedirs(cpath)
+      except OSError:
+        pass
+      ccopts=ConfigObj(infile=ccfile, unrepr=True, encoding='utf8',
+                       indent_type='    ', interpolation=False)
+      last_cfile='default'
+      ccopts['last_file']=last_cfile
+      ccopts['config_files']=[last_cfile]
+
+    if not cpath in self.storages:
+      sfile=os.path.join(cpath, last_cfile+'.ini')
+      try:
+        self.storages[cpath]=ConfigObj(
+                                        infile=sfile,
+                                        unrepr=True,
+                                        encoding='utf8',
+                                        indent_type='    ',
+                                        interpolation=False,
+                                        )
+      except ConfigObjError:
+        self._PARSE_ERRORS.append(
+            ("Could not parse configfile %s, using temporary config.\nFix or delete the file!"%sfile,
+              sys.exc_info()))
+        self.storages[cpath]={}
+      self.tmp_storages[cpath]={}
+    self.configs[name]=cpath
+
+    if name in self.storages[cpath]:
+      # update additional options from config
+      for key, value in items.items():
+        if not key in self.storages[cpath][name]:
+          self.storages[cpath][name][key]=value
+    else:
+      self.storages[cpath][name]=dict(items)
+    self.tmp_storages[cpath][name]={}
+
+    if cpath in self.path_configs:
+      self.path_configs[cpath][1][name]=items
+    else:
+      self.path_configs[cpath]=(ccopts, {name: items}) # store option file and defaults
+
+    return self[name]
+
+  @log_input
+  def switch_path_config(self, cpath, cname):
+    if not cpath in self.path_configs:
+      if cpath in self.configs and self.configs[cpath] in self.path_configs:
+        cpath=self.configs[cpath]
+      else:
+        raise KeyError, 'Config path %s is not defined'%cpath
+    # save the current config to a file
+    # remove constants for storage
+    for ignore, config in self.storages[cpath].items():
+      for key in config.keys():
+        if key==key.upper():
+          del(config[key])
+    self.storages[cpath].write()
+
+    # create a new config, from the defaults
+    sfile=os.path.join(cpath, cname+'.ini')
+    try:
+      self.storages[cpath]=ConfigObj(
+                                      infile=sfile,
+                                      unrepr=True,
+                                      encoding='utf8',
+                                      indent_type='    ',
+                                      interpolation=False,
+                                      )
+    except ConfigObjError:
+      self._PARSE_ERRORS.append(
+          ("Could not parse configfile %s, using temporary config.\nFix or delete the file!"%sfile,
+            sys.exc_info()))
+    if not cname in self.path_configs[cpath][0]['config_files']:
+      self.path_configs[cpath][0]['config_files'].append(cname)
+
+    # update missing items from default config
+    for name, items in self.path_configs[cpath][1].items():
+      if name in self.storages[cpath]:
+        # update additional options from config
+        for key, value in items.items():
+          if not key in self.storages[cpath][name]:
+            self.storages[cpath][name][key]=value
+      else:
+        self.storages[cpath][name]=dict(items)
+      self.path_configs[cpath][0]['last_file']=cname
+
+  def get_path_configs(self, cpath):
+    if not cpath in self.path_configs:
+      if cpath in self.configs and self.configs[cpath] in self.path_configs:
+        cpath=self.configs[cpath]
+      else:
+        raise KeyError, 'Config path %s is not defined'%cpath
+    return self.path_configs[cpath][0]['config_files']
+
+  @log_input
   def add_alias(self, config, alias):
     '''
     Crate an alias for another configuration item.
@@ -120,6 +231,8 @@ class ConfigProxy(object):
       for cname, cdict in restore.items():
         for key, value in cdict.items():
           item[cname][key]=value
+    for ccopts, ignore in self.path_configs.values():
+      ccopts.write()
 
   def __getitem__(self, name):
     if isinstance(name, basestring):
@@ -136,6 +249,12 @@ class ConfigProxy(object):
     if not config in self.configs:
       raise KeyError, "%s is no known configuration"%config
     storage=self.configs[config]
+    # special convenience methods to switch the config file with the config object
+    if storage in self.path_configs and item=='get_configs':
+      return lambda : self.get_path_configs(storage)
+    if storage in self.path_configs and item=='switch_config':
+      return lambda new_config: self.switch_path_config(storage, new_config)
+    #
     if item in self.tmp_storages[storage][config]:
       # if value has been stored temporarily, return it
       value=self.tmp_storages[storage][config][item]
@@ -206,7 +325,11 @@ class ConfigProxy(object):
     if not config in self.configs:
       raise KeyError, "%s is no known configuration"%config
     storage=self.configs[config]
-    return self.storages[storage][config].keys()
+    keys=self.storages[storage][config].keys()
+    if storage in self.path_configs:
+      keys.append('get_configs')
+      keys.append('switch_config')
+    return keys
 
   def keys(self):
     """Return the available configurations"""
