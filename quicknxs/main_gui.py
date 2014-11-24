@@ -47,6 +47,7 @@ from calculate_SF import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
+from prev_files_loaded_handler import PrevFilesLoadedHandler
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -139,6 +140,7 @@ class MainGUI(QtGui.QMainWindow):
   isLog = False
 
   stitchingAsciiWidgetObject = None
+  prevFilesLoadedObject = None
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -286,6 +288,8 @@ class MainGUI(QtGui.QMainWindow):
     if instrument.NAME=="REF_L":
       self.folderModified()
       self.defineRightDefaultPath()
+#      self.saveListPrevLoadedFiles()  #REMOVEME
+  #    self.loadListPrevLoadedFiles()
 
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -341,6 +345,45 @@ class MainGUI(QtGui.QMainWindow):
     self.ipython.namespace['data']=self.active_data
     # exceptions within GUI thread, must be installed by method within that process
     self.trigger('_install_exc')
+
+
+  #def saveListPrevLoadedFiles(self):
+    
+    #from quicknxs.config import refllastloadedfiles
+    #refllastloadedfiles.switch_config('config_files')
+    #refllastloadedfiles.reduce1 = '/SNS/REF_L/shared/0/IPTS_e5454/dfdfdf.txt'
+    
+
+  #def  loadListPrevLoadedFiles(self):
+    #'''
+    #will update the gui with the previous files (config, reduced) loaded
+    #'''
+    #from quicknxs.config import refllastloadedfiles
+    #refllastloadedfiles.switch_config('config_files')
+    #file1 = refllastloadedfiles.reduce1
+    #if file1 is not '':
+      #self.ui.menuFile.addSeparator()
+      #file1Action = QtGui.QAction(file1, self)
+      #file1Action.triggered.connect(self.loadConfigFile1)
+      #self.ui.menuFile.addAction(file1Action)
+      
+    #file2 = refllastloadedfiles.reduce2
+    #file3 = refllastloadedfiles.reduce3
+    #file4 = refllastloadedfiles.reduce4
+    #file5 = refllastloadedfiles.reduce5
+    
+    #refllastloadedfiles.switch_config('default')
+
+  #def addConfigFileLoaded(self, fullFileName):
+    
+    #from quicknxs.config import refllastloadedfiles
+    #refllastloadedfiles.switch_config('config_files')
+    #file1 = refllastloadedfiles.reduce1
+    
+
+
+  #def loadConfigFile1(self):
+    #print 'in loadConfigFile1'
 
   def raiseError(self):
     '''
@@ -3711,50 +3754,67 @@ Do you want to try to restore the working reduction list?""",
     Save window and dock geometry.
     '''
 
-    return  ##FIXME
+    if instrument.NAME == 'REF_M':
 
-    # join delay thread
-    debug('Shutting down delay trigger')
-    self.trigger.stay_alive=False
-    self.trigger.wait()
-    del(self.trigger)
-    debug('Gathering figure and window layout')
-    # store geometry and setting parameters
-    figure_params=[]
-    for fig in [
-                self.ui.xy_overview,
-                self.ui.xtof_overview,
-                self.ui.refl,
-                self.ui.x_project,
-                self.ui.y_project,
-                ]:
-      figure_params.append(fig.get_config())
+      # join delay thread
+      debug('Shutting down delay trigger')
+      self.trigger.stay_alive=False
+      self.trigger.wait()
+      del(self.trigger)
+      debug('Gathering figure and window layout')
+      # store geometry and setting parameters
+      figure_params=[]
+      for fig in [
+                  self.ui.xy_overview,
+                  self.ui.xtof_overview,
+                  self.ui.refl,
+                  self.ui.x_project,
+                  self.ui.y_project,
+                  ]:
+        figure_params.append(fig.get_config())
+  
+      debug('Storing GUI configuration')
+      gui.geometry=self.saveGeometry().data()
+      gui.state=self.saveState().data()
+      if hasattr(self.ui, 'mainSplitter'):
+        gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
+      else:
+        gui.splitters=(gui.splitters[0], self.ui.overviewSplitter.sizes(), gui.splitters[2])
+      gui.color_selection=self.ui.color_selector.currentIndex()
+      gui.show_colorbars=self.ui.show_colorbars.isChecked()
+      gui.normalizeXTof=self.ui.normalizeXTof.isChecked()
+      gui.figure_params=figure_params
+  
+      # remove the state file on normal exit
+      debug('Removing status file')
+      os.remove(paths.STATE_FILE)
+      # detach the gui logging handler before closing the window
+      debug('Detaching GUI handler')
+      from logging import getLogger
+      logger=getLogger()
+      for handler in logger.handlers:
+        if handler.__class__.__name__=='QtHandler':
+          logger.removeHandler(handler)
+      debug('GUI handler removed, closing window')
+      # actually close the window
+      QtGui.QMainWindow.closeEvent(self, event)
 
-    debug('Storing GUI configuration')
-    gui.geometry=self.saveGeometry().data()
-    gui.state=self.saveState().data()
-    if hasattr(self.ui, 'mainSplitter'):
-      gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
-    else:
-      gui.splitters=(gui.splitters[0], self.ui.overviewSplitter.sizes(), gui.splitters[2])
-    gui.color_selection=self.ui.color_selector.currentIndex()
-    gui.show_colorbars=self.ui.show_colorbars.isChecked()
-    gui.normalizeXTof=self.ui.normalizeXTof.isChecked()
-    gui.figure_params=figure_params
-
-    # remove the state file on normal exit
-    debug('Removing status file')
-    os.remove(paths.STATE_FILE)
-    # detach the gui logging handler before closing the window
-    debug('Detaching GUI handler')
-    from logging import getLogger
-    logger=getLogger()
-    for handler in logger.handlers:
-      if handler.__class__.__name__=='QtHandler':
-        logger.removeHandler(handler)
-    debug('GUI handler removed, closing window')
-    # actually close the window
-    QtGui.QMainWindow.closeEvent(self, event)
+    else: #REF_L
+      
+      # remove the state file on normal exit
+      debug('Removing status file')
+      os.remove(paths.STATE_FILE)
+      # detach the gui logging handler before closing the window
+      debug('Detaching GUI handler')
+      from logging import getLogger
+      logger=getLogger()
+      for handler in logger.handlers:
+        if handler.__class__.__name__=='QtHandler':
+          logger.removeHandler(handler)
+      debug('GUI handler removed, closing window')
+      # actually close the window
+      QtGui.QMainWindow.closeEvent(self, event)
+      
 
   @log_call
   def open_advanced_background(self):
@@ -4314,23 +4374,32 @@ Do you want to try to restore the working reduction list?""",
     Reached by the Load Configuration button
     will populate the GUI with the data retrieved from the configuration file
     '''
-    try:
-      _path = self.path_config
-      filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
-      if not(filename == ""):
+#    try:
+    _path = self.path_config
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
+    if not(filename == ""):
+      
+      self.path_config = os.path.dirname(filename)
+      
+      # make sure the reductionTable is empty
+      nbrRow = self.ui.reductionTable.rowCount()
+      if nbrRow > 0:
+        for _row in range(nbrRow):
+          self.ui.reductionTable.removeRow(0)
+      
+      self.loadConfigAndPopulateGui(filename)
+      self.enableWidgets(checkStatus=True)
+      
+      if self.prevFilesLoadedObject is None:
+        _prevFilesLoadedObject = PrevFilesLoadedHandler(self)
+      else:
+        _prevFilesLoadedObject = self.prevFilesLoadedObject
+      _prevFilesLoadedObject.addFile(filename)
+      _prevFilesLoadedObject.updateGui()
+      self.prevFilesLoadedObject = _prevFilesLoadedObject
         
-        self.path_config = os.path.dirname(filename)
-        
-        # make sure the reductionTable is empty
-        nbrRow = self.ui.reductionTable.rowCount()
-        if nbrRow > 0:
-          for _row in range(nbrRow):
-            self.ui.reductionTable.removeRow(0)
-        
-        self.loadConfigAndPopulateGui(filename)
-        self.enableWidgets(checkStatus=True)
-    except:
-      warning('Could not open configuration file!')
+  #  except:
+    #  warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):
