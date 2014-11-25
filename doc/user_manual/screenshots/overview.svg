@@ -49,9 +49,9 @@
      inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1680"
-     inkscape:window-height="988"
+     inkscape:window-height="992"
      inkscape:window-x="3596"
-     inkscape:window-y="-6"
+     inkscape:window-y="-4"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -114,10 +114,10 @@
        id="rect3250"
        width="112.14286"
        height="30.714285"
-       x="379.28571"
+       x="387.28571"
        y="101.42857" />
     <flowRoot
-       transform="translate(189.28571,10.714286)"
+       transform="translate(197.28571,10.714286)"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot3230"
        xml:space="preserve"><flowRegion
@@ -131,13 +131,13 @@
          style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
          id="flowPara3236">Detector</flowPara></flowRoot>    <rect
        y="202.14285"
-       x="370"
+       x="378"
        height="30.714285"
        width="112.14286"
        id="rect3092"
        style="opacity:0.5;fill:#ffffff;fill-opacity:1;stroke:none" />
     <flowRoot
-       transform="translate(194.28571,-2.1428572)"
+       transform="translate(202.28571,-2.1428572)"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot3238"
        xml:space="preserve"><flowRegion
@@ -150,7 +150,7 @@
            id="rect3242" /></flowRegion><flowPara
          style="font-size:32px;text-align:center;text-anchor:middle;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
          id="flowPara3244">ToF vs. X</flowPara></flowRoot>    <flowRoot
-       transform="translate(-13.571428,379.28571)"
+       transform="translate(-13.571428,393.28571)"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot3254"
        xml:space="preserve"><flowRegion
@@ -189,13 +189,13 @@
        id="rect3330"
        width="152.14287"
        height="84.999992"
-       x="575"
+       x="583"
        y="425.71429" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot3274"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       transform="translate(408.57142,336.42857)"><flowRegion
+       transform="translate(416.57142,336.42857)"><flowRegion
          id="flowRegion3276"><rect
            id="rect3278"
            width="188.57143"
@@ -205,7 +205,7 @@
            style="text-align:center;text-anchor:middle" /></flowRegion><flowPara
          id="flowPara3280"
          style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L">Reflectivity</flowPara></flowRoot>    <flowRoot
-       transform="translate(410.71428,365)"
+       transform="translate(418.71428,365)"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot3282"
        xml:space="preserve"><flowRegion
@@ -218,7 +218,7 @@
            id="rect3286" /></flowRegion><flowPara
          style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Nimbus Roman No9 L;-inkscape-font-specification:Nimbus Roman No9 L"
          id="flowPara3288">/</flowPara></flowRoot>    <flowRoot
-       transform="translate(409.99999,392.85714)"
+       transform="translate(417.99999,392.85714)"
        style="font-size:40px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot3290"
        xml:space="preserve"><flowRegion

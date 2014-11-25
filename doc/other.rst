@@ -1,19 +1,33 @@
 Other Modules
 =============
 
-:mod:`config` Module
---------------------
+.. toctree::
 
-.. automodule:: quicknxs.config
+   config
+   buzhug
+
+:mod:`console_logging` Module
+-----------------------------
+
+.. automodule:: quicknxs.console_logging
     :members:
     :undoc-members:
     :show-inheritance:
 
+:mod:`database` Module
+----------------------
 
-:mod:`output_templates` Module
+.. automodule:: quicknxs.database
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`database_updater` Module
 ------------------------------
 
-.. automodule:: quicknxs.output_templates
+.. automodule:: quicknxs.database_updater
     :members:
     :undoc-members:
     :show-inheritance:
+
+   

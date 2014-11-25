@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="General">
+    <file>autoNorm.png</file>
     <file>logo_hq.png</file>
     <file>autoRef.png</file>
     <file>stripOverlap.png</file>

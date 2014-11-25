@@ -221,7 +221,7 @@ class QtHandler(logging.Handler):
                                     record.exc_info[0].__name__,
                                     record.exc_info[1])+
                    u'<br /><br />If you know what triggered the exception please select "No"'+
-                   u' and activate full logging from the "Debug" menu, trigger the error again'+
+                   u' and activate full logging from the "Advanced->Debug" menu, trigger the error again'+
                    u' and send a full report.')
     elif hasattr(record, 'formated_tb'):
       mbox.setDetailedText(record.formated_tb[2])

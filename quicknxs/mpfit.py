@@ -1006,6 +1006,8 @@ class mpfit:
                         qllim=qulim
                         llim=x*0.
                         qanylim=0
+                ulim[numpy.isnan(ulim)]=numpy.inf
+                llim[numpy.isnan(llim)]=-numpy.inf
 
                 n=len(x)
                 # Check input parameters for errors
@@ -2000,7 +2002,7 @@ class mpfit:
 
                 for j in range(n):
                         r[j:n, j]=r[j, j:n]
-                x=numpy.diagonal(r)
+                x=numpy.diagonal(r).copy()
                 wa=qtb.copy()
 
                 # Eliminate the diagonal matrix d using a givens rotation

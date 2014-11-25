@@ -13,10 +13,10 @@ from logging import debug, info
 from time import strftime
 from zipfile import ZipFile
 from cPickle import loads, dumps
-from .decorators import log_call
 from .config import paths, instrument, output_templates
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
+from .decorators import log_call
 from .qcalc import smooth_data, DetectorTailCorrector
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular
 from .version import str_version
 from . import genx_data
 
@@ -40,6 +40,7 @@ class HeaderCreator(object):
   bgs=None
   bg_polys=None
   evts=None
+  gbl_opts=None
   sections=None
   direct_beam_options=['P0', 'PN', 'x_pos', 'x_width', 'y_pos', 'y_width',
                        'bg_pos', 'bg_width', 'dpix', 'tth', 'number']
@@ -47,6 +48,7 @@ class HeaderCreator(object):
                    'bg_pos', 'bg_width', 'extract_fan', 'dpix', 'tth', 'number']
   bg_options=['bg_tof_constant', 'bg_scale_xfit', 'bg_poly_regions', 'bg_scale_factor']
   event_options=['bin_type', 'bins', 'event_split_bins', 'event_split_index']
+  global_options=['sample_length']
 
   def __init__(self, refls):
     self.refls=refls
@@ -54,6 +56,7 @@ class HeaderCreator(object):
     self._collect_norms()
     self._collect_background()
     self._collect_event()
+    self._collect_global_options()
     self._collect_data()
 
   def _collect_norms(self):
@@ -106,6 +109,14 @@ class HeaderCreator(object):
       event_opts=[item.read_options[option] for option in self.event_options]
       if not event_opts in self.evts:
         self.evts.append(event_opts)
+
+  def _collect_global_options(self):
+    '''
+    Collect export options used for the whole set of data.
+    '''
+    self.gbl_opts={}
+    for item in self.global_options:
+      self.gbl_opts[item]=self.refls[0].options[item]
 
   def _collect_data(self):
     '''
@@ -233,6 +244,11 @@ class HeaderCreator(object):
                [dict(zip(options, item)) for item in data]]
       self.sections.append(section)
 
+    debug('Global Options section')
+    section=[u'Global Options', ['name', 'value'],
+                  [{'name': key, 'value': self.gbl_opts[key]} for key in self.global_options]]
+    self.sections.append(section)
+
   def _get_general_header(self):
     '''
     Return header lines present in any file, indipendent of datasets.
@@ -329,20 +345,57 @@ class HeaderParser(object):
   event_defaults=dict(EVT_ID=0, bin_type=0, bins=40, event_split_bins=10, event_split_index=0)
   poly_defaults=dict(poly_region=0, l1=0., l2=0., l3=0., l4=0.,
                                     x1=0., x2=0., x3=0., x4=0.)
+  global_defaults=dict(name='unknown', value=10.)
   callback=None
+  quicknxs_version=None
+  export_type=None
+  export_date=None
+  states_in_file=None
 
-  def __init__(self, header):
+  def __init__(self, header, parse_meta=True):
     if type(header) is not unicode:
       header=unicode(header, 'utf8', 'ignore')
+    # if header is a single line, assume it is a file name, not a header string
+    if not '\n' in header:
+      header=self.read_file_header(header)
     self.header=header
     self.sections={}
+    if parse_meta:
+      self._collect_meta_data()
     self._collect_sections()
     self._evaluate()
+
+  @staticmethod
+  def read_file_header(fname):
+    text=unicode(open(fname, 'rb').read(), 'utf8')
+    header=[]
+    for line in text.splitlines():
+      if not line.startswith('#'):
+        break
+      header.append(line)
+    header='\n'.join(header)
+    return header
 
   def parse(self, callback=None):
     self.callback=callback
     self._read_direct_beam()
     self._read_datasets()
+
+  def _collect_meta_data(self):
+    '''
+    Check if the header was written by QuickNXS and collect version and other general info.
+    '''
+    hlines=self.header.splitlines()
+    if not hlines[0].startswith('# Datafile created by QuickNXS'):
+      raise IOError, 'This is no file created by QuickNXS'
+    self.quicknxs_version=hlines[0].strip().rsplit(' ', 1)[1]
+    for line in hlines:
+      if line.startswith('# Date:'):
+        self.export_date=line.split(': ', 1)[1].strip()
+      if line.startswith('# Type:'):
+        self.export_type=line.split(': ', 1)[1].strip()
+      if line.startswith('# Extracted states:'):
+        self.states_in_file=line.split(': ', 1)[1].strip().split()
 
   def _collect_sections(self):
     '''
@@ -412,6 +465,11 @@ class HeaderParser(object):
     if 'Background Polygon Regions' in self.sections:
       self.section_data['Background Polygon Regions']=self._evaluate_section(
                         'Background Polygon Regions', self.poly_defaults)
+    if 'Global Options' in self.sections:
+      gbl_options=self._evaluate_section(
+                        'Global Options', self.global_defaults)
+      self.section_data['Global Options']=dict([(item['name'], item['value'])
+                                                for item in gbl_options])
     self._collect_background_options()
 
   def _get_dataset(self, options):
@@ -550,11 +608,11 @@ class Exporter(object):
       opts=refli.options
       index=opts['number']
       fdata=self.raw_data[index]
-      P0=len(fdata[0].tof)-opts['P0']
-      PN=opts['PN']
       for channel in self.channels:
         res=Reflectivity(fdata[channel], **opts)
         Qz, R, dR, dQz=res.Q, res.R, res.dR, res.dQ
+        P0=len(Qz)-opts['P0']
+        PN=opts['PN']
         rdata=np.vstack([Qz[PN:P0], R[PN:P0], dR[PN:P0], dQz[PN:P0],
                       0.*Qz[PN:P0]+res.ai]).transpose()
         output_data[channel].append(rdata)
@@ -726,6 +784,7 @@ class Exporter(object):
                 np.savetxt(of, scan, delimiter='\t', fmt='%-18e')
                 of.write(u'\n'.encode('utf8'))
             of.write(u'\n\n'.encode('utf8'))
+          of.close()
           self.exported_files_all.append(output);self.exported_files_data.append(output)
       if combined_ascii:
         debug('Export multi_ascii')

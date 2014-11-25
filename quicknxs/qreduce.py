@@ -16,27 +16,31 @@ storing the result as well as some intermediate data in itself as attributes.
 
 import os
 import zlib
+import h5py
+import base64
 from copy import deepcopy
 from glob import glob
 from numpy import *
-from logging import debug, info, warn #@Reimport
+from numpy.version import version as npversion
 from platform import node
-import h5py
 from time import time, strptime, mktime
+from xml.dom import minidom
 # ignore zero devision error
 #seterr(invalid='ignore')
 
-from .decorators import log_call, log_input, log_both
+from logging import debug, info, warn #@Reimport
 from .config import instrument
+from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
-DETECTOR_X_REGION=(8, 295) # the active area of the detector
-DETECTOR_Y_REGION=(8, 246)
 ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
+POLY_CORR_PARAMS=[-4.74152261e-05,-4.62469580e-05, 1.25995446e-02, 2.13654008e-02,
+                  1.02334517e+01] # parameters used in polynomial detector sensitivity correction
+DETECTOR_SENSITIVITY={}
 # measurement type mapping of states
 MAPPING_12FULL=(
                  (u'++ (0V)', u'entry-off_off_Ezero'),
@@ -85,6 +89,21 @@ USE_COMPRESSION=not ('biganalysis' in node() or 'mrac' in node())
 # used for * imports
 __all__=['NXSData', 'MRDataset', 'Reflectivity', 'OffSpecular', 'GISANS', 'time_from_header',
          'locate_file']
+
+_bincount=bincount
+def bincount(x, weights=None, minlength=None):
+  if len(x)==0:
+    if minlength:
+      return zeros(minlength, dtype=int)
+    else:
+      return array([0], dtype=int)
+  if npversion<'1.6.0':
+    bins=_bincount(x, weights=weights)
+    if minlength and len(bins)<minlength:
+      bins.resize(minlength)
+    return bins
+  else:
+    return _bincount(x, weights, minlength)
 
 class OptionsDocMeta(type):
   '''
@@ -163,7 +182,7 @@ class NXSData(object):
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
     callback='Function called to update e.g. a progress bar',
     )
-  COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
+  COUNT_THREASHOLD=0.01 #: Relative number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=100 #: Number of datasets that are kept in the cache
   _cache=[]
 
@@ -174,11 +193,9 @@ class NXSData(object):
       if fn is None:
         raise RuntimeError, 'No file found for index %i'%filename
       filename=fn
-    all_options=dict(cls.DEFAULT_OPTIONS)
-    for key, value in options.items():
-      if not key in all_options:
-        raise ValueError, "%s is not a known option parameter"%key
-      all_options[key]=value
+    if filename.endswith('.xml') and cls is not XMLData:
+      return XMLData(filename, **options)
+    all_options=cls._get_all_options(options)
     filename=os.path.abspath(filename)
     cached_names=[item.origin for item in cls._cache]
     if all_options['use_caching'] and filename in cached_names:
@@ -214,6 +231,15 @@ class NXSData(object):
     self._options['callback']=None
     return self
 
+  @classmethod
+  def _get_all_options(cls, options):
+    all_options=dict(cls.DEFAULT_OPTIONS)
+    for key, value in options.items():
+      if not key in all_options:
+        raise ValueError, "%s is not a known option parameter"%key
+      all_options[key]=value
+    return all_options
+
   def _read_file(self, filename):
     '''
     Load data from a Nexus file.
@@ -231,7 +257,7 @@ class NXSData(object):
     # analyze channels
     channels=nxs.keys()
     debug('Channels in file: '+repr(channels))
-    if channels==['entry']:
+    if channels==['entry'] and 'DASlogs' not in nxs[channels[0]]:
       # ancient file format with polarizations in different files
       nxs=self._get_ancient(filename)
       channels=nxs.keys()
@@ -239,9 +265,13 @@ class NXSData(object):
       is_ancient=True
     else:
       is_ancient=False
+    try:
+      max_counts=max([nxs[channel][u'total_counts'].value[0] for channel in channels])
+    except KeyError:
+      warn('total_counts not defined in channels')
+      return False
     for channel in list(channels):
-      debug(str(nxs[channel][u'total_counts'].value[0]))
-      if nxs[channel][u'total_counts'].value[0]<self.COUNT_THREASHOLD:
+      if nxs[channel][u'total_counts'].value[0]<(self.COUNT_THREASHOLD*max_counts):
         channels.remove(channel)
     if len(channels)==0:
       debug('No valid channels in file')
@@ -436,7 +466,7 @@ class NXSData(object):
   dangle=property(__dangle, doc='first state dangle attribute')
   dangle0=property(__dangle0, doc='first state dangle0 attribute')
   sangle=property(__sangle, doc='first state sangle attribute')
-  
+
 
 class NXSMultiData(NXSData):
   '''
@@ -449,6 +479,15 @@ class NXSMultiData(NXSData):
   def __new__(cls, filenames, **options):
     if not hasattr(filenames, '__iter__') or len(filenames)==0:
       raise ValueError, 'File names needs to be an iterable of length > 0'
+    all_options=cls._get_all_options(options)
+    all_options['callback']=None
+    cached_names=[item.origin for item in cls._cache]
+    if all_options['use_caching'] and filenames in cached_names:
+      cache_index=cached_names.index(filenames)
+      cached_object=cls._cache[cache_index]
+      if cached_object._options==all_options:
+        return cached_object
+
     options['use_caching']=False # caching would return NXSData type objects
     filenames.sort()
     if 'callback' in options and options['callback'] is not None:
@@ -466,6 +505,17 @@ class NXSMultiData(NXSData):
       self._add_data(other)
       numbers.append(other.number)
     self.origin=filenames
+    self._options=all_options
+    for item in self:
+      item.read_options=all_options
+    if all_options['use_caching']:
+      if filenames in cached_names:
+        cache_index=cached_names.index(filenames)
+        cls._cache.pop(cache_index)
+      # make sure cache does not get bigger than MAX_CACHE items or 80% of available memory
+      while len(cls._cache)>=cls.MAX_CACHE:
+        cls._cache.pop(0)
+      cls._cache.append(self)
     return self
 
   def _add_data(self, other):
@@ -482,6 +532,128 @@ class NXSMultiData(NXSData):
   def _callback_sum(cls, progress):
     cls._callback(cls._progress+progress/cls._progress_items)
 
+class XMLData(NXSData):
+  '''
+  Load running experiment from a set of xml files. The metat data xml
+  contains the instrument info and the filenames of the collected data.
+  '''
+
+  def _read_file(self, filename):
+    start=time()
+    if self._options['callback']:
+      self._options['callback'](0.)
+    try:
+      xml=minidom.parse(filename)
+    except:
+      debug('Could not read xml file %s'%filename, exc_info=True)
+      return False
+    finfo=xml.getElementsByTagName('Files')[0]
+    channels=[]
+    xmlfiles=[]
+    path=os.path.dirname(filename)
+    for item in finfo.getElementsByTagName('entry'):
+      channels.append(item.getAttribute('name'))
+      xmlfiles.append((os.path.join(path, item.getAttribute('xy_file')), 
+                       os.path.join(path, item.getAttribute('tofx_file'))))
+    
+    # collect meta information
+    daslogs={}
+    for item in xml.getElementsByTagName('DASLogs')[0].getElementsByTagName('item'):
+      value=item.getAttribute('value')
+      try:
+        value=float(value)
+      except ValueError:
+        pass
+      daslogs[item.getAttribute('name')]=value
+
+    channel_counts=[]
+    # check counts for each channel
+    for xyfile, ignore in xmlfiles:
+      xyxml=minidom.parse(xyfile)
+      channel_counts.append(int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data))
+    max_counts=max(channel_counts)
+    for i in reversed(range(len(channels))):
+      counts=channel_counts[i]
+      if counts<(self.COUNT_THREASHOLD*max_counts):
+        channels.pop(i)
+        xmlfiles.pop(i)
+    if len(channels)==0:
+      debug('No valid channels in file')
+      return False
+    ana=daslogs['AnalyzerLift']
+    pol=daslogs['PolLift']
+    try:
+      smpt=daslogs['SMPolTrans']
+    except KeyError:
+      smpt=0.
+
+    # select the type of measurement that has been used
+    if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
+      if channels[0] in [m[1] for m in MAPPING_12FULL]:
+        self.measurement_type='Polarization Analysis w/E-Field'
+        mapping=list(MAPPING_12FULL)
+      else:
+        self.measurement_type='Polarization Analysis'
+        mapping=list(MAPPING_FULLPOL)
+    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
+         abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
+      if channels[0] in [m[1] for m in MAPPING_12HALF]:
+        self.measurement_type='Polarized w/E-Field'
+        mapping=list(MAPPING_12HALF)
+      else:
+        self.measurement_type='Polarized'
+        mapping=list(MAPPING_HALFPOL)
+    #elif 'SP_HV_Minus' in daslogs and \
+    #      daslogs['SP_HV_Minus']!='None' and \
+    #      channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
+    #  self.measurement_type='Electric Field'
+    #  mapping=list(MAPPING_EFIELD)
+    elif len(channels)==1:
+      self.measurement_type='Unpolarized'
+      mapping=list(MAPPING_UNPOL)
+    else:
+      self.measurement_type='Unknown'
+      mapping=[]
+    # check that all channels have a mapping entry
+    for channel in channels:
+      if not channel in [m[1] for m in mapping]:
+        mapping.append((channel.lstrip('entry-'), channel))
+
+    progress=0.1
+    if self._options['callback']:
+      self._options['callback'](progress)
+    self._read_times.append(time()-start)
+    i=1
+    empty_channels=[]
+    for dest, channel in mapping:
+      if channel not in channels:
+        continue
+      xyfile, tofxfile=xmlfiles[channels.index(channel)]
+      data=MRDataset.from_xml(xyfile, tofxfile, daslogs, self._options,
+                              callback=self._options['callback'],
+                              callback_offset=progress,
+                              callback_scaling=0.9/len(channels),
+                              tof_overwrite=self._options['event_tof_overwrite'])
+      data.origin=(os.path.abspath(filename), channel)
+
+      if data is None:
+        # no data in channel, don't add it
+        empty_channels.append(dest)
+        continue
+
+      self._channel_data.append(data)
+      self._channel_names.append(dest)
+      self._channel_origin.append(channel)
+      progress=0.1+0.9*float(i)/len(channels)
+      if self._options['callback']:
+        self._options['callback'](progress)
+      i+=1
+      self._read_times.append(time()-self._read_times[-1]-start)
+
+    if empty_channels:
+      warn('No counts for state %s'%(','.join(empty_channels)))
+
+    return True
 
 class MRDataset(object):
   '''
@@ -490,6 +662,7 @@ class MRDataset(object):
   '''
   proton_charge=0. #: total proton charge on target [pC]
   total_counts=0 #: total counts on detector
+  total_time=0 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
   dangle=0. #: detector arm angle value in [°]
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
@@ -524,6 +697,8 @@ class MRDataset(object):
   _Q=None
   _I=None
   _dI=None
+  _active_area_x=None #: active pixels for x direction
+  _active_area_y=None #: active pixels for y direction
 
   def __init__(self):
     '''
@@ -601,22 +776,18 @@ class MRDataset(object):
       # ToF region for this specific central wavelength
       tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
       tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
-      if bin_type==0:
+      if bin_type==0: # constant Δλ
         tof_edges=linspace(tmin, tmax, bins+1)
-      elif bin_type==1:
+      elif bin_type==1: # constant ΔQ
         tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      elif bin_type==2: # constant Δλ/λ
+        tof_edges=tmin*(((tmax/tmin)**(1./bins))**arange(bins+1))
       else:
         raise ValueError, 'Unknown bin type %i'%bin_type
     else:
       tof_edges=tof_overwrite
 
     # Histogram the data
-    # create pixel map
-    x=arange(304)
-    y=arange(256)
-    Y, X=meshgrid(y, x)
-    X=X.flatten()
-    Y=Y.flatten()
     # create ToF edges for the binning and correlate pixel indices with pixel position
     tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
     tof_time=data['bank1_events/event_time_offset'].value
@@ -657,37 +828,144 @@ class MRDataset(object):
       if output.total_counts==0:
         debug('No counts in selected range')
         return None
-    tof_x=X[tof_ids]
-    tof_y=Y[tof_ids]
     # calculate total proton charge in the selected area
     output.proton_charge=tof_pc.sum()
+    dimension=data['bank1/data_x_y'].shape
+    Ixyt=MRDataset.bin_events(tof_ids, tof_time, tof_edges, dimension,
+                              callback, callback_offset, callback_scaling)
 
-    if callback is not None:
-      # create the 3D binning using chunks to update the callback regularly
-      ssize=1e5
-      Ixyt, D=histogramdd(vstack([tof_x[:ssize], tof_y[:ssize], tof_time[:ssize]]).transpose(),
-                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
-      steps=int(tof_x.shape[0]/ssize)
-      callback(callback_offset+callback_scaling*1/(steps+1))
-      for i in range(1, steps+1):
-        Ixyti, D=histogramdd(vstack([tof_x[ssize*i:ssize*(i+1)], tof_y[ssize*i:ssize*(i+1)],
-                                     tof_time[ssize*i:ssize*(i+1)]]).transpose(),
-                           bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
-        Ixyt+=Ixyti
-        callback(callback_offset+callback_scaling*(i+1)/(steps+1))
-    else:
-      # create the 3D binning
-      Ixyt, D=histogramdd(vstack([tof_x, tof_y, tof_time]).transpose(),
-                         bins=(arange(305)-0.5, arange(257)-0.5, tof_edges))
     # create projections for the 2D datasets
     Ixy=Ixyt.sum(axis=2)
     Ixt=Ixyt.sum(axis=1)
     # store the data
-    output.tof_edges=D[2]
+    output.tof_edges=tof_edges
     output.data=Ixyt.astype(float) # 3D dataset
     output.xydata=Ixy.transpose().astype(float) # 2D dataset
     output.xtofdata=Ixt.astype(float) # 2D dataset
     return output
+
+  @classmethod
+  @log_call
+  def from_xml(cls, xyfile, tofxfile, daslogs,
+               read_options, callback=None, callback_offset=0.,
+               callback_scaling=1., tof_overwrite=None):
+    '''
+    Load data from a XML previe format created by PyDAS.
+    Needs to rebin the data to be able to normalize it with a normal direct beam measurement.
+    The 3D dataset is just a dummy, as it is not available in this format.
+    '''
+    output=cls()
+    output.read_options=read_options
+    output.from_event_mode=True
+    bin_type=read_options['bin_type']
+    bins=read_options['bins']
+
+    xyxml=minidom.parse(xyfile)
+
+    output.total_time=float(xyxml.getElementsByTagName('TotalTime')[0].childNodes[0].data[:-4])
+    output.total_counts=int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data)
+    output.proton_charge=float(xyxml.getElementsByTagName('TotalCharge')[0].childNodes[0].data)
+    output.number=int(daslogs['run_number'])
+    output.experiment='Live Data'
+
+    output.logs=dict(daslogs)
+
+    output.lambda_center=daslogs['lamda_center']
+    output.sangle=daslogs['SANGLE']
+    output.dangle=daslogs['DANGLE']
+    output.dangle0=daslogs['DANGLE0']
+    output.dpix=daslogs['DIRPIX']
+    output.slit1_width=daslogs['S1HWidth']
+    output.slit2_width=daslogs['S2HWidth']
+    output.slit3_width=daslogs['S3HWidth']
+
+    xydata=MRDataset._getxml_data(xyxml)
+    tofxxml=minidom.parse(tofxfile)
+    tofxdata=MRDataset._getxml_data(tofxxml).T
+    
+    output.xydata=xydata.T.astype(float)
+
+    if tof_overwrite is None:
+      lcenter=output.lambda_center
+      # ToF region for this specific central wavelength
+      tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
+      tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
+      if bin_type==0: # constant Δλ
+        tof_edges=linspace(tmin, tmax, bins+1)
+      elif bin_type==1: # constant ΔQ
+        tof_edges=1./linspace(1./tmin, 1./tmax, bins+1)
+      elif bin_type==2: # constant Δλ/λ
+        tof_edges=tmin*(((tmax/tmin)**(1./bins))**arange(bins+1))
+      else:
+        raise ValueError, 'Unknown bin type %i'%bin_type
+    else:
+      tof_edges=tof_overwrite
+    
+    tmin=float(tofxxml.getElementsByTagName('TOFMin')[0].childNodes[0].data[:-3])
+    tstep=float(tofxxml.getElementsByTagName('TOFBinSize')[0].childNodes[0].data[:-3])
+    tof_bins=arange(tmin, tmin+tstep*tofxdata.shape[1], tstep)
+
+    newxtofdata=zeros((tofxdata.shape[0], tof_edges.shape[0]-1), dtype=float)
+    for i, (tfrom, tto) in enumerate(zip(tof_edges[:-1], tof_edges[1:])):
+      newxtofdata[:, i]=tofxdata[:, (tof_bins>=tfrom)&(tof_bins<tto)].sum(axis=1)
+
+    output.xtofdata=newxtofdata
+    yscale=zeros(xydata.shape[1])
+    yscale[xydata.shape[1]//2]=1.
+    output.data=output.xtofdata[:, newaxis, :]*yscale[newaxis, :, newaxis]
+    output.tof_edges=tof_edges
+
+    return output
+
+  @staticmethod
+  def bin_events(tof_ids, tof_time, tof_edges, dimension,
+                 callback=None, callback_offset=0., callback_scaling=1.):
+    '''
+    Filter events outside the tof_edges region and calculate the binning with devide_bin.
+    
+    @return: 3D array of dimensions (x, y, tof)
+    '''
+    region=(tof_time>=tof_edges[0])&(tof_time<=tof_edges[-1])
+    result=array(MRDataset.devide_bin(tof_ids[region], tof_time[region], tof_edges, dimension,
+                                callback, callback_offset, callback_scaling/len(tof_edges)))
+    return result.transpose((1, 2, 0))
+
+  @staticmethod
+  def devide_bin(tof_ids, tof_time, tof_edges, dimension,
+                 callback=None, callback_offset=0., callback_scaling=1., cbidx=0):
+    '''
+    Use a divide and conquer strategy to bin the data. For the actual binning the
+    numpy bincount function is used, as it is much faster then histogram for
+    counting of integer values.
+    
+    :param tof_ids: Array of positional indices for each event
+    :param tof_time: Array of time of flight for each event
+    :param tof_edges: The edges of bins to be used for the histogram
+    :param dimension: x,y pixel size of detector
+    :keyword callback: Optional callback function for the progress
+    :keyword callback_offset: Offset for calling the function
+    :keyword callback_scaling: Factor to multiply the counting index when calling the function
+    :keyword cbidx: Current counting index for this recursive call
+    
+    :return: 3D list of dimensions (tof, x, y)
+    '''
+    if len(tof_edges)==2:
+      # deepest recursion reached, all items should be within the two ToF edges
+      if callback is not None:
+        callback(callback_offset+callback_scaling*cbidx)
+      return [bincount(tof_ids, minlength=dimension[0]*dimension[1]).reshape(
+                                                  dimension[0], dimension[1]).tolist()]
+    # split all events into two time of flight regions
+    split_idx=len(tof_edges)//2
+    left_region=tof_time<tof_edges[split_idx]
+    left_list=MRDataset.devide_bin(tof_ids[left_region], tof_time[left_region],
+                              tof_edges[:split_idx+1], dimension,
+                              callback, callback_offset, callback_scaling, cbidx)
+    right_region=logical_not(left_region)
+    right_list=MRDataset.devide_bin(tof_ids[right_region], tof_time[right_region],
+                              tof_edges[split_idx:], dimension,
+                              callback, callback_offset, callback_scaling, split_idx+cbidx)
+    return left_list+right_list
 
   def _collect_info(self, data):
     '''
@@ -700,12 +978,15 @@ class MRDataset(object):
     self.log_minmax=NiceDict()
     self.log_units=NiceDict()
     if 'DASlogs' in data:  # the old format does not include the DAS logs
-      # get an array of all pulses to make it possible to correlate values with states
-      stimes=data['DASlogs/proton_charge/time'].value
-      stimes=stimes[::10] # reduce the number of items to speed up the correlation
-      # use only values that are not directly before or after a state change
-      stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
-      stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
+      if 'proton_charge' in data['DASlogs']: # some intermediate format has DASlogs but no pc
+        # get an array of all pulses to make it possible to correlate values with states
+        stimes=data['DASlogs/proton_charge/time'].value
+        stimes=stimes[::10] # reduce the number of items to speed up the correlation
+        # use only values that are not directly before or after a state change
+        stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
+        stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
+      else:
+        stimes=None
       for motor, item in data['DASlogs'].items():
         if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
           continue
@@ -719,10 +1000,11 @@ class MRDataset(object):
             self.logs[motor]=val[0]
             self.log_minmax[motor]=(val[0], val[0])
           else:
-            vtime=item['time'].value
-            sidx=searchsorted(vtime, stimes, side='right')
-            sidx=maximum(sidx-1, 0)
-            val=val[sidx]
+            if stimes is not None:
+              vtime=item['time'].value
+              sidx=searchsorted(vtime, stimes, side='right')
+              sidx=maximum(sidx-1, 0)
+              val=val[sidx]
             if len(val)==0:
               self.logs[motor]=NaN
               self.log_minmax[motor]=(NaN, NaN)
@@ -754,6 +1036,7 @@ class MRDataset(object):
 
     self.proton_charge=data['proton_charge'].value[0]
     self.total_counts=data['total_counts'].value[0]
+    self.total_time=data['duration'].value[0]
 
     self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
     self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
@@ -764,6 +1047,21 @@ class MRDataset(object):
     self.experiment=str(data['experiment_identifier'].value[0])
     self.number=int(data['run_number'].value[0])
     self.merge_warnings=str(data['SNSproblem_log_geom/data'].value[0])
+
+    detector_id=str(data['instrument/SNSgeometry_file_name'].value[0])
+    if detector_id in instrument.DETECTOR_REGION:
+      self.active_area_x=instrument.DETECTOR_REGION[detector_id][0]
+      self.active_area_y=instrument.DETECTOR_REGION[detector_id][1]
+  
+  @staticmethod
+  def _getxml_data(xml):
+    data=xml.getElementsByTagName('Data')[0]
+    rawdata=[item for item in data.childNodes if item.nodeType==minidom.CDATASection.nodeType][0]
+    xdim=int(data.getAttribute('xdim'))
+    ydim=int(data.getAttribute('ydim'))
+    type_name=data.getAttribute('type')
+    Idata=fromstring(base64.decodestring(rawdata.data), dtype=type_name).reshape(xdim, ydim)
+    return Idata
 
   def __repr__(self):
     if type(self.origin) is tuple:
@@ -888,6 +1186,26 @@ class MRDataset(object):
     lamda_n=H_OVER_M_NEUTRON/v_n*1e10 #A
     return lamda_n
 
+  @property
+  def active_area_x(self):
+    if self._active_area_x is None:
+      return (0, self.xydata.shape[1])
+    else:
+      return self._active_area_x
+  @active_area_x.setter
+  def active_area_x(self, value):
+    self._active_area_x=value
+
+  @property
+  def active_area_y(self):
+    if self._active_area_y is None:
+      return (0, self.xydata.shape[1])
+    else:
+      return self._active_area_y
+  @active_area_y.setter
+  def active_area_y(self, value):
+    self._active_area_y=value
+
   def get_tth(self, dangle0=None, dpix=None):
     '''
     Return the tth values corresponding to each x-pixel.
@@ -898,7 +1216,7 @@ class MRDataset(object):
       dpix=self.dpix
     x=self.x
     grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
-    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
+    tth0=(self.dangle-dangle0)-(x.shape[0]-dpix)*grad_per_pixel
     tth_range=x[::-1]*grad_per_pixel
     return tth0+tth_range
 
@@ -954,13 +1272,14 @@ def time_from_header(filename, nxs=None):
     nxs.close()
   return etime-stime
 
-def locate_file(number, histogram=True, old_format=False):
+def locate_file(number, histogram=True, old_format=False, verbose=True):
     '''
     Search the data folders for a specific file number and open it.
     
     :param int number: Run number
     '''
-    info('Trying to locate file number %s...'%number)
+    if verbose:
+      info('Trying to locate file number %s...'%number)
     if histogram:
       search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
     elif old_format:
@@ -996,11 +1315,13 @@ class Reflectivity(object):
        bg_poly_regions=None,
        bg_scale_xfit=False,
        bg_scale_factor=1.,
+       sensitivity_correction=None,
        P0=0,
        PN=0,
        number='0',
        gisans_gridy=50,
        gisans_gridz=50,
+       gisans_no_DP=True,
        )
   _OPTIONS_DESCRTIPTION=dict(
        x_pos='X-pixel position of the reflected beam on the detector',
@@ -1019,11 +1340,13 @@ class Reflectivity(object):
        bg_poly_regions='use polygon regions in x/λ to determine which points to use for the background',
        bg_scale_xfit='use a linear fit on x-axes projection to scale the background',
        bg_scale_factor='scale the background by this constant before subtraction',
+       sensitivity_correction='Detector sensitivity correction to be used',
        P0='Number of points to remove from the low-Q side of the reflectivity',
        PN='Number of points to remove from the high-Q side of the reflectivity',
        number='Index of the origin dataset used for naming etc. when exported',
        gisans_gridy='When extracting GISANS data, this is the number of pixels in Qz',
        gisans_gridz='When extracting GISANS data, this is the number of pixels in Qy',
+       gisans_no_DP='Remove the ToF bin which contains the direct pulse background',
        )
 
   @log_input
@@ -1113,6 +1436,22 @@ class Reflectivity(object):
     return StringRepr('self.options='+repr(self.options), output)
 
 
+  @log_call
+  def _correct_sensitivity(self, data):
+    if self.options['sensitivity_correction'] in DETECTOR_SENSITIVITY:
+      return data/DETECTOR_SENSITIVITY[self.options['sensitivity_correction']][:, :, newaxis]
+    elif self.options['sensitivity_correction']=='polynomial':
+      # use polynomial form to generate sensitivity map
+      X, Y=meshgrid(arange(data.shape[0]), arange(data.shape[1]))
+      X, Y=X.T.astype(float), Y.T.astype(float)
+      ax, ay, bx, by, c=POLY_CORR_PARAMS
+      Isens=ax*X**2+ay*Y**2+bx*X+by*Y+c
+      Isens/=Isens.mean()
+      DETECTOR_SENSITIVITY[self.options['sensitivity_correction']]=Isens
+      return data/Isens[:, :, newaxis]
+    else:
+      raise NotImplementedError, 'sensitivity correction %s not known'%self.options['sensitivity_correction']
+
   #############################################################################
 
   @log_call
@@ -1129,6 +1468,8 @@ class Reflectivity(object):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
@@ -1216,6 +1557,8 @@ class Reflectivity(object):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
@@ -1336,6 +1679,8 @@ class Reflectivity(object):
     :param quicknxs.qreduce.MRDataset dataset: The dataset to use for extraction
     '''
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     y_pos=self.options['y_pos']
     y_width=self.options['y_width']
     bg_pos=self.options['bg_pos']
@@ -1368,7 +1713,7 @@ class Reflectivity(object):
           points_in_region|=poly_path.contains_points(points)
       else:
         debug('Using matplotlib.nxutils for polygon checking')
-        from matplotlib.nxutils import points_inside_poly
+        from matplotlib.nxutils import points_inside_poly #@UnresolvedImport
         for poly in bg_poly:
           points_in_region|=points_inside_poly(points, poly)
       points_in_region=points_in_region.reshape(X.shape)
@@ -1427,6 +1772,7 @@ class Reflectivity(object):
     self.dR*=rescale
     self.options['scale']=scaling
 
+  @log_call
   def get_resolution(self):
     '''
     Calculate the angular resolution given by all slits together with the sample size
@@ -1436,9 +1782,14 @@ class Reflectivity(object):
     s_width=self.options['sample_length']*sin(self.ai)
     for width, dist in self.slits:
       # calculate the maximum opening angle dTheta
-      dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
+      if s_width>0.:
+        dTheta=arctan((s_width/2.*(1.+width/s_width))/dist)*2.
+      else:
+        dTheta=arctan(width/2./dist)*2.
       # standard deviation for a uniform angle distribution is Δθ/√12
       res.append(dTheta*0.28867513)
+    debug('Sample Size %.2f\tSample FP: %.5f\tResolutions for slits: %s'%(
+                            self.options['sample_length'], s_width, res))
     return min(res)
 
 class OffSpecular(Reflectivity):
@@ -1497,6 +1848,8 @@ class OffSpecular(Reflectivity):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     x_width=self.options['x_width']
     y_pos=self.options['y_pos']
@@ -1510,7 +1863,8 @@ class OffSpecular(Reflectivity):
     debug('Off-Specular region: %s'%str(reg))
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
-    xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
+    xtth=self.options['dpix']-arange(data.shape[0])[dataset.active_area_x[0]:
+                                                    dataset.active_area_x[1]]
     pix_offset_spec=self.options['dpix']-x_pos
     tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
@@ -1537,7 +1891,7 @@ class OffSpecular(Reflectivity):
     self.kf_z=k[newaxis, :]*sin(af)[:, newaxis]
 
     # calculate ROI intensities and normalize by number of points
-    Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1], reg[2]:reg[3], :]
+    Idata=data[dataset.active_area_x[0]:dataset.active_area_x[1], reg[2]:reg[3], :]
     self.Iraw=Idata.sum(axis=1)
     self.dIraw=sqrt(self.Iraw)
     # normalize data by width in y and multiply scaling factor
@@ -1613,18 +1967,22 @@ class GISANS(Reflectivity):
     """
     tof_edges=dataset.tof_edges
     data=dataset.data
+    if self.options['sensitivity_correction'] is not None:
+      data=self._correct_sensitivity(data)
     x_pos=self.options['x_pos']
     y_pos=self.options['y_pos']
     # create a nicer intensity scale by multiplying with the reflectiviy extraction region
     scale=self.options['scale']/dataset.proton_charge # scale by user factor
 
     rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
-    xtth=self.options['dpix']-arange(data.shape[0])[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]]
+    xtth=self.options['dpix']-arange(data.shape[0])[dataset.active_area_x[0]:
+                                                    dataset.active_area_x[1]]
     pix_offset_spec=self.options['dpix']-x_pos
     tth_spec=self.options['tth']*pi/180.+pix_offset_spec*rad_per_pixel
     af=self.options['tth']*pi/180.+xtth*rad_per_pixel-tth_spec/2.
     ai=ones_like(af)*tth_spec/2.
-    phi=(arange(data.shape[1])[DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1]]-y_pos)*rad_per_pixel
+    phi=(arange(data.shape[1])[dataset.active_area_y[0]:
+                               dataset.active_area_y[1]]-y_pos)*rad_per_pixel
     debug('alpha_i=%s'%(tth_spec/2.))
 
     v_edges=dataset.dist_mod_det/tof_edges*1e6 #m/s
@@ -1640,13 +1998,15 @@ class GISANS(Reflectivity):
     # calculate ROI intensities and normalize by number of points
     P0=len(self.tof)-self.options['P0']
     PN=self.options['PN']
-    Idata=data[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1],
-               DETECTOR_Y_REGION[0]:DETECTOR_Y_REGION[1],
+    Idata=data[dataset.active_area_x[0]:dataset.active_area_x[1],
+               dataset.active_area_y[0]:dataset.active_area_y[1],
                PN:P0]
     # calculate reciprocal space, incident and outgoing perpendicular wave vectors
     self.Qx=k[newaxis, newaxis, PN:P0]*(cos(phi)*cos(af)[:, newaxis]-cos(ai)[:, newaxis])[:, :, newaxis]
     self.Qy=k[newaxis, newaxis, PN:P0]*(sin(phi)*cos(af)[:, newaxis])[:, :, newaxis]
-    self.Qz=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(af)[:, newaxis]+sin(ai)[:, newaxis])[:, :, newaxis]
+    self.pi=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(ai)[:, newaxis])[:, :, newaxis]
+    self.pf=k[newaxis, newaxis, PN:P0]*((0*phi)+sin(af)[:, newaxis])[:, :, newaxis]
+    self.Qz=self.pi+self.pf
 
     self.Iraw=Idata
     self.dIraw=sqrt(self.Iraw)
@@ -1671,6 +2031,26 @@ class GISANS(Reflectivity):
       self.S[:, :, idxs]/=normR[idxs][newaxis, newaxis, :]
       self.S[:, :, logical_not(idxs)]=0.
       self.dS[:, :, logical_not(idxs)]=0.
+
+    if self.options['gisans_no_DP']:
+      fast_n_tof=[i*1.0e6/60. for i in range(4)]
+      tof_edges=dataset.tof_edges[PN:P0]
+      fresult=(tof_edges[1:]<fast_n_tof[0])|(tof_edges[:-1]>fast_n_tof[0])
+      for fnt in fast_n_tof[1:]:
+        fresult&=(tof_edges[1:]<fnt)|(tof_edges[:-1]>fnt)
+      fidx=where(fresult)[0]
+      # apply filtering to all arrays
+      self.Iraw=self.Iraw[:, :, fidx]
+      self.dIraw=self.dIraw[:, :, fidx]
+      self.I=self.I[:, :, fidx]
+      self.dI=self.dI[:, :, fidx]
+      self.S=self.S[:, :, fidx]
+      self.dS=self.dS[:, :, fidx]
+      self.Qx=self.Qx[:, :, fidx]
+      self.Qy=self.Qy[:, :, fidx]
+      self.Qz=self.Qz[:, :, fidx]
+      self.pi=self.pi[:, :, fidx]
+      self.pf=self.pf[:, :, fidx]
 
     # create grid
     self.SGrid, qy, qz=histogram2d(self.Qy.flatten(), self.Qz.flatten(),

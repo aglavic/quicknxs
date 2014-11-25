@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/gisans_dialog.ui'
 #
-# Created: Tue Jun  4 13:39:19 2013
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Thu Mar  6 09:40:43 2014
+#      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,16 @@ from PyQt4 import QtCore, QtGui
 try:
   _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-  _fromUtf8 = lambda s: s
+  def _fromUtf8(s):
+    return s
+
+try:
+  _encoding = QtGui.QApplication.UnicodeUTF8
+  def _translate(context, text, disambig):
+    return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+  def _translate(context, text, disambig):
+    return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
@@ -114,7 +123,7 @@ class Ui_Dialog(object):
     self.scrollArea.setWidgetResizable(True)
     self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
     self.resultImageArea = QtGui.QWidget()
-    self.resultImageArea.setGeometry(QtCore.QRect(0, 0, 476, 295))
+    self.resultImageArea.setGeometry(QtCore.QRect(0, 0, 476, 286))
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Preferred)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(0)
@@ -173,6 +182,13 @@ class Ui_Dialog(object):
     self.gridLayout = QtGui.QGridLayout(self.widget)
     self.gridLayout.setMargin(0)
     self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+    self.gridQy = QtGui.QSpinBox(self.widget)
+    self.gridQy.setMinimum(20)
+    self.gridQy.setMaximum(300)
+    self.gridQy.setSingleStep(10)
+    self.gridQy.setProperty("value", 50)
+    self.gridQy.setObjectName(_fromUtf8("gridQy"))
+    self.gridLayout.addWidget(self.gridQy, 0, 3, 1, 1)
     self.numberSlices = QtGui.QSpinBox(self.widget)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
     sizePolicy.setHorizontalStretch(1)
@@ -193,7 +209,7 @@ class Ui_Dialog(object):
     self.projectionMethod = QtGui.QComboBox(self.widget)
     self.projectionMethod.setObjectName(_fromUtf8("projectionMethod"))
     self.projectionMethod.addItem(_fromUtf8(""))
-    self.gridLayout.addWidget(self.projectionMethod, 6, 3, 1, 2)
+    self.gridLayout.addWidget(self.projectionMethod, 7, 3, 1, 2)
     self.lambdaMin = QtGui.QDoubleSpinBox(self.widget)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
     sizePolicy.setHorizontalStretch(1)
@@ -224,7 +240,7 @@ class Ui_Dialog(object):
     self.label.setObjectName(_fromUtf8("label"))
     self.gridLayout.addWidget(self.label, 3, 2, 1, 1)
     spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-    self.gridLayout.addItem(spacerItem, 7, 3, 1, 1)
+    self.gridLayout.addItem(spacerItem, 9, 3, 1, 1)
     self.label_5 = QtGui.QLabel(self.widget)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
     sizePolicy.setHorizontalStretch(1)
@@ -244,7 +260,7 @@ class Ui_Dialog(object):
     self.lambdaMax.setSizePolicy(sizePolicy)
     self.lambdaMax.setDecimals(3)
     self.lambdaMax.setMinimum(1.9)
-    self.lambdaMax.setMaximum(9.0)
+    self.lambdaMax.setMaximum(20.0)
     self.lambdaMax.setSingleStep(0.025)
     self.lambdaMax.setProperty("value", 5.0)
     self.lambdaMax.setObjectName(_fromUtf8("lambdaMax"))
@@ -256,10 +272,10 @@ class Ui_Dialog(object):
     sizePolicy.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
     self.label_6.setSizePolicy(sizePolicy)
     self.label_6.setObjectName(_fromUtf8("label_6"))
-    self.gridLayout.addWidget(self.label_6, 6, 2, 1, 1)
+    self.gridLayout.addWidget(self.label_6, 7, 2, 1, 1)
     self.pushButton = QtGui.QPushButton(self.widget)
     self.pushButton.setObjectName(_fromUtf8("pushButton"))
-    self.gridLayout.addWidget(self.pushButton, 7, 2, 1, 1)
+    self.gridLayout.addWidget(self.pushButton, 9, 2, 1, 1)
     self.line = QtGui.QFrame(self.widget)
     self.line.setFrameShape(QtGui.QFrame.HLine)
     self.line.setFrameShadow(QtGui.QFrame.Sunken)
@@ -268,13 +284,6 @@ class Ui_Dialog(object):
     self.label_8 = QtGui.QLabel(self.widget)
     self.label_8.setObjectName(_fromUtf8("label_8"))
     self.gridLayout.addWidget(self.label_8, 1, 2, 1, 1)
-    self.gridQy = QtGui.QSpinBox(self.widget)
-    self.gridQy.setMinimum(20)
-    self.gridQy.setMaximum(300)
-    self.gridQy.setSingleStep(10)
-    self.gridQy.setProperty("value", 50)
-    self.gridQy.setObjectName(_fromUtf8("gridQy"))
-    self.gridLayout.addWidget(self.gridQy, 0, 3, 1, 1)
     self.gridQz = QtGui.QSpinBox(self.widget)
     self.gridQz.setMinimum(20)
     self.gridQz.setMaximum(300)
@@ -282,6 +291,10 @@ class Ui_Dialog(object):
     self.gridQz.setProperty("value", 50)
     self.gridQz.setObjectName(_fromUtf8("gridQz"))
     self.gridLayout.addWidget(self.gridQz, 1, 3, 1, 1)
+    self.lambdaNoDirectPulse = QtGui.QCheckBox(self.widget)
+    self.lambdaNoDirectPulse.setChecked(True)
+    self.lambdaNoDirectPulse.setObjectName(_fromUtf8("lambdaNoDirectPulse"))
+    self.gridLayout.addWidget(self.lambdaNoDirectPulse, 6, 2, 1, 3)
     self.verticalLayout_3.addWidget(self.widget)
     self.buttonBox = QtGui.QDialogButtonBox(self.verticalWidget)
     self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
@@ -314,20 +327,21 @@ class Ui_Dialog(object):
     Dialog.setTabOrder(self.plotShowList, self.scrollArea)
 
   def retranslateUi(self, Dialog):
-    Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "QuickNXS - GISANS export", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_9.setText(QtGui.QApplication.translate("Dialog", "I-Max", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_11.setText(QtGui.QApplication.translate("Dialog", "10^", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_10.setText(QtGui.QApplication.translate("Dialog", "I-Min", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_12.setText(QtGui.QApplication.translate("Dialog", "10^", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_3.setText(QtGui.QApplication.translate("Dialog", "Å", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_7.setText(QtGui.QApplication.translate("Dialog", "Grid Points Qy", None, QtGui.QApplication.UnicodeUTF8))
-    self.projectionMethod.setItemText(0, QtGui.QApplication.translate("Dialog", "Binning", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_2.setText(QtGui.QApplication.translate("Dialog", "λ-Max", None, QtGui.QApplication.UnicodeUTF8))
-    self.label.setText(QtGui.QApplication.translate("Dialog", "λ-Min", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_5.setText(QtGui.QApplication.translate("Dialog", "No. of Slices", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_4.setText(QtGui.QApplication.translate("Dialog", "Å", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_6.setText(QtGui.QApplication.translate("Dialog", "Projection Method", None, QtGui.QApplication.UnicodeUTF8))
-    self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Create Preview", None, QtGui.QApplication.UnicodeUTF8))
-    self.label_8.setText(QtGui.QApplication.translate("Dialog", "Grid Points Qz", None, QtGui.QApplication.UnicodeUTF8))
+    Dialog.setWindowTitle(_translate("Dialog", "QuickNXS - GISANS export", None))
+    self.label_9.setText(_translate("Dialog", "I-Max", None))
+    self.label_11.setText(_translate("Dialog", "10^", None))
+    self.label_10.setText(_translate("Dialog", "I-Min", None))
+    self.label_12.setText(_translate("Dialog", "10^", None))
+    self.label_3.setText(_translate("Dialog", "Å", None))
+    self.label_7.setText(_translate("Dialog", "Grid Points Qy", None))
+    self.projectionMethod.setItemText(0, _translate("Dialog", "Binning", None))
+    self.label_2.setText(_translate("Dialog", "λ-Max", None))
+    self.label.setText(_translate("Dialog", "λ-Min", None))
+    self.label_5.setText(_translate("Dialog", "No. of Slices", None))
+    self.label_4.setText(_translate("Dialog", "Å", None))
+    self.label_6.setText(_translate("Dialog", "Projection Method", None))
+    self.pushButton.setText(_translate("Dialog", "Create Preview", None))
+    self.label_8.setText(_translate("Dialog", "Grid Points Qz", None))
+    self.lambdaNoDirectPulse.setText(_translate("Dialog", "Remove Direct Pulse", None))
 
 from .mplwidget import MPLWidget

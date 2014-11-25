@@ -9,6 +9,8 @@ ADMIN=u'Artur Glavic'
 ADMIN_EMAIL=u'agf@ornl.gov'
 SMTP_SERVER='160.91.4.26'
 
+SCRIPT_VERSION='1.0'
+
 debug_mode=False
 default_log_levels={
                     'CONSOLE': 'WARNING',

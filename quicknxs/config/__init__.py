@@ -75,7 +75,16 @@ def _create_proxy():
     except Exception, error:
       _warn("Could not import module %s,\n %s: %s"%(name, error.__class__.__name__, error))
       continue
-    if 'config_file' in modi.__dict__:
+    if 'config_path' in modi.__dict__:
+      moddict={}
+      for key, value in modi.__dict__.items():
+        if key.startswith('_') or key=='config_path' or\
+           hasattr(value, '__file__') or hasattr(value, '__module__') or\
+           type(value).__name__=='module':
+          continue
+        moddict[key]=value
+      config_holder=proxy.add_path_config(name, moddict, modi.config_path) #@UnusedVariable
+    elif 'config_file' in modi.__dict__:
       moddict={}
       for key, value in modi.__dict__.items():
         if key.startswith('_') or key=='config_file' or\

@@ -8,8 +8,8 @@
 \end{LARGE}
 
 In addition to the default elements of a typical graphical user interface (GUI) like menu-, tool- and statusbar the QuickNXS program has a central area, which can be switch using the tab bar above, and several plot and option areas on the left and right side, always visible. Most users will work only with the "Overview" tab visible in the image above as it contains all valuable information about the current loaded dataset and the reduction parameters. 
-The on the left and right areas can be customized in size and hold parameter entries for the reduction as well as the projection and reflectivity plot, most important for the extraction.
-The other tabs, shown below, allow a parallel view on the 2D maps of all spin states in the active dataset as well as a preview of off-specular and GISANS scattering, motor/controller logs from the current file and a large plot area to compare different reflectivities extracted earlier.
+The left and right areas can be customized in size and hold parameter entries for the reduction as well as the projection and reflectivity plots, most important for the extraction.
+The other tabs, shown below, allow a parallel view of the 2D maps of all spin states in the active dataset as well as a preview of off-specular and GISANS scattering, motor/controller logs from the current file and a large plot area to compare different reflectivities extracted earlier.
 
  \begin{tabular}{cccc}
  \includegraphics[width=103pt]{screenshots/xymaps.png}&
@@ -21,9 +21,10 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
 
  Each of the plots has its own toolbar described in the plots section and shows one specific aspect of your dataset. 
  It is often important to look not only on one of these plots to analyze the data, so it is good to familiarize with what you see there.
- All options available in the toolbar are duplicated somewhere in the menus, to make it easier to find what you need.
+ 
+ All options available in the main toolbar are duplicated somewhere in the menus, to make it easier to find what you need.
  The most important actions have \textbf{keystrokes} assigned to them for convenience. 
- The keys have been chosen to be accessible only with the right hand, so you can use them together with the mouse.
+ The keys have been chosen to be accessible only with the left hand, so you can use them together with the mouse.
  \textbf{Most GUI elements have a tool tip} assigned, so you can always position the \textbf{mouse cursor} over \textbf{any element to get a more detailed description}, what it is used for.
 
 
@@ -31,38 +32,49 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
   
   \begin{description}
    \item[{\icon{document-open} File -> Open... (CTRL+O)}] Shows a dialog to select a file to be loaded. The filename filter depends on the selection of "Histogram" or "Event" mode in the Files area.
-   \item[File -> Open Sum... (CTRL+SHIFT+O)] Allows to open several files to sum up their intensities
+   \item[File -> Open Sum... (CTRL+SHIFT+O)] Allows to open several files to sum up their intensities for measurements split in to multiple runs.
    \item[{\icon{listDown} File -> Next File (CTRL+D)}] Opens the file below the active selection in the Files area.
    \item[{\icon{listUp} File -> Previous File (CTRL+SHIFT+D)}] Opens the file above the active selection in the Files area.
    \item[File -> Load Extraction... (CTRL+ALT+O)] Reads the header of an exported dataset (.dat) to reconstruct the options and load the data files used for the reduction. This can be used to improve an already exported dataset.
    
-   \item[{\icon{extractNormalization} Reduction -> Set Normalization (CTRL+W)}] Use the data extracted from the current file as a direct beam dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate direct beam run is selected using the number of time of flight channels in the file and the central wavelength, if this is ambiguous a dialog is shown to select one dataset.
+   \item[{\icon{extractNormalization} Reduction -> Set Normalization (CTRL+W)}] Use the data extracted from the current file as a direct beam dataset. You can add as many of these datasets as you like or remove them by activating this action again. The appropriate direct beam run is selected using the number of time of flight channels in the file and the central wavelength, if this is ambiguous a dialog is shown to select one dataset, unless the AutoNorm feature is active.
    \item[{\icon{clearNorm} Reduction -> Clear Normalization (CTRL+SHIFT+W)}] Empty the list of direct beam datasets.
    
-   \item[{\icon{totalReflection} Reduction -> Set Scaling (CTRL+S)}] For the first dataset this tries to find the edge of total reflection and fit a constant to all points before it normalizes it to one. For subsequent datasets it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
+   \item[{\icon{totalReflection} Reduction -> Set Scaling (CTRL+S)}] For the first dataset this tries to find the edge of total reflection and fits a constant to all points before it to normalizes it to one. For subsequent datasets it fits a polynomial to the overlapping region of the active dataset and the closest one found in the reduction table to stitch them together. It is helpful to first define a suitable range of cut points to improve the results.
    \item[{\icon{cutPoints} Reduction -> Cut Points (L/R) (CTRL+SHIFT+C)}] Tries to select good cut points for the given wavelength band based on the corresponding direct beam measurement.
    \item[{\icon{addRef} Reduction -> Keep Item in List (CTRL+Q)}] Use the reflectivity from the current dataset and add it to the reduction list. Only works for dataset with direct beam run. The options in the reduction list can still be changed later.
    \item[{\icon{delRef} Reduction -> Remove Line}] Remove the selected line from the reduction list.
-   \item[{\icon{clearRef} Reduction -> Clear List (CTRL+SHIFT+Q)}] Clear the full reduction list to start a new set of reflectivity.
+   \item[{\icon{clearRef} Reduction -> Clear List (CTRL+SHIFT+Q)}] Clear the full reduction list to start a new reflectivity set.
 
     \item[{\icon{reduce} Reduction -> Reduce...}] Use the items and options in the reduction table to export a dataset. Shows a dialog to select how the export should be done.
+    \item[ Reduction -> Quick-Reduce...] As Reduce but doesn't show the export dialog using the last set of options.
+    
+   \item[{\icon{findXauto} Automatics -> Automatic Peak Finder}] If checked, the program runs a peak finder and peak fitting algorithm on the X-projection of the data each time a new dataset is loaded and sets the X-center parameter accordingly. This works very reliable in general and is activated by default.
+   \item[{\icon{limitYauto} Automatics -> Automatic Y Limits}] If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly. After adding the first dataset to the reduction table the option is switched off automatically to prevent issues at higher incident angle, where the intensity is comparable with the background. Clearing the reduction list will reactivate the option.
+    \item[{\icon{autoNorm} Automatics -> AutoNorm}] If more then one normalization datasets are defined that can be used for the current dataset the program will decide which to use based on slit settings.
 
+   \item[{\icon{autoRef} Automatics -> Auto Reflectivity}] When extracting several reflectivities with similar experimental setup the extraction parameters will likely be similar, as well. Activate this action at the total reflection run and it will use the current settings to subsequently scale and add all following datasets as long as the incident angle increases. Afterwards the \textbf{Strip Overlap} action is invoked. For good quality data this is a convenient way to reduce the full reflectivity very quickly.
+   \item[{\icon{stripOverlap} Automatics -> Strip Overlap}] This option can be invoked directly before reducing the data to remove overlapping points between subsequent runs. The points are removed from the lower \Qz run, as these normally will have much lower statistics.
+   
+   \item[{ Tools -> Open Compare Window...}] Open a dialog which allows the direct comparison of different reflectivity measurements, can be used several times and is equivalent to the Compare tab of the main window.
+   \item[{ Tools -> Open Reduction Preview...}] Open a dialog which shows a preview of the extracted reflectivity with all spin states. Keeping this window open will slow down some actions.
+   \item[{ Tools -> Filter Points...}] Allows you to post-process exported files by filtering specific data points.
+  \item[{ Tools -> Search Database...}] This options is not always possible. It opens a dialog that allows the search for datasets based on specific parameters of the measurement.
+
+    
    \item[{Advanced -> Advanced Background ... (CTRL+B)}] Open a dialog with additional options for the background subtraction.
    \item[{\icon{tthZero} Advanced -> Adjust Direct Beam}] For datasets where the direct pixel and or DANGLE0 values are not correctly defined, this action can take the current X-position of a direct beam measurement to set overwrite parameters accordingly.
    \item[{ Advanced -> Clear Overwrite}] This clears the overwrite parameters defined with "Adjust Direct Beam".
    
    \item[{ Advanced -> Polarization...}] Open a tool to plot polarization parameters of dedicated measurements. Not intended for users.
    \item[{ Advanced -> Raw Data Comparison...}] Show a dialog to compare the raw data of the current run (not divided by direct beam) with the direct beam measurement and background. Can be helpful to identify problems with the direct beam normalization or the extraction window.
-   \item[{ Advanced -> Open Compare Window...}] Open a dialog which allows the direct comparison of different reflectivity measurements, can be used several times and is equivalent to the Compare tab of the main window.
+    \item[{ Advanced -> Browse NXS file... (CTRL+N)}] Show a dialog that accesses the raw NXS file with it's folder structure. This is only intended for beamline staff.
 
-   \item[{\icon{findXauto} Automatics -> Automatic Peak Finder}] If checked, the program runs a peak finder and peak fitting algorithm on the X-projection of the data each time a new dataset is loaded and sets the X-center parameter accordingly. This works very reliable in general and is activated by default.
-   \item[{\icon{limitYauto} Automatics -> Automatic Y Limits}] If checked, the program detects the region, where the intensity in the Y-projection drops below a certain threshold and sets the Y-center and Y-width parameters accordingly. After adding the first dataset to the reduction table the option is switched off automatically to prevent issues at higher incident angle, where the intensity is comparable with the background. Clearing the reduction list will reactivate the option.
-   \item[{\icon{autoRef} Automatics -> Auto Reflectivity}] When extracting several reflectivities with similar experimental setup the extraction parameters will likely be similar, as well. Activate this action at the total reflection run and it will use the current settings to subsequently scale and add all following datasets as long as the incident angle increases. Afterwards the \textbf{Strip Overlap} action is invoked. For good quality data this is a convenient way to reduce the full reflectivity very quickly.
-   \item[{\icon{stripOverlap} Automatics -> Strip Overlap}] This option can be invoked directly before reducing the data to remove overlapping points between subsequent runs. The points are removed from the lower \Qz run, as these normally will have much lower statistics.
-   
+   \item[{ Advanced -> IPython Console...}] Adds a new tab to the main window with an IPython interactive console, that can be used for advanced data treatment and scripting.
+   \item[Advanced -> Debug Menu] Useful things for program debugging.
+    
    \item[Help Menu] Online access to this manual and an about dialog.
    
-   \item[Debug Menu] Useful things for program debugging.
    \end{description}
 
 \section{The Overview Tab}
@@ -73,7 +85,7 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
   
   At the bottom you can find the reduction table and an additional tab with a list of defined direct beam datasets.
   These tables show the parameters used for the respective intensity extractions.
-  These parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity area.
+  The parameters in the Data tab can be edited afterwards and will be applied directly to the reflectivity curve shown in the Reflectivity area.
   Directly above the table is a label showing the numbers of all defined direct beam runs and radio buttons to select the current datasets spin state shown in the Overview, projections and reflectivity plots.
   
 \section{Plots and Options}
@@ -85,7 +97,7 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
 
    \item[Reflectivity Extraction (Basic)] The parameters used to extract the active reflectivity. When adding a dataset to the reduction list, these parameters are stored in the Data table.
    \item[Reflectivity Extraction (Advanced)] Settings to change the extraction method or overwrite parameters otherwise read from the datafile. Options for the stitching algorithm can be found here as well.
-   \item[Algorithm Parameters] Settings for the peak finder algorithm not important for normal user operation.
+   \item[Peak Finder Algorithm] Settings for the peak finder algorithm not important for normal user operation.
    \item[Plot Options] Global settings for the shown plots, does not effect the data reduction in any way. Here you can also chose to show the 2D datasets in wavelength and angle coordinates instead of time of flight and pixel.
    
    
@@ -98,6 +110,10 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
 \end{description}
 
 \section{Convenient Parameter Alteration with the Mouse Wheel}
+    \begin{wrapfigure}[8]{l}{0.25\textwidth}
+        \includegraphics[width=0.25\textwidth]{screenshots/parameter_scroll.png}
+    \end{wrapfigure}
+
   You can use the mouse wheel when your cursor is on top of a value entry to increase or decrease the according parameter. 
   This can be very convenient to see the result of e.g. changing the scaling factor for the current reflectivity. Holding down the CTRL key while scrolling increases the speed of the parameter changes.
   The same method can also be used to scale datasets in the reduction table, simply by moving the mouse at the curve in the reflectivity plot and scrolling with the mouse wheel.
@@ -106,7 +122,7 @@ The other tabs, shown below, allow a parallel view on the 2D maps of all spin st
   Each of the plots described above are created with the same framework and have a toolbar below them:\\
   \includegraphics[width=6cm]{screenshots/plottoolbar.png}\\
   The first 5 items allow the navigation on the plot, like zooming in and out or moving the current view position.
-  The fourth icon from the left opens a dialog, which can be used to change the amount of frees pace around the plot to fit the current window scaling.
+  The fourth icon from the left opens a dialog, which can be used to change the amount of free space around the plot to fit the current window scaling.
   The following two icons can be used to save or print the plot. The last button allows to toggle between logarithmic and linear plotting (this is not persistent after changing the dataset).
   
   \textbf{Keep in mind that the X- and Y-projections as well as the overview maps can be used to select the extraction parameters.}

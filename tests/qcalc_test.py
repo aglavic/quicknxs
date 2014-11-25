@@ -83,9 +83,10 @@ class PositionTest(FakeData, unittest.TestCase):
     self.ds.dpix=220.
     self.ds.dangle=self.ds.dangle0
     self.ds.sangle=0.5
-    self.ds.xydata[:, 180:211]+=50*exp(-0.5*((arange(31)-15.)/2.)**2)
+    self.ds.xydata[:, 180:211]*=1.+5.*exp(-0.5*((arange(31)-15.25)/2.)**2) # reflected beam
+    self.ds.xydata[:, 220:251]*=1.+1000.*exp(-0.5*((arange(31)-15.25)/2.)**2) # transmitted beam
     x_pos=get_xpos(self.ds)
-    self.assertAlmostEqual(x_pos, 195., places=8)
+    self.assertAlmostEqual(x_pos, 195.25, places=1)
   
   def test_ypos(self):
     y_pos, y_width, bg=get_yregion(self.ds)
@@ -97,7 +98,7 @@ class SmoothTest(unittest.TestCase):
   def setUp(self):
     self._progress=None
     self.x, self.y=meshgrid(arange(100), arange(100))
-    self.I=(self.x-50.)**2+(self.y-50.)**2+random.randn(1e4).reshape((100, 100))
+    self.I=(self.x-50.)**2+(self.y-50.)**2+random.randn(10000).reshape((100, 100))
     self.settings={
                    'grid': (20, 20),
                    'sigma': (3., 3.),

@@ -10,23 +10,26 @@ from numpy import where, pi, newaxis, log10
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
-from .version import str_version
-from .config import paths, instrument, gui
-from .main_window import Ui_MainWindow
-from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
-from .compare_plots import CompareDialog
-from .rawcompare_plots import RawCompare
-from .nxs_gui import NXSDialog
-from .polarization_gui import PolarizationDialog
+#from logging import info, debug
 from .advanced_background import BackgroundDialog
-from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION
+from .compare_plots import CompareDialog
+from .config import paths, instrument, gui, export, misc
+from .decorators import log_call, log_input, log_both
+from .default_interface import Ui_MainWindow
+from .gui_logging import install_gui_handler, excepthook_overwrite
+from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
+from .nxs_gui import NXSDialog
+from .point_picker import PointPicker
+from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
 from .qio import HeaderParser, HeaderCreator
-
-#from logging import info, debug
+from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, \
+                     GISANS, XMLData
+from .rawcompare_plots import RawCompare
+from .separate_plots import ReductionPreviewDialog
+from .database_dialog import DatabaseDialog
+from .version import str_version
 from logging import info, warning, debug
-from .gui_logging import install_gui_handler, excepthook_overwrite
-from .decorators import log_call, log_input, log_both
 
 class gisansCalcThread(QtCore.QThread):
   '''
@@ -82,6 +85,7 @@ class MainGUI(QtGui.QMainWindow):
   overview_lines=None
   # colors for the reflecitivy lines
   _refl_color_list=['blue', 'red', 'green', 'purple', '#aaaa00', 'cyan']
+  _extension_scripts=None
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -112,10 +116,25 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
+    if gui.interface!='default':
+      exec 'from .%s_interface import Ui_MainWindow'%gui.interface
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
+
+    # widgets in the statusbar
+    self.x_position_indicator=QtGui.QLabel(u" x=%g"%0.)
+    self.x_position_indicator.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    self.x_position_indicator.setMaximumWidth(100)
+    self.x_position_indicator.setMinimumWidth(100)
+    self.ui.statusbar.addPermanentWidget(self.x_position_indicator)
+    self.y_position_indicator=QtGui.QLabel(u" y=%g"%0.)
+    self.y_position_indicator.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    self.y_position_indicator.setMaximumWidth(100)
+    self.y_position_indicator.setMinimumWidth(100)
+    self.ui.statusbar.addPermanentWidget(self.y_position_indicator)
+
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
     button=QtGui.QPushButton('Empty Cache')
@@ -128,10 +147,29 @@ class MainGUI(QtGui.QMainWindow):
     for i in range(1, 12):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
 
+    # create progress bar in statusbar
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(140, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
+
+    # create menu entries for scripts, if they exist
+    if os.path.exists(instrument.EXTENSION_SCRIPTS):
+      scripts=[]
+      for pyfile in glob(instrument.EXTENSION_SCRIPTS+u'/*.py'):
+        sinfo=self.get_script_info(pyfile)
+        if sinfo:
+          scripts.append(sinfo)
+      if len(scripts)>0:
+        scripts.sort()
+        self._extension_scripts={}
+
+        self.ui.menuTools.addSeparator()
+        smenu=self.ui.menuTools.addMenu(u'Extension Scripts')
+        for name, info, code in scripts:
+          self._extension_scripts[name]=code
+          mitem=smenu.addAction(name)
+          mitem.triggered.connect(self.run_script)
 
     self.toggleHide()
     self.readSettings()
@@ -140,8 +178,8 @@ class MainGUI(QtGui.QMainWindow):
     self.trigger=DelayedTrigger()
     self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
-    self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
-    self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
+    self.ui.bgCenter.setValue((instrument.START_BG[0]+instrument.START_BG[1])/2.)
+    self.ui.bgWidth.setValue((instrument.START_BG[1]-instrument.START_BG[0]))
 
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -257,6 +295,30 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.xtof_overview.mpl_connect('motion_notify_event', self.plotPickXToF)
     self.ui.xtof_overview.mpl_connect('button_release_event', self.plotRelese)
 
+  def get_script_info(self, sfile):
+    '''
+    Compile a python file and extract script information to be used.
+    '''
+    debug(u'Reding script file %s.'%sfile)
+    stxt=open(sfile, 'r').read()
+    try:
+      code=compile(stxt, sfile, 'exec')
+    except:
+      debug('Error in script:', exc_info=True)
+      return None
+    try:
+      script_info=[sline.strip('# ') for sline in stxt.splitlines()[1:4]]
+      if script_info[0]!=('QuickNXS script version '+misc.SCRIPT_VERSION):
+        return None
+      name=unicode(script_info[1].split('Name:', 1)[1].strip(), 'utf8', 'replace')
+      info=unicode(script_info[2].split('Info:', 1)[1].strip(), 'utf8', 'replace')
+    except:
+      debug("Can't parse script header:", exc_info=True)
+      return None
+    else:
+      return (name, info, code)
+
+
   @log_input
   def fileOpen(self, filename, do_plot=True):
     '''
@@ -333,7 +395,10 @@ class MainGUI(QtGui.QMainWindow):
     for i in range(len(self.channels), 12):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
     self.active_data=data
-    self.last_mtime=os.path.getmtime(filename)
+    try:
+      self.last_mtime=os.path.getmtime(filename)
+    except OSError:
+      pass
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
 
@@ -354,6 +419,24 @@ class MainGUI(QtGui.QMainWindow):
     if do_plot:
       self.initiateProjectionPlot.emit(False)
       self.initiateReflectivityPlot.emit(False)
+
+  def live_open(self):
+    '''
+    Load data from current run stored in special xml format. Use binning from any direct
+    beam measurement available.
+    '''
+    tof_overwrite=None
+    if self.active_data is not None:
+      tof_overwrite=self.active_data[0].tof_edges
+    info(u"Reading Live Data...")
+    data=XMLData(instrument.LIVE_DATA,
+                 event_tof_overwrite=tof_overwrite,
+                 bin_type=self.ui.eventBinMode.currentIndex(),
+                 bins=self.ui.eventTofBins.value(),
+                 callback=self.updateEventReadout,
+                 use_caching=False,
+                 )
+    self._fileOpenDone(data, 'LiveData', do_plot=True)
 
   def empty_cache(self):
     """
@@ -404,6 +487,13 @@ class MainGUI(QtGui.QMainWindow):
     X vs. Y and X vs. Tof for main channel.
     '''
     data=self.active_data[self.active_channel]
+    if data.total_counts==0:
+      self.ui.xy_overview.clear()
+      self.ui.xtof_overview.clear()
+
+      self.ui.xy_overview.draw()
+      self.ui.xtof_overview.draw()
+      return
     xy=data.xydata
     xtof=data.xtofdata
     ref_norm=self.getNorm()
@@ -431,7 +521,7 @@ class MainGUI(QtGui.QMainWindow):
       phi_range=xy.shape[0]*rad_per_pixel*180./pi
       tth_range=xy.shape[1]*rad_per_pixel*180./pi
       phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-      tth0=(data.dangle-data.dangle0)-(304-data.dpix)*rad_per_pixel*180./pi
+      tth0=(data.dangle-data.dangle0)-(xy.shape[1]-data.dpix)*rad_per_pixel*180./pi
       self.ui.xy_overview.clear()
       if self.overview_lines is None:
         self.overview_lines=[]
@@ -456,11 +546,15 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.xy_overview.axvline(x_peak+x_width/2., color='#aa0000')
         self.ui.xy_overview.axhline(y_pos-y_width/2., color='#00aa00')
         self.ui.xy_overview.axhline(y_pos+y_width/2., color='#00aa00')
+        if self.overview_lines is not None:
+          self.overview_lines=[x1, x2, y1, y2]+self.overview_lines
+        else:
+          self.overview_lines=[x1, x2, y1, y2]
       else:
-        self.ui.xy_overview.vlines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-        self.ui.xy_overview.vlines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-        self.ui.xy_overview.hlines[0].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
-        self.ui.xy_overview.hlines[1].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
+        self.overview_lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+        self.overview_lines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+        self.overview_lines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
+        self.overview_lines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
     # XToF plot
     if self.ui.xLamda.isChecked():
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
@@ -473,21 +567,22 @@ class MainGUI(QtGui.QMainWindow):
                                    extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
       self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
-    if len(self.ui.xtof_overview.hlines)==0:
-      self.ui.xtof_overview.axhline(x_peak-x_width/2., color='#aa0000')
-      self.ui.xtof_overview.axhline(x_peak+x_width/2., color='#aa0000')
-      self.ui.xtof_overview.axhline(bg_pos-bg_width/2., color='black')
-      self.ui.xtof_overview.axhline(bg_pos+bg_width/2., color='black')
+    if len(self.overview_lines) in [0, 4]:
+      x3=self.ui.xtof_overview.ax.axhline(x_peak-x_width/2., color='#aa0000')
+      x4=self.ui.xtof_overview.ax.axhline(x_peak+x_width/2., color='#aa0000')
+      x5=self.ui.xtof_overview.ax.axhline(bg_pos-bg_width/2., color='black')
+      x6=self.ui.xtof_overview.ax.axhline(bg_pos+bg_width/2., color='black')
+      self.overview_lines+=[x3, x4, x5, x6]
     else:
-      self.ui.xtof_overview.hlines[0].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
-      self.ui.xtof_overview.hlines[1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
-      self.ui.xtof_overview.hlines[2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-      self.ui.xtof_overview.hlines[3].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+      self.overview_lines[-4].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.overview_lines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.overview_lines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      self.overview_lines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 
-    if self.ui.show_colorbars.isChecked():
-      self.ui.xy_overview.colorbar()
-      self.ui.xtof_overview.colorbar()
+    if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
+      self.ui.xy_overview.cbar=self.ui.xy_overview.fig.colorbar(self.ui.xy_overview.cplot)
+      self.ui.xtof_overview.cbar=self.ui.xtof_overview.fig.colorbar(self.ui.xtof_overview.cplot)
     self.ui.xy_overview.draw()
     self.ui.xtof_overview.draw()
 
@@ -507,6 +602,8 @@ class MainGUI(QtGui.QMainWindow):
     for dataset in self.active_data[:4]:
       d=dataset.xydata/dataset.proton_charge
       xynormed.append(d)
+      if dataset.total_counts==0:
+        continue
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
 
@@ -521,13 +618,15 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.frame_xy_sf.hide()
 
     for i, datai in enumerate(xynormed):
+      if self.active_data[i].total_counts==0:
+        continue
       if self.ui.tthPhi.isChecked():
         plots[i].clear()
         rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
         phi_range=datai.shape[0]*rad_per_pixel*180./pi
         tth_range=datai.shape[1]*rad_per_pixel*180./pi
         phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(datai.shape[1]-dataset.dpix)*rad_per_pixel*180./pi
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, origin='lower',
@@ -565,6 +664,8 @@ class MainGUI(QtGui.QMainWindow):
         # normalize all datasets for wavelength distribution
         d=d/ref_norm[newaxis, :]
       xtofnormed.append(d)
+      if dataset.total_counts==0:
+        continue
       imin=min(imin, d[d>0].min())
       imax=max(imax, d.max())
     lamda=self.active_data[self.active_channel].lamda
@@ -586,6 +687,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.frame_xtof_mm.hide()
       self.ui.frame_xtof_sf.hide()
     for i, datai in enumerate(xtofnormed):
+      if self.active_data[i].total_counts==0:
+        continue
       if self.ui.xLamda.isChecked():
         plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, extent=[lamda[0], lamda[-1], 0, datai.shape[0]-1])
@@ -614,6 +717,13 @@ class MainGUI(QtGui.QMainWindow):
     if self.active_data is None:
       return
     data=self.active_data[self.active_channel]
+    if data.total_counts==0:
+      self.ui.x_project.clear()
+      self.ui.x_project.draw()
+      self.ui.y_project.clear()
+      self.ui.y_project.draw()
+      return
+
     xproj=data.xdata
     yproj=data.ydata
 
@@ -632,7 +742,9 @@ class MainGUI(QtGui.QMainWindow):
     yxlim=(0, len(yproj)-1)
     yylim=(yproj[yproj>0].min(), yproj.max()*2)
 
-    if len(self.ui.x_project.shown_plots)==0:
+    if self._x_projection is None or len(self._x_projection.get_xdata())!=xproj.shape[0]:
+      self.ui.x_project.clear_fig()
+      self.ui.y_project.clear_fig()
       #self._x_projection=
       self.ui.x_project.plot(xproj, color='blue')
       self.ui.x_project.set_xlabel(u'x [pix]')
@@ -762,7 +874,15 @@ class MainGUI(QtGui.QMainWindow):
       view=None
 
     self.ui.refl.clear()
-    if options['normalization']:
+    if self.active_data[self.active_channel].total_counts==0:
+      self.ui.refl.canvas.ax.text(0.5, 0.5,
+                                  u'No points to show\nin active dataset!',
+                                  horizontalalignment='center',
+                                  verticalalignment='center',
+                                  fontsize=14,
+                                  transform=self.ui.refl.canvas.ax.transAxes)
+
+    elif options['normalization']:
       ymin=1e50
       ymax=1e-50
       ynormed=self.refl.R[PN:P0]
@@ -787,7 +907,10 @@ class MainGUI(QtGui.QMainWindow):
           ymin=min(ymin, ynormed[ynormed>0].min())
         except ValueError:
           pass
-        ymax=max(ymax, ynormed.max())
+        try:
+          ymax=max(ymax, ynormed.max())
+        except ValueError:
+          pass
         self.ui.refl.errorbar(refli.Q[PNi:P0i], ynormed,
                               yerr=refli.dR[PNi:P0i], label=str(refli.options['number']),
                               color=self._refl_color_list[i%len(self._refl_color_list)])
@@ -1150,11 +1273,13 @@ class MainGUI(QtGui.QMainWindow):
           break
         header.append(line)
       header='\n'.join(header)
+      from_backup=False
     else:
       header=self._pending_header
       self._pending_header=None
+      from_backup=True
     try:
-      parser=HeaderParser(header)
+      parser=HeaderParser(header, parse_meta=not from_backup)
     except:
       warning('Could not evaluate header information, probably the wrong format:\n\n',
               exc_info=True)
@@ -1170,6 +1295,9 @@ class MainGUI(QtGui.QMainWindow):
     for refl in parser.refls:
       self.refl=refl
       self.addRefList(do_plot=False)
+    # update global export options
+    if 'Global Options' in parser.section_data:
+      export.sampleSize=parser.section_data['Global Options']['sample_length']
     # set settings for the dataset added last
     self.auto_change_active=True
     self.ui.refXPos.setValue(refl.options['x_pos'])
@@ -1358,7 +1486,12 @@ class MainGUI(QtGui.QMainWindow):
                                                          self.active_data.lambda_center-1.5,
                                                          self.active_data.lambda_center+1.5))
     self.ui.datasetPCharge.setText(u"%.3e"%d.proton_charge)
+    self.ui.datasetTime.setText(u"%i s"%d.total_time)
     self.ui.datasetTotCounts.setText(u"%.4e"%d.total_counts)
+    try:
+      self.ui.datasetRate.setText(u"%.1f cps"%(d.total_counts/d.total_time))
+    except ZeroDivisionError:
+      self.ui.datasetRate.setText(u"NaN")
     self.ui.datasetDangle.setText(u"%.3f°"%d.dangle)
     self.ui.datasetDangle0.setText(dangle0)
     self.ui.datasetSangle.setText(u"%.3f°"%d.sangle)
@@ -1514,7 +1647,7 @@ class MainGUI(QtGui.QMainWindow):
     if data is None:
       data=self.active_data[self.active_channel]
     for index, norm in sorted(self.ref_norm.items()):
-      if len(norm.Rraw)==len(data.tof) and norm.lambda_center==data.lambda_center:
+      if len(norm.Rraw)==len(data.tof) and round(norm.lambda_center-data.lambda_center, 3)==0.:
         fittings.append(norm)
         indices.append(str(index))
     if len(fittings)==0:
@@ -1523,6 +1656,18 @@ class MainGUI(QtGui.QMainWindow):
       return fittings[0]
     elif str(self.active_data.number) in indices:
       return fittings[indices.index(str(self.active_data.number))]
+    elif self.ui.actionAutoNorm.isChecked():
+      # select normalization file with closest slit sizes
+      weights=[]
+      s1, s2, s3=data.slit1_width, data.slit2_width, data.slit3_width
+      for norm in fittings:
+        normds=NXSData(norm.origin[0], **norm.read_options)[norm.origin[1]]
+        ns1, ns2, ns3=normds.slit1_width, normds.slit2_width, normds.slit3_width
+        sdiff=abs(s1-ns1)+abs(s2-ns2)+abs(s3-ns3)
+        weights.append(sdiff)
+      normidx=weights.index(min(weights))
+      self._norm_selected=normidx
+      return fittings[self._norm_selected]
     else:
       if self._norm_selected is None:
         result=QtGui.QInputDialog.getItem(self, 'Select Normalization',
@@ -1600,8 +1745,13 @@ class MainGUI(QtGui.QMainWindow):
     # options used for the extraction
     opts=self.refl.options
 
+    try:
     Pstart=len(self.refl.R)-where(self.refl.R>0)[0][-1]-1
     Pend=where(self.refl.R>0)[0][0]
+    except IndexError:
+      # for the rare case of reflectivity with no counts catch the exception
+      Pstart=0
+      Pend=0
     opts['P0']=max(Pstart, opts['P0'])
     opts['PN']=max(Pend, opts['PN'])
 
@@ -1821,7 +1971,8 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if event.inaxes is None:
       return
-    self.ui.statusbar.showMessage(u"x=%15g    y=%15g"%(event.xdata, event.ydata))
+    self.x_position_indicator.setText(u" x=%g"%event.xdata)
+    self.y_position_indicator.setText(u" y=%g"%event.xdata)
 
   def plotRelese(self, event):
     self._picked_line=None
@@ -2107,9 +2258,10 @@ Do you want to try to restore the working reduction list?""",
     debug('Applying GUI configuration')
     if gui.geometry is not None: self.restoreGeometry(QtCore.QByteArray(gui.geometry))
     if gui.state is not None: self.restoreState(QtCore.QByteArray(gui.state))
+    if hasattr(self.ui, 'mainSplitter'):
     self.ui.mainSplitter.setSizes(gui.splitters[0])
+      self.ui.plotSplitter.setSizes(gui.splitters[2])
     self.ui.overviewSplitter.setSizes(gui.splitters[1])
-    self.ui.plotSplitter.setSizes(gui.splitters[2])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
     self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
@@ -2146,7 +2298,10 @@ Do you want to try to restore the working reduction list?""",
     debug('Storing GUI configuration')
     gui.geometry=self.saveGeometry().data()
     gui.state=self.saveState().data()
+    if hasattr(self.ui, 'mainSplitter'):
     gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
+    else:
+      gui.splitters=(gui.splitters[0], self.ui.overviewSplitter.sizes(), gui.splitters[2])
     gui.color_selection=self.ui.color_selector.currentIndex()
     gui.show_colorbars=self.ui.show_colorbars.isChecked()
     gui.normalizeXTof=self.ui.normalizeXTof.isChecked()
@@ -2190,6 +2345,12 @@ Do you want to try to restore the working reduction list?""",
     self.open_plots.append(dia)
 
   @log_call
+  def open_reduction_preview(self):
+    dia=ReductionPreviewDialog(self)
+    dia.show()
+    self.open_plots.append(dia)
+
+  @log_call
   def open_rawdata_dialog(self):
     dia=RawCompare(self)
     dia.show()
@@ -2205,7 +2366,59 @@ Do you want to try to restore the working reduction list?""",
     dia=NXSDialog(self, self.active_data.origin)
     dia.show()
 
+  def open_database_search(self):
+    dia=DatabaseDialog(self)
+    dia.datasetSelected.connect(self.fileOpen)
+    dia.show()
+
   @log_call
+  def open_filter_dialog(self):
+    filter_=u'Reflectivity (*.dat);;All (*.*)'
+    names=QtGui.QFileDialog.getOpenFileNames(self, u'Select reflectivity file(s)...',
+                                             directory=paths.results,
+                                             filter=filter_)
+    if names:
+      filtered_points=[]
+      for name in names:
+        text=unicode(open(name, 'rb').read(), 'utf8')
+        header=[]
+        for line in text.splitlines():
+          if not line.startswith('#'):
+            break
+          header.append(line)
+        header='\n'.join(header)
+        try:
+          parser=HeaderParser(header)
+        except:
+          warning('Open file %s:\nCould not evaluate header information, probably the wrong format:\n\n'%
+                  name,
+              exc_info=True)
+          continue
+        if not (parser.export_type=='Specular' and len(parser.states_in_file)==1):
+          warning('Open file %s:\nThis function only works for reflectivity files with a single spin state.'%
+                  name)
+          continue
+        if 'Filtered Indices' in parser.sections:
+          # if opening a already filtered dataset the original is opened with the used filters
+          origin=parser.sections['Filtered Indices'][0].split(': ', 1)[1].strip()
+          if os.path.exists(origin):
+            name=origin
+            filtered_points=eval(parser.sections['Filtered Indices'][1].split(': ', 1)[1])
+
+        dia=PointPicker(name, filtered_points)
+        result=dia.exec_()
+        if result:
+          filtered_points=dia.filtered_idxs
+
+  @log_call
+  def run_script(self):
+    trigger=self.sender()
+    name=unicode(trigger.text())
+    info(u'Executing script "%s"...'%name)
+    code=self._extension_scripts[name]
+    gls={'app': QtGui.QApplication.instance(), 'gui': self, 'data': self.active_data}
+    exec code in gls
+
   def helpDialog(self):
     '''
     Open a HTML page with the program documentation and place it on the right

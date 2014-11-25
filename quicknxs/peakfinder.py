@@ -10,7 +10,7 @@ Implemented by Artur Glavic (artur.glavic@gmail.com) 2012-2013
 import numpy
 try:
   from scipy.stats.mstats import mquantiles
-except ImportError:
+except (ImportError, RuntimeError):
   # use the slightly slower quantiles function that does not rely on scipy
   def mquantiles(data, prob, *ignore): return quantile(data, prob)
 
@@ -149,7 +149,7 @@ class PeakFinder(object):
     for i in range(steps):
       windows.append(data[i:(-(steps-i-1) or None)])
     windows=numpy.vstack(windows)
-    lmax=windows[(steps+1)/2-1]==windows.max(axis=0)
+    lmax=windows[(steps+1)//2-1]==windows.max(axis=0)
     return numpy.hstack([numpy.zeros(steps//2),
                          lmax,
                          numpy.zeros(steps//2)])
@@ -376,9 +376,9 @@ class Cwt:
         # create a grid twice the size of the original grid to remove boundary
         # effects in the convolution
         scaled_data=numpy.zeros(ndata*2)
-        scaled_data[ndata/2:ndata/2+ndata]=data
-        scaled_data[ndata/2+ndata:]=data[-10:].mean()
-        scaled_data[:ndata/2]=data[:10].mean()
+        scaled_data[ndata//2:ndata//2+ndata]=data
+        scaled_data[ndata//2+ndata:]=data[-10:].mean()
+        scaled_data[:ndata//2]=data[:10].mean()
         datahat=numpy.fft.rfft(scaled_data)
         self.fftdata=datahat
         #self.psihat0=self.wf(omega*self.scales[3*self.nscale/4])
@@ -393,7 +393,7 @@ class Cwt:
             #psihat*=numpy.sqrt(2.0*numpy.pi*currentscale)
             convhat=psihat*datahat
             W=numpy.fft.irfft(convhat)
-            self.cwt[scaleindex, :]=W[ndata/2:ndata/2+ndata]
+            self.cwt[scaleindex, :]=W[ndata//2:ndata//2+ndata]
         return
 
     def _setscales(self, ndata, largestscale, notes, scaling):
@@ -478,7 +478,7 @@ def quantile(a, prob):
     # find the two bounds we're interpreting between:
     # that is, find i such that (i+.5) / n <= prob <= (i+1.5)/n
     t=n*prob-.5
-    i=numpy.floor(t)
+    i=int(t)
 
     # partial sort so that the ith element is at position i, with bigger ones
     # to the right and smaller to the left

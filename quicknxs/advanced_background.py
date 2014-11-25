@@ -7,6 +7,7 @@ from PyQt4.QtGui import QDialog, QTableWidgetItem
 from matplotlib.patches import Polygon, Rectangle
 from numpy import array, sqrt
 from .background_dialog import Ui_Dialog
+from .qcalc import get_BGscale
 
 class BackgroundDialog(QDialog):
   '''
@@ -173,9 +174,23 @@ class BackgroundDialog(QDialog):
     '''
     self.main_window.initiateReflectivityPlot.emit(True)
 
+  def calcAutoBackground(self):
+    '''
+    Get the background scaling factor from the x projection of the data.
+    '''
+    gui=self.main_window
+    data=gui.active_data[gui.active_channel]
+    xpos=gui.ui.refXPos.value()
+    xwidth=gui.ui.refXWidth.value()
+    bg_pos=gui.ui.bgCenter.value()
+    bg_width=gui.ui.bgWidth.value()
+    scale=get_BGscale(data, xpos, xwidth, bg_pos, bg_width)
+    self.ui.scaleFactor.setValue(scale)
+
   def closeEvent(self, *args, **kwargs):
     # disconnect when closed as object is not actually destroyed and will slow down plots
     self.main_window.fileLoaded.disconnect(self.drawXTof)
     self.main_window.initiateReflectivityPlot.disconnect(self.drawBG)
     self.main_window.background_dialog=None
-    return QDialog.closeEvent(self, *args, **kwargs)
+    self.close()
+    #return QDialog.closeEvent(self, *args, **kwargs)

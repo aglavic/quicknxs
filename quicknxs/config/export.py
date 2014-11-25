@@ -12,6 +12,8 @@ exportOffSpecularCorr=False
 exportOffSpecularSmoothed=False
 exportGISANS=False
 
+sampleSize=10.
+
 emailSend=False
 multiAscii=True
 combinedAscii=False

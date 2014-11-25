@@ -6,9 +6,9 @@ Module for calculations used in data reduction and automatic algorithms.
 from numpy import *
 from logging import debug, info #@Reimport
 from .decorators import log_input, log_both
-from .qreduce import Reflectivity, MRDataset, DETECTOR_X_REGION
 from .mpfit import mpfit
 from .peakfinder import PeakFinder
+from .qreduce import Reflectivity, MRDataset
 
 # used for * imports
 __all__=['get_total_reflection', 'get_scaling', 'get_xpos', 'get_yregion',
@@ -64,12 +64,17 @@ def get_scaling(refl1, refl2, add_points=0, polynom=3):
   dR1=refl1.dR[last:first][R1>0]
   Q1=refl1.Q[last:first][R1>0]
   R1=R1[R1>0]
+
   last=refl2.options['PN']
   first=len(refl2.R)-refl2.options['P0']
   R2=refl2.R[last:first]
   dR2=refl2.dR[last:first][R2>0]
   Q2=refl2.Q[last:first][R2>0]
   R2=R2[R2>0]
+
+  if len(R1)==0 or len(R2)==0:
+    # if either reflectivity has only zero intensity, return a scaling factor of 1.
+    return 1., array([refl1.Q[0], refl2.Q[-1]]), array([0., 0.])
   try:
     reg1=max(0, where(Q1<=Q2.max())[0][0]-add_points)
     reg2=where(Q2>=Q1.min())[0][-1]+1+add_points
@@ -101,6 +106,13 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   """
   if type(data) is not MRDataset:
     raise ValueError, "'data' needs to be a MRDataset object"
+  if data.total_counts==0:
+    # for datasets with no counts return the direct pixel from the metadata
+    if return_pf:
+      pf=PeakFinder(arange(data.active_area_x[1]-data.active_area_x[0]), data.xdata)
+      return data.dpix, pf
+    else:
+      return data.dpix
   xproj=data.xdata
   # calculate approximate peak position
   if dangle0_overwrite is not None:
@@ -116,23 +128,27 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
   pix_position=dp-(ai*2-tth_bank)/rad_per_pixel
 
   # locate peaks using CWT peak finder algorithm
-  pf=PeakFinder(arange(DETECTOR_X_REGION[1]-DETECTOR_X_REGION[0]),
-                xproj[DETECTOR_X_REGION[0]:DETECTOR_X_REGION[1]])
+  pf=PeakFinder(arange(data.active_area_x[1]-data.active_area_x[0]),
+                xproj[data.active_area_x[0]:data.active_area_x[1]])
   # Signal to noise ratio, minimum width, maximum width, algorithm ridge parameter
   peaks=pf.get_peaks(snr=snr, min_width=min_width, max_width=max_width,
                      ridge_length=ridge_length)
   try:
-    x_peaks=array([p[0] for p in peaks])+DETECTOR_X_REGION[0]
+    x_peaks=array([p[0] for p in peaks])+data.active_area_x[0]
     wpeaks=array([p[1] for p in peaks])
     delta_pix=abs(pix_position-x_peaks)
-    x_peak=x_peaks[delta_pix==delta_pix.min()][0]
-    wpeak=wpeaks[delta_pix==delta_pix.min()][0]
+    x_peak=x_peaks[delta_pix.argmin()]
+    wpeak=wpeaks[delta_pix.argmin()]
   except:
     x_peak=pix_position
     wpeak=min_width
+    debug('Error in getting pixel from detected peaks, taking default value:', exc_info=True)
   if refine:
     # refine position with gaussian after background subtraction, FWHM=2.355*sigma
-    x_peak=refine_gauss(xproj-median(xproj), x_peak, wpeak)
+    # use limited range around the peak to avoid fitting into a different peak
+    fit_halfwidth=int(wpeak)
+    fit_data=(xproj-median(xproj))[max(0, x_peak-fit_halfwidth):x_peak+fit_halfwidth+1]
+    x_peak=refine_gauss(fit_data, fit_halfwidth, wpeak)-fit_halfwidth+x_peak
   if return_pf:
     return float(x_peak), pf
   else:
@@ -150,11 +166,37 @@ def get_yregion(data):
   if type(data) is not MRDataset:
     raise ValueError, "'data' needs to be a MRDataset object"
   yproj=data.ydata
-  # find the central peak reagion with intensities larger than the median
+  # find the central peak region with intensities larger than the median
   y_bg=median(yproj)
-  y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
-  yregion=(y_peak_region[0], y_peak_region[-1])
-  return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
+  try:
+    y_peak_region=where((yproj-y_bg)>yproj.max()/10.)[0]
+    yregion=(y_peak_region[0], y_peak_region[-1])
+  except IndexError:
+    # there are no points in this region, return full detector size:
+    return len(yproj)/2., len(yproj)/2., 0.
+  else:
+    return (yregion[0]+yregion[1]+1.)/2., yregion[1]+1.-yregion[0], y_bg
+
+@log_both
+def get_BGscale(data, pos, width, bg_pos, bg_width):
+  """
+  Estimate a scaling factor for the background by comparing the average
+  background intensity in the x-projection with the intensity left and right
+  of the reflected beam.
+  
+  :param quicknxs.qreduce.MRDataset data: Raw data used to find the y-region
+  :param float pos: position of the reflected beam
+  :param float width: width of reflected beam
+  :param float bg_pos: central position of the background region
+  :param float bg_width: width of the background region
+  
+  :returns: scaling factor
+  """
+  xproj=data.xdata
+  refI=xproj[max(0, int(bg_pos-bg_width/2)):int(bg_pos+bg_width/2)].mean()
+  bgI=(xproj[int(round(pos-1.5*width)):int(round(pos-0.5*width))].mean()+
+       xproj[int(round(pos+0.5*width)):int(round(pos+1.5*width))].mean())/2.
+  return bgI/refI
 
 @log_input
 def refine_gauss(data, pos, width, return_params=False):
@@ -166,6 +208,8 @@ def refine_gauss(data, pos, width, return_params=False):
   :param float width: Starting value for the peak width
   :param bool return_params: Return full parameter array, if False only return position
   '''
+  if pos<0 or pos>(len(data)-1):
+    pos=len(data)/2
   p0=[data[int(pos)], pos, max(1., width)]
   parinfo=[{'value': p0[i], 'fixed':0, 'limited':[0, 0],
             'limits':[0., 0.]} for i in range(3)]
@@ -178,11 +222,15 @@ def refine_gauss(data, pos, width, return_params=False):
   parinfo[2]['fixed']=False
   parinfo[2]['limited']=[True, True]
   parinfo[2]['limits']=[1., 4.*width]
-  p0=[data[int(res.params[1])], res.params[1], width]
-  res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
-  debug('Result 2: I=%g  x0=%g w=%g niter=%i msg="%s"'%(res.params[0], res.params[1],
-                                                res.params[2], res.niter,
-                                                res.errmsg))
+  try:
+    p0=[data[int(res.params[1])], res.params[1], width]
+  except IndexError:
+    pass
+  else:
+    res=mpfit(_gauss_residuals, p0, functkw={'data':data}, nprint=0, parinfo=parinfo)
+    debug('Result 2: I=%g  x0=%g w=%g niter=%i msg="%s"'%(res.params[0], res.params[1],
+                                                  res.params[2], res.niter,
+                                                  res.errmsg))
   if return_params:
     return res.params
   else:
@@ -413,7 +461,7 @@ class DetectorTailCorrector(object):
       else:
         last_diff=abs_diff
     debug('difference at end %g'%last_diff)
-    return result[lendiff/2:outshape+lendiff/2]
+    return result[lendiff//2:outshape+lendiff//2]
 
   def correct_shape_set(self, data):
     output=[]
@@ -433,7 +481,7 @@ class DetectorTailCorrector(object):
 
   def convole_data(self, data):
     conv=convolve(data, self.shape_function, mode='same')
-    return conv[self.mshape/2+1:-self.mshape/2+1]
+    return conv[self.mshape//2+1:-self.mshape//2+1]
 
   def __call__(self, data):
     return self.correct_shape_set(data.transpose()).transpose()

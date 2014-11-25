@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FilterWidget</class>
+ <widget class="QWidget" name="FilterWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>484</width>
+    <height>69</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Column</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="filterColumn"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="numberCompare">
+       <property name="currentIndex">
+        <number>5</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>=</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>&lt;</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>&gt;</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>≤</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>≥</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>≈</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="strCompare">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>=</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>contains</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RegEx</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="filterEntry"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="activeFilters">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Active:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>pressed()</signal>
+   <receiver>FilterWidget</receiver>
+   <slot>addFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>453</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>33</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filterColumn</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>FilterWidget</receiver>
+   <slot>toggleColumn(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>19</x>
+     <y>31</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filterEntry</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>FilterWidget</receiver>
+   <slot>checkEntry()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>358</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>29</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filterEntry</sender>
+   <signal>returnPressed()</signal>
+   <receiver>FilterWidget</receiver>
+   <slot>addFilter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>14</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>375</x>
+     <y>32</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>filtersChanged()</signal>
+  <slot>addFilter()</slot>
+  <slot>toggleColumn(int)</slot>
+  <slot>checkEntry()</slot>
+ </slots>
+</ui>

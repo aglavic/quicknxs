@@ -169,7 +169,7 @@
             <x>0</x>
             <y>0</y>
             <width>476</width>
-            <height>295</height>
+            <height>286</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -235,6 +235,22 @@
              </sizepolicy>
             </property>
             <layout class="QGridLayout" name="gridLayout">
+             <item row="0" column="3">
+              <widget class="QSpinBox" name="gridQy">
+               <property name="minimum">
+                <number>20</number>
+               </property>
+               <property name="maximum">
+                <number>300</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+               <property name="value">
+                <number>50</number>
+               </property>
+              </widget>
+             </item>
              <item row="5" column="3">
               <widget class="QSpinBox" name="numberSlices">
                <property name="sizePolicy">
@@ -268,7 +284,7 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="3" colspan="2">
+             <item row="7" column="3" colspan="2">
               <widget class="QComboBox" name="projectionMethod">
                <item>
                 <property name="text">
@@ -328,7 +344,7 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="3">
+             <item row="9" column="3">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -376,7 +392,7 @@
                 <double>1.900000000000000</double>
                </property>
                <property name="maximum">
-                <double>9.000000000000000</double>
+                <double>20.000000000000000</double>
                </property>
                <property name="singleStep">
                 <double>0.025000000000000</double>
@@ -386,7 +402,7 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="2">
+             <item row="7" column="2">
               <widget class="QLabel" name="label_6">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -399,7 +415,7 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="2">
+             <item row="9" column="2">
               <widget class="QPushButton" name="pushButton">
                <property name="text">
                 <string>Create Preview</string>
@@ -420,8 +436,8 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="3">
-              <widget class="QSpinBox" name="gridQy">
+             <item row="1" column="3">
+              <widget class="QSpinBox" name="gridQz">
                <property name="minimum">
                 <number>20</number>
                </property>
@@ -436,19 +452,13 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
-              <widget class="QSpinBox" name="gridQz">
-               <property name="minimum">
-                <number>20</number>
+             <item row="6" column="2" colspan="3">
+              <widget class="QCheckBox" name="lambdaNoDirectPulse">
+               <property name="text">
+                <string>Remove Direct Pulse</string>
                </property>
-               <property name="maximum">
-                <number>300</number>
-               </property>
-               <property name="singleStep">
-                <number>10</number>
-               </property>
-               <property name="value">
-                <number>50</number>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>

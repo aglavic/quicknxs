@@ -28,7 +28,7 @@ __description__='''Magnetism reflectometer data reduction software'''
 __scripts__=['scripts/quicknxs']
 __py_modules__=[]
 __package_dir__={}
-__packages__=['quicknxs', 'quicknxs.config']
+__packages__=['quicknxs', 'quicknxs.config', 'quicknxs.buzhug']
 __package_data__={'quicknxs': ['default_config.cfg', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
@@ -41,7 +41,7 @@ if "py2exe" in sys.argv:
   __data_files__=matplotlib.get_py2exe_datafiles()
   sys.path.append("..\\App")
   __data_files__+=[('Microsoft.VC90.CRT', glob('..\\App\\msvc*.dll')+['..\\App\\Microsoft.VC90.CRT.manifest'])]
-  __data_files__+=[(r'quicknxs', [r'quicknxs\default_config.cfg']),
+  __data_files__+=[#(r'quicknxs', [r'quicknxs\default_config.cfg']),
                    (r'quicknxs\genx_templates', glob(r'quicknxs\genx_templates\*.gx')),
                    (r'quicknxs\htmldoc', glob(r'quicknxs\htmldoc\*')),
                    ("IPython\\config\\profile", glob('..\\App\\Lib\\site-packages\\IPython\\config\\profile\\*.*')+
