@@ -546,15 +546,11 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.xy_overview.axvline(x_peak+x_width/2., color='#aa0000')
         self.ui.xy_overview.axhline(y_pos-y_width/2., color='#00aa00')
         self.ui.xy_overview.axhline(y_pos+y_width/2., color='#00aa00')
-        if self.overview_lines is not None:
-          self.overview_lines=[x1, x2, y1, y2]+self.overview_lines
-        else:
-          self.overview_lines=[x1, x2, y1, y2]
       else:
-        self.overview_lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-        self.overview_lines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-        self.overview_lines[2].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
-        self.overview_lines[3].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
+        self.ui.xy_overview.vlines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+        self.ui.xy_overview.vlines[1].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+        self.ui.xy_overview.hlines[0].set_ydata([y_pos-y_width/2., y_pos-y_width/2.])
+        self.ui.xy_overview.hlines[1].set_ydata([y_pos+y_width/2., y_pos+y_width/2.])
     # XToF plot
     if self.ui.xLamda.isChecked():
       self.ui.xtof_overview.imshow(xtof[::-1], log=self.ui.logarithmic_colorscale.isChecked(),
@@ -567,20 +563,20 @@ class MainGUI(QtGui.QMainWindow):
                                    extent=[data.tof[0]*1e-3, data.tof[-1]*1e-3, 0, data.x.shape[0]-1])
       self.ui.xtof_overview.set_xlabel(u'ToF [ms]')
     self.ui.xtof_overview.set_ylabel(u'x [pix]')
-    if len(self.overview_lines) in [0, 4]:
-      x3=self.ui.xtof_overview.ax.axhline(x_peak-x_width/2., color='#aa0000')
-      x4=self.ui.xtof_overview.ax.axhline(x_peak+x_width/2., color='#aa0000')
-      x5=self.ui.xtof_overview.ax.axhline(bg_pos-bg_width/2., color='black')
-      x6=self.ui.xtof_overview.ax.axhline(bg_pos+bg_width/2., color='black')
-      self.overview_lines+=[x3, x4, x5, x6]
+    if len(self.ui.xtof_overview.hlines)==0:
+      self.ui.xtof_overview.axhline(x_peak-x_width/2., color='#aa0000')
+      self.ui.xtof_overview.axhline(x_peak+x_width/2., color='#aa0000')
+      self.ui.xtof_overview.axhline(bg_pos-bg_width/2., color='black')
+      self.ui.xtof_overview.axhline(bg_pos+bg_width/2., color='black')
     else:
-      self.overview_lines[-4].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
-      self.overview_lines[-3].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
-      self.overview_lines[-2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-      self.overview_lines[-1].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+      self.ui.xtof_overview.hlines[0].set_ydata([x_peak-x_width/2., x_peak-x_width/2.])
+      self.ui.xtof_overview.hlines[1].set_ydata([x_peak+x_width/2., x_peak+x_width/2.])
+      self.ui.xtof_overview.hlines[2].set_ydata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+      self.ui.xtof_overview.hlines[3].set_ydata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
     self.ui.xtof_overview.cplot.set_clim([tof_imin, tof_imax])
 
     if self.ui.show_colorbars.isChecked() and self.ui.xy_overview.cbar is None:
+      # TODO: make colorbar work
       self.ui.xy_overview.cbar=self.ui.xy_overview.fig.colorbar(self.ui.xy_overview.cplot)
       self.ui.xtof_overview.cbar=self.ui.xtof_overview.fig.colorbar(self.ui.xtof_overview.cplot)
     self.ui.xy_overview.draw()
@@ -1746,8 +1742,8 @@ class MainGUI(QtGui.QMainWindow):
     opts=self.refl.options
 
     try:
-    Pstart=len(self.refl.R)-where(self.refl.R>0)[0][-1]-1
-    Pend=where(self.refl.R>0)[0][0]
+      Pstart=len(self.refl.R)-where(self.refl.R>0)[0][-1]-1
+      Pend=where(self.refl.R>0)[0][0]
     except IndexError:
       # for the rare case of reflectivity with no counts catch the exception
       Pstart=0
@@ -2127,6 +2123,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
       Change the intensity limits of a map plot with the mouse wheel.
     '''
+    # TODO: fix this for MP
     canvas=None
     for plot in [self.ui.xy_overview, self.ui.xtof_overview]:
       if plot.canvas is event.canvas:
@@ -2259,7 +2256,7 @@ Do you want to try to restore the working reduction list?""",
     if gui.geometry is not None: self.restoreGeometry(QtCore.QByteArray(gui.geometry))
     if gui.state is not None: self.restoreState(QtCore.QByteArray(gui.state))
     if hasattr(self.ui, 'mainSplitter'):
-    self.ui.mainSplitter.setSizes(gui.splitters[0])
+      self.ui.mainSplitter.setSizes(gui.splitters[0])
       self.ui.plotSplitter.setSizes(gui.splitters[2])
     self.ui.overviewSplitter.setSizes(gui.splitters[1])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
@@ -2299,7 +2296,7 @@ Do you want to try to restore the working reduction list?""",
     gui.geometry=self.saveGeometry().data()
     gui.state=self.saveState().data()
     if hasattr(self.ui, 'mainSplitter'):
-    gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
+      gui.splitters=(self.ui.mainSplitter.sizes(), self.ui.overviewSplitter.sizes(), self.ui.plotSplitter.sizes())
     else:
       gui.splitters=(gui.splitters[0], self.ui.overviewSplitter.sizes(), gui.splitters[2])
     gui.color_selection=self.ui.color_selector.currentIndex()

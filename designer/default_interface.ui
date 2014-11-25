@@ -570,7 +570,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>256</width>
+             <width>251</width>
              <height>129</height>
             </rect>
            </property>
@@ -753,7 +753,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>256</width>
+             <width>145</width>
              <height>128</height>
             </rect>
            </property>
@@ -1091,7 +1091,7 @@
               <number>2</number>
              </property>
              <item>
-              <widget class="MPLWidget" name="xy_overview" native="true">
+              <widget class="MPLBackgroundWidget" name="xy_overview" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -1107,7 +1107,7 @@
               </widget>
              </item>
              <item>
-              <widget class="MPLWidget" name="xtof_overview" native="true">
+              <widget class="MPLBackgroundWidget" name="xtof_overview" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -2567,7 +2567,7 @@
              </widget>
             </item>
             <item>
-             <widget class="MPLWidget" name="x_project" native="true">
+             <widget class="MPLBackgroundWidget" name="x_project" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -2609,7 +2609,7 @@
              </widget>
             </item>
             <item>
-             <widget class="MPLWidget" name="y_project" native="true">
+             <widget class="MPLBackgroundWidget" name="y_project" native="true">
               <property name="minimumSize">
                <size>
                 <width>150</width>
@@ -2645,7 +2645,7 @@
              </widget>
             </item>
             <item>
-             <widget class="MPLWidget" name="refl" native="true">
+             <widget class="MPLBackgroundWidget" name="refl" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -3203,6 +3203,12 @@
     <slot>setMaxValue(int)</slot>
     <slot>setMinValue(int)</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>MPLBackgroundWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">.mplprocess.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -4631,8 +4637,8 @@
    <slot>open_database_search()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>494</x>
-     <y>430</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>

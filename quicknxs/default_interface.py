@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface.ui'
 #
-# Created: Mon Jun  9 12:58:15 2014
+# Created: Tue Nov 25 16:42:27 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -259,7 +259,7 @@ class Ui_MainWindow(object):
     self.gridLayout_3.addWidget(self.bgActive, 3, 1, 1, 1)
     self.toolBox.addItem(self.page, _fromUtf8(""))
     self.page_2 = QtGui.QWidget()
-    self.page_2.setGeometry(QtCore.QRect(0, 0, 256, 129))
+    self.page_2.setGeometry(QtCore.QRect(0, 0, 251, 129))
     self.page_2.setObjectName(_fromUtf8("page_2"))
     self.gridLayout_15 = QtGui.QGridLayout(self.page_2)
     self.gridLayout_15.setMargin(2)
@@ -325,7 +325,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 256, 128))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 145, 128))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -451,7 +451,7 @@ class Ui_MainWindow(object):
     self.horizontalLayout_6.setSpacing(0)
     self.horizontalLayout_6.setMargin(2)
     self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
-    self.xy_overview = MPLWidget(self.frame)
+    self.xy_overview = MPLBackgroundWidget(self.frame)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(0)
@@ -460,7 +460,7 @@ class Ui_MainWindow(object):
     self.xy_overview.setMinimumSize(QtCore.QSize(0, 150))
     self.xy_overview.setObjectName(_fromUtf8("xy_overview"))
     self.horizontalLayout_6.addWidget(self.xy_overview)
-    self.xtof_overview = MPLWidget(self.frame)
+    self.xtof_overview = MPLBackgroundWidget(self.frame)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(0)
@@ -1131,7 +1131,7 @@ class Ui_MainWindow(object):
     self.label_35.setAlignment(QtCore.Qt.AlignCenter)
     self.label_35.setObjectName(_fromUtf8("label_35"))
     self.verticalLayout_24.addWidget(self.label_35)
-    self.x_project = MPLWidget(self.widget_4)
+    self.x_project = MPLBackgroundWidget(self.widget_4)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(0)
@@ -1159,7 +1159,7 @@ class Ui_MainWindow(object):
     self.label_34.setAlignment(QtCore.Qt.AlignCenter)
     self.label_34.setObjectName(_fromUtf8("label_34"))
     self.verticalLayout_23.addWidget(self.label_34)
-    self.y_project = MPLWidget(self.widget_2)
+    self.y_project = MPLBackgroundWidget(self.widget_2)
     self.y_project.setMinimumSize(QtCore.QSize(150, 150))
     self.y_project.setObjectName(_fromUtf8("y_project"))
     self.verticalLayout_23.addWidget(self.y_project)
@@ -1182,7 +1182,7 @@ class Ui_MainWindow(object):
     self.label_33.setAlignment(QtCore.Qt.AlignCenter)
     self.label_33.setObjectName(_fromUtf8("label_33"))
     self.verticalLayout_22.addWidget(self.label_33)
-    self.refl = MPLWidget(self.widget)
+    self.refl = MPLBackgroundWidget(self.widget)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
     sizePolicy.setHorizontalStretch(0)
     sizePolicy.setVerticalStretch(0)
@@ -1883,6 +1883,7 @@ class Ui_MainWindow(object):
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget
-from .help_widgets import LimitingSpinBox
 from .persistentframe import PersistentFrame
+from .help_widgets import LimitingSpinBox
+from .mplprocess import MPLBackgroundWidget
 from . import icons_rc
