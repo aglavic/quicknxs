@@ -199,6 +199,14 @@ class ConfigProxy(object):
         raise KeyError, 'Config path %s is not defined'%cpath
     return self.path_configs[cpath][0]['config_files']
 
+  def get_current_path_config(self, cpath):
+    if not cpath in self.path_configs:
+      if cpath in self.configs and self.configs[cpath] in self.path_configs:
+        cpath=self.configs[cpath]
+      else:
+        raise KeyError, 'Config path %s is not defined'%cpath
+    return self.path_configs[cpath][0]['last_file']
+
   @log_input
   def add_alias(self, config, alias):
     '''
@@ -252,6 +260,8 @@ class ConfigProxy(object):
     # special convenience methods to switch the config file with the config object
     if storage in self.path_configs and item=='get_configs':
       return lambda : self.get_path_configs(storage)
+    if storage in self.path_configs and item=='get_current_config':
+      return lambda : self.get_current_path_config(storage)
     if storage in self.path_configs and item=='switch_config':
       return lambda new_config: self.switch_path_config(storage, new_config)
     #
@@ -327,8 +337,7 @@ class ConfigProxy(object):
     storage=self.configs[config]
     keys=self.storages[storage][config].keys()
     if storage in self.path_configs:
-      keys.append('get_configs')
-      keys.append('switch_config')
+      keys+=['get_configs', 'switch_config', 'get_current_config']
     return keys
 
   def keys(self):
