@@ -9,8 +9,15 @@ class InitFileMenu(object):
 	def __init__(self, mainGui):
 		self.mainGui = mainGui
 		
-		self.init_action()
 		self.init_list_of_files()
+		self.init_separator()
+		self.init_action()
+		
+		self.init_gui()
+		
+	def init_separator(self):
+		if self.listFiles != ['','','','','']:
+			self.mainGui.ui.menuFile.addSeparator()
 		
 	def init_action(self):
 		_action1 = QtGui.QAction('', self.mainGui)
@@ -45,10 +52,9 @@ class InitFileMenu(object):
 		file5 = refllastloadedfiles.reduce5
 		_list_files = [file1, file2, file3, file4, file5]
 		self.listFiles = _list_files
-		
-		if _list_files != ['','','','','']:
-			self.mainGui.ui.menuFile.addSeparator()
-			
+
+	def	init_gui(self):
+		_list_files = self.listFiles
 		for i in range(len(_list_files)):
 			_file = _list_files[i]
 			if _file != '':
@@ -58,6 +64,6 @@ class InitFileMenu(object):
 				
 	def activate_file_at_index(self, index):			
 		self.currentlyActivatedFile = index
-		for i in range(len):
+		for i in range(len(self.listFiles)):
 			self.mainGui.listAction[i].setChecked(False)
 		self.mainGui.listAction[index].setChecked(True)

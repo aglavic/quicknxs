@@ -84,15 +84,6 @@ class ReducedConfigFilesHandler(object):
 	def save(self):
 		from quicknxs.config import refllastloadedfiles
 		refllastloadedfiles.switch_config('config_files')
-		#_list_reduce = [refllastloadedfiles.reduce1,
-		                #refllastloadedfiles.reduce2,
-		                #refllastloadedfiles.reduce3,
-		                #refllastloadedfiles.reduce4,
-		                #refllastloadedfiles.reduce5]
-		#for i in range(len(self.configFiles)):
-			#_reduce = _list_reduce[i]
-			#_reduce = self.configFiles[i].fullFileName
-			#_reduce = self.configFiles[i].lastTimeUsed
 		
 		if  self.totalFilesLoaded>0 and self.configFiles[0].fullFileName != '':
 			refllastloadedfiles.reduce1 = self.configFiles[0].fullFileName

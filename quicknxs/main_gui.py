@@ -367,15 +367,15 @@ class MainGUI(QtGui.QMainWindow):
 
 
   def launch_config_file1(self):
-    self.launch_config_file_nbr(1)
+    self.launch_config_file_nbr(0)
   def launch_config_file2(self):
-    self.launch_config_file_nbr(2)
+    self.launch_config_file_nbr(1)
   def launch_config_file3(self):
-    self.launch_config_file_nbr(3)
+    self.launch_config_file_nbr(2)
   def launch_config_file4(self):
-    self.launch_config_file_nbr(4)
+    self.launch_config_file_nbr(3)
   def launch_config_file5(self):
-    self.launch_config_file_nbr(5)
+    self.launch_config_file_nbr(4)
 
   def launch_config_file_nbr(self, index):
     _configObject = self.reducedFilesLoadedObject
