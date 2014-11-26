@@ -42,24 +42,38 @@ class ReducedConfigFilesHandler(object):
 		
 		_newFileObject = FileLoadedObject(fullFileName)
 		
-		if self.totalFilesLoaded < self.TOTAL_NUMBER_OF_FILES:
+		if len(self.configFiles) == 0:
 			self._add_file_to_array(_newFileObject)
 			return
 		
-		if self._is_new_file(_newFileObject):
-			self._replace_with_oldest_file(_newFileObject)
+		[isAlreadyThere, index] = self._is_new_file(_newFileObject)
+		if isAlreadyThere:
+			self.switch_old_with_new_file(_newFileObject, index)
+		else:
+			self._add_file_to_array(_newFileObject)
 			
 	def _is_new_file(self, newFileObject):
 		_nbrFile = len(self.configFiles)
 		for i in range(_nbrFile):
-			if newFileObject.fullFileName == configFiles[i]:
-				return True
-		return False
+			if newFileObject.fullFileName == self.configFiles[i].fullFileName:
+				return [True, i]
+		return [False, -1]
 			
 	def _add_file_to_array(self, _newFileObject):
-		self.configFiles.append(_newFileObject)
-		self.totalFilesLoaded += 1
-			
+		if len(self.configFiles) == self.TOTAL_NUMBER_OF_FILES:
+			self._add_at_the_top(_newFileObject)
+		else:
+			self.configFiles.append(_newFileObject)
+			self.totalFilesLoaded += 1
+	
+	def _add_at_the_top(self, newFileObject):	
+		for i in range(self.TOTAL_NUMBER_OF_FILES,0,-1):
+			self.configFiles[i] = self.configFiles[i-1]
+		self.configFiles[0] = newFileObject
+
+	def switch_old_with_new_file(self, newFileObject, index):
+		self.configFiles[index] = newFileObject
+		
 	def _replace_with_oldest_file(self, newFileObject):
 		_oldestIndex = self._get_index_of_oldest_file()
 		self.configFiles[_oldestIndex] = newFileObject
