@@ -5,12 +5,13 @@ class FileLoadedObject(object):
 	fullFileName = ''
 	lastTimeUsed = ''
 	
-	def __init__(self, fullFileName):
-		
+	def __init__(self, fullFileName, date=None):
 		self.fullFileName = fullFileName
-		self.lastTimeUsed = self.setNewTime()
+		if date is None:
+			self.setNewTime()
+		else:
+			self.lastTimeUsed = date
 		
 	def setNewTime(self):
-		
-		self.lastTimeUsed = datetime.datetime.today()
+		self.lastTimeUsed = str(datetime.datetime.today())
 		

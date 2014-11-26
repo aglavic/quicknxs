@@ -47,7 +47,8 @@ from calculate_SF import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
-from prev_files_loaded_handler import PrevFilesLoadedHandler
+from reduced_config_files_handler import ReducedConfigFilesHandler
+from init_file_menu import InitFileMenu
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -140,7 +141,9 @@ class MainGUI(QtGui.QMainWindow):
   isLog = False
 
   stitchingAsciiWidgetObject = None
-  prevFilesLoadedObject = None
+  reducedFilesLoadedObject = None
+  listAction = [] # in Menu File
+  fileMenuObject = None
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -235,31 +238,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reducedAsciiDataSetTable.setColumnWidth(0,249)
       self.ui.reducedAsciiDataSetTable.setColumnWidth(1,49)
 
-#      self.ui.dataStitchingTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-#      self.ui.dataStitchingTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
-
-      #self.ui.dataStitchingTable.insertRow(0)
-      #widgetSpinBox = QtGui.QDoubleSpinBox()
-##      _item_auto_sf = QtGui.QTableWidget().setCellWidget(0, 0, widgetSpinBox)
-      #self.ui.dataStitchingTable.setCellWidget(0,0,widgetSpinBox)
-      
-#      self.frame = QtGui.QWidget()
-      #self.fig = Figure((5.0,5.0))
-      #self.canvas = FigureCanvasQTAgg(self.fig)
-      #self.canvas.setParent(self.ui.normalization_yi_plot)
-      #self.norm_yi_plot = self.fig.add_subplot(111)
-      
-      #self.toolbar = NavigationToolbar(self.canvas, self.ui.normalization_yi_plot)
-      #self.toolbar.logtog.connect(self.logtoggle)
-      
-      #vbox = QtGui.QVBoxLayout()
-      #vbox.addWidget(self.canvas)
-      #vbox.addWidget(self.toolbar)
-      #self.ui.normalization_yi_plot.setLayout(vbox)
-      
-      # self.ui.norm_yi_plot.mpltoolbar.logtog.connect(self.logtoggle)
-
-    self.readSettings()
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
     self.trigger=DelayedTrigger()
@@ -284,13 +262,13 @@ class MainGUI(QtGui.QMainWindow):
     self.initiateProjectionPlot.connect(self.plot_projections)
     self.initiateReflectivityPlot.connect(self.plot_refl)
     self.initiateReflectivityPlot.connect(self.updateStateFile)
+    self.folderModified()
 
     if instrument.NAME=="REF_L":
-      self.folderModified()
       self.defineRightDefaultPath()
-#      self.saveListPrevLoadedFiles()  #REMOVEME
-  #    self.loadListPrevLoadedFiles()
-
+      self.fileMenuObject = InitFileMenu(self)
+      self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+      
     # open file after GUI is shown
     if '-ipython' in argv:
       self.run_ipython()
@@ -312,6 +290,8 @@ class MainGUI(QtGui.QMainWindow):
         self.trigger('automaticExtraction', argv)
     else:
       self.ui.numberSearchEntry.setFocus()
+
+  
 
   def defineRightDefaultPath(self):
     
@@ -384,6 +364,26 @@ class MainGUI(QtGui.QMainWindow):
 
   #def loadConfigFile1(self):
     #print 'in loadConfigFile1'
+
+
+  def launch_config_file1(self):
+    self.launch_config_file_nbr(1)
+  def launch_config_file2(self):
+    self.launch_config_file_nbr(2)
+  def launch_config_file3(self):
+    self.launch_config_file_nbr(3)
+  def launch_config_file4(self):
+    self.launch_config_file_nbr(4)
+  def launch_config_file5(self):
+    self.launch_config_file_nbr(5)
+
+  def launch_config_file_nbr(self, index):
+    _configObject = self.reducedFilesLoadedObject
+    _filename = _configObject.configFiles[index].fullFileName
+    _configObject.configFiles[index].setNewTime()
+    self.reducedFilesLoadedObject = _configObject
+    self.loading_configuration_file(_filename)
+    self.fileMenuObject.activate_file_at_index(index)
 
   def raiseError(self):
     '''
@@ -3801,6 +3801,10 @@ Do you want to try to restore the working reduction list?""",
 
     else: #REF_L
       
+      # save config files
+      print 'in closeEvent'
+      self.save_config_files()
+      return
       # remove the state file on normal exit
       debug('Removing status file')
       os.remove(paths.STATE_FILE)
@@ -3815,6 +3819,8 @@ Do you want to try to restore the working reduction list?""",
       # actually close the window
       QtGui.QMainWindow.closeEvent(self, event)
       
+  def save_config_files(self):
+    self.reducedFilesLoadedObject.save()
 
   @log_call
   def open_advanced_background(self):
@@ -4374,32 +4380,34 @@ Do you want to try to restore the working reduction list?""",
     Reached by the Load Configuration button
     will populate the GUI with the data retrieved from the configuration file
     '''
-#    try:
     _path = self.path_config
     filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
-    if not(filename == ""):
+    if not (filename == ""):
+      self.loading_configuration_file(filename)
+            
+  def loading_configuration_file(self, filename):
+    # try:
+    self.path_config = os.path.dirname(filename)
+    
+    # make sure the reductionTable is empty
+    nbrRow = self.ui.reductionTable.rowCount()
+    if nbrRow > 0:
+      for _row in range(nbrRow):
+        self.ui.reductionTable.removeRow(0)
+    
+    self.loadConfigAndPopulateGui(filename)
+    self.enableWidgets(checkStatus=True)
+    
+    if self.reducedFilesLoadedObject is None:
+      _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+    else:
+      _reducedFilesLoadedObject = self.reducedFilesLoadedObject
+    _reducedFilesLoadedObject.addFile(filename)
+    _reducedFilesLoadedObject.updateGui()
+    self.reducedFilesLoadedObject = _reducedFilesLoadedObject
       
-      self.path_config = os.path.dirname(filename)
-      
-      # make sure the reductionTable is empty
-      nbrRow = self.ui.reductionTable.rowCount()
-      if nbrRow > 0:
-        for _row in range(nbrRow):
-          self.ui.reductionTable.removeRow(0)
-      
-      self.loadConfigAndPopulateGui(filename)
-      self.enableWidgets(checkStatus=True)
-      
-      if self.prevFilesLoadedObject is None:
-        _prevFilesLoadedObject = PrevFilesLoadedHandler(self)
-      else:
-        _prevFilesLoadedObject = self.prevFilesLoadedObject
-      _prevFilesLoadedObject.addFile(filename)
-      _prevFilesLoadedObject.updateGui()
-      self.prevFilesLoadedObject = _prevFilesLoadedObject
-        
-  #  except:
-    #  warning('Could not open configuration file!')
+#  except:
+  #  warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):
