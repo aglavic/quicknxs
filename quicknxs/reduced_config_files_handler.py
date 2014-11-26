@@ -49,6 +49,7 @@ class ReducedConfigFilesHandler(object):
 		[isAlreadyThere, index] = self._is_new_file(_newFileObject)
 		if isAlreadyThere:
 			self.switch_old_with_new_file(_newFileObject, index)
+			self.mainGui.fileMenuObject.activate_file_at_index(index)
 		else:
 			self._add_file_to_array(_newFileObject)
 			
@@ -62,12 +63,14 @@ class ReducedConfigFilesHandler(object):
 	def _add_file_to_array(self, _newFileObject):
 		if len(self.configFiles) == self.TOTAL_NUMBER_OF_FILES:
 			self._add_at_the_top(_newFileObject)
+			self.mainGui.fileMenuObject.activate_file_at_index(0)
 		else:
 			self.configFiles.append(_newFileObject)
 			self.totalFilesLoaded += 1
+			self.mainGui.fileMenuObject.activate_file_at_index(self.totalFilesLoaded)
 	
 	def _add_at_the_top(self, newFileObject):	
-		for i in range(self.TOTAL_NUMBER_OF_FILES,0,-1):
+		for i in range(self.TOTAL_NUMBER_OF_FILES-1,0,-1):
 			self.configFiles[i] = self.configFiles[i-1]
 		self.configFiles[0] = newFileObject
 

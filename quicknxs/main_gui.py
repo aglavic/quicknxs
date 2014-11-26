@@ -268,6 +268,7 @@ class MainGUI(QtGui.QMainWindow):
       self.defineRightDefaultPath()
       self.fileMenuObject = InitFileMenu(self)
       self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+      self.initConfigGui()
       
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -292,6 +293,12 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.numberSearchEntry.setFocus()
 
   
+  def initConfigGui(self):
+    from quicknxs.config import refllastloadedfiles
+    refllastloadedfiles.switch_config('config_files')
+    if refllastloadedfiles.config_files_path != '':
+      self.path_config =  refllastloadedfiles.config_files_path
+    
 
   def defineRightDefaultPath(self):
     
@@ -3802,12 +3809,10 @@ Do you want to try to restore the working reduction list?""",
     else: #REF_L
       
       # save config files
-      print 'in closeEvent'
       self.save_config_files()
-      return
       # remove the state file on normal exit
-      debug('Removing status file')
-      os.remove(paths.STATE_FILE)
+#      debug('Removing status file')
+  #    os.remove(paths.STATE_FILE)
       # detach the gui logging handler before closing the window
       debug('Detaching GUI handler')
       from logging import getLogger
@@ -3821,6 +3826,13 @@ Do you want to try to restore the working reduction list?""",
       
   def save_config_files(self):
     self.reducedFilesLoadedObject.save()
+    self.gui_config()
+
+  def gui_config(self):
+    from quicknxs.config import refllastloadedfiles
+    refllastloadedfiles.switch_config('config_files')
+    refllastloadedfiles.config_files_path = self.path_config
+    refllastloadedfiles.switch_config('default')
 
   @log_call
   def open_advanced_background(self):
