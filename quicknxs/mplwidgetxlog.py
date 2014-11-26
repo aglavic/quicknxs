@@ -265,6 +265,9 @@ class NavigationToolbar(NavigationToolbar2QT):
     self.canvas.draw()
 
 class MplCanvas(FigureCanvas):
+
+  trigger = QtCore.pyqtSignal()
+
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
     self.ax=self.fig.add_subplot(111, sharex=sharex, sharey=sharey)
@@ -284,6 +287,12 @@ class MplCanvas(FigureCanvas):
                               QtGui.QSizePolicy.Expanding)
     FigureCanvas.updateGeometry(self)
 
+    self.fig.canvas.mpl_connect('button_press_event', self.button_pressed)
+
+  def button_pressed(self, event):
+    self.trigger.emit()
+    print 'in button pressed'
+ 
   def format_labels(self):
     self.ax.set_title(self.PlotTitle)
 #    self.ax.title.set_fontsize(10)
@@ -297,6 +306,7 @@ class MplCanvas(FigureCanvas):
 #    for ylabel in labels_y:
 #      ylabel.set_fontsize(8)
 
+
   def sizeHint(self):
     w, h=self.get_width_height()
     w=max(w, self.height())
@@ -309,7 +319,6 @@ class MplCanvas(FigureCanvas):
   def get_default_filetype(self):
       return 'png'
 
-
 class MPLWidgetXLog(QtGui.QWidget):
   cplot=None
   cbar=None
@@ -317,6 +326,7 @@ class MPLWidgetXLog(QtGui.QWidget):
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
     self.canvas=MplCanvas()
+    
     self.canvas.ax2=None
     self.vbox=QtGui.QVBoxLayout()
     self.vbox.setMargin(1)

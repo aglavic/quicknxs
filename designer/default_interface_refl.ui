@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="page_3">
            <property name="geometry">
@@ -301,7 +301,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>380</height>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -432,7 +432,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>380</height>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -525,7 +525,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>380</height>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -652,7 +652,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>380</height>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -853,58 +853,6 @@ p, li { white-space: pre-wrap; }
             <number>1</number>
            </property>
            <item row="2" column="0">
-            <widget class="QCheckBox" name="show_colorbars">
-             <property name="toolTip">
-              <string>Show a colorbar for the map plots</string>
-             </property>
-             <property name="text">
-              <string>Colorbars</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="color_selector">
-             <property name="toolTip">
-              <string>Select the color scale from a list of presets</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>default</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>gist_ncar</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>gist_rainbow</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>jet</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>hsv</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>hot</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>binary</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="3" column="0">
             <widget class="QCheckBox" name="logarithmic_colorscale">
              <property name="toolTip">
               <string>Logarithmic colorscale in the maps</string>
@@ -3449,6 +3397,11 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="sfCalculatorTab">
+        <attribute name="title">
+         <string>SF Calculator</string>
+        </attribute>
+       </widget>
        <widget class="QWidget" name="logbookTab">
         <attribute name="title">
          <string>Logbook</string>
@@ -3677,8 +3630,6 @@ p, li { white-space: pre-wrap; }
  <tabstops>
   <tabstop>numberSearchEntry</tabstop>
   <tabstop>eventTofBins</tabstop>
-  <tabstop>show_colorbars</tabstop>
-  <tabstop>color_selector</tabstop>
   <tabstop>logarithmic_colorscale</tabstop>
   <tabstop>plotTab</tabstop>
  </tabstops>
@@ -3811,54 +3762,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>622</x>
      <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>color_selector</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>258</x>
-     <y>1067</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>349</x>
-     <y>815</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>show_colorbars</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>133</x>
-     <y>1064</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>833</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logarithmic_colorscale</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>133</x>
-     <y>1090</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
     </hint>
    </hints>
   </connection>
@@ -4803,6 +4706,22 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>950</x>
      <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>logarithmic_colorscale</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>toggleColorbars()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>133</x>
+     <y>1090</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>543</x>
+     <y>416</y>
     </hint>
    </hints>
   </connection>

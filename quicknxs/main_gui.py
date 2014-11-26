@@ -249,6 +249,8 @@ class MainGUI(QtGui.QMainWindow):
       self.connect_plot_events()
     else:
       self.connect_plot_events_refl()
+
+    self.ui.data_yi_plot.canvas.trigger.connect(self.trigger_in_MainGui)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -311,6 +313,9 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
+  def trigger_in_MainGui(self):
+    print 'in test me'
+  
   def handleReductionTableMenu(self, pos):
     '''
     Context menu of the Reduction table
@@ -2648,15 +2653,16 @@ class MainGUI(QtGui.QMainWindow):
       
   @log_call
   def toggleColorbars(self):
-    if not self.auto_change_active:
-      plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-             self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-             self.ui.xy_overview, self.ui.xtof_overview,
-             self.ui.offspec_pp, self.ui.offspec_mp, self.ui.offspec_pm, self.ui.offspec_mm]
-      for plot in plots:
-        plot.clear_fig()
-      self.overview_lines=None
-      self.plotActiveTab()
+    if instrument.NAME == 'REF_M':
+      if not self.auto_change_active:
+        plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
+               self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
+               self.ui.xy_overview, self.ui.xtof_overview,
+               self.ui.offspec_pp, self.ui.offspec_mp, self.ui.offspec_pm, self.ui.offspec_mm]
+        for plot in plots:
+          plot.clear_fig()
+        self.overview_lines=None
+        self.plotActiveTab()
 
   @log_call
   def toggleHide(self):
