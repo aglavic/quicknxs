@@ -291,7 +291,6 @@ class MplCanvas(FigureCanvas):
 
   def button_pressed(self, event):
     self.trigger.emit()
-    print 'in button pressed'
  
   def format_labels(self):
     self.ax.set_title(self.PlotTitle)

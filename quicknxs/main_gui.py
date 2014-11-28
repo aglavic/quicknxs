@@ -16,6 +16,7 @@ from mantid.simpleapi import *
 from xml.dom import minidom
 from distutils.util import strtobool
 import numpy as np
+import time
 #import pickle
 #QtWebKit
 
@@ -144,6 +145,11 @@ class MainGUI(QtGui.QMainWindow):
   reducedFilesLoadedObject = None
   listAction = [] # in Menu File
   fileMenuObject = None
+
+  # for double click of yi plot
+  timeClick1 = -1
+  DOUBLE_CLICK_IF_WITHIN_TIME = 0.4  #s
+
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -314,7 +320,20 @@ class MainGUI(QtGui.QMainWindow):
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
   def trigger_in_MainGui(self):
-    print 'in test me'
+    '''
+    This function is reached when the user click the yi plot (data and normalization)
+    '''
+    if self.timeClick1 == -1:
+      self.timeClick1 = time.time()
+      return
+    else:
+      _timeClick2 = time.time()
+
+    if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
+      # we double clicked
+      pass
+      
+    self.timeClick1 = -1
   
   def handleReductionTableMenu(self, pos):
     '''
