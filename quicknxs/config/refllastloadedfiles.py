@@ -3,7 +3,8 @@
 This will keep record of all the last config, ascii and reduced files
 '''
 
-config_path = '/tmp/path_config'
+import os
+config_path = os.path.expanduser('~/tmp/path_config')
 
 reduce1 = ''
 date1 = ''
