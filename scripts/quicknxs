@@ -44,11 +44,13 @@ def _run(argv=[]):
   return app.exec_()
 
 if __name__=='__main__':
-  if check_runstate():
-    # make sure the debug.log is not overwritten and only one version
-    # of the program per user is running
-    print "Another instance is already running"
-    sys.exit(0)
+  from quicknxs import config
+  if config.instrument.NAME == "REF_M":
+    if check_runstate():
+      # make sure the debug.log is not overwritten and only one version
+      # of the program per user is running
+      print "Another instance is already running"
+      sys.exit(0)
   setup_system()
   if 'QuickNXS.app' in sys.argv[0]: sys.argv.pop(-1)
   sys.exit(_run(sys.argv[1:]))
