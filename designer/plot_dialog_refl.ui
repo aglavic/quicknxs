@@ -25,7 +25,7 @@
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="MPLWidget" name="widget" native="true"/>
+        <widget class="MPLWidget" name="plot_pixel_vs_counts" native="true"/>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_4">
@@ -51,7 +51,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_15">
                <item>
-                <widget class="QSlider" name="verticalSlider">
+                <widget class="QSlider" name="john_slider_peak2">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -73,7 +73,7 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="spinBox_9"/>
+                  <widget class="QSpinBox" name="john_peak2"/>
                  </item>
                 </layout>
                </item>
@@ -82,7 +82,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QSlider" name="verticalSlider_2">
+                <widget class="QSlider" name="john_slider_peak1">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -91,7 +91,7 @@
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_14">
                  <item>
-                  <widget class="QSpinBox" name="spinBox_10"/>
+                  <widget class="QSpinBox" name="john_peak1"/>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_7">
@@ -140,7 +140,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
-                <widget class="QSlider" name="verticalSlider_3">
+                <widget class="QSlider" name="john_slider_back2">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -162,7 +162,7 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="spinBox_7"/>
+                  <widget class="QSpinBox" name="john_back2"/>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_4">
@@ -184,7 +184,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_14">
                <item>
-                <widget class="QSlider" name="verticalSlider_4">
+                <widget class="QSlider" name="john_slider_back1">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -206,7 +206,7 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="spinBox_8"/>
+                  <widget class="QSpinBox" name="john_back1"/>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_6">
@@ -239,7 +239,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="MPLWidget" name="widget_2" native="true"/>
+        <widget class="MPLWidget" name="plot_counts_vs_pixel" native="true"/>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
@@ -265,12 +265,12 @@
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_2"/>
+               <widget class="QSpinBox" name="jim_peak1"/>
               </item>
              </layout>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider_2">
+             <widget class="QSlider" name="jim_slider_peak1">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -283,7 +283,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
-               <widget class="QSpinBox" name="spinBox"/>
+               <widget class="QSpinBox" name="jim_peak2"/>
               </item>
               <item>
                <spacer name="horizontalSpacer">
@@ -301,7 +301,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider">
+             <widget class="QSlider" name="jim_slider_peak2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -336,7 +336,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_3"/>
+               <widget class="QSpinBox" name="jim_back1"/>
               </item>
               <item>
                <spacer name="horizontalSpacer_4">
@@ -354,7 +354,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider_3">
+             <widget class="QSlider" name="jim_slider_back1">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -380,7 +380,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_4"/>
+               <widget class="QSpinBox" name="jim_back2"/>
               </item>
               <item>
                <spacer name="horizontalSpacer_6">
@@ -398,7 +398,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider_4">
+             <widget class="QSlider" name="jim_slider_back2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
