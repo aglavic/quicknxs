@@ -50,6 +50,8 @@ from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
 from reduced_config_files_handler import ReducedConfigFilesHandler
 from init_file_menu import InitFileMenu
+from refl_gui_utils import PlotDialogREFL
+
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -330,8 +332,8 @@ class MainGUI(QtGui.QMainWindow):
       _timeClick2 = time.time()
 
     if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
-      # we double clicked
-      pass
+      dialog_refl = PlotDialogREFL()
+      dialog_refl.show()
       
     self.timeClick1 = -1
   
