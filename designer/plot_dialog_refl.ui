@@ -52,6 +52,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_15">
                <item>
                 <widget class="QSlider" name="john_slider_peak2">
+                 <property name="maximum">
+                  <number>303</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -73,7 +76,11 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="john_peak2"/>
+                  <widget class="QSpinBox" name="john_peak2">
+                   <property name="maximum">
+                    <number>303</number>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -83,6 +90,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
                 <widget class="QSlider" name="john_slider_peak1">
+                 <property name="maximum">
+                  <number>303</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -91,7 +101,11 @@
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_14">
                  <item>
-                  <widget class="QSpinBox" name="john_peak1"/>
+                  <widget class="QSpinBox" name="john_peak1">
+                   <property name="maximum">
+                    <number>303</number>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_7">
@@ -141,6 +155,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
                 <widget class="QSlider" name="john_slider_back2">
+                 <property name="maximum">
+                  <number>303</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -162,7 +179,11 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="john_back2"/>
+                  <widget class="QSpinBox" name="john_back2">
+                   <property name="maximum">
+                    <number>303</number>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_4">
@@ -185,6 +206,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_14">
                <item>
                 <widget class="QSlider" name="john_slider_back1">
+                 <property name="maximum">
+                  <number>303</number>
+                 </property>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -206,7 +230,11 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="john_back1"/>
+                  <widget class="QSpinBox" name="john_back1">
+                   <property name="maximum">
+                    <number>303</number>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_6">
@@ -265,12 +293,19 @@
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="jim_peak1"/>
+               <widget class="QSpinBox" name="jim_peak1">
+                <property name="maximum">
+                 <number>303</number>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
             <item>
              <widget class="QSlider" name="jim_slider_peak1">
+              <property name="maximum">
+               <number>303</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -283,7 +318,11 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
-               <widget class="QSpinBox" name="jim_peak2"/>
+               <widget class="QSpinBox" name="jim_peak2">
+                <property name="maximum">
+                 <number>303</number>
+                </property>
+               </widget>
               </item>
               <item>
                <spacer name="horizontalSpacer">
@@ -302,6 +341,9 @@
             </item>
             <item>
              <widget class="QSlider" name="jim_slider_peak2">
+              <property name="maximum">
+               <number>303</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -336,7 +378,11 @@
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="jim_back1"/>
+               <widget class="QSpinBox" name="jim_back1">
+                <property name="maximum">
+                 <number>303</number>
+                </property>
+               </widget>
               </item>
               <item>
                <spacer name="horizontalSpacer_4">
@@ -355,6 +401,9 @@
             </item>
             <item>
              <widget class="QSlider" name="jim_slider_back1">
+              <property name="maximum">
+               <number>303</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -380,7 +429,11 @@
                </spacer>
               </item>
               <item>
-               <widget class="QSpinBox" name="jim_back2"/>
+               <widget class="QSpinBox" name="jim_back2">
+                <property name="maximum">
+                 <number>303</number>
+                </property>
+               </widget>
               </item>
               <item>
                <spacer name="horizontalSpacer_6">
@@ -399,6 +452,9 @@
             </item>
             <item>
              <widget class="QSlider" name="jim_slider_back2">
+              <property name="maximum">
+               <number>303</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -426,5 +482,268 @@
  <resources>
   <include location="../icons/icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>jim_peak1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>587</x>
+     <y>509</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_peak1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1027</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_slider_peak1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>326</x>
+     <y>646</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_slider_peak1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>983</x>
+     <y>742</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_slider_peak2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>912</x>
+     <y>646</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_peak2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>652</x>
+     <y>509</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_slider_peak2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>983</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_peak2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_peak2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1027</x>
+     <y>503</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_back1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>821</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_back1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1163</x>
+     <y>742</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_slider_back1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>326</x>
+     <y>959</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_slider_back1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back1_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1119</x>
+     <y>742</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_back2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>913</x>
+     <y>821</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_back2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1163</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>jim_slider_back2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>912</x>
+     <y>959</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_slider_back2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>update_back2_spinbox()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1119</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>update_peak1_spinbox()</slot>
+  <slot>update_peak2_spinbox()</slot>
+  <slot>update_back1_spinbox()</slot>
+  <slot>update_back2_spinbox()</slot>
+ </slots>
 </ui>

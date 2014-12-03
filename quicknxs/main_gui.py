@@ -336,7 +336,8 @@ class MainGUI(QtGui.QMainWindow):
       yaxis = data.ycountsdata
       peak = data.peak
       back = data.back
-      dialog_refl = PlotDialogREFL(yaxis, peak, back)
+      new_detector_geometry_flag = data.new_detector_geometry_flag
+      dialog_refl = PlotDialogREFL(yaxis, peak, back, new_detector_geometry_flag)
       dialog_refl.show()
       
     self.timeClick1 = -1
