@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -25,7 +25,7 @@
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="MPLWidget" name="plot_pixel_vs_counts" native="true"/>
+        <widget class="MPLWidgetXLog" name="plot_pixel_vs_counts" native="true"/>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_4">
@@ -50,16 +50,6 @@
             <layout class="QVBoxLayout" name="verticalLayout_12">
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_15">
-               <item>
-                <widget class="QSlider" name="john_slider_peak2">
-                 <property name="maximum">
-                  <number>303</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_13">
                  <item>
@@ -88,16 +78,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_16">
-               <item>
-                <widget class="QSlider" name="john_slider_peak1">
-                 <property name="maximum">
-                  <number>303</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_14">
                  <item>
@@ -154,16 +134,6 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
-                <widget class="QSlider" name="john_slider_back2">
-                 <property name="maximum">
-                  <number>303</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <layout class="QVBoxLayout" name="verticalLayout_9">
                  <item>
                   <spacer name="verticalSpacer_3">
@@ -204,16 +174,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_14">
-               <item>
-                <widget class="QSlider" name="john_slider_back1">
-                 <property name="maximum">
-                  <number>303</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_10">
                  <item>
@@ -276,80 +236,64 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="jim_peak1">
-                <property name="maximum">
-                 <number>303</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QSlider" name="jim_slider_peak1">
-              <property name="maximum">
-               <number>303</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <widget class="QSpinBox" name="jim_peak2">
-                <property name="maximum">
-                 <number>303</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QSlider" name="jim_slider_peak2">
-              <property name="maximum">
-               <number>303</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QFrame" name="frame_3">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="jim_peak1">
+                   <property name="maximum">
+                    <number>303</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="jim_peak2">
+                   <property name="maximum">
+                    <number>303</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -361,106 +305,69 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <spacer name="horizontalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="jim_back1">
-                <property name="maximum">
-                 <number>303</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QSlider" name="jim_slider_back1">
-              <property name="maximum">
-               <number>303</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <spacer name="horizontalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="jim_back2">
-                <property name="maximum">
-                 <number>303</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QSlider" name="jim_slider_back2">
-              <property name="maximum">
-               <number>303</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QFrame" name="frame_4">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>334</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="jim_back1">
+               <property name="maximum">
+                <number>303</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="jim_back2">
+               <property name="maximum">
+                <number>303</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -476,6 +383,12 @@
    <class>MPLWidget</class>
    <extends>QWidget</extends>
    <header location="global">.mplwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MPLWidgetXLog</class>
+   <extends>QWidget</extends>
+   <header location="global">.mplwidgetxlog.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -516,54 +429,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>jim_slider_peak1</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>jim_peak1_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>326</x>
-     <y>646</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>john_slider_peak1</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>john_peak1_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>983</x>
-     <y>742</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>jim_slider_peak2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>jim_peak2_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>912</x>
-     <y>646</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>jim_peak2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
@@ -572,22 +437,6 @@
     <hint type="sourcelabel">
      <x>652</x>
      <y>509</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>john_slider_peak2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>john_peak2_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>983</x>
-     <y>301</y>
     </hint>
     <hint type="destinationlabel">
      <x>615</x>
@@ -644,38 +493,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>jim_slider_back1</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>jim_back1_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>326</x>
-     <y>959</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>john_slider_back1</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>john_back1_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1119</x>
-     <y>742</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>jim_back2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
@@ -699,38 +516,6 @@
    <hints>
     <hint type="sourcelabel">
      <x>1163</x>
-     <y>301</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>jim_slider_back2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>jim_back2_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>912</x>
-     <y>959</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
-     <y>500</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>john_slider_back2</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>john_back2_slider_signal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1119</x>
      <y>301</y>
     </hint>
     <hint type="destinationlabel">

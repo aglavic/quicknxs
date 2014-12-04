@@ -14,6 +14,8 @@ class PlotDialogREFL(QDialog):
 	_prev_back1 = -1
 	_prev_back2 = -1
 	
+	nbr_pixel_y_axis = 304
+	
 	def __init__(self,yaxis, peak, back, new_detector_geometry_flag, parent=None):
 		self.yaxis = yaxis
 		self.peak = peak
@@ -28,6 +30,7 @@ class PlotDialogREFL(QDialog):
 
 		if not _new_detector_geometry_flag:
 			self.reset_max_ui_value()
+			self.nbr_pixel_y_axis = 256
 		self.init_plot()
 
 	def reset_max_ui_value(self):
@@ -39,15 +42,6 @@ class PlotDialogREFL(QDialog):
 		self.ui.john_back2.setMaximum(255)
 		self.ui.jim_back1.setMaximum(255)
 		self.ui.jim_back2.setMaximum(255)
-
-		self.ui.john_slider_peak1.setMaximum(255)
-		self.ui.john_slider_peak2.setMaximum(255)
-		self.ui.jim_slider_peak1.setMaximum(255)
-		self.ui.jim_slider_peak2.setMaximum(255)
-		self.ui.john_slider_back1.setMaximum(255)
-		self.ui.john_slider_back2.setMaximum(255)
-		self.ui.jim_slider_back1.setMaximum(255)
-		self.ui.jim_slider_back2.setMaximum(255)
 
 	def init_plot(self):
 		xaxis = range(len(self.yaxis))
@@ -70,6 +64,7 @@ class PlotDialogREFL(QDialog):
 		ui_plot1.canvas.ax.plot(self.yaxis, xaxis)
 		ui_plot1.canvas.ax.set_xlabel(u'counts')
 		ui_plot1.canvas.ax.set_ylabel(u'Pixels')
+		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)
 		ui_plot1.canvas.ax.axhline(peak1, color='#00aa00')
 		ui_plot1.canvas.ax.axhline(peak2, color='#00aa00')
 		ui_plot1.canvas.ax.axhline(back1, color='#aa0000')
@@ -81,6 +76,7 @@ class PlotDialogREFL(QDialog):
 		ui_plot2.canvas.ax.plot(xaxis, self.yaxis)
 		ui_plot2.canvas.ax.set_xlabel(u'Pixels')
 		ui_plot2.canvas.ax.set_ylabel(u'Counts')
+		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
 		ui_plot2.canvas.ax.axvline(peak1, color='#00aa00')
 		ui_plot2.canvas.ax.axvline(peak2, color='#00aa00')
 		ui_plot2.canvas.ax.axvline(back1, color='#aa0000')
@@ -94,199 +90,99 @@ class PlotDialogREFL(QDialog):
 	def set_peak_value(self, peak1, peak2):
 		self.ui.john_peak1.setValue(peak1)
 		self.ui.jim_peak1.setValue(peak1)
-		self.ui.john_slider_peak1.setValue(peak1)
-		self.ui.jim_slider_peak1.setValue(peak1)
-
 		self.ui.john_peak2.setValue(peak2)
 		self.ui.jim_peak2.setValue(peak2)
-		self.ui.john_slider_peak2.setValue(peak2)
-		self.ui.jim_slider_peak2.setValue(peak2)
 	
 	def set_back_value(self, back1, back2):
 		self.ui.john_back1.setValue(back1)
 		self.ui.jim_back1.setValue(back1)
-		self.ui.john_slider_back1.setValue(back1)
-		self.ui.jim_slider_back1.setValue(back1)
-
 		self.ui.john_back2.setValue(back2)
 		self.ui.jim_back2.setValue(back2)
-		self.ui.john_slider_back2.setValue(back2)
-		self.ui.jim_slider_back2.setValue(back2)
 
 	# peak1
 	def update_peak1(self, value, updateJimSpinbox=True,
-	                 updateJimSlider=True,
-	                 updateJohnSpinbox=True,
-	                 updateJohnSlider=True):
+	                 updateJohnSpinbox=True):
 		if updateJimSpinbox:
 			self.ui.jim_peak1.setValue(value)
-		if updateJimSlider:
-			self.ui.jim_slider_peak1.setValue(value)
 		if updateJohnSpinbox:
 			self.ui.john_peak1.setValue(value)
-		if updateJohnSlider:
-			self.ui.john_slider_peak1.setValue(value)
 		self._prev_peak1 = value
 		
 	def jim_peak1_spinbox_signal(self, value):
 		if value == self._prev_peak1:
 			return
 		self.update_peak1(value, updateJimSpinbox=False)
-		self.make_sure_peak1_lt_peak2()
 		self.update_plot()
 		
-	def jim_peak1_slider_signal(self, value):
-		if value == self._prev_peak1:
-			return
-		self.update_peak1(value, updateJimSlider=False)
-		self.make_sure_peak1_lt_peak2()
-		self.update_plot()
-
 	def john_peak1_spinbox_signal(self, value):
 		if value == self._prev_peak1:
 			return
 		self.update_peak1(value, updateJohnSpinbox=False)
-		self.make_sure_peak1_lt_peak2()
-		self.update_plot()
-		
-	def john_peak1_slider_signal(self, value):
-		if value == self._prev_peak1:
-			return
-		self.update_peak1(value, updateJohnSlider=False)
-		self.make_sure_peak1_lt_peak2()
-		self.update_plot()
+		self.update_plot()		
 
 	# peak2
 	def update_peak2(self, value, updateJimSpinbox=True,
-	                 updateJimSlider=True,
-	                 updateJohnSpinbox=True,
-	                 updateJohnSlider=True):
+	                 updateJohnSpinbox=True):
 		if updateJimSpinbox:
 			self.ui.jim_peak2.setValue(value)
-		if updateJimSlider:
-			self.ui.jim_slider_peak2.setValue(value)
 		if updateJohnSpinbox:
 			self.ui.john_peak2.setValue(value)
-		if updateJohnSlider:
-			self.ui.john_slider_peak2.setValue(value)
 		self._prev_peak2 = value
 		
 	def jim_peak2_spinbox_signal(self, value):
 		if value == self._prev_peak2:
 			return
 		self.update_peak2(value, updateJimSpinbox=False)
-		self.make_sure_peak2_gt_peak1()
 		self.update_plot()
 				
-	def jim_peak2_slider_signal(self, value):
-		if value == self._prev_peak2:
-			return
-		self.update_peak2(value, updateJimSlider=False)
-		self.make_sure_peak2_gt_peak1()
-		self.update_plot()
-
 	def john_peak2_spinbox_signal(self, value):
 		if value == self._prev_peak2:
 			return
 		self.update_peak2(value, updateJohnSpinbox=False)
-		self.make_sure_peak2_gt_peak1()
 		self.update_plot()
 		
-	def john_peak2_slider_signal(self, value):
-		if value == self._prev_peak2:
-			return
-		self.update_peak2(value, updateJohnSlider=False)
-		self.make_sure_peak2_gt_peak1()
-		self.update_plot()
-
 	# back1
 	def update_back1(self, value, updateJimSpinbox=True,
-	                 updateJimSlider=True,
-	                 updateJohnSpinbox=True,
-	                 updateJohnSlider=True):
+	                 updateJohnSpinbox=True):
 		if updateJimSpinbox:
 			self.ui.jim_back1.setValue(value)
-		if updateJimSlider:
-			self.ui.jim_slider_back1.setValue(value)
 		if updateJohnSpinbox:
 			self.ui.john_back1.setValue(value)
-		if updateJohnSlider:
-			self.ui.john_slider_back1.setValue(value)
 		self._prev_back1 = value
 			
-		
 	def jim_back1_spinbox_signal(self, value):
 		if value == self._prev_back1:
 			return
 		self.update_back1(value, updateJimSpinbox=False)
-		self.make_sure_back1_lt_back2()
 		self.update_plot()
-		
-	def jim_back1_slider_signal(self, value):
-		if value == self._prev_back1:
-			return
-		self.update_back1(value, updateJimSlider=False)
-		self.make_sure_back1_lt_back2()
-		self.update_plot()
-		
+				
 	def john_back1_spinbox_signal(self, value):
 		if value == self._prev_back1:
 			return
 		self.update_back1(value, updateJohnSpinbox=False)
-		self.make_sure_back1_lt_back2()
 		self.update_plot()
-		
-	def john_back1_slider_signal(self, value):
-		if value == self._prev_back1:
-			return
-		self.update_back1(value, updateJohnSlider=False)
-		self.make_sure_back1_lt_back2()
-		self.update_plot()
-		
+				
 	# back2
 	def update_back2(self, value, updateJimSpinbox=True,
-	                 updateJimSlider=True,
-	                 updateJohnSpinbox=True,
-	                 updateJohnSlider=True):
+	                 updateJohnSpinbox=True):
 		if updateJimSpinbox:
 			self.ui.jim_back2.setValue(value)
-		if updateJimSlider:
-			self.ui.jim_slider_back2.setValue(value)
 		if updateJohnSpinbox:
 			self.ui.john_back2.setValue(value)
-		if updateJohnSlider:
-			self.ui.john_slider_back2.setValue(value)
 		self._prev_back2 = value
-		
 		
 	def jim_back2_spinbox_signal(self, value):
 		if value == self._prev_back2:
 			return
 		self.update_back2(value, updateJimSpinbox=False)
-		self.make_sure_back2_gt_back1()
 		self.update_plot()
 		
-	def jim_back2_slider_signal(self, value):
-		if value == self._prev_back2:
-			return
-		self.update_back2(value, updateJimSlider=False)
-		self.make_sure_back2_gt_back1()
-		self.update_plot()
-
 	def john_back2_spinbox_signal(self, value):
 		if value == self._prev_back2:
 			return
 		self.update_back2(value, updateJohnSpinbox=False)
-		self.make_sure_back2_gt_back1()
 		self.update_plot()
-				
-	def john_back2_slider_signal(self, value):
-		if value == self._prev_back2:
-			return
-		self.update_back2(value, updateJohnSlider=False)
-		self.make_sure_back2_gt_back1()
-		self.update_plot()
-		
+						
 	# check widgets 	
 	def make_sure_peak1_lt_peak2(self):
 		peak1 = self.ui.jim_peak1.value()
@@ -315,31 +211,7 @@ class PlotDialogREFL(QDialog):
 		if back2<back1:
 			self.update_back1(back2)
 			self.update_back2(back1)
-
-	def jim_peak1_slider_moved(self, int):
-		self.update_plot()
-
-	def jim_peak2_slider_moved(self, int):
-		self.update_plot()
 		
-	def jim_back1_slider_moved(self, int):
-		self.update_plot()
-		
-	def jim_back2_slider_moved(self, int):
-		self.update_plot()
-
-	def john_peak1_slider_moved(self, int):
-		self.update_plot()
-
-	def john_peak2_slider_moved(self, int):
-		self.update_plot()
-		
-	def john_back1_slider_moved(self, int):
-		self.update_plot()
-		
-	def john_back2_slider_moved(self, int):
-		self.update_plot()
-
 	def update_plot(self):
 		self.ui.plot_counts_vs_pixel.clear()
 		self.ui.plot_pixel_vs_counts.clear()
@@ -354,6 +226,7 @@ class PlotDialogREFL(QDialog):
 		ui_plot1.canvas.ax.plot(self.yaxis, self.xaxis)
 		ui_plot1.canvas.ax.set_xlabel(u'counts')
 		ui_plot1.canvas.ax.set_ylabel(u'Pixels')
+		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)		
 		ui_plot1.canvas.ax.axhline(peak1, color='#00aa00')
 		ui_plot1.canvas.ax.axhline(peak2, color='#00aa00')
 		ui_plot1.canvas.ax.axhline(back1, color='#aa0000')
@@ -365,6 +238,7 @@ class PlotDialogREFL(QDialog):
 		ui_plot2.canvas.ax.plot(self.xaxis, self.yaxis)
 		ui_plot2.canvas.ax.set_xlabel(u'Pixels')
 		ui_plot2.canvas.ax.set_ylabel(u'Counts')
+		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
 		ui_plot2.canvas.ax.axvline(peak1, color='#00aa00')
 		ui_plot2.canvas.ax.axvline(peak2, color='#00aa00')
 		ui_plot2.canvas.ax.axvline(back1, color='#aa0000')
