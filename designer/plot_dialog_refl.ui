@@ -487,7 +487,7 @@
    <sender>jim_peak1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak1_spinbox()</slot>
+   <slot>jim_peak1_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>587</x>
@@ -503,7 +503,7 @@
    <sender>john_peak1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak1_spinbox()</slot>
+   <slot>john_peak1_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1027</x>
@@ -519,7 +519,7 @@
    <sender>jim_slider_peak1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak1_spinbox()</slot>
+   <slot>jim_peak1_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>326</x>
@@ -535,7 +535,7 @@
    <sender>john_slider_peak1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak1_spinbox()</slot>
+   <slot>john_peak1_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>983</x>
@@ -551,7 +551,7 @@
    <sender>jim_slider_peak2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak2_spinbox()</slot>
+   <slot>jim_peak2_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>912</x>
@@ -567,7 +567,7 @@
    <sender>jim_peak2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak2_spinbox()</slot>
+   <slot>jim_peak2_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>652</x>
@@ -583,7 +583,7 @@
    <sender>john_slider_peak2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak2_spinbox()</slot>
+   <slot>john_peak2_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>983</x>
@@ -599,7 +599,7 @@
    <sender>john_peak2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_peak2_spinbox()</slot>
+   <slot>john_peak2_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1027</x>
@@ -615,7 +615,7 @@
    <sender>jim_back1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back1_spinbox()</slot>
+   <slot>jim_back1_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>327</x>
@@ -631,7 +631,7 @@
    <sender>john_back1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back1_spinbox()</slot>
+   <slot>john_back1_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1163</x>
@@ -647,7 +647,7 @@
    <sender>jim_slider_back1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back1_spinbox()</slot>
+   <slot>jim_back1_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>326</x>
@@ -663,7 +663,7 @@
    <sender>john_slider_back1</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back1_spinbox()</slot>
+   <slot>john_back1_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1119</x>
@@ -679,7 +679,7 @@
    <sender>jim_back2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back2_spinbox()</slot>
+   <slot>jim_back2_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>913</x>
@@ -695,7 +695,7 @@
    <sender>john_back2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back2_spinbox()</slot>
+   <slot>john_back2_spinbox_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1163</x>
@@ -711,7 +711,7 @@
    <sender>jim_slider_back2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back2_spinbox()</slot>
+   <slot>jim_back2_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>912</x>
@@ -727,7 +727,7 @@
    <sender>john_slider_back2</sender>
    <signal>valueChanged(int)</signal>
    <receiver>Dialog</receiver>
-   <slot>update_back2_spinbox()</slot>
+   <slot>john_back2_slider_signal()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1119</x>
@@ -745,5 +745,21 @@
   <slot>update_peak2_spinbox()</slot>
   <slot>update_back1_spinbox()</slot>
   <slot>update_back2_spinbox()</slot>
+  <slot>jim_peak1_slider_signal()</slot>
+  <slot>jim_peak1_spinbox_signal()</slot>
+  <slot>jim_peak2_slider_signal()</slot>
+  <slot>jim_peak2_spinbox_signal()</slot>
+  <slot>john_peak1_slider_signal()</slot>
+  <slot>john_peak1_spinbox_signal()</slot>
+  <slot>john_peak2_slider_signal()</slot>
+  <slot>john_peak2_spinbox_signal()</slot>
+  <slot>jim_back1_slider_signal()</slot>
+  <slot>jim_back1_spinbox_signal()</slot>
+  <slot>jim_back2_slider_signal()</slot>
+  <slot>jim_back2_spinbox_signal()</slot>
+  <slot>john_back1_slider_signal()</slot>
+  <slot>john_back1_spinbox_signal()</slot>
+  <slot>john_back2_slider_signal()</slot>
+  <slot>john_back2_spinbox_signal()</slot>
  </slots>
 </ui>
