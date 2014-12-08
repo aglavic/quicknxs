@@ -34,6 +34,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     A small change to the original navigation toolbar.
   '''
   _auto_toggle=False
+  logtog = QtCore.pyqtSignal(str)
 
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
@@ -185,6 +186,10 @@ class NavigationToolbar(NavigationToolbar2QT):
 
       self.set_message(self.mode)
 
+  #def logtoggle(self, checked):
+    #print 'inside mplwidgetxlog logtoggle'
+    #self.logtog.emit(checked)
+
   def print_figure(self):
     '''
       Save the plot to a temporary png file and show a preview dialog also used for printing.
@@ -205,7 +210,6 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     def getPrintData(printer):
       imgobj.render(printer)
-
 
     printer=QtGui.QPrinter()
     printer.setPrinterName('mrac4a_printer')
@@ -249,10 +253,10 @@ class NavigationToolbar(NavigationToolbar2QT):
       logstate=ax.get_xscale()
       if logstate=='linear':
         ax.set_xscale('log')
-        self.canvas.draw()
       else:
         ax.set_xscale('linear')
-        self.canvas.draw()
+      self.canvas.draw()
+      self.logtog.emit(ax.get_xscale())
     else:
       imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
       norm=imgs[0].norm
@@ -287,6 +291,7 @@ class MplCanvas(FigureCanvas):
                               QtGui.QSizePolicy.Expanding)
     FigureCanvas.updateGeometry(self)
 
+    
     self.fig.canvas.mpl_connect('button_press_event', self.button_pressed)
 
   def button_pressed(self, event):
@@ -322,6 +327,8 @@ class MPLWidgetXLog(QtGui.QWidget):
   cplot=None
   cbar=None
 
+  logtogx = QtCore.pyqtSignal(str)
+
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
     self.canvas=MplCanvas()
@@ -334,9 +341,13 @@ class MPLWidgetXLog(QtGui.QWidget):
       self.toolbar=NavigationToolbar(self.canvas, self)
       self.toolbar.coordinates=coordinates
       self.vbox.addWidget(self.toolbar)
+      self.toolbar.logtog.connect(self.logtoggle)
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
+
+  def logtoggle(self, status):
+    self.logtogx.emit(status)
 
   def leaveEvent(self, event):
     '''

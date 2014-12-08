@@ -33,6 +33,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     A small change to the original navigation toolbar.
   '''
   _auto_toggle=False
+  logtog = QtCore.pyqtSignal(str)
 
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
@@ -251,6 +252,7 @@ class NavigationToolbar(NavigationToolbar2QT):
       else:
         ax.set_yscale('linear')
       self.canvas.draw()
+      self.logtog.emit(ax.get_yscale())
     else:
       imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
       norm=imgs[0].norm
@@ -263,6 +265,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     self.canvas.draw()
 
 class MplCanvas(FigureCanvas):
+  
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
     self.ax=self.fig.add_subplot(111, sharex=sharex, sharey=sharey)
@@ -312,6 +315,8 @@ class MPLWidget(QtGui.QWidget):
   cplot=None
   cbar=None
 
+  logtogy = QtCore.pyqtSignal(str)
+
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
     self.canvas=MplCanvas()
@@ -323,9 +328,13 @@ class MPLWidget(QtGui.QWidget):
       self.toolbar=NavigationToolbar(self.canvas, self)
       self.toolbar.coordinates=coordinates
       self.vbox.addWidget(self.toolbar)
+      self.toolbar.logtog.connect(self.logtoggleylog)
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
+
+  def logtoggleylog(self, status):
+    self.logtogy.emit(status)
 
   def leaveEvent(self, event):
     '''

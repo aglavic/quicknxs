@@ -13,6 +13,9 @@ class PlotDialogREFL(QDialog):
 	_prev_peak2 = -1
 	_prev_back1 = -1
 	_prev_back2 = -1
+
+	isJimLog = True
+	isJohnLog = True
 	
 	nbr_pixel_y_axis = 304
 	
@@ -32,6 +35,8 @@ class PlotDialogREFL(QDialog):
 			self.reset_max_ui_value()
 			self.nbr_pixel_y_axis = 256
 		self.init_plot()
+		
+		
 
 	def reset_max_ui_value(self):
 		self.ui.john_peak1.setMaximum(255)
@@ -61,9 +66,13 @@ class PlotDialogREFL(QDialog):
 		
 		# John
 		ui_plot1 = self.ui.plot_pixel_vs_counts
-		ui_plot1.canvas.ax.plot(self.yaxis, xaxis)
+		ui_plot1.plot(self.yaxis, xaxis)
 		ui_plot1.canvas.ax.set_xlabel(u'counts')
 		ui_plot1.canvas.ax.set_ylabel(u'Pixels')
+		if self.isJohnLog:
+			ui_plot1.canvas.ax.set_xscale('log')
+		else:
+			ui_plot1.canvas.ax.set_xscale('linear')
 		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)
 		ui_plot1.canvas.ax.axhline(peak1, color='#00aa00')
 		ui_plot1.canvas.ax.axhline(peak2, color='#00aa00')
@@ -76,6 +85,10 @@ class PlotDialogREFL(QDialog):
 		ui_plot2.canvas.ax.plot(xaxis, self.yaxis)
 		ui_plot2.canvas.ax.set_xlabel(u'Pixels')
 		ui_plot2.canvas.ax.set_ylabel(u'Counts')
+		if self.isJimLog:
+			ui_plot2.canvas.ax.set_yscale('log')
+		else:
+			ui_plot2.canvas.ax.set_yscale('linear')
 		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
 		ui_plot2.canvas.ax.axvline(peak1, color='#00aa00')
 		ui_plot2.canvas.ax.axvline(peak2, color='#00aa00')
@@ -86,6 +99,21 @@ class PlotDialogREFL(QDialog):
 		# John and Jim peak and back
 		self.set_peak_value(peak1, peak2)
 		self.set_back_value(back1, back2)
+		
+		ui_plot1.logtogx.connect(self.logtogglexlog)
+		ui_plot2.logtogy.connect(self.logtoggleylog)
+
+	def logtogglexlog(self, status):
+		if status == 'log':
+			self.isJohnLog = True
+		else:
+			self.isJohnLog = False
+	
+	def logtoggleylog(self, status):
+		if status == 'log':
+			self.isJimLog = True
+		else:
+			self.isJimLog = False
 		
 	def set_peak_value(self, peak1, peak2):
 		self.ui.john_peak1.setValue(peak1)
@@ -226,6 +254,10 @@ class PlotDialogREFL(QDialog):
 		ui_plot1.canvas.ax.plot(self.yaxis, self.xaxis)
 		ui_plot1.canvas.ax.set_xlabel(u'counts')
 		ui_plot1.canvas.ax.set_ylabel(u'Pixels')
+		if self.isJohnLog:
+			ui_plot1.canvas.ax.set_xscale('log')
+		else:
+			ui_plot1.canvas.ax.set_xscale('linear')
 		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)		
 		ui_plot1.canvas.ax.axhline(peak1, color='#00aa00')
 		ui_plot1.canvas.ax.axhline(peak2, color='#00aa00')
@@ -238,6 +270,10 @@ class PlotDialogREFL(QDialog):
 		ui_plot2.canvas.ax.plot(self.xaxis, self.yaxis)
 		ui_plot2.canvas.ax.set_xlabel(u'Pixels')
 		ui_plot2.canvas.ax.set_ylabel(u'Counts')
+		if self.isJimLog:
+			ui_plot2.canvas.ax.set_yscale('log')
+		else:
+			ui_plot2.canvas.ax.set_yscale('linear')
 		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
 		ui_plot2.canvas.ax.axvline(peak1, color='#00aa00')
 		ui_plot2.canvas.ax.axvline(peak2, color='#00aa00')
@@ -245,4 +281,5 @@ class PlotDialogREFL(QDialog):
 		ui_plot2.canvas.ax.axvline(back2, color='#aa0000')
 		ui_plot2.canvas.draw()
 		
-		
+	def button_press():
+		print 'in button press'
