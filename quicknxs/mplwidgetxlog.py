@@ -35,7 +35,11 @@ class NavigationToolbar(NavigationToolbar2QT):
   '''
   _auto_toggle=False
   logtog = QtCore.pyqtSignal(str)
+  isCursorNormal = True
 
+  isPanActivated = False
+  isZoomActivated = False
+  
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
     self.setIconSize(QtCore.QSize(20, 20))
@@ -93,7 +97,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     a.setToolTip('Toggle logarithmic scale')
     
     self.buttons={}
-
+    
     # Add the x,y location widget at the right side of the toolbar
     # The stretch factor is 1 which means any resizing of the toolbar
     # will resize this label instead of the buttons.
@@ -112,8 +116,34 @@ class NavigationToolbar(NavigationToolbar2QT):
     # reference holder for subplots_adjust window
     self.adj_window=None
 
+  def activate_widget(self, widget_name, activateIt):
+    
+    if widget_name == 'pan':
+      if activateIt:
+        self.isPanActivated = True
+        self.isZoomActivated = False
+      else:
+        self.isPanActivated = False
+    elif widget_name == 'zoom':
+      if activateIt:
+        self.isZoomActivated = True
+        self.isPanActivated = False
+      else:
+        self.isZoomActivated = False
+        
+  def pan(self, *args):
+    NavigationToolbar2QT.pan(self, *args)
+    self.activate_widget('pan', not self.isPanActivated)
+
+  def zoom(self, *args):
+    NavigationToolbar2QT.zoom(self, *args)
+    self.activate_widget('zoom', not self.isZoomActivated)
+
+
   if matplotlib.__version__<'1.2':
+    
     def pan(self, *args):
+      
       'Activate the pan/zoom tool. pan with left button, zoom with right'
       # set the pointer icon and button press funcs to the
       # appropriate callbacks
@@ -153,6 +183,7 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     def zoom(self, *args):
       'activate zoom to rect mode'
+
       if self._auto_toggle:
         return
       if self._active=='PAN':
@@ -328,6 +359,7 @@ class MPLWidgetXLog(QtGui.QWidget):
   cbar=None
 
   logtogx = QtCore.pyqtSignal(str)
+  doubleClick = QtCore.pyqtSignal(bool)
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -345,6 +377,11 @@ class MPLWidgetXLog(QtGui.QWidget):
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
+    self.canvas.trigger.connect(self._doubleClick)
+
+  def _doubleClick(self):
+    status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
+    self.doubleClick.emit(status)
 
   def logtoggle(self, status):
     self.logtogx.emit(status)

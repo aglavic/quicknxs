@@ -258,7 +258,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.connect_plot_events_refl()
 
-    self.ui.data_yi_plot.canvas.trigger.connect(self.double_click_yi_plot)
+#    self.ui.data_yi_plot.canvas.trigger.connect(self.double_click_yi_plot)
+    self.ui.data_yi_plot.doubleClick.connect(self.double_click_yi_plot)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -321,15 +322,21 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
-  def double_click_yi_plot(self):
+  def double_click_yi_plot(self, var):
     '''
     This function is reached when the user click the yi plot (data and normalization)
     '''
+    if var:
+      return
+    print 'in double click yi plot'
+
     if self.timeClick1 == -1:
       self.timeClick1 = time.time()
       return
     else:
       _timeClick2 = time.time()
+
+    print 'after first if'
 
     if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
       data = self.active_data
