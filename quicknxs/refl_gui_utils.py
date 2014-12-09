@@ -1,4 +1,5 @@
-from PyQt4.QtGui import QDialog
+from PyQt4.QtGui import QDialog, QPalette
+from PyQt4.QtCore import Qt
 from plot_dialog_refl import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
 
@@ -38,10 +39,103 @@ class PlotDialogREFL(QDialog):
 		self.ui = UiPlot()
 		self.ui.setupUi(self)
 
+		self.hide_and_format_invalid_widgets()
+
 		if not _new_detector_geometry_flag:
 			self.reset_max_ui_value()
 			self.nbr_pixel_y_axis = 256
 		self.init_plot()
+		
+	def hide_and_format_invalid_widgets(self):
+		palette = QPalette()
+		palette.setColor(QPalette.Foreground, Qt.red)
+		self.ui.jim_peak1_label.setVisible(False)
+		self.ui.jim_peak1_label.setPalette(palette)
+		self.ui.jim_peak2_label.setVisible(False)
+		self.ui.jim_peak2_label.setPalette(palette)
+		self.ui.jim_back1_label.setVisible(False)
+		self.ui.jim_back1_label.setPalette(palette)
+		self.ui.jim_back2_label.setVisible(False)
+		self.ui.jim_back2_label.setPalette(palette)
+		self.ui.john_peak1_label.setVisible(False)
+		self.ui.john_peak1_label.setPalette(palette)
+		self.ui.john_peak2_label.setVisible(False)
+		self.ui.john_peak2_label.setPalette(palette)
+		self.ui.john_back1_label.setVisible(False)
+		self.ui.john_back1_label.setPalette(palette)
+		self.ui.john_back2_label.setVisible(False)
+		self.ui.john_back2_label.setPalette(palette)
+		self.ui.invalid_selection_label.setVisible(False)
+		self.ui.invalid_selection_label.setPalette(palette)
+		
+	def check_widget_format(self):
+		'''
+		will inform the user if back is inside the peak for example....
+		'''
+		self.widgets_to_show('peak1', False)
+		self.widgets_to_show('peak2', False)
+		self.widgets_to_show('back1', False)
+		self.widgets_to_show('back2', False)
+
+		peak1 = self.ui.jim_peak1.value()
+		peak2 = self.ui.jim_peak2.value()
+		back1 = self.ui.jim_back1.value()
+		back2 = self.ui.jim_back2.value()
+		
+		peak_min = min([peak1, peak2])
+		peak_max = max([peak1, peak2])
+		
+		back_min = min([back1, back2])
+		back_max = max([back1, back2])
+		
+		is_peak1_peak_min = (peak1 == peak_min)
+		is_peak2_peak_max = (peak2 == peak_max)
+		is_back1_back_min = (back1 == back_min)
+		is_back2_back_max = (back2 == back_max)
+		
+		_at_least_one_error = False
+		
+		if back_min > peak_min:
+			_at_least_one_error = True
+			if is_peak1_peak_min:
+				self.widgets_to_show('peak1', True)
+			else:
+				self.widgets_to_show('peak2', True)
+			
+			if is_back1_back_min:
+				self.widgets_to_show('back1', True)
+			else:
+				self.widgets_to_show('back2', True)
+				
+		if back_max < peak_max:
+			_at_least_one_error = True
+			if is_peak2_peak_max:
+				self.widgets_to_show('peak2', True)
+			else:
+				self.widgets_to_show('peak1', True)
+			
+			if is_back2_back_max:
+				self.widgets_to_show('back2', True)
+			else:
+				self.widgets_to_show('back1', True)
+				
+		self.ui.invalid_selection_label.setVisible(_at_least_one_error)
+				
+				
+	def widgets_to_show(self, widget, status):
+		if widget == 'peak1':
+			self.ui.jim_peak1_label.setVisible(status)
+			self.ui.john_peak1_label.setVisible(status)
+		if widget == 'peak2':
+			self.ui.jim_peak2_label.setVisible(status)
+			self.ui.john_peak2_label.setVisible(status)
+		if widget == 'back1':
+			self.ui.jim_back1_label.setVisible(status)
+			self.ui.john_back1_label.setVisible(status)
+		if widget == 'back2':
+			self.ui.jim_back2_label.setVisible(status)
+			self.ui.john_back2_label.setVisible(status)
+		
 		
 	def reset_max_ui_value(self):
 		self.ui.john_peak1.setMaximum(255)
@@ -125,12 +219,14 @@ class PlotDialogREFL(QDialog):
 		self.ui.jim_peak1.setValue(peak1)
 		self.ui.john_peak2.setValue(peak2)
 		self.ui.jim_peak2.setValue(peak2)
+		self.check_widget_format()
 	
 	def set_back_value(self, back1, back2):
 		self.ui.john_back1.setValue(back1)
 		self.ui.jim_back1.setValue(back1)
 		self.ui.john_back2.setValue(back2)
 		self.ui.jim_back2.setValue(back2)
+		self.check_widget_format()
 
 	# peak1
 	def update_peak1(self, value, updateJimSpinbox=True,
@@ -140,7 +236,8 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_peak1.setValue(value)
 		self._prev_peak1 = value
-		
+		self.check_widget_format()
+				
 	def jim_peak1_spinbox_signal(self, value):
 		if value == self._prev_peak1:
 			return
@@ -161,6 +258,7 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_peak2.setValue(value)
 		self._prev_peak2 = value
+		self.check_widget_format()
 		
 	def jim_peak2_spinbox_signal(self, value):
 		if value == self._prev_peak2:
@@ -182,6 +280,7 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_back1.setValue(value)
 		self._prev_back1 = value
+		self.check_widget_format()			
 			
 	def jim_back1_spinbox_signal(self, value):
 		if value == self._prev_back1:
@@ -203,6 +302,7 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_back2.setValue(value)
 		self._prev_back2 = value
+		self.check_widget_format()
 		
 	def jim_back2_spinbox_signal(self, value):
 		if value == self._prev_back2:
