@@ -4,6 +4,9 @@ from mplwidget import MPLWidget
 
 class PlotDialogREFL(QDialog):
 	
+	main_gui = None
+	type = 'data'
+	
 	_open_instances = []
 	yaxis = None
 	peak = None
@@ -19,7 +22,11 @@ class PlotDialogREFL(QDialog):
 	
 	nbr_pixel_y_axis = 304
 	
-	def __init__(self,yaxis, peak, back, new_detector_geometry_flag, parent=None):
+	def __init__(self, main_gui, type, yaxis, peak, back, new_detector_geometry_flag, parent=None):
+
+		self.type = type
+		self.main_gui = main_gui
+
 		self.yaxis = yaxis
 		self.peak = peak
 		self.back = back
@@ -36,8 +43,6 @@ class PlotDialogREFL(QDialog):
 			self.nbr_pixel_y_axis = 256
 		self.init_plot()
 		
-		
-
 	def reset_max_ui_value(self):
 		self.ui.john_peak1.setMaximum(255)
 		self.ui.john_peak2.setMaximum(255)
@@ -281,5 +286,32 @@ class PlotDialogREFL(QDialog):
 		ui_plot2.canvas.ax.axvline(back2, color='#aa0000')
 		ui_plot2.canvas.draw()
 		
-	def button_press():
-		print 'in button press'
+	def closeEvent(self, event=None):
+		# collect peak and back values
+		peak1 = self.ui.jim_peak1.value()
+		peak2 = self.ui.jim_peak2.value()
+		back1 = self.ui.jim_back1.value()
+		back2 = self.ui.jim_back2.value()
+		
+		peak_min = min([peak1, peak2])
+		peak_max = max([peak1, peak2])
+		
+		back_min = min([back1, back2])
+		back_max = max([back1, back2])
+		
+		if self.type == 'data':
+			self.main_gui.ui.dataPeakFromValue.setValue(peak_min)
+			self.main_gui.ui.dataPeakToValue.setValue(peak_max)
+			self.main_gui.ui.dataBackFromValue.setValue(back_min)
+			self.main_gui.ui.dataBackToValue.setValue(back_max)
+			self.main_gui.data_peak_and_back_validation(False)
+		else:
+			self.main_gui.ui.normPeakFromValue.setValue(peak_min)
+			self.main_gui.ui.normPeakToValue.setValue(peak_max)
+			self.main_gui.ui.normBackFromValue.setValue(back_min)
+			self.main_gui.ui.normBackToValue.setValue(back_max)
+			self.main_gui.norm_peak_and_back_validation(False)
+
+		self.main_gui.plot_overview_REFL(plot_it=False, plot_ix=False)
+		
+	

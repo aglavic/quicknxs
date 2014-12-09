@@ -258,7 +258,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.connect_plot_events_refl()
 
-    self.ui.data_yi_plot.doubleClick.connect(self.double_click_yi_plot)
+    self.ui.data_yi_plot.doubleClick.connect(self.double_click_data_yi_plot)
+    self.ui.norm_yi_plot.doubleClick.connect(self.double_click_norm_yi_plot)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -321,12 +322,21 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
-  def double_click_yi_plot(self, isPanOrZoomActivated):
+  def double_click_data_yi_plot(self, isPanOrZoomActivated):
     '''
-    This function is reached when the user click the yi plot (data and normalization)
+    This function is reached when the user click the yi plot (data)
     '''
-#    if isPanOrZoomActivated:
- #     return
+    self.double_click_yi(isPanOrZoomActivated, type='data')
+    
+
+  def double_click_norm_yi_plot(self, isPanOrZoomActivated):
+    '''
+    This function is reached when the user click the yi plot (normalization)
+    '''
+    self.double_click_yi(isPanOrZoomActivated, type='norm')
+        
+    
+  def double_click_yi(self, isPanOrZoomActivated, type='data'):
 
     if self.timeClick1 == -1:
       self.timeClick1 = time.time()
@@ -343,7 +353,7 @@ class MainGUI(QtGui.QMainWindow):
       peak = data.peak
       back = data.back
       new_detector_geometry_flag = data.new_detector_geometry_flag
-      dialog_refl = PlotDialogREFL(yaxis, peak, back, new_detector_geometry_flag)
+      dialog_refl = PlotDialogREFL(self, type, yaxis, peak, back, new_detector_geometry_flag)
       dialog_refl.show()
       
     self.timeClick1 = -1
@@ -4029,8 +4039,14 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
+
+  def data_peak_and_back_validation(self, withPlotUpdate=True):
+    self. data_peak_spinbox_validation(withPlotUpdate=withPlotUpdate)
+    self.data_back_spinbox_validation(withPlotUpdate=withPlotUpdate)
+
+
   # data peak spinboxes
-  def data_peak_spinbox_validation(self):
+  def data_peak_spinbox_validation(self, withPlotUpdate=True):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
@@ -4058,13 +4074,14 @@ Do you want to try to restore the working reduction list?""",
     self.ui.dataPeakToValue.setValue(peak_max)
 
     # refresh plots
-    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    if withPlotUpdate:
+      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
     # save new settings
     self.save_new_settings()
     
   # data back spinboxes
-  def data_back_spinbox_validation(self):
+  def data_back_spinbox_validation(self, withPlotUpdate=True):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
@@ -4103,7 +4120,7 @@ Do you want to try to restore the working reduction list?""",
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
   # data low resolution spinboxes
-  def data_lowres_spinbox_validation(self):
+  def data_lowres_spinbox_validation(self, withPlotUpdate=False):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
@@ -4134,10 +4151,17 @@ Do you want to try to restore the working reduction list?""",
     self.save_new_settings()
 
     # refresh plots
-    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    if withPlotUpdate:
+      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    
+    
+  def norm_peak_and_back_validation(self, withPlotUpdate=False):
+    self.norm_peak_spinbox_validation(withPlotUpdate)
+    self.norm_back_spinbox_validation(withPlotUpdate)
+
     
   # norm peak spinboxes
-  def norm_peak_spinbox_validation(self):
+  def norm_peak_spinbox_validation(self, withPlotUpdate=True):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
@@ -4167,11 +4191,12 @@ Do you want to try to restore the working reduction list?""",
     # save new settings
     self.save_new_settings()
 
-    # refresh plots
-    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    if withPlotUpdate:
+      # refresh plots
+      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
   # norm back spinboxes
-  def norm_back_spinbox_validation(self):
+  def norm_back_spinbox_validation(self, withPlotUpdate=True):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
@@ -4201,8 +4226,9 @@ Do you want to try to restore the working reduction list?""",
     # save new settings
     self.save_new_settings()
 
-    # refresh plots
-    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    if withPlotUpdate:
+      # refresh plots
+      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
   # data low resolution spinboxes
   def norm_lowres_spinbox_validation(self):
