@@ -238,13 +238,15 @@ class PlotDialogREFL(QDialog):
 		self._prev_peak1 = value
 		self.check_widget_format()
 				
-	def jim_peak1_spinbox_signal(self, value):
+	def jim_peak1_spinbox_signal(self):
+		value = self.ui.jim_peak1.value()
 		if value == self._prev_peak1:
 			return
 		self.update_peak1(value, updateJimSpinbox=False)
 		self.update_plot()
 		
-	def john_peak1_spinbox_signal(self, value):
+	def john_peak1_spinbox_signal(self):
+		value = self.ui.john_peak1.value()
 		if value == self._prev_peak1:
 			return
 		self.update_peak1(value, updateJohnSpinbox=False)
@@ -260,13 +262,15 @@ class PlotDialogREFL(QDialog):
 		self._prev_peak2 = value
 		self.check_widget_format()
 		
-	def jim_peak2_spinbox_signal(self, value):
+	def jim_peak2_spinbox_signal(self):
+		value = self.ui.jim_peak2.value()
 		if value == self._prev_peak2:
 			return
 		self.update_peak2(value, updateJimSpinbox=False)
 		self.update_plot()
 				
-	def john_peak2_spinbox_signal(self, value):
+	def john_peak2_spinbox_signal(self):
+		value = self.ui.john_peak2.value()
 		if value == self._prev_peak2:
 			return
 		self.update_peak2(value, updateJohnSpinbox=False)
@@ -282,13 +286,15 @@ class PlotDialogREFL(QDialog):
 		self._prev_back1 = value
 		self.check_widget_format()			
 			
-	def jim_back1_spinbox_signal(self, value):
+	def jim_back1_spinbox_signal(self):
+		value = self.ui.jim_back1.value()
 		if value == self._prev_back1:
 			return
 		self.update_back1(value, updateJimSpinbox=False)
 		self.update_plot()
 				
-	def john_back1_spinbox_signal(self, value):
+	def john_back1_spinbox_signal(self):
+		value = self.ui.john_back1.value()
 		if value == self._prev_back1:
 			return
 		self.update_back1(value, updateJohnSpinbox=False)
@@ -304,13 +310,15 @@ class PlotDialogREFL(QDialog):
 		self._prev_back2 = value
 		self.check_widget_format()
 		
-	def jim_back2_spinbox_signal(self, value):
+	def jim_back2_spinbox_signal(self):
+		value = self.ui.jim_back2.value()
 		if value == self._prev_back2:
 			return
 		self.update_back2(value, updateJimSpinbox=False)
 		self.update_plot()
 		
-	def john_back2_spinbox_signal(self, value):
+	def john_back2_spinbox_signal(self):
+		value = self.ui.john_back2.value()
 		if value == self._prev_back2:
 			return
 		self.update_back2(value, updateJohnSpinbox=False)

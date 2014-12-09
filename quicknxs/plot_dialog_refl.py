@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot_dialog_refl.ui'
 #
-# Created: Tue Dec  9 13:34:00 2014
+# Created: Tue Dec  9 15:10:45 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -264,14 +264,14 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(1)
-        QtCore.QObject.connect(self.jim_peak1, QtCore.SIGNAL("valueChanged(int)"), Dialog.jim_peak1_spinbox_signal)
-        QtCore.QObject.connect(self.john_peak1, QtCore.SIGNAL("valueChanged(int)"), Dialog.john_peak1_spinbox_signal)
-        QtCore.QObject.connect(self.jim_peak2, QtCore.SIGNAL("valueChanged(int)"), Dialog.jim_peak2_spinbox_signal)
-        QtCore.QObject.connect(self.john_peak2, QtCore.SIGNAL("valueChanged(int)"), Dialog.john_peak2_spinbox_signal)
-        QtCore.QObject.connect(self.jim_back1, QtCore.SIGNAL("valueChanged(int)"), Dialog.jim_back1_spinbox_signal)
-        QtCore.QObject.connect(self.john_back1, QtCore.SIGNAL("valueChanged(int)"), Dialog.john_back1_spinbox_signal)
-        QtCore.QObject.connect(self.jim_back2, QtCore.SIGNAL("valueChanged(int)"), Dialog.jim_back2_spinbox_signal)
-        QtCore.QObject.connect(self.john_back2, QtCore.SIGNAL("valueChanged(int)"), Dialog.john_back2_spinbox_signal)
+        QtCore.QObject.connect(self.jim_peak1, QtCore.SIGNAL("editingFinished()"), Dialog.jim_peak1_spinbox_signal)
+        QtCore.QObject.connect(self.john_peak1, QtCore.SIGNAL("editingFinished()"), Dialog.john_peak1_spinbox_signal)
+        QtCore.QObject.connect(self.jim_peak2, QtCore.SIGNAL("editingFinished()"), Dialog.jim_peak2_spinbox_signal)
+        QtCore.QObject.connect(self.john_peak2, QtCore.SIGNAL("editingFinished()"), Dialog.john_peak2_spinbox_signal)
+        QtCore.QObject.connect(self.jim_back1, QtCore.SIGNAL("editingFinished()"), Dialog.jim_back1_spinbox_signal)
+        QtCore.QObject.connect(self.john_back1, QtCore.SIGNAL("editingFinished()"), Dialog.john_back1_spinbox_signal)
+        QtCore.QObject.connect(self.jim_back2, QtCore.SIGNAL("editingFinished()"), Dialog.jim_back2_spinbox_signal)
+        QtCore.QObject.connect(self.john_back2, QtCore.SIGNAL("editingFinished()"), Dialog.john_back2_spinbox_signal)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):

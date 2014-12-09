@@ -571,7 +571,7 @@
  <connections>
   <connection>
    <sender>jim_peak1</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>jim_peak1_spinbox_signal()</slot>
    <hints>
@@ -587,7 +587,7 @@
   </connection>
   <connection>
    <sender>john_peak1</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>john_peak1_spinbox_signal()</slot>
    <hints>
@@ -603,7 +603,7 @@
   </connection>
   <connection>
    <sender>jim_peak2</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>jim_peak2_spinbox_signal()</slot>
    <hints>
@@ -619,7 +619,7 @@
   </connection>
   <connection>
    <sender>john_peak2</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>john_peak2_spinbox_signal()</slot>
    <hints>
@@ -635,7 +635,7 @@
   </connection>
   <connection>
    <sender>jim_back1</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>jim_back1_spinbox_signal()</slot>
    <hints>
@@ -651,7 +651,7 @@
   </connection>
   <connection>
    <sender>john_back1</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>john_back1_spinbox_signal()</slot>
    <hints>
@@ -667,7 +667,7 @@
   </connection>
   <connection>
    <sender>jim_back2</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>jim_back2_spinbox_signal()</slot>
    <hints>
@@ -683,7 +683,7 @@
   </connection>
   <connection>
    <sender>john_back2</sender>
-   <signal>valueChanged(int)</signal>
+   <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
    <slot>john_back2_spinbox_signal()</slot>
    <hints>
