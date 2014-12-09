@@ -280,6 +280,7 @@ class MainGUI(QtGui.QMainWindow):
       self.fileMenuObject = InitFileMenu(self)
       self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
       self.initConfigGui()
+      self.initErrorWidgets()
       
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -303,6 +304,69 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.ui.numberSearchEntry.setFocus()
 
+  def initErrorWidgets(self):  
+    palette = QtGui.QPalette()
+    palette.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
+    self.ui.data_peak1_error.setVisible(False)
+    self.ui.data_peak1_error.setPalette(palette)
+    self.ui.data_peak2_error.setVisible(False)
+    self.ui.data_peak2_error.setPalette(palette)
+    self.ui.data_back1_error.setVisible(False)
+    self.ui.data_back1_error.setPalette(palette)
+    self.ui.data_back2_error.setVisible(False)
+    self.ui.data_back2_error.setPalette(palette)
+    self.ui.norm_peak1_error.setVisible(False)
+    self.ui.norm_peak1_error.setPalette(palette)
+    self.ui.norm_peak2_error.setVisible(False)
+    self.ui.norm_peak2_error.setPalette(palette)
+    self.ui.norm_back1_error.setVisible(False)
+    self.ui.norm_back1_error.setPalette(palette)
+    self.ui.norm_back2_error.setVisible(False)
+    self.ui.norm_back2_error.setPalette(palette)
+
+  
+  def checkErrorWidgets(self):
+    [row, col] = self.getCurrentRowColumnSelected()
+    if col == 0: #data
+
+      self.ui.data_peak1_error.setVisible(False)
+      self.ui.data_peak2_error.setVisible(False)
+      self.ui.data_back1_error.setVisible(False)
+      self.ui.data_back2_error.setVisible(False)
+
+      peak2 = self.ui.dataPeakToValue.value()
+      peak1 = self.ui.dataPeakFromValue.value()
+      back1 = self.ui.dataBackFromValue.value()
+      back2 = self.ui.dataBackToValue.value()
+      
+      if back1 > peak1:
+        self.ui.data_peak1_error.setVisible(True)
+        self.ui.data_back1_error.setVisible(True)
+
+      if back2 < peak2:
+        self.ui.data_peak2_error.setVisible(True)
+        self.ui.data_back2_error.setVisible(True)
+      
+    else: #norm
+      
+      self.ui.norm_peak1_error.setVisible(False)
+      self.ui.norm_peak2_error.setVisible(False)
+      self.ui.norm_back1_error.setVisible(False)
+      self.ui.norm_back2_error.setVisible(False)
+      
+      peak2 = self.ui.normPeakToValue.value()
+      peak1 = self.ui.normPeakFromValue.value()
+      back1 = self.ui.normBackFromValue.value()
+      back2 = self.ui.normBackToValue.value()
+      
+      if back1 > peak1:
+        self.ui.norm_peak1_error.setVisible(True)
+        self.ui.norm_back1_error.setVisible(True)
+
+      if back2 < peak2:
+        self.ui.norm_peak2_error.setVisible(True)
+        self.ui.norm_back2_error.setVisible(True)
+
   
   def initConfigGui(self):
     from quicknxs.config import refllastloadedfiles
@@ -312,7 +376,6 @@ class MainGUI(QtGui.QMainWindow):
 
 
   def defineRightDefaultPath(self):
-    
     import socket
     if socket.gethostname() == 'lrac.sns.gov':
       self.path_config = '/SNS/REF_L/'
@@ -3142,6 +3205,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.reductionTable.setRangeSelected(range_selected, True)
 
     self.enableWidgets(checkStatus=True)
+    self.checkErrorWidgets()
 
   def data_norm_tab_changed(self, index):
     '''
@@ -3930,6 +3994,9 @@ Do you want to try to restore the working reduction list?""",
     # refresh plot
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)
 
+    self.checkErrorWidgets()
+    
+
   def data_low_res_switch(self):
     '''
     With or without data low resolution range
@@ -4041,8 +4108,9 @@ Do you want to try to restore the working reduction list?""",
 
 
   def data_peak_and_back_validation(self, withPlotUpdate=True):
-    self. data_peak_spinbox_validation(withPlotUpdate=withPlotUpdate)
+    self.data_peak_spinbox_validation(withPlotUpdate=withPlotUpdate)
     self.data_back_spinbox_validation(withPlotUpdate=withPlotUpdate)
+    self.checkErrorWidgets()
 
 
   # data peak spinboxes
@@ -4079,6 +4147,9 @@ Do you want to try to restore the working reduction list?""",
     
     # save new settings
     self.save_new_settings()
+    
+    self.checkErrorWidgets()
+    
     
   # data back spinboxes
   def data_back_spinbox_validation(self, withPlotUpdate=True):
@@ -4118,6 +4189,9 @@ Do you want to try to restore the working reduction list?""",
 
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    
+    self.checkErrorWidgets()
+    
 
   # data low resolution spinboxes
   def data_lowres_spinbox_validation(self, withPlotUpdate=False):
@@ -4153,6 +4227,8 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     if withPlotUpdate:
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    
+    self.checkErrorWidgets()
     
     
   def norm_peak_and_back_validation(self, withPlotUpdate=False):
@@ -4195,6 +4271,9 @@ Do you want to try to restore the working reduction list?""",
       # refresh plots
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
+    self.checkErrorWidgets()
+    
+    
   # norm back spinboxes
   def norm_back_spinbox_validation(self, withPlotUpdate=True):
     '''
@@ -4229,6 +4308,10 @@ Do you want to try to restore the working reduction list?""",
     if withPlotUpdate:
       # refresh plots
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+
+    self.checkErrorWidgets()
+    
+
 
   # data low resolution spinboxes
   def norm_lowres_spinbox_validation(self):
@@ -4351,6 +4434,7 @@ Do you want to try to restore the working reduction list?""",
   def getCurrentRowColumnSelected(self):
     '''
     will determine the current row and column selected in the big Table.
+    return 0 or 1
     '''
     try:
       rangeSelected = self.ui.reductionTable.selectedRanges()

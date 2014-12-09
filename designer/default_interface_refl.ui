@@ -1001,7 +1001,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="dataBackFromLabel">
                                 <property name="text">
-                                 <string>Back1</string>
+                                 <string>Back2</string>
                                 </property>
                                </widget>
                               </item>
@@ -1052,6 +1052,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                </widget>
                               </item>
+                              <item>
+                               <widget class="QLabel" name="data_back2_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </item>
                             <item>
@@ -1059,7 +1079,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="dataPeakFromLabel">
                                 <property name="text">
-                                 <string>Peak1</string>
+                                 <string>Peak2</string>
                                 </property>
                                </widget>
                               </item>
@@ -1110,6 +1130,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                </widget>
                               </item>
+                              <item>
+                               <widget class="QLabel" name="data_peak2_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </item>
                             <item>
@@ -1117,7 +1157,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="dataPeakToLabel">
                                 <property name="text">
-                                 <string>Peak2</string>
+                                 <string>Peak1</string>
                                 </property>
                                </widget>
                               </item>
@@ -1168,6 +1208,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                </widget>
                               </item>
+                              <item>
+                               <widget class="QLabel" name="data_peak1_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </item>
                             <item>
@@ -1175,7 +1235,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="dataBackToLabel">
                                 <property name="text">
-                                 <string>Back2</string>
+                                 <string>Back1</string>
                                 </property>
                                </widget>
                               </item>
@@ -1223,6 +1283,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                 <property name="value">
                                  <number>0</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="data_back1_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
                                 </property>
                                </widget>
                               </item>
@@ -1629,7 +1709,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="normBackFromLabel">
                                 <property name="text">
-                                 <string>Back1</string>
+                                 <string>Back2</string>
                                 </property>
                                </widget>
                               </item>
@@ -1680,6 +1760,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                </widget>
                               </item>
+                              <item>
+                               <widget class="QLabel" name="norm_back2_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </item>
                             <item>
@@ -1687,7 +1787,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="normPeakFromLabel">
                                 <property name="text">
-                                 <string>Peak1</string>
+                                 <string>Peak2</string>
                                 </property>
                                </widget>
                               </item>
@@ -1738,6 +1838,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                </widget>
                               </item>
+                              <item>
+                               <widget class="QLabel" name="norm_peak2_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </item>
                             <item>
@@ -1745,7 +1865,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="normPeakToLabel">
                                 <property name="text">
-                                 <string>Peak2</string>
+                                 <string>Peak1</string>
                                 </property>
                                </widget>
                               </item>
@@ -1796,6 +1916,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                </widget>
                               </item>
+                              <item>
+                               <widget class="QLabel" name="norm_peak1_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </item>
                             <item>
@@ -1803,7 +1943,7 @@ p, li { white-space: pre-wrap; }
                               <item>
                                <widget class="QLabel" name="normBackToLabel">
                                 <property name="text">
-                                 <string>Back2</string>
+                                 <string>Back1</string>
                                 </property>
                                </widget>
                               </item>
@@ -1878,6 +2018,26 @@ p, li { white-space: pre-wrap; }
                                 </property>
                                 <property name="value">
                                  <number>0</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="norm_back1_error">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>20</pointsize>
+                                  <weight>75</weight>
+                                  <bold>true</bold>
+                                 </font>
+                                </property>
+                                <property name="accessibleDescription">
+                                 <string/>
+                                </property>
+                                <property name="text">
+                                 <string>*</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignCenter</set>
                                 </property>
                                </widget>
                               </item>
@@ -3349,7 +3509,6 @@ p, li { white-space: pre-wrap; }
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <zorder></zorder>
             </widget>
            </item>
           </layout>
@@ -4038,70 +4197,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>dataBackgroundFlag</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_background_switch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1830</x>
-     <y>442</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataLowResFlag</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_low_res_switch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>743</x>
-     <y>627</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normBackgroundFlag</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>normalization_background_switch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1830</x>
-     <y>447</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataPeakToValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_peak_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>343</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>TOFmanualFromValue</sender>
    <signal>editingFinished()</signal>
    <receiver>MainWindow</receiver>
@@ -4110,102 +4205,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>703</x>
      <y>680</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normLowResFromValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>norm_lowres_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1179</x>
-     <y>630</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataLowResFromValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_lowres_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1179</x>
-     <y>630</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useNormalizationFlag</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>normalization_switch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>396</x>
-     <y>165</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataBackFromValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_back_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>413</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataPeakFromValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_peak_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>378</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataBackToValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_back_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>308</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4246,70 +4245,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>normLowResFlag</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>normalization_low_res_switch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>743</x>
-     <y>627</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normBackToValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>norm_back_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>313</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normPeakToValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>norm_peak_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>348</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataLowResToValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_lowres_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1586</x>
-     <y>614</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>TOFmanualToValue</sender>
    <signal>editingFinished()</signal>
    <receiver>MainWindow</receiver>
@@ -4318,54 +4253,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>900</x>
      <y>680</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normLowResToValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>norm_lowres_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1586</x>
-     <y>614</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normBackFromValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>norm_back_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>418</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>normPeakFromValue</sender>
-   <signal>editingFinished()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>norm_peak_spinbox_validation()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1829</x>
-     <y>383</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4398,22 +4285,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>1852</x>
      <y>1073</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dataNormTabWidget</sender>
-   <signal>currentChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>data_norm_tab_changed()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>986</x>
-     <y>382</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4722,6 +4593,294 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>543</x>
      <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataLowResFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_lowres_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1179</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useNormalizationFlag</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>396</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>343</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLowResFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_lowres_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1179</x>
+     <y>630</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataBackgroundFlag</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_background_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1830</x>
+     <y>442</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataLowResFlag</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_low_res_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>743</x>
+     <y>627</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normBackgroundFlag</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_background_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1830</x>
+     <y>447</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normBackToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_back_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>378</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataBackFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_back_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>413</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataBackToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_back_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLowResFlag</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normalization_low_res_switch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>743</x>
+     <y>627</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataLowResToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_lowres_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1586</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normPeakToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLowResToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_lowres_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1586</x>
+     <y>614</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normBackFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_back_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataNormTabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>data_norm_tab_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>986</x>
+     <y>382</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normPeakFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>norm_peak_spinbox_validation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1829</x>
+     <y>383</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>556</y>
     </hint>
    </hints>
   </connection>
