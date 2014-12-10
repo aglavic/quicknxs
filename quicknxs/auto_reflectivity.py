@@ -218,7 +218,9 @@ class ReflectivityBuilder(object):
       self.finish_reflectivity()
       self.current_index+=1
       return True
-    if dsinfo.ai<(self.reflectivity_last_ai*0.95) or dsinfo.no_states!=self.reflectivity_states:
+    if dsinfo.ai<(self.reflectivity_last_ai*0.95) or \
+       dsinfo.lambda_center>self.reflectivity_last_lamda or \
+       dsinfo.no_states!=self.reflectivity_states:
       # The currenct reflectivity is finished, as this dataset does not correspond to
       # it. Return to the main loop, which will try to add the dataset again.
       self.finish_reflectivity()
@@ -318,8 +320,9 @@ class ReflectivityBuilder(object):
                             P0=P0, PN=PN,
                             )
 
-    if (r0.ai*180./numpy.pi)<(self.reflectivity_last_ai*0.95):
-      logging.debug('Live dataset has lower ai, finish current reflectivity')
+    if (r0.ai*180./numpy.pi)<(self.reflectivity_last_ai*0.95) or \
+      live_ds.lambda_center>self.reflectivity_last_lamda:
+      logging.debug('Live dataset has lower Q, finish current reflectivity')
       self.finish_reflectivity()
       self.start_new_reflectivity(live_ds)
     if len(self.reflectivity_items)==0:
