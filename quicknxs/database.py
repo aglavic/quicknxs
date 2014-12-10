@@ -78,7 +78,10 @@ class DatabaseHandler(object):
     output.append(float(data.lambda_center))
   
     for ignore, key, ftype in config.DATABASE_ADDITIONAL_FIELDS:
-      output.append(ftype(data.logs[key]))
+      try:
+        output.append(ftype(data.logs[key]))
+      except KeyError:
+        output.append(ftype(0.))
     return output
   
   @log_call
