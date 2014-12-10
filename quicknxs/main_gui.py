@@ -1200,25 +1200,40 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.plot_overview_REFL()
 
-  def clear_plot_overview_REFL(self, isData):
+  def clear_plot_overview_REFL(self, isData, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
     if isData:
-      self.ui.data_yt_plot.clear()
-      self.ui.data_yt_plot.draw()
-      self.ui.data_yi_plot.clear()
-      self.ui.data_yi_plot.draw()
-      self.ui.data_it_plot.clear()
-      self.ui.data_it_plot.draw()
-      self.ui.data_ix_plot.clear()
-      self.ui.data_ix_plot.draw()
+      if plot_yt:
+        self.ui.data_yt_plot.clear()
+        self.ui.data_yt_plot.draw()
+
+      if plot_yi:
+        self.ui.data_yi_plot.clear()
+        self.ui.data_yi_plot.draw()
+
+      if plot_it:
+        self.ui.data_it_plot.clear()
+        self.ui.data_it_plot.draw()
+
+      if plot_ix:
+        self.ui.data_ix_plot.clear()
+        self.ui.data_ix_plot.draw()
+
     else:
-      self.ui.norm_yt_plot.clear()
-      self.ui.norm_yt_plot.draw()
-      self.ui.norm_yi_plot.clear()
-      self.ui.norm_yi_plot.draw()
-      self.ui.norm_it_plot.clear()
-      self.ui.norm_it_plot.draw()
-      self.ui.norm_ix_plot.clear()
-      self.ui.norm_ix_plot.draw()
+      if plot_yt:
+        self.ui.norm_yt_plot.clear()
+        self.ui.norm_yt_plot.draw()
+        
+      if plot_yi:
+        self.ui.norm_yi_plot.clear()
+        self.ui.norm_yi_plot.draw()
+
+      if plot_it:
+        self.ui.norm_it_plot.clear()
+        self.ui.norm_it_plot.draw()
+        
+      if plot_ix:
+        self.ui.norm_ix_plot.clear()
+        self.ui.norm_ix_plot.draw()
       
   #@log_call
   def plot_overview_REFL(self, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
@@ -1230,7 +1245,11 @@ class MainGUI(QtGui.QMainWindow):
       isDataSelected = False
       
     # clear previous plot
-    self.clear_plot_overview_REFL(isDataSelected)
+    self.clear_plot_overview_REFL(isDataSelected, 
+                                  plot_yt=plot_yt, 
+                                  plot_yi=plot_yi, 
+                                  plot_it=plot_it, 
+                                  plot_ix=plot_ix)
 
     data = self.active_data
     if data is None:
