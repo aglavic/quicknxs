@@ -142,6 +142,7 @@ class MainGUI(QtGui.QMainWindow):
 
   # log/linear status of yi_plot
   isLog = False
+  isReducedPlotLog = True
 
   stitchingAsciiWidgetObject = None
   reducedFilesLoadedObject = None
@@ -5381,7 +5382,8 @@ Do you want to try to restore the working reduction list?""",
 
   def sf_browse_button(self):
     filename = QtGui.QFileDialog.getOpenFileName(self,'Open scaling factor file', '.',"sfConfig (*.cfg)")
-    if filename is not '':
+
+    if filename is not u'':
       self.ui.scalingFactorFile.setText(filename)
       self.populate_sf_widgets(filename)
 
@@ -5598,7 +5600,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       self.stitchingAsciiWidgetObject.addData(loadedAscii)
     
-    self.stitchingAsciiWidgetObject.updateDisplay()
+    self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
   
     # refresh reductionTable content (lambda range, Q range...etc)
     self.update_reductionTable()
@@ -5609,7 +5611,7 @@ Do you want to try to restore the working reduction list?""",
       return
     
     self.stitchingAsciiWidgetObject.updateStatus()
-    self.stitchingAsciiWidgetObject.updateDisplay()
+    self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
 
 
   def replot_reduced_data(self):
@@ -5661,7 +5663,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       self.stitchingAsciiWidgetObject.addData(liveDataSet)
     
-    self.stitchingAsciiWidgetObject.updateDisplay()
+    self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
 
 
   def replot_stitched_data(self):
@@ -6242,7 +6244,7 @@ Do you want to try to restore the working reduction list?""",
         else:
           self.stitchingAsciiWidgetObject.addData(loadedAscii)
         
-        self.stitchingAsciiWidgetObject.updateDisplay()
+        self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
           
   #  except:
    #   warning('Could not open ASCII file!')

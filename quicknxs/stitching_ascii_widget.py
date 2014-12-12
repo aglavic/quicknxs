@@ -8,6 +8,7 @@ class stitchingAsciiWidgetObject(object):
 	tableUi = None
 	stitchingPlot = None
 	mainGui = None
+	isReducedPlotLog = True
 	
 	def __init__(self, mainGui, loadedAscii):
 		
@@ -57,8 +58,9 @@ class stitchingAsciiWidgetObject(object):
 		
 		
 			
-	def updateDisplay(self):
+	def updateDisplay(self, isReducePlotLog=True):
 		
+		self.isReducedPlotLog = isReducePlotLog
 		self.tableUi.clearContents()
 		self.stitchingPlot.clear()
 		self.stitchingPlot.draw()
@@ -87,7 +89,7 @@ class stitchingAsciiWidgetObject(object):
 			if _object.isEnabled:
 				
 				if _object.isLiveReduced:
-					self.displayLiveData(_object)
+					self.displayLiveData(_object, isReducedPlotLog=self.isReducedPlotLog)
 				else:
 					self.displayLoadedAscii(_object)
 					_q_axis = _object.col1
@@ -95,10 +97,14 @@ class stitchingAsciiWidgetObject(object):
 					_e_axis = _object.col3
 				
 					self.stitchingPlot.errorbar(_q_axis, _y_axis, yerr=_e_axis)
+					if isReducePlotLog:
+						self.stitchingPlot.set_yscale('log')
+					else:
+						self.stitchingPlot.set_yscale('linear')
 					self.stitchingPlot.draw()
 
 
-	def displayLiveData(self, _object):
+	def displayLiveData(self, _object, isReducedPlotLog=True):
 		'''
 		plot last reduced data set
 		'''
@@ -126,6 +132,10 @@ class stitchingAsciiWidgetObject(object):
 			                                                            _e_axis)
 			
 			self.stitchingPlot.errorbar(_q_axis, y_axis_red, yerr=e_axis_red, color=_colors[i])
+			if isReducedPlotLog:
+				self.stitchingPlot.set_yscale('log')
+			else:
+				self.stitchingPlot.set_yscale('linear')
 			self.stitchingPlot.draw()
 			
 			i+=1
