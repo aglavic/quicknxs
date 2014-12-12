@@ -1385,7 +1385,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normPeakFromValue.setValue(peak_min)
       self.ui.normPeakToValue.setValue(peak_max)
       
-#      [back1, back2] = data.norm_back
+  #    [back1, back2] = data.norm_back
       back1 = int(back1)
       back2 = int(back2)
       back_min = min([back1, back2])
@@ -1401,11 +1401,11 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normLowResFromValue.setValue(lowRes_min)
       self.ui.normLowResToValue.setValue(lowRes_max)
 
-#      norm_low_res_flag = data.norm_low_res_flag
-#      self.ui.normLowResFlag.setChecked(norm_low_res_flag)
+    #  norm_low_res_flag = data.norm_low_res_flag
+     # self.ui.normLowResFlag.setChecked(norm_low_res_flag)
       self.ui.normLowResFlag.setChecked(low_res_flag)
 
-#      back_flag = data.norm_back_flag
+      #norm_back_flag = data.norm_back_flag
       self.ui.normBackgroundFlag.setChecked(back_flag)
       
       yt_plot = self.ui.norm_yt_plot
@@ -4111,7 +4111,10 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without normalization background
     '''
-    
+    data = self.active_data
+    if data is None:
+      return
+
     flag = self.ui.normBackgroundFlag.isChecked()
     
     self.ui.normBackFromLabel.setEnabled(flag)
@@ -4123,6 +4126,8 @@ Do you want to try to restore the working reduction list?""",
     self.save_new_settings()
     
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
+    self.checkErrorWidgets()
+    
     
   def normalization_low_res_switch(self):
     '''
@@ -4404,58 +4409,55 @@ Do you want to try to restore the working reduction list?""",
 
     _active_data = data.active_data
 
-    data_peak = [self.ui.dataPeakFromValue.value(), 
-                 self.ui.dataPeakToValue.value()]
+    if c==0: #data
+
+      use_it_flag = True
+      
+      peak = [self.ui.dataPeakFromValue.value(), 
+              self.ui.dataPeakToValue.value()]
+      
+      back = [self.ui.dataBackFromValue.value(),
+              self.ui.dataBackToValue.value()]
+      
+      low_res = [self.ui.dataLowResFromValue.value(),
+                 self.ui.dataLowResToValue.value()]
+      
+      back_flag = self.ui.dataBackgroundFlag.isChecked()
+      
+      low_res_flag = self.ui.dataLowResFlag.isChecked()
     
-    data_back = [self.ui.dataBackFromValue.value(),
-                 self.ui.dataBackToValue.value()]
-    
-    data_low_res = [self.ui.dataLowResFromValue.value(),
-                    self.ui.dataLowResToValue.value()]
-    
-    data_back_flag = self.ui.dataBackgroundFlag.isChecked()
-    
-    data_low_res_flag = self.ui.dataLowResFlag.isChecked()
-    
+    else:
+      
+      use_it_flag = self.ui.useNormalizationFlag.isChecked()
+      
+      peak = [self.ui.normPeakFromValue.value(),
+              self.ui.normPeakToValue.value()]
+      
+      back = [self.ui.normBackFromValue.value(),
+              self.ui.normBackToValue.value()]
+      
+      back_flag = self.ui.normBackgroundFlag.isChecked()
+      
+      low_res = [self.ui.normLowResFromValue.value(),
+                 self.ui.normLowResToValue.value()]
+      
+      low_res_flag = self.ui.normLowResFlag.isChecked()
+         
+
     tof_range = [self.ui.TOFmanualFromValue.text(),
                  self.ui.TOFmanualToValue.text()]
-    
-#    if self.ui.TOFmanualMsValue.isChecked():
     tof_units = 'ms'
-#    else:
-#      tof_units = 'micros'
-      
     tof_auto_flag = self.ui.dataTOFautoMode.isChecked()
     
-    norm_flag = self.ui.useNormalizationFlag.isChecked()
-    
-    norm_peak = [self.ui.normPeakFromValue.value(),
-                 self.ui.normPeakToValue.value()]
-    
-    norm_back = [self.ui.normBackFromValue.value(),
-                 self.ui.normBackToValue.value()]
-    
-    norm_back_flag = self.ui.normBackgroundFlag.isChecked()
-    
-    norm_low_res = [self.ui.normLowResFromValue.value(),
-                    self.ui.normLowResToValue.value()]
-    
-    norm_low_res_flag = self.ui.normLowResFlag.isChecked()
-    
-    _active_data.data_peak = data_peak
-    _active_data.data_back = data_back
-    _active_data.data_low_res = data_low_res
-    _active_data.data_back_flag = data_back_flag
-    _active_data.data_low_res_flag = data_low_res_flag
+    _active_data.peak = peak
+    _active_data.back = back
+    _active_data.low_res = low_res
+    _active_data.back_flag = back_flag
+    _active_data.low_res_flag = low_res_flag
     _active_data.tof_range = tof_range
     _active_data.tof_units = tof_units
     _active_data.tof_auto_flag = tof_auto_flag
-    _active_data.norm_flag = norm_flag
-    _active_data.norm_peak = norm_peak
-    _active_data.norm_back = norm_back
-    _active_data.norm_back_flag = norm_back_flag
-    _active_data.norm_low_res = norm_low_res
-    _active_data.norm_low_res_flag = norm_low_res_flag
+    _active_data.use_it_flag = use_it_flag
     
     # put back info in right place
     data.active_data = _active_data
