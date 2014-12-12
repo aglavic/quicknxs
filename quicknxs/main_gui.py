@@ -260,6 +260,7 @@ class MainGUI(QtGui.QMainWindow):
 
     self.ui.data_yi_plot.doubleClick.connect(self.double_click_data_yi_plot)
     self.ui.norm_yi_plot.doubleClick.connect(self.double_click_norm_yi_plot)
+    self.ui.data_yi_plot.logtogx.connect(self.logx_toggle)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -382,6 +383,13 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.norm_back2_error.setVisible(True)
 
       self.ui.norm_selection_error_label.setVisible(bError)  
+
+  def logx_toggle(self, status):
+    if status == 'log':
+      self.isLog = True
+    else:
+      self.isLog = False
+
   
   def initConfigGui(self):
     from quicknxs.config import refllastloadedfiles
