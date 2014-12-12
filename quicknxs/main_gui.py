@@ -323,6 +323,10 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.norm_back1_error.setPalette(palette)
     self.ui.norm_back2_error.setVisible(False)
     self.ui.norm_back2_error.setPalette(palette)
+    self.ui.data_selection_error_label.setVisible(False)
+    self.ui.data_selection_error_label.setPalette(palette)
+    self.ui.norm_selection_error_label.setVisible(False)
+    self.ui.norm_selection_error_label.setPalette(palette)
 
   
   def checkErrorWidgets(self):
@@ -338,14 +342,20 @@ class MainGUI(QtGui.QMainWindow):
       peak1 = self.ui.dataPeakFromValue.value()
       back1 = self.ui.dataBackFromValue.value()
       back2 = self.ui.dataBackToValue.value()
+
+      bError = False
       
       if back1 > peak1:
+        bError = True
         self.ui.data_peak1_error.setVisible(True)
         self.ui.data_back1_error.setVisible(True)
 
       if back2 < peak2:
+        bError = True
         self.ui.data_peak2_error.setVisible(True)
         self.ui.data_back2_error.setVisible(True)
+      
+      self.ui.data_selection_error_label.setVisible(bError)
       
     else: #norm
       
@@ -359,14 +369,19 @@ class MainGUI(QtGui.QMainWindow):
       back1 = self.ui.normBackFromValue.value()
       back2 = self.ui.normBackToValue.value()
       
+      bError = False
+      
       if back1 > peak1:
+        bError = True
         self.ui.norm_peak1_error.setVisible(True)
         self.ui.norm_back1_error.setVisible(True)
 
       if back2 < peak2:
+        bError = True
         self.ui.norm_peak2_error.setVisible(True)
         self.ui.norm_back2_error.setVisible(True)
 
+      self.ui.norm_selection_error_label.setVisible(bError)  
   
   def initConfigGui(self):
     from quicknxs.config import refllastloadedfiles

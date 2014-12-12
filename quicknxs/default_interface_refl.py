@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Dec  9 18:14:25 2014
+# Created: Fri Dec 12 12:22:41 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -371,6 +371,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_26.setObjectName("verticalLayout_26")
         spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_26.addItem(spacerItem3)
+        self.data_selection_error_label = QtGui.QLabel(self.frame_11)
+        self.data_selection_error_label.setObjectName("data_selection_error_label")
+        self.verticalLayout_26.addWidget(self.data_selection_error_label)
         self.verticalLayout_28 = QtGui.QVBoxLayout()
         self.verticalLayout_28.setObjectName("verticalLayout_28")
         self.horizontalLayout_32 = QtGui.QHBoxLayout()
@@ -656,6 +659,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_31.setObjectName("verticalLayout_31")
         spacerItem9 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_31.addItem(spacerItem9)
+        self.norm_selection_error_label = QtGui.QLabel(self.frame_16)
+        self.norm_selection_error_label.setObjectName("norm_selection_error_label")
+        self.verticalLayout_31.addWidget(self.norm_selection_error_label)
         self.verticalLayout_32 = QtGui.QVBoxLayout()
         self.verticalLayout_32.setObjectName("verticalLayout_32")
         self.horizontalLayout_44 = QtGui.QHBoxLayout()
@@ -1428,7 +1434,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(3)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
@@ -1567,6 +1573,7 @@ class Ui_MainWindow(object):
         self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Plot Options", None, QtGui.QApplication.UnicodeUTF8))
         self.logarithmic_colorscale.setToolTip(QtGui.QApplication.translate("MainWindow", "Logarithmic colorscale in the maps", None, QtGui.QApplication.UnicodeUTF8))
         self.logarithmic_colorscale.setText(QtGui.QApplication.translate("MainWindow", "Log Colorscale", None, QtGui.QApplication.UnicodeUTF8))
+        self.data_selection_error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
         self.data_back2_error.setText(QtGui.QApplication.translate("MainWindow", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.dataPeakFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Peak2", None, QtGui.QApplication.UnicodeUTF8))
@@ -1581,6 +1588,7 @@ class Ui_MainWindow(object):
         self.dataLowResToLabel.setText(QtGui.QApplication.translate("MainWindow", "To Pixel", None, QtGui.QApplication.UnicodeUTF8))
         self.dataNormTabWidget.setTabText(self.dataNormTabWidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "  D A T A  ", None, QtGui.QApplication.UnicodeUTF8))
         self.useNormalizationFlag.setText(QtGui.QApplication.translate("MainWindow", "Use Normalization", None, QtGui.QApplication.UnicodeUTF8))
+        self.norm_selection_error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
         self.normBackFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
         self.norm_back2_error.setText(QtGui.QApplication.translate("MainWindow", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.normPeakFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Peak2", None, QtGui.QApplication.UnicodeUTF8))

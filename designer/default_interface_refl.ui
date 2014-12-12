@@ -902,7 +902,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -993,6 +993,13 @@ p, li { white-space: pre-wrap; }
                              </size>
                             </property>
                            </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="data_selection_error_label">
+                            <property name="text">
+                             <string>SELECTION ERROR</string>
+                            </property>
+                           </widget>
                           </item>
                           <item>
                            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -1701,6 +1708,13 @@ p, li { white-space: pre-wrap; }
                              </size>
                             </property>
                            </spacer>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="norm_selection_error_label">
+                            <property name="text">
+                             <string>SELECTION ERROR</string>
+                            </property>
+                           </widget>
                           </item>
                           <item>
                            <layout class="QVBoxLayout" name="verticalLayout_32">
