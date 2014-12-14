@@ -246,6 +246,10 @@ class ReductionObject(object):
         nxs = data.nxs
         
         tof_range = data.tof_range
+        if data.tof_units == 'ms':
+            tof_range[0] = float(tof_range[0])*1000
+            tof_range[1] = float(tof_range[1])*1000
+        
         tof_bin = float(self.main_gui.ui.eventTofBins.text())
         
         rebin_params = [float(tof_range[0]), tof_bin, float(tof_range[1])]
