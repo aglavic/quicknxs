@@ -1508,7 +1508,6 @@ class MainGUI(QtGui.QMainWindow):
         yi_plot.canvas.ax.set_ylim(right_allPlotAxisDataType.yi_axis[2], right_allPlotAxisDataType.yi_axis[3])
         yi_plot.canvas.ax.set_xlim(right_allPlotAxisDataType.yi_axis[0], right_allPlotAxisDataType.yi_axis[1])
       
-      print right_allPlotAxisDataType.yi_axis
       yi_plot.canvas.draw()
 
     # display ix

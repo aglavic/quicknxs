@@ -39,6 +39,9 @@ class NavigationToolbar(NavigationToolbar2QT):
 
   isPanActivated = False
   isZoomActivated = False
+
+  ylog = True
+  xlog = False
   
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
@@ -91,10 +94,16 @@ class NavigationToolbar(NavigationToolbar2QT):
     a.setToolTip('Print the figure with the default printer')
 
     icon=QtGui.QIcon()
-    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-xlog.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-log.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.addSeparator()
     a=self.addAction(icon, 'Log', self.toggle_log)
-    a.setToolTip('Toggle logarithmic scale')
+    a.setToolTip('Toggle logarithmic y scale')
+
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-xlog.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    self.addSeparator()
+    a=self.addAction(icon, 'Log', self.toggle_xlog)
+    a.setToolTip('Toggle logarithmic x scale')
     
     self.buttons={}
     
@@ -281,11 +290,14 @@ class NavigationToolbar(NavigationToolbar2QT):
   def toggle_log(self, *args):
     ax=self.canvas.ax
     if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
-      logstate=ax.get_xscale()
-      if logstate=='linear':
-        ax.set_xscale('log')
+
+#      logstate=ax.get_xscale()
+      if self.ylog:
+        ax.set_yscale('linear')
       else:
-        ax.set_xscale('linear')
+        ax.set_yscale('log')
+      self.ylog = not self.ylog
+        
       self.canvas.draw()
       self.logtog.emit(ax.get_xscale())
     else:
@@ -298,6 +310,30 @@ class NavigationToolbar(NavigationToolbar2QT):
           for img in imgs:
             img.set_norm(LogNorm(norm.vmin, norm.vmax))
     self.canvas.draw()
+
+  def toggle_xlog(self, *args):
+    ax=self.canvas.ax
+    if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
+
+      if self.xlog:
+        ax.set_xscale('linear')
+      else:
+        ax.set_xscale('log')
+      self.xlog = not self.xlog
+        
+      self.canvas.draw()
+      self.logtog.emit(ax.get_xscale())
+    else:
+      imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
+      norm=imgs[0].norm
+      if norm.__class__ is LogNorm:
+        for img in imgs:
+          img.set_norm(Normalize(norm.vmin, norm.vmax))
+        else:
+          for img in imgs:
+            img.set_norm(LogNorm(norm.vmin, norm.vmax))
+    self.canvas.draw()
+
 
 class MplCanvas(FigureCanvas):
 
@@ -355,7 +391,7 @@ class MplCanvas(FigureCanvas):
   def get_default_filetype(self):
       return 'png'
 
-class MPLWidgetXLog(QtGui.QWidget):
+class MPLWidgetXLogYLog(QtGui.QWidget):
   cplot=None
   cbar=None
 
@@ -382,19 +418,13 @@ class MPLWidgetXLog(QtGui.QWidget):
 
   def _singleClick(self):
     status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
-    
     axis = self.canvas.ax.axis()
     xmin = axis[0]
     xmax = axis[1]
     ymin = axis[2]
     ymax = axis[3]
-#    print self.canvas.ax.yaxis.get_data_interval()
-#    self.canvas.ax.set_ylim([100,200])
-  #  self.canvas.ax.yaxis.set_data_interval(100,200, True)
-   # self.canvas.draw()
-    #print self.canvas.ax.yaxis.get_data_interval()
+    
     self.singleClick.emit(status, xmin, xmax, ymin, ymax)
-
 
   def logtoggle(self, status):
     self.logtogx.emit(status)
