@@ -142,7 +142,6 @@ class MainGUI(QtGui.QMainWindow):
   userClickedInTable = False
 
   # log/linear status of yi_plot
-  isLog = False
   isReducedPlotLog = True
 
   stitchingAsciiWidgetObject = None
@@ -262,8 +261,8 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.connect_plot_events_refl()
 
-    self.ui.data_yi_plot.doubleClick.connect(self.double_click_data_yi_plot)
-    self.ui.norm_yi_plot.doubleClick.connect(self.double_click_norm_yi_plot)
+    self.ui.data_yi_plot.singleClick.connect(self.single_click_data_yi_plot)
+    self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
     self.ui.data_yi_plot.logtogx.connect(self.logx_toggle)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
@@ -286,6 +285,7 @@ class MainGUI(QtGui.QMainWindow):
       self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
       self.initConfigGui()
       self.initErrorWidgets()
+      self.allPlotAxis = AllPlotAxis()
       
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -388,11 +388,22 @@ class MainGUI(QtGui.QMainWindow):
 
       self.ui.norm_selection_error_label.setVisible(bError)  
 
+
   def logx_toggle(self, status):
     if status == 'log':
-      self.isLog = True
+      isLog = True
     else:
-      self.isLog = False
+      isLog = False
+
+    if self.isDataTabSelected():
+      isTypeData = True
+    else:
+      isTypeData = False
+    
+    if isTypeData:
+      self.allPlotAxis.plot_axis_data.is_yi_xlog = isLog
+    else:
+      self.allPlotAxis.plot_axis_norm.is_yi_xlog = isLog      
 
   
   def initConfigGui(self):
@@ -412,21 +423,22 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
-  def double_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
+  def single_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     '''
     This function is reached when the user click the yi plot (data)
     '''
-    self.double_click_yi(isPanOrZoomActivated, type='data')
+    self.allPlotAxis.plot_axis_data.set_yi_axis(xmin, xmax, ymin, ymax)
+    self.single_click_yi(isPanOrZoomActivated, type='data')
 
-  def double_click_norm_yi_plot(self, isPanOrZoomActivated):
+
+  def single_click_norm_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     '''
     This function is reached when the user click the yi plot (normalization)
     '''
-    self.double_click_yi(isPanOrZoomActivated, type='norm')
+    self.allPlotAxis.plot_axis_norm.set_yi_axis(xmin, xmax, ymin, ymax)
+    self.single_click_yi(isPanOrZoomActivated, type='norm')
         
-    
-  def double_click_yi(self, isPanOrZoomActivated, type='data'):
-
+  def single_click_yi(self, isPanOrZoomActivated, type='data'):
     if self.timeClick1 == -1:
       self.timeClick1 = time.time()
       return
@@ -1307,7 +1319,8 @@ class MainGUI(QtGui.QMainWindow):
     if isDataSelected: # data
 
       self.ui.dataNameOfFile.setText('%s'%filename)
-
+      right_allPlotAxisDataType =  self.allPlotAxis.plot_axis_data
+      
       # repopulate the tab
 #      [peak1, peak2] = data.data_peak
       peak1 = int(peak1)
@@ -1375,6 +1388,7 @@ class MainGUI(QtGui.QMainWindow):
     else: # normalization
 
       self.ui.normNameOfFile.setText('%s'%filename)
+      right_allPlotAxisDataType =  self.allPlotAxis.plot_axis_norm
 
       flag = data.use_it_flag
       self.ui.useNormalizationFlag.setChecked(flag)
@@ -1484,11 +1498,17 @@ class MainGUI(QtGui.QMainWindow):
         y1back = yi_plot.canvas.ax.axhline(back1, color='#aa0000')
         y2back = yi_plot.canvas.ax.axhline(back2, color='#aa0000')
 
-      if self.isLog:
+      isLog = right_allPlotAxisDataType.is_yi_xlog
+      if isLog:
         yi_plot.canvas.ax.set_xscale('log')
       else:
         yi_plot.canvas.ax.set_xscale('linear')
+     
+      if right_allPlotAxisDataType.yi_axis != [-1,-1,-1,-1]:
+        yi_plot.canvas.ax.set_ylim(right_allPlotAxisDataType.yi_axis[2], right_allPlotAxisDataType.yi_axis[3])
+        yi_plot.canvas.ax.set_xlim(right_allPlotAxisDataType.yi_axis[0], right_allPlotAxisDataType.yi_axis[1])
       
+      print right_allPlotAxisDataType.yi_axis
       yi_plot.canvas.draw()
 
     # display ix
@@ -3756,6 +3776,13 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.reductionTable.setItem(i, 1,
                                    QtGui.QTableWidgetItem("%.4f"%(Inew)))
 
+  def isDataTabSelected(self):
+    if self.ui.dataNormTabWidget.currentIndex() == 0:
+      return True
+    else:
+      return False
+
+
   def changeColorScale(self, event):
     '''
       Change the intensity limits of a map plot with the mouse wheel.
@@ -5525,6 +5552,7 @@ Do you want to try to restore the working reduction list?""",
 
     self.ui.data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
     self.ui.data_stitching_plot.set_ylabel(u'R')
+    self.ui.data_stitching_plot.set_yscale('log')
     self.ui.data_stitching_plot.draw()
     
 

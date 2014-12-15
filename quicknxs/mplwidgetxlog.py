@@ -360,7 +360,7 @@ class MPLWidgetXLog(QtGui.QWidget):
   cbar=None
 
   logtogx = QtCore.pyqtSignal(str)
-  doubleClick = QtCore.pyqtSignal(bool, float, float, float, float)
+  singleClick = QtCore.pyqtSignal(bool, float, float, float, float)
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -378,16 +378,17 @@ class MPLWidgetXLog(QtGui.QWidget):
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
-    self.canvas.trigger.connect(self._doubleClick)
+    self.canvas.trigger.connect(self._singleClick)
 
-  def _doubleClick(self):
+  def _singleClick(self):
     status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
     axis = self.canvas.ax.axis()
     xmin = axis[0]
     xmax = axis[1]
     ymin = axis[2]
     ymax = axis[3]
-    self.doubleClick.emit(status, xmin, xmax, ymin, ymax)
+    
+    self.singleClick.emit(status, xmin, xmax, ymin, ymax)
 
   def logtoggle(self, status):
     self.logtogx.emit(status)

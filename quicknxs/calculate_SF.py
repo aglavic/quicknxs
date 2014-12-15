@@ -38,7 +38,7 @@ class CalculateSF(object):
 		_e_axis = dataSet.reduce_e_axis
 		error_0 = 1./dataSet.active_data.proton_charge
 		[data_mean, mean_error] = self.weightedMean(_y_axis, _e_axis, error_0)
-		_sf = data_mean 
+		_sf = 1./data_mean 
 		
 		data_CE = self.bigTableData[0,0]
 		data_CE.sf_auto = _sf
@@ -58,7 +58,7 @@ class CalculateSF(object):
 			left_set = self.applyLeftSF(self.bigTableData[j-1, 0])
 			right_set = self.bigTableData[j, 0]
 
-			_sf = self.fitDataOfOverlapRange(left_set, right_set)
+			_sf = 1./self.fitDataOfOverlapRange(left_set, right_set)
 
 			right_set.sf_auto = _sf
 			self.bigTableData[j,0] = right_set
@@ -102,16 +102,15 @@ class CalculateSF(object):
 			right_mean = self.calculateRightWeightedMean(min_x, max_x, right_set.reduce_y_axis, right_set.reduce_e_axis)
 			
 
-
 	def applyLeftSF(self, left_set):
 		'''
-		In order to caluclate the right SF, we must apply the previously calculated left SF
+		In order to calculate the right SF, we must apply the previously calculated left SF
 		'''
 		y_axis = left_set.reduce_y_axis
 		e_axis = left_set.reduce_e_axis
 		sf = left_set.sf_auto
-		y_axis = y_axis / sf
-		e_axis = e_axis / sf
+		y_axis = y_axis * sf
+		e_axis = e_axis * sf
 		
 		left_set.tmp_y_axis = y_axis
 		left_set.tmp_e_axis = e_axis
@@ -171,7 +170,7 @@ class CalculateSF(object):
 		left_mean = self.calculateMeanOfFctOverRange(fit_range_to_use, a_left, b_left)
 		right_mean = self.calculateMeanOfFctOverRange(fit_range_to_use, a_right, b_right)
 			
-		_sf = right_mean / left_mean 
+		_sf =  right_mean / left_mean
 
 		return _sf
 
