@@ -5224,6 +5224,7 @@ Do you want to try to restore the working reduction list?""",
 
         incident_medium_list = self.getNodeValue(node, 'incident_medium_list')
         im_list = incident_medium_list.split(',')
+        self.ui.selectIncidentMediumList.clear()
         self.ui.selectIncidentMediumList.addItems(im_list)
 
         incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')

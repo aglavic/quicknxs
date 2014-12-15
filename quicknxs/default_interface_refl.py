@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Dec 12 17:24:12 2014
+# Created: Mon Dec 15 15:37:59 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1197,10 +1197,10 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(True)
+        self.reductionTable.horizontalHeader().setVisible(False)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
-        self.reductionTable.verticalHeader().setVisible(True)
+        self.reductionTable.verticalHeader().setVisible(False)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1322,7 +1322,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addWidget(self.refreshStitchingAsciiPlot)
         self.verticalLayout_4.addLayout(self.verticalLayout_7)
         self.horizontalLayout_2.addLayout(self.verticalLayout_4)
-        self.data_stitching_plot = MPLWidget(self.data_stitching_Tab)
+        self.data_stitching_plot = MPLWidgetXLogYLog(self.data_stitching_Tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1426,14 +1426,13 @@ class Ui_MainWindow(object):
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionLoadConfiguration_2)
-        self.menuFile.addAction(self.actionLoadFullConfiguration_2)
         self.menuFile.addAction(self.actionSaveConfiguration_2)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(3)
-        self.plotTab.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(2)
+        self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
@@ -1705,12 +1704,13 @@ class Ui_MainWindow(object):
         self.actionSaveConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadFullConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (heavy and slow) ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoad_Configuration_light.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (light)", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLoadConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (light and fast) ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadConfiguration_2.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadFullConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (heavy and slow) ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration_2.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
 
 from .mplwidget import MPLWidget
+from mplwidgetxlogylog import MPLWidgetXLogYLog
 from .mplwidgetxlog import MPLWidgetXLog
 import icons_rc

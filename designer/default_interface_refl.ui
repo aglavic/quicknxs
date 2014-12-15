@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="page_3">
            <property name="geometry">
@@ -878,7 +878,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -902,7 +902,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -3136,7 +3136,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3145,7 +3145,7 @@ p, li { white-space: pre-wrap; }
                      <number>25</number>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3160,13 +3160,13 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3516,7 +3516,7 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <widget class="MPLWidget" name="data_stitching_plot" native="true">
+            <widget class="MPLWidgetXLogYLog" name="data_stitching_plot" native="true">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -3796,6 +3796,12 @@ p, li { white-space: pre-wrap; }
    <class>MPLWidgetXLog</class>
    <extends>QWidget</extends>
    <header location="global">.mplwidgetxlog.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MPLWidgetXLogYLog</class>
+   <extends>QWidget</extends>
+   <header location="global">mplwidgetxlogylog.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
