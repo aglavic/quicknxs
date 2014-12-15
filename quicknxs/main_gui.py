@@ -51,6 +51,7 @@ from peakfinder import PeakFinder
 from reduced_config_files_handler import ReducedConfigFilesHandler
 from init_file_menu import InitFileMenu
 from refl_gui_utils import PlotDialogREFL
+from all_plot_axis import AllPlotAxis
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
@@ -152,6 +153,8 @@ class MainGUI(QtGui.QMainWindow):
   # for double click of yi plot
   timeClick1 = -1
   DOUBLE_CLICK_IF_WITHIN_TIME = 0.4  #s
+
+  allPlotAxis = None
 
 
   ##### for IPython mode, keep namespace up to date ######
@@ -409,12 +412,11 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
-  def double_click_data_yi_plot(self, isPanOrZoomActivated):
+  def double_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     '''
     This function is reached when the user click the yi plot (data)
     '''
     self.double_click_yi(isPanOrZoomActivated, type='data')
-    
 
   def double_click_norm_yi_plot(self, isPanOrZoomActivated):
     '''

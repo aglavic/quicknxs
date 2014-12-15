@@ -326,6 +326,7 @@ class MplCanvas(FigureCanvas):
     self.fig.canvas.mpl_connect('button_press_event', self.button_pressed)
 
   def button_pressed(self, event):
+    _axis = self.ax.axis()
     self.trigger.emit()
  
   def format_labels(self):
@@ -359,7 +360,7 @@ class MPLWidgetXLog(QtGui.QWidget):
   cbar=None
 
   logtogx = QtCore.pyqtSignal(str)
-  doubleClick = QtCore.pyqtSignal(bool)
+  doubleClick = QtCore.pyqtSignal(bool, float, float, float, float)
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -381,7 +382,12 @@ class MPLWidgetXLog(QtGui.QWidget):
 
   def _doubleClick(self):
     status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
-    self.doubleClick.emit(status)
+    axis = self.canvas.ax.axis()
+    xmin = axis[0]
+    xmax = axis[1]
+    ymin = axis[2]
+    ymax = axis[3]
+    self.doubleClick.emit(status, xmin, xmax, ymin, ymax)
 
   def logtoggle(self, status):
     self.logtogx.emit(status)

@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page_3">
            <property name="geometry">
@@ -902,7 +902,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -3612,7 +3612,6 @@ p, li { white-space: pre-wrap; }
      <string>File</string>
     </property>
     <addaction name="actionLoadConfiguration_2"/>
-    <addaction name="actionLoadFullConfiguration_2"/>
     <addaction name="actionSaveConfiguration_2"/>
    </widget>
    <addaction name="menuFile"/>
@@ -3766,7 +3765,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionLoadConfiguration_2">
    <property name="text">
-    <string>Load Configuration (light and fast) ...</string>
+    <string>Load Configuration ...</string>
    </property>
    <property name="shortcut">
     <string>Meta+O</string>
