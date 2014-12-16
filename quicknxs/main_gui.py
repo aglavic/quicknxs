@@ -262,6 +262,7 @@ class MainGUI(QtGui.QMainWindow):
       self.connect_plot_events_refl()
 
     self.ui.data_yi_plot.singleClick.connect(self.single_click_data_yi_plot)
+    self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_data_yi_plot)
     self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
     self.ui.data_yi_plot.logtogx.connect(self.logx_toggle)
       
@@ -395,15 +396,12 @@ class MainGUI(QtGui.QMainWindow):
     else:
       isLog = False
 
-    if self.isDataTabSelected():
-      isTypeData = True
-    else:
-      isTypeData = False
-    
-    if isTypeData:
-      self.allPlotAxis.plot_axis_data.is_yi_xlog = isLog
-    else:
-      self.allPlotAxis.plot_axis_norm.is_yi_xlog = isLog      
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    data.all_plot_axis.is_yi_xlog = isLog
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
 
   
   def initConfigGui(self):
@@ -427,9 +425,21 @@ class MainGUI(QtGui.QMainWindow):
     '''
     This function is reached when the user click the yi plot (data)
     '''
-    self.allPlotAxis.plot_axis_data.set_yi_axis(xmin, xmax, ymin, ymax)
+#    self.allPlotAxis.plot_axis_data.set_yi_axis(xmin, xmax, ymin, ymax)
     self.single_click_yi(isPanOrZoomActivated, type='data')
 
+  def leave_figure_data_yi_plot(self, xmin, xmax, ymin, ymax):
+    [xmin, xmax] = self.ui.data_yi_plot.canvas.ax.xaxis.get_view_interval()
+    [ymin, ymax] = self.ui.data_yi_plot.canvas.ax.yaxis.get_view_interval()
+    self.ui.data_yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+    self.ui.data_yi_plot.canvas.ax.yaxis.set_data_interval(ymin,ymax)
+    self.ui.data_yi_plot.draw()
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
 
   def single_click_norm_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     '''
@@ -439,6 +449,7 @@ class MainGUI(QtGui.QMainWindow):
     self.single_click_yi(isPanOrZoomActivated, type='norm')
         
   def single_click_yi(self, isPanOrZoomActivated, type='data'):
+
     if self.timeClick1 == -1:
       self.timeClick1 = time.time()
       return
@@ -1289,7 +1300,10 @@ class MainGUI(QtGui.QMainWindow):
                                   plot_it=plot_it, 
                                   plot_ix=plot_ix)
 
-    data = self.active_data
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    #data = self.active_data
     if data is None:
       return
 
@@ -1319,7 +1333,6 @@ class MainGUI(QtGui.QMainWindow):
     if isDataSelected: # data
 
       self.ui.dataNameOfFile.setText('%s'%filename)
-      right_allPlotAxisDataType =  self.allPlotAxis.plot_axis_data
       
       # repopulate the tab
 #      [peak1, peak2] = data.data_peak
@@ -1358,13 +1371,12 @@ class MainGUI(QtGui.QMainWindow):
       ix_plot = self.ui.data_ix_plot
     
       # calculate and display Q range if not calculated yet
-      [r,c] = self.getCurrentRowColumnSelected()
-      _data = self.bigTableData[r,c]
-      _active_data = _data.active_data
+#      _data = self.bigTableData[r,c]
+ #     _active_data = _data.active_data
         
-      incident_angle = _active_data.incident_angle
-      [qmin,qmax] = _active_data.q_range
-      [lmin,lmax] = _active_data.lambda_range
+      incident_angle = data.incident_angle
+      [qmin,qmax] = data.q_range
+      [lmin,lmax] = data.lambda_range
       
       _item_min = QtGui.QTableWidgetItem(str(qmin))
       _item_min.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
@@ -1388,7 +1400,6 @@ class MainGUI(QtGui.QMainWindow):
     else: # normalization
 
       self.ui.normNameOfFile.setText('%s'%filename)
-      right_allPlotAxisDataType =  self.allPlotAxis.plot_axis_norm
 
       flag = data.use_it_flag
       self.ui.useNormalizationFlag.setChecked(flag)
@@ -1483,32 +1494,39 @@ class MainGUI(QtGui.QMainWindow):
       tb = it_plot.canvas.ax.axvline(autotmax/1000, color='#00aa00')
       it_plot.canvas.draw()
 
-    # display yi
     if plot_yi:
       
       xaxis = range(len(ycountsdata))
       yi_plot.canvas.ax.plot(ycountsdata,xaxis)
       yi_plot.canvas.ax.set_xlabel(u'counts')
       yi_plot.canvas.ax.set_ylabel(u'y (pixel)')
-     
-      yi_plot.canvas.ax.set_ylim(0,ylim)      
+
+      if  data.all_plot_axis.yi_data_interval is None:    
+        yi_plot.canvas.ax.set_ylim(0,ylim)
+        
       y1peak = yi_plot.canvas.ax.axhline(peak1, color='#00aa00')
       y2peak = yi_plot.canvas.ax.axhline(peak2, color='#00aa00')
       if back_flag:
         y1back = yi_plot.canvas.ax.axhline(back1, color='#aa0000')
         y2back = yi_plot.canvas.ax.axhline(back2, color='#aa0000')
 
-      isLog = right_allPlotAxisDataType.is_yi_xlog
-      if isLog:
+      if data.all_plot_axis.is_yi_xlog:
         yi_plot.canvas.ax.set_xscale('log')
       else:
         yi_plot.canvas.ax.set_xscale('linear')
      
-      if right_allPlotAxisDataType.yi_axis != [-1,-1,-1,-1]:
-        yi_plot.canvas.ax.set_ylim(right_allPlotAxisDataType.yi_axis[2], right_allPlotAxisDataType.yi_axis[3])
-        yi_plot.canvas.ax.set_xlim(right_allPlotAxisDataType.yi_axis[0], right_allPlotAxisDataType.yi_axis[1])
-      
-      yi_plot.canvas.draw()
+      if data.all_plot_axis.yi_data_interval is None:
+        yi_plot.canvas.draw()
+        [xmin, xmax] = yi_plot.canvas.ax.xaxis.get_view_interval()
+        [ymin, ymax] = yi_plot.canvas.ax.yaxis.get_view_interval()
+        data.all_plot_axis.yi_data_interval = [xmin, xmax, ymin, ymax]
+        data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
+        yi_plot.toolbar.home_settings = [xmin, xmax, ymin, ymax]
+      else:
+        [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_view_interval
+        yi_plot.canvas.ax.set_xlim([xmin, xmax])
+        yi_plot.canvas.ax.set_ylim([ymin, ymax])
+        yi_plot.canvas.draw()
 
     # display ix
     if plot_ix:
@@ -1522,6 +1540,10 @@ class MainGUI(QtGui.QMainWindow):
         x2low = ix_plot.canvas.ax.axvline(lowRes2, color='#aa00aa')
         
       ix_plot.canvas.draw()
+      
+    # save back data
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
 
   def retrieve_tof_range(self, data):
     '''

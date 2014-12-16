@@ -38,6 +38,7 @@ from random import randint
 import constants
 import psutil
 from peakfinder import PeakFinder
+from all_plot_axis import AllPlotAxis
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
@@ -1315,6 +1316,10 @@ class LRDataset(object):
   _Q=None
   _I=None
   _dI=None
+  
+  # will define the axis of all the plot used by this data set
+  all_plot_axis = None
+  
 
   def __init__(self):
     '''
@@ -1322,7 +1327,8 @@ class LRDataset(object):
     use the class methods from_histogram or from_event.
     '''
     self.origin=('none', 'none')
-
+    self.all_plot_axis = AllPlotAxis()
+    
   @classmethod
   @log_call
   def from_histogram(cls, data, read_options):
