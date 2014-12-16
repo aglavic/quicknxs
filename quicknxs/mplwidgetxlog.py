@@ -371,7 +371,7 @@ class MPLWidgetXLog(QtGui.QWidget):
 
   logtogx = QtCore.pyqtSignal(str)
   singleClick = QtCore.pyqtSignal(bool, float, float, float, float)
-  leaveFigure = QtCore.pyqtSignal(bool, float, float, float, float)
+  leaveFigure = QtCore.pyqtSignal(bool)
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -404,12 +404,12 @@ class MPLWidgetXLog(QtGui.QWidget):
 
   def _leaveFigure(self):
     status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
-    axis = self.canvas.ax.axis()
-    xmin = axis[0]
-    xmax = axis[1]
-    ymin = axis[2]
-    ymax = axis[3]
-    self.leaveFigure.emit(status, xmin, xmax, ymin, ymax)
+    #axis = self.canvas.ax.axis()
+    #xmin = axis[0]
+    #xmax = axis[1]
+    #ymin = axis[2]
+    #ymax = axis[3]
+    self.leaveFigure.emit(status)
 
   def logtoggle(self, status):
     self.logtogx.emit(status)

@@ -414,51 +414,33 @@ class MainGUI(QtGui.QMainWindow):
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
     
-  # data_yi_plot 
+  # data_yi_plot     
   def home_clicked_data_yi_plot(self):
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-    [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_data_interval
-    self.ui.data_yi_plot.canvas.ax.set_xlim([xmin, xmax])
-    self.ui.data_yi_plot.canvas.ax.set_ylim([ymin, ymax])
-    self.ui.data_yi_plot.canvas.draw()
+    self.home_clicked_yi_plot(self.ui.data_yi_plot.canvas)
 
   def single_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     self.single_click_yi(isPanOrZoomActivated, type='data')
 
-  def leave_figure_data_yi_plot(self, xmin, xmax, ymin, ymax):
-    [xmin, xmax] = self.ui.data_yi_plot.canvas.ax.xaxis.get_view_interval()
-    [ymin, ymax] = self.ui.data_yi_plot.canvas.ax.yaxis.get_view_interval()
-    self.ui.data_yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-    self.ui.data_yi_plot.canvas.ax.yaxis.set_data_interval(ymin,ymax)
-    self.ui.data_yi_plot.draw()
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-    data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
-    _data.active_data = data
-    self.bigTableData[r,c] = _data
+  def leave_figure_data_yi_plot(self):
+    self.leave_figure_yi_plot(self.ui.data_yi_plot)
 
   # norm_yi_plot
   def home_clicked_norm_yi_plot(self):
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-    [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_data_interval
-    self.ui.norm_yi_plot.canvas.ax.set_xlim([xmin, xmax])
-    self.ui.norm_yi_plot.canvas.ax.set_ylim([ymin, ymax])
-    self.ui.norm_yi_plot.canvas.draw()
+    self.home_clicked_yi_plot(self.ui.norm_yi_plot.canvas)
   
   def single_click_norm_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     self.single_click_yi(isPanOrZoomActivated, type='norm')
         
-  def leave_figure_norm_yi_plot(self, xmin, xmax, ymin, ymax):
-    [xmin, xmax] = self.ui.norm_yi_plot.canvas.ax.xaxis.get_view_interval()
-    [ymin, ymax] = self.ui.norm_yi_plot.canvas.ax.yaxis.get_view_interval()
-    self.ui.norm_yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-    self.ui.norm_yi_plot.canvas.ax.yaxis.set_data_interval(ymin,ymax)
-    self.ui.norm_yi_plot.draw()
+  def leave_figure_norm_yi_plot(self):
+    self.leave_figure_yi_plot(self.ui.norm_yi_plot)
+
+  # general plot utilities
+  def leave_figure_yi_plot(self, plot_ui):
+    [xmin, xmax] = plot_ui.canvas.ax.xaxis.get_view_interval()
+    [ymin, ymax] = plot_ui.canvas.ax.yaxis.get_view_interval()
+    plot_ui.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+    plot_ui.canvas.ax.yaxis.set_data_interval(ymin,ymax)
+    plot_ui.draw()
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
     data = _data.active_data
@@ -466,7 +448,15 @@ class MainGUI(QtGui.QMainWindow):
     _data.active_data = data
     self.bigTableData[r,c] = _data
 
-  # general plot utilities
+  def home_clicked_yi_plot(self, plot_ui):
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_data_interval
+    plot_ui.ax.set_xlim([xmin, xmax])
+    plot_ui.ax.set_ylim([ymin, ymax])
+    plot_ui.draw()
+  
   def logx_toggle_yi_plot(self, status):
     if status == 'log':
       isLog = True
@@ -480,7 +470,6 @@ class MainGUI(QtGui.QMainWindow):
     self.bigTableData[r,c] = _data
 
   def single_click_yi(self, isPanOrZoomActivated, type='data'):
-
     if self.timeClick1 == -1:
       self.timeClick1 = time.time()
       return
