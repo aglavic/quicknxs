@@ -261,11 +261,16 @@ class MainGUI(QtGui.QMainWindow):
     else:
       self.connect_plot_events_refl()
 
+    # connections
     self.ui.data_yi_plot.singleClick.connect(self.single_click_data_yi_plot)
     self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_data_yi_plot)
-    self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
-    self.ui.data_yi_plot.logtogx.connect(self.logx_toggle)
+    self.ui.data_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
     self.ui.data_yi_plot.toolbar.homeClicked.connect(self.home_clicked_data_yi_plot)
+
+    self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
+    self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_norm_yi_plot)
+    self.ui.norm_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
+    self.ui.norm_yi_plot.toolbar.homeClicked.connect(self.home_clicked_norm_yi_plot)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -390,20 +395,6 @@ class MainGUI(QtGui.QMainWindow):
 
       self.ui.norm_selection_error_label.setVisible(bError)  
 
-
-  def logx_toggle(self, status):
-    if status == 'log':
-      isLog = True
-    else:
-      isLog = False
-
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-    data.all_plot_axis.is_yi_xlog = isLog
-    _data.active_data = data
-    self.bigTableData[r,c] = _data
-
   
   def initConfigGui(self):
     from quicknxs.config import refllastloadedfiles
@@ -422,6 +413,8 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
+    
+  # data_yi_plot 
   def home_clicked_data_yi_plot(self):
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
@@ -432,10 +425,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_yi_plot.canvas.draw()
 
   def single_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
-    '''
-    This function is reached when the user click the yi plot (data)
-    '''
-#    self.allPlotAxis.plot_axis_data.set_yi_axis(xmin, xmax, ymin, ymax)
     self.single_click_yi(isPanOrZoomActivated, type='data')
 
   def leave_figure_data_yi_plot(self, xmin, xmax, ymin, ymax):
@@ -451,13 +440,45 @@ class MainGUI(QtGui.QMainWindow):
     _data.active_data = data
     self.bigTableData[r,c] = _data
 
+  # norm_yi_plot
+  def home_clicked_norm_yi_plot(self):
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_data_interval
+    self.ui.norm_yi_plot.canvas.ax.set_xlim([xmin, xmax])
+    self.ui.norm_yi_plot.canvas.ax.set_ylim([ymin, ymax])
+    self.ui.norm_yi_plot.canvas.draw()
+  
   def single_click_norm_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
-    '''
-    This function is reached when the user click the yi plot (normalization)
-    '''
-    self.allPlotAxis.plot_axis_norm.set_yi_axis(xmin, xmax, ymin, ymax)
     self.single_click_yi(isPanOrZoomActivated, type='norm')
         
+  def leave_figure_norm_yi_plot(self, xmin, xmax, ymin, ymax):
+    [xmin, xmax] = self.ui.norm_yi_plot.canvas.ax.xaxis.get_view_interval()
+    [ymin, ymax] = self.ui.norm_yi_plot.canvas.ax.yaxis.get_view_interval()
+    self.ui.norm_yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+    self.ui.norm_yi_plot.canvas.ax.yaxis.set_data_interval(ymin,ymax)
+    self.ui.norm_yi_plot.draw()
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
+
+  # general plot utilities
+  def logx_toggle_yi_plot(self, status):
+    if status == 'log':
+      isLog = True
+    else:
+      isLog = False
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    data.all_plot_axis.is_yi_xlog = isLog
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
+
   def single_click_yi(self, isPanOrZoomActivated, type='data'):
 
     if self.timeClick1 == -1:

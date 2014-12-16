@@ -146,7 +146,6 @@ class NavigationToolbar(NavigationToolbar2QT):
     NavigationToolbar2QT.zoom(self, *args)
     self.activate_widget('zoom', not self.isZoomActivated)
 
-
   if matplotlib.__version__<'1.2':
     
     def pan(self, *args):
