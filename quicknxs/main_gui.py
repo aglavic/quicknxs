@@ -265,6 +265,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_data_yi_plot)
     self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
     self.ui.data_yi_plot.logtogx.connect(self.logx_toggle)
+    self.ui.data_yi_plot.toolbar.homeClicked.connect(self.home_clicked_data_yi_plot)
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
@@ -420,6 +421,15 @@ class MainGUI(QtGui.QMainWindow):
   def logtoggle(self, checked):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
+
+  def home_clicked_data_yi_plot(self):
+    [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+    [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_data_interval
+    self.ui.data_yi_plot.canvas.ax.set_xlim([xmin, xmax])
+    self.ui.data_yi_plot.canvas.ax.set_ylim([ymin, ymax])
+    self.ui.data_yi_plot.canvas.draw()
 
   def single_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
     '''

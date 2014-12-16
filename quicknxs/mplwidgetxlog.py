@@ -35,6 +35,7 @@ class NavigationToolbar(NavigationToolbar2QT):
   '''
   _auto_toggle=False
   logtog = QtCore.pyqtSignal(str)
+  homeClicked = QtCore.pyqtSignal()
   isCursorNormal = True
 
   isPanActivated = False
@@ -135,7 +136,7 @@ class NavigationToolbar(NavigationToolbar2QT):
         
   def home(self, *args):
     NavigationToolbar2QT.home(self,*args)
-        
+    self.homeClicked.emit()
         
   def pan(self, *args):
     NavigationToolbar2QT.pan(self, *args)
