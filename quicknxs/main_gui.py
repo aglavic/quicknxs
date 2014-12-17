@@ -642,14 +642,14 @@ class MainGUI(QtGui.QMainWindow):
   def logy_toggle_ix_plot(self, checked):
     self.log_toggle_plot(checked, plot_type='ix', isylog=True)
 
-  def logx_toggle_data_stitching(self, status):
+  def logx_toggle_data_stitching(self, checked):
     self.log_toggle_plot(checked, plot_type='stitching', isylog=False)
     
-  def logy_toggle_data_stitching(self, status):
-    self.log_toggle_plot(status, plot_type='stitching', isylog=True)
+  def logy_toggle_data_stitching(self, checked):
+    self.log_toggle_plot(checked, plot_type='stitching', isylog=True)
       
-  def logx_toggle_yi_plot(self, status):
-    self.log_toggle_plot(status, plot_type='yi', isylog=False)
+  def logx_toggle_yi_plot(self, checked):
+    self.log_toggle_plot(checked, plot_type='yi', isylog=False)
 
   def log_toggle_plot(self,  status, plot_type='yi', isylog=True):
     if status == 'log':
