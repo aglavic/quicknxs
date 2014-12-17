@@ -34,11 +34,15 @@ class NavigationToolbar(NavigationToolbar2QT):
     A small change to the original navigation toolbar.
   '''
   _auto_toggle=False
-  logtog = QtCore.pyqtSignal(str)
+  logtogx = QtCore.pyqtSignal(str)
+  logtogy = QtCore.pyqtSignal(str)
+  homeClicked = QtCore.pyqtSignal()
   isCursorNormal = True
 
   isPanActivated = False
   isZoomActivated = False
+
+  home_settings = None
 
   ylog = True
   xlog = False
@@ -96,7 +100,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     icon=QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-log.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     self.addSeparator()
-    a=self.addAction(icon, 'Log', self.toggle_log)
+    a=self.addAction(icon, 'Log', self.toggle_ylog)
     a.setToolTip('Toggle logarithmic y scale')
 
     icon=QtGui.QIcon()
@@ -139,6 +143,10 @@ class NavigationToolbar(NavigationToolbar2QT):
         self.isPanActivated = False
       else:
         self.isZoomActivated = False
+        
+  def home(self, *args):
+    NavigationToolbar2QT.home(self,*args)
+    self.homeClicked.emit()
         
   def pan(self, *args):
     NavigationToolbar2QT.pan(self, *args)
@@ -287,7 +295,7 @@ class NavigationToolbar(NavigationToolbar2QT):
                   self, "Error saving file", str(e),
                   QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
-  def toggle_log(self, *args):
+  def toggle_ylog(self, *args):
     ax=self.canvas.ax
     if len(ax.images)==0 and all([c.__class__.__name__!='QuadMesh' for c in ax.collections]):
 
@@ -299,7 +307,7 @@ class NavigationToolbar(NavigationToolbar2QT):
       self.ylog = not self.ylog
         
       self.canvas.draw()
-      self.logtog.emit(ax.get_xscale())
+      self.logtogy.emit(ax.get_yscale())
     else:
       imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
       norm=imgs[0].norm
@@ -322,7 +330,7 @@ class NavigationToolbar(NavigationToolbar2QT):
       self.xlog = not self.xlog
         
       self.canvas.draw()
-      self.logtog.emit(ax.get_xscale())
+      self.logtogx.emit(ax.get_xscale())
     else:
       imgs=ax.images+[c for c in ax.collections if c.__class__.__name__=='QuadMesh']
       norm=imgs[0].norm
@@ -337,7 +345,8 @@ class NavigationToolbar(NavigationToolbar2QT):
 
 class MplCanvas(FigureCanvas):
 
-  trigger = QtCore.pyqtSignal()
+  trigger_click = QtCore.pyqtSignal()
+  trigger_figure_left = QtCore.pyqtSignal()
 
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
@@ -360,10 +369,14 @@ class MplCanvas(FigureCanvas):
 
     
     self.fig.canvas.mpl_connect('button_press_event', self.button_pressed)
+    self.fig.canvas.mpl_connect('figure_leave_event', self.figure_leave)
 
   def button_pressed(self, event):
     _axis = self.ax.axis()
-    self.trigger.emit()
+    self.trigger_click.emit()
+ 
+  def figure_leave(self, event):
+    self.trigger_figure_left.emit()
  
   def format_labels(self):
     self.ax.set_title(self.PlotTitle)
@@ -396,7 +409,9 @@ class MPLWidgetXLogYLog(QtGui.QWidget):
   cbar=None
 
   logtogx = QtCore.pyqtSignal(str)
-  singleClick = QtCore.pyqtSignal(bool, float, float, float, float)
+  logtogy = QtCore.pyqtSignal(str)
+  singleClick = QtCore.pyqtSignal(bool)
+  leaveFigure = QtCore.pyqtSignal()
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -410,24 +425,26 @@ class MPLWidgetXLogYLog(QtGui.QWidget):
       self.toolbar=NavigationToolbar(self.canvas, self)
       self.toolbar.coordinates=coordinates
       self.vbox.addWidget(self.toolbar)
-      self.toolbar.logtog.connect(self.logtoggle)
+      self.toolbar.logtogx.connect(self.logtogglex)
+      self.toolbar.logtogy.connect(self.logtoggley)
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
-    self.canvas.trigger.connect(self._singleClick)
+    self.canvas.trigger_click.connect(self._singleClick)
+    self.canvas.trigger_figure_left.connect(self._leaveFigure)
 
   def _singleClick(self):
     status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
-    axis = self.canvas.ax.axis()
-    xmin = axis[0]
-    xmax = axis[1]
-    ymin = axis[2]
-    ymax = axis[3]
-    
-    self.singleClick.emit(status, xmin, xmax, ymin, ymax)
+    self.singleClick.emit(status)
 
-  def logtoggle(self, status):
+  def _leaveFigure(self):
+    self.leaveFigure.emit()
+
+  def logtogglex(self, status):
     self.logtogx.emit(status)
+
+  def logtoggley(self, status):
+    self.logtogy.emit(status)
 
   def leaveEvent(self, event):
     '''

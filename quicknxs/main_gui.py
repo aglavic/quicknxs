@@ -271,9 +271,17 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_norm_yi_plot)
     self.ui.norm_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
     self.ui.norm_yi_plot.toolbar.homeClicked.connect(self.home_clicked_norm_yi_plot)
+    
+    self.ui.data_stitching_plot.singleClick.connect(self.single_click_data_stitching_plot)
+    self.ui.data_stitching_plot.leaveFigure.connect(self.leave_figure_data_stitching_plot)
+    self.ui.data_stitching_plot.toolbar.homeClicked.connect(self.home_clicked_data_stitching_plot)
+    self.ui.data_stitching_plot.logtogx.connect(self.logx_toggle_data_stitching)
+    self.ui.data_stitching_plot.logtogy.connect(self.logy_toggle_data_stitching)
+    
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
+    
 
     # watch folder for changes
     self.auto_change_active=False
@@ -418,7 +426,7 @@ class MainGUI(QtGui.QMainWindow):
   def home_clicked_data_yi_plot(self):
     self.home_clicked_yi_plot(self.ui.data_yi_plot.canvas)
 
-  def single_click_data_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
+  def single_click_data_yi_plot(self, isPanOrZoomActivated):
     self.single_click_yi(isPanOrZoomActivated, type='data')
 
   def leave_figure_data_yi_plot(self):
@@ -428,11 +436,38 @@ class MainGUI(QtGui.QMainWindow):
   def home_clicked_norm_yi_plot(self):
     self.home_clicked_yi_plot(self.ui.norm_yi_plot.canvas)
   
-  def single_click_norm_yi_plot(self, isPanOrZoomActivated, xmin, xmax, ymin, ymax):
+  def single_click_norm_yi_plot(self, isPanOrZoomActivated):
     self.single_click_yi(isPanOrZoomActivated, type='norm')
         
   def leave_figure_norm_yi_plot(self):
     self.leave_figure_yi_plot(self.ui.norm_yi_plot)
+
+  # data_stitching_plot
+  def single_click_data_stitching_plot(self, isPanOrZoomActivated):
+    pass
+
+  def leave_figure_data_stitching_plot(self):
+    plot_ui = self.ui.data_stitching_plot
+    [xmin, xmax] = plot_ui.canvas.ax.xaxis.get_view_interval()
+    [ymin, ymax] = plot_ui.canvas.ax.yaxis.get_view_interval()
+    plot_ui.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+    plot_ui.canvas.ax.yaxis.set_data_interval(ymin,ymax)
+    plot_ui.draw()
+    _data = self.bigTableData[0,0]
+    data = _data.active_data
+    data.all_plot_axis.reduced_plot_stitching_tab_view_interval = [xmin, xmax, ymin, ymax]
+    _data.active_data = data
+    self.bigTableData[0,0] = _data
+
+  def home_clicked_data_stitching_plot(self):
+    _data = self.bigTableData[0,0]
+    data = _data.active_data
+    if data.all_plot_axis.reduced_plot_stitching_tab_data_interval is None:
+      return
+    [xmin, xmax, ymin, ymax] = data.all_plot_axis.reduced_plot_stitching_tab_data_interval
+    self.ui.data_stitching_plot.canvas.ax.set_xlim([xmin, xmax])
+    self.ui.data_stitching_plot.canvas.ax.set_ylim([ymin, ymax])
+    self.ui.data_stitching_plot.draw()
 
   # general plot utilities
   def leave_figure_yi_plot(self, plot_ui):
@@ -452,17 +487,42 @@ class MainGUI(QtGui.QMainWindow):
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
     data = _data.active_data
+    if data.all_plot_axis.yi_data_interval is None:
+      return
     [xmin, xmax, ymin, ymax] = data.all_plot_axis.yi_data_interval
     plot_ui.ax.set_xlim([xmin, xmax])
     plot_ui.ax.set_ylim([ymin, ymax])
     plot_ui.draw()
   
+  def logx_toggle_data_stitching(self, status):
+    if status == 'log':
+      isLog = True
+    else:
+      isLog = False
+    _data = self.bigTableData[0,0]
+    data = _data.active_data
+    data.all_plot_axis.is_reduced_plot_stitching_tab_xlog = isLog
+    _data.active_data = data
+    self.bigTableData[0,0] = _data
+    
+  def logy_toggle_data_stitching(self, status):
+    if status == 'log':
+      isLog = True
+    else:
+      isLog = False
+    _data = self.bigTableData[0,0]
+    data = _data.active_data
+    data.all_plot_axis.is_reduced_plot_stitching_tab_ylog = isLog
+    _data.active_data = data
+    self.bigTableData[0,0] = _data
+      
   def logx_toggle_yi_plot(self, status):
     if status == 'log':
       isLog = True
     else:
       isLog = False
-    [r,c] = self.getCurrentRowColumnSelected()
+    if r==-1 and c==-1:
+      [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
     data = _data.active_data
     data.all_plot_axis.is_yi_xlog = isLog
@@ -5564,7 +5624,24 @@ Do you want to try to restore the working reduction list?""",
 
     # move to stitching table tab
     self.ui.plotTab.setCurrentIndex(1)      
-
+    
+    # save current view limits of plot
+    self.initializeReduceViewObject()
+    
+    
+  def initializeReduceViewObject(self):
+    bigTableData = self.bigTableData
+    _data = bigTableData[0,0]
+    _active_data = _data.active_data
+    
+    [xmin,xmax] = self.ui.data_stitching_plot.canvas.ax.xaxis.get_view_interval()
+    [ymin,ymax] = self.ui.data_stitching_plot.canvas.ax.yaxis.get_view_interval()
+    _active_data.all_plot_axis.reduced_plot_stitching_tab_view_interval = [xmin,xmax,ymin,ymax]
+    _active_data.all_plot_axis.reduced_plot_stitching_tab_data_interval = [xmin,xmax,ymin,ymax]
+    _data.active_data = _active_data
+    bigTableData[0,0] = _data
+    self.bigTableData = bigTableData
+    self.ui.data_stitching_plot.toolbar.home_settings = [xmin,xmax,ymin,ymax]
 
   def plot_stitched_scaled_data(self):
     
@@ -5576,6 +5653,11 @@ Do you want to try to restore the working reduction list?""",
 
     self.ui.data_stitching_plot.clear()
     self.ui.data_stitching_plot.draw()
+    
+    _data0 = bigTableData[0,0]
+    _isxlog = _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+    _isylog = _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+    [xmin,xmax,ymin,ymax] = _data0.active_data.all_plot_axis.reduced_plot_stitching_tab_view_interval
     
     for i in range(nbr_row):
 
@@ -5594,9 +5676,18 @@ Do you want to try to restore the working reduction list?""",
 
     self.ui.data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
     self.ui.data_stitching_plot.set_ylabel(u'R')
-    self.ui.data_stitching_plot.set_yscale('log')
+    if _isxlog:
+      self.ui.data_stitching_plot.set_xscale('log')
+    else:
+      self.ui.data_stitching_plot.set_xscale('linear')
+    if _isylog:
+      self.ui.data_stitching_plot.set_yscale('log')
+    else:
+      self.ui.data_stitching_plot.set_yscale('linear')
+    self.ui.data_stitching_plot.canvas.ax.set_xlim([xmin, xmax])
+    self.ui.data_stitching_plot.canvas.ax.set_ylim([ymin, ymax])
     self.ui.data_stitching_plot.draw()
-    
+
 
   def reduce_plot_RvsQ_radiobutton(self):
     self.reduce_plot_radiobuttons(option='RvsQ')
@@ -6183,7 +6274,6 @@ Do you want to try to restore the working reduction list?""",
     '''
     auto, manual or 1
     '''
-
     # recovering data
     bigTableData = self.bigTableData
     nbr_row = self.ui.dataStitchingTable.rowCount()
