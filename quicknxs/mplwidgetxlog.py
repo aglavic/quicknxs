@@ -330,11 +330,9 @@ class MplCanvas(FigureCanvas):
     FigureCanvas.updateGeometry(self)
 
     self.fig.canvas.mpl_connect('button_press_event', self.button_pressed)
-    #self.fig.canvas.mpl_connect('button_release_event', self.button_released)
     self.fig.canvas.mpl_connect('figure_leave_event', self.figure_leave)
 
   def button_pressed(self, event):
-    _axis = self.ax.axis()
     self.trigger_click.emit()
  
   def figure_leave(self, event):
@@ -370,7 +368,7 @@ class MPLWidgetXLog(QtGui.QWidget):
   cbar=None
 
   logtogx = QtCore.pyqtSignal(str)
-  logtogy = QtCore.pyqtSignal(str)
+ # logtogy = QtCore.pyqtSignal(str)
   singleClick = QtCore.pyqtSignal(bool)
   leaveFigure = QtCore.pyqtSignal()
 

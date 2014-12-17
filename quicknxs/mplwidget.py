@@ -34,6 +34,12 @@ class NavigationToolbar(NavigationToolbar2QT):
   '''
   _auto_toggle=False
   logtog = QtCore.pyqtSignal(str)
+  homeClicked = QtCore.pyqtSignal()
+  
+  isPanActivated = False
+  isZoomActivated = False
+  
+  home_settings = None
 
   def __init__(self, canvas, parent, coordinates=False):
     NavigationToolbar2QT.__init__(self, canvas, parent, coordinates)
@@ -110,6 +116,33 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     # reference holder for subplots_adjust window
     self.adj_window=None
+
+  def activate_widget(self, widget_name, activateIt):
+    
+    if widget_name == 'pan':
+      if activateIt:
+        self.isPanActivated = True
+        self.isZoomActivated = False
+      else:
+        self.isPanActivated = False
+    elif widget_name == 'zoom':
+      if activateIt:
+        self.isZoomActivated = True
+        self.isPanActivated = False
+      else:
+        self.isZoomActivated = False
+        
+  def home(self, *args):
+    NavigationToolbar2QT.home(self,*args)
+    self.homeClicked.emit()
+        
+  def pan(self, *args):
+    NavigationToolbar2QT.pan(self, *args)
+    self.activate_widget('pan', not self.isPanActivated)
+
+  def zoom(self, *args):
+    NavigationToolbar2QT.zoom(self, *args)
+    self.activate_widget('zoom', not self.isZoomActivated)
 
   if matplotlib.__version__<'1.2':
     def pan(self, *args):
@@ -266,6 +299,9 @@ class NavigationToolbar(NavigationToolbar2QT):
 
 class MplCanvas(FigureCanvas):
   
+  trigger_click = QtCore.pyqtSignal()
+  trigger_figure_left = QtCore.pyqtSignal()
+  
   def __init__(self, parent=None, width=3, height=3, dpi=100, sharex=None, sharey=None, adjust={}):
     self.fig=Figure(figsize=(width, height), dpi=dpi, facecolor='#FFFFFF')
     self.ax=self.fig.add_subplot(111, sharex=sharex, sharey=sharey)
@@ -284,7 +320,16 @@ class MplCanvas(FigureCanvas):
                               QtGui.QSizePolicy.Expanding,
                               QtGui.QSizePolicy.Expanding)
     FigureCanvas.updateGeometry(self)
+    
+    self.fig.canvas.mpl_connect('button_press_event', self.button_pressed)
+    self.fig.canvas.mpl_connect('figure_leave_event', self.figure_leave)
 
+  def button_pressed(self, event):
+    self.trigger_click.emit()
+
+  def figure_leave(self, event):
+    self.trigger_figure_left.emit()
+    
   def format_labels(self):
     self.ax.set_title(self.PlotTitle)
 #    self.ax.title.set_fontsize(10)
@@ -316,6 +361,8 @@ class MPLWidget(QtGui.QWidget):
   cbar=None
 
   logtogy = QtCore.pyqtSignal(str)
+  singleClick = QtCore.pyqtSignal(bool)
+  leaveFigure = QtCore.pyqtSignal()
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
     QtGui.QWidget.__init__(self, parent)
@@ -332,6 +379,15 @@ class MPLWidget(QtGui.QWidget):
     else:
       self.toolbar=None
     self.setLayout(self.vbox)
+    self.canvas.trigger_click.connect(self._singleClick)
+    self.canvas.trigger_figure_left.connect(self._leaveFigure)
+    
+  def _singleClick(self):
+    status = self.toolbar.isPanActivated or self.toolbar.isZoomActivated
+    self.singleClick.emit(status)
+    
+  def _leaveFigure(self):
+    self.leaveFigure.emit()
 
   def logtoggleylog(self, status):
     self.logtogy.emit(status)
