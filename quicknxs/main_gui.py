@@ -263,25 +263,35 @@ class MainGUI(QtGui.QMainWindow):
 
     # connections
     self.ui.data_yt_plot.singleClick.connect(self.single_click_data_yt_plot)
-    self.ui.data_yt_plot.leaveFigure.connect(self.leave_figure_data_yt_plot)
+    self.ui.data_yt_plot.leaveFigure.connect(self.leave_figure_yt_plot)
     self.ui.data_yt_plot.logtogy.connect(self.logy_toggle_yt_plot)
     self.ui.data_yt_plot.toolbar.homeClicked.connect(self.home_clicked_yt_plot)
 
     self.ui.norm_yt_plot.singleClick.connect(self.single_click_norm_yt_plot)
-    self.ui.norm_yt_plot.leaveFigure.connect(self.leave_figure_norm_yt_plot)
+    self.ui.norm_yt_plot.leaveFigure.connect(self.leave_figure_yt_plot)
     self.ui.norm_yt_plot.logtogy.connect(self.logy_toggle_yt_plot)
     self.ui.norm_yt_plot.toolbar.homeClicked.connect(self.home_clicked_yt_plot)
 
     self.ui.data_yi_plot.singleClick.connect(self.single_click_data_yi_plot)
-    self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_data_yi_plot)
+    self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
     self.ui.data_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
     self.ui.data_yi_plot.toolbar.homeClicked.connect(self.home_clicked_yi_plot)
 
     self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
-    self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_norm_yi_plot)
+    self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
     self.ui.norm_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
     self.ui.norm_yi_plot.toolbar.homeClicked.connect(self.home_clicked_yi_plot)
     
+    self.ui.data_it_plot.singleClick.connect(self.single_click_data_it_plot)
+    self.ui.data_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
+    self.ui.data_it_plot.logtogy.connect(self.logy_toggle_it_plot)
+    self.ui.data_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
+
+    self.ui.norm_it_plot.singleClick.connect(self.single_click_norm_it_plot)
+    self.ui.norm_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
+    self.ui.norm_it_plot.logtogy.connect(self.logy_toggle_it_plot)
+    self.ui.norm_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
+
     self.ui.data_stitching_plot.singleClick.connect(self.single_click_data_stitching_plot)
     self.ui.data_stitching_plot.leaveFigure.connect(self.leave_figure_data_stitching_plot)
     self.ui.data_stitching_plot.toolbar.homeClicked.connect(self.home_clicked_data_stitching_plot)
@@ -431,33 +441,7 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
-  # data_yt_plot
-  def single_click_data_yt_plot(self, isPanOrZoomActivated):
-    pass
   
-  def leave_figure_data_yt_plot(self):
-    pass
-
-  def logy_toggle_yt_plot(self, checked):
-    pass
-  
-  def home_clicked_data_yt_plot(self):
-    pass
-
-    
-  # norm_yt_plot
-  def single_click_norm_yt_plot(self, isPanOrZoomActivated):
-    pass
-  
-  def leave_figure_norm_yt_plot(self):
-    pass
-
-  def logy_toggle_yt_plot(self, checked):
-    pass
-  
-  def home_clicked_norm_yt_plot(self):
-    pass
-
   # home button of plots
   def home_clicked_yi_plot(self):
     self.home_clicked_plot(plot_type='yi')
@@ -465,28 +449,36 @@ class MainGUI(QtGui.QMainWindow):
   def home_clicked_yt_plot(self):
     self.home_clicked_plot(plot_type='yt')
 
+  def home_clicked_it_plot(self):
+    self.home_clicked_plot(plot_type='it')
+
   def home_clicked_plot(self, plot_type='yi'):
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
+    if _data is None:
+      return
     data = _data.active_data
-
     if data.all_plot_axis.yi_data_interval is None:
       return
-
     if plot_type =='yi':
-      _data_interval = data.all_plot_axis.yi_data_interval
+      [xmin,xmax,ymin,ymax] = data.all_plot_axis.yi_data_interval
       if c==0:
         _plot_ui = self.ui.data_yi_plot.canvas
       else:
         _plot_ui = self.ui.norm_yi_plot.canvas
     elif plot_type == 'yt':
-      _data_interval = data.all_plot_axis.yt_data_interval
+      [xmin,xmax,ymin,ymax] = data.all_plot_axis.yt_data_interval
       if c==0:
         _plot_ui = self.ui.data_yt_plot.canvas
       else:
         _plot_ui = self.ui.norm_yt_plot.canvas
+    elif plot_type == 'it':
+      [xmin,xmax,ymin,ymax] = data.all_plot_axis.it_data_interval
+      if c==0:
+        _plot_ui = self.ui.data_it_plot.canvas
+      else:
+        _plot_ui = self.ui.norm_it_plot.canvas
       
-    [xmin, xmax, ymin, ymax] = _data_interval
     _plot_ui.ax.set_xlim([xmin, xmax])
     _plot_ui.ax.set_ylim([ymin, ymax])
     _plot_ui.draw()
@@ -501,91 +493,87 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_stitching_plot.canvas.ax.set_ylim([ymin, ymax])
     self.ui.data_stitching_plot.draw()
 
+  # leave figure 
+  def leave_figure_yi_plot(self):
+    self.leave_figure_plot(type='yi')
 
+  def leave_figure_yt_plot(self):
+    self.leave_figure_plot(type='yt')
 
+  def leave_figure_it_plot(self):
+    self.leave_figure_plot(type='it')
 
+  def leave_figure_data_stitching_plot(self):
+    self.leave_figure_plot(type='stitching', r=0, c=0)
 
+  def leave_figure_plot(self, type='yi', r=-1, c=-1):
+    if r==-1 and c==-1:
+      [r,c] = self.getCurrentRowColumnSelected()
+    _data = self.bigTableData[r,c]
+    if _data is None:
+      return
+    data = _data.active_data
+    if type == 'yi':
+      view_interval = data.all_plot_axis.yi_view_interval
+      if c==0:
+        plot_ui = self.ui.data_yi_plot
+      else:
+        plot_ui = self.ui.norm_yi_plot
+    elif type == 'yt':
+      view_interval = data.all_plot_axis.yt_view_interval
+      if c==0:
+        plot_ui = self.ui.data_yt_plot
+      else:
+        plot_ui = self.ui.norm_yt_plot
+    elif type =='it':
+      view_interval = data.all_plot_axis.it_view_interval
+      if c==0:
+        plot_ui = self.ui.data_it_plot
+      else:
+        plot_ui = self.ui.norm_it_plot
+    elif type=='stitching':
+      view_interval = data.all_plot_axis.reduced_plot_stitching_tab_view_interval
+      plot_ui = self.ui.data_stitching_plot
+        
+    [xmin, xmax] = plot_ui.canvas.ax.xaxis.get_view_interval()
+    [ymin, ymax] = plot_ui.canvas.ax.yaxis.get_view_interval()
+    plot_ui.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+    plot_ui.canvas.ax.yaxis.set_data_interval(ymin,ymax)
+    plot_ui.draw()
+    
+    if type == 'yi':
+      data.all_plot_axis.yi_view_interval = [xmin,xmax,ymin,ymax]
+    elif type == 'yt':
+      data.all_plot_axis.yt_view_interval = [xmin,xmax,ymin,ymax]
+    elif type =='it':
+      data.all_plot_axis.it_view_interval = [xmin,xmax,ymin,ymax]
+    elif type=='stitching':
+      data.all_plot_axis.reduced_plot_stitching_tab_view_interval = [xmin,xmax,ymin,ymax]
 
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
+  
+  # single click
   def single_click_data_yi_plot(self, isPanOrZoomActivated):
     self.single_click_yi(isPanOrZoomActivated, type='data')
-
-  def leave_figure_data_yi_plot(self):
-    self.leave_figure_yi_plot(self.ui.data_yi_plot)
-
-  # norm_yi_plot
   
   def single_click_norm_yi_plot(self, isPanOrZoomActivated):
     self.single_click_yi(isPanOrZoomActivated, type='norm')
-        
-  def leave_figure_norm_yi_plot(self):
-    self.leave_figure_yi_plot(self.ui.norm_yi_plot)
 
-  # data_stitching_plot
-  def single_click_data_stitching_plot(self, isPanOrZoomActivated):
+  def single_click_norm_yt_plot(self, isPanOrZoomActivated):
     pass
 
-  def leave_figure_data_stitching_plot(self):
-    plot_ui = self.ui.data_stitching_plot
-    [xmin, xmax] = plot_ui.canvas.ax.xaxis.get_view_interval()
-    [ymin, ymax] = plot_ui.canvas.ax.yaxis.get_view_interval()
-    plot_ui.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-    plot_ui.canvas.ax.yaxis.set_data_interval(ymin,ymax)
-    plot_ui.draw()
-    _data = self.bigTableData[0,0]
-    data = _data.active_data
-    data.all_plot_axis.reduced_plot_stitching_tab_view_interval = [xmin, xmax, ymin, ymax]
-    _data.active_data = data
-    self.bigTableData[0,0] = _data
+  def single_click_data_yt_plot(self, isPanOrZoomActivated):
+    pass
 
+  def single_click_norm_it_plot(self, isPanOrZoomActivated):
+    pass
 
-  # general plot utilities
-  def leave_figure_yi_plot(self, plot_ui):
-    [xmin, xmax] = plot_ui.canvas.ax.xaxis.get_view_interval()
-    [ymin, ymax] = plot_ui.canvas.ax.yaxis.get_view_interval()
-    plot_ui.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-    plot_ui.canvas.ax.yaxis.set_data_interval(ymin,ymax)
-    plot_ui.draw()
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-    data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
-    _data.active_data = data
-    self.bigTableData[r,c] = _data
+  def single_click_data_it_plot(self, isPanOrZoomActivated):
+    pass
 
-  
-  def logx_toggle_data_stitching(self, status):
-    if status == 'log':
-      isLog = True
-    else:
-      isLog = False
-    _data = self.bigTableData[0,0]
-    data = _data.active_data
-    data.all_plot_axis.is_reduced_plot_stitching_tab_xlog = isLog
-    _data.active_data = data
-    self.bigTableData[0,0] = _data
-    
-  def logy_toggle_data_stitching(self, status):
-    if status == 'log':
-      isLog = True
-    else:
-      isLog = False
-    _data = self.bigTableData[0,0]
-    data = _data.active_data
-    data.all_plot_axis.is_reduced_plot_stitching_tab_ylog = isLog
-    _data.active_data = data
-    self.bigTableData[0,0] = _data
-      
-  def logx_toggle_yi_plot(self, status):
-    if status == 'log':
-      isLog = True
-    else:
-      isLog = False
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-    data.all_plot_axis.is_yi_xlog = isLog
-    _data.active_data = data
-    self.bigTableData[r,c] = _data
+  def single_click_data_stitching_plot(self, isPanOrZoomActivated):
+    pass
 
   def single_click_yi(self, isPanOrZoomActivated, type='data'):
     if self.timeClick1 == -1:
@@ -607,6 +595,88 @@ class MainGUI(QtGui.QMainWindow):
       dialog_refl.show()
       
     self.timeClick1 = -1
+
+  # toggle log
+  def logy_toggle_yt_plot(self, checked):
+    self.log_toggle_plot(checked, plot_type='yt', isylog=True)
+  
+  def logy_toggle_it_plot(self, checked):
+    self.log_toggle_plot(checked, plot_type='it', isylog=True)
+
+  def logx_toggle_data_stitching(self, status):
+    self.log_toggle_plot(checked, plot_type='stitching', isylog=False)
+    #if status == 'log':
+      #isLog = True
+    #else:
+      #isLog = False
+    #_data = self.bigTableData[0,0]
+    #data = _data.active_data
+    #data.all_plot_axis.is_reduced_plot_stitching_tab_xlog = isLog
+    #_data.active_data = data
+    #self.bigTableData[0,0] = _data
+    
+  def logy_toggle_data_stitching(self, status):
+    self.log_toggle_plot(status, plot_type='stitching', isylog=True)
+    #if status == 'log':
+      #isLog = True
+    #else:
+      #isLog = False
+    #_data = self.bigTableData[0,0]
+    #data = _data.active_data
+    #data.all_plot_axis.is_reduced_plot_stitching_tab_ylog = isLog
+    #_data.active_data = data
+    #self.bigTableData[0,0] = _data
+      
+  def logx_toggle_yi_plot(self, status):
+    self.log_toggle_plot(status, plot_type='yi', isylog=False)
+    #if status == 'log':
+      #isLog = True
+    #else:
+      #isLog = False
+    #[r,c] = self.getCurrentRowColumnSelected()
+    #_data = self.bigTableData[r,c]
+    #data = _data.active_data
+    #data.all_plot_axis.is_yi_xlog = isLog
+    #_data.active_data = data
+    #self.bigTableData[r,c] = _data
+
+
+  def log_toggle_plot(self,  status, plot_type='yi', isylog=True):
+    if status == 'log':
+      isLog = True
+    else:
+      isLog = False
+    if plot_type=='stitching':
+      [r,c] = [0,0]
+    else:
+      [r,c] = self.getCurrentRowColumnSelected()
+    
+    _data = self.bigTableData[r,c]
+    data = _data.active_data
+       
+    if plot_type=='stitching':
+      if isylog:
+        data.all_plot_axis.is_reduced_plot_stitching_tab_ylog = isLog
+      else:
+        data.all_plot_axis.is_reduced_plot_stitching_tab_xlog = isLog
+    elif plot_type=='yi':
+      if isylog:
+        data.all_plot_axis.is_yi_ylog = isLog
+      else:
+        data.all_plot_axis.is_yi_xlog = isLog
+    elif plot_type=='yt':
+      if isylog:
+        data.all_plot_axis.is_yt_ylog = isLog
+      else:
+        data.all_plot_axis.is_yt_xlog = isLog
+    elif plot_type=='it':
+      if isylog:
+        data.all_plot_axis.is_it_ylog = isLog
+      else:
+        data.all_plot_axis.is_it_xlog = isLog
+      
+    _data.active_data = data
+    self.bigTableData[r,c] = _data
   
   def handleReductionTableMenu(self, pos):
     '''
@@ -1596,8 +1666,8 @@ class MainGUI(QtGui.QMainWindow):
       yt_plot.set_ylabel(u'y (pixel)')
   
       # display tof range in auto/manual TOF range    #FIXME
-      autotmin = tof_range_auto[0]
-      autotmax = tof_range_auto[1]
+      autotmin = float(tof_range_auto[0])
+      autotmax = float(tof_range_auto[1])
       self.display_tof_range(autotmin, autotmax, 'ms')
   
       tmin = autotmin*1e-3
@@ -1625,6 +1695,7 @@ class MainGUI(QtGui.QMainWindow):
         [ymin,ymax] = yt_plot.canvas.ax.yaxis.get_view_interval()
         data.all_plot_axis.yt_data_interval = [xmin, xmax, ymin, ymax]
         data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
+        yt_plot.toolbar.home_settings = [xmin, xmax, ymin, ymax]
       else:
         [xmin,xmax,ymin,ymax] = data.all_plot_axis.yt_view_interval
         yt_plot.canvas.ax.set_xlim([xmin,xmax])
@@ -1638,10 +1709,31 @@ class MainGUI(QtGui.QMainWindow):
       it_plot.canvas.ax.set_xlabel(u't (ms)')
 #      u'\u03bcs
       it_plot.canvas.ax.set_ylabel(u'Counts')
-      autotmin = tof_range_auto[0]
-      autotmax = tof_range_auto[1]
+      autotmin = float(tof_range_auto[0])
+      autotmax = float(tof_range_auto[1])
       ta = it_plot.canvas.ax.axvline(autotmin/1000, color='#00aa00')
       tb = it_plot.canvas.ax.axvline(autotmax/1000, color='#00aa00')
+    
+      if data.all_plot_axis.is_it_ylog:
+        it_plot.canvas.ax.set_yscale('log')
+      else:
+        it_plot.canvas.ax.set_yscale('linear')
+        
+      if data.all_plot_axis.it_data_interval is None:
+        [xmin,xmax] = it_plot.canvas.ax.xaxis.get_view_interval()
+        [ymin,ymax] = it_plot.canvas.ax.yaxis.get_view_interval()
+        data.all_plot_axis.it_data_interval = [xmin,xmax,ymin,ymax]
+        data.all_plot_axis.it_view_interval = [xmin,xmax,ymin,ymax]
+        it_plot.toolbar.home_settings = [xmin,xmax,ymin,ymax]
+      else:
+        [xmin,xmax,ymin,ymax]=data.all_plot_axis.it_view_interval
+        it_plot.canvas.ax.set_xlim([xmin,xmax])
+        it_plot.canvas.ax.set_ylim([ymin,ymax])
+      it_plot.canvas.draw()
+
+
+
+
       it_plot.canvas.draw()
 
     if plot_yi:
@@ -1752,8 +1844,8 @@ class MainGUI(QtGui.QMainWindow):
     #_tmin = tmin.copy()
     #_tmax = tmax.copy()
     
-    _tmin = 1e-3 * tmin
-    _tmax = 1e-3 * tmax
+    _tmin = 1e-3 * float(tmin)
+    _tmax = 1e-3 * float(tmax)
 
     stmin = str("%.2f" % _tmin)
     stmax = str("%.2f" % _tmax)
