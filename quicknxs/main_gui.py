@@ -4562,13 +4562,12 @@ Do you want to try to restore the working reduction list?""",
     
 
   # data low resolution spinboxes
-  def data_lowres_spinbox_validation(self, withPlotUpdate=False):
+  def data_lowres_spinbox_validation(self):
     '''
     This function, reached when the user is done editing the
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
-
     data = self.active_data
     if data is None:
       return
@@ -4593,8 +4592,7 @@ Do you want to try to restore the working reduction list?""",
     self.save_new_settings()
 
     # refresh plots
-    if withPlotUpdate:
-      self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
     self.checkErrorWidgets()
     
