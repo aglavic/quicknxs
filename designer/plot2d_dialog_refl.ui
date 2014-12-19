@@ -346,7 +346,7 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_39">
                 <item>
-                 <widget class="QRadioButton" name="dataTOFautoMode">
+                 <widget class="QRadioButton" name="tof_auto_flag">
                   <property name="text">
                    <string>Auto</string>
                   </property>
@@ -375,7 +375,7 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="dataTOFmanualMode">
+                 <widget class="QRadioButton" name="tof_manual_flag">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -409,7 +409,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="TOFmanualFromLabel">
+            <widget class="QLabel" name="tof_from_label">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -419,7 +419,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="TOFmanualFromValue">
+            <widget class="QLineEdit" name="tof_from">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -447,7 +447,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="TOFmanualFromUnitsValue">
+            <widget class="QLabel" name="tof_from_units">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -473,7 +473,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="TOFmanualToLabel">
+            <widget class="QLabel" name="tof_to_label">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -483,7 +483,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="TOFmanualToValue">
+            <widget class="QLineEdit" name="tof_to">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -511,7 +511,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="TOFmanualToUnitsValue">
+            <widget class="QLabel" name="tof_to_units">
              <property name="enabled">
               <bool>false</bool>
              </property>
@@ -1128,9 +1128,245 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>peak1</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_peak1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1180</x>
+     <y>597</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>peak2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_peak2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1180</x>
+     <y>560</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>peak1_2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_peak1_2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1180</x>
+     <y>595</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>peak2_2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_peak2_2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1180</x>
+     <y>558</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>back1</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_back1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1299</x>
+     <y>815</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>back1_2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_back1_2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1299</x>
+     <y>811</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>back2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_back2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1299</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>back2_2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_back2_2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1299</x>
+     <y>370</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>low_res1</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_of_low_res_field()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>689</x>
+     <y>1119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>low_res2</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_of_low_res_field()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1069</x>
+     <y>1119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tof_from</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_of_tof_field()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>437</x>
+     <y>1121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tof_to</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_of_tof_field()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>634</x>
+     <y>1121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tof_auto_flag</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_auto_tof_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>1121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tof_manual_flag</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_auto_tof_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>251</x>
+     <y>1121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>activate_or_not_low_res_widgets()</slot>
   <slot>activate_or_not_back_widgets()</slot>
+  <slot>manual_input_of_peak_back_field()</slot>
+  <slot>manual_input_of_low_res_field()</slot>
+  <slot>manual_input_of_tof_field()</slot>
+  <slot>manual_auto_tof_clicked()</slot>
+  <slot>manual_input_peak1()</slot>
+  <slot>manual_input_peak2()</slot>
+  <slot>manual_input_peak1_2()</slot>
+  <slot>manual_input_peak2_2()</slot>
+  <slot>manual_input_back1()</slot>
+  <slot>manual_input_back1_2()</slot>
+  <slot>manual_input_back2()</slot>
+  <slot>manual_input_back2_2()</slot>
  </slots>
 </ui>

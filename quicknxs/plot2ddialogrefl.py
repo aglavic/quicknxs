@@ -112,6 +112,7 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.back2.setEnabled(back_flag)
 		self.ui.back1_2.setEnabled(back_flag)
 		self.ui.back2_2.setEnabled(back_flag)
+		self.check_peak_back_input_validity()
 	
 	def activate_or_not_low_res_widgets(self, low_res_flag):
 		self.ui.low_res1.setEnabled(low_res_flag)
@@ -119,4 +120,113 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.low_res1_label.setEnabled(low_res_flag)
 		self.ui.low_res2_label.setEnabled(low_res_flag)
 		
+	def sort_peak_back_input(self):		
+		peak1 = self.ui.peak1.value()
+		peak2 = self.ui.peak2.value()		
+		peak_min = min([peak1, peak2])
+		peak_max = max([peak1, peak2])
+		if peak_min != peak1:
+			self.ui.peak1.setValue(peak2)
+			self.ui.peak1_2.setValue(peak2)
+			self.ui.peak2.setValue(peak1)
+			self.ui.peak2_2.setValue(peak1)
+			
+		back1 = self.ui.back1.value()
+		back2 = self.ui.back2.value()		
+		back_min = min([back1, back2])
+		back_max = max([back1, back2])
+		if back_min != back1:
+			self.ui.back1.setValue(back2)
+			self.ui.back1_2.setValue(back2)
+			self.ui.back2.setValue(back1)
+			self.ui.back2_2.setValue(back1)
+
+	def manual_input_peak1(self):
+		self.ui.peak1_2.setValue(self.ui.peak1.value())
+		self.sort_and_check_widgets()
+			
+	def manual_input_peak2(self):
+		self.ui.peak2_2.setValue(self.ui.peak2.value())
+		self.sort_and_check_widgets()
+			
+	def manual_input_peak1_2(self):
+		self.ui.peak1.setValue(self.ui.peak1_2.value())
+		self.sort_and_check_widgets()
+			
+	def manual_input_peak2_2(self):
+		self.ui.peak2.setValue(self.ui.peak2_2.value())
+		self.sort_and_check_widgets()
+
+	def manual_input_back1(self):
+		self.ui.back1_2.setValue(self.ui.back1.value())
+		self.sort_and_check_widgets()
+			
+	def manual_input_back2(self):
+		self.ui.back2_2.setValue(self.ui.back2.value())
+		self.sort_and_check_widgets()
+			
+	def manual_input_back1_2(self):
+		self.ui.back1.setValue(self.ui.back1_2.value())
+		self.sort_and_check_widgets()
+			
+	def manual_input_back2_2(self):
+		self.ui.back2.setValue(self.ui.back2_2.value())
+		self.sort_and_check_widgets()
+
+	def sort_and_check_widgets(self):
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
+
+	def check_peak_back_input_validity(self):
+		peak1 = self.ui.peak1.value()
+		peak2 = self.ui.peak2.value()
+		back1 = self.ui.back1.value()
+		back2 = self.ui.back2.value()
 		
+		_show_widgets_1 = False
+		_show_widgets_2 = False
+		
+		if not self.ui.back_flag.isChecked():
+			_show_widgets_2 = False
+			_show_widgets_1 = False
+		else:
+			if back1 > peak1:
+				_show_widgets_1 = True
+			if back2 < peak2:
+				_show_widgets_2 = True
+				
+		self.ui.back1_label.setVisible(_show_widgets_1)
+		self.ui.back1_label_2.setVisible(_show_widgets_1)
+		self.ui.peak1_label.setVisible(_show_widgets_1)
+		self.ui.peak1_label_2.setVisible(_show_widgets_1)
+		
+		self.ui.back2_label.setVisible(_show_widgets_2)
+		self.ui.back2_label_2.setVisible(_show_widgets_2)
+		self.ui.peak2_label.setVisible(_show_widgets_2)
+		self.ui.peak2_label_2.setVisible(_show_widgets_2)
+		
+		self.ui.error_label.setVisible(_show_widgets_1 or _show_widgets_2)
+			
+	def manual_input_of_peak_back_field(self):
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
+		
+	def manual_input_of_low_res_field(self):
+		pass
+	
+	def manual_input_of_tof_field(self):
+		pass
+	
+	def manual_auto_tof_clicked(self):
+		status = self.ui.tof_manual_flag.isChecked()
+		self.activate_tof_widgets(status)
+		
+	def activate_tof_widgets(self, status):
+		self.ui.tof_from.setEnabled(status)
+		self.ui.tof_to.setEnabled(status)
+		self.ui.tof_from_label.setEnabled(status)
+		self.ui.tof_to_label.setEnabled(status)
+		self.ui.tof_from_units.setEnabled(status)
+		self.ui.tof_to_units.setEnabled(status)
+
+	
