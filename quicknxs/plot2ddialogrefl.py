@@ -9,6 +9,12 @@ class Plot2dDialogREFL(QDialog):
 	_open_instances = []
 	data = None
 	
+	manual_min_tof = None
+	manual_max_tof = None
+	
+	auto_min_tof = None
+	auto_max_tof = None
+	
 	def __init__(self, main_gui, data, parent=None):
 
 		self.main_gui = main_gui
@@ -43,35 +49,19 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.back1_label.setPalette(palette)
 		self.ui.back2_label.setVisible(False)
 		self.ui.back2_label.setPalette(palette)
-		self.ui.peak1_label_2.setVisible(False)
-		self.ui.peak1_label_2.setPalette(palette)
-		self.ui.peak2_label_2.setVisible(False)
-		self.ui.peak2_label_2.setPalette(palette)
-		self.ui.back1_label_2.setVisible(False)
-		self.ui.back1_label_2.setPalette(palette)
-		self.ui.back2_label_2.setVisible(False)
-		self.ui.back2_label_2.setPalette(palette)
 		
 		# peak
 		self.ui.peak1.setMinimum(yrange[0])
 		self.ui.peak1.setMaximum(yrange[1])
 		self.ui.peak2.setMinimum(yrange[0])
 		self.ui.peak2.setMaximum(yrange[1])
-		self.ui.peak1_2.setMinimum(yrange[0])
-		self.ui.peak1_2.setMaximum(yrange[1])
-		self.ui.peak2_2.setMinimum(yrange[0])
-		self.ui.peak2_2.setMaximum(yrange[1])
 
 		# back
 		self.ui.back1.setMinimum(yrange[0])
 		self.ui.back1.setMaximum(yrange[1])
 		self.ui.back2.setMinimum(yrange[0])
 		self.ui.back2.setMaximum(yrange[1])
-		self.ui.back1_2.setMinimum(yrange[0])
-		self.ui.back1_2.setMaximum(yrange[1])
-		self.ui.back2_2.setMinimum(yrange[0])
-		self.ui.back2_2.setMaximum(yrange[1])
-		
+
 		# low res
 		self.ui.low_res1.setMinimum(xrange[0])
 		self.ui.low_res1.setMaximum(xrange[1])
@@ -90,15 +80,30 @@ class Plot2dDialogREFL(QDialog):
 		tof_range_auto = _data.tof_range_auto
 		tof_range = _data.tof_range
 	
+		# make sure we are in ms
+		tof_range_auto_min = tof_range_auto[0]
+		tof_range_auto_max = tof_range_auto[1]
+		if tof_range_auto_min > 1000:
+			tof_range_auto_min /= 1000.
+			tof_range_auto_max /= 1000.
+		self.auto_max_tof = tof_range_auto_max
+		self.auto_min_tof = tof_range_auto_min
+		
+		tof_range_manual_min = tof_range[0]
+		tof_range_manual_max = tof_range[1]
+		if tof_range_manual_min > 1000:
+			tof_range_manual_min /= 1000.
+			tof_range_manual_max /= 1000.
+		self.manual_max_tof = tof_range_manual_max
+		self.manual_min_tof = tof_range_manual_min
+		self.manual_auto_tof_clicked()
+	
 		self.ui.peak1.setValue(int(peak[0]))
 		self.ui.peak2.setValue(int(peak[1]))
-		self.ui.peak1_2.setValue(int(peak[0]))
-		self.ui.peak2_2.setValue(int(peak[1]))
 	
 		self.ui.back1.setValue(int(back[0]))
 		self.ui.back2.setValue(int(back[1]))
-		self.ui.back1_2.setValue(int(back[0]))
-		self.ui.back2_2.setValue(int(back[1]))
+
 		self.activate_or_not_back_widgets(back_flag)
 		
 		self.ui.low_res1.setValue(int(low_res[0]))
@@ -107,11 +112,8 @@ class Plot2dDialogREFL(QDialog):
 		
 	def activate_or_not_back_widgets(self, back_flag):
 		self.ui.back_flag.setChecked(back_flag)
-		self.ui.back_2_flag.setChecked(back_flag)
 		self.ui.back1.setEnabled(back_flag)
 		self.ui.back2.setEnabled(back_flag)
-		self.ui.back1_2.setEnabled(back_flag)
-		self.ui.back2_2.setEnabled(back_flag)
 		self.check_peak_back_input_validity()
 	
 	def activate_or_not_low_res_widgets(self, low_res_flag):
@@ -127,9 +129,7 @@ class Plot2dDialogREFL(QDialog):
 		peak_max = max([peak1, peak2])
 		if peak_min != peak1:
 			self.ui.peak1.setValue(peak2)
-			self.ui.peak1_2.setValue(peak2)
 			self.ui.peak2.setValue(peak1)
-			self.ui.peak2_2.setValue(peak1)
 			
 		back1 = self.ui.back1.value()
 		back2 = self.ui.back2.value()		
@@ -137,42 +137,20 @@ class Plot2dDialogREFL(QDialog):
 		back_max = max([back1, back2])
 		if back_min != back1:
 			self.ui.back1.setValue(back2)
-			self.ui.back1_2.setValue(back2)
 			self.ui.back2.setValue(back1)
-			self.ui.back2_2.setValue(back1)
 
 	def manual_input_peak1(self):
-		self.ui.peak1_2.setValue(self.ui.peak1.value())
 		self.sort_and_check_widgets()
 			
 	def manual_input_peak2(self):
-		self.ui.peak2_2.setValue(self.ui.peak2.value())
 		self.sort_and_check_widgets()
 			
-	def manual_input_peak1_2(self):
-		self.ui.peak1.setValue(self.ui.peak1_2.value())
-		self.sort_and_check_widgets()
-			
-	def manual_input_peak2_2(self):
-		self.ui.peak2.setValue(self.ui.peak2_2.value())
-		self.sort_and_check_widgets()
-
 	def manual_input_back1(self):
-		self.ui.back1_2.setValue(self.ui.back1.value())
 		self.sort_and_check_widgets()
 			
 	def manual_input_back2(self):
-		self.ui.back2_2.setValue(self.ui.back2.value())
 		self.sort_and_check_widgets()
 			
-	def manual_input_back1_2(self):
-		self.ui.back1.setValue(self.ui.back1_2.value())
-		self.sort_and_check_widgets()
-			
-	def manual_input_back2_2(self):
-		self.ui.back2.setValue(self.ui.back2_2.value())
-		self.sort_and_check_widgets()
-
 	def sort_and_check_widgets(self):
 		self.sort_peak_back_input()
 		self.check_peak_back_input_validity()
@@ -196,14 +174,10 @@ class Plot2dDialogREFL(QDialog):
 				_show_widgets_2 = True
 				
 		self.ui.back1_label.setVisible(_show_widgets_1)
-		self.ui.back1_label_2.setVisible(_show_widgets_1)
 		self.ui.peak1_label.setVisible(_show_widgets_1)
-		self.ui.peak1_label_2.setVisible(_show_widgets_1)
 		
 		self.ui.back2_label.setVisible(_show_widgets_2)
-		self.ui.back2_label_2.setVisible(_show_widgets_2)
 		self.ui.peak2_label.setVisible(_show_widgets_2)
-		self.ui.peak2_label_2.setVisible(_show_widgets_2)
 		
 		self.ui.error_label.setVisible(_show_widgets_1 or _show_widgets_2)
 			
@@ -212,14 +186,36 @@ class Plot2dDialogREFL(QDialog):
 		self.check_peak_back_input_validity()
 		
 	def manual_input_of_low_res_field(self):
-		pass
+		value1 = self.ui.low_res1.value()
+		value2 = self.ui.low_res2.value()
+		value_min = min([value1,value2])
+		value_max = max([value1,value2])
+		self.ui.low_res1.setValue(value_min)
+		self.ui.low_res2.setValue(value_max)
 	
 	def manual_input_of_tof_field(self):
-		pass
+		tof1 = float(self.ui.tof_from.text())
+		tof2 = float(self.ui.tof_to.text())
+		tof_min = min([tof1, tof2])
+		tof_max = max([tof1, tof2])
+		str_tof_min = ("%.2f"%tof_min)
+		str_tof_max = ("%.2f"%tof_max)
+		self.ui.tof_from.setText(str_tof_min)
+		self.ui.tof_to.setText(str_tof_max)
+		self.manual_min_tof = tof_min
+		self.manual_max_tof = tof_max
 	
 	def manual_auto_tof_clicked(self):
-		status = self.ui.tof_manual_flag.isChecked()
-		self.activate_tof_widgets(status)
+		isManualChecked = self.ui.tof_manual_flag.isChecked()
+		self.activate_tof_widgets(isManualChecked)
+		if isManualChecked:
+			_from_value = "%.2f"%self.manual_min_tof
+			_to_value = "%.2f"%self.manual_max_tof
+		else:
+			_from_value = "%.2f"%self.auto_min_tof
+			_to_value = "%.2f"%self.auto_max_tof
+		self.ui.tof_from.setText(_from_value)
+		self.ui.tof_to.setText(_to_value)
 		
 	def activate_tof_widgets(self, status):
 		self.ui.tof_from.setEnabled(status)
@@ -228,5 +224,6 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.tof_to_label.setEnabled(status)
 		self.ui.tof_from_units.setEnabled(status)
 		self.ui.tof_to_units.setEnabled(status)
+
 
 	
