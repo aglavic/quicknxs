@@ -51,6 +51,7 @@ from peakfinder import PeakFinder
 from reduced_config_files_handler import ReducedConfigFilesHandler
 from init_file_menu import InitFileMenu
 from refl_gui_utils import PlotDialogREFL
+from plot2ddialogrefl import Plot2dDialogREFL
 from all_plot_axis import AllPlotAxis
 
 
@@ -591,10 +592,10 @@ class MainGUI(QtGui.QMainWindow):
     self.single_click_yi(isPanOrZoomActivated, type='norm')
 
   def single_click_norm_yt_plot(self, isPanOrZoomActivated):
-    pass
+    self.single_click_yt(isPanOrZoomActivated)
 
   def single_click_data_yt_plot(self, isPanOrZoomActivated):
-    pass
+    self.single_click_yt(isPanOrZoomActivated)
 
   def single_click_norm_it_plot(self, isPanOrZoomActivated):
     pass
@@ -631,6 +632,22 @@ class MainGUI(QtGui.QMainWindow):
       dialog_refl.show()
       
     self.timeClick1 = -1
+
+  def single_click_yt(self, isPanOrZoomActivated, type='data'):
+    if self.timeClick1 == -1:
+      self.timeClick1 = time.time()
+      return
+    elif abs(self.timeClick1 - time.time()) > 0.5:
+      self.timeClick1 = time.time()
+      return
+    else:
+      _timeClick2 = time.time()
+
+    if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
+      data = self.active_data
+      dialog_refl2d = Plot2dDialogREFL(self, data)
+      dialog_refl2d.show()
+
 
   # toggle log
   def logy_toggle_yt_plot(self, checked):
@@ -4677,8 +4694,7 @@ Do you want to try to restore the working reduction list?""",
 
     self.checkErrorWidgets()
     
-
-
+    
   # data low resolution spinboxes
   def norm_lowres_spinbox_validation(self):
     '''
