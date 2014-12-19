@@ -26,8 +26,34 @@ class Plot2dDialogREFL(QDialog):
 		self.ui = UiPlot()
 		self.ui.setupUi(self)
 		
+		self.setWindowTitle('Detector and  Pixel vs TOF  views')
 		self.init_gui()
 		self.populate_widgets()
+		
+		self.update_detector_tab_plot()
+		self.update_pixel_vs_tof_tab_plot()
+		
+	def update_detector_tab_plot(self):
+		pass
+	
+	def update_pixel_vs_tof_tab_plot(self):
+		ytof = self.data.ytofdata
+		tof_axis = self.data.tof_axis_auto_with_margin
+		tof_from = tof_axis[0]
+		tof_to = tof_axis[-1]
+		if tof_from > 1000: # stay in ms
+			tof_from /= 1000.
+			tof_to /= 1000.
+		pixel_from = 0
+		pixel_to = self.data.y.shape[0]-1
+		
+		self.ui.y_pixel_vs_tof_plot.imshow(ytof, log=True, aspect='auto',
+		                                   origin='lower', extent=[tof_from, tof_to, pixel_from, pixel_to])
+		self.ui.y_pixel_vs_tof_plot.set_xlabel(u't (ms)')
+		self.ui.y_pixel_vs_tof_plot.set_ylabel(u'y (pixel)')
+		self.ui.y_pixel_vs_tof_plot.draw()
+		
+		
 		
 	def init_gui(self):
 		palette = QPalette()

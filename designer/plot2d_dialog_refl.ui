@@ -31,7 +31,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="MPLWidget" name="widget" native="true">
+              <widget class="MPLWidget" name="y_pixel_vs_tof_plot" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>

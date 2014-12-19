@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot2d_dialog_refl.ui'
 #
-# Created: Fri Dec 19 16:20:38 2014
+# Created: Fri Dec 19 16:34:24 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,14 +27,14 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.widget = MPLWidget(self.tab)
+        self.y_pixel_vs_tof_plot = MPLWidget(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy)
-        self.widget.setObjectName("widget")
-        self.horizontalLayout.addWidget(self.widget)
+        sizePolicy.setHeightForWidth(self.y_pixel_vs_tof_plot.sizePolicy().hasHeightForWidth())
+        self.y_pixel_vs_tof_plot.setSizePolicy(sizePolicy)
+        self.y_pixel_vs_tof_plot.setObjectName("y_pixel_vs_tof_plot")
+        self.horizontalLayout.addWidget(self.y_pixel_vs_tof_plot)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.horizontalLayout_37 = QtGui.QHBoxLayout()
         self.horizontalLayout_37.setObjectName("horizontalLayout_37")
