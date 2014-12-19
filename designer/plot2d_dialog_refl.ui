@@ -288,7 +288,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="MPLWidget" name="widget_2" native="true">
+              <widget class="MPLWidget" name="detector_plot" native="true">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>

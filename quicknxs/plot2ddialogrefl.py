@@ -34,7 +34,14 @@ class Plot2dDialogREFL(QDialog):
 		self.update_pixel_vs_tof_tab_plot()
 		
 	def update_detector_tab_plot(self):
-		pass
+		xydata = self.data.xydata
+		
+		[ymax,xmax] = xydata.shape
+		self.ui.detector_plot.imshow(xydata, log=True, aspect='auto',
+		                             origin='lower', extent=[0,xmax,0,ymax])
+		self.ui.detector_plot.set_xlabel(u'x (pixel)')
+		self.ui.detector_plot.set_ylabel(u'y (pixel)')
+		self.ui.detector_plot.draw()
 	
 	def update_pixel_vs_tof_tab_plot(self):
 		ytof = self.data.ytofdata

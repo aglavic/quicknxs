@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot2d_dialog_refl.ui'
 #
-# Created: Fri Dec 19 16:34:24 2014
+# Created: Fri Dec 19 16:39:30 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,14 +122,14 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.widget_2 = MPLWidget(self.tab_2)
+        self.detector_plot = MPLWidget(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.widget_2.sizePolicy().hasHeightForWidth())
-        self.widget_2.setSizePolicy(sizePolicy)
-        self.widget_2.setObjectName("widget_2")
-        self.horizontalLayout_2.addWidget(self.widget_2)
+        sizePolicy.setHeightForWidth(self.detector_plot.sizePolicy().hasHeightForWidth())
+        self.detector_plot.setSizePolicy(sizePolicy)
+        self.detector_plot.setObjectName("detector_plot")
+        self.horizontalLayout_2.addWidget(self.detector_plot)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.frame_20 = QtGui.QFrame(self.tab_2)
         self.frame_20.setMaximumSize(QtCore.QSize(16777215, 50))
