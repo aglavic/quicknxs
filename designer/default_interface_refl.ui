@@ -902,7 +902,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -1658,7 +1658,7 @@ p, li { white-space: pre-wrap; }
                      <property name="childrenCollapsible">
                       <bool>false</bool>
                      </property>
-                     <widget class="MPLWidget" name="norm_yt_plot" native="true">
+                     <widget class="MPLWidgetNoLog" name="norm_yt_plot" native="true">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>

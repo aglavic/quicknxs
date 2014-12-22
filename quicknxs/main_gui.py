@@ -469,35 +469,46 @@ class MainGUI(QtGui.QMainWindow):
   def home_clicked_plot(self, plot_type='yi'):
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
+
     if _data is None:
       return
     data = _data.active_data
+
     if data.all_plot_axis.yi_data_interval is None:
       return
     if plot_type =='yi':
       [xmin,xmax,ymin,ymax] = data.all_plot_axis.yi_data_interval
+      data.all_plot_axis.yi_view_interval = [xmin,xmax,ymin,ymax]
       if c==0:
         _plot_ui = self.ui.data_yi_plot.canvas
       else:
         _plot_ui = self.ui.norm_yi_plot.canvas
+
     elif plot_type == 'yt':
       [xmin,xmax,ymin,ymax] = data.all_plot_axis.yt_data_interval
+      data.all_plot_axis.yt_view_interval = [xmin,xmax,ymin,ymax]
       if c==0:
         _plot_ui = self.ui.data_yt_plot.canvas
       else:
         _plot_ui = self.ui.norm_yt_plot.canvas
+
     elif plot_type == 'it':
       [xmin,xmax,ymin,ymax] = data.all_plot_axis.it_data_interval
+      data.all_plot_axis.it_view_interval = [xmin,xmax,ymin,ymax]
       if c==0:
         _plot_ui = self.ui.data_it_plot.canvas
       else:
         _plot_ui = self.ui.norm_it_plot.canvas
+
     elif plot_type == 'ix':
       [xmin,xmax,ymin,ymax] = data.all_plot_axis.ix_data_interval
+      data.all_plot_axis.ix_view_interval = [xmin,xmax,ymin,ymax]
       if c==0:
         _plot_ui = self.ui.data_ix_plot.canvas
       else:
         _plot_ui = self.ui.norm_ix_plot.canvas
+      
+    _data.active_data = data
       
     _plot_ui.ax.set_xlim([xmin, xmax])
     _plot_ui.ax.set_ylim([ymin, ymax])
@@ -592,10 +603,10 @@ class MainGUI(QtGui.QMainWindow):
     self.single_click_yi(isPanOrZoomActivated, type='norm')
 
   def single_click_norm_yt_plot(self, isPanOrZoomActivated):
-    self.single_click_yt(isPanOrZoomActivated)
+    self.single_click_yt(isPanOrZoomActivated, type='norm')
 
   def single_click_data_yt_plot(self, isPanOrZoomActivated):
-    self.single_click_yt(isPanOrZoomActivated)
+    self.single_click_yt(isPanOrZoomActivated, type='data')
 
   def single_click_norm_it_plot(self, isPanOrZoomActivated):
     pass
@@ -645,7 +656,7 @@ class MainGUI(QtGui.QMainWindow):
 
     if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
       data = self.active_data
-      dialog_refl2d = Plot2dDialogREFL(self, data)
+      dialog_refl2d = Plot2dDialogREFL(self, type, data)
       dialog_refl2d.show()
 
 
@@ -1696,7 +1707,7 @@ class MainGUI(QtGui.QMainWindow):
                      extent=[tof_axis[0]*1e-3, tof_axis[-1]*1e-3, 0, data.y.shape[0]-1])
       yt_plot.set_xlabel(u't (ms)')
       yt_plot.set_ylabel(u'y (pixel)')
-  
+      
       # display tof range in auto/manual TOF range    #FIXME
       autotmin = float(tof_range_auto[0])
       autotmax = float(tof_range_auto[1])
@@ -1733,6 +1744,7 @@ class MainGUI(QtGui.QMainWindow):
         yt_plot.canvas.ax.set_xlim([xmin,xmax])
         yt_plot.canvas.ax.set_ylim([ymin,ymax])
         yt_plot.canvas.draw()
+      
         
     # display it
     if plot_it:
@@ -4353,7 +4365,6 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without data background
     '''
-
     data = self.active_data
     if data is None:
       return

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Dec 22 08:34:58 2014
+# Created: Mon Dec 22 10:47:19 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -631,7 +631,7 @@ class Ui_MainWindow(object):
         self.splitter_8.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_8.setChildrenCollapsible(False)
         self.splitter_8.setObjectName("splitter_8")
-        self.norm_yt_plot = MPLWidget(self.splitter_8)
+        self.norm_yt_plot = MPLWidgetNoLog(self.splitter_8)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1433,7 +1433,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(2)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)

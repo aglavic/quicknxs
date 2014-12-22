@@ -9,6 +9,7 @@ class Plot2dDialogREFL(QDialog):
 	main_gui = None
 	_open_instances = []
 	data = None
+	type = 'data'
 	
 	manual_min_tof = None
 	manual_max_tof = None
@@ -16,10 +17,11 @@ class Plot2dDialogREFL(QDialog):
 	auto_min_tof = None
 	auto_max_tof = None
 	
-	def __init__(self, main_gui, active_data, parent=None):
+	def __init__(self, main_gui, type, active_data, parent=None):
 
 		self.main_gui = main_gui
 		self.data = active_data
+		self.type = type
 		
 		QDialog.__init__(self, parent=parent)
 		self.setWindowModality(False)
@@ -160,7 +162,13 @@ class Plot2dDialogREFL(QDialog):
 		lowresFlag = self.ui.low_res_flag.isChecked()
 		[peak1,peak2,back1,back2, backFlag] = self.retrievePeakBack()
 		return [lowres1,lowres2,lowresFlag,peak1,peak2,back1,back2,backFlag]
-		
+	
+	def retrieveLowRes(self):
+		lowres1 = self.ui.low_res1.value()
+		lowres2 = self.ui.low_res2.value()
+		lowresFlag = self.ui.low_res_flag.isChecked()
+		return [lowres1, lowres2, lowresFlag]
+	
 	def retrievePeakBack(self):
 		peak1 = self.ui.peak1.value()
 		peak2 = self.ui.peak2.value()
@@ -221,16 +229,16 @@ class Plot2dDialogREFL(QDialog):
 		tof_range = _data.tof_range
 	
 		# make sure we are in ms
-		tof_range_auto_min = tof_range_auto[0]
-		tof_range_auto_max = tof_range_auto[1]
+		tof_range_auto_min = float(tof_range_auto[0])
+		tof_range_auto_max = float(tof_range_auto[1])
 		if tof_range_auto_min > 1000:
 			tof_range_auto_min /= 1000.
 			tof_range_auto_max /= 1000.
 		self.auto_max_tof = tof_range_auto_max
 		self.auto_min_tof = tof_range_auto_min
 		
-		tof_range_manual_min = tof_range[0]
-		tof_range_manual_max = tof_range[1]
+		tof_range_manual_min = float(tof_range[0])
+		tof_range_manual_max = float(tof_range[1])
 		if tof_range_manual_min > 1000:
 			tof_range_manual_min /= 1000.
 			tof_range_manual_max /= 1000.
@@ -378,5 +386,44 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.tof_to_units.setEnabled(status)
 		self.update_pixel_vs_tof_tab_plot()
 
-
+	def closeEvent(self, event=None):
+		# collect values
+		[lowres1, lowres2, lowresFlag] = self.retrieveLowRes()
+		[peak1, peak2, back1, back2, backFlag]= self.retrievePeakBack()
 	
+		if self.type == 'data':
+			self.main_gui.ui.dataPeakFromValue.setValue(peak1)
+			self.main_gui.ui.dataPeakToValue.setValue(peak2)
+			self.main_gui.ui.dataBackFromValue.setValue(back1)
+			self.main_gui.ui.dataBackToValue.setValue(back2)
+			self.main_gui.ui.dataBackgroundFlag.setChecked(backFlag)
+			self.main_gui.data_peak_and_back_validation(False)
+			self.main_gui.ui.dataBackFromLabel.setEnabled(backFlag)
+			self.main_gui.ui.dataBackFromValue.setEnabled(backFlag)
+			self.main_gui.ui.dataBackToLabel.setEnabled(backFlag)
+			self.main_gui.ui.dataBackToValue.setEnabled(backFlag)
+			self.main_gui.ui.dataLowResFromValue.setValue(lowres1)
+			self.main_gui.ui.dataLowResToValue.setValue(lowres2)
+			self.main_gui.ui.dataLowResFromLabel.setEnabled(lowresFlag)
+			self.main_gui.ui.dataLowResFromValue.setEnabled(lowresFlag)
+			self.main_gui.ui.dataLowResToLabel.setEnabled(lowresFlag)
+			self.main_gui.ui.dataLowResToValue.setEnabled(lowresFlag)
+		else:
+			self.main_gui.ui.normPeakFromValue.setValue(peak1)
+			self.main_gui.ui.normPeakToValue.setValue(peak2)
+			self.main_gui.ui.normBackFromValue.setValue(back1)
+			self.main_gui.ui.normBackToValue.setValue(back2)
+			self.main_gui.ui.normBackgroundFlag.setChecked(backFlag)
+			self.main_gui.norm_peak_and_back_validation(False)
+			self.main_gui.ui.normBackFromLabel.setEnabled(backFlag)
+			self.main_gui.ui.normBackFromValue.setEnabled(backFlag)
+			self.main_gui.ui.normBackToLabel.setEnabled(backFlag)
+			self.main_gui.ui.normBackToValue.setEnabled(backFlag)
+			self.main_gui.ui.normLowResFromValue.setValue(lowres1)
+			self.main_gui.ui.normLowResToValue.setValue(lowres2)
+			self.main_gui.ui.normLowResFromLabel.setEnabled(lowresFlag)
+			self.main_gui.ui.normLowResFromValue.setEnabled(lowresFlag)
+			self.main_gui.ui.normLowResToLabel.setEnabled(lowresFlag)
+			self.main_gui.ui.normLowResToValue.setEnabled(lowresFlag)
+			
+		self.main_gui.plot_overview_REFL()
