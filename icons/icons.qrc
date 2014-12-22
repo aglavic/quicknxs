@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="General">
+    <file>export_ascii.png</file>
     <file>logo_refl.png</file>
     <file>flat_data_group_background.png</file>
     <file>metadata_background.png</file>
@@ -27,6 +28,7 @@
     <file>norm_group_background.png</file>
   </qresource>
   <qresource prefix="MPL Toolbar">
+    <file>export_ascii.png</file>
     <file>toggle-log.png</file>
     <file>toggle-xlog.png</file>
     <file>edit-guides.png</file>

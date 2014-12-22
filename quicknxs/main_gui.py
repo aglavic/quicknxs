@@ -287,11 +287,13 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
     self.ui.data_it_plot.logtogy.connect(self.logy_toggle_it_plot)
     self.ui.data_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
+    self.ui.data_it_plot.toolbar.exportClicked.connect(self.export_data_it)
 
     self.ui.norm_it_plot.singleClick.connect(self.single_click_norm_it_plot)
     self.ui.norm_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
     self.ui.norm_it_plot.logtogy.connect(self.logy_toggle_it_plot)
     self.ui.norm_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
+    self.ui.norm_it_plot.toolbar.exportClicked.connect(self.export_norm_it)
 
     self.ui.data_ix_plot.singleClick.connect(self.single_click_data_ix_plot)
     self.ui.data_ix_plot.leaveFigure.connect(self.leave_figure_ix_plot)
@@ -308,6 +310,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_stitching_plot.toolbar.homeClicked.connect(self.home_clicked_data_stitching_plot)
     self.ui.data_stitching_plot.logtogx.connect(self.logx_toggle_data_stitching)
     self.ui.data_stitching_plot.logtogy.connect(self.logy_toggle_data_stitching)
+    
     
       
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
@@ -452,6 +455,12 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
+ # export
+  def export_data_it(self):
+    pass
+
+  def export_norm_it(self):
+    pass
   
   # home button of plots
   def home_clicked_yi_plot(self):

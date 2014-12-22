@@ -36,6 +36,8 @@ class NavigationToolbar(NavigationToolbar2QT):
   _auto_toggle=False
   logtog = QtCore.pyqtSignal(str)
   homeClicked = QtCore.pyqtSignal()
+  exportClicked = QtCore.pyqtSignal()
+  
   isCursorNormal = True
 
   isPanActivated = False
@@ -87,11 +89,16 @@ class NavigationToolbar(NavigationToolbar2QT):
     icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/document-save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     a=self.addAction(icon, 'Save', self.save_figure)
     a.setToolTip('Save the figure')
-
+    
     icon=QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/document-print.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     a=self.addAction(icon, 'Print', self.print_figure)
     a.setToolTip('Print the figure with the default printer')
+
+    icon=QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/export_ascii.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    a=self.addAction(icon, "Export", self.export_ascii)
+    a.setToolTip('Export the plot into ASCII file')
 
     icon=QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(":/MPL Toolbar/toggle-xlog.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -223,9 +230,8 @@ class NavigationToolbar(NavigationToolbar2QT):
 
       self.set_message(self.mode)
 
-  #def logtoggle(self, checked):
-    #print 'inside mplwidgetxlog logtoggle'
-    #self.logtog.emit(checked)
+  def export_ascii(self):
+    self.exportClicked.emit()
 
   def print_figure(self):
     '''
