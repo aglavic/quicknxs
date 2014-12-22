@@ -2,11 +2,13 @@ from PyQt4.QtGui import QDialog, QPalette
 from PyQt4.QtCore import Qt
 from plot_dialog_refl import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
+import colors
 
 class PlotDialogREFL(QDialog):
 	
 	main_gui = None
 	type = 'data'
+	data = None
 	
 	_open_instances = []
 	yaxis = None
@@ -23,15 +25,11 @@ class PlotDialogREFL(QDialog):
 	
 	nbr_pixel_y_axis = 304
 	
-	def __init__(self, main_gui, type, yaxis, peak, back, new_detector_geometry_flag, parent=None):
+	def __init__(self, main_gui, type, active_data, parent=None):
 
 		self.type = type
 		self.main_gui = main_gui
-
-		self.yaxis = yaxis
-		self.peak = peak
-		self.back = back
-		_new_detector_geometry_flag = new_detector_geometry_flag
+		self.data = active_data
 
 		QDialog.__init__(self, parent=parent)
 		self.setWindowModality(False)
@@ -40,7 +38,8 @@ class PlotDialogREFL(QDialog):
 		self.ui.setupUi(self)
 
 		self.hide_and_format_invalid_widgets()
-
+		
+		_new_detector_geometry_flag = self.data.new_detector_geometry_flag
 		if not _new_detector_geometry_flag:
 			self.reset_max_ui_value()
 			self.nbr_pixel_y_axis = 256
@@ -67,60 +66,54 @@ class PlotDialogREFL(QDialog):
 		self.ui.john_back2_label.setPalette(palette)
 		self.ui.invalid_selection_label.setVisible(False)
 		self.ui.invalid_selection_label.setPalette(palette)
-		
-	def check_widget_format(self):
-		'''
-		will inform the user if back is inside the peak for example....
-		'''
-		self.widgets_to_show('peak1', False)
-		self.widgets_to_show('peak2', False)
-		self.widgets_to_show('back1', False)
-		self.widgets_to_show('back2', False)
 
+	def sort_peak_back_input(self):
+		peak1 = self.ui.jim_peak1.value()
+		peak2 = self.ui.jim_peak2.value()
+		peak_min = min([peak1,peak2])
+		peak_max = max([peak1,peak2])
+		if peak_min != peak1:
+			self.ui.jim_peak1.setValue(peak2)
+			self.ui.john_peak1.setValue(peak2)
+			self.ui.jim_peak2.setValue(peak1)
+			self.ui.john_peak2.setValue(peak1)
+			
+		back1 = self.ui.jim_back1.value()
+		back2 = self.ui.jim_back2.value()
+		back_min = min([back1,back2])
+		back_max = max([back1,back2])
+		if back_min != back1:
+			self.ui.jim_back1.setValue(back2)
+			self.ui.john_back1.setValue(back2)
+			self.ui.jim_back2.setValue(back1)
+			self.ui.john_back2.setValue(back1)
+		
+	def check_peak_back_input_validity(self):
 		peak1 = self.ui.jim_peak1.value()
 		peak2 = self.ui.jim_peak2.value()
 		back1 = self.ui.jim_back1.value()
 		back2 = self.ui.jim_back2.value()
+
+		_show_widgets_1 = False
+		_show_widgets_2 = False
 		
-		peak_min = min([peak1, peak2])
-		peak_max = max([peak1, peak2])
+		if self.ui.jim_back_flag.isChecked():
+			if back1 > peak1:
+				_show_widgets_1 = True
+			if back2 < peak2:
+				_show_widgets_2 = True
 		
-		back_min = min([back1, back2])
-		back_max = max([back1, back2])
-		
-		is_peak1_peak_min = (peak1 == peak_min)
-		is_peak2_peak_max = (peak2 == peak_max)
-		is_back1_back_min = (back1 == back_min)
-		is_back2_back_max = (back2 == back_max)
-		
-		_at_least_one_error = False
-		
-		if back_min > peak_min:
-			_at_least_one_error = True
-			if is_peak1_peak_min:
-				self.widgets_to_show('peak1', True)
-			else:
-				self.widgets_to_show('peak2', True)
-			
-			if is_back1_back_min:
-				self.widgets_to_show('back1', True)
-			else:
-				self.widgets_to_show('back2', True)
+		self.ui.jim_back1_label.setVisible(_show_widgets_1)
+		self.ui.jim_peak1_label.setVisible(_show_widgets_1)
+		self.ui.jim_back2_label.setVisible(_show_widgets_2)
+		self.ui.jim_peak2_label.setVisible(_show_widgets_2)
+
+		self.ui.john_back1_label.setVisible(_show_widgets_1)
+		self.ui.john_peak1_label.setVisible(_show_widgets_1)
+		self.ui.john_back2_label.setVisible(_show_widgets_2)
+		self.ui.john_peak2_label.setVisible(_show_widgets_2)
 				
-		if back_max < peak_max:
-			_at_least_one_error = True
-			if is_peak2_peak_max:
-				self.widgets_to_show('peak2', True)
-			else:
-				self.widgets_to_show('peak1', True)
-			
-			if is_back2_back_max:
-				self.widgets_to_show('back2', True)
-			else:
-				self.widgets_to_show('back1', True)
-				
-		self.ui.invalid_selection_label.setVisible(_at_least_one_error)
-				
+		self.ui.invalid_selection_label.setVisible(_show_widgets_1 or _show_widgets_2)
 				
 	def widgets_to_show(self, widget, status):
 		if widget == 'peak1':
@@ -136,7 +129,6 @@ class PlotDialogREFL(QDialog):
 			self.ui.jim_back2_label.setVisible(status)
 			self.ui.john_back2_label.setVisible(status)
 		
-		
 	def reset_max_ui_value(self):
 		self.ui.john_peak1.setMaximum(255)
 		self.ui.john_peak2.setMaximum(255)
@@ -148,10 +140,17 @@ class PlotDialogREFL(QDialog):
 		self.ui.jim_back2.setMaximum(255)
 
 	def init_plot(self):
-		xaxis = range(len(self.yaxis))
+		_yaxis = self.data.ycountsdata
+		xaxis = range(len(_yaxis))
 		self.xaxis = xaxis
-		[peak1, peak2] = self.peak
-		[back1, back2] = self.back
+		
+		_peak = self.data.peak
+		_back = self.data.back
+		[peak1, peak2] = _peak
+		[back1, back2] = _back
+		back_flag = self.data.back_flag
+		self.ui.jim_back_flag.setChecked(back_flag)
+		self.ui.john_back_flag.setChecked(back_flag)
 		
 		peak1 = int(peak1)
 		peak2 = int(peak2)
@@ -165,7 +164,7 @@ class PlotDialogREFL(QDialog):
 		
 		# John
 		ui_plot1 = self.ui.plot_pixel_vs_counts
-		ui_plot1.plot(self.yaxis, xaxis)
+		ui_plot1.plot(_yaxis, xaxis)
 		ui_plot1.canvas.ax.set_xlabel(u'counts')
 		ui_plot1.canvas.ax.set_ylabel(u'Pixels')
 		if self.isJohnLog:
@@ -173,15 +172,18 @@ class PlotDialogREFL(QDialog):
 		else:
 			ui_plot1.canvas.ax.set_xscale('linear')
 		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)
-		ui_plot1.canvas.ax.axhline(peak1, color='#00aa00')
-		ui_plot1.canvas.ax.axhline(peak2, color='#00aa00')
-		ui_plot1.canvas.ax.axhline(back1, color='#aa0000')
-		ui_plot1.canvas.ax.axhline(back2, color='#aa0000')
+		ui_plot1.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		ui_plot1.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+
+		if back_flag:
+			ui_plot1.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			ui_plot1.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+
 		ui_plot1.draw()
 
 		# Jim
 		ui_plot2 = self.ui.plot_counts_vs_pixel
-		ui_plot2.canvas.ax.plot(xaxis, self.yaxis)
+		ui_plot2.canvas.ax.plot(xaxis, _yaxis)
 		ui_plot2.canvas.ax.set_xlabel(u'Pixels')
 		ui_plot2.canvas.ax.set_ylabel(u'Counts')
 		if self.isJimLog:
@@ -189,10 +191,12 @@ class PlotDialogREFL(QDialog):
 		else:
 			ui_plot2.canvas.ax.set_yscale('linear')
 		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
-		ui_plot2.canvas.ax.axvline(peak1, color='#00aa00')
-		ui_plot2.canvas.ax.axvline(peak2, color='#00aa00')
-		ui_plot2.canvas.ax.axvline(back1, color='#aa0000')
-		ui_plot2.canvas.ax.axvline(back2, color='#aa0000')
+		ui_plot2.canvas.ax.axvline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		ui_plot2.canvas.ax.axvline(peak2, color=colors.PEAK_SELECTION_COLOR)
+
+		if back_flag:
+			ui_plot2.canvas.ax.axvline(back1, color=colors.BACK_SELECTION_COLOR)
+			ui_plot2.canvas.ax.axvline(back2, color=colors.BACK_SELECTION_COLOR)
 		ui_plot2.draw()
 		
 		# John and Jim peak and back
@@ -214,19 +218,40 @@ class PlotDialogREFL(QDialog):
 		else:
 			self.isJimLog = False
 		
+	def jim_back_flag_clicked(self, status):
+		self.ui.john_back_flag.setChecked(status)
+		self.data.back_flag = status
+		self.update_plot()
+		self.update_back_flag_widgets()
+		self.check_peak_back_input_validity()		
+		
+	def john_back_flag_clicked(self, status):
+		self.ui.jim_back_flag.setChecked(status)
+		self.data.back_flag = status
+		self.update_plot()
+		self.update_back_flag_widgets()
+		self.check_peak_back_input_validity()		
+
+	def update_back_flag_widgets(self):
+		status_flag = self.ui.jim_back_flag.isChecked()
+		self.ui.jim_back1.setEnabled(status_flag)
+		self.ui.jim_back2.setEnabled(status_flag)
+		self.ui.john_back1.setEnabled(status_flag)
+		self.ui.john_back2.setEnabled(status_flag)
+				
 	def set_peak_value(self, peak1, peak2):
 		self.ui.john_peak1.setValue(peak1)
 		self.ui.jim_peak1.setValue(peak1)
 		self.ui.john_peak2.setValue(peak2)
 		self.ui.jim_peak2.setValue(peak2)
-		self.check_widget_format()
+		self.check_peak_back_input_validity()
 	
 	def set_back_value(self, back1, back2):
 		self.ui.john_back1.setValue(back1)
 		self.ui.jim_back1.setValue(back1)
 		self.ui.john_back2.setValue(back2)
 		self.ui.jim_back2.setValue(back2)
-		self.check_widget_format()
+		self.check_peak_back_input_validity()
 
 	# peak1
 	def update_peak1(self, value, updateJimSpinbox=True,
@@ -235,14 +260,14 @@ class PlotDialogREFL(QDialog):
 			self.ui.jim_peak1.setValue(value)
 		if updateJohnSpinbox:
 			self.ui.john_peak1.setValue(value)
-		self._prev_peak1 = value
-		self.check_widget_format()
-				
+		self._prev_peak1 = value				
 	def jim_peak1_spinbox_signal(self):
 		value = self.ui.jim_peak1.value()
 		if value == self._prev_peak1:
 			return
 		self.update_peak1(value, updateJimSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()
 		
 	def john_peak1_spinbox_signal(self):
@@ -250,6 +275,8 @@ class PlotDialogREFL(QDialog):
 		if value == self._prev_peak1:
 			return
 		self.update_peak1(value, updateJohnSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()		
 
 	# peak2
@@ -260,13 +287,15 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_peak2.setValue(value)
 		self._prev_peak2 = value
-		self.check_widget_format()
+		self.check_peak_back_input_validity()
 		
 	def jim_peak2_spinbox_signal(self):
 		value = self.ui.jim_peak2.value()
 		if value == self._prev_peak2:
 			return
 		self.update_peak2(value, updateJimSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()
 				
 	def john_peak2_spinbox_signal(self):
@@ -274,6 +303,8 @@ class PlotDialogREFL(QDialog):
 		if value == self._prev_peak2:
 			return
 		self.update_peak2(value, updateJohnSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()
 		
 	# back1
@@ -284,13 +315,15 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_back1.setValue(value)
 		self._prev_back1 = value
-		self.check_widget_format()			
+		self.check_peak_back_input_validity()			
 			
 	def jim_back1_spinbox_signal(self):
 		value = self.ui.jim_back1.value()
 		if value == self._prev_back1:
 			return
 		self.update_back1(value, updateJimSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()		
 		self.update_plot()
 				
 	def john_back1_spinbox_signal(self):
@@ -298,6 +331,8 @@ class PlotDialogREFL(QDialog):
 		if value == self._prev_back1:
 			return
 		self.update_back1(value, updateJohnSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()
 				
 	# back2
@@ -308,13 +343,15 @@ class PlotDialogREFL(QDialog):
 		if updateJohnSpinbox:
 			self.ui.john_back2.setValue(value)
 		self._prev_back2 = value
-		self.check_widget_format()
+		self.check_peak_back_input_validity()
 		
 	def jim_back2_spinbox_signal(self):
 		value = self.ui.jim_back2.value()
 		if value == self._prev_back2:
 			return
 		self.update_back2(value, updateJimSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()
 		
 	def john_back2_spinbox_signal(self):
@@ -322,36 +359,9 @@ class PlotDialogREFL(QDialog):
 		if value == self._prev_back2:
 			return
 		self.update_back2(value, updateJohnSpinbox=False)
+		self.sort_peak_back_input()
+		self.check_peak_back_input_validity()
 		self.update_plot()
-						
-	# check widgets 	
-	def make_sure_peak1_lt_peak2(self):
-		peak1 = self.ui.jim_peak1.value()
-		peak2 = self.ui.jim_peak2.value()
-		if peak1>peak2:
-			self.update_peak1(peak2)
-			self.update_peak2(peak1)
-
-	def make_sure_peak2_gt_peak1(self):
-		peak1 = self.ui.jim_peak1.value()
-		peak2 = self.ui.jim_peak2.value()
-		if peak2 < peak1:
-			self.update_peak1(peak2)
-			self.update_peak2(peak1)
-		
-	def make_sure_back1_lt_back2(self):
-		back1 = self.ui.jim_back1.value()
-		back2 = self.ui.jim_back2.value()
-		if back1>back2:
-			self.update_back1(back2)
-			self.update_back2(back1)
-		
-	def make_sure_back2_gt_back1(self):
-		back1 = self.ui.jim_back1.value()
-		back2 = self.ui.jim_back2.value()
-		if back2<back1:
-			self.update_back1(back2)
-			self.update_back2(back1)
 		
 	def update_plot(self):
 		self.ui.plot_counts_vs_pixel.clear()
@@ -362,9 +372,10 @@ class PlotDialogREFL(QDialog):
 		back1 = self.ui.jim_back1.value()
 		back2 = self.ui.jim_back2.value()
 		
+		_yaxis = self.data.ycountsdata
 		# John
 		ui_plot1 = self.ui.plot_pixel_vs_counts
-		ui_plot1.canvas.ax.plot(self.yaxis, self.xaxis)
+		ui_plot1.canvas.ax.plot(_yaxis, self.xaxis)
 		ui_plot1.canvas.ax.set_xlabel(u'counts')
 		ui_plot1.canvas.ax.set_ylabel(u'Pixels')
 		if self.isJohnLog:
@@ -372,15 +383,18 @@ class PlotDialogREFL(QDialog):
 		else:
 			ui_plot1.canvas.ax.set_xscale('linear')
 		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)		
-		ui_plot1.canvas.ax.axhline(peak1, color='#00aa00')
-		ui_plot1.canvas.ax.axhline(peak2, color='#00aa00')
-		ui_plot1.canvas.ax.axhline(back1, color='#aa0000')
-		ui_plot1.canvas.ax.axhline(back2, color='#aa0000')
+		ui_plot1.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		ui_plot1.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+
+		if self.data.back_flag:
+			ui_plot1.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			ui_plot1.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+
 		ui_plot1.canvas.draw()
 
 		# Jim
 		ui_plot2 = self.ui.plot_counts_vs_pixel
-		ui_plot2.canvas.ax.plot(self.xaxis, self.yaxis)
+		ui_plot2.canvas.ax.plot(self.xaxis, _yaxis)
 		ui_plot2.canvas.ax.set_xlabel(u'Pixels')
 		ui_plot2.canvas.ax.set_ylabel(u'Counts')
 		if self.isJimLog:
@@ -388,10 +402,13 @@ class PlotDialogREFL(QDialog):
 		else:
 			ui_plot2.canvas.ax.set_yscale('linear')
 		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
-		ui_plot2.canvas.ax.axvline(peak1, color='#00aa00')
-		ui_plot2.canvas.ax.axvline(peak2, color='#00aa00')
-		ui_plot2.canvas.ax.axvline(back1, color='#aa0000')
-		ui_plot2.canvas.ax.axvline(back2, color='#aa0000')
+		ui_plot2.canvas.ax.axvline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		ui_plot2.canvas.ax.axvline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		
+		if self.data.back_flag:
+			ui_plot2.canvas.ax.axvline(back1, color=colors.BACK_SELECTION_COLOR)
+			ui_plot2.canvas.ax.axvline(back2, color=colors.BACK_SELECTION_COLOR)
+
 		ui_plot2.canvas.draw()
 		
 	def closeEvent(self, event=None):

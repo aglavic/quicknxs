@@ -635,11 +635,7 @@ class MainGUI(QtGui.QMainWindow):
 
     if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
       data = self.active_data
-      yaxis = data.ycountsdata
-      peak = data.peak
-      back = data.back
-      new_detector_geometry_flag = data.new_detector_geometry_flag
-      dialog_refl = PlotDialogREFL(self, type, yaxis, peak, back, new_detector_geometry_flag)
+      dialog_refl = PlotDialogREFL(self, type, data)
       dialog_refl.show()
       
     self.timeClick1 = -1

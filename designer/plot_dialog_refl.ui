@@ -176,6 +176,13 @@
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_9">
                  <item>
+                  <widget class="QCheckBox" name="john_back_flag">
+                   <property name="text">
+                    <string>with Back.</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <spacer name="verticalSpacer_3">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
@@ -437,13 +444,20 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
+              <widget class="QCheckBox" name="jim_back_flag">
+               <property name="text">
+                <string>with Background</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_3">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>321</width>
+                 <width>200</width>
                  <height>20</height>
                 </size>
                </property>
@@ -697,6 +711,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>jim_back_flag</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Dialog</receiver>
+   <slot>jim_back_flag_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>814</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>john_back_flag</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Dialog</receiver>
+   <slot>john_back_flag_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1142</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>update_peak1_spinbox()</slot>
@@ -719,5 +765,7 @@
   <slot>john_back1_spinbox_signal()</slot>
   <slot>john_back2_slider_signal()</slot>
   <slot>john_back2_spinbox_signal()</slot>
+  <slot>jim_back_flag_clicked()</slot>
+  <slot>john_back_flag_clicked()</slot>
  </slots>
 </ui>

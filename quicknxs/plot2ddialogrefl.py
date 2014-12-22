@@ -322,10 +322,7 @@ class Plot2dDialogREFL(QDialog):
 		_show_widgets_1 = False
 		_show_widgets_2 = False
 		
-		if not self.ui.back_flag.isChecked():
-			_show_widgets_2 = False
-			_show_widgets_1 = False
-		else:
+		if self.ui.back_flag.isChecked():
 			if back1 > peak1:
 				_show_widgets_1 = True
 			if back2 < peak2:
@@ -338,11 +335,7 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.peak2_label.setVisible(_show_widgets_2)
 		
 		self.ui.error_label.setVisible(_show_widgets_1 or _show_widgets_2)
-			
-	#def manual_input_of_peak_back_field(self):
-		#self.sort_peak_back_input()
-		#self.check_peak_back_input_validity()
-		
+					
 	def manual_input_of_low_res_field(self):
 		value1 = self.ui.low_res1.value()
 		value2 = self.ui.low_res2.value()

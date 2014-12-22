@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot_dialog_refl.ui'
 #
-# Created: Tue Dec  9 16:24:21 2014
+# Created: Mon Dec 22 13:58:47 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -104,6 +104,9 @@ class Ui_Dialog(object):
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
         self.verticalLayout_9 = QtGui.QVBoxLayout()
         self.verticalLayout_9.setObjectName("verticalLayout_9")
+        self.john_back_flag = QtGui.QCheckBox(self.frame_2)
+        self.john_back_flag.setObjectName("john_back_flag")
+        self.verticalLayout_9.addWidget(self.john_back_flag)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_9.addItem(spacerItem2)
         self.john_back2_label = QtGui.QLabel(self.frame_2)
@@ -219,7 +222,10 @@ class Ui_Dialog(object):
         self.frame_4.setObjectName("frame_4")
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.frame_4)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        spacerItem8 = QtGui.QSpacerItem(321, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.jim_back_flag = QtGui.QCheckBox(self.frame_4)
+        self.jim_back_flag.setObjectName("jim_back_flag")
+        self.horizontalLayout_5.addWidget(self.jim_back_flag)
+        spacerItem8 = QtGui.QSpacerItem(200, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem8)
         self.jim_back1_label = QtGui.QLabel(self.frame_4)
         font = QtGui.QFont()
@@ -272,6 +278,8 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.john_back1, QtCore.SIGNAL("editingFinished()"), Dialog.john_back1_spinbox_signal)
         QtCore.QObject.connect(self.jim_back2, QtCore.SIGNAL("editingFinished()"), Dialog.jim_back2_spinbox_signal)
         QtCore.QObject.connect(self.john_back2, QtCore.SIGNAL("editingFinished()"), Dialog.john_back2_spinbox_signal)
+        QtCore.QObject.connect(self.jim_back_flag, QtCore.SIGNAL("clicked(bool)"), Dialog.jim_back_flag_clicked)
+        QtCore.QObject.connect(self.john_back_flag, QtCore.SIGNAL("clicked(bool)"), Dialog.john_back_flag_clicked)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -280,6 +288,7 @@ class Ui_Dialog(object):
         self.john_peak2_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.john_peak1_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Dialog", "BACKGROUND", None, QtGui.QApplication.UnicodeUTF8))
+        self.john_back_flag.setText(QtGui.QApplication.translate("Dialog", "with Back.", None, QtGui.QApplication.UnicodeUTF8))
         self.john_back2_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.john_back1_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("Dialog", "John", None, QtGui.QApplication.UnicodeUTF8))
@@ -287,6 +296,7 @@ class Ui_Dialog(object):
         self.jim_peak1_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.jim_peak2_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Dialog", "BACKGROUND", None, QtGui.QApplication.UnicodeUTF8))
+        self.jim_back_flag.setText(QtGui.QApplication.translate("Dialog", "with Background", None, QtGui.QApplication.UnicodeUTF8))
         self.jim_back1_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.jim_back2_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("Dialog", "Jim", None, QtGui.QApplication.UnicodeUTF8))
