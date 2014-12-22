@@ -5,6 +5,9 @@ class AllPlotAxis(object):
 	is_yt_ylog = False
 	is_yt_xlog = False
 
+	detector_view_interval = None
+	detector_data_interval = None
+
 	yi_view_interval = None
 	yi_data_interval = None
 	is_yi_ylog = False

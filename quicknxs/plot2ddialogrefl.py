@@ -37,6 +37,9 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.y_pixel_vs_tof_plot.leaveFigure.connect(self.leave_figure_plot)
 		self.ui.y_pixel_vs_tof_plot.toolbar.homeClicked.connect(self.home_clicked_plot)
 		
+		self.ui.detector_plot.leaveFigure.connect(self.leave_figure_detector_plot)
+		self.ui.detector_plot.toolbar.homeClicked.connect(self.home_clicked_detector_plot)
+		
 	def leave_figure_plot(self):
 		[xmin, xmax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.xaxis.get_view_interval()
 		[ymin, ymax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.yaxis.get_view_interval()
@@ -50,19 +53,59 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.y_pixel_vs_tof_plot.canvas.ax.set_xlim([xmin,xmax])
 		self.ui.y_pixel_vs_tof_plot.canvas.ax.set_ylim([ymin,ymax])
 		self.ui.y_pixel_vs_tof_plot.draw()
+
+	def leave_figure_detector_plot(self):
+		[xmin, xmax]= self.ui.detector_plot.canvas.ax.xaxis.get_view_interval()
+		[ymin, ymax]= self.ui.detector_plot.canvas.ax.yaxis.get_view_interval()
+		self.ui.detector_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+		self.ui.detector_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		self.ui.detector_plot.draw()
+		self.data.all_plot_axis.detector_view_interval = [xmin, xmax, ymin, ymax]
 		
+	def home_clicked_detector_plot(self):
+		[xmin,xmax,ymin,ymax] = self.data.all_plot_axis.detector_data_interval
+		self.ui.detector_plot.canvas.ax.set_xlim([xmin,xmax])
+		self.ui.detector_plot.canvas.ax.set_ylim([ymin,ymax])
+		self.ui.detector_plot.draw()
+
 	def update_detector_tab_plot(self):
+		self.ui.detector_plot.clear()
 		xydata = self.data.xydata
+		self.ui.detector_plot.draw()
 		
 		[ymax,xmax] = xydata.shape
 		self.ui.detector_plot.imshow(xydata, log=True, aspect='auto',
 		                             origin='lower', extent=[0,xmax,0,ymax])
 		self.ui.detector_plot.set_xlabel(u'x (pixel)')
 		self.ui.detector_plot.set_ylabel(u'y (pixel)')
-		self.ui.detector_plot.draw()
+	
+		[lowres1, lowres2, lowresFlag, peak1, peak2, back1, back2, backFlag] = self.retrieveLowResPeakBack()
+	
+		if lowresFlag:
+			lr1 = self.ui.detector_plot.canvas.ax.axvline(lowres1, color=colors.LOWRESOLUTION_SELECTION_COLOR)
+			lr2 = self.ui.detector_plot.canvas.ax.axvline(lowres2, color=colors.LOWRESOLUTION_SELECTION_COLOR)
+		
+		p1 = self.ui.detector_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		p2 = self.ui.detector_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		
+		if backFlag:
+			b1 = self.ui.detector_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			b2 = self.ui.detector_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+	
+		if self.data.all_plot_axis.detector_data_interval is None:
+			self.ui.detector_plot.draw()
+			[xmin,xmax] = self.ui.detector_plot.canvas.ax.xaxis.get_view_interval()
+			[ymin,ymax] = self.ui.detector_plot.canvas.ax.yaxis.get_view_interval()
+			self.data.all_plot_axis.detector_data_interval = [xmin, xmax, ymin, ymax]
+			self.data.all_plot_axis.detector_view_interval = [xmin, xmax, ymin, ymax]
+			self.ui.detector_plot.toolbar.home_settings = [xmin, xmax, ymin, ymax]
+		else:
+			[xmin, xmax, ymin, ymax] = self.data.all_plot_axis.detector_view_interval
+			self.ui.detector_plot.canvas.ax.set_xlim([xmin, xmax])
+			self.ui.detector_plot.canvas.ax.set_ylim([ymin, ymax])
+			self.ui.detector_plot.draw()
 	
 	def update_pixel_vs_tof_tab_plot(self):
-		
 		ytof = self.data.ytofdata
 		tof_axis = self.data.tof_axis_auto_with_margin
 		tof_from = tof_axis[0]
@@ -88,7 +131,6 @@ class Plot2dDialogREFL(QDialog):
 		p2 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
 		
 		if backFlag:
-			
 			b1 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
 			b2 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
 		
@@ -107,15 +149,25 @@ class Plot2dDialogREFL(QDialog):
 			self.ui.y_pixel_vs_tof_plot.draw()
 		
 	def retrieveTofPeakBack(self):
-		
 		tmin = float(self.ui.tof_from.text())
 		tmax = float(self.ui.tof_to.text())
+		[peak1,peak2,back1,back2, backFlag] = self.retrievePeakBack()
+		return [tmin, tmax, peak1, peak2, back1, back2, backFlag]
+		
+	def retrieveLowResPeakBack(self):
+		lowres1 = self.ui.low_res1.value()
+		lowres2 = self.ui.low_res2.value()
+		lowresFlag = self.ui.low_res_flag.isChecked()
+		[peak1,peak2,back1,back2, backFlag] = self.retrievePeakBack()
+		return [lowres1,lowres2,lowresFlag,peak1,peak2,back1,back2,backFlag]
+		
+	def retrievePeakBack(self):
 		peak1 = self.ui.peak1.value()
 		peak2 = self.ui.peak2.value()
 		back1 = self.ui.back1.value()
 		back2 = self.ui.back2.value()
 		backFlag = self.ui.back_flag.isChecked()
-		return [tmin, tmax, peak1, peak2, back1, back2, backFlag]
+		return [peak1,peak2,back1,back2,backFlag]
 		
 	def init_gui(self):
 		palette = QPalette()
@@ -203,12 +255,14 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.back1.setEnabled(back_flag)
 		self.ui.back2.setEnabled(back_flag)
 		self.check_peak_back_input_validity()
+		self.update_plots()
 	
 	def activate_or_not_low_res_widgets(self, low_res_flag):
 		self.ui.low_res1.setEnabled(low_res_flag)
 		self.ui.low_res2.setEnabled(low_res_flag)
 		self.ui.low_res1_label.setEnabled(low_res_flag)
 		self.ui.low_res2_label.setEnabled(low_res_flag)
+		self.update_detector_tab_plot()
 		
 	def sort_peak_back_input(self):		
 		peak1 = self.ui.peak1.value()
@@ -227,21 +281,25 @@ class Plot2dDialogREFL(QDialog):
 			self.ui.back1.setValue(back2)
 			self.ui.back2.setValue(back1)
 
+	def update_plots(self):
+		self.update_pixel_vs_tof_tab_plot()
+		self.update_detector_tab_plot()
+
 	def manual_input_peak1(self):
 		self.sort_and_check_widgets()
-		self.update_pixel_vs_tof_tab_plot()
+		self.update_plots()
 					
 	def manual_input_peak2(self):
 		self.sort_and_check_widgets()
-		self.update_pixel_vs_tof_tab_plot()
+		self.update_plots()
 			
 	def manual_input_back1(self):
 		self.sort_and_check_widgets()
-		self.update_pixel_vs_tof_tab_plot()
+		self.update_plots()
 			
 	def manual_input_back2(self):
 		self.sort_and_check_widgets()
-		self.update_pixel_vs_tof_tab_plot()
+		self.update_plots()
 			
 	def sort_and_check_widgets(self):
 		self.sort_peak_back_input()
@@ -273,9 +331,9 @@ class Plot2dDialogREFL(QDialog):
 		
 		self.ui.error_label.setVisible(_show_widgets_1 or _show_widgets_2)
 			
-	def manual_input_of_peak_back_field(self):
-		self.sort_peak_back_input()
-		self.check_peak_back_input_validity()
+	#def manual_input_of_peak_back_field(self):
+		#self.sort_peak_back_input()
+		#self.check_peak_back_input_validity()
 		
 	def manual_input_of_low_res_field(self):
 		value1 = self.ui.low_res1.value()
@@ -284,6 +342,7 @@ class Plot2dDialogREFL(QDialog):
 		value_max = max([value1,value2])
 		self.ui.low_res1.setValue(value_min)
 		self.ui.low_res2.setValue(value_max)
+		self.ui.detector_plot()
 	
 	def manual_input_of_tof_field(self):
 		tof1 = float(self.ui.tof_from.text())
@@ -317,6 +376,7 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.tof_to_label.setEnabled(status)
 		self.ui.tof_from_units.setEnabled(status)
 		self.ui.tof_to_units.setEnabled(status)
+		self.update_pixel_vs_tof_tab_plot()
 
 
 	
