@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Dec 15 15:37:59 2014
+# Created: Mon Dec 22 08:34:58 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -341,7 +341,7 @@ class Ui_MainWindow(object):
         self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_2.setChildrenCollapsible(False)
         self.splitter_2.setObjectName("splitter_2")
-        self.data_yt_plot = MPLWidget(self.splitter_2)
+        self.data_yt_plot = MPLWidgetNoLog(self.splitter_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1432,8 +1432,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(2)
-        self.plotTab.setCurrentIndex(1)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.plotTab.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
@@ -1710,6 +1710,7 @@ class Ui_MainWindow(object):
         self.actionSaveConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration_2.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
 
+from mplwidgetnolog import MPLWidgetNoLog
 from .mplwidget import MPLWidget
 from mplwidgetxlogylog import MPLWidgetXLogYLog
 from .mplwidgetxlog import MPLWidgetXLog

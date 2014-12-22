@@ -300,8 +300,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>214</width>
-             <height>122</height>
+             <width>248</width>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -431,8 +431,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>248</width>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -651,8 +651,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>248</width>
+             <height>394</height>
             </rect>
            </property>
            <attribute name="label">
@@ -937,7 +937,7 @@ p, li { white-space: pre-wrap; }
                      <property name="childrenCollapsible">
                       <bool>false</bool>
                      </property>
-                     <widget class="MPLWidget" name="data_yt_plot" native="true">
+                     <widget class="MPLWidgetNoLog" name="data_yt_plot" native="true">
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                         <horstretch>0</horstretch>
@@ -3802,6 +3802,12 @@ p, li { white-space: pre-wrap; }
    <class>MPLWidgetXLogYLog</class>
    <extends>QWidget</extends>
    <header location="global">mplwidgetxlogylog.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MPLWidgetNoLog</class>
+   <extends>QWidget</extends>
+   <header>mplwidgetnolog.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

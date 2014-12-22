@@ -2,6 +2,7 @@ from PyQt4.QtGui import QDialog, QPalette
 from PyQt4.QtCore import Qt
 from plot2d_dialog_refl import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
+import colors
 
 class Plot2dDialogREFL(QDialog):
 	
@@ -15,10 +16,10 @@ class Plot2dDialogREFL(QDialog):
 	auto_min_tof = None
 	auto_max_tof = None
 	
-	def __init__(self, main_gui, data, parent=None):
+	def __init__(self, main_gui, active_data, parent=None):
 
 		self.main_gui = main_gui
-		self.data = data
+		self.data = active_data
 		
 		QDialog.__init__(self, parent=parent)
 		self.setWindowModality(False)
@@ -33,6 +34,23 @@ class Plot2dDialogREFL(QDialog):
 		self.update_detector_tab_plot()
 		self.update_pixel_vs_tof_tab_plot()
 		
+		self.ui.y_pixel_vs_tof_plot.leaveFigure.connect(self.leave_figure_plot)
+		self.ui.y_pixel_vs_tof_plot.toolbar.homeClicked.connect(self.home_clicked_plot)
+		
+	def leave_figure_plot(self):
+		[xmin, xmax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.xaxis.get_view_interval()
+		[ymin, ymax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.yaxis.get_view_interval()
+		self.ui.y_pixel_vs_tof_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+		self.ui.y_pixel_vs_tof_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		self.ui.y_pixel_vs_tof_plot.draw()
+		self.data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
+		
+	def home_clicked_plot(self):
+		[xmin,xmax,ymin,ymax] = self.data.all_plot_axis.yt_data_interval
+		self.ui.y_pixel_vs_tof_plot.canvas.ax.set_xlim([xmin,xmax])
+		self.ui.y_pixel_vs_tof_plot.canvas.ax.set_ylim([ymin,ymax])
+		self.ui.y_pixel_vs_tof_plot.draw()
+		
 	def update_detector_tab_plot(self):
 		xydata = self.data.xydata
 		
@@ -44,6 +62,7 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.detector_plot.draw()
 	
 	def update_pixel_vs_tof_tab_plot(self):
+		
 		ytof = self.data.ytofdata
 		tof_axis = self.data.tof_axis_auto_with_margin
 		tof_from = tof_axis[0]
@@ -54,13 +73,49 @@ class Plot2dDialogREFL(QDialog):
 		pixel_from = 0
 		pixel_to = self.data.y.shape[0]-1
 		
+		self.ui.y_pixel_vs_tof_plot.clear()
 		self.ui.y_pixel_vs_tof_plot.imshow(ytof, log=True, aspect='auto',
 		                                   origin='lower', extent=[tof_from, tof_to, pixel_from, pixel_to])
 		self.ui.y_pixel_vs_tof_plot.set_xlabel(u't (ms)')
 		self.ui.y_pixel_vs_tof_plot.set_ylabel(u'y (pixel)')
-		self.ui.y_pixel_vs_tof_plot.draw()
+
+		[tmin,tmax,peak1,peak2,back1,back2,backFlag] = self.retrieveTofPeakBack()
 		
+		t1 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axvline(tmin, color=colors.TOF_SELECTION_COLOR)
+		t2 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axvline(tmax, color=colors.TOF_SELECTION_COLOR)
 		
+		p1 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		p2 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		
+		if backFlag:
+			
+			b1 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			b2 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+		
+		if self.data.all_plot_axis.yt_data_interval is None:
+			self.ui.y_pixel_vs_tof_plot.canvas.ax.set_ylim(0,pixel_to)
+			self.ui.y_pixel_vs_tof_plot.canvas.draw()
+			[xmin,xmax] = self.ui.y_pixel_vs_tof_plot.canvas.ax.xaxis.get_view_interval()
+			[ymin,ymax] = self.ui.y_pixel_vs_tof_plot.canvas.ax.yaxis.get_view_interval()
+			self.data.all_plot_axis.yt_data_interval = [xmin, xmax, ymin, ymax]
+			self.data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
+			self.ui.y_pixel_vs_tof_plot.toolbar.home_settings = [xmin, xmax, ymin, ymax]
+		else:
+			[xmin,xmax,ymin,ymax] = self.data.all_plot_axis.yt_view_interval
+			self.ui.y_pixel_vs_tof_plot.canvas.ax.set_xlim([xmin,xmax])
+			self.ui.y_pixel_vs_tof_plot.canvas.ax.set_ylim([ymin,ymax])
+			self.ui.y_pixel_vs_tof_plot.draw()
+		
+	def retrieveTofPeakBack(self):
+		
+		tmin = float(self.ui.tof_from.text())
+		tmax = float(self.ui.tof_to.text())
+		peak1 = self.ui.peak1.value()
+		peak2 = self.ui.peak2.value()
+		back1 = self.ui.back1.value()
+		back2 = self.ui.back2.value()
+		backFlag = self.ui.back_flag.isChecked()
+		return [tmin, tmax, peak1, peak2, back1, back2, backFlag]
 		
 	def init_gui(self):
 		palette = QPalette()
@@ -174,15 +229,19 @@ class Plot2dDialogREFL(QDialog):
 
 	def manual_input_peak1(self):
 		self.sort_and_check_widgets()
-			
+		self.update_pixel_vs_tof_tab_plot()
+					
 	def manual_input_peak2(self):
 		self.sort_and_check_widgets()
+		self.update_pixel_vs_tof_tab_plot()
 			
 	def manual_input_back1(self):
 		self.sort_and_check_widgets()
+		self.update_pixel_vs_tof_tab_plot()
 			
 	def manual_input_back2(self):
 		self.sort_and_check_widgets()
+		self.update_pixel_vs_tof_tab_plot()
 			
 	def sort_and_check_widgets(self):
 		self.sort_peak_back_input()
@@ -237,6 +296,7 @@ class Plot2dDialogREFL(QDialog):
 		self.ui.tof_to.setText(str_tof_max)
 		self.manual_min_tof = tof_min
 		self.manual_max_tof = tof_max
+		self.update_pixel_vs_tof_tab_plot()
 	
 	def manual_auto_tof_clicked(self):
 		isManualChecked = self.ui.tof_manual_flag.isChecked()

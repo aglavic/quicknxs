@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot2d_dialog_refl.ui'
 #
-# Created: Fri Dec 19 16:39:30 2014
+# Created: Mon Dec 22 08:56:18 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.y_pixel_vs_tof_plot = MPLWidget(self.tab)
+        self.y_pixel_vs_tof_plot = MPLWidgetNoLog(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -122,7 +122,7 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.detector_plot = MPLWidget(self.tab_2)
+        self.detector_plot = MPLWidgetNoLog(self.tab_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -338,7 +338,7 @@ class Ui_Dialog(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.low_res_flag, QtCore.SIGNAL("clicked(bool)"), Dialog.activate_or_not_low_res_widgets)
         QtCore.QObject.connect(self.back_flag, QtCore.SIGNAL("clicked(bool)"), Dialog.activate_or_not_back_widgets)
         QtCore.QObject.connect(self.peak1, QtCore.SIGNAL("editingFinished()"), Dialog.manual_input_peak1)
@@ -378,4 +378,4 @@ class Ui_Dialog(object):
         self.back1_label.setText(QtGui.QApplication.translate("Dialog", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.error_label.setText(QtGui.QApplication.translate("Dialog", "(*) INVALID SELECTION", None, QtGui.QApplication.UnicodeUTF8))
 
-from .mplwidget import MPLWidget
+from mplwidgetnolog import MPLWidgetNoLog
