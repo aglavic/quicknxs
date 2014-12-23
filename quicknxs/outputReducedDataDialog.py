@@ -55,7 +55,8 @@ class OutputReducedDataDialog(QDialog):
 		if str(filename).strip() == '':
 			return
 		
-		if not self.is_folder_access_granted(filename):
+		folder = os.path.dirname(filename)
+		if not self.is_folder_access_granted(folder):
 			self.ui.folder_error.setVisible(True)
 			return
 		
@@ -110,7 +111,6 @@ class OutputReducedDataDialog(QDialog):
 			
 			[_y_axis, _e_axis] = self.applySF(_data, _y_axis, _e_axis)
 			
-			
 			minQ = min([_q_axis[0], minQ])
 			maxQ = max([_q_axis[-1], maxQ])
 			
@@ -140,7 +140,7 @@ class OutputReducedDataDialog(QDialog):
 		data_e = mtd['wks_0'].dataE(0).copy()
 			
 		skip_index = 0
-		point_to_skip = 1
+		point_to_skip = 2
 			
 		for k in range(1,nbrRow):
 
