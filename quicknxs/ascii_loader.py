@@ -18,7 +18,7 @@ class asciiLoader(object):
 		self.dataCol1 = data[:,0]
 		self.dataCol2 = data[:,1]
 		self.dataCol3 = data[:,2]
-		self.dataCol4 = data[:,3]
+#		self.dataCol4 = data[:,3]
 		
 	def data(self):
 		

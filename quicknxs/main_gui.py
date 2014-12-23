@@ -53,6 +53,7 @@ from init_file_menu import InitFileMenu
 from refl_gui_utils import PlotDialogREFL
 from plot2ddialogrefl import Plot2dDialogREFL
 from all_plot_axis import AllPlotAxis
+from outputReducedDataDialog import OutputReducedDataDialog
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
@@ -310,6 +311,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_stitching_plot.toolbar.homeClicked.connect(self.home_clicked_data_stitching_plot)
     self.ui.data_stitching_plot.logtogx.connect(self.logx_toggle_data_stitching)
     self.ui.data_stitching_plot.logtogy.connect(self.logy_toggle_data_stitching)
+    self.ui.data_stitching_plot.toolbar.exportClicked.connect(self.export_stitching_data)
     
     
       
@@ -461,6 +463,10 @@ class MainGUI(QtGui.QMainWindow):
 
   def export_norm_it(self):
     pass
+  
+  def export_stitching_data(self):
+    _tmp = OutputReducedDataDialog(self, self.stitchingAsciiWidgetObject)
+    _tmp.show()
   
   # home button of plots
   def home_clicked_yi_plot(self):
@@ -6386,7 +6392,6 @@ Do you want to try to restore the working reduction list?""",
     
     return [y_array, e_array]
 
-
   def produce_workspace_with_common_q_axis(self):
     '''
     In order to produce output ascii file, we need to get all the data sets with a common q axis
@@ -6674,27 +6679,27 @@ Do you want to try to restore the working reduction list?""",
 
   def load_reduced_ascii(self):
     
-    try:
-      _path = self.path_config
-      filename = QtGui.QFileDialog.getOpenFileName(self,'Open Reduced Data Set', _path)      
-      if not(filename == ""):
-        self.path_config = os.path.dirname(filename)
+  #  try:
+    _path = self.path_config
+    filename = QtGui.QFileDialog.getOpenFileName(self,'Open Reduced Data Set', _path)      
+    if not(filename == ""):
+      self.path_config = os.path.dirname(filename)
+    
+      loadedAscii = reducedAsciiLoader(self, filename)
+      if self.stitchingAsciiWidgetObject is None:
+        self.stitchingAsciiWidgetObject = stitchingAsciiWidgetObject(self, loadedAscii)
+      else:
+        self.stitchingAsciiWidgetObject.addData(loadedAscii)
       
-        loadedAscii = reducedAsciiLoader(self, filename)
-        if self.stitchingAsciiWidgetObject is None:
-          self.stitchingAsciiWidgetObject = stitchingAsciiWidgetObject(self, loadedAscii)
-        else:
-          self.stitchingAsciiWidgetObject.addData(loadedAscii)
-        
-        bigTableData= self.bigTableData
-        data0 = bigTableData[0,0]
-        data0_active_data = data0.active_data
-        _isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
-        _isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
-        self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
+      bigTableData= self.bigTableData
+      data0 = bigTableData[0,0]
+      data0_active_data = data0.active_data
+      _isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+      _isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+      self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
           
-    except:
-      warning('Could not open ASCII file!')
+   # except:
+     # warning('Could not open ASCII file!')
     
   def getNodeValue(self,node,flag):
     '''

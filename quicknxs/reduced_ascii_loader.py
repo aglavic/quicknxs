@@ -42,6 +42,5 @@ class reducedAsciiLoader(object):
 		_asciiData = asciiLoader(filename,
 		                         nbrColumns=nbrColumns)
 		
-		
 		[self.col1, self.col2, self.col3, self.col4] = _asciiData.data()
 		
