@@ -26,7 +26,7 @@ class AllPlotAxis(object):
 	reduced_plot_stitching_tab_view_interval = None
 	reduced_plot_stitching_tab_data_interval = None
 	is_reduced_plot_stitching_tab_ylog = True
-	is_reduced_plot_stitching_tab_xlog = True
+	is_reduced_plot_stitching_tab_xlog = False
 	
 	reduced_plot_overview_tab_view_interval = None
 	reduced_plot_overview_tab_data_interval = None

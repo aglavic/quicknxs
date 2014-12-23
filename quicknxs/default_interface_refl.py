@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Dec 23 08:15:07 2014
+# Created: Tue Dec 23 09:02:10 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1206,7 +1206,7 @@ class Ui_MainWindow(object):
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
         self.reductionTable.verticalHeader().setStretchLastSection(False)
         self.verticalLayout_24.addWidget(self.reductionTable)
-        self.reflectivity_plot = MPLWidget(self.splitter)
+        self.reflectivity_plot = MPLWidgetXLogYLog(self.splitter)
         self.reflectivity_plot.setEnabled(False)
         self.reflectivity_plot.setMinimumSize(QtCore.QSize(300, 0))
         self.reflectivity_plot.setObjectName("reflectivity_plot")

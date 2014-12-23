@@ -3222,7 +3222,7 @@ p, li { white-space: pre-wrap; }
                   </item>
                  </layout>
                 </widget>
-                <widget class="MPLWidget" name="reflectivity_plot" native="true">
+                <widget class="MPLWidgetXLogYLog" name="reflectivity_plot" native="true">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>

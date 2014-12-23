@@ -5798,7 +5798,7 @@ Do you want to try to restore the working reduction list?""",
         _data.sf = 1
         bigTableData[i,0] = _data
   
-      self.bigTableData = bigTableData
+    self.bigTableData = bigTableData
 
 
   def calculate_autoSF(self):
@@ -5976,7 +5976,7 @@ Do you want to try to restore the working reduction list?""",
     self.ui.RvsQ_2.setChecked(status_RvsQ)
     self.ui.RQ4vsQ_2.setChecked(status_RQ4vsQ)
     self.ui.LogRvsQ_2.setChecked(status_LogRvsQ)
-    
+
     self.replot_stitched_data()
 
   def clearStitchingTable(self):
@@ -5987,12 +5987,7 @@ Do you want to try to restore the working reduction list?""",
         for _row in range(nbrRow):
           self.ui.dataStitchingTable.removeRow(0)
     
-
   def plot_reduced_data(self):
-    '''
-    plot the data after reduction
-    '''
-    
     self.clearStitchingTable()
         
     loadedAscii = reducedAsciiLoader(self,asciiFilename='', isLiveReduced=True, bigTableData=self.bigTableData )    
@@ -6001,19 +5996,31 @@ Do you want to try to restore the working reduction list?""",
     else:
       self.stitchingAsciiWidgetObject.addData(loadedAscii)
     
-    self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
+    bigTableData= self.bigTableData
+    data0 = bigTableData[0,0]
+    data0_active_data = data0.active_data
+    isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+    isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+      
+    self.stitchingAsciiWidgetObject.updateDisplay(isylog=isylog, isxlog=isxlog)
   
     # refresh reductionTable content (lambda range, Q range...etc)
     self.update_reductionTable()
     self.update_stitchingTable()
+    self.replot_reduced_data()
 
   def refresh_stitching_ascii_plot(self):
     if self.stitchingAsciiWidgetObject is None:
       return
     
     self.stitchingAsciiWidgetObject.updateStatus()
-    self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
-
+    
+    bigTableData= self.bigTableData
+    data0 = bigTableData[0,0]
+    data0_active_data = data0.active_data
+    _isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+    _isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+    self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
 
   def replot_reduced_data(self):
     '''
@@ -6023,8 +6030,6 @@ Do you want to try to restore the working reduction list?""",
     nbr_row = self.ui.reductionTable.rowCount()
     
     reflectivity_plot = self.ui.reflectivity_plot
-    
-    print 'hererererere'
     
     _colors = colors.COLOR_LIST
     _colors.append(_colors)
@@ -6057,17 +6062,18 @@ Do you want to try to restore the working reduction list?""",
       reflectivity_plot.set_ylabel(u'RQ4')
     else:
       reflectivity_plot.set_ylabel(u'Log(Q))')
+
     reflectivity_plot.draw()
-  
+    
     if _data.active_data.all_plot_axis.is_reduced_plot_overview_tab_ylog:
-      reflectivity_plot.ax.set_yscale('log')
+      reflectivity_plot.canvas.ax.set_yscale('log')
     else:
-      reflectivity_plot.ax.set_yscale('linear')
+      reflectivity_plot.canvas.ax.set_yscale('linear')
       
     if _data.active_data.all_plot_axis.is_reduced_plot_overview_tab_xlog:
-      reflectivity_plot.ax.set_xscale('log')
+      reflectivity_plot.canvas.ax.set_xscale('log')
     else:
-      reflectivity_plot.ax.set_xscale('linear')
+      reflectivity_plot.canvas.ax.set_xscale('linear')
   
     reflectivity_plot.draw()
 
@@ -6077,7 +6083,9 @@ Do you want to try to restore the working reduction list?""",
     else:
       self.stitchingAsciiWidgetObject.addData(liveDataSet)
     
-    self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
+    _isylog = _data.active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+    _isxlog = _data.active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+    self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
 
 
   def replot_stitched_data(self):
@@ -6668,7 +6676,12 @@ Do you want to try to restore the working reduction list?""",
         else:
           self.stitchingAsciiWidgetObject.addData(loadedAscii)
         
-        self.stitchingAsciiWidgetObject.updateDisplay(isReducePlotLog=self.isReducedPlotLog)
+        bigTableData= self.bigTableData
+        data0 = bigTableData[0,0]
+        data0_active_data = data0.active_data
+        _isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+        _isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+        self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
           
   #  except:
    #   warning('Could not open ASCII file!')
