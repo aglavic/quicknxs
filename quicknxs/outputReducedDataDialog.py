@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDialog, QFileDialog
+from PyQt4.QtGui import QDialog, QFileDialog, QPalette
 from PyQt4.QtCore import Qt
 from output_reduced_data_dialog import Ui_Dialog as UiDialog
 from stitching_ascii_widget import stitchingAsciiWidgetObject
@@ -33,10 +33,16 @@ class OutputReducedDataDialog(QDialog):
 		self.ui = UiDialog()
 		self.ui.setupUi(self)
 		
+		self.ui.folder_error.setVisible(False)
+		palette = QPalette()
+		palette.setColor(QPalette.Foreground, Qt.red)
+		self.ui.folder_error.setPalette(palette)
+		
 		self.stitchingAsciiWidgetObject = stitchingAsciiWidgetObject
 		self.mainGui = mainGui
 		
 	def create_reduce_ascii_button_event(self):
+		self.ui.folder_error.setVisible(False)
 		if self.stitchingAsciiWidgetObject is None:
 			return
 		
@@ -50,6 +56,7 @@ class OutputReducedDataDialog(QDialog):
 			return
 		
 		if not self.is_folder_access_granted(filename):
+			self.ui.folder_error.setVisible(True)
 			return
 		
 		self.filename = filename
@@ -59,7 +66,7 @@ class OutputReducedDataDialog(QDialog):
 		self.close()
 		
 	def is_folder_access_granted(self, filename):
-		return True
+		return os.access(filename,os.W_OK)
 	
 	def write_ascii(self):
 		self.isWith4thColumnFlag = self.ui.output4thColumnFlag.isChecked()

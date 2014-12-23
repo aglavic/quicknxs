@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/output_reduced_data_dialog.ui'
 #
-# Created: Tue Dec 23 15:01:26 2014
+# Created: Tue Dec 23 15:57:03 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,6 +59,16 @@ class Ui_Dialog(object):
         self.createAsciiButton.setObjectName("createAsciiButton")
         self.verticalLayout.addWidget(self.createAsciiButton)
         self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.folder_error = QtGui.QLabel(Dialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.folder_error.sizePolicy().hasHeightForWidth())
+        self.folder_error.setSizePolicy(sizePolicy)
+        self.folder_error.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.folder_error.setAlignment(QtCore.Qt.AlignCenter)
+        self.folder_error.setObjectName("folder_error")
+        self.verticalLayout_2.addWidget(self.folder_error)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.createAsciiButton, QtCore.SIGNAL("clicked()"), Dialog.create_reduce_ascii_button_event)
@@ -80,4 +90,5 @@ class Ui_Dialog(object):
         self.usingLessErrorValueFlag.setText(QtGui.QApplication.translate("Dialog", "use lowest error value", None, QtGui.QApplication.UnicodeUTF8))
         self.usingMeanValueFalg.setText(QtGui.QApplication.translate("Dialog", "use mean value", None, QtGui.QApplication.UnicodeUTF8))
         self.createAsciiButton.setText(QtGui.QApplication.translate("Dialog", "Create Reduce ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.folder_error.setText(QtGui.QApplication.translate("Dialog", "CHECK FOLDER PERMISSION !", None, QtGui.QApplication.UnicodeUTF8))
 
