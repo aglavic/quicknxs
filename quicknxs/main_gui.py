@@ -6092,6 +6092,16 @@ Do you want to try to restore the working reduction list?""",
     '''
     plot the data after stitching
     '''
+    bigTableData= self.bigTableData
+    data0 = bigTableData[0,0]
+    data0_active_data = data0.active_data
+    _isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+    _isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+
+    _type = self.get_selected_output_stitched()
+    self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog, yaxistype=_type)
+    
+    return
     bigTableData = self.bigTableData
     nbr_row = self.ui.reductionTable.rowCount()
     
@@ -6664,7 +6674,7 @@ Do you want to try to restore the working reduction list?""",
 
   def load_reduced_ascii(self):
     
-#    try:
+    try:
       _path = self.path_config
       filename = QtGui.QFileDialog.getOpenFileName(self,'Open Reduced Data Set', _path)      
       if not(filename == ""):
@@ -6683,10 +6693,9 @@ Do you want to try to restore the working reduction list?""",
         _isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
         self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
           
-  #  except:
-   #   warning('Could not open ASCII file!')
+    except:
+      warning('Could not open ASCII file!')
     
-
   def getNodeValue(self,node,flag):
     '''
     get the value of the node from the dom (config file)

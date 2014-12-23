@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from reduced_ascii_loader import reducedAsciiLoader
 import colors
+import numpy as np
 
 class stitchingAsciiWidgetObject(object):
 
@@ -10,6 +11,7 @@ class stitchingAsciiWidgetObject(object):
 	mainGui = None
 	isylog = True
 	isxlog = True
+	yaxistype = 'RvsQ'
 	
 	def __init__(self, mainGui, loadedAscii):
 		
@@ -47,20 +49,21 @@ class stitchingAsciiWidgetObject(object):
 		nbrRow = len(self.loadedAsciiArray)
 		for i in range(nbrRow):
 			
-			_object = self.loadedAsciiArray[i]
+			_data_object = self.loadedAsciiArray[i]
 			
 			_item_state = self.mainGui.ui.reducedAsciiDataSetTable.cellWidget(i,1).checkState()
 			if _item_state == 2:
-				_object.isEnabled = True
+				_data_object.isEnabled = True
 			else:
-				_object.isEnabled = False
+				_data_object.isEnabled = False
 			
-			self.loadedAsciiArray[i] = _object
+			self.loadedAsciiArray[i] = _data_object
 			
-	def updateDisplay(self, isylog=True, isxlog=True):
+	def updateDisplay(self, isylog=True, isxlog=True, yaxistype='RvsQ'):
 		
 		self.isylog = isylog
 		self.isxlog = isxlog
+		self.yaxistype = yaxistype
 		
 		self.tableUi.clearContents()
 		self.stitchingPlot.clear()
@@ -72,32 +75,36 @@ class stitchingAsciiWidgetObject(object):
 		
 		for i in range(nbrRow):
 			
-			_object = self.loadedAsciiArray[i]
+			_data_object = self.loadedAsciiArray[i]
 
 			self.tableUi.insertRow(i)
 
-			_item = QtGui.QTableWidgetItem(str(_object.shortAsciiFilename))
+			_item = QtGui.QTableWidgetItem(str(_data_object.shortAsciiFilename))
 			self.tableUi.setItem(i,0,_item)
 			
 			_widget = QtGui.QCheckBox()
-			if _object.isEnabled:
+			if _data_object.isEnabled:
 				_status = QtCore.Qt.Checked
 			else:
 				_status = QtCore.Qt.Unchecked
 			_widget.setCheckState(_status)
 			self.tableUi.setCellWidget(i, 1, _widget)
 			
-			if _object.isEnabled:
+			if _data_object.isEnabled:
 				
-				if _object.isLiveReduced:
-					self.displayLiveData(_object)
+				if _data_object.isLiveReduced:
+					self.displayLiveData(_data_object)
 				else:
-					self.displayLoadedAscii(_object)
-					_q_axis = _object.col1
-					_y_axis = _object.col2
-					_e_axis = _object.col3
+					#self.displayLoadedAscii(_data_object)
+					_q_axis = _data_object.col1
+					_y_axis = _data_object.col2
+					_e_axis = _data_object.col3
 				
-					self.stitchingPlot.errorbar(_q_axis, _y_axis, yerr=_e_axis)
+					[_y_axis_red, _e_axis_red] = self.formatDataFromYmodeSelected(_q_axis, 
+					                                                              _y_axis,
+					                                                              _e_axis)
+					
+					self.stitchingPlot.errorbar(_q_axis, _y_axis_red, yerr=_e_axis_red)
 					if isylog:
 						self.stitchingPlot.set_yscale('log')
 					else:
@@ -110,12 +117,12 @@ class stitchingAsciiWidgetObject(object):
 					self.stitchingPlot.draw()
 
 
-	def displayLiveData(self, _object):
+	def displayLiveData(self, _data_object):
 		'''
 		plot last reduced data set
 		'''
 		
-		bigTableData = _object.bigTableData
+		bigTableData = _data_object.bigTableData
 		_colors = colors.COLOR_LIST
 		_colors.append(_colors)
 		
@@ -132,8 +139,7 @@ class stitchingAsciiWidgetObject(object):
 			_y_axis = _y_axis / sf
 			_e_axis = _e_axis / sf
 			
-			[y_axis_red, e_axis_red] = self.formatDataFromYmodeSelected(_object, 
-			                                                            _q_axis, 
+			[y_axis_red, e_axis_red] = self.formatDataFromYmodeSelected(_q_axis, 
 			                                                            _y_axis,
 			                                                            _e_axis)
 			
@@ -152,7 +158,7 @@ class stitchingAsciiWidgetObject(object):
 			i+=1
 		
 		self.stitchingPlot.set_xlabel(u'Q (1/Angstroms)')
-		type = self.getSelectedReducedOutput(_object)
+		type = self.getSelectedReducedOutput()
 		if type == 'RvsQ':
 			self.stitchingPlot.set_ylabel(u'R')
 		elif type == 'RQ4vsQ':
@@ -162,9 +168,9 @@ class stitchingAsciiWidgetObject(object):
 		self.stitchingPlot.draw()
 		
 				
-	def formatDataFromYmodeSelected(self, _object, q_axis, y_axis, e_axis):
+	def formatDataFromYmodeSelected(self, q_axis, y_axis, e_axis):
 		
-		type = self.getSelectedReducedOutput(_object)
+		type = self.getSelectedReducedOutput()
 		[final_y_axis, final_e_axis] = self.getFormatedOutput(type, q_axis, y_axis, e_axis)
 		return [final_y_axis, final_e_axis]
 		
@@ -189,23 +195,16 @@ class stitchingAsciiWidgetObject(object):
 		return [_final_y_axis, _final_e_axis]
 		
 
-	def getSelectedReducedOutput(self, _object):
-		type = 'RvsQ'
-		if _object.mainGui.ui.RQ4vsQ.isChecked():
-		  type = 'RQ4vsQ'
-		elif _object.mainGui.ui.LogRvsQ.isChecked():
-		  type = 'LogRvsQ'
-		return type
-	
+	def getSelectedReducedOutput(self):
+		return self.yaxistype
 
-	def 	displayLoadedAscii(self, _object):
+	def 	displayLoadedAscii(self, _data_object):
 		'''
 		plot data coming from ascii file loaded
 		'''
-
-		_q_axis = _object.col1
-		_y_axis = _object.col2
-		_e_axis = _object.col3
+		_q_axis = _data_object.col1
+		_y_axis = _data_object.col2
+		_e_axis = _data_object.col3
 	
 		self.stitchingPlot.errorbar(_q_axis, _y_axis, yerr=_e_axis)
 		self.stitchingPlot.draw()
