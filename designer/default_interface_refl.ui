@@ -3136,7 +3136,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -3166,7 +3166,7 @@ p, li { white-space: pre-wrap; }
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3223,6 +3223,9 @@ p, li { white-space: pre-wrap; }
                  </layout>
                 </widget>
                 <widget class="MPLWidget" name="reflectivity_plot" native="true">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>300</width>
@@ -3291,6 +3294,9 @@ p, li { white-space: pre-wrap; }
                  <layout class="QHBoxLayout" name="horizontalLayout_6">
                   <item>
                    <widget class="QRadioButton" name="RvsQ">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string>R vs Q</string>
                     </property>
@@ -3301,6 +3307,9 @@ p, li { white-space: pre-wrap; }
                   </item>
                   <item>
                    <widget class="QRadioButton" name="RQ4vsQ">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string>RQ^4 vs Q</string>
                     </property>
@@ -3308,6 +3317,9 @@ p, li { white-space: pre-wrap; }
                   </item>
                   <item>
                    <widget class="QRadioButton" name="LogRvsQ">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string>LogR vs Q</string>
                     </property>
@@ -3338,6 +3350,9 @@ p, li { white-space: pre-wrap; }
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
               <widget class="QTableWidget" name="dataStitchingTable">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="maximumSize">
                 <size>
                  <width>300</width>
@@ -3410,6 +3425,9 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <item>
                  <widget class="QRadioButton" name="autoSF">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>auto</string>
                   </property>
@@ -3420,6 +3438,9 @@ p, li { white-space: pre-wrap; }
                 </item>
                 <item>
                  <widget class="QRadioButton" name="manualSF">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>manual</string>
                   </property>
@@ -3427,6 +3448,9 @@ p, li { white-space: pre-wrap; }
                 </item>
                 <item>
                  <widget class="QRadioButton" name="oneSF">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>1</string>
                   </property>
@@ -3517,6 +3541,9 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="MPLWidgetXLogYLog" name="data_stitching_plot" native="true">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -3544,6 +3571,9 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QRadioButton" name="RvsQ_2">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>R vs Q</string>
              </property>
@@ -3554,6 +3584,9 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QRadioButton" name="RQ4vsQ_2">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>RQ^4 vs Q</string>
              </property>
@@ -3561,6 +3594,9 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QRadioButton" name="LogRvsQ_2">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>LogR vs Q</string>
              </property>

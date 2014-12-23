@@ -1251,7 +1251,6 @@ class MainGUI(QtGui.QMainWindow):
  
     self.bigTable_selection_changed(row, column)
     
-
   def remove_row_reductionTable(self):
     nbrRow = self.ui.reductionTable.rowCount()
     if nbrRow == 0:
@@ -1749,8 +1748,7 @@ class MainGUI(QtGui.QMainWindow):
         yt_plot.canvas.ax.set_xlim([xmin,xmax])
         yt_plot.canvas.ax.set_ylim([ymin,ymax])
         yt_plot.canvas.draw()
-      
-        
+              
     # display it
     if plot_it:
 
@@ -5842,12 +5840,30 @@ Do you want to try to restore the working reduction list?""",
     # display data reduced
     self.plot_reduced_data()
 
+    # enabled all stitching related widgets
+    self.enabled_reduced_widgets(True)
+
     # move to stitching table tab
     self.ui.plotTab.setCurrentIndex(1)      
     
     # save current view limits of plot
     self.initializeReduceViewObject()
     
+  def enabled_reduced_widgets(self, status):
+    # overview tab
+    self.ui.reflectivity_plot.setEnabled(status)
+    self.ui.RvsQ.setEnabled(status)
+    self.ui.RQ4vsQ.setEnabled(status)
+    self.ui.LogRvsQ.setEnabled(status)
+    # stitching tab
+    self.ui.dataStitchingTable.setEnabled(status)
+    self.ui.autoSF.setEnabled(status)
+    self.ui.manualSF.setEnabled(status)
+    self.ui.oneSF.setEnabled(status)
+    self.ui.data_stitching_plot.setEnabled(status)
+    self.ui.RvsQ_2.setEnabled(status)
+    self.ui.RQ4vsQ_2.setEnabled(status)
+    self.ui.LogRvsQ_2.setEnabled(status)
     
   def initializeReduceViewObject(self):
     bigTableData = self.bigTableData
@@ -6008,6 +6024,8 @@ Do you want to try to restore the working reduction list?""",
     
     reflectivity_plot = self.ui.reflectivity_plot
     
+    print 'hererererere'
+    
     _colors = colors.COLOR_LIST
     _colors.append(_colors)
     
@@ -6030,7 +6048,6 @@ Do you want to try to restore the working reduction list?""",
                                                                    _e_axis)
             
       reflectivity_plot.errorbar(_q_axis, y_axis_red, yerr=e_axis_red, color=_colors[i])
-      reflectivity_plot.draw()
       
     reflectivity_plot.set_xlabel(u'Q (1/Angstroms)')
     type = self.get_selected_output_reduced()    
@@ -6041,7 +6058,19 @@ Do you want to try to restore the working reduction list?""",
     else:
       reflectivity_plot.set_ylabel(u'Log(Q))')
     reflectivity_plot.draw()
-                               
+  
+    if _data.active_data.all_plot_axis.is_reduced_plot_overview_tab_ylog:
+      reflectivity_plot.ax.set_yscale('log')
+    else:
+      reflectivity_plot.ax.set_yscale('linear')
+      
+    if _data.active_data.all_plot_axis.is_reduced_plot_overview_tab_xlog:
+      reflectivity_plot.ax.set_xscale('log')
+    else:
+      reflectivity_plot.ax.set_xscale('linear')
+  
+    reflectivity_plot.draw()
+
     liveDataSet = reducedAsciiLoader(self, '', True, bigTableData)
     if self.stitchingAsciiWidgetObject is None:
       self.stitchingAsciiWidgetObject = stitchingAsciiWidgetObject(self, liveDataSet)
@@ -6083,6 +6112,17 @@ Do you want to try to restore the working reduction list?""",
       
       data_stitching_plot.errorbar(_q_axis, y_axis_stit, yerr=e_axis_stit, color=_colors[i])
       data_stitching_plot.draw()
+    
+    _data0 = bigTableData[0,0]
+    if _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog:
+      data_stitching_plot.canvas.ax.set_yscale('log')
+    else:
+      data_stitching_plot.canvas.ax.set_yscale('linear')
+      
+    if _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog:
+      data_stitching_plot.canvas.ax.set_xscale('log')
+    else:
+      data_stitching_plot.canvas.ax.set_xscale('linear')
       
     data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
     type = self.get_selected_output_stitched()
