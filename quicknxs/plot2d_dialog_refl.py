@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/plot2d_dialog_refl.ui'
 #
-# Created: Mon Dec 22 15:53:18 2014
+# Created: Fri Dec 26 08:42:25 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -338,7 +338,7 @@ class Ui_Dialog(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.low_res_flag, QtCore.SIGNAL("clicked(bool)"), Dialog.activate_or_not_low_res_widgets)
         QtCore.QObject.connect(self.back_flag, QtCore.SIGNAL("clicked(bool)"), Dialog.activate_or_not_back_widgets)
         QtCore.QObject.connect(self.peak1, QtCore.SIGNAL("editingFinished()"), Dialog.manual_input_peak1)

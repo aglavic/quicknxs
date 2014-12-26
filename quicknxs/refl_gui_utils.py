@@ -1,8 +1,10 @@
-from PyQt4.QtGui import QDialog, QPalette
+from PyQt4.QtGui import QDialog, QPalette, QFileDialog
 from PyQt4.QtCore import Qt
 from plot_dialog_refl import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
 import colors
+import os
+import utilities
 
 class PlotDialogREFL(QDialog):
 	
@@ -42,9 +44,11 @@ class PlotDialogREFL(QDialog):
 		
 		self.ui.plot_counts_vs_pixel.leaveFigure.connect(self.leave_plot_counts_vs_pixel)
 		self.ui.plot_counts_vs_pixel.toolbar.homeClicked.connect(self.home_plot_counts_vs_pixel)
+		self.ui.plot_counts_vs_pixel.toolbar.exportClicked.connect(self.export_counts_vs_pixel)
 		
 		self.ui.plot_pixel_vs_counts.leaveFigure.connect(self.leave_plot_pixel_vs_counts)
 		self.ui.plot_pixel_vs_counts.toolbar.homeClicked.connect(self.home_plot_pixel_vs_counts)
+		self.ui.plot_pixel_vs_counts.toolbar.exportClicked.connect(self.export_counts_vs_pixel)
 		
 		_new_detector_geometry_flag = self.data.new_detector_geometry_flag
 		if not _new_detector_geometry_flag:
@@ -52,6 +56,32 @@ class PlotDialogREFL(QDialog):
 			self.nbr_pixel_y_axis = 256
 		
 		self.init_plot()
+
+	def export_counts_vs_pixel(self):
+
+		_active_data = self.data
+		run_number = _active_data.run_number
+		default_filename = 'REFL_' + str(run_number) + '_rpx.txt'
+		_path = self.main_gui.path_ascii
+		default_filename = _path + '/' + default_filename
+		filename = QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel ASCII File', default_filename)
+		
+		#user canceled
+		if str(filename).strip() == '':
+			return
+		
+		self.main_gui.path_ascii = os.path.dirname(filename)
+
+		ycountsdata = _active_data.ycountsdata
+		pixelaxis = range(len(ycountsdata))
+		
+		text = ['#Couns vs Pixels','#Pixel - Counts']
+		sz = len(pixelaxis)
+		for i in range(sz):
+			_line = str(pixelaxis[i]) + ' ' + str(ycountsdata[i])
+			text.append(_line)
+			
+		utilities.write_ascii_file(filename, text)
 	
 	def leave_plot_counts_vs_pixel(self):
 		[xmin,xmax] = self.ui.plot_counts_vs_pixel.canvas.ax.yaxis.get_view_interval()

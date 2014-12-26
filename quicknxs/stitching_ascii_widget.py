@@ -126,6 +126,8 @@ class stitchingAsciiWidgetObject(object):
 		_colors = colors.COLOR_LIST
 		_colors.append(_colors)
 		
+		_data0 = bigTableData[0,0]
+		
 		i=0
 		while (bigTableData[i,0] is not None):
 			
@@ -152,11 +154,26 @@ class stitchingAsciiWidgetObject(object):
 				self.stitchingPlot.set_xscale('log')
 			else:
 				self.stitchingPlot.set_xscale('linear')
+				
+			self.stitchingPlot.draw()
 
+			i+=1
+	
+		if _data0.active_data.all_plot_axis.reduced_plot_stitching_tab_data_interval is None:
+			[xmin,xmax] = self.stitchingPlot.canvas.ax.xaxis.get_view_interval()
+			[ymin,ymax] = self.stitchingPlot.canvas.ax.yaxis.get_view_interval()
+			_data0.active_data.all_plot_axis.reduced_plot_stitching_tab_data_interval = [xmin,xmax,ymin,ymax]
+			_data0.active_data.all_plot_axis.reduced_plot_stitching_tab_view_interval = [xmin,xmax,ymin,ymax]
+			self.stitchingPlot.toolbar.home_settings = [xmin,xmax,ymin,ymax]
+		else:
+			[xmin,xmax,ymin,ymax] = _data0.active_data.all_plot_axis.reduced_plot_stitching_tab_view_interval
+			self.stitchingPlot.canvas.ax.set_xlim([xmin,xmax])
+			self.stitchingPlot.canvas.ax.set_ylim([ymin,ymax])
 			self.stitchingPlot.draw()
 			
-			i+=1
-		
+		bigTableData[0,0] = _data0
+		self.mainGui.bigTableData = bigTableData
+
 		self.stitchingPlot.set_xlabel(u'Q (1/Angstroms)')
 		type = self.getSelectedReducedOutput()
 		if type == 'RvsQ':

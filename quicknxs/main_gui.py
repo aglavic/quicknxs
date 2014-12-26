@@ -278,6 +278,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
     self.ui.data_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
     self.ui.data_yi_plot.toolbar.homeClicked.connect(self.home_clicked_yi_plot)
+    self.ui.data_yi_plot.toolbar.exportClicked.connect(self.export_counts_vs_pixel)
 
     self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
     self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
@@ -464,6 +465,35 @@ class MainGUI(QtGui.QMainWindow):
   def export_norm_it(self):
     pass
   
+  def export_counts_vs_pixel(self):
+    
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    _data = bigTableData[row,col]
+    _active_data = _data.active_data
+    run_number = _active_data.run_number
+    default_filename = 'REFL_' + run_number + '_rpx.txt'
+    path = self.path_ascii
+    default_filename = path + '/' + default_filename
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel ASCII File', default_filename)
+    
+    if str(filename).strip() == '':
+      info('User Canceled Output ASCII')
+      return
+    
+    self.path_ascii = os.path.dirname(filename)
+    
+    ycountsdata = _active_data.ycountsdata
+    pixelaxis = range(len(ycountsdata))
+    
+    text = ['#Counts vs Pixels','#Pixel - Counts']
+    sz = len(pixelaxis)
+    for i in range(sz):
+      _line = str(pixelaxis[i]) + ' ' + str(ycountsdata[i])
+      text.append(_line)
+      
+    utilities.write_ascii_file(filename, text)
+    
   def export_stitching_data(self):
     _tmp = OutputReducedDataDialog(self, self.stitchingAsciiWidgetObject)
     _tmp.show()
@@ -6213,7 +6243,7 @@ Do you want to try to restore the working reduction list?""",
     return [_final_y_axis, _final_e_axis]
 
   @waiting_effects
-  def output_selected_data_into_crtof_ascii(self):
+  def output_selected_data_into_crtof_ascii(self):    #REMOVEME
     '''
     The RTOF of the selected data set (data or norm) will be output into an ASCII file
     '''
