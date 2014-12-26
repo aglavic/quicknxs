@@ -284,6 +284,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
     self.ui.norm_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
     self.ui.norm_yi_plot.toolbar.homeClicked.connect(self.home_clicked_yi_plot)
+    self.ui.norm_yi_plot.toolbar.exportClicked.connect(self.export_counts_vs_pixel)
     
     self.ui.data_it_plot.singleClick.connect(self.single_click_data_it_plot)
     self.ui.data_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
