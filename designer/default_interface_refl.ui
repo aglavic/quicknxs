@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page_3">
            <property name="geometry">
@@ -301,7 +301,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>394</height>
+             <height>425</height>
             </rect>
            </property>
            <attribute name="label">
@@ -432,7 +432,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>394</height>
+             <height>425</height>
             </rect>
            </property>
            <attribute name="label">
@@ -525,7 +525,7 @@ p, li { white-space: pre-wrap; }
              <x>0</x>
              <y>0</y>
              <width>248</width>
-             <height>394</height>
+             <height>425</height>
             </rect>
            </property>
            <attribute name="label">
@@ -646,199 +646,13 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </widget>
-          <widget class="QWidget" name="page_5">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>248</width>
-             <height>394</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Output ASCII</string>
-           </attribute>
-           <widget class="QCheckBox" name="output4thColumnFlag">
-            <property name="geometry">
-             <rect>
-              <x>9</x>
-              <y>5</y>
-              <width>171</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>4th column (precision)</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>40</y>
-              <width>38</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;dQ&lt;span style=&quot; vertical-align:sub;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="dq0Value">
-            <property name="geometry">
-             <rect>
-              <x>37</x>
-              <y>34</y>
-              <width>58</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.0009</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_4">
-            <property name="geometry">
-             <rect>
-              <x>96</x>
-              <y>39</y>
-              <width>29</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>1/Å</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_5">
-            <property name="geometry">
-             <rect>
-              <x>155</x>
-              <y>39</y>
-              <width>41</width>
-              <height>17</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>ΔQ/Q</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="dQoverQvalue">
-            <property name="geometry">
-             <rect>
-              <x>197</x>
-              <y>33</y>
-              <width>50</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>0.045</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="createAsciiButton">
-            <property name="geometry">
-             <rect>
-              <x>16</x>
-              <y>74</y>
-              <width>232</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Create Reduce ASCII ...</string>
-            </property>
-           </widget>
-           <widget class="QGroupBox" name="groupBox_3">
-            <property name="geometry">
-             <rect>
-              <x>23</x>
-              <y>114</y>
-              <width>242</width>
-              <height>77</height>
-             </rect>
-            </property>
-            <property name="title">
-             <string>How to treat overlap values</string>
-            </property>
-            <widget class="QRadioButton" name="usingLessErrorValueFlag">
-             <property name="geometry">
-              <rect>
-               <x>25</x>
-               <y>24</y>
-               <width>199</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>use lowest error value</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-            <widget class="QRadioButton" name="usingMeanValueFalg">
-             <property name="geometry">
-              <rect>
-               <x>25</x>
-               <y>51</y>
-               <width>199</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>use mean value</string>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QPushButton" name="createIvsPxAscii">
-            <property name="geometry">
-             <rect>
-              <x>13</x>
-              <y>206</y>
-              <width>172</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Create IvsPx ASCII ...</string>
-            </property>
-           </widget>
-           <widget class="Line" name="line_6">
-            <property name="geometry">
-             <rect>
-              <x>22</x>
-              <y>188</y>
-              <width>225</width>
-              <height>16</height>
-             </rect>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="createRvsTOFAscii">
-            <property name="geometry">
-             <rect>
-              <x>13</x>
-              <y>238</y>
-              <width>171</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Create CRTOF ASCII ...</string>
-            </property>
-           </widget>
-          </widget>
          </widget>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_2">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="title">
            <string>Plot Options</string>
           </property>
@@ -902,7 +716,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -4210,22 +4024,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>createAsciiButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>output_data_into_ascii()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>128</x>
-     <y>917</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>reductionTable</sender>
    <signal>itemChanged(QTableWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
@@ -4570,38 +4368,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>1845</x>
      <y>1176</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>950</x>
-     <y>609</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>createIvsPxAscii</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>output_selected_data_into_ivspx_ascii()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>185</x>
-     <y>1095</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>950</x>
-     <y>609</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>createRvsTOFAscii</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>output_selected_data_into_crtof_ascii()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>99</x>
-     <y>1101</y>
     </hint>
     <hint type="destinationlabel">
      <x>950</x>

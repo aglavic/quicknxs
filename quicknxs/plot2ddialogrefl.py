@@ -1,8 +1,10 @@
-from PyQt4.QtGui import QDialog, QPalette
+from PyQt4.QtGui import QDialog, QPalette, QFileDialog
 from PyQt4.QtCore import Qt
 from plot2d_dialog_refl import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
 import colors
+import utilities
+import os
 
 class Plot2dDialogREFL(QDialog):
 	
@@ -38,10 +40,44 @@ class Plot2dDialogREFL(QDialog):
 		
 		self.ui.y_pixel_vs_tof_plot.leaveFigure.connect(self.leave_figure_plot)
 		self.ui.y_pixel_vs_tof_plot.toolbar.homeClicked.connect(self.home_clicked_plot)
+		self.ui.y_pixel_vs_tof_plot.toolbar.exportClicked.connect(self.export_yt)
 		
 		self.ui.detector_plot.leaveFigure.connect(self.leave_figure_detector_plot)
 		self.ui.detector_plot.toolbar.homeClicked.connect(self.home_clicked_detector_plot)
+		self.ui.detector_plot.toolbar.exportClicked.connect(self.export_detector_view)
 		
+	def export_yt(self):
+		_active_data = self.data
+		run_number = _active_data.run_number
+		default_filename = 'REFL_' + run_number + '_2dPxVsTof.txt'
+		path = self.main_gui.path_ascii
+		default_filename = path + '/' + default_filename
+		filename = QFileDialog.getSaveFileName(self, 'Create 2D Pixel VS TOF', default_filename)
+	      
+		if str(filename).strip() == '':
+		  info('User Canceled Outpout ASCII')
+		  return
+		
+		self.main_gui.path_ascii = os.path.dirname(filename)
+		image = _active_data.ytofdata
+		utilities.output_2d_ascii_file(filename, image)
+
+	def export_detector_view(self):
+		_active_data = self.data
+		run_number = _active_data.run_number
+		default_filename = 'REFL_' + run_number + '_2dDetectorView.txt'
+		path = self.main_gui.path_ascii
+		default_filename = path + '/' + default_filename
+		filename = QFileDialog.getSaveFileName(self, 'Create 2D Y Pixel VS X Pixel (Detector View)', default_filename)
+	      
+		if str(filename).strip() == '':
+		  info('User Canceled Outpout ASCII')
+		  return
+		
+		self.main_gui.path_ascii = os.path.dirname(filename)
+		image = _active_data.xydata
+		utilities.output_2d_ascii_file(filename, image)
+
 	def leave_figure_plot(self):
 		[xmin, xmax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.xaxis.get_view_interval()
 		[ymin, ymax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.yaxis.get_view_interval()

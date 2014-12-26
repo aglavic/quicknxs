@@ -480,6 +480,7 @@ class MainGUI(QtGui.QMainWindow):
       info('User Canceled Outpout ASCII')
       return
     
+    self.path_ascii = os.path.dirname(filename)
     image = _active_data.ytofdata
     utilities.output_2d_ascii_file(filename, image)
 
