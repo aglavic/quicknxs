@@ -1286,8 +1286,27 @@ class MainGUI(QtGui.QMainWindow):
     if (column != 0) and (column != 6):
       return
     
+    bigTableData = self.bigTableData
+
     # check if only 1 run number, or more
     str_split = cell_content.split(',')
+    if str_split == [''] and (not isData):
+      bigTableData[row,1] = None
+      self.bigTableData = bigTableData
+      self.plot_overview_REFL()
+      self.enableWidgets(status=False)
+      return
+    
+    if str_split == [''] and isData:
+      msgBox = QtGui.QMessageBox.critical(self, 'THIS BOX CAN NOT BE EMPTY !','INVALID FIELD!')
+      # put back previous data run number
+      _data = bigTableData[row,0]
+      run_number = _data.active_data.run_number
+      _item = QtGui.QTableWidgetItem(run_number)
+      _item.setForeground(QtGui.QColor(250,0,0))
+      self.ui.reductionTable.setItem(row, 0, _item)
+      return
+
     if len(str_split) == 1:
       # load object
       info('Trying to locate file number %s...'% cell_content)
@@ -1333,7 +1352,6 @@ class MainGUI(QtGui.QMainWindow):
       data_active.tof_range = config_file.tof_range
       data_active.tof_units = config_file.tof_units
       data_active.tof_auto_flag = config_file.tof_auto_flag
-      
       
     else: # use previously loaded data object
       prev_data = self.bigTableData[row, bigTableCol]
@@ -1665,11 +1683,9 @@ class MainGUI(QtGui.QMainWindow):
 
     [r,c] = self.getCurrentRowColumnSelected()
     _data = self.bigTableData[r,c]
-    data = _data.active_data
-    #data = self.active_data
-    if data is None:
+    if _data is None:
       return
-
+    data = _data.active_data
     filename = data.filename
 
     if self.ui.dataTOFmanualMode.isChecked(): # manual mode
