@@ -304,11 +304,13 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_ix_plot.leaveFigure.connect(self.leave_figure_ix_plot)
     self.ui.data_ix_plot.logtogy.connect(self.logy_toggle_ix_plot)
     self.ui.data_ix_plot.toolbar.homeClicked.connect(self.home_clicked_ix_plot)
+    self.ui.data_ix_plot.toolbar.exportClicked.connect(self.export_ix)
 
     self.ui.norm_ix_plot.singleClick.connect(self.single_click_norm_ix_plot)
     self.ui.norm_ix_plot.leaveFigure.connect(self.leave_figure_ix_plot)
     self.ui.norm_ix_plot.logtogy.connect(self.logy_toggle_ix_plot)
     self.ui.norm_ix_plot.toolbar.homeClicked.connect(self.home_clicked_ix_plot)
+    self.ui.norm_ix_plot.toolbar.exportClicked.connect(self.export_ix)
 
     self.ui.data_stitching_plot.singleClick.connect(self.single_click_data_stitching_plot)
     self.ui.data_stitching_plot.leaveFigure.connect(self.leave_figure_data_stitching_plot)
@@ -462,6 +464,32 @@ class MainGUI(QtGui.QMainWindow):
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
  # export
+  def export_ix(self):
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    _data = bigTableData[row,col]
+    _active_data = _data.active_data
+    run_number = _active_data.run_number
+    default_filename = 'REFL_' + run_number + '_ix.txt'
+    path = self.path_ascii
+    default_filename = path + '/' + default_filename
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel (low resolution range) ASCII File', default_filename)
+    
+    if str(filename).strip() == '':
+      info('User Canceled Output ASCII')
+      return
+    
+    self.path_ascii = os.path.dirname(filename)
+    countsxdata = _active_data.countsxdata
+    pixelaxis = range(len(countsxdata))
+    
+    text = ['#Counts vs Pixels (low resolution range)','#Pixel - Counts']
+    sz = len(pixelaxis)
+    for i in range(sz):
+      _line = str(pixelaxis[i]) + ' ' + str(countsxdata[i])
+      text.append(_line)
+    utilities.write_ascii_file(filename, text)
+
   def export_it(self):
     bigTableData = self.bigTableData
     [row,col] = self.getCurrentRowColumnSelected()
