@@ -1202,7 +1202,6 @@ class MainGUI(QtGui.QMainWindow):
     If checkStatus is True, will overwrite the status flag and
     will check itself what should be done (enable or not).
     '''
-
     isData = False
     if self.ui.dataNormTabWidget.currentIndex() == 0: #data
       isData = True
@@ -1255,17 +1254,12 @@ class MainGUI(QtGui.QMainWindow):
     return [_row, _column]
  
   def reduction_table_cell_double_clicked(self, row, column):
-
     if column == 0 or column == 6:
       # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
 
   @waiting_effects
   def reductionTable_manual_entry(self, item):
-    '''
-    user manually modified data or norm run number in the reductionTable
-    '''
-
     if not self.editing_flag:
       return
     self.editing_flag = False
@@ -1282,12 +1276,25 @@ class MainGUI(QtGui.QMainWindow):
       isData = False
       bigTableCol = 1
     
+    bigTableData = self.bigTableData
+
+    #make sure we are dealing with a number
+    try:
+      isNumber = int(cell_content)
+    except ValueError:
+      msgBox = QtGui.QMessageBox.critical(self, 'INVALID FIELD!', 'MAKE SURE YOU ENTERED A NUMBER!')
+      if isData:
+        _data = bigTableData[row,0]
+        run_number = _data.active_data.run_number
+        _item = QtGui.QTableWidgetItem(run_number)
+        _item.setForeground(QtGui.QColor(250,0,0))
+        self.ui.reductionTable.setItem(row, 0, _item)
+      return
+    
     # keep going only for data and norm columns
     if (column != 0) and (column != 6):
       return
     
-    bigTableData = self.bigTableData
-
     # check if only 1 run number, or more
     str_split = cell_content.split(',')
     if str_split == [''] and (not isData):
@@ -1295,10 +1302,12 @@ class MainGUI(QtGui.QMainWindow):
       self.bigTableData = bigTableData
       self.plot_overview_REFL()
       self.enableWidgets(status=False)
+      self._prev_row_selected = -1
+      self._prev_col_selected = -1
       return
     
     if str_split == [''] and isData:
-      msgBox = QtGui.QMessageBox.critical(self, 'THIS BOX CAN NOT BE EMPTY !','INVALID FIELD!')
+      msgBox = QtGui.QMessageBox.critical(self, 'INVALID FIELD!','THIS BOX CAN NOT BE EMPTY !')
       # put back previous data run number
       _data = bigTableData[row,0]
       run_number = _data.active_data.run_number
@@ -1325,6 +1334,7 @@ class MainGUI(QtGui.QMainWindow):
                    event_split_index = 0,
                    angle_offset = self.ui.angleOffsetValue.text(),
                    isData = isData)
+#    self.enableWidgets(status=True)
     
     # if previously entry has been loaded, then recover metadata info (peak, back...etc)
     # otherwise get them from config file bigTable[row,2]
@@ -1415,10 +1425,8 @@ class MainGUI(QtGui.QMainWindow):
     self.bigTable_selection_changed(row, col)   
 
   def reduction_table_cell_modified(self, item):
-    
     if self.editing_flag:
       self.reductionTable_manual_entry(item)
- 
  
   def populateReflectivityTable(self, data):
     # will populate the recap table
@@ -1694,7 +1702,6 @@ class MainGUI(QtGui.QMainWindow):
     else: # auto mode
       tof_range_auto = data.tof_range_auto
       
-    #tof_edges_full = data.tof_edges_full
     tof_axis = data.tof_axis_auto_with_margin
     
     xy = data.xydata
@@ -1706,15 +1713,14 @@ class MainGUI(QtGui.QMainWindow):
     [peak1, peak2] = data.peak
     [back1, back2] = data.back
     [lowRes1, lowRes2] = data.low_res
-    back_flag = data.back_flag
-    low_res_flag = data.low_res_flag
+    back_flag = bool(data.back_flag)
+    low_res_flag = bool(data.low_res_flag)
     
     if isDataSelected: # data
 
       self.ui.dataNameOfFile.setText('%s'%filename)
       
       # repopulate the tab
-#      [peak1, peak2] = data.data_peak
       peak1 = int(peak1)
       peak2 = int(peak2)
       peak_min = min([peak1, peak2])
@@ -1722,7 +1728,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataPeakFromValue.setValue(peak_min)
       self.ui.dataPeakToValue.setValue(peak_max)
 
-#      [back1, back2] = data.data_back
       back1 = int(back1)
       back2 = int(back2)
       back_min = min([back1, back2])
@@ -1730,18 +1735,14 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.dataBackFromValue.setValue(back_min)
       self.ui.dataBackToValue.setValue(back_max)
 
-#      [lowRes1, lowRes2] = data.data_low_res
       lowRes1 = int(lowRes1)
       lowRes2 = int(lowRes2)
       lowRes_min = min([lowRes1, lowRes2])
       lowRes_max = max([lowRes1, lowRes2])
       self.ui.dataLowResFromValue.setValue(lowRes_min)
       self.ui.dataLowResToValue.setValue(lowRes_max)
-#      back_flag = data.data_back_flag
       self.ui.dataBackgroundFlag.setChecked(back_flag)
 
-#      data_low_res_flag = data.data_low_res_flag
-#      self.ui.dataLowResFlag.setChecked(data_low_res_flag)
       self.ui.dataLowResFlag.setChecked(low_res_flag)
       
       yt_plot = self.ui.data_yt_plot
@@ -1749,10 +1750,6 @@ class MainGUI(QtGui.QMainWindow):
       it_plot = self.ui.data_it_plot
       ix_plot = self.ui.data_ix_plot
     
-      # calculate and display Q range if not calculated yet
-#      _data = self.bigTableData[r,c]
- #     _active_data = _data.active_data
-        
       incident_angle = data.incident_angle
       [qmin,qmax] = data.q_range
       [lmin,lmax] = data.lambda_range
@@ -1783,7 +1780,6 @@ class MainGUI(QtGui.QMainWindow):
       flag = data.use_it_flag
       self.ui.useNormalizationFlag.setChecked(flag)
 
-#      [peak1,peak2] = data.norm_peak
       peak1 = int(peak1)
       peak2 = int(peak2)
       peak_min = min([peak1, peak2])
@@ -1791,7 +1787,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normPeakFromValue.setValue(peak_min)
       self.ui.normPeakToValue.setValue(peak_max)
       
-  #    [back1, back2] = data.norm_back
       back1 = int(back1)
       back2 = int(back2)
       back_min = min([back1, back2])
@@ -1799,7 +1794,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normBackFromValue.setValue(back_min)
       self.ui.normBackToValue.setValue(back_max)
 
-#      [lowRes1, lowRes2] = data.norm_low_res
       lowRes1 = int(lowRes1)
       lowRes2 = int(lowRes2)
       lowRes_min = min([lowRes1, lowRes2])
@@ -1807,15 +1801,11 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.normLowResFromValue.setValue(lowRes_min)
       self.ui.normLowResToValue.setValue(lowRes_max)
 
-    #  norm_low_res_flag = data.norm_low_res_flag
-     # self.ui.normLowResFlag.setChecked(norm_low_res_flag)
       self.ui.normLowResFlag.setChecked(low_res_flag)
 
-      #norm_back_flag = data.norm_back_flag
       self.ui.normBackgroundFlag.setChecked(back_flag)
       
       yt_plot = self.ui.norm_yt_plot
-#      yi_plot = self.ui.norm_yi_plot
       yi_plot = self.ui.norm_yi_plot
       it_plot = self.ui.norm_it_plot
       ix_plot = self.ui.norm_ix_plot
@@ -5160,7 +5150,7 @@ Do you want to try to restore the working reduction list?""",
         data_back = _data.back
         data_low_res = _data.low_res
         data_back_flag = _data.back_flag
-        data_low_res_flag = _data.low_res_flag
+        data_low_res_flag = bool(_data.low_res_flag)
         tof = _data.tof_range
         tof_units = _data.tof_units
         tof_auto_flag = _data.tof_auto_flag
