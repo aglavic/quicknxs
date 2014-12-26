@@ -463,8 +463,34 @@ class MainGUI(QtGui.QMainWindow):
 
  # export
   def export_it(self):
-    pass
-
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    _data = bigTableData[row,col]
+    _active_data = _data.active_data
+    run_number = _active_data.run_number
+    default_filename = 'REFL_' + run_number + '_yt.txt'
+    path = self.path_ascii
+    default_filename = path + '/' + default_filename
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs TOF ASCII File', default_filename)
+    
+    if str(filename).strip() == '':
+      info('User Canceled Output ASCII')
+      return
+    
+    self.path_ascii = os.path.dirname(filename)
+    countstofdata = _active_data.countstofdata
+    tof = _active_data.tof_axis_auto_with_margin
+    if tof[-1] > 1000:
+      tof /= 1000.
+            
+    text = ['#Counts vs  TOF','#TOF(ms) - Counts']
+    sz = len(tof)-1
+    for i in range(sz):
+      _line = str(tof[i]) + ' ' + str(countstofdata[i])
+      text.append(_line)
+    text.append(str(tof[-1]))
+    utilities.write_ascii_file(filename, text)
+    
   def export_yt(self):
     bigTableData = self.bigTableData
     [row,col] = self.getCurrentRowColumnSelected()
@@ -510,7 +536,6 @@ class MainGUI(QtGui.QMainWindow):
     for i in range(sz):
       _line = str(pixelaxis[i]) + ' ' + str(ycountsdata[i])
       text.append(_line)
-      
     utilities.write_ascii_file(filename, text)
     
   def export_stitching_data(self):
