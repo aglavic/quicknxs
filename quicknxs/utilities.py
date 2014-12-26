@@ -19,6 +19,19 @@ def convert_angle (angle=0, from_units='degree', to_units='rad'):
 
     return float(angle) * coeff
 
+def output_2d_ascii_file(filename, image):
+    f=open(filename,'w')
+    sz = image.shape
+    dim1 = sz[0]
+    dim2 = sz[1]
+    for px in range(dim1):
+        _line = ''
+        for t in range(dim2):
+            _line += str(image[px,t])
+            _line += ' '
+        _line += '\n'
+        f.write(_line)
+    f.close
   
 def output_big_ascii_file(file_name,
                          x_axis,
@@ -30,6 +43,7 @@ def output_big_ascii_file(file_name,
     sz = y_axis.shape # (nbr_pixel, nbr_tof)
     nbr_tof = sz[1]
     nbr_pixel = sz[0]
+    f.write('#2D Pixel vs TOF (integrated over low resolution pixel range)')
 
     for t in range(nbr_tof):
         _tmp_str = str(x_axis[t])

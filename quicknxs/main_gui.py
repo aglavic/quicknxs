@@ -268,11 +268,13 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_yt_plot.leaveFigure.connect(self.leave_figure_yt_plot)
     self.ui.data_yt_plot.logtogy.connect(self.logy_toggle_yt_plot)
     self.ui.data_yt_plot.toolbar.homeClicked.connect(self.home_clicked_yt_plot)
+    self.ui.data_yt_plot.toolbar.exportClicked.connect(self.export_yt)
 
     self.ui.norm_yt_plot.singleClick.connect(self.single_click_norm_yt_plot)
     self.ui.norm_yt_plot.leaveFigure.connect(self.leave_figure_yt_plot)
     self.ui.norm_yt_plot.logtogy.connect(self.logy_toggle_yt_plot)
     self.ui.norm_yt_plot.toolbar.homeClicked.connect(self.home_clicked_yt_plot)
+    self.ui.norm_yt_plot.toolbar.exportClicked.connect(self.export_yt)
 
     self.ui.data_yi_plot.singleClick.connect(self.single_click_data_yi_plot)
     self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
@@ -290,13 +292,13 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
     self.ui.data_it_plot.logtogy.connect(self.logy_toggle_it_plot)
     self.ui.data_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
-    self.ui.data_it_plot.toolbar.exportClicked.connect(self.export_data_it)
+    self.ui.data_it_plot.toolbar.exportClicked.connect(self.export_it)
 
     self.ui.norm_it_plot.singleClick.connect(self.single_click_norm_it_plot)
     self.ui.norm_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
     self.ui.norm_it_plot.logtogy.connect(self.logy_toggle_it_plot)
     self.ui.norm_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
-    self.ui.norm_it_plot.toolbar.exportClicked.connect(self.export_norm_it)
+    self.ui.norm_it_plot.toolbar.exportClicked.connect(self.export_it)
 
     self.ui.data_ix_plot.singleClick.connect(self.single_click_data_ix_plot)
     self.ui.data_ix_plot.leaveFigure.connect(self.leave_figure_ix_plot)
@@ -460,14 +462,29 @@ class MainGUI(QtGui.QMainWindow):
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
  # export
-  def export_data_it(self):
+  def export_it(self):
     pass
 
-  def export_norm_it(self):
-    pass
+  def export_yt(self):
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    _data = bigTableData[row,col]
+    _active_data = _data.active_data
+    run_number = _active_data.run_number
+    default_filename = 'REFL_' + run_number + '_2dPxVsTof.txt'
+    path = self.path_ascii
+    default_filename = path + '/' + default_filename
+    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create 2D Pixel VS TOF', default_filename)
+  
+    if str(filename).strip() == '':
+      info('User Canceled Outpout ASCII')
+      return
+    
+    image = _active_data.ytofdata
+    utilities.output_2d_ascii_file(filename, image)
+
   
   def export_counts_vs_pixel(self):
-    
     bigTableData = self.bigTableData
     [row,col] = self.getCurrentRowColumnSelected()
     _data = bigTableData[row,col]
