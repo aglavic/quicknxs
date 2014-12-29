@@ -1263,9 +1263,9 @@ class MainGUI(QtGui.QMainWindow):
       # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
 
-
-  def reduction_table_cell_single_clicked(self):
-    print 'reduction table cell single clicked'
+  def reduction_table_cell_single_clicked(self, item):
+    self.editing_flag = True
+    self.reductionTable_manual_entry(item)
 
   @waiting_effects
   def reductionTable_manual_entry(self, item):
@@ -1287,6 +1287,18 @@ class MainGUI(QtGui.QMainWindow):
     
     bigTableData = self.bigTableData
 
+    # if norm field is empty, clear data
+    # check if only 1 run number, or more
+    str_split = cell_content.split(',')
+    if str_split == [''] and (not isData):
+      bigTableData[row,1] = None
+      self.bigTableData = bigTableData
+      self.plot_overview_REFL()
+      self.enableWidgets(status=False)
+      self._prev_row_selected = -1
+      self._prev_col_selected = -1
+      return
+
     #make sure we are dealing with a number
     try:
       isNumber = int(cell_content)
@@ -1303,18 +1315,7 @@ class MainGUI(QtGui.QMainWindow):
     # keep going only for data and norm columns
     if (column != 0) and (column != 6):
       return
-    
-    # check if only 1 run number, or more
-    str_split = cell_content.split(',')
-    if str_split == [''] and (not isData):
-      bigTableData[row,1] = None
-      self.bigTableData = bigTableData
-      self.plot_overview_REFL()
-      self.enableWidgets(status=False)
-      self._prev_row_selected = -1
-      self._prev_col_selected = -1
-      return
-    
+        
     if str_split == [''] and isData:
       msgBox = QtGui.QMessageBox.critical(self, 'INVALID FIELD!','THIS BOX CAN NOT BE EMPTY !')
       # put back previous data run number
@@ -1353,7 +1354,6 @@ class MainGUI(QtGui.QMainWindow):
       config_file = self.bigTableData[row, 2]
       
       if isData:
-        
         data_active.peak = config_file.data_peak
         data_active.back = config_file.data_back
         data_active.low_res = config_file.data_low_res
@@ -1361,7 +1361,6 @@ class MainGUI(QtGui.QMainWindow):
         data_active.low_res_flag = config_file.data_low_res_flag
 
       else:
-        
         data_active.peak = config_file.norm_peak
         data_active.back = config_file.norm_back
         data_active.low_res = config_file.norm_low_res
@@ -1374,9 +1373,7 @@ class MainGUI(QtGui.QMainWindow):
       
     else: # use previously loaded data object
       prev_data = self.bigTableData[row, bigTableCol]
-      
       prev_active = prev_data.active_data
-      
       data_active.peak = prev_active.peak
       data_active.back = prev_active.back
       data_active.low_res = prev_active.low_res
@@ -5062,28 +5059,28 @@ Do you want to try to restore the working reduction list?""",
       self.loading_configuration_file(filename)
             
   def loading_configuration_file(self, filename):
-    # try:
-    self.path_config = os.path.dirname(filename)
-    
-    # make sure the reductionTable is empty
-    nbrRow = self.ui.reductionTable.rowCount()
-    if nbrRow > 0:
-      for _row in range(nbrRow):
-        self.ui.reductionTable.removeRow(0)
-    
-    self.loadConfigAndPopulateGui(filename)
-    self.enableWidgets(checkStatus=True)
-    
-    if self.reducedFilesLoadedObject is None:
-      _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
-    else:
-      _reducedFilesLoadedObject = self.reducedFilesLoadedObject
-    _reducedFilesLoadedObject.addFile(filename)
-    _reducedFilesLoadedObject.updateGui()
-    self.reducedFilesLoadedObject = _reducedFilesLoadedObject
+    try:
+      self.path_config = os.path.dirname(filename)
       
-#  except:
-  #  warning('Could not open configuration file!')
+      # make sure the reductionTable is empty
+      nbrRow = self.ui.reductionTable.rowCount()
+      if nbrRow > 0:
+        for _row in range(nbrRow):
+          self.ui.reductionTable.removeRow(0)
+      
+      self.loadConfigAndPopulateGui(filename)
+      self.enableWidgets(checkStatus=True)
+      
+      if self.reducedFilesLoadedObject is None:
+        _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+      else:
+        _reducedFilesLoadedObject = self.reducedFilesLoadedObject
+      _reducedFilesLoadedObject.addFile(filename)
+      _reducedFilesLoadedObject.updateGui()
+      self.reducedFilesLoadedObject = _reducedFilesLoadedObject
+        
+    except:
+      warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):
@@ -5092,7 +5089,14 @@ Do you want to try to restore the working reduction list?""",
     if not(filename == ""):
       self.path = os.path.dirname(filename)
       self.saveConfig(filename)
-
+      if self.reducedFilesLoadedObject is None:
+        _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+      else:
+        _reducedFilesLoadedObject = self.reducedFilesLoadedObject
+      _reducedFilesLoadedObject.addFile(filename)
+      _reducedFilesLoadedObject.updateGui()
+      self.reducedFilesLoadedObject = _reducedFilesLoadedObject
+      
   @log_call
   def saveConfig(self, filename):
     

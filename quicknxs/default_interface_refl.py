@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Dec 26 16:28:19 2014
+# Created: Mon Dec 29 10:11:54 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1400,7 +1400,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(0)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
@@ -1466,7 +1466,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.normBackFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.norm_back_spinbox_validation)
         QtCore.QObject.connect(self.dataNormTabWidget, QtCore.SIGNAL("currentChanged(int)"), MainWindow.data_norm_tab_changed)
         QtCore.QObject.connect(self.normPeakFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.norm_peak_spinbox_validation)
-        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellClicked(int,int)"), MainWindow.reduction_table_cell_single_clicked)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("itemActivated(QTableWidgetItem*)"), MainWindow.reduction_table_cell_single_clicked)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.logarithmic_colorscale)

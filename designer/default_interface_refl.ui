@@ -716,7 +716,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -4713,7 +4713,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>reductionTable</sender>
-   <signal>cellClicked(int,int)</signal>
+   <signal>itemActivated(QTableWidgetItem*)</signal>
    <receiver>MainWindow</receiver>
    <slot>reduction_table_cell_single_clicked()</slot>
    <hints>
