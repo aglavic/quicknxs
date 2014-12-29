@@ -4711,6 +4711,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>cellClicked(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduction_table_cell_single_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>844</x>
+     <y>1042</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>950</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -4808,5 +4824,6 @@ p, li { white-space: pre-wrap; }
   <slot>output_selected_data_into_crtof_ascii()</slot>
   <slot>load_reduced_ascii()</slot>
   <slot>refresh_stitching_ascii_plot()</slot>
+  <slot>reduction_table_cell_single_clicked()</slot>
  </slots>
 </ui>

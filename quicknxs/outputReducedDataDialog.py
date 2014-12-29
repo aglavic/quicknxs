@@ -2,9 +2,11 @@ from PyQt4.QtGui import QDialog, QFileDialog, QPalette
 from PyQt4.QtCore import Qt
 from output_reduced_data_dialog import Ui_Dialog as UiDialog
 from stitching_ascii_widget import stitchingAsciiWidgetObject
+from export_stitching_ascii_settings import ExportStitchingAsciiSettings
 from mantid.simpleapi import *
 import os
 import utilities
+
 
 class OutputReducedDataDialog(QDialog):
 	
@@ -24,7 +26,7 @@ class OutputReducedDataDialog(QDialog):
 	isWith4thColumnFlag = False
 	dq0 = None
 	dq_over_q = None
-	useLowestErrorValue = True
+	useLowestErrorValueFlag = True
 	
 	def __init__(self, mainGui, stitchingAsciiWidgetObject, parent=None):
 		QDialog.__init__(self, parent=parent)
@@ -40,6 +42,18 @@ class OutputReducedDataDialog(QDialog):
 		
 		self.stitchingAsciiWidgetObject = stitchingAsciiWidgetObject
 		self.mainGui = mainGui
+		
+		# retrieve gui parameters 
+		_exportStitchingAsciiSettings = self.mainGui.exportStitchingAsciiSettings
+		self.dq0 = str(_exportStitchingAsciiSettings.fourth_column_dq0)
+		self.dq_over_q = str(_exportStitchingAsciiSettings.fourth_column_dq_over_q)
+		self.isWith4thColumnFlag = bool(_exportStitchingAsciiSettings.fourth_column_flag)
+		self.useLowestErrorValueFlag = bool(_exportStitchingAsciiSettings.use_lowest_error_value_flag)
+		self.ui.dq0Value.setText(self.dq0)
+		self.ui.dQoverQvalue.setText(self.dq_over_q)
+		self.ui.output4thColumnFlag.setChecked(self.isWith4thColumnFlag)
+		self.ui.usingLessErrorValueFlag.setChecked(self.useLowestErrorValueFlag)
+		self.ui.usingMeanValueFalg.setChecked(not self.useLowestErrorValueFlag)
 		
 	def create_reduce_ascii_button_event(self):
 		self.ui.folder_error.setVisible(False)
@@ -63,8 +77,21 @@ class OutputReducedDataDialog(QDialog):
 		self.filename = filename
 		self.mainGui.path_ascii = os.path.dirname(filename)
 		self.write_ascii()
-		
 		self.close()
+		self.save_back_widget_parameters_used()
+		
+	def save_back_widget_parameters_used(self):
+		_isWith4thColumnFlag = self.ui.output4thColumnFlag.isChecked()
+		_dq0 = self.ui.dq0Value.text()
+		_dq_over_q = self.ui.dQoverQvalue.text()
+		_useLowestErrorValueFlag = self.ui.usingLessErrorValueFlag.isChecked()
+		
+		_exportStitchingAsciiSettings = ExportStitchingAsciiSettings()
+		_exportStitchingAsciiSettings.fourth_column_dq0 = _dq0
+		_exportStitchingAsciiSettings.fourth_column_dq_over_q = _dq_over_q
+		_exportStitchingAsciiSettings.fourth_column_flag = _isWith4thColumnFlag
+		_exportStitchingAsciiSettings.use_lowest_error_value_flag = _useLowestErrorValueFlag
+		self.mainGui.exportStitchingAsciiSettings = _exportStitchingAsciiSettings
 		
 	def is_folder_access_granted(self, filename):
 		return os.access(filename,os.W_OK)
@@ -83,7 +110,7 @@ class OutputReducedDataDialog(QDialog):
 		else:
 			text = ['#Q[1/Angstroms] R delta_R']
 			
-		self.useLowestErrorValue = self.ui.usingLessErrorValueFlag.isChecked()
+		self.useLowestErrorValueFlag = self.ui.usingLessErrorValueFlag.isChecked()
 		
 		self.text_data = text
 		self.produce_data_with_common_q_axis()
@@ -167,7 +194,7 @@ class OutputReducedDataDialog(QDialog):
 					
 				if data_y[j] > 0 and data_y_k[j] > 0:
 					  
-					if self.useLowestErrorValue:
+					if self.useLowestErrorValueFlag:
 						if (data_e[j] > data_e_k[j]):
 							data_y[j] = data_y_k[j]
 							data_e[j] = data_e_k[j]

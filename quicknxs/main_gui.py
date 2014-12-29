@@ -54,6 +54,7 @@ from refl_gui_utils import PlotDialogREFL
 from plot2ddialogrefl import Plot2dDialogREFL
 from all_plot_axis import AllPlotAxis
 from outputReducedDataDialog import OutputReducedDataDialog
+from export_stitching_ascii_settings import ExportStitchingAsciiSettings
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
@@ -157,6 +158,8 @@ class MainGUI(QtGui.QMainWindow):
 
   allPlotAxis = None
 
+  exportStitchingAsciiSettings = None
+
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -250,6 +253,8 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.reducedAsciiDataSetTable.setHorizontalHeaderLabels(verticalHeader)
       self.ui.reducedAsciiDataSetTable.setColumnWidth(0,249)
       self.ui.reducedAsciiDataSetTable.setColumnWidth(1,49)
+
+      self.exportStitchingAsciiSettings = ExportStitchingAsciiSettings()
 
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
@@ -1257,6 +1262,10 @@ class MainGUI(QtGui.QMainWindow):
     if column == 0 or column == 6:
       # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
+
+
+  def reduction_table_cell_single_clicked(self):
+    print 'reduction table cell single clicked'
 
   @waiting_effects
   def reductionTable_manual_entry(self, item):
@@ -5662,13 +5671,15 @@ Do you want to try to restore the working reduction list?""",
 
         incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')
         self.ui.selectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected))
-        
+
+        _exportStitchingAsciiSettings = self.exportStitchingAsciiSettings
         fourth_column_flag = self.getNodeValue(node, 'fourth_column_flag')
-        self.ui.output4thColumnFlag.setChecked(strtobool(fourth_column_flag))
+        _exportStitchingAsciiSettings.fourth_column_flag = fourth_column_flag
         fourth_column_dq0 = self.getNodeValue(node, 'fourth_column_dq0')
-        self.ui.dq0Value.setText(fourth_column_dq0)
+        _exportStitchingAsciiSettings.fourth_column_dq0 = fourth_column_dq0
         fourth_column_dq_over_q = self.getNodeValue(node, 'fourth_column_dq_over_q')
-        self.ui.dQoverQvalue.setText(fourth_column_dq_over_q)
+        _exportStitchingAsciiSettings.fourth_column_dq_over_q = fourth_column_dq_over_q
+        self.exportStitchingAsciiSettings = _exportStitchingAsciiSettings
 
       try:
         _data_full_file_name = self.getNodeValue(node, 'data_full_file_name')
