@@ -1,5 +1,6 @@
 from file_loaded_object import FileLoadedObject
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 
 class ReducedConfigFilesHandler(object):
 	'''
@@ -92,11 +93,18 @@ class ReducedConfigFilesHandler(object):
 		return _index
 			
 	def updateGui(self):
+		listKey = [QtCore.Qt.Key_0, 
+		           QtCore.Qt.Key_1,
+		           QtCore.Qt.Key_2,
+		           QtCore.Qt.Key_3,
+		           QtCore.Qt.Key_4]
 		for i in range(self.totalFilesLoaded):
 			_file = self.configFiles[i].fullFileName
+			_key = listKey[i]
 			if _file != '':
 				self.mainGui.listAction[i].setText(_file)
 				self.mainGui.listAction[i].setVisible(True)
+				self.mainGui.listAction[i].setShortcuts(QtGui.QKeySequence(QtCore.Qt.META + _key))
 
 	def save(self):
 		from quicknxs.config import refllastloadedfiles

@@ -323,13 +323,9 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.data_stitching_plot.logtogx.connect(self.logx_toggle_data_stitching)
     self.ui.data_stitching_plot.logtogy.connect(self.logy_toggle_data_stitching)
     self.ui.data_stitching_plot.toolbar.exportClicked.connect(self.export_stitching_data)
-    
-    
-      
+
     self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
     self._path_watcher.directoryChanged.connect(self.folderModified)
-    
-
     # watch folder for changes
     self.auto_change_active=False
 
