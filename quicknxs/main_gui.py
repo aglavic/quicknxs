@@ -2965,7 +2965,6 @@ class MainGUI(QtGui.QMainWindow):
     
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
   
-  
   @log_call
   def nextFile(self):
     item=self.ui.file_list.currentRow()
@@ -4859,6 +4858,15 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
+  def useAutoPeakBackSelectionCheckBox(self, status):
+    self.ui.autoPeakBackSelectionFrame.setEnabled(status)
+  
+  def useGeometryCorrectionCheckBox(self, status):
+    self.ui.geometryCorrectionFrame.setEnabled(status)
+  
+  def useScalingFactorConfigCheckBox(self, status):
+    self.ui.scalingFactorConfigFrame.setEnabled(status)
+    
   def save_new_settings(self):
     '''
     This function will retrieve all the settings (peak, background...)
@@ -5055,28 +5063,28 @@ Do you want to try to restore the working reduction list?""",
       self.loading_configuration_file(filename)
             
   def loading_configuration_file(self, filename):
-    try:
-      self.path_config = os.path.dirname(filename)
+#    try:
+    self.path_config = os.path.dirname(filename)
       
-      # make sure the reductionTable is empty
-      nbrRow = self.ui.reductionTable.rowCount()
-      if nbrRow > 0:
-        for _row in range(nbrRow):
-          self.ui.reductionTable.removeRow(0)
-      
-      self.loadConfigAndPopulateGui(filename)
-      self.enableWidgets(checkStatus=True)
-      
-      if self.reducedFilesLoadedObject is None:
-        _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
-      else:
-        _reducedFilesLoadedObject = self.reducedFilesLoadedObject
-      _reducedFilesLoadedObject.addFile(filename)
-      _reducedFilesLoadedObject.updateGui()
-      self.reducedFilesLoadedObject = _reducedFilesLoadedObject
+    # make sure the reductionTable is empty
+    nbrRow = self.ui.reductionTable.rowCount()
+    if nbrRow > 0:
+      for _row in range(nbrRow):
+        self.ui.reductionTable.removeRow(0)
+    
+    self.loadConfigAndPopulateGui(filename)
+    self.enableWidgets(checkStatus=True)
+    
+    if self.reducedFilesLoadedObject is None:
+      _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+    else:
+      _reducedFilesLoadedObject = self.reducedFilesLoadedObject
+    _reducedFilesLoadedObject.addFile(filename)
+    _reducedFilesLoadedObject.updateGui()
+    self.reducedFilesLoadedObject = _reducedFilesLoadedObject
         
-    except:
-      warning('Could not open configuration file!')
+   # except:
+      #warning('Could not open configuration file!')
     
   @log_call
   def saving_configuration(self):
@@ -5287,7 +5295,6 @@ Do you want to try to restore the working reduction list?""",
       _exportStitchingAsciiSettings = self.exportStitchingAsciiSettings
       _overlap_lowest_error = _exportStitchingAsciiSettings.use_lowest_error_value_flag
       strArray.append('   <overlap_lowest_error>' + str(_overlap_lowest_error) + '</overlap_lowest_error>\n')
-#      strArray.append('   <overlap_mean_value>False</overlap_mean_value>\n');
 
       angleValue = self.ui.angleOffsetValue.text()
       angleError = self.ui.angleOffsetError.text()
@@ -5323,8 +5330,15 @@ Do you want to try to restore the working reduction list?""",
       fcdqoverq = _exportStitchingAsciiSettings.fourth_column_dq_over_q
       strArray.append('   <fourth_column_dq_over_q>' + str(fcdqoverq) + '</fourth_column_dq_over_q>\n')
     
-      strArray.append('  </RefLData>\n')
+      useAutoPeakBackSelectionFlag = self.ui.actionAutomaticPeakFinder.isChecked()
+      strArray.append('   <auto_peak_back_selection_flag>' + str(useAutoPeakBackSelectionFlag) + '</auto_peak_back_selection_flag>\n')
+      autoBackSelectionWidth = self.ui.autoBackSelectionWidth.text()
+      strArray.append('   <auto_peak_back_selection_width>' + str(autoBackSelectionWidth) + '</auto_peak_back_selection_width>\n')
+      useAutoTofRangeFinderFlag = self.ui.autoTofFlag.isChecked()
+      strArray.append('   <auto_tof_range_flag>' + str(useAutoTofRangeFinderFlag) + '</auto_tof_range_flag>\n')
     
+      strArray.append('  </RefLData>\n')
+
     strArray.append('  </DataSeries>\n')
     strArray.append('</Reduction>\n')
 
@@ -5638,22 +5652,31 @@ Do you want to try to restore the working reduction list?""",
         # load general settings for first row only
         scaling_factor_file = self.getNodeValue(node, 'scaling_factor_file')
         self.ui.scalingFactorFile.setText(scaling_factor_file)
-
         scaling_factor_flag = self.getNodeValue(node, 'scaling_factor_flag')
         self.ui.scalingFactorFlag.setChecked(strtobool(scaling_factor_flag))
-        self.sf_widgets_status(strtobool(scaling_factor_flag))
-        
+        self.useScalingFactorConfigCheckBox(strtobool(scaling_factor_flag))
         slits_width_flag = self.getNodeValue(node, 'slits_width_flag')
         self.ui.scalingFactorSlitsWidthFlag.setChecked(strtobool(slits_width_flag))
-
         incident_medium_list = self.getNodeValue(node, 'incident_medium_list')
         im_list = incident_medium_list.split(',')
         self.ui.selectIncidentMediumList.clear()
         self.ui.selectIncidentMediumList.addItems(im_list)
-
         incident_medium_index_selected = self.getNodeValue(node, 'incident_medium_index_selected')
         self.ui.selectIncidentMediumList.setCurrentIndex(int(incident_medium_index_selected))
 
+        try:
+          useAutoPeakBackSelectionFlag = strtobool(self.getNodeValue(node,'auto_peak_back_selection_flag'))
+          autoBackSelectionWidth = int(self.getNodeValue(node, 'auto_peak_back_selection_width'))
+          useAutoTofRangeFinderFlag = strtobool(self.getNodeValue(node,'auto_tof_range_flag'))
+        except:
+          useAutoPeakBackSelectionFlag = True
+          autoBackSelectionWidth = 4
+          useAutoTofRangeFinderFlag = True
+        self.ui.actionAutomaticPeakFinder.setChecked(useAutoPeakBackSelectionFlag)
+        self.useAutoPeakBackSelectionCheckBox(useAutoPeakBackSelectionFlag)
+        self.ui.autoBackSelectionWidth.setValue(autoBackSelectionWidth)
+        self.ui.autoTofFlag.setChecked(useAutoTofRangeFinderFlag)
+        
         _exportStitchingAsciiSettings = self.exportStitchingAsciiSettings
         fourth_column_flag = self.getNodeValue(node, 'fourth_column_flag')
         _exportStitchingAsciiSettings.fourth_column_flag = fourth_column_flag
@@ -5662,6 +5685,14 @@ Do you want to try to restore the working reduction list?""",
         fourth_column_dq_over_q = self.getNodeValue(node, 'fourth_column_dq_over_q')
         _exportStitchingAsciiSettings.fourth_column_dq_over_q = fourth_column_dq_over_q
         self.exportStitchingAsciiSettings = _exportStitchingAsciiSettings
+
+        _useGeometryCorrection = self.getNodeValue(node,'geometry_correction_switch')
+        self.useGeometryCorrectionCheckBox(strtobool(_useGeometryCorrection))
+        self.ui.geometryCorrectionFlag.setChecked(strtobool(_useGeometryCorrection))
+        _angle_offset = self.getNodeValue(node,'angle_offset')
+        self.ui.angleOffsetValue.setText(_angle_offset)
+        _angle_offset_error = self.getNodeValue(node,'angle_offset_error')
+        self.ui.angleOffsetError.setText(_angle_offset_error)
 
       try:
         _data_full_file_name = self.getNodeValue(node, 'data_full_file_name')
@@ -5876,15 +5907,6 @@ Do you want to try to restore the working reduction list?""",
     
     return sorted(set(first_column_only))
     
-
-  def sf_widgets_status(self, bool):
-    self.ui.label_sf_precision.setEnabled(bool)
-    self.ui.sfPrecision.setEnabled(bool)
-    self.ui.scalingFactorSlitsWidthFlag.setEnabled(bool)
-    self.ui.scalingFactorFile.setEnabled(bool)
-    self.ui.selectIncidentMediumList.setEnabled(bool)
-    self.ui.sfBrowseButton.setEnabled(bool)
-
   def select_current_SF(self):
   
     sf_status = 'auto'
