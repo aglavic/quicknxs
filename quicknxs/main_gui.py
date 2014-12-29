@@ -5087,30 +5087,12 @@ Do you want to try to restore the working reduction list?""",
     
   @log_call
   def saving_configuration(self):
-    '''
-    Reached by the Save Configuration button
-    will retrieve all the data from the application and will save them using the 
-    same format as Mantid
-    '''
-    
     _path = self.path_config
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', _path)
     if not(filename == ""):
-      
       self.path = os.path.dirname(filename)
       self.saveConfig(filename)
-#      self.saveReducedObject(filename)
-      
-  #@log_call
-  #def saveReducedObject(self, filename):
-    #'''
-    #save reduce data (biTableData)
-    #'''
-    #pickleFilename = createPickleFilename(filename)
-    #_bigTableData = self.bigTableData
-    #filehandler = open(pickleFilename, 'w')
-    #pickle.dump(_bigTableData, filehandler)
-      
+
   @log_call
   def saveConfig(self, filename):
     
@@ -5166,9 +5148,7 @@ Do you want to try to restore the working reduction list?""",
         q_range = _data.q_range
         lambda_range = _data.lambda_range
         incident_angle = _data.incident_angle
-      
       else:
-
         _metadata = _bigTableData[row,2]
         if _metadata is not None: # collect data via previously loaded config
           data_full_file_name = _metadata.data_full_file_name
@@ -5302,10 +5282,12 @@ Do you want to try to restore the working reduction list?""",
       
       q_min = '0'   #FIXME
       q_max = '0'   #FIXME
-      
+          
       strArray.append('   <auto_q_binning>False</auto_q_binning>\n')
-      strArray.append('   <overlap_lowest_error>True</overlap_lowest_error>\n')
-      strArray.append('   <overlap_mean_value>False</overlap_mean_value>\n');
+      _exportStitchingAsciiSettings = self.exportStitchingAsciiSettings
+      _overlap_lowest_error = _exportStitchingAsciiSettings.use_lowest_error_value_flag
+      strArray.append('   <overlap_lowest_error>' + str(_overlap_lowest_error) + '</overlap_lowest_error>\n')
+#      strArray.append('   <overlap_mean_value>False</overlap_mean_value>\n');
 
       angleValue = self.ui.angleOffsetValue.text()
       angleError = self.ui.angleOffsetError.text()
@@ -5332,13 +5314,13 @@ Do you want to try to restore the working reduction list?""",
       strArray.append('   <incident_medium_index_selected>' + str(imIndex) + '</incident_medium_index_selected>\n')
       
       # output
-      fcFlag = self.ui.output4thColumnFlag.isChecked()
+      fcFlag = _exportStitchingAsciiSettings.fourth_column_flag
       strArray.append('   <fourth_column_flag>' + str(fcFlag) + '</fourth_column_flag>\n')
       
-      fcdq0 = self.ui.dq0Value.text()
+      fcdq0 = _exportStitchingAsciiSettings.fourth_column_dq0
       strArray.append('   <fourth_column_dq0>' + str(fcdq0) + '</fourth_column_dq0>\n')
       
-      fcdqoverq = self.ui.dQoverQvalue.text()
+      fcdqoverq = _exportStitchingAsciiSettings.fourth_column_dq_over_q
       strArray.append('   <fourth_column_dq_over_q>' + str(fcdqoverq) + '</fourth_column_dq_over_q>\n')
     
       strArray.append('  </RefLData>\n')
