@@ -180,6 +180,7 @@ class NXSData(object):
   __metaclass__=OptionsDocMeta
 
   nexus = None
+  list_run_numbers = []
   nxs = None
 
   # raw axis (where q axis has 1 more element that y and e)
@@ -352,6 +353,7 @@ class NXSData(object):
         try:
           print '------> filename is: ' + str(filename)
           nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
+          self.list_run_numbers[0] = nxs.getRun().getProperty('run_number').value
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
           return False
@@ -371,6 +373,7 @@ class NXSData(object):
               
               # retrieve lambda requested value
               mt_run = nxs.getRun()
+              self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value)
               _lambda_requested_1 = mt_run.getProperty('LambdaRequest').value
               _index += 1
             else:
@@ -1777,8 +1780,8 @@ class LRDataset(object):
     
     lr = mt_run.getProperty('LambdaRequest').value
     self.run_number = mt_run.getProperty('run_number').value
-    if len(lr) > 1:
-      self.run_number += ' ...'
+#    if len(lr) > 1:
+ #     self.run_number = 
     self.lambda_requested = mt_run.getProperty('LambdaRequest').value[0]
     self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units
     self.thi = mt_run.getProperty('thi').value[0]

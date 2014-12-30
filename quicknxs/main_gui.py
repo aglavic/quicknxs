@@ -55,6 +55,7 @@ from plot2ddialogrefl import Plot2dDialogREFL
 from all_plot_axis import AllPlotAxis
 from outputReducedDataDialog import OutputReducedDataDialog
 from export_stitching_ascii_settings import ExportStitchingAsciiSettings
+from displayMetadata import DisplayMetadata
 
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
@@ -159,7 +160,8 @@ class MainGUI(QtGui.QMainWindow):
   allPlotAxis = None
 
   exportStitchingAsciiSettings = None
-
+  reduction_table_copied_field = ''
+  redcution_table_copied_row_col = []
 
   ##### for IPython mode, keep namespace up to date ######
   @property
@@ -1165,6 +1167,7 @@ class MainGUI(QtGui.QMainWindow):
     self.active_data = data.active_data
 #    self.active_data = data
     self.filename = data.origin
+    print self.filename
     
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))    
@@ -1301,9 +1304,9 @@ class MainGUI(QtGui.QMainWindow):
       self._prev_col_selected = -1
       return
 
-    #make sure we are dealing with a number
+    #make sure we are dealing with a number or a list of numbers
     try:
-      isNumber = int(cell_content)
+      isNumber = int(str_split[0])
     except ValueError:
       msgBox = QtGui.QMessageBox.critical(self, 'INVALID FIELD!', 'MAKE SURE YOU ENTERED A NUMBER!')
       if isData:
@@ -1403,6 +1406,7 @@ class MainGUI(QtGui.QMainWindow):
     # remove row from table
     [row,col] = self.getCurrentRowColumnSelected()
     self.ui.reductionTable.removeRow(row)
+    self.ui.reductionTable.show()
 
     self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,
                                                                              row,6), False)
@@ -1456,7 +1460,8 @@ class MainGUI(QtGui.QMainWindow):
 
       _row = r
 
-      _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+      _run_number = data.list_run_numbers.join(',')
+      _item = QtGui.QTableWidgetItem(data._run_number)
       _item.setForeground(QtGui.QColor(13,24,241))
 #      _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
       self.ui.reductionTable.setItem(r, _column, _item)
@@ -4877,37 +4882,52 @@ Do you want to try to restore the working reduction list?""",
     menu = QtGui.QMenu(self)
     copy = menu.addAction("Copy")
     paste = menu.addAction("Paste")
-    paste.setEnabled(False)
+    if self.reduction_table_copied_field != '':
+      paste.setEnabled(True)  
+    else:
+      paste.setEnabled(False)
     menu.addSeparator()
     removeRow = menu.addAction("Delete Row")
-    displayMeta = menu.addAction("Display Metadata")
+    menu.addSeparator()
+    displayMeta = menu.addAction("Display Metadata ...")
     action = menu.exec_(QtGui.QCursor.pos())
     
     if action == copy:
       self.reduction_table_copy()
     if action == paste:
-      self.reduction_table.paste()
+      self.reduction_table_paste()
     if action == removeRow:
       self.reduction_table_delete_row()
     if action == displayMeta:
       self.reduction_table_display_metadata()
     
   def reduction_table_copy(self):
-    pass
+    _item = self.ui.reductionTable.selectedItems()
+    self.reduction_table_copied_field = _item[0].text()
+    [row,col] = self.getCurrentRowColumnSelected()
+    self.reduction_table_copied_row_col = [row,col]
  
   def reduction_table_paste(self):
-    pass
+    [newrow, newcol] = self.getCurrentRowColumnSelected()
+    [oldrow, oldcol] = self.reduction_table_copied_row_col
+    if newrow == oldrow and newcol == oldcol:
+      return
+    bigTable = self.bigTableData
+    bigTable[newrow,newcol] = bigTable[oldrow,oldcol]
+    self.bigTableData = bigTable
+    self._fileOpenDoneREFL(data=bigTable[newrow, newcol])
+    
     
   def reduction_table_display_metadata(self):
-    print 'display metadata'
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    active_data = data.active_data
+    _displayMeta = DisplayMetadata(self, active_data)
+    _displayMeta.show()
 
   def reduction_table_delete_row(self):
     self.remove_row_reductionTable()
-
-
-
-    
-    
     
   def save_new_settings(self):
     '''
