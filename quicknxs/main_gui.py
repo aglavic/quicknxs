@@ -1219,6 +1219,12 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.tab.setEnabled(status)
     else:
       self.ui.tab_2.setEnabled(status)
+
+    if self.bigTableData[0,0] is None:
+      bigTableStatus = False
+    else:
+      bigTableStatus = True
+    self.ui.reductionTable.setEnabled(bigTableStatus)
           
   def getRowColumnNextDataSet(self):
     '''
@@ -4866,6 +4872,42 @@ Do you want to try to restore the working reduction list?""",
   
   def useScalingFactorConfigCheckBox(self, status):
     self.ui.scalingFactorConfigFrame.setEnabled(status)
+    
+  def reduction_table_right_click(self, pos):
+    menu = QtGui.QMenu(self)
+    copy = menu.addAction("Copy")
+    paste = menu.addAction("Paste")
+    paste.setEnabled(False)
+    menu.addSeparator()
+    removeRow = menu.addAction("Delete Row")
+    displayMeta = menu.addAction("Display Metadata")
+    action = menu.exec_(QtGui.QCursor.pos())
+    
+    if action == copy:
+      self.reduction_table_copy()
+    if action == paste:
+      self.reduction_table.paste()
+    if action == removeRow:
+      self.reduction_table_delete_row()
+    if action == displayMeta:
+      self.reduction_table_display_metadata()
+    
+  def reduction_table_copy(self):
+    pass
+ 
+  def reduction_table_paste(self):
+    pass
+    
+  def reduction_table_display_metadata(self):
+    print 'display metadata'
+
+  def reduction_table_delete_row(self):
+    self.remove_row_reductionTable()
+
+
+
+    
+    
     
   def save_new_settings(self):
     '''

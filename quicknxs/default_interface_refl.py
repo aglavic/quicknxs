@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Dec 29 16:19:21 2014
+# Created: Tue Dec 30 11:01:06 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1137,11 +1137,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_25.addLayout(self.horizontalLayout_14)
         self.verticalLayout_24.addLayout(self.verticalLayout_25)
         self.reductionTable = QtGui.QTableWidget(self.layoutWidget_3)
-        self.reductionTable.setEnabled(True)
+        self.reductionTable.setEnabled(False)
         self.reductionTable.setMinimumSize(QtCore.QSize(0, 200))
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
-        self.reductionTable.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked)
+        self.reductionTable.setFocusPolicy(QtCore.Qt.TabFocus)
+        self.reductionTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed|QtGui.QAbstractItemView.SelectedClicked)
         self.reductionTable.setProperty("showDropIndicator", True)
         self.reductionTable.setDragDropOverwriteMode(True)
         self.reductionTable.setAlternatingRowColors(True)
@@ -1182,9 +1183,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addWidget(self.splitter)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.removeSelectedRow = QtGui.QPushButton(self.widget)
-        self.removeSelectedRow.setObjectName("removeSelectedRow")
-        self.horizontalLayout_11.addWidget(self.removeSelectedRow)
         self.clearTableButton = QtGui.QPushButton(self.widget)
         self.clearTableButton.setObjectName("clearTableButton")
         self.horizontalLayout_11.addWidget(self.clearTableButton)
@@ -1444,7 +1442,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.reduceButton, QtCore.SIGNAL("clicked()"), MainWindow.runReduction)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.reduction_table_cell_double_clicked)
         QtCore.QObject.connect(self.clearTableButton, QtCore.SIGNAL("clicked()"), MainWindow.clear_reductionTable)
-        QtCore.QObject.connect(self.removeSelectedRow, QtCore.SIGNAL("clicked()"), MainWindow.remove_row_reductionTable)
         QtCore.QObject.connect(self.actionLoadFullConfiguration_2, QtCore.SIGNAL("triggered()"), MainWindow.loading_full_configuration)
         QtCore.QObject.connect(self.autoSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_auto)
         QtCore.QObject.connect(self.manualSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_manual)
@@ -1482,6 +1479,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.scalingFactorFlag, QtCore.SIGNAL("toggled(bool)"), MainWindow.useScalingFactorConfigCheckBox)
         QtCore.QObject.connect(self.findPeakBack, QtCore.SIGNAL("clicked()"), MainWindow.find_peak_back)
         QtCore.QObject.connect(self.sfBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.sf_browse_button)
+        QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), MainWindow.reduction_table_right_click)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.logarithmic_colorscale)
@@ -1601,7 +1599,6 @@ class Ui_MainWindow(object):
         self.reductionTable.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
-        self.removeSelectedRow.setText(QtGui.QApplication.translate("MainWindow", "Remove Selected Row", None, QtGui.QApplication.UnicodeUTF8))
         self.clearTableButton.setText(QtGui.QApplication.translate("MainWindow", "Clear Table", None, QtGui.QApplication.UnicodeUTF8))
         self.reduceButton.setText(QtGui.QApplication.translate("MainWindow", "R E D U C E", None, QtGui.QApplication.UnicodeUTF8))
         self.RvsQ.setText(QtGui.QApplication.translate("MainWindow", "R vs Q", None, QtGui.QApplication.UnicodeUTF8))

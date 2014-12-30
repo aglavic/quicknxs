@@ -2892,7 +2892,7 @@ p, li { white-space: pre-wrap; }
                   <item>
                    <widget class="QTableWidget" name="reductionTable">
                     <property name="enabled">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </property>
                     <property name="minimumSize">
                      <size>
@@ -2906,11 +2906,14 @@ p, li { white-space: pre-wrap; }
                       <height>300</height>
                      </size>
                     </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::TabFocus</enum>
+                    </property>
                     <property name="contextMenuPolicy">
-                     <enum>Qt::NoContextMenu</enum>
+                     <enum>Qt::CustomContextMenu</enum>
                     </property>
                     <property name="editTriggers">
-                     <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked</set>
+                     <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
                     </property>
                     <property name="showDropIndicator" stdset="0">
                      <bool>true</bool>
@@ -3035,13 +3038,6 @@ p, li { white-space: pre-wrap; }
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_11">
-                <item>
-                 <widget class="QPushButton" name="removeSelectedRow">
-                  <property name="text">
-                   <string>Remove Selected Row</string>
-                  </property>
-                 </widget>
-                </item>
                 <item>
                  <widget class="QPushButton" name="clearTableButton">
                   <property name="text">
@@ -4136,22 +4132,6 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>removeSelectedRow</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>remove_row_reductionTable()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>357</x>
-     <y>1057</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionLoadFullConfiguration_2</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -4743,6 +4723,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>reductionTable</sender>
+   <signal>customContextMenuRequested(QPoint)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reduction_table_right_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>894</x>
+     <y>1095</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>986</x>
+     <y>636</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -4844,5 +4840,6 @@ p, li { white-space: pre-wrap; }
   <slot>useAutoPeakBackSelectionCheckBox()</slot>
   <slot>useGeometryCorrectionCheckBox()</slot>
   <slot>useScalingFactorConfigCheckBox()</slot>
+  <slot>reduction_table_right_click()</slot>
  </slots>
 </ui>
