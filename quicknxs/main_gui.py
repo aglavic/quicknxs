@@ -37,7 +37,6 @@ from .qio import HeaderParser, HeaderCreator
 from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from_header, GISANS, DETECTOR_X_REGION, LRDataset, LConfigDataset
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
-from .version import str_version
 from logging import info, warning, debug
 from reduction import REFLReduction
 from utilities import convert_angle
@@ -48,40 +47,20 @@ from calculate_SF import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
-from reduced_config_files_handler import ReducedConfigFilesHandler
-from init_file_menu import InitFileMenu
 from refl_gui_utils import PlotDialogREFL
 from plot2ddialogrefl import Plot2dDialogREFL
-from all_plot_axis import AllPlotAxis
+#from all_plot_axis import AllPlotAxis
 from outputReducedDataDialog import OutputReducedDataDialog
 from export_stitching_ascii_settings import ExportStitchingAsciiSettings
 from displayMetadata import DisplayMetadata
 from make_gui_connections import MakeGuiConnections
+from initialize_gui import InitializeGui
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
 from matplotlib.figure import Figure
 
 
-class gisansCalcThread(QtCore.QThread):
-  '''
-  Perform GISANS scattering calculations in the background.
-  '''
-  updateProgress=QtCore.pyqtSignal(float)
-  gisans=None
-
-  def __init__(self, dataset, options):
-    QtCore.QThread.__init__(self)
-    self.dataset=dataset
-    self.options=options
-
-  def run(self):
-    gisans=[]
-    for i, dataset in enumerate(self.dataset):
-      gisans.append(GISANS(dataset, **self.options))
-      self.updateProgress.emit(float(i+1)/len(self.dataset))
-    self.gisans=gisans            
-            
 class MainGUI(QtGui.QMainWindow):
   '''
   The program top level window with all direct event handling.
@@ -160,23 +139,6 @@ class MainGUI(QtGui.QMainWindow):
   reduction_table_copied_field = ''
   redcution_table_copied_row_col = []
 
-  ##### for IPython mode, keep namespace up to date ######
-  @property
-  def active_data(self): return self._active_data
-  @active_data.setter
-  def active_data(self, value):
-    if self.ipython:
-      self.ipython.namespace['data']=value
-    self._active_data=value
-  @property
-  def refl(self): return self._refl
-  @refl.setter
-  def refl(self, value):
-    if self.ipython:
-      self.ipython.namespace['refl']=value
-    self._refl=value
-  ##### for IPython mode, keep namespace up to date ######
-
   fileLoaded=QtCore.pyqtSignal()
   initiateProjectionPlot=QtCore.pyqtSignal(bool)
   initiateReflectivityPlot=QtCore.pyqtSignal(bool)
@@ -194,125 +156,33 @@ class MainGUI(QtGui.QMainWindow):
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
-    window_title = 'QuickNXS for REF_L'
-    self.setWindowTitle(u'%s   %s'%(window_title,str_version))
-    self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
-    self.ui.statusbar.addPermanentWidget(self.cache_indicator)
-    button=QtGui.QPushButton('Empty Cache')
-    self.ui.statusbar.addPermanentWidget(button)
-    button.pressed.connect(self.empty_cache)
-    button.setFlat(True)
-    button.setMaximumSize(150, 20)
     
-    self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
-    self.eventProgress.setMinimumSize(20, 14)
-    self.eventProgress.setMaximumSize(140, 100)
-    self.ui.statusbar.addPermanentWidget(self.eventProgress)
-    
-    #set up the header of the big table
-    verticalHeader = ["Data Run #",u'2\u03b8 (\u00B0)',u'\u03bbmin(\u00c5)',
-                      u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)',
-                      'Norm. Run #']
-    self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
-    self.ui.reductionTable.resizeColumnsToContents()
-    # define the context menu of the recap table
-    self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
-
-    # set up the header of the scaling factor table
-    verticalHeader = ["Data Run #","SF: auto","SF: manual","SF: 1"]
-    self.ui.dataStitchingTable.setHorizontalHeaderLabels(verticalHeader)
-    self.ui.dataStitchingTable.resizeColumnsToContents()
-    
-    palette_green = QtGui.QPalette()
-    palette_green.setColor(QtGui.QPalette.Foreground, QtCore.Qt.green)
-    self.ui.sf_found_label.setPalette(palette_green)
-    
-    palette_red = QtGui.QPalette()
-    palette_red.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
-    self.ui.sf_not_found_label.setPalette(palette_red)
-
-    # set up header for reduced ascii table
-    verticalHeader = ["ASCII files", "Active"]
-    self.ui.reducedAsciiDataSetTable.setHorizontalHeaderLabels(verticalHeader)
-    self.ui.reducedAsciiDataSetTable.setColumnWidth(0,249)
-    self.ui.reducedAsciiDataSetTable.setColumnWidth(1,49)
-
-    self.exportStitchingAsciiSettings = ExportStitchingAsciiSettings()
-
-    self.ui.plotTab.setCurrentIndex(0)
-    # start a separate thread for delayed actions
-    self.trigger=DelayedTrigger()
-    self.trigger.activate.connect(self.processDelayedTrigger)
-    self.trigger.start()
-    self.connect_plot_events_refl()
-
+    InitializeGui(self)
     MakeGuiConnections(self)
     
-#    self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
- #   self._path_watcher.directoryChanged.connect(self.folderModified)
-    # watch folder for changes
- #   self.auto_change_active=False
+#    self.initErrorWidgets()
+     
+    ## open file after GUI is shown
+    #if '-ipython' in argv:
+      #self.run_ipython()
+    #else:
+      #self.ipython=None
+    #if len(argv)>0:
+      #if sys.version_info[0]<3:
+        ## if non ascii character in filenames interprete it as utf8
+        #argv=[unicode(argi, 'utf8', 'ignore') for argi in argv]
+      ## delay action to be run within event loop, this allows the error handling to work
+      #if argv[0][-4:]=='.dat':
+        #self.trigger('loadExtraction', argv[0])
+      #elif len(argv)==1:
+        #if argv[0][-4:]=='.nxs':
+          #self.trigger('fileOpen', argv[0])
+        #else:
+          #self.trigger('openByNumber', argv[0])
+      #else:
+        #self.trigger('automaticExtraction', argv)
+    #else:
 
-    #self.fileLoaded.connect(self.updateLabels)
-    #self.fileLoaded.connect(self.plotActiveTab)
-    #self.initiateProjectionPlot.connect(self.plot_projections)
-    #self.initiateReflectivityPlot.connect(self.plot_refl)
-    #self.initiateReflectivityPlot.connect(self.updateStateFile)
-    self.folderModified()
-
-    self.defineRightDefaultPath()
-    self.fileMenuObject = InitFileMenu(self)
-    self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
-    self.initConfigGui()
-    self.initErrorWidgets()
-    self.allPlotAxis = AllPlotAxis()
-      
-    # open file after GUI is shown
-    if '-ipython' in argv:
-      self.run_ipython()
-    else:
-      self.ipython=None
-    if len(argv)>0:
-      if sys.version_info[0]<3:
-        # if non ascii character in filenames interprete it as utf8
-        argv=[unicode(argi, 'utf8', 'ignore') for argi in argv]
-      # delay action to be run within event loop, this allows the error handling to work
-      if argv[0][-4:]=='.dat':
-        self.trigger('loadExtraction', argv[0])
-      elif len(argv)==1:
-        if argv[0][-4:]=='.nxs':
-          self.trigger('fileOpen', argv[0])
-        else:
-          self.trigger('openByNumber', argv[0])
-      else:
-        self.trigger('automaticExtraction', argv)
-    else:
-      self.ui.numberSearchEntry.setFocus()
-
-  def initErrorWidgets(self):  
-    palette = QtGui.QPalette()
-    palette.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
-    self.ui.data_peak1_error.setVisible(False)
-    self.ui.data_peak1_error.setPalette(palette)
-    self.ui.data_peak2_error.setVisible(False)
-    self.ui.data_peak2_error.setPalette(palette)
-    self.ui.data_back1_error.setVisible(False)
-    self.ui.data_back1_error.setPalette(palette)
-    self.ui.data_back2_error.setVisible(False)
-    self.ui.data_back2_error.setPalette(palette)
-    self.ui.norm_peak1_error.setVisible(False)
-    self.ui.norm_peak1_error.setPalette(palette)
-    self.ui.norm_peak2_error.setVisible(False)
-    self.ui.norm_peak2_error.setPalette(palette)
-    self.ui.norm_back1_error.setVisible(False)
-    self.ui.norm_back1_error.setPalette(palette)
-    self.ui.norm_back2_error.setVisible(False)
-    self.ui.norm_back2_error.setPalette(palette)
-    self.ui.data_selection_error_label.setVisible(False)
-    self.ui.data_selection_error_label.setPalette(palette)
-    self.ui.norm_selection_error_label.setVisible(False)
-    self.ui.norm_selection_error_label.setPalette(palette)
 
   
   def checkErrorWidgets(self):
@@ -370,18 +240,7 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.norm_selection_error_label.setVisible(bError)  
 
   
-  def initConfigGui(self):
-    from quicknxs.config import refllastloadedfiles
-    refllastloadedfiles.switch_config('config_files')
-    if refllastloadedfiles.config_files_path != '':
-      self.path_config =  refllastloadedfiles.config_files_path
 
-
-  def defineRightDefaultPath(self):
-    import socket
-    if socket.gethostname() == 'lrac.sns.gov':
-      self.path_config = '/SNS/REF_L/'
-      self.path_ascii = '/SNS/REF_L'
 
   def logtoggle(self, checked):
     self.isLog = checked
@@ -766,59 +625,6 @@ class MainGUI(QtGui.QMainWindow):
     menu.addAction('Delete Row')
     menu.addAction('Delete Data')
     menu.addAction('Delete Normalization')
-#    menu.exec_(self.mapToGlobal(pos))
-    
-  #def run_ipython(self):
-    #'''
-      #Startup the IPython console within the program.
-    #'''
-    #info('Start IPython console')
-    #from .ipython_widget import IPythonConsoleQtWidget
-    #self.ipython=IPythonConsoleQtWidget(self)
-    #self.ui.plotTab.addTab(self.ipython, 'IPython')
-    #self.ipython.namespace['data']=self.active_data
-    ## exceptions within GUI thread, must be installed by method within that process
-    #self.trigger('_install_exc')
-
-
-  #def saveListPrevLoadedFiles(self):
-    
-    #from quicknxs.config import refllastloadedfiles
-    #refllastloadedfiles.switch_config('config_files')
-    #refllastloadedfiles.reduce1 = '/SNS/REF_L/shared/0/IPTS_e5454/dfdfdf.txt'
-    
-
-  #def  loadListPrevLoadedFiles(self):
-    #'''
-    #will update the gui with the previous files (config, reduced) loaded
-    #'''
-    #from quicknxs.config import refllastloadedfiles
-    #refllastloadedfiles.switch_config('config_files')
-    #file1 = refllastloadedfiles.reduce1
-    #if file1 is not '':
-      #self.ui.menuFile.addSeparator()
-      #file1Action = QtGui.QAction(file1, self)
-      #file1Action.triggered.connect(self.loadConfigFile1)
-      #self.ui.menuFile.addAction(file1Action)
-      
-    #file2 = refllastloadedfiles.reduce2
-    #file3 = refllastloadedfiles.reduce3
-    #file4 = refllastloadedfiles.reduce4
-    #file5 = refllastloadedfiles.reduce5
-    
-    #refllastloadedfiles.switch_config('default')
-
-  #def addConfigFileLoaded(self, fullFileName):
-    
-    #from quicknxs.config import refllastloadedfiles
-    #refllastloadedfiles.switch_config('config_files')
-    #file1 = refllastloadedfiles.reduce1
-    
-
-
-  #def loadConfigFile1(self):
-    #print 'in loadConfigFile1'
-
 
   def launch_config_file1(self):
     self.launch_config_file_nbr(0)
@@ -879,79 +685,6 @@ class MainGUI(QtGui.QMainWindow):
     else:
       attrib(*args)
 
-  def connect_plot_events(self):
-    '''
-    Connect matplotlib mouse events.
-    '''
-    for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-                 self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-                 self.ui.xy_overview, self.ui.xtof_overview,
-                 self.ui.x_project, self.ui.y_project, self.ui.refl]:
-      plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
-    for plot in [self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-                 self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-                 self.ui.xy_overview, self.ui.xtof_overview]:
-      plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
-
-    self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
-    self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
-    self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotRelese)
-    self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
-    self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
-    self.ui.y_project.canvas.mpl_connect('button_release_event', self.plotRelese)
-    self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
-    self.ui.xy_overview.canvas.mpl_connect('button_press_event', self.plotPickXY)
-    self.ui.xy_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXY)
-    self.ui.xy_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
-    self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
-    self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
-    self.ui.xtof_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
-
-  def connect_plot_events_refl(self):
-    '''
-    Connect matplotlib mouse events.
-    '''
-    for plot in [self.ui.data_yt_plot, 
-#                 self.ui.data_yi_plot,
-                 self.ui.data_it_plot,
-                 self.ui.data_ix_plot,
-                 self.ui.norm_yt_plot, 
-#                 self.ui.norm_yi_plot,
-                 self.ui.norm_it_plot,
-                 self.ui.norm_ix_plot]:
-      plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
-    
-    for plot in [self.ui.data_yt_plot, 
-#                 self.ui.data_yi_plot,
-                 self.ui.data_it_plot,
-                 self.ui.data_ix_plot,
-                 self.ui.norm_yt_plot, 
-#                 self.ui.norm_yi_plot,
-                 self.ui.norm_it_plot,
-                 self.ui.norm_ix_plot]:
-      plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
-
-    self.ui.norm_yt_plot.canvas.mpl_connect('motion_notify_event', self.mouseNormPlotyt)
-    self.ui.norm_yt_plot.canvas.mpl_connect('button_press_event', self.mouseNormPlotyt)
-    self.ui.norm_yt_plot.canvas.mpl_connect('button_release_event', self.mouseNormPlotyt)
-
-#    self.ui.data_yt_plot.canvas.mpl_connect('motion_notify_event', self.plotPickyt)
-
-    #self.ui.x_project.canvas.mpl_connect('motion_notify_event', self.plotPickX)
-    #self.ui.x_project.canvas.mpl_connect('button_press_event', self.plotPickX)
-    #self.ui.x_project.canvas.mpl_connect('button_release_event', self.plotRelese)
-    #self.ui.y_project.canvas.mpl_connect('motion_notify_event', self.plotPickY)
-    #self.ui.y_project.canvas.mpl_connect('button_press_event', self.plotPickY)
-    #self.ui.y_project.canvas.mpl_connect('button_release_event', self.plotRelese)
-    #self.ui.refl.canvas.mpl_connect('scroll_event', self.scaleOnPlot)
-    #self.ui.xy_overview.canvas.mpl_connect('button_press_event', self.plotPickXY)
-    #self.ui.xy_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXY)
-    #self.ui.xy_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
-    #self.ui.xtof_overview.canvas.mpl_connect('button_press_event', self.plotPickXToF)
-    #self.ui.xtof_overview.canvas.mpl_connect('motion_notify_event', self.plotPickXToF)
-    #self.ui.xtof_overview.canvas.mpl_connect('button_release_event', self.plotRelese)
-
-
   @log_input
   def fileOpen(self, filename, do_plot=True, do_add=False):
     '''
@@ -973,88 +706,70 @@ class MainGUI(QtGui.QMainWindow):
       self.updateFileList(base, folder)
     self.active_file=base
     
-    if instrument.NAME=='REF_M':
-      if base.endswith('event.nxs'):
-        tottime=time_from_header(os.path.join(folder, base))
-        self.ui.eventTotalTimeLabel.setText(u"(%i min)"%(tottime/60))
-      if base.endswith('event.nxs') and self.ui.eventSplit.isChecked():
-        event_split_bins=self.ui.eventSplitItems.value()
-        event_split_index=self.ui.eventSplitIndex.value()-1
-      else:
-        event_split_bins=None
-        event_split_index=0
-      bin_type=self.ui.eventBinMode.currentIndex()
+    event_split_bins=None
+    event_split_index=0      
+    bin_type=0
 
-    else: #REF_L
-      event_split_bins=None
-      event_split_index=0      
-      bin_type=0
+    if do_add:
 
-    # we want to add those runs to selected data/norm cell runs
-      if do_add:
-
-        # get list of previously loaded runs
-        [r,c] = self.getCurrentRowColumnSelected()
-        if c is not 0:
-          c=1
-          
-        data = self.bigTableData[r,c]
-        _prevLoadedFullFile = data.active_data.filename
-        filename = [_prevLoadedFullFile, filename]
-      
-      self._norm_selected=None
-      if type(filename) == type(u"") or type(filename) == type(""):
-        info(u"Reading file %s ..." % filename)
-      else: # more than 1 file
-        strFilename = ", ".join(filename)
-        info(u"Reading files %s ..." % strFilename)
-       
-      if self.ui.dataNormTabWidget.currentIndex() == 0: #data
-        isData = True
-      else:
-        isData = False
+      # get list of previously loaded runs
+      [r,c] = self.getCurrentRowColumnSelected()
+      if c is not 0:
+        c=1
         
-      backOffsetFromPeak = self.ui.autoBackSelectionWidth.value()
-      if self.ui.actionAutomaticPeakFinder.isChecked():
-        isAutoPeakFinder = True
-      else:
-        isAutoPeakFinder = False
-
-      isAutoTofFinder = self.ui.autoTofFlag.isChecked()
-        
-      data=NXSData(filename,
-            bin_type=bin_type,
-            bins=self.ui.eventTofBins.value(),
-            callback=self.updateEventReadout,
-            event_split_bins=event_split_bins,
-            event_split_index=event_split_index,
-            angle_offset= self.ui.angleOffsetValue.text(),
-            isData = isData,
-            isAutoPeakFinder = isAutoPeakFinder,
-            backOffsetFromPeak = backOffsetFromPeak,
-            isAutoTofFinder = isAutoTofFinder
-            )
+      data = self.bigTableData[r,c]
+      _prevLoadedFullFile = data.active_data.filename
+      filename = [_prevLoadedFullFile, filename]
     
-      if instrument.NAME == 'REF_M':
-        self._fileOpenDone(data, filename, do_plot)
+    self._norm_selected=None
+    if type(filename) == type(u"") or type(filename) == type(""):
+      info(u"Reading file %s ..." % filename)
+    else: # more than 1 file
+      strFilename = ", ".join(filename)
+      info(u"Reading files %s ..." % strFilename)
+     
+    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+      isData = True
+    else:
+      isData = False
+      
+    backOffsetFromPeak = self.ui.autoBackSelectionWidth.value()
+    if self.ui.actionAutomaticPeakFinder.isChecked():
+      isAutoPeakFinder = True
+    else:
+      isAutoPeakFinder = False
 
+    isAutoTofFinder = self.ui.autoTofFlag.isChecked()
+      
+    data=NXSData(filename,
+          bin_type=bin_type,
+          bins=self.ui.eventTofBins.value(),
+          callback=self.updateEventReadout,
+          event_split_bins=event_split_bins,
+          event_split_index=event_split_index,
+          angle_offset= self.ui.angleOffsetValue.text(),
+          isData = isData,
+          isAutoPeakFinder = isAutoPeakFinder,
+          backOffsetFromPeak = backOffsetFromPeak,
+          isAutoTofFinder = isAutoTofFinder
+          )
+  
+    if data is not None:
+      # save the data in the right spot (row, column)
+      if do_add:
+        [r,c] = self.getCurrentRowColumnSelected()
       else:
-        if data is not None:
-          # save the data in the right spot (row, column)
-          if do_add:
-            [r,c] = self.getCurrentRowColumnSelected()
-          else:
-            [r,c] = self.getRowColumnNextDataSet()
+        [r,c] = self.getRowColumnNextDataSet()
 
-          if c is not 0:
-            c=1
-          self.bigTableData[r,c] = data
-          self._prev_row_selected = r
-          self._prev_col_selected = c
-          
-          self.enableWidgets(status=True)
-        
-        self._fileOpenDoneREFL(data, filename, do_plot)
+      if c is not 0:
+        c=1
+      self.bigTableData[r,c] = data
+      self._prev_row_selected = r
+      self._prev_col_selected = c
+      
+      self.enableWidgets(status=True)
+      
+      self._fileOpenDoneREFL(data, filename, do_plot)
 
   @log_input
   def fileOpenSum(self, filenames, do_plot=True):
@@ -3073,68 +2788,11 @@ class MainGUI(QtGui.QMainWindow):
     Update the file list and create a watcher to update the list again if a new file was
     created.
     '''
-    self._path_watcher.removePath(self.active_folder)
-    if instrument.NAME == "REF_M":
-      self.updateFileList(base, folder)
     self.active_folder=folder
-    self._path_watcher.addPath(self.active_folder)
-
-  @log_call
-  def folderModified(self, flist=None):
-    '''
-    Called by the path watcher to update the file list when the folder
-    has been modified.
-    '''
-    if instrument.NAME == "REF_L":
-      return
-    self.updateFileList(self.active_file, self.active_folder)
 
   @log_call
   def reloadFile(self):
       self.fileOpen(os.path.join(self.active_folder, self.active_file))
-
-  @log_call
-  def updateFileList(self, base, folder):
-    '''
-    Create a new filelist if the folder has changes.
-    '''
-    if instrument.NAME=='REF_M':
-      was_active=self.auto_change_active
-      self.auto_change_active=True
-      if self.ui.histogramActive.isChecked():
-        newlist=glob(os.path.join(folder, '*histo.nxs'))
-        self.ui.eventModeEntries.hide()
-      elif self.ui.oldFormatActive.isChecked():
-        newlist=glob(os.path.join(folder, '*.nxs'))
-        self.ui.eventModeEntries.hide()
-      elif self.ui.eventActive.isChecked():
-        self.ui.eventModeEntries.show()
-        newlist=glob(os.path.join(folder, '*event.nxs'))
-      else:
-        self.ui.histogramActive.setChecked(True)
-        return self.updateFileList(base, folder)
-    else: 
-      self.ui.eventModeEntries.show()
-      newlist=glob(os.path.join(folder, '*event.nxs'))
-      
-    if instrument.NAME == 'REF_M':
-      newlist.sort()
-      newlist=map(lambda name: os.path.basename(name), newlist)
-      oldlist=[self.ui.file_list.item(i).text() for i in range(self.ui.file_list.count())]
-      if newlist!=oldlist:
-        # only update the list if it has changed
-        self.ui.file_list.clear()
-        for item in newlist:
-          listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
-          if item==base:
-            self.ui.file_list.setCurrentItem(listitem)
-      else:
-        try:
-          pass
-          self.ui.file_list.setCurrentRow(newlist.index(base))
-        except ValueError:
-          pass
-      self.auto_change_active=was_active
 
   @log_call
   def updateLabels(self):

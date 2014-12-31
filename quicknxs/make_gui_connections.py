@@ -63,3 +63,25 @@ class MakeGuiConnections(object):
         self.initiateReflectivityPlot.connect(self.plot_refl)
         self.initiateReflectivityPlot.connect(self.updateStateFile)
         
+        for plot in [self.ui.data_yt_plot, 
+                     self.ui.data_it_plot,
+                     self.ui.data_yi_plot,
+                     self.ui.data_ix_plot,
+                     self.ui.norm_yt_plot, 
+                     self.ui.norm_it_plot,
+                     self.ui.norm_yi_plot,
+                     self.ui.norm_ix_plot]:
+            plot.canvas.mpl_connect('motion_notify_event', self.plotMouseEvent)
+            
+        #for plot in [self.ui.data_yt_plot, 
+                     #self.ui.data_it_plot,
+                     #self.ui.data_ix_plot,
+                     #self.ui.norm_yt_plot, 
+                         #self.ui.norm_it_plot,
+                     #self.ui.norm_ix_plot]:
+          #plot.canvas.mpl_connect('scroll_event', self.changeColorScale)
+    
+        self.ui.norm_yt_plot.canvas.mpl_connect('motion_notify_event', self.mouseNormPlotyt)
+        self.ui.norm_yt_plot.canvas.mpl_connect('button_press_event', self.mouseNormPlotyt)
+        self.ui.norm_yt_plot.canvas.mpl_connect('button_release_event', self.mouseNormPlotyt)
+        
