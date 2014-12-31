@@ -47,7 +47,7 @@ from calculate_SF import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
-from refl_gui_utils import PlotDialogREFL
+from plotdialogrefl import PlotDialogREFL
 from plot2ddialogrefl import Plot2dDialogREFL
 #from all_plot_axis import AllPlotAxis
 from outputReducedDataDialog import OutputReducedDataDialog
@@ -56,9 +56,13 @@ from displayMetadata import DisplayMetadata
 from make_gui_connections import MakeGuiConnections
 from initialize_gui import InitializeGui
 from check_peak_back_error_widgets import CheckErrorWidgets
+from export_plot_ascii import ExportPlotAscii
+from home_plot_button_clicked import HomePlotButtonClicked
+from mouse_leave_plot import MouseLeavePlot
+from single_plot_click import SinglePlotClick
+from log_plot_toggle import LogPlotToggle
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
-#from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
 from matplotlib.figure import Figure
 
 
@@ -183,375 +187,75 @@ class MainGUI(QtGui.QMainWindow):
     self.isLog = checked
     self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
- # export
+ # export plot into ascii files
   def export_ix(self):
-    bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
-    _data = bigTableData[row,col]
-    _active_data = _data.active_data
-    run_number = _active_data.run_number
-    default_filename = 'REFL_' + run_number + '_ix.txt'
-    path = self.path_ascii
-    default_filename = path + '/' + default_filename
-    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel (low resolution range) ASCII File', default_filename)
-    
-    if str(filename).strip() == '':
-      info('User Canceled Output ASCII')
-      return
-    
-    self.path_ascii = os.path.dirname(filename)
-    countsxdata = _active_data.countsxdata
-    pixelaxis = range(len(countsxdata))
-    
-    text = ['#Counts vs Pixels (low resolution range)','#Pixel - Counts']
-    sz = len(pixelaxis)
-    for i in range(sz):
-      _line = str(pixelaxis[i]) + ' ' + str(countsxdata[i])
-      text.append(_line)
-    utilities.write_ascii_file(filename, text)
-
+    ExportPlotAscii(self, type='ix')
   def export_it(self):
-    bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
-    _data = bigTableData[row,col]
-    _active_data = _data.active_data
-    run_number = _active_data.run_number
-    default_filename = 'REFL_' + run_number + '_yt.txt'
-    path = self.path_ascii
-    default_filename = path + '/' + default_filename
-    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs TOF ASCII File', default_filename)
-    
-    if str(filename).strip() == '':
-      info('User Canceled Output ASCII')
-      return
-    
-    self.path_ascii = os.path.dirname(filename)
-    countstofdata = _active_data.countstofdata
-    tof = _active_data.tof_axis_auto_with_margin
-    if tof[-1] > 1000:
-      tof /= 1000.
-            
-    text = ['#Counts vs  TOF','#TOF(ms) - Counts']
-    sz = len(tof)-1
-    for i in range(sz):
-      _line = str(tof[i]) + ' ' + str(countstofdata[i])
-      text.append(_line)
-    text.append(str(tof[-1]))
-    utilities.write_ascii_file(filename, text)
-    
+    ExportPlotAscii(self, type='it')
   def export_yt(self):
-    bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
-    _data = bigTableData[row,col]
-    _active_data = _data.active_data
-    run_number = _active_data.run_number
-    default_filename = 'REFL_' + run_number + '_2dPxVsTof.txt'
-    path = self.path_ascii
-    default_filename = path + '/' + default_filename
-    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create 2D Pixel VS TOF', default_filename)
-  
-    if str(filename).strip() == '':
-      info('User Canceled Outpout ASCII')
-      return
-    
-    self.path_ascii = os.path.dirname(filename)
-    image = _active_data.ytofdata
-    utilities.output_2d_ascii_file(filename, image)
-
-  
-  def export_counts_vs_pixel(self):
-    bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
-    _data = bigTableData[row,col]
-    _active_data = _data.active_data
-    run_number = _active_data.run_number
-    default_filename = 'REFL_' + run_number + '_rpx.txt'
-    path = self.path_ascii
-    default_filename = path + '/' + default_filename
-    filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel ASCII File', default_filename)
-    
-    if str(filename).strip() == '':
-      info('User Canceled Output ASCII')
-      return
-    
-    self.path_ascii = os.path.dirname(filename)
-    
-    ycountsdata = _active_data.ycountsdata
-    pixelaxis = range(len(ycountsdata))
-    
-    text = ['#Counts vs Pixels','#Pixel - Counts']
-    sz = len(pixelaxis)
-    for i in range(sz):
-      _line = str(pixelaxis[i]) + ' ' + str(ycountsdata[i])
-      text.append(_line)
-    utilities.write_ascii_file(filename, text)
-    
+    ExportPlotAscii(self, type='yt')
+  def export_yi(self):
+    ExportPlotAscii(self, type='yi')
   def export_stitching_data(self):
-    _tmp = OutputReducedDataDialog(self, self.stitchingAsciiWidgetObject)
-    _tmp.show()
+    ExportPlotAscii(self, type='stitched')
   
   # home button of plots
   def home_clicked_yi_plot(self):
-    self.home_clicked_plot(plot_type='yi')
-
+    HomePlotButtonClicked(self, type='yi')
   def home_clicked_yt_plot(self):
-    self.home_clicked_plot(plot_type='yt')
-
+    HomePlotButtonClicked(self, type='yt')
   def home_clicked_it_plot(self):
-    self.home_clicked_plot(plot_type='it')
-
+    HomePlotButtonClicked(self, type='it')
   def home_clicked_ix_plot(self):
-    self.home_clicked_plot(plot_type='ix')
-
-  def home_clicked_plot(self, plot_type='yi'):
-    [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-
-    if _data is None:
-      return
-    data = _data.active_data
-
-    if data.all_plot_axis.yi_data_interval is None:
-      return
-    if plot_type =='yi':
-      [xmin,xmax,ymin,ymax] = data.all_plot_axis.yi_data_interval
-      data.all_plot_axis.yi_view_interval = [xmin,xmax,ymin,ymax]
-      if c==0:
-        _plot_ui = self.ui.data_yi_plot.canvas
-      else:
-        _plot_ui = self.ui.norm_yi_plot.canvas
-
-    elif plot_type == 'yt':
-      [xmin,xmax,ymin,ymax] = data.all_plot_axis.yt_data_interval
-      data.all_plot_axis.yt_view_interval = [xmin,xmax,ymin,ymax]
-      if c==0:
-        _plot_ui = self.ui.data_yt_plot.canvas
-      else:
-        _plot_ui = self.ui.norm_yt_plot.canvas
-
-    elif plot_type == 'it':
-      [xmin,xmax,ymin,ymax] = data.all_plot_axis.it_data_interval
-      data.all_plot_axis.it_view_interval = [xmin,xmax,ymin,ymax]
-      if c==0:
-        _plot_ui = self.ui.data_it_plot.canvas
-      else:
-        _plot_ui = self.ui.norm_it_plot.canvas
-
-    elif plot_type == 'ix':
-      [xmin,xmax,ymin,ymax] = data.all_plot_axis.ix_data_interval
-      data.all_plot_axis.ix_view_interval = [xmin,xmax,ymin,ymax]
-      if c==0:
-        _plot_ui = self.ui.data_ix_plot.canvas
-      else:
-        _plot_ui = self.ui.norm_ix_plot.canvas
-      
-    _data.active_data = data
-      
-    _plot_ui.ax.set_xlim([xmin, xmax])
-    _plot_ui.ax.set_ylim([ymin, ymax])
-    _plot_ui.draw()
-
+    HomePlotButtonClicked(self, type='ix')
   def home_clicked_data_stitching_plot(self):
-    _data = self.bigTableData[0,0]
-    data = _data.active_data
-    if data.all_plot_axis.reduced_plot_stitching_tab_data_interval is None:
-      return
-    [xmin, xmax, ymin, ymax] = data.all_plot_axis.reduced_plot_stitching_tab_data_interval
-    self.ui.data_stitching_plot.canvas.ax.set_xlim([xmin, xmax])
-    self.ui.data_stitching_plot.canvas.ax.set_ylim([ymin, ymax])
-    self.ui.data_stitching_plot.draw()
+    HomePlotButtonClicked(self, type='stitching')
 
   # leave figure 
   def leave_figure_yi_plot(self):
-    self.leave_figure_plot(type='yi')
-
+    MouseLeavePlot(self, type='yi')
   def leave_figure_yt_plot(self):
-    self.leave_figure_plot(type='yt')
-
+    MouseLeavePlot(self, type='yt')
   def leave_figure_it_plot(self):
-    self.leave_figure_plot(type='it')
-
+    MouseLeavePlot(self, type='it')
   def leave_figure_ix_plot(self):
-    self.leave_figure_plot(type='ix')
-
+    MouseLeavePlot(self, type='ix')
   def leave_figure_data_stitching_plot(self):
-    self.leave_figure_plot(type='stitching', r=0, c=0)
-
-  def leave_figure_plot(self, type='yi', r=-1, c=-1):
-    if r==-1 and c==-1:
-      [r,c] = self.getCurrentRowColumnSelected()
-    _data = self.bigTableData[r,c]
-    if _data is None:
-      return
-    data = _data.active_data
-    if type == 'yi':
-      view_interval = data.all_plot_axis.yi_view_interval
-      if c==0:
-        plot_ui = self.ui.data_yi_plot
-      else:
-        plot_ui = self.ui.norm_yi_plot
-    elif type == 'yt':
-      view_interval = data.all_plot_axis.yt_view_interval
-      if c==0:
-        plot_ui = self.ui.data_yt_plot
-      else:
-        plot_ui = self.ui.norm_yt_plot
-    elif type =='it':
-      view_interval = data.all_plot_axis.it_view_interval
-      if c==0:
-        plot_ui = self.ui.data_it_plot
-      else:
-        plot_ui = self.ui.norm_it_plot
-    elif type =='ix':
-      view_interval = data.all_plot_axis.ix_view_interval
-      if c==0:
-        plot_ui = self.ui.data_ix_plot
-      else:
-        plot_ui = self.ui.norm_ix_plot
-    elif type=='stitching':
-      view_interval = data.all_plot_axis.reduced_plot_stitching_tab_view_interval
-      plot_ui = self.ui.data_stitching_plot
-        
-    [xmin, xmax] = plot_ui.canvas.ax.xaxis.get_view_interval()
-    [ymin, ymax] = plot_ui.canvas.ax.yaxis.get_view_interval()
-    plot_ui.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-    plot_ui.canvas.ax.yaxis.set_data_interval(ymin,ymax)
-    plot_ui.draw()
-    
-    if type == 'yi':
-      data.all_plot_axis.yi_view_interval = [xmin,xmax,ymin,ymax]
-    elif type == 'yt':
-      data.all_plot_axis.yt_view_interval = [xmin,xmax,ymin,ymax]
-    elif type =='it':
-      data.all_plot_axis.it_view_interval = [xmin,xmax,ymin,ymax]
-    elif type =='ix':
-      data.all_plot_axis.ix_view_interval = [xmin,xmax,ymin,ymax]
-    elif type=='stitching':
-      data.all_plot_axis.reduced_plot_stitching_tab_view_interval = [xmin,xmax,ymin,ymax]
-
-    _data.active_data = data
-    self.bigTableData[r,c] = _data
+    MouseLeavePlot(self, type='stitching')
   
   # single click
   def single_click_data_yi_plot(self, isPanOrZoomActivated):
-    self.single_click_yi(isPanOrZoomActivated, type='data')
-  
+    SinglePlotClick(self, 'data','yi')
   def single_click_norm_yi_plot(self, isPanOrZoomActivated):
-    self.single_click_yi(isPanOrZoomActivated, type='norm')
-
+    SinglePlotClick(self,'norm','yi')
   def single_click_norm_yt_plot(self, isPanOrZoomActivated):
-    self.single_click_yt(isPanOrZoomActivated, type='norm')
-
+    SinglePlotClick(self,'norm','yt')
   def single_click_data_yt_plot(self, isPanOrZoomActivated):
-    self.single_click_yt(isPanOrZoomActivated, type='data')
-
+    SinglePlotClick(self,'data','yt')
   def single_click_norm_it_plot(self, isPanOrZoomActivated):
-    pass
-
+    SinglePlotClick(self, 'norm','it')
   def single_click_data_it_plot(self, isPanOrZoomActivated):
-    pass
-
+    SinglePlotClick(self,'data','it')
   def single_click_norm_ix_plot(self, isPanOrZoomActivated):
-    pass
-
+    SinglePlotClick(self,'norm','ix')
   def single_click_data_ix_plot(self, isPanOrZoomActivated):
-    pass
-
+    SinglePlotClick(self,'data','ix')
   def single_click_data_stitching_plot(self, isPanOrZoomActivated):
-    pass
-
-  def single_click_yi(self, isPanOrZoomActivated, type='data'):
-    if self.timeClick1 == -1:
-      self.timeClick1 = time.time()
-      return
-    elif abs(self.timeClick1 - time.time()) > 0.5:
-      self.timeClick1 = time.time()
-      return
-    else:
-      _timeClick2 = time.time()
-
-    if (_timeClick2 - self.timeClick1) <= constants.double_click_if_within_time:
-      data = self.active_data
-      dialog_refl = PlotDialogREFL(self, type, data)
-      dialog_refl.show()
-      
-    self.timeClick1 = -1
-
-  def single_click_yt(self, isPanOrZoomActivated, type='data'):
-    if self.timeClick1 == -1:
-      self.timeClick1 = time.time()
-      return
-    elif abs(self.timeClick1 - time.time()) > 0.5:
-      self.timeClick1 = time.time()
-      return
-    else:
-      _timeClick2 = time.time()
-
-    if (_timeClick2 - self.timeClick1) <= constants.double_click_if_within_time:
-      data = self.active_data
-      dialog_refl2d = Plot2dDialogREFL(self, type, data)
-      dialog_refl2d.show()
+    SinglePlotClick(self,'data','stitching')
 
   # toggle log
   def logy_toggle_yt_plot(self, checked):
-    self.log_toggle_plot(checked, plot_type='yt', isylog=True)
-  
+    LogPlotToggle(self,checked,'yt',is_y_log=True)
   def logy_toggle_it_plot(self, checked):
-    self.log_toggle_plot(checked, plot_type='it', isylog=True)
-
+    LogPlotToggle(self,checked,'it',is_y_log=True)
   def logy_toggle_ix_plot(self, checked):
-    self.log_toggle_plot(checked, plot_type='ix', isylog=True)
-
-  def logx_toggle_data_stitching(self, checked):
-    self.log_toggle_plot(checked, plot_type='stitching', isylog=False)
-    
-  def logy_toggle_data_stitching(self, checked):
-    self.log_toggle_plot(checked, plot_type='stitching', isylog=True)
-      
+    LogPlotToggle(self,checked,'ix',is_y_log=True)
   def logx_toggle_yi_plot(self, checked):
-    self.log_toggle_plot(checked, plot_type='yi', isylog=False)
-
-  def log_toggle_plot(self,  status, plot_type='yi', isylog=True):
-    if status == 'log':
-      isLog = True
-    else:
-      isLog = False
-    if plot_type=='stitching':
-      [r,c] = [0,0]
-    else:
-      [r,c] = self.getCurrentRowColumnSelected()
-    
-    _data = self.bigTableData[r,c]
-    data = _data.active_data
-       
-    if plot_type=='stitching':
-      if isylog:
-        data.all_plot_axis.is_reduced_plot_stitching_tab_ylog = isLog
-      else:
-        data.all_plot_axis.is_reduced_plot_stitching_tab_xlog = isLog
-    elif plot_type=='yi':
-      if isylog:
-        data.all_plot_axis.is_yi_ylog = isLog
-      else:
-        data.all_plot_axis.is_yi_xlog = isLog
-    elif plot_type=='yt':
-      if isylog:
-        data.all_plot_axis.is_yt_ylog = isLog
-      else:
-        data.all_plot_axis.is_yt_xlog = isLog
-    elif plot_type=='it':
-      if isylog:
-        data.all_plot_axis.is_it_ylog = isLog
-      else:
-        data.all_plot_axis.is_it_xlog = isLog
-    elif plot_type=='ix':
-      if isylog:
-        data.all_plot_axis.is_ix_ylog = isLog
-      else:
-        data.all_plot_axis.is_ix_xlog = isLog
-      
-    _data.active_data = data
-    self.bigTableData[r,c] = _data
+    LogPlotToggle(self,checked,'yi',is_y_log=False)
+  def logx_toggle_data_stitching(self, checked):
+    LogPlotToggle(self,checked,'stitching',is_y_log=False)
+  def logy_toggle_data_stitching(self, checked):
+    LogPlotToggle(self,checked,'stitching',is_y_log=True)
   
   def handleReductionTableMenu(self, pos):
     '''
