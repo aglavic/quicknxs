@@ -61,6 +61,7 @@ from home_plot_button_clicked import HomePlotButtonClicked
 from mouse_leave_plot import MouseLeavePlot
 from single_plot_click import SinglePlotClick
 from log_plot_toggle import LogPlotToggle
+from config_file_launcher import ConfigFileLauncher
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -183,9 +184,9 @@ class MainGUI(QtGui.QMainWindow):
         #self.trigger('automaticExtraction', argv)
     #else:
 
-  def logtoggle(self, checked):
-    self.isLog = checked
-    self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
+  #def logtoggle(self, checked):
+    #self.isLog = checked
+    #self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
  # export plot into ascii files
   def export_ix(self):
@@ -256,34 +257,17 @@ class MainGUI(QtGui.QMainWindow):
     LogPlotToggle(self,checked,'stitching',is_y_log=False)
   def logy_toggle_data_stitching(self, checked):
     LogPlotToggle(self,checked,'stitching',is_y_log=True)
-  
-  def handleReductionTableMenu(self, pos):
-    '''
-    Context menu of the Reduction table
-    '''
-    menu = QtGui.QMenu()
-    menu.addAction('Delete Row')
-    menu.addAction('Delete Data')
-    menu.addAction('Delete Normalization')
-
+    
   def launch_config_file1(self):
-    self.launch_config_file_nbr(0)
+    ConfigFileLauncher(self, 0)
   def launch_config_file2(self):
-    self.launch_config_file_nbr(1)
+    ConfigFileLauncher(self, 1)
   def launch_config_file3(self):
-    self.launch_config_file_nbr(2)
+    ConfigFileLauncher(self, 2)
   def launch_config_file4(self):
-    self.launch_config_file_nbr(3)
+    ConfigFileLauncher(self, 3)
   def launch_config_file5(self):
-    self.launch_config_file_nbr(4)
-
-  def launch_config_file_nbr(self, index):
-    _configObject = self.reducedFilesLoadedObject
-    _filename = _configObject.configFiles[index].fullFileName
-    _configObject.configFiles[index].setNewTime()
-    self.reducedFilesLoadedObject = _configObject
-    self.loading_configuration_file(_filename)
-    self.fileMenuObject.activate_file_at_index(index)
+    ConfigFileLauncher(self, 4)
 
   def raiseError(self):
     '''

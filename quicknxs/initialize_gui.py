@@ -36,8 +36,8 @@ class InitializeGui(object):
 		self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
 		self.ui.reductionTable.resizeColumnsToContents()
 		# define the context menu of the recap table
-		self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-		self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
+		#self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+#		self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
 	    
 		# set up the header of the scaling factor table
 		verticalHeader = ["Data Run #","SF: auto","SF: manual","SF: 1"]
