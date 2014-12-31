@@ -353,7 +353,7 @@ class NXSData(object):
         try:
           print '------> filename is: ' + str(filename)
           nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
-          self.list_run_numbers[0] = nxs.getRun().getProperty('run_number').value
+          self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value)
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
           return False

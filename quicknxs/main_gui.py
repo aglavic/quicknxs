@@ -56,7 +56,7 @@ from all_plot_axis import AllPlotAxis
 from outputReducedDataDialog import OutputReducedDataDialog
 from export_stitching_ascii_settings import ExportStitchingAsciiSettings
 from displayMetadata import DisplayMetadata
-
+from make_gui_connections import MakeGuiConnections
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -90,8 +90,6 @@ class MainGUI(QtGui.QMainWindow):
   active_file=u''
   last_mtime=0. #: Stores the last time the current file has been modified
   _active_data=None
-  
-  #bigTableData = [] # Will store all the data objects indexes just like the BigTable
   
   # will save the data and norm objects according to their position in the bigTable
   # [data, norm, metadata from config file]
@@ -155,7 +153,6 @@ class MainGUI(QtGui.QMainWindow):
 
   # for double click of yi plot
   timeClick1 = -1
-  DOUBLE_CLICK_IF_WITHIN_TIME = 0.4  #s
 
   allPlotAxis = None
 
@@ -192,18 +189,12 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
-    if instrument.NAME == 'REF_M':
-      exec 'from .default_interface import Ui_MainWindow'
-    else:
-      exec 'from .default_interface_refl import Ui_MainWindow'
+    exec 'from .default_interface_refl import Ui_MainWindow'
         
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
-    if instrument.NAME == 'REF_L':
-      window_title = 'QuickNXS for REF_L'
-    else:
-      window_title = 'QuickNXS'
+    window_title = 'QuickNXS for REF_L'
     self.setWindowTitle(u'%s   %s'%(window_title,str_version))
     self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
@@ -212,140 +203,70 @@ class MainGUI(QtGui.QMainWindow):
     button.pressed.connect(self.empty_cache)
     button.setFlat(True)
     button.setMaximumSize(150, 20)
-
-    if instrument.NAME=="REF_M":
-      # hide radio buttons
-      for i in range(1, 12):
-        getattr(self.ui, 'selectedChannel%i'%i).hide()
-
+    
     self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(140, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
-
-    if instrument.NAME=="REF_M":
-      self.toggleHide()      
     
-    if instrument.NAME=="REF_L":
-      #set up the header of the big table
-      verticalHeader = ["Data Run #",u'2\u03b8 (\u00B0)',u'\u03bbmin(\u00c5)',
-                        u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)',
-                        'Norm. Run #']
-      self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
-      self.ui.reductionTable.resizeColumnsToContents()
-      # define the context menu of the recap table
-      self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-      self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
+    #set up the header of the big table
+    verticalHeader = ["Data Run #",u'2\u03b8 (\u00B0)',u'\u03bbmin(\u00c5)',
+                      u'\u03bbmax (\u00c5)',u'Qmin (1/\u00c5)',u'Qmax (1/\u00c5)',
+                      'Norm. Run #']
+    self.ui.reductionTable.setHorizontalHeaderLabels(verticalHeader)
+    self.ui.reductionTable.resizeColumnsToContents()
+    # define the context menu of the recap table
+    self.ui.reductionTable.horizontalHeader().setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    self.ui.reductionTable.horizontalHeader().customContextMenuRequested.connect(self.handleReductionTableMenu)
 
-      # set up the header of the scaling factor table
-      verticalHeader = ["Data Run #","SF: auto","SF: manual","SF: 1"]
-      self.ui.dataStitchingTable.setHorizontalHeaderLabels(verticalHeader)
-      self.ui.dataStitchingTable.resizeColumnsToContents()
-      
-      palette_green = QtGui.QPalette()
-      palette_green.setColor(QtGui.QPalette.Foreground, QtCore.Qt.green)
-      self.ui.sf_found_label.setPalette(palette_green)
-      
-      palette_red = QtGui.QPalette()
-      palette_red.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
-      self.ui.sf_not_found_label.setPalette(palette_red)
+    # set up the header of the scaling factor table
+    verticalHeader = ["Data Run #","SF: auto","SF: manual","SF: 1"]
+    self.ui.dataStitchingTable.setHorizontalHeaderLabels(verticalHeader)
+    self.ui.dataStitchingTable.resizeColumnsToContents()
+    
+    palette_green = QtGui.QPalette()
+    palette_green.setColor(QtGui.QPalette.Foreground, QtCore.Qt.green)
+    self.ui.sf_found_label.setPalette(palette_green)
+    
+    palette_red = QtGui.QPalette()
+    palette_red.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
+    self.ui.sf_not_found_label.setPalette(palette_red)
 
-      # set up header for reduced ascii table
-      verticalHeader = ["ASCII files", "Active"]
-      self.ui.reducedAsciiDataSetTable.setHorizontalHeaderLabels(verticalHeader)
-      self.ui.reducedAsciiDataSetTable.setColumnWidth(0,249)
-      self.ui.reducedAsciiDataSetTable.setColumnWidth(1,49)
+    # set up header for reduced ascii table
+    verticalHeader = ["ASCII files", "Active"]
+    self.ui.reducedAsciiDataSetTable.setHorizontalHeaderLabels(verticalHeader)
+    self.ui.reducedAsciiDataSetTable.setColumnWidth(0,249)
+    self.ui.reducedAsciiDataSetTable.setColumnWidth(1,49)
 
-      self.exportStitchingAsciiSettings = ExportStitchingAsciiSettings()
+    self.exportStitchingAsciiSettings = ExportStitchingAsciiSettings()
 
     self.ui.plotTab.setCurrentIndex(0)
     # start a separate thread for delayed actions
     self.trigger=DelayedTrigger()
     self.trigger.activate.connect(self.processDelayedTrigger)
     self.trigger.start()
-    if instrument.NAME == "REF_M":
-      self.ui.bgCenter.setValue((DETECTOR_X_REGION[0]+100.)/2.)
-      self.ui.bgWidth.setValue((100-DETECTOR_X_REGION[0]))
-      self.connect_plot_events()
-    else:
-      self.connect_plot_events_refl()
+    self.connect_plot_events_refl()
 
-    # connections
-    self.ui.data_yt_plot.singleClick.connect(self.single_click_data_yt_plot)
-    self.ui.data_yt_plot.leaveFigure.connect(self.leave_figure_yt_plot)
-    self.ui.data_yt_plot.logtogy.connect(self.logy_toggle_yt_plot)
-    self.ui.data_yt_plot.toolbar.homeClicked.connect(self.home_clicked_yt_plot)
-    self.ui.data_yt_plot.toolbar.exportClicked.connect(self.export_yt)
-
-    self.ui.norm_yt_plot.singleClick.connect(self.single_click_norm_yt_plot)
-    self.ui.norm_yt_plot.leaveFigure.connect(self.leave_figure_yt_plot)
-    self.ui.norm_yt_plot.logtogy.connect(self.logy_toggle_yt_plot)
-    self.ui.norm_yt_plot.toolbar.homeClicked.connect(self.home_clicked_yt_plot)
-    self.ui.norm_yt_plot.toolbar.exportClicked.connect(self.export_yt)
-
-    self.ui.data_yi_plot.singleClick.connect(self.single_click_data_yi_plot)
-    self.ui.data_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
-    self.ui.data_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
-    self.ui.data_yi_plot.toolbar.homeClicked.connect(self.home_clicked_yi_plot)
-    self.ui.data_yi_plot.toolbar.exportClicked.connect(self.export_counts_vs_pixel)
-
-    self.ui.norm_yi_plot.singleClick.connect(self.single_click_norm_yi_plot)
-    self.ui.norm_yi_plot.leaveFigure.connect(self.leave_figure_yi_plot)
-    self.ui.norm_yi_plot.logtogx.connect(self.logx_toggle_yi_plot)
-    self.ui.norm_yi_plot.toolbar.homeClicked.connect(self.home_clicked_yi_plot)
-    self.ui.norm_yi_plot.toolbar.exportClicked.connect(self.export_counts_vs_pixel)
+    MakeGuiConnections(self)
     
-    self.ui.data_it_plot.singleClick.connect(self.single_click_data_it_plot)
-    self.ui.data_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
-    self.ui.data_it_plot.logtogy.connect(self.logy_toggle_it_plot)
-    self.ui.data_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
-    self.ui.data_it_plot.toolbar.exportClicked.connect(self.export_it)
-
-    self.ui.norm_it_plot.singleClick.connect(self.single_click_norm_it_plot)
-    self.ui.norm_it_plot.leaveFigure.connect(self.leave_figure_it_plot)
-    self.ui.norm_it_plot.logtogy.connect(self.logy_toggle_it_plot)
-    self.ui.norm_it_plot.toolbar.homeClicked.connect(self.home_clicked_it_plot)
-    self.ui.norm_it_plot.toolbar.exportClicked.connect(self.export_it)
-
-    self.ui.data_ix_plot.singleClick.connect(self.single_click_data_ix_plot)
-    self.ui.data_ix_plot.leaveFigure.connect(self.leave_figure_ix_plot)
-    self.ui.data_ix_plot.logtogy.connect(self.logy_toggle_ix_plot)
-    self.ui.data_ix_plot.toolbar.homeClicked.connect(self.home_clicked_ix_plot)
-    self.ui.data_ix_plot.toolbar.exportClicked.connect(self.export_ix)
-
-    self.ui.norm_ix_plot.singleClick.connect(self.single_click_norm_ix_plot)
-    self.ui.norm_ix_plot.leaveFigure.connect(self.leave_figure_ix_plot)
-    self.ui.norm_ix_plot.logtogy.connect(self.logy_toggle_ix_plot)
-    self.ui.norm_ix_plot.toolbar.homeClicked.connect(self.home_clicked_ix_plot)
-    self.ui.norm_ix_plot.toolbar.exportClicked.connect(self.export_ix)
-
-    self.ui.data_stitching_plot.singleClick.connect(self.single_click_data_stitching_plot)
-    self.ui.data_stitching_plot.leaveFigure.connect(self.leave_figure_data_stitching_plot)
-    self.ui.data_stitching_plot.toolbar.homeClicked.connect(self.home_clicked_data_stitching_plot)
-    self.ui.data_stitching_plot.logtogx.connect(self.logx_toggle_data_stitching)
-    self.ui.data_stitching_plot.logtogy.connect(self.logy_toggle_data_stitching)
-    self.ui.data_stitching_plot.toolbar.exportClicked.connect(self.export_stitching_data)
-
-    self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
-    self._path_watcher.directoryChanged.connect(self.folderModified)
+#    self._path_watcher=QtCore.QFileSystemWatcher([self.active_folder], self)
+ #   self._path_watcher.directoryChanged.connect(self.folderModified)
     # watch folder for changes
-    self.auto_change_active=False
+ #   self.auto_change_active=False
 
-    self.fileLoaded.connect(self.updateLabels)
-#    self.fileLoaded.connect(self.calcReflParams) #REMOVEME
-    self.fileLoaded.connect(self.plotActiveTab)
-    self.initiateProjectionPlot.connect(self.plot_projections)
-    self.initiateReflectivityPlot.connect(self.plot_refl)
-    self.initiateReflectivityPlot.connect(self.updateStateFile)
+    #self.fileLoaded.connect(self.updateLabels)
+    #self.fileLoaded.connect(self.plotActiveTab)
+    #self.initiateProjectionPlot.connect(self.plot_projections)
+    #self.initiateReflectivityPlot.connect(self.plot_refl)
+    #self.initiateReflectivityPlot.connect(self.updateStateFile)
     self.folderModified()
 
-    if instrument.NAME=="REF_L":
-      self.defineRightDefaultPath()
-      self.fileMenuObject = InitFileMenu(self)
-      self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
-      self.initConfigGui()
-      self.initErrorWidgets()
-      self.allPlotAxis = AllPlotAxis()
+    self.defineRightDefaultPath()
+    self.fileMenuObject = InitFileMenu(self)
+    self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+    self.initConfigGui()
+    self.initErrorWidgets()
+    self.allPlotAxis = AllPlotAxis()
       
     # open file after GUI is shown
     if '-ipython' in argv:
@@ -753,7 +674,7 @@ class MainGUI(QtGui.QMainWindow):
     else:
       _timeClick2 = time.time()
 
-    if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
+    if (_timeClick2 - self.timeClick1) <= constants.double_click_if_within_time:
       data = self.active_data
       dialog_refl = PlotDialogREFL(self, type, data)
       dialog_refl.show()
@@ -770,7 +691,7 @@ class MainGUI(QtGui.QMainWindow):
     else:
       _timeClick2 = time.time()
 
-    if (_timeClick2 - self.timeClick1) <= self.DOUBLE_CLICK_IF_WITHIN_TIME:
+    if (_timeClick2 - self.timeClick1) <= constants.double_click_if_within_time:
       data = self.active_data
       dialog_refl2d = Plot2dDialogREFL(self, type, data)
       dialog_refl2d.show()
@@ -847,17 +768,17 @@ class MainGUI(QtGui.QMainWindow):
     menu.addAction('Delete Normalization')
 #    menu.exec_(self.mapToGlobal(pos))
     
-  def run_ipython(self):
-    '''
-      Startup the IPython console within the program.
-    '''
-    info('Start IPython console')
-    from .ipython_widget import IPythonConsoleQtWidget
-    self.ipython=IPythonConsoleQtWidget(self)
-    self.ui.plotTab.addTab(self.ipython, 'IPython')
-    self.ipython.namespace['data']=self.active_data
-    # exceptions within GUI thread, must be installed by method within that process
-    self.trigger('_install_exc')
+  #def run_ipython(self):
+    #'''
+      #Startup the IPython console within the program.
+    #'''
+    #info('Start IPython console')
+    #from .ipython_widget import IPythonConsoleQtWidget
+    #self.ipython=IPythonConsoleQtWidget(self)
+    #self.ui.plotTab.addTab(self.ipython, 'IPython')
+    #self.ipython.namespace['data']=self.active_data
+    ## exceptions within GUI thread, must be installed by method within that process
+    #self.trigger('_install_exc')
 
 
   #def saveListPrevLoadedFiles(self):
@@ -2393,6 +2314,7 @@ class MainGUI(QtGui.QMainWindow):
 
   @log_call
   def plot_refl(self, preserve_lim=False):
+    return #REMOVEME
     '''
     Calculate and display the reflectivity from the current dataset
     and any dataset stored. Intensities from direct beam

@@ -700,7 +700,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -2945,8 +2945,11 @@ p, li { white-space: pre-wrap; }
                     <attribute name="horizontalHeaderMinimumSectionSize">
                      <number>25</number>
                     </attribute>
-                    <attribute name="verticalHeaderVisible">
+                    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
                      <bool>false</bool>
+                    </attribute>
+                    <attribute name="verticalHeaderVisible">
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -2961,6 +2964,9 @@ p, li { white-space: pre-wrap; }
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderVisible">
+                     <bool>true</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
                      <bool>false</bool>
                     </attribute>
                     <attribute name="verticalHeaderDefaultSectionSize">
@@ -3517,14 +3523,6 @@ p, li { white-space: pre-wrap; }
     <string>Raw Data Comparison...</string>
    </property>
   </action>
-  <action name="actionIPython_Console">
-   <property name="text">
-    <string>IPython Console</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+I</string>
-   </property>
-  </action>
   <action name="actionRaise_Error">
    <property name="text">
     <string>Raise Error</string>
@@ -3816,22 +3814,6 @@ p, li { white-space: pre-wrap; }
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>open_rawdata_dialog()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>494</x>
-     <y>430</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionIPython_Console</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>run_ipython()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -4784,7 +4766,6 @@ p, li { white-space: pre-wrap; }
   <slot>stripOverlap()</slot>
   <slot>open_polarization_window()</slot>
   <slot>open_rawdata_dialog()</slot>
-  <slot>run_ipython()</slot>
   <slot>raiseError()</slot>
   <slot>set_debug()</slot>
   <slot>quickReduce()</slot>

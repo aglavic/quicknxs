@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Tue Dec 30 11:46:26 2014
+# Created: Wed Dec 31 08:20:08 2014
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1170,7 +1170,8 @@ class Ui_MainWindow(object):
         self.reductionTable.horizontalHeader().setVisible(True)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
-        self.reductionTable.verticalHeader().setVisible(False)
+        self.reductionTable.horizontalHeader().setSortIndicatorShown(False)
+        self.reductionTable.verticalHeader().setVisible(True)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1373,8 +1374,6 @@ class Ui_MainWindow(object):
         self.actionPolarization.setObjectName("actionPolarization")
         self.actionRaw_Data_Comparison = QtGui.QAction(MainWindow)
         self.actionRaw_Data_Comparison.setObjectName("actionRaw_Data_Comparison")
-        self.actionIPython_Console = QtGui.QAction(MainWindow)
-        self.actionIPython_Console.setObjectName("actionIPython_Console")
         self.actionRaise_Error = QtGui.QAction(MainWindow)
         self.actionRaise_Error.setObjectName("actionRaise_Error")
         self.actionLog_Debug_Messages = QtGui.QAction(MainWindow)
@@ -1411,7 +1410,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
@@ -1423,7 +1422,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.numberSearchEntry, QtCore.SIGNAL("returnPressed()"), MainWindow.openByNumber)
         QtCore.QObject.connect(self.actionPolarization, QtCore.SIGNAL("triggered()"), MainWindow.open_polarization_window)
         QtCore.QObject.connect(self.actionRaw_Data_Comparison, QtCore.SIGNAL("triggered()"), MainWindow.open_rawdata_dialog)
-        QtCore.QObject.connect(self.actionIPython_Console, QtCore.SIGNAL("triggered()"), MainWindow.run_ipython)
         QtCore.QObject.connect(self.actionRaise_Error, QtCore.SIGNAL("triggered()"), MainWindow.raiseError)
         QtCore.QObject.connect(self.actionLog_Debug_Messages, QtCore.SIGNAL("triggered()"), MainWindow.set_debug)
         QtCore.QObject.connect(self.actionQuick_Reduce, QtCore.SIGNAL("triggered()"), MainWindow.quickReduce)
@@ -1643,8 +1641,6 @@ class Ui_MainWindow(object):
         self.actionOpen_Sum.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Shift+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPolarization.setText(QtGui.QApplication.translate("MainWindow", "Polarization...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRaw_Data_Comparison.setText(QtGui.QApplication.translate("MainWindow", "Raw Data Comparison...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionIPython_Console.setText(QtGui.QApplication.translate("MainWindow", "IPython Console", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionIPython_Console.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRaise_Error.setText(QtGui.QApplication.translate("MainWindow", "Raise Error", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLog_Debug_Messages.setText(QtGui.QApplication.translate("MainWindow", "Log Debug Messages", None, QtGui.QApplication.UnicodeUTF8))
         self.actionQuick_Reduce.setText(QtGui.QApplication.translate("MainWindow", "Quick-Reduce", None, QtGui.QApplication.UnicodeUTF8))
