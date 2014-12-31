@@ -1,3 +1,5 @@
+from plot2ddialogrefl import Plot2dDialogREFL
+
 class MakeGuiConnections(object):
     
     def __init__(cls, self):
@@ -84,4 +86,4 @@ class MakeGuiConnections(object):
         self.ui.norm_yt_plot.canvas.mpl_connect('motion_notify_event', self.mouseNormPlotyt)
         self.ui.norm_yt_plot.canvas.mpl_connect('button_press_event', self.mouseNormPlotyt)
         self.ui.norm_yt_plot.canvas.mpl_connect('button_release_event', self.mouseNormPlotyt)
-        
+                

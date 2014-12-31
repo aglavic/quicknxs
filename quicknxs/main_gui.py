@@ -55,6 +55,7 @@ from export_stitching_ascii_settings import ExportStitchingAsciiSettings
 from displayMetadata import DisplayMetadata
 from make_gui_connections import MakeGuiConnections
 from initialize_gui import InitializeGui
+from check_peak_back_error_widgets import CheckErrorWidgets
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg
@@ -149,19 +150,14 @@ class MainGUI(QtGui.QMainWindow):
       QtGui.QMainWindow.__init__(self)
     else:
       QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
-
     self.auto_change_active=True
     exec 'from .default_interface_refl import Ui_MainWindow'
-        
     self.ui=Ui_MainWindow()
     self.ui.setupUi(self)
     install_gui_handler(self)
-    
     InitializeGui(self)
     MakeGuiConnections(self)
     
-#    self.initErrorWidgets()
-     
     ## open file after GUI is shown
     #if '-ipython' in argv:
       #self.run_ipython()
@@ -182,65 +178,6 @@ class MainGUI(QtGui.QMainWindow):
       #else:
         #self.trigger('automaticExtraction', argv)
     #else:
-
-
-  
-  def checkErrorWidgets(self):
-    [row, col] = self.getCurrentRowColumnSelected()
-    if col == 0: #data
-
-      self.ui.data_peak1_error.setVisible(False)
-      self.ui.data_peak2_error.setVisible(False)
-      self.ui.data_back1_error.setVisible(False)
-      self.ui.data_back2_error.setVisible(False)
-
-      peak2 = self.ui.dataPeakToValue.value()
-      peak1 = self.ui.dataPeakFromValue.value()
-      back1 = self.ui.dataBackFromValue.value()
-      back2 = self.ui.dataBackToValue.value()
-
-      bError = False
-      
-      if back1 > peak1:
-        bError = True
-        self.ui.data_peak1_error.setVisible(True)
-        self.ui.data_back1_error.setVisible(True)
-
-      if back2 < peak2:
-        bError = True
-        self.ui.data_peak2_error.setVisible(True)
-        self.ui.data_back2_error.setVisible(True)
-      
-      self.ui.data_selection_error_label.setVisible(bError)
-      
-    else: #norm
-      
-      self.ui.norm_peak1_error.setVisible(False)
-      self.ui.norm_peak2_error.setVisible(False)
-      self.ui.norm_back1_error.setVisible(False)
-      self.ui.norm_back2_error.setVisible(False)
-      
-      peak2 = self.ui.normPeakToValue.value()
-      peak1 = self.ui.normPeakFromValue.value()
-      back1 = self.ui.normBackFromValue.value()
-      back2 = self.ui.normBackToValue.value()
-      
-      bError = False
-      
-      if back1 > peak1:
-        bError = True
-        self.ui.norm_peak1_error.setVisible(True)
-        self.ui.norm_back1_error.setVisible(True)
-
-      if back2 < peak2:
-        bError = True
-        self.ui.norm_peak2_error.setVisible(True)
-        self.ui.norm_back2_error.setVisible(True)
-
-      self.ui.norm_selection_error_label.setVisible(bError)  
-
-  
-
 
   def logtoggle(self, checked):
     self.isLog = checked
@@ -554,7 +491,6 @@ class MainGUI(QtGui.QMainWindow):
       data = self.active_data
       dialog_refl2d = Plot2dDialogREFL(self, type, data)
       dialog_refl2d.show()
-
 
   # toggle log
   def logy_toggle_yt_plot(self, checked):
@@ -3299,7 +3235,7 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.reductionTable.setRangeSelected(range_selected, True)
 
     self.enableWidgets(checkStatus=True)
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
 
   def data_norm_tab_changed(self, index):
     '''
@@ -4094,7 +4030,7 @@ Do you want to try to restore the working reduction list?""",
     # refresh plot
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)
 
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
 
   def data_low_res_switch(self):
@@ -4183,7 +4119,7 @@ Do you want to try to restore the working reduction list?""",
     self.save_new_settings()
     
     self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
     
   def normalization_low_res_switch(self):
@@ -4215,7 +4151,7 @@ Do you want to try to restore the working reduction list?""",
   def data_peak_and_back_validation(self, withPlotUpdate=True):
     self.data_peak_spinbox_validation(withPlotUpdate=withPlotUpdate)
     self.data_back_spinbox_validation(withPlotUpdate=withPlotUpdate)
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
 
 
   # data peak spinboxes
@@ -4253,7 +4189,7 @@ Do you want to try to restore the working reduction list?""",
     # save new settings
     self.save_new_settings()
     
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
     
   # data back spinboxes
@@ -4295,7 +4231,7 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
 
   # data low resolution spinboxes
@@ -4331,7 +4267,7 @@ Do you want to try to restore the working reduction list?""",
     # refresh plots
     self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
     
   def norm_peak_and_back_validation(self, withPlotUpdate=False):
@@ -4374,7 +4310,7 @@ Do you want to try to restore the working reduction list?""",
       # refresh plots
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
     
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
     
   # norm back spinboxes
@@ -4412,7 +4348,7 @@ Do you want to try to restore the working reduction list?""",
       # refresh plots
       self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
-    self.checkErrorWidgets()
+    CheckErrorWidgets(self)
     
     
   # data low resolution spinboxes
