@@ -206,10 +206,10 @@ class NXSData(object):
                        event_tof_overwrite=None, 
                        metadata_config_object=None,
                        angle_offset = 0,
-                       isData = True,
-                       isAutoPeakFinder = False,
-                       backOffsetFromPeak = 4,
-                       isAutoTofFinder = True)
+                       is_data = True,
+                       is_auto_peak_finder = False,
+                       back_offset_from_peak = 4,
+                       is_auto_tof_finder = True)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
@@ -221,10 +221,10 @@ class NXSData(object):
     metadata_config_object='LConfigDataset that is only present when the data comes from a config file',
     angle_offset='angle offset value defined in GUI',
     callback='Function called to update e.g. a progress bar',
-    isData='True or False (if file is a direct beam data set)',
-    isAutoPeakFinder='True or False',
-    backOffsetFromPeak = 'pixel distance of background from peak',
-    isAutoTofFinder = 'True or False'
+    is_data='True or False (if file is a direct beam data set)',
+    is_auto_peak_finder='True or False',
+    back_offset_from_peak = 'pixel distance of background from peak',
+    is_auto_tof_finder = 'True or False'
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=20 #: Number of datasets that are kept in the cache
@@ -1384,7 +1384,7 @@ class LRDataset(object):
     the output object
     '''
     output = _output
-    _isData = output.read_options['isData']
+    _isData = output.read_options['is_data']
 
     _iDataset = output.read_options['metadata_config_object']
     
@@ -1574,7 +1574,7 @@ class LRDataset(object):
     # calculate theta
     output.theta = LRDataset.calculate_theta(output)
 
-    if (output.read_options['isAutoTofFinder']) or (output.tof_range == ['0','0']):
+    if (output.read_options['is_auto_tof_finder']) or (output.tof_range == ['0','0']):
       
       # auto t range
       autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
@@ -1656,7 +1656,7 @@ class LRDataset(object):
     output.countsxdata = Iix.astype(float)
     output.ycountsdata = Iyi.astype(float)
 
-    if read_options['isAutoPeakFinder']:
+    if read_options['is_auto_peak_finder']:
       pf = PeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
       peaks=pf.get_peaks()
       main_peak = peaks[0]
@@ -1664,7 +1664,7 @@ class LRDataset(object):
       peak2 = int(main_peak[0] + main_peak[1])
       output.peak = [str(peak1), str(peak2)]
 
-      backOffsetFromPeak = read_options['backOffsetFromPeak']
+      backOffsetFromPeak = read_options['back_offset_from_peak']
       back1 = int(peak1 - backOffsetFromPeak)
       back2 = int(peak2 + backOffsetFromPeak)
       output.back = [str(back1), str(back2)]

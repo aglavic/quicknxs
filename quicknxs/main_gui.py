@@ -62,6 +62,8 @@ from mouse_leave_plot import MouseLeavePlot
 from single_plot_click import SinglePlotClick
 from log_plot_toggle import LogPlotToggle
 from config_file_launcher import ConfigFileLauncher
+from open_run_number import OpenRunNumber
+from selection_bigTable_changed import SelectionBigTableChanged
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -417,9 +419,6 @@ class MainGUI(QtGui.QMainWindow):
 
   @log_call
   def _fileOpenDoneREFL(self, data=None, filename=None, do_plot=True, update_table=True):
-    '''
-    plot the REFL data
-    '''
     if data is None:
       info('Data file is empty!')
       return
@@ -427,7 +426,6 @@ class MainGUI(QtGui.QMainWindow):
     self.active_data = data.active_data
 #    self.active_data = data
     self.filename = data.origin
-    print self.filename
     
     info(u"%s loaded"%(filename))
     self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))    
@@ -529,11 +527,13 @@ class MainGUI(QtGui.QMainWindow):
       self.editing_flag = True
 
   def reduction_table_cell_single_clicked(self, item):
+    print 'reduction_table_cell_single_clicked'
     self.editing_flag = True
     self.reductionTable_manual_entry(item)
 
   @waiting_effects
   def reductionTable_manual_entry(self, item):
+
     if not self.editing_flag:
       return
     self.editing_flag = False
@@ -697,6 +697,7 @@ class MainGUI(QtGui.QMainWindow):
     self.bigTable_selection_changed(row, col)   
 
   def reduction_table_cell_modified(self, item):
+    return
     if self.editing_flag:
       self.reductionTable_manual_entry(item)
  
@@ -2131,81 +2132,22 @@ class MainGUI(QtGui.QMainWindow):
     # only reload if filename was actually changed or file was modified
     self.fileOpen(os.path.join(self.active_folder, name), do_add=do_add)
 
-  @log_call
-  def openByNumber(self, number=None, do_plot=True):
-    '''
-    Search the data folders for a specific file number and open it.
-    '''
-    if instrument.NAME == "REF_M":
-    
-      if number is None:
-        number=self.ui.numberSearchEntry.text()
-      info('Trying to locate file number %s...'%number)
-      QtGui.QApplication.instance().processEvents()
-      if self.ui.histogramActive.isChecked():
-        search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
-      elif self.ui.oldFormatActive.isChecked():
-        search=glob(os.path.join(instrument.data_base, (instrument.OLD_BASE_SEARCH%(number, number))+u'.nxs'))
-      else:
-        search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'event.nxs'))
-      if search:
-        self.ui.numberSearchEntry.setText('')
-        self.fileOpen(os.path.abspath(search[0]), do_plot=do_plot)
-        return True
-      else:
-        info('Could not locate %s...'%number)
-        return False
 
-    else: # REF_L instrument
+  def  is_working_with_data(self):
+    if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+      return True
+    else:
+      return False
 
-      if number is None:
-        number = self.ui.numberSearchEntry.text()
-        
-      if number.strip() == '':
-        return
-        
-      # check if we are looking at 1 file or more than 1
-      listNumber = number.split(',')
-      # removing empty element (in case user put too many ',')
-      listNumber = filter(None, listNumber)
-      
-      # check if user wants to add this/those files to a previous selected box
-      do_add = False
-      #if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
-        #do_add = True
-      
-      # only 1 run number to load
-      if len(listNumber) == 1:
-        #try:
-        fullFileName = FileFinder.findRuns("REF_L_%d"%int(listNumber[0]))[0]
-        self.fileOpen(fullFileName, do_plot=do_plot, do_add=do_add)
-        self.ui.numberSearchEntry.setText('')
-        #except:
-        #  info('Could not locate runs %s ...'%listNumber[0])
-        #  return False
-      else: # more than 1 file loaded
-        notFoundRun = []
-        foundRun = []
-        for i in range(len(listNumber)):
-          try:
-            _fullFileName = FileFinder.findRuns("REF_L_%d"%int(listNumber[i]))[0]
-            foundRun.append(_fullFileName)
-          except:
-            notFoundRun.append(listNumber[i])
-        
-        # inform user of file not found
-        if notFoundRun:
-          if len(notFoundRun)>1:
-            _strListNumber = ",".join(notFoundRun)
-          else:
-            _strListNumber = notFoundRun[0]
-          info('Could not locate runs %s ...' %_strListNumber)
-        
-        # load runs if any file found
-        if foundRun is not None:
-          self.fileOpen(foundRun, do_plot=do_plot, do_add=do_add)
-
-        self.ui.numberSearchEntry.setText('')
+  def is_with_auto_peak_finder(self):
+    if self.ui.actionAutomaticPeakFinder.isChecked():
+      return True
+    else:
+      return False
+  
+  #@log_call
+  def openByNumber(self):
+    OpenRunNumber(self)
 
   @waiting_effects
   def find_peak_back(self):
@@ -2324,49 +2266,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.rangeStart.setValue(P0)
     self.ui.rangeEnd.setValue(PN)
     info('Changed Cut Points to area with at least 5% of maximum incident intensity')
-
-  @log_input
-  def automaticExtraction(self, filenames):
-    '''
-    Make use of all automatic algorithms to reduce a full set of data in one run.
-    Normalization files are detected by the tth angle to the selected peak position.
-    
-    The result is shown in the table and can be modified by the user.
-    '''
-    self.clearRefList(do_plot=False)
-    for filename in sorted(filenames):
-      # read files data and extract reflectivity
-      if filename[-4:]=='.nxs':
-        self.fileOpen(filename, do_plot=False)
-      else:
-        if not self.openByNumber(filename, do_plot=False):
-          continue
-      last_file=filename
-      self.calc_refl()
-      if (self.refl.ai*180./pi)<0.05:
-        self.setNorm(do_plot=False, do_remove=False)
-      else:
-        norm=self.getNorm()
-        if norm is None:
-          warning('There is a dataset without fitting normalization, automatic extraction stopped!',
-               extra={'title': 'Automatic extraction failed'})
-          break
-        # cut regions where the incident intensity drops below 10% of the maximum
-        region=where(norm.Rraw>=(norm.Rraw.max()*0.1))[0]
-        P0=len(norm.Rraw)-region[-1]
-        PN=region[0]
-        self.ui.rangeStart.setValue(P0)
-        self.ui.rangeEnd.setValue(PN)
-        # normalize total reflection or stich together adjecent scans
-        self.normalizeTotalReflection()
-        self.addRefList(do_plot=False)
-    # rest cut options and show the file, which was added last
-    self.ui.rangeStart.setValue(0)
-    self.ui.rangeEnd.setValue(0)
-    if last_file[-4:]=='.nxs':
-      self.fileOpen(last_file, do_plot=True)
-    else:
-      self.openByNumber(last_file, do_plot=True)
 
   @log_call
   def autoRef(self):
@@ -2763,6 +2662,8 @@ class MainGUI(QtGui.QMainWindow):
 
   @waiting_effects          
   def bigTable_selection_changed(self, row, column):    
+    SelectionBigTableChanged(self, row, column)
+    return
 
     self.editing_flag = False
 
