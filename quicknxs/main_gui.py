@@ -87,7 +87,7 @@ class MainGUI(QtGui.QMainWindow):
   path_ascii = '.'
 
   # will be on when the user double click an editable cell
-  editing_flag = False
+  editing_flag = True
 
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
@@ -2660,171 +2660,184 @@ class MainGUI(QtGui.QMainWindow):
     if do_plot:
       self.initiateReflectivityPlot.emit(True)
 
+  def same_cell_selected(self, current_row, current_column):
+    if (self._prev_row_selected == current_row) and (self._prev_col_selected == current_column):
+      return True
+    if (self._prev_row_selected == current_row) and (self._prev_col_selected < 6) and (current_column < 6):
+      return True
+    
   @waiting_effects          
   def bigTable_selection_changed(self, row, column):    
-    SelectionBigTableChanged(self, row, column)
+    if self.same_cell_selected(row, column):
+      return
+      
+    if self.editing_flag:
+      self.editing_flag = False
+      SelectionBigTableChanged(self, row, column)
+    else:
+      self.editing_flag = True
     return
 
-    self.editing_flag = False
+    #self.editing_flag = False
 
-    # if selection of same row and not data or column 0 and 6
-#    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
-#      return
+    ## if selection of same row and not data or column 0 and 6
+##    if (self._prev_row_selected == row) and ((column != 0) and (column != 6)):
+##      return
 
-    # same row and same column selected
-    if (self._prev_row_selected == row) and (self._prev_col_selected == column):
-      return
-
-    if (self._prev_row_selected == row) and (self._prev_col_selected < 6) and (column < 6):
-      return
-    
-    if column is 6:
-      col = 1
-    else:
-      col = 0
-
-    _data = self.bigTableData[row,col]
-    try:
-      self.active_data = _data.active_data
-      addButtonStatus = True
-    except:
-      self.active_data = None
-      addButtonStatus = False
-
-    #self.ui.addRunNumbers.setEnabled(addButtonStatus)
-
-    self.userClickedInTable = True # this avoid to re-rerun this method a second time
-    if column == 6:
-      self.ui.dataNormTabWidget.setCurrentIndex(1)      
-    else:
-      self.ui.dataNormTabWidget.setCurrentIndex(0)  
-
-    self._prev_row_selected = row
-    self._prev_col_selected = column
-
-    cell = self.ui.reductionTable.selectedItems()
-    #print cell
-    #if cell == []:
-      #self.userClickedInTable = False
+    ## same row and same column selected
+    #if (self._prev_row_selected == row) and (self._prev_col_selected == column):
       #return
+
+    #if (self._prev_row_selected == row) and (self._prev_col_selected < 6) and (column < 6):
+      #return
+    
+    #if column is 6:
+      #col = 1
+    #else:
+      #col = 0
+
+    #_data = self.bigTableData[row,col]
+    #try:
+      #self.active_data = _data.active_data
+      #addButtonStatus = True
+    #except:
+      #self.active_data = None
+      #addButtonStatus = False
+
+    ##self.ui.addRunNumbers.setEnabled(addButtonStatus)
+
+    #self.userClickedInTable = True # this avoid to re-rerun this method a second time
+    #if column == 6:
+      #self.ui.dataNormTabWidget.setCurrentIndex(1)      
+    #else:
+      #self.ui.dataNormTabWidget.setCurrentIndex(0)  
+
+    #self._prev_row_selected = row
+    #self._prev_col_selected = column
+
+    #cell = self.ui.reductionTable.selectedItems()
+    ##print cell
+    ##if cell == []:
+      ##self.userClickedInTable = False
+      ##return
       
-    # display norm tab
-    if column == 6:
-      self.ui.dataNormTabWidget.setCurrentIndex(1)
-      # if cell is empty
-      if cell == []:
-        self.clear_plot_overview_REFL(isData=False)
-        self.ui.normNameOfFile.setText('')
-      else:
-        cell = self.ui.reductionTable.selectedItems()[0]
-        if cell.text() == '':
-  #      cell.text == ''
-          self.clear_plot_overview_REFL(isData=False)
-          self.ui.normNameOfFile.setText('')
-        else:
-          cell = self.ui.reductionTable.selectedItems()[0]
-          if (self.active_data is not None) and (_data.active_data.nxs is not None):
-            self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+    ## display norm tab
+    #if column == 6:
+      #self.ui.dataNormTabWidget.setCurrentIndex(1)
+      ## if cell is empty
+      #if cell == []:
+        #self.clear_plot_overview_REFL(isData=False)
+        #self.ui.normNameOfFile.setText('')
+      #else:
+        #cell = self.ui.reductionTable.selectedItems()[0]
+        #if cell.text() == '':
+  ##      cell.text == ''
+          #self.clear_plot_overview_REFL(isData=False)
+          #self.ui.normNameOfFile.setText('')
+        #else:
+          #cell = self.ui.reductionTable.selectedItems()[0]
+          #if (self.active_data is not None) and (_data.active_data.nxs is not None):
+            #self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
   
-          else: # load the data
-            _run_number = int(cell.text())
-            _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+          #else: # load the data
+            #_run_number = int(cell.text())
+            #_first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
             
-            _configDataset = self.bigTableData[row,2]
+            #_configDataset = self.bigTableData[row,2]
             
-            if col == 1:
-              isData = False
-            else:
-              isData = True
+            #if col == 1:
+              #isData = False
+            #else:
+              #isData = True
             
-            event_split_bins = None
-            event_split_index = 0
-            bin_type = 0
-            data = NXSData(_first_file_name, 
-                           bin_type = bin_type,
-                           bins = self.ui.eventTofBins.value(),
-                           callback = self.updateEventReadout,
-                           event_split_bins = event_split_bins,
-                           event_split_index = event_split_index,
-                           metadata_config_object = _configDataset,
-                           isData = isData)
+            #event_split_bins = None
+            #event_split_index = 0
+            #bin_type = 0
+            #data = NXSData(_first_file_name, 
+                           #bin_type = bin_type,
+                           #bins = self.ui.eventTofBins.value(),
+                           #callback = self.updateEventReadout,
+                           #event_split_bins = event_split_bins,
+                           #event_split_index = event_split_index,
+                           #metadata_config_object = _configDataset,
+                           #isData = isData)
             
-            r=row
-            c=col
+            #r=row
+            #c=col
   
-            self.bigTableData[r,c] = data
-            self._prev_row_selected = r
-            self._prev_col_selected = c
+            #self.bigTableData[r,c] = data
+            #self._prev_row_selected = r
+            #self._prev_col_selected = c
             
-            self._fileOpenDoneREFL(data=data, 
-                                   filename=_first_file_name, 
-                                   do_plot=True,
-                                   update_table=False)
+            #self._fileOpenDoneREFL(data=data, 
+                                   #filename=_first_file_name, 
+                                   #do_plot=True,
+                                   #update_table=False)
 
-    else: # display data tab
-      self.ui.dataNormTabWidget.setCurrentIndex(0)
-      # if cell is empty
-      cell = self.ui.reductionTable.selectedItems()
+    #else: # display data tab
+      #self.ui.dataNormTabWidget.setCurrentIndex(0)
+      ## if cell is empty
+      #cell = self.ui.reductionTable.selectedItems()
 
-      if (self.active_data is not None) and (_data.active_data.nxs is not None):
-        self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+      #if (self.active_data is not None) and (_data.active_data.nxs is not None):
+        #self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
       
-      else: # load (the data cell is empty or data not loaded yet)
-        [row,col] = self.getTrueCurrentRowColumnSelected()
-        if col < 6:
-          col = 0
-        item = self.ui.reductionTable.item(row,col)
+      #else: # load (the data cell is empty or data not loaded yet)
+        #[row,col] = self.getTrueCurrentRowColumnSelected()
+        #if col < 6:
+          #col = 0
+        #item = self.ui.reductionTable.item(row,col)
 
-        if item is not None:
-          _run_number = int(str(item.text()))
-          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+        #if item is not None:
+          #_run_number = int(str(item.text()))
+          #_first_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
           
-          _configDataset = self.bigTableData[row,2]
+          #_configDataset = self.bigTableData[row,2]
           
-          event_split_bins = None
-          event_split_index = 0
-          bin_type = 0
-          data = NXSData(_first_file_name, 
-                         bin_type = bin_type,
-                         bins = self.ui.eventTofBins.value(),
-                         callback = self.updateEventReadout,
-                         event_split_bins = event_split_bins,
-                         event_split_index = event_split_index,
-                         metadata_config_object = _configDataset)
+          #event_split_bins = None
+          #event_split_index = 0
+          #bin_type = 0
+          #data = NXSData(_first_file_name, 
+                         #bin_type = bin_type,
+                         #bins = self.ui.eventTofBins.value(),
+                         #callback = self.updateEventReadout,
+                         #event_split_bins = event_split_bins,
+                         #event_split_index = event_split_index,
+                         #metadata_config_object = _configDataset)
           
-          r=row
-          c=col
+          #r=row
+          #c=col
   
-          self.bigTableData[r,c] = data
-          self._prev_row_selected = r
-          self._prev_col_selected = c
+          #self.bigTableData[r,c] = data
+          #self._prev_row_selected = r
+          #self._prev_col_selected = c
           
-          self._fileOpenDoneREFL(data=data, 
-                                 filename=_first_file_name, 
-                                 do_plot=True,
-                                 update_table=False)
+          #self._fileOpenDoneREFL(data=data, 
+                                 #filename=_first_file_name, 
+                                 #do_plot=True,
+                                 #update_table=False)
       
-    self.userClickedInTable = False
+    #self.userClickedInTable = False
 
-    self._prev_row_selected = row
-    self._prev_col_selected = column
+    #self._prev_row_selected = row
+    #self._prev_col_selected = column
 
-    # select data or norm cell 
-    prev_range_selected = QtGui.QTableWidgetSelectionRange(row, 0, row, 6)
-    self.ui.reductionTable.setRangeSelected(prev_range_selected, False)
+    ## select data or norm cell 
+    #prev_range_selected = QtGui.QTableWidgetSelectionRange(row, 0, row, 6)
+    #self.ui.reductionTable.setRangeSelected(prev_range_selected, False)
 
-    self.editing_flag = True
+    #self.editing_flag = True
 
-    if column < 6:
-      _col = 0
-    else:
-      _col = 6
+    #if column < 6:
+      #_col = 0
+    #else:
+      #_col = 6
 
-    range_selected = QtGui.QTableWidgetSelectionRange(row, _col, row, _col)
-    self.ui.reductionTable.setRangeSelected(range_selected, True)
+    #range_selected = QtGui.QTableWidgetSelectionRange(row, _col, row, _col)
+    #self.ui.reductionTable.setRangeSelected(range_selected, True)
 
-    self.enableWidgets(checkStatus=True)
-    CheckErrorWidgets(self)
+    #self.enableWidgets(checkStatus=True)
+    #CheckErrorWidgets(self)
 
   def data_norm_tab_changed(self, index):
     '''

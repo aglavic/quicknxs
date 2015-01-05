@@ -280,7 +280,6 @@ class DisplayPlots(object):
 		self = cls.self
 		
 		self.ui.dataNameOfFile.setText('%s'%(cls.filename))
-		print 'filling text'
 		
 		[peak1, peak2] = cls.peak	
 		self.ui.dataPeakFromValue.setValue(peak1)
