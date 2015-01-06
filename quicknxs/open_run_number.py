@@ -1,16 +1,21 @@
 from mantid.simpleapi import *
 from logging import info
 from qreduce import NXSData
+from display_plots import DisplayPlots
 
 class OpenRunNumber(object):
 	
 	self = None
 	run_number_found = []
+	replaced_data = False
 	
-	def __init__(cls, self, cell=None):
+	def __init__(cls, self, cell=None, replaced_data=False):
 		cls.self = self
+		cls.replaced_data = replaced_data
+		
 		run_found = []
 		run_not_found = []
+		cls.run_number_found = []
 		
 		if cell is None:
 			run_number_field = self.ui.numberSearchEntry.text()
@@ -60,16 +65,18 @@ class OpenRunNumber(object):
 		if data is None:
 			return
 		
-		[r,c] = self.getRowColumnNextDataSet()
-		if c is not 0:
-			c = 1
+		if cls.replaced_data:
+			[r,c] = self.getCurrentRowColumnSelected()
+		else:
+			[r,c] = self.getRowColumnNextDataSet()
+			if c is not 0:
+				c = 1
 			
 		self.bigTableData[r,c] = data
 		self._prev_row_selected = r
 		self._prev_col_selected = c
 		
 		self.enableWidgets(status=True)
-		
-		self._fileOpenDoneREFL(data, list_full_file_name, True)
+		DisplayPlots(cls.self)
 		
 			

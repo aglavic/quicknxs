@@ -42,7 +42,7 @@ class SelectionBigTableChanged(object):
 			if (cls.active_data is not None) and (cls.active_data.nxs is not None):
 				DisplayPlots(cls.self)
 			else:
-				OpenRunNumber(cls.self, cell)
+				OpenRunNumber(cls.self, cell, replaced_data=True)
 		
 	def record_new_row_col_selected(cls):
 		cls.self._prev_row_selected = cls.current_row

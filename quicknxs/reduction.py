@@ -922,7 +922,7 @@ class ReductionObject(object):
         type is either 'data' or 'norm'
         '''
         
-        isData = True
+        is_data = True
         
         # check first if we have a full file name already
         if oConfig is not None:
@@ -932,7 +932,7 @@ class ReductionObject(object):
                     _run_number = oConfig.data_sets
                     full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
             else:
-                isData = False
+                is_data = False
                 if oConfig.norm_flag:
                     full_file_name = oConfig.norm_full_file_name
                     if full_file_name == u'' or full_file_name == ['']:
@@ -950,7 +950,7 @@ class ReductionObject(object):
                             event_split_bins = event_split_bins,
                             event_split_index = event_split_index,
                             metadata_config_object = oConfig,
-                            isData = isData)
+                            is_data = is_data)
         
             return oData
 

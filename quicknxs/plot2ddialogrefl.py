@@ -5,6 +5,7 @@ from mplwidget import MPLWidget
 import colors
 import utilities
 import os
+from logging import info
 
 class Plot2dDialogREFL(QDialog):
 	

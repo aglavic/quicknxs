@@ -87,7 +87,7 @@ class MainGUI(QtGui.QMainWindow):
   path_ascii = '.'
 
   # will be on when the user double click an editable cell
-  editing_flag = True
+  editing_flag = False
 
   ref_list_channels=[] #: Store which channels are available for stored reflectivities
   _refl=None #: Reflectivity of the active dataset
@@ -521,18 +521,31 @@ class MainGUI(QtGui.QMainWindow):
 
     return [_row, _column]
  
+  def reduction_table_cell_modified(self, item):
+    print 'in reduction_table_cell_modified'
+#    if self.editing_flag:
+ #     OpenRunNumber(self, item, replaced_data=True)
+  #    self.editing_flag = False
+
+    #return
+    #if self.editing_flag:
+      #self.reductionTable_manual_entry(item)
+ 
   def reduction_table_cell_double_clicked(self, row, column):
+    print 'reduction table cell double clicked'
     if column == 0 or column == 6:
-      # we are now editing the cell if column is 0 or 6
       self.editing_flag = True
 
   def reduction_table_cell_single_clicked(self, item):
     print 'reduction_table_cell_single_clicked'
-    self.editing_flag = True
-    self.reductionTable_manual_entry(item)
+#    self.editing_flag = True
+  #  self.reductionTable_manual_entry(item)
 
   @waiting_effects
   def reductionTable_manual_entry(self, item):
+    print 'reductionTable_manual_entry'
+#    OpenRunNumber(self, item)
+    return
 
     if not self.editing_flag:
       return
@@ -695,11 +708,6 @@ class MainGUI(QtGui.QMainWindow):
     self._prev_row_selected = -1
     self._prev_col_selected = -1
     self.bigTable_selection_changed(row, col)   
-
-  def reduction_table_cell_modified(self, item):
-    return
-    if self.editing_flag:
-      self.reductionTable_manual_entry(item)
  
   def populateReflectivityTable(self, data):
     # will populate the recap table
@@ -2671,11 +2679,11 @@ class MainGUI(QtGui.QMainWindow):
     if self.same_cell_selected(row, column):
       return
       
-    if self.editing_flag:
-      self.editing_flag = False
-      SelectionBigTableChanged(self, row, column)
-    else:
-      self.editing_flag = True
+#    if self.editing_flag:
+ #     self.editing_flag = False
+    SelectionBigTableChanged(self, row, column)
+  #  else:
+   #   self.editing_flag = True
     return
 
     #self.editing_flag = False
