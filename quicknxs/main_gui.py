@@ -63,7 +63,9 @@ from single_plot_click import SinglePlotClick
 from log_plot_toggle import LogPlotToggle
 from config_file_launcher import ConfigFileLauncher
 from open_run_number import OpenRunNumber
+from display_plots import DisplayPlots
 from selection_bigTable_changed import SelectionBigTableChanged
+from populate_reductionTable import PopulateReductionTable
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -710,6 +712,7 @@ class MainGUI(QtGui.QMainWindow):
     self.bigTable_selection_changed(row, col)   
  
   def populateReflectivityTable(self, data):
+    return
     # will populate the recap table
     
     _selected_row = self.ui.reductionTable.selectedRanges()
@@ -2156,6 +2159,12 @@ class MainGUI(QtGui.QMainWindow):
   #@log_call
   def openByNumber(self):
     OpenRunNumber(self)
+    PopulateReductionTable(self)
+    DisplayPlots(self)
+    
+
+
+
 
   @waiting_effects
   def find_peak_back(self):

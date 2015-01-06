@@ -77,6 +77,3 @@ class OpenRunNumber(object):
 		self._prev_col_selected = c
 		
 		self.enableWidgets(status=True)
-		DisplayPlots(cls.self)
-		
-			
