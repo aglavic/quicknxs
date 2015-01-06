@@ -2159,12 +2159,15 @@ class MainGUI(QtGui.QMainWindow):
   #@log_call
   def openByNumber(self):
     OpenRunNumber(self)
+        
     PopulateReductionTable(self)
+
+    # selection
+    _row = self._prev_row_selected
+    _col = self._prev_col_selected
+    self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row, _col, _row, _col), True)
+
     DisplayPlots(self)
-    
-
-
-
 
   @waiting_effects
   def find_peak_back(self):
@@ -2682,6 +2685,10 @@ class MainGUI(QtGui.QMainWindow):
       return True
     if (self._prev_row_selected == current_row) and (self._prev_col_selected < 6) and (current_column < 6):
       return True
+    return False
+    #self._prev_row_selected = current_row
+    #self._prev_col_selected = current_column
+    #return False
     
   @waiting_effects          
   def bigTable_selection_changed(self, row, column):    

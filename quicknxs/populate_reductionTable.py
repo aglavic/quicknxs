@@ -8,12 +8,15 @@ class PopulateReductionTable(object):
 	def __init__(cls, self):
 		cls.self = self
 		_bigTableData = self.bigTableData
+		
+		cls.clearTable()
 
-		[nbr_col, nbr_row] = _bigTableData.shape
+		[nbr_row, nbr_col] = _bigTableData.shape
 		
 		for r in range(nbr_row):
-			if (_bigTableData[0,r] == None) and (_bigTableData[1,r] == None):
-				return
+			
+			if (_bigTableData[r,0] == None) and (_bigTableData[r,1] == None):
+				break
 			else:
 				self.ui.reductionTable.insertRow(r)
 
@@ -33,7 +36,13 @@ class PopulateReductionTable(object):
 					if c==0:
 						cls.addMetadata(r, _obj)
 						
-
+	def clearTable(cls):
+		cls.self.ui.reductionTable.clearContents()
+		nbrRow = cls.self.ui.reductionTable.rowCount()
+		if nbrRow > 0:
+			for _row in range(nbrRow):
+				cls.self.ui.reductionTable.removeRow(0)
+				
 	def addMetadata(cls, row, obj):
 		_color = colors.METADATA_CELL_COLOR
 		_active_data = obj.active_data

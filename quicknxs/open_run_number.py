@@ -68,12 +68,36 @@ class OpenRunNumber(object):
 		if cls.replaced_data:
 			[r,c] = self.getCurrentRowColumnSelected()
 		else:
-			[r,c] = self.getRowColumnNextDataSet()
+			[r,c] = cls.getRowColumnNextDataSet()
 			if c is not 0:
 				c = 1
 			
 		self.bigTableData[r,c] = data
-		self._prev_row_selected = r
-		self._prev_col_selected = c
+		[true_r, true_c] = self.getTrueCurrentRowColumnSelected()
+		if true_r == -1:
+			true_r = 0
+			true_c = 0
+		self._prev_row_selected = true_r
+		self._prev_col_selected = true_c
 		
 		self.enableWidgets(status=True)
+
+	def getRowColumnNextDataSet(cls):
+		self = cls.self
+		
+		_selected_row = self.ui.reductionTable.selectedRanges()
+		_is_data = self.is_working_with_data()
+		if _selected_row == []:
+			_new_row = 0
+		else:
+			_new_row = _selected_row[0].bottomRow()
+			if _is_data:
+				_new_row += 1
+		
+		if _is_data:
+			_new_column = 0
+		else:
+			_new_column = 1
+			
+		return [_new_row, _new_column]
+	

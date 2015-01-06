@@ -1,6 +1,7 @@
 from clear_plots import ClearPlots
 from display_plots import DisplayPlots
 from open_run_number import OpenRunNumber
+from PyQt4 import QtGui
 
 class SelectionBigTableChanged(object):
 	
@@ -32,7 +33,7 @@ class SelectionBigTableChanged(object):
 		
 		cls.record_new_row_col_selected()
 		cls.load_and_display_cell()
-		
+				
 	def load_and_display_cell(cls):
 		cell = cls.self.ui.reductionTable.selectedItems()
 		if cell == [] or cell[0] == '':
@@ -59,6 +60,5 @@ class SelectionBigTableChanged(object):
 	def same_cell_selected(cls):
 		if (cls.self._prev_row_selected == cls.current_row) and (cls.self._prev_col_selected == cls.current_column):
 			return True
-		
 		if (cls.self._prev_row_selected == cls.current_row) and (cls.self._prev_col_selected < 6) and (cls.current_column < 6):
 			return True
