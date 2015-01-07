@@ -1003,7 +1003,7 @@ class MainGUI(QtGui.QMainWindow):
     
     if isDataSelected: # data
 
-      self.ui.dataNameOfFile.setText('%s'%filename)
+      #self.ui.dataNameOfFile.setText('%s'%filename)
       
       # repopulate the tab
       peak1 = int(peak1)
@@ -2375,10 +2375,10 @@ class MainGUI(QtGui.QMainWindow):
     else: #REF_L
       
       d = self.active_data
-      if self.ui.dataNormTabWidget.currentIndex() == 0:
-        self.ui.dataNameOfFile.setText('%s'%d.filename)
-      else:
-        self.ui.normNameOfFile.setText('%s'%d.filename)
+    #  if self.ui.dataNormTabWidget.currentIndex() == 0:
+     #   self.ui.dataNameOfFile.setText('%s'%d.filename)
+     # else:
+      #  self.ui.normNameOfFile.setText('%s'%d.filename)
 
       self.ui.metadataProtonChargeValue.setText('%.2e'%d.proton_charge)
       self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)

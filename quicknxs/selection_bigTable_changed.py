@@ -18,7 +18,6 @@ class SelectionBigTableChanged(object):
 		
 		if cls.same_cell_selected():
 			return
-		print 'not same cell selected'
 		
 		if column == 6:
 			col_index = 1
@@ -37,7 +36,7 @@ class SelectionBigTableChanged(object):
 				
 	def load_and_display_cell(cls):
 		cell = cls.self.ui.reductionTable.selectedItems()
-		if cell == [] or cell[0] == '':
+		if cell == [] or cell[0] == '' or cell[0].text() == '':
 			ClearPlots(cls.self, is_data=cls.is_data, is_norm=not cls.is_data, all_plots=True)
 		else:
 			cell = cell[0]
@@ -63,3 +62,4 @@ class SelectionBigTableChanged(object):
 			return True
 		if (cls.self._prev_row_selected == cls.current_row) and (cls.self._prev_col_selected < 6) and (cls.current_column < 6):
 			return True
+		return False

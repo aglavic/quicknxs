@@ -46,6 +46,7 @@ class DisplayPlots(object):
 		cls.rowColSelected = [row,col]
 		_data = self.bigTableData[row,col]
 		if _data is None:
+			ClearPlots(self, is_data=cls.isDataSelected(), is_norm=not cls.isDataSelected(), all_plots=True)
 			return
 		
 		_active_data = _data.active_data
@@ -103,6 +104,12 @@ class DisplayPlots(object):
 		if plot_ix:
 			ClearPlots(cls.self, plot_ix=True, is_data=is_data, is_norm=is_norm)
 			cls.plot_ix()
+		
+		if plot_yt or plot_it or plot_yi or plot_ix:
+			if cls.isDataSelected():
+				self.ui.dataNameOfFile.setText('%s'%(cls.filename))
+			else:
+				self.ui.normNameOfFile.setText('%s'%(cls.filename))
 			
 	def plot_ix(cls):
 		_countsxdata = cls.countsxdata
@@ -259,7 +266,6 @@ class DisplayPlots(object):
 	def workWithNorm(cls):
 		self = cls.self
 		
-		self.ui.normNameOfFile.setText('%s'%(cls.filename))
 		self.ui.useNormalizationFlag.setChecked(cls.useItFlag)
 		
 		[peak1, peak2] = cls.peak
@@ -283,8 +289,6 @@ class DisplayPlots(object):
 			
 	def workWithData(cls):
 		self = cls.self
-		
-		self.ui.dataNameOfFile.setText('%s'%(cls.filename))
 		
 		[peak1, peak2] = cls.peak	
 		self.ui.dataPeakFromValue.setValue(peak1)
