@@ -18,6 +18,7 @@ class SelectionBigTableChanged(object):
 		
 		if cls.same_cell_selected():
 			return
+		print 'not same cell selected'
 		
 		if column == 6:
 			col_index = 1

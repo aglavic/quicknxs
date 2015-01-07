@@ -2686,20 +2686,17 @@ class MainGUI(QtGui.QMainWindow):
     if (self._prev_row_selected == current_row) and (self._prev_col_selected < 6) and (current_column < 6):
       return True
     return False
-    #self._prev_row_selected = current_row
-    #self._prev_col_selected = current_column
-    #return False
     
   @waiting_effects          
   def bigTable_selection_changed(self, row, column):    
     if self.same_cell_selected(row, column):
       return
-      
+
 #    if self.editing_flag:
  #     self.editing_flag = False
     SelectionBigTableChanged(self, row, column)
-  #  else:
-   #   self.editing_flag = True
+    DisplayPlots(self)
+
     return
 
     #self.editing_flag = False

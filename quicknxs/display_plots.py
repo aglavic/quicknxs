@@ -74,29 +74,34 @@ class DisplayPlots(object):
 		cls.backFlag = bool(_active_data.back_flag)
 		cls.lowResFlag = bool(_active_data.low_res_flag)
 		
+		is_data = True
+		is_norm = False
+		
 		if cls.isDataSelected():
 			cls.qRange = _active_data.q_range
 			cls.incidentAngle = _active_data.incident_angle
 			cls.lambdaRange = _active_data.lambda_range
 			cls.workWithData()
 		else:
+			is_data = False
+			is_norm = True
 			cls.useItFlag = _active_data.use_it_flag
 			cls.workWithNorm()
 		
 		if plot_yt:
-			ClearPlots(cls.self, plot_yt=True)
+			ClearPlots(cls.self, plot_yt=True, is_data=is_data, is_norm=is_norm)
 			cls.plot_yt()
 
 		if plot_it:
-			ClearPlots(cls.self, plot_it=True)
+			ClearPlots(cls.self, plot_it=True, is_data=is_data, is_norm=is_norm)
 			cls.plot_it()
 			
 		if plot_yi:
-			ClearPlots(cls.self, plot_yi=True)
+			ClearPlots(cls.self, plot_yi=True, is_data=is_data, is_norm=is_norm)
 			cls.plot_yi()
 			
 		if plot_ix:
-			ClearPlots(cls.self, plot_ix=True)
+			ClearPlots(cls.self, plot_ix=True, is_data=is_data, is_norm=is_norm)
 			cls.plot_ix()
 			
 	def plot_ix(cls):

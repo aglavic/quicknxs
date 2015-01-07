@@ -75,9 +75,9 @@ class OpenRunNumber(object):
 		self.bigTableData[r,c] = data
 		[true_r, true_c] = self.getTrueCurrentRowColumnSelected()
 		if true_r == -1:
-			true_r = 0
+			r = 0
 			true_c = 0
-		self._prev_row_selected = true_r
+		self._prev_row_selected = r
 		self._prev_col_selected = true_c
 		
 		self.enableWidgets(status=True)
