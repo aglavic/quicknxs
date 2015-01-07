@@ -1207,6 +1207,11 @@ class LConfigDataset(object):
   norm_low_res = ['0','0']
   norm_low_res_flag = True
  
+  q_range =['0','0']
+  lambda_range = ['0','0']
+  
+  norm_sets = ''
+  data_sets = ''
  
 class LRDataset(object):
   '''

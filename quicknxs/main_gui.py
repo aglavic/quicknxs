@@ -66,6 +66,7 @@ from open_run_number import OpenRunNumber
 from display_plots import DisplayPlots
 from selection_bigTable_changed import SelectionBigTableChanged
 from populate_reductionTable import PopulateReductionTable
+from loading_configuration import LoadingConfiguration
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -1003,7 +1004,7 @@ class MainGUI(QtGui.QMainWindow):
     
     if isDataSelected: # data
 
-      #self.ui.dataNameOfFile.setText('%s'%filename)
+      self.ui.dataNameOfFile.setText('%s'%filename)
       
       # repopulate the tab
       peak1 = int(peak1)
@@ -4254,16 +4255,32 @@ Do you want to try to restore the working reduction list?""",
   @log_call
   @waiting_effects
   def loading_configuration(self):
-    '''
-    Reached by the Load Configuration button
-    will populate the GUI with the data retrieved from the configuration file
-    '''
+    
     _path = self.path_config
     filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
+		
     if not (filename == ""):
       self.loading_configuration_file(filename)
-            
+
+    #loadConfig = LoadingConfiguration(self)
+    #if loadConfig.statusOk:
+      #self.enableWidgets(checkStatus=True)
+      
+      if self.reducedFilesLoadedObject is None:
+        _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+      else:
+        _reducedFilesLoadedObject = self.reducedFilesLoadedObject
+      _reducedFilesLoadedObject.addFile(filename)
+      _reducedFilesLoadedObject.updateGui()
+      self.reducedFilesLoadedObject = _reducedFilesLoadedObject
+
+
   def loading_configuration_file(self, filename):
+    #loadConfig = LoadingConfiguration(self, filename=filename)
+    #if loadConfig.statusOk:
+      #PopulateReductionTable(self)
+    #return
+
 #    try:
     self.path_config = os.path.dirname(filename)
       
@@ -4275,14 +4292,6 @@ Do you want to try to restore the working reduction list?""",
     
     self.loadConfigAndPopulateGui(filename)
     self.enableWidgets(checkStatus=True)
-    
-    if self.reducedFilesLoadedObject is None:
-      _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
-    else:
-      _reducedFilesLoadedObject = self.reducedFilesLoadedObject
-    _reducedFilesLoadedObject.addFile(filename)
-    _reducedFilesLoadedObject.updateGui()
-    self.reducedFilesLoadedObject = _reducedFilesLoadedObject
         
    # except:
       #warning('Could not open configuration file!')

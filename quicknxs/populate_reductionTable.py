@@ -15,7 +15,9 @@ class PopulateReductionTable(object):
 		
 		for r in range(nbr_row):
 			
-			if (_bigTableData[r,0] == None) and (_bigTableData[r,1] == None):
+			if (_bigTableData[r,2] is not None):
+				self.ui.reductionTable.insertRow(r)
+			elif (_bigTableData[r,0] == None) and (_bigTableData[r,1] == None):
 				break
 			else:
 				self.ui.reductionTable.insertRow(r)
@@ -26,8 +28,21 @@ class PopulateReductionTable(object):
 					c=6
 
 				if _obj == None:
-					_item = QtGui.QTableWidgetItem('')
-					self.ui.reductionTable.setItem(r,c,_item)
+					_obj_config = _bigTableData[r,2]
+					if (_obj_config is None):
+						_item = QtGui.QTableWidgetItem('')
+						self.ui.reductionTable.setItem(r,c,_item)
+					else:
+						if c == 0:
+							_data_run_number = _obj_config.data_sets
+							_item = QtGui.QTableWidgetItem(_data_run_number)
+							_item.setForeground(QtGui.QColor(13,24,241))
+							self.ui.reductionTable.setItem(r,0,_item)						
+						else:
+							_norm_run_number = _obj_config.norm_sets
+							_item = QtGui.QTableWidgetItem(_norm_run_number)
+							_item.setForeground(QtGui.QColor(13,24,241))
+							self.ui.reductionTable.setItem(r,6,_item)						
 				else:
 					_run_number = _obj.active_data.run_number
 					_item = QtGui.QTableWidgetItem(_run_number)

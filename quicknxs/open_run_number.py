@@ -82,22 +82,51 @@ class OpenRunNumber(object):
 		
 		self.enableWidgets(status=True)
 
+	def getFirstEmptyLine(cls):
+		self = cls.self
+		bigTableData = self.bigTableData
+		[nbr_row, nbr_col] = bigTableData.shape
+		for r in range(nbr_row):
+			field1 = bigTableData[r,0]
+			field2 = bigTableData[r,1]
+			field3 = bigTableData[r,2]
+			if (field1 is None) and (field2 is None) and (field3 is None):
+				return r
+		return nbr_row
+
 	def getRowColumnNextDataSet(cls):
 		self = cls.self
-		
 		_selected_row = self.ui.reductionTable.selectedRanges()
-		_is_data = self.is_working_with_data()
 		if _selected_row == []:
 			_new_row = 0
-		else:
-			_new_row = _selected_row[0].bottomRow()
 			if _is_data:
-				_new_row += 1
-		
+				_new_column = 0
+			else:
+				_new_column = 6
+			return [_new_row, _new_column]
+			
+		_is_data = self.is_working_with_data()
 		if _is_data:
+			_new_row = cls.getFirstEmptyLine()
 			_new_column = 0
 		else:
-			_new_column = 1
-			
+			_new_row = _selected_row[0].bottomRow()
+			_new_column = 6
 		return [_new_row, _new_column]
+					
+		#_selected_row = self.ui.reductionTable.selectedRanges()
+		#_is_data = self.is_working_with_data()
+		#if _selected_row == []:
+			#_new_row = 0
+		#else:
+			#_new_row = _selected_row[0].bottomRow()
+			#if _is_data:
+				#_new_row += 1
+		
+		#if _is_data:
+			#_new_column = 0
+		#else:
+			#_new_column = 1
+			
+		#return [_new_row, _new_column]
 	
