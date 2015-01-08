@@ -110,6 +110,37 @@ class DisplayPlots(object):
 				self.ui.dataNameOfFile.setText('%s'%(cls.filename))
 			else:
 				self.ui.normNameOfFile.setText('%s'%(cls.filename))
+			cls.displayMetadata()
+			
+	def displayMetadata(cls):
+		cls.clearMetadataWidgets()
+		d = cls.activeData
+		if d is None:
+			return
+		self = cls.self
+		self.ui.metadataProtonChargeValue.setText('%.2e'%d.proton_charge)
+		self.ui.metadataProtonChargeUnits.setText('%s'%d.proton_charge_units)
+		self.ui.metadataLambdaRequestedValue.setText('%.2f'%d.lambda_requested)
+		self.ui.metadataLambdaRequestedUnits.setText('%s'%d.lambda_requested_units)
+		self.ui.metadatathiValue.setText('%.2f'%d.thi)
+		self.ui.metadatathiUnits.setText('%s'%d.thi_units)
+		self.ui.metadatatthdValue.setText('%.2f'%d.tthd)
+		self.ui.metadatatthdUnits.setText('%s'%d.tthd_units)
+		self.ui.metadataS1WValue.setText('%.2f'%d.S1W)
+		self.ui.metadataS2WValue.setText('%.2f'%d.S2W)
+		self.ui.metadataS1HValue.setText('%.2f'%d.S1H)
+		self.ui.metadataS2HValue.setText('%.2f'%d.S2H)
+
+	def clearMetadataWidgets(cls):
+		self = cls.self
+		self.ui.metadataProtonChargeValue.setText('N/A')
+		self.ui.metadataLambdaRequestedValue.setText('N/A')
+		self.ui.metadataS1HValue.setText('N/A')
+		self.ui.metadataS1WValue.setText('N/A')
+		self.ui.metadataS2HValue.setText('N/A')
+		self.ui.metadataS2WValue.setText('N/A')
+		self.ui.metadatathiValue.setText('N/A')
+		self.ui.metadatatthdValue.setText('N/A')
 			
 	def plot_ix(cls):
 		_countsxdata = cls.countsxdata

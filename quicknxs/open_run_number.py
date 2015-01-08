@@ -97,6 +97,7 @@ class OpenRunNumber(object):
 	def getRowColumnNextDataSet(cls):
 		self = cls.self
 		_selected_row = self.ui.reductionTable.selectedRanges()
+		_is_data = self.is_working_with_data()
 		if _selected_row == []:
 			_new_row = 0
 			if _is_data:
@@ -105,7 +106,6 @@ class OpenRunNumber(object):
 				_new_column = 6
 			return [_new_row, _new_column]
 			
-		_is_data = self.is_working_with_data()
 		if _is_data:
 			_new_row = cls.getFirstEmptyLine()
 			_new_column = 0
@@ -113,20 +113,4 @@ class OpenRunNumber(object):
 			_new_row = _selected_row[0].bottomRow()
 			_new_column = 6
 		return [_new_row, _new_column]
-					
-		#_selected_row = self.ui.reductionTable.selectedRanges()
-		#_is_data = self.is_working_with_data()
-		#if _selected_row == []:
-			#_new_row = 0
-		#else:
-			#_new_row = _selected_row[0].bottomRow()
-			#if _is_data:
-				#_new_row += 1
 		
-		#if _is_data:
-			#_new_column = 0
-		#else:
-			#_new_column = 1
-			
-		#return [_new_row, _new_column]
-	
