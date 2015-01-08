@@ -266,9 +266,9 @@ class CalculateSF(object):
 		return self.bigTableData
 	
 	def logbook(self, text, appendFlag=True):
-	    if appendFlag:
-		self.main_gui.ui.logbook.append(text)
-	    else:
-		self.main_gui.ui.logbook.undo()
-		self.main_gui.ui.logbook.append(text)
+		if appendFlag:
+			self.main_gui.ui.logbook.append(text)
+		else:
+		    self.main_gui.ui.logbook.undo()
+		    self.main_gui.ui.logbook.append(text)
 	

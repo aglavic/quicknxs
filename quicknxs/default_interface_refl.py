@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Jan  5 16:48:37 2015
+# Created: Thu Jan  8 12:25:30 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1167,11 +1167,11 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(True)
+        self.reductionTable.horizontalHeader().setVisible(False)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
         self.reductionTable.horizontalHeader().setSortIndicatorShown(False)
-        self.reductionTable.verticalHeader().setVisible(True)
+        self.reductionTable.verticalHeader().setVisible(False)
         self.reductionTable.verticalHeader().setCascadingSectionResizes(False)
         self.reductionTable.verticalHeader().setDefaultSectionSize(20)
         self.reductionTable.verticalHeader().setSortIndicatorShown(False)
@@ -1259,7 +1259,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.autoSF = QtGui.QRadioButton(self.groupBox)
         self.autoSF.setEnabled(False)
-        self.autoSF.setChecked(True)
+        self.autoSF.setChecked(False)
         self.autoSF.setObjectName("autoSF")
         self.horizontalLayout.addWidget(self.autoSF)
         self.manualSF = QtGui.QRadioButton(self.groupBox)
@@ -1268,7 +1268,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.manualSF)
         self.oneSF = QtGui.QRadioButton(self.groupBox)
         self.oneSF.setEnabled(False)
-        self.oneSF.setChecked(False)
+        self.oneSF.setChecked(True)
         self.oneSF.setObjectName("oneSF")
         self.horizontalLayout.addWidget(self.oneSF)
         self.verticalLayout_4.addWidget(self.groupBox)
@@ -1409,7 +1409,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.plotTab.setCurrentIndex(0)
+        self.plotTab.setCurrentIndex(1)
         self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
@@ -1486,7 +1486,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QuickNXS REF_L", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setToolTip(QtGui.QApplication.translate("MainWindow", "Search for a file by measurement number", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Run #:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Run #", None, QtGui.QApplication.UnicodeUTF8))
         self.numberSearchEntry.setToolTip(QtGui.QApplication.translate("MainWindow", "ex: 3454    or     3454,3456,3457", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setToolTip(QtGui.QApplication.translate("MainWindow", "The number of bins for the Time of Flight channels", None, QtGui.QApplication.UnicodeUTF8))
         self.label_27.setText(QtGui.QApplication.translate("MainWindow", "TOF bins", None, QtGui.QApplication.UnicodeUTF8))

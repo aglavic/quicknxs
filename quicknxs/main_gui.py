@@ -491,10 +491,6 @@ class MainGUI(QtGui.QMainWindow):
     self.ui.reductionTable.setEnabled(bigTableStatus)
           
   def getRowColumnNextDataSet(self):
-    '''
-    this routine will determine where the data set, just loaded
-    will be saved in the 2D data set array
-    '''
     _selected_row = self.ui.reductionTable.selectedRanges()
     
     # add new row each time a data is selected
@@ -532,18 +528,19 @@ class MainGUI(QtGui.QMainWindow):
       DisplayPlots(self)
  
   def reduction_table_cell_double_clicked(self, row, column):
-    print 'reduction table cell double clicked'
+#    print 'reduction table cell double clicked'
     if column == 0 or column == 6:
       self.editing_flag = True
 
   def reduction_table_cell_single_clicked(self, item):
-    print 'reduction_table_cell_single_clicked'
+    pass
+ #   print 'reduction_table_cell_single_clicked'
 #    self.editing_flag = True
   #  self.reductionTable_manual_entry(item)
 
   @waiting_effects
   def reductionTable_manual_entry(self, item):
-    print 'reductionTable_manual_entry'
+ #   print 'reductionTable_manual_entry'
 #    OpenRunNumber(self, item)
     return
 
@@ -3891,7 +3888,7 @@ Do you want to try to restore the working reduction list?""",
     self.bigTableData = bigTable
     self._fileOpenDoneREFL(data=bigTable[newrow, newcol])
     
-    
+  @waiting_effects
   def reduction_table_display_metadata(self):
     bigTableData = self.bigTableData
     [row,col] = self.getCurrentRowColumnSelected()
@@ -5077,8 +5074,8 @@ Do you want to try to restore the working reduction list?""",
       
       sf = _data.sf
       
-      _y_axis = _y_axis / sf
-      _e_axis = _e_axis / sf
+      _y_axis = _y_axis * sf
+      _e_axis = _e_axis * sf
       
       self.ui.data_stitching_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
       self.ui.data_stitching_plot.draw()
@@ -5695,10 +5692,6 @@ Do you want to try to restore the working reduction list?""",
 
 
   def manual_entry_of_sf_table(self):
-    '''
-    update sf data of selected row
-    '''
-
     bigTableData = self.bigTableData
 
     # switch to manual option
@@ -5709,7 +5702,6 @@ Do you want to try to restore the working reduction list?""",
     # save all manual parameters
     nbr_row = self.ui.dataStitchingTable.rowCount()
     for i in range(nbr_row):
-      
       _data = bigTableData[i,0]
       
       _sf_manual = self.ui.dataStitchingTable.cellWidget(i,2).value()
