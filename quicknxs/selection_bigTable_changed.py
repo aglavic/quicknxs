@@ -35,17 +35,6 @@ class SelectionBigTableChanged(object):
 		cls.record_new_row_col_selected()
 		cls.load_and_display_cell()
 				
-	#def clearMetadataWidgets(cls):
-		#self = cls.self
-		#self.ui.metadataProtonChargeValue.setText('N/A')
-		#self.ui.metadataLambdaRequestedValue.setText('N/A')
-		#self.ui.metadataS1HValue.setText('N/A')
-		#self.ui.metadataS1WValue.setText('N/A')
-		#self.ui.metadataS2HValue.setText('N/A')
-		#self.ui.metadataS2WValue.setText('N/A')
-		#self.ui.metadatathiValue.setText('N/A')
-		#self.ui.metadatatthdValue.setText('N/A')
-		
 	def load_and_display_cell(cls):
 		cell = cls.self.ui.reductionTable.selectedItems()
 		if cell == [] or cell[0] == '' or cell[0].text() == '':
