@@ -382,13 +382,22 @@ class ReductionObject(object):
 
             # retrieve slits parameters
             s1h_value = abs(self.oData.active_data.S1H)
-            s2h_value = abs(self.oData.active_data.S2H)
             s1w_value = abs(self.oData.active_data.S1W)
-            s2w_value = abs(self.oData.active_data.S2W)
+            if self.oData.active_data.isSiThere:
+                si2h_value = abs(self.oData.active_data.SiH)
+                si2w_value = abs(self.oData.active_data.SiW)
+            else:
+                si2h_value = abs(self.oData.active_data.S2H)
+                si2w_value = abs(self.oData.active_data.S2W)
+                
             self.logbook('---> s1h: ' + str(s1h_value))
-            self.logbook('---> s2h: ' + str(s2h_value))
             self.logbook('---> s1w: ' + str(s1w_value))
-            self.logbook('---> s2w: ' + str(s2w_value))
+            if self.oData.active_data.isSiThere:
+                self.logbook('---> sih: ' + str(si2h_value))
+                self.logbook('---> siw: ' + str(si2w_value))
+            else:
+                self.logbook('---> s2h: ' + str(si2h_value))
+                self.logbook('---> s2w: ' + str(si2w_value))
             
             # precision requested
             value_precision = float(self.main_gui.ui.sfPrecision.text())
@@ -411,10 +420,10 @@ class ReductionObject(object):
                                                            s1h_value,
                                                            value_precision)):
                             
-                            # check that s2h match
-                            _file_s2h = self.get_table_field_value(sfFactorTable, i, 3)
-                            if (self.is_within_precision_range(_file_s2h,
-                                                               s2h_value,
+                            # check that si2h match
+                            _file_si2h = self.get_table_field_value(sfFactorTable, i, 3)
+                            if (self.is_within_precision_range(_file_si2h,
+                                                               si2h_value,
                                                                value_precision)):
             
                                 if self.main_gui.ui.scalingFactorSlitsWidthFlag.isChecked():
@@ -425,10 +434,10 @@ class ReductionObject(object):
                                                                        s1w_value,
                                                                        value_precision)):
                 
-                                        # check that s2w match
-                                        _file_s2w = self.get_table_field_value(sfFactorTable, i, 5)
-                                        if (self.is_within_precision_range(_file_s2w,
-                                                                           s2w_value,
+                                        # check that si2w match
+                                        _file_si2w = self.get_table_field_value(sfFactorTable, i, 5)
+                                        if (self.is_within_precision_range(_file_si2w,
+                                                                           si2w_value,
                                                                            value_precision)):
                 
                                             self.logbook('----> Perfect Match (with slits width checked): FOUND !')
@@ -457,7 +466,7 @@ class ReductionObject(object):
                                     self.apply_scaling_factor_to_data(a, b, a_error, b_error)
                                     return
                             
-                            else: # no s2h match
+                            else: # no si2h match
                                 
                                 self.logbook('----> Perfect Match: NOT FOUND !')
                                     

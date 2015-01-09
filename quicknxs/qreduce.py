@@ -1258,6 +1258,9 @@ class LRDataset(object):
   S2W=0 # slit 2 width
   S1H=0 # slit 1 height
   S2H=0 # slit 2 height
+  isSiThere = False
+  SiH = 0 # slit i height
+  SiW = 0 # slit i width
   dMS=0 # distance Moderator-Sample
   dMS_units = ''
   dSD=0 # distance Sample-Detector
@@ -1794,9 +1797,16 @@ class LRDataset(object):
     self.tthd = mt_run.getProperty('tthd').value[0]
     self.tthd_units = mt_run.getProperty('tthd').units
     self.S1W = mt_run.getProperty('S1HWidth').value[0]
-    self.S2W = mt_run.getProperty('S2HWidth').value[0]
     self.S1H = mt_run.getProperty('S1VHeight').value[0]
-    self.S2H = mt_run.getProperty('S2VHeight').value[0]
+
+    try:
+      self.SiW = mt_run.getProperty('SiHWidth').value[0]
+      self.SiH = mt_run.getProperty('SiVHeight').value[0]
+      self.isSiThere = True
+    except:
+      self.S2W = mt_run.getProperty('S2HWidth').value[0]
+      self.S2H = mt_run.getProperty('S2VHeight').value[0]
+
     self.date = mt_run.getProperty('run_start').value
 
     sample = nxs.getInstrument().getSample()

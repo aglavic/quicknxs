@@ -115,6 +115,8 @@ class DisplayMetadata(QDialog):
 			_value = str(_value)
 		elif len(_value) == 1:
 			_value = str(_value)
+		elif type(_value) == type(""):
+			_value = _value
 		else:
 			_value = '[' + str(_value[0]) + ',...]' + '-> (' + str(len(_value)) + ' entries)'
 		_units = mt_run.getProperty(_name).units

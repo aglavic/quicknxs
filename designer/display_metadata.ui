@@ -255,5 +255,6 @@
   <slot>importConfiguration()</slot>
   <slot>saveMetadataListAsAscii()</slot>
   <slot>unselectAll()</slot>
+  <slot>sortSelectedColumn()</slot>
  </slots>
 </ui>
