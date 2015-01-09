@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/display_metadata.ui'
 #
-# Created: Fri Jan  9 10:03:26 2015
+# Created: Fri Jan  9 14:54:14 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,6 +67,9 @@ class Ui_Dialog(object):
         self.verticalLayout_5.addWidget(self.configureTable)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.unselectAllButton = QtGui.QPushButton(self.Configure)
+        self.unselectAllButton.setObjectName("unselectAllButton")
+        self.horizontalLayout.addWidget(self.unselectAllButton)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.exportConfigurationButton = QtGui.QPushButton(self.Configure)
@@ -80,11 +83,12 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.tabWidget)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), Dialog.userChangedTab)
         QtCore.QObject.connect(self.saveMetadataAsAsciiButton, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAscii)
         QtCore.QObject.connect(self.exportConfigurationButton, QtCore.SIGNAL("clicked()"), Dialog.exportConfiguration)
         QtCore.QObject.connect(self.importConfigurationButton, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
+        QtCore.QObject.connect(self.unselectAllButton, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -98,6 +102,7 @@ class Ui_Dialog(object):
         self.configureTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Dialog", "Units", None, QtGui.QApplication.UnicodeUTF8))
+        self.unselectAllButton.setText(QtGui.QApplication.translate("Dialog", "Unselect All", None, QtGui.QApplication.UnicodeUTF8))
         self.exportConfigurationButton.setText(QtGui.QApplication.translate("Dialog", "Export Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.importConfigurationButton.setText(QtGui.QApplication.translate("Dialog", "Import Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Configure), QtGui.QApplication.translate("Dialog", "Configure", None, QtGui.QApplication.UnicodeUTF8))

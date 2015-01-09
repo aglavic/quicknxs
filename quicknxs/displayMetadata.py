@@ -233,11 +233,19 @@ class DisplayMetadata(QDialog):
 		_config_table = cls.ui.configureTable
 		nbr_row = _config_table.rowCount()
 		for r in range(nbr_row):
-			
 			_name = cls.ui.configureTable.item(r,1).text()
 			_yesNo = QCheckBox()
 			if _name in list_metadata_selected:
 				_yesNo.setChecked(True)
+			_yesNo.setText('')
+			cls.ui.configureTable.setCellWidget(r, 0, _yesNo)
+
+	def unselectAll(cls):
+		_config_table = cls.ui.configureTable
+		nbr_row = _config_table.rowCount()
+		for r in range(nbr_row):
+			_name = cls.ui.configureTable.item(r,1).text()
+			_yesNo = QCheckBox()
 			_yesNo.setText('')
 			cls.ui.configureTable.setCellWidget(r, 0, _yesNo)
 

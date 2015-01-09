@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Metadata">
       <attribute name="title">
@@ -123,6 +123,13 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
+          <widget class="QPushButton" name="unselectAllButton">
+           <property name="text">
+            <string>Unselect All</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -223,6 +230,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>unselectAllButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>unselectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>944</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>588</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>close_gui()</slot>
@@ -231,5 +254,6 @@
   <slot>exportConfiguration()</slot>
   <slot>importConfiguration()</slot>
   <slot>saveMetadataListAsAscii()</slot>
+  <slot>unselectAll()</slot>
  </slots>
 </ui>
