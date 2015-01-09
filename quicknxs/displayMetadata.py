@@ -5,6 +5,7 @@ from xml.dom import minidom
 import numpy as np
 import os
 import utilities
+import time
 
 class DisplayMetadata(QDialog):
 	
@@ -174,9 +175,9 @@ class DisplayMetadata(QDialog):
 		metadataSelected.switch_config('default')
 
 	def saveMetadataListAsAscii(cls):
-		_filter = u'Config Metadata (*_metadata.cfg);;All(*.*)'
+		_filter = u'List Metadata (*_metadata.txt);;All(*.*)'
 		_run_number = cls.active_data.run_number
-		_default_name = cls.main_gui.path_config + '/' + _run_number + '_metadata.cfg'
+		_default_name = cls.main_gui.path_ascii + '/' + _run_number + '_metadata.txt'
 		filename = QFileDialog.getSaveFileName(cls, u'Save Metadata into ASCII',
 		                                       _default_name,
 		                                       filter=_filter)
@@ -196,10 +197,49 @@ class DisplayMetadata(QDialog):
 		utilities.write_ascii_file(filename, text)
 	
 	def exportConfiguration(cls):
-		pass	
-	
+		_filter = u"Metadata Configuration (*_metadata.cfg);; All (*.*)"
+		_date = time.strftime("%d_%m_%Y")
+		_default_name = cls.main_gui.path_config + '/' + _date + '_metadata.cfg'
+		filename = QFileDialog.getSaveFileName(cls, u'Export Metadata Configuration',
+		                                       _default_name,
+		                                       filter = (_filter))
+		if filename == '':
+			return
+		
+		cls.main_gui.path_config = os.path.dirname(filename)
+		
+		list_metadata_selected = cls.list_metadata_selected
+		text = []
+		for _name in list_metadata_selected:
+			text.append(_name)
+			
+		utilities.write_ascii_file(filename, text)
+
 	def importConfiguration(cls):
-		pass
+		_filter = u"Metadata Configuration (*_metadata.cfg);; All (*.*)"
+		_default_path = cls.main_gui.path_config
+		filename = QFileDialog.getOpenFileName(cls, u'Import Metadata Configuration',
+		                                       directory=_default_path,
+		                                       filter=(_filter))
+		if filename == '':
+			return
+		
+		data = utilities.import_ascii_file(filename)
+		cls.list_metadata_selected = data
+		cls.checkTrueImportedMetadataFromConfigFile()
+		
+	def checkTrueImportedMetadataFromConfigFile(cls):
+		list_metadata_selected = cls.list_metadata_selected
+		_config_table = cls.ui.configureTable
+		nbr_row = _config_table.rowCount()
+		for r in range(nbr_row):
+			
+			_name = cls.ui.configureTable.item(r,1).text()
+			_yesNo = QCheckBox()
+			if _name in list_metadata_selected:
+				_yesNo.setChecked(True)
+			_yesNo.setText('')
+			cls.ui.configureTable.setCellWidget(r, 0, _yesNo)
 
 	def closeEvent(cls, event=None):
 		cls.saveListMetadataSelected()
