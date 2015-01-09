@@ -1,8 +1,10 @@
-from PyQt4.QtGui import QDialog, QPalette, QCheckBox, QTableWidgetItem
+from PyQt4.QtGui import QDialog, QPalette, QCheckBox, QTableWidgetItem, QFileDialog
 from display_metadata import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
 from xml.dom import minidom
 import numpy as np
+import os
+import utilities
 
 class DisplayMetadata(QDialog):
 	
@@ -14,7 +16,7 @@ class DisplayMetadata(QDialog):
 	dom = None
 	fields = None
 	table = []
-	list_metadata_selected = None
+	list_metadata_selected = []
 	mt_run = None
 	
 	def __init__(cls, main_gui, active_data, parent=None):
@@ -36,7 +38,7 @@ class DisplayMetadata(QDialog):
 		cls.active_data = active_data
 		cls.init_gui()
 		
-		cls.list_metadata_selected = cls.retrieveListMetadataPreviouslySelected()
+		cls.retrieveListMetadataPreviouslySelected()
 		cls.populateMetadataTable()
 		cls.populateConfigTable()
 		
@@ -51,7 +53,7 @@ class DisplayMetadata(QDialog):
 		cls.clearMetadataTable()
 		list_metadata_selected = cls.list_metadata_selected
 		if list_metadata_selected is None:
-			cls.ui.exportButton.setEnabled(False)
+			cls.ui.saveMetadataAsAsciiButton.setEnabled(False)
 			return
 		else:
 			nxs = cls.active_data.nxs
@@ -73,21 +75,27 @@ class DisplayMetadata(QDialog):
 					cls.ui.metadataTable.setItem(_index, 2, _unitsItem)
 					
 					_index += 1
-		cls.ui.exportButton.setEnabled(True)
+		cls.ui.saveMetadataAsAsciiButton.setEnabled(True)
 		
 	def populateConfigTable(cls):
 		nxs = cls.active_data.nxs
 		cls.mt_run = nxs.getRun()
 		list_keys = cls.mt_run.keys()
+		
+		_metadata_table = cls.list_metadata_selected
+		
 		_index = 0
 		for _key in list_keys:
 			cls.ui.configureTable.insertRow(_index)
 
+			_name = _key
+
 			_yesNo = QCheckBox()
+			if _name in _metadata_table:
+				_yesNo.setChecked(True)
 			_yesNo.setText('')
 			cls.ui.configureTable.setCellWidget(_index, 0, _yesNo)
 
-			_name = _key
 			_nameItem = QTableWidgetItem(_name)
 			cls.ui.configureTable.setItem(_index, 1, _nameItem)
 			
@@ -115,14 +123,9 @@ class DisplayMetadata(QDialog):
 		from quicknxs.config import metadataSelected
 		metadataSelected.switch_config('listMetadata')
 		listMetadataSelected = metadataSelected.metadata_list
+		cls.list_metadata_selected = listMetadataSelected
 		metadataSelected.switch_config('default')
 
-	def saveListMetadataSelected(cls):
-		from quicknxs.config import metadataSelected
-		metadataSelected.switch_config('listMetadata')
-		metadataSelected.metadata_list = cls.list_metadata_selected
-		metadataSelected.switch_config('default')
-		
 	def init_gui(cls):
 		dom = minidom.parse(cls.dom_filename)
 		cls.fields = dom.getElementsByTagName('field')
@@ -135,22 +138,16 @@ class DisplayMetadata(QDialog):
 		for i in range(nbr_column):
 			_file_name = _full_file_name[i]
 			_nxs = LoadEventNexus(Filename=str(_file_name))
-			cls.retrieve_and_populate_table(_nxs)
-	
-	def retrieve_and_populate_table(cls, nxs):
-		for node in cls.fields:
-#			print cls.getNodeValue(node,'name')
-			pass
 	
 	def close_gui(cls):
 		cls.close()
 
 	def getNodeValue(cls,node,flag):
 		try:
-		  _tmp = node.getElementsByTagName(flag)
-		  _value = _tmp[0].childNodes[0].nodeValue
+			_tmp = node.getElementsByTagName(flag)
+			_value = _tmp[0].childNodes[0].nodeValue
 		except:
-		  _value = ''
+			_value = ''
 		return _value
 	
 	def userChangedTab(cls, int):
@@ -169,3 +166,40 @@ class DisplayMetadata(QDialog):
 				_list_metadata_selected.append(_name)
 		return _list_metadata_selected
 
+	def saveListMetadataSelected(cls):
+		_listMetadata = cls.list_metadata_selected
+		from quicknxs.config import metadataSelected
+		metadataSelected.switch_config('listMetadata')
+		metadataSelected.metadata_list = _listMetadata
+		metadataSelected.switch_config('default')
+
+	def saveMetadataListAsAscii(cls):
+		_filter = u'Config Metadata (*_metadata.cfg);;All(*.*)'
+		_run_number = cls.active_data.run_number
+		_default_name = cls.main_gui.path_config + '/' + _run_number + '_metadata.cfg'
+		filename = QFileDialog.getSaveFileName(cls, u'Save Metadata into ASCII',
+		                                       _default_name,
+		                                       filter=_filter)
+		if filename == '':
+			return
+	
+		cls.main_gui.path_config = os.path.dirname(filename)
+		
+		text = ['# Metadata Selected for run ' + _run_number]
+		text.append('#Name - Value - Units')
+		
+		_metadata_table = cls.ui.metadataTable
+		nbr_row = _metadata_table.rowCount()
+		for r in range(nbr_row):
+			_line = _metadata_table.item(r,0).text() + ' ' + str(_metadata_table.item(r,1).text()) + ' ' + 	str(_metadata_table.item(r,2).text())
+			text.append(_line)
+		utilities.write_ascii_file(filename, text)
+	
+	def exportConfiguration(cls):
+		pass	
+	
+	def importConfiguration(cls):
+		pass
+
+	def closeEvent(cls, event=None):
+		cls.saveListMetadataSelected()
