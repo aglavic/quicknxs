@@ -4,12 +4,18 @@ from metadata_finder_interface import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
 from run_sequence_breaker import RunSequenceBreaker
 from decorators import waiting_effects
+import utilities
+import os
 
 class MetadataFinder(QDialog):
 	
 	_open_instances = []
 	main_gui = None
-	filename0 = ''
+#	filename0 = ''
+	list_metadata_selected = []
+	list_nxs = []
+	list_filename = []
+	list_runs = []
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -21,7 +27,13 @@ class MetadataFinder(QDialog):
 		cls.ui.setupUi(cls)
 		
 		cls.initGui()
+		cls.retrieveListMetadataPreviouslySelected()
 		
+	def initList(cls):
+		cls.list_runs = []
+		cls.list_filename= []
+		cls.list_nxs = []
+	
 	def initGui(cls):
 		cls.ui.inputErrorLabel.setVisible(False)
 		palette = QPalette()
@@ -33,6 +45,12 @@ class MetadataFinder(QDialog):
 		cls.ui.configureTable.setColumnWidth(2,300)
 		cls.ui.configureTable.setColumnWidth(3,300)
 		
+	def retrieveListMetadataPreviouslySelected(cls):
+		from quicknxs.config import metadataSelected
+		metadataSelected.switch_config('listMetadata')
+		listMetadataSelected = metadataSelected.metadata_list
+		cls.list_metadata_selected = listMetadataSelected
+		metadataSelected.switch_config('default')
 		
 	def clearMetadataTable(cls):
 		_meta_table = cls.ui.metadataTable
@@ -50,25 +68,29 @@ class MetadataFinder(QDialog):
 			
 	@waiting_effects
 	def runNumberEditEvent(cls):
+		cls.initList()
 		cls.clearMetadataTable()
 		cls.populateMetadataTable()
 		cls.populateconfigureTable()
 		
 	def populateconfigureTable(cls):
 		cls.clearConfigureTable()
-		_filename = cls.filename0
+		_filename = cls.list_filename[0]
 		nxs = LoadEventNexus(Filename=_filename)
 		list_keys = nxs.getRun().keys()
+		_metadata_table = cls.list_metadata_selected
+
 		_index = 0
 		for _key in list_keys:
 			cls.ui.configureTable.insertRow(_index)
 
 			_yesNo = QCheckBox()
-			_yesNo.setChecked(False)
+			_name = _key
+			if _name in _metadata_table:			
+				_yesNo.setChecked(True)
 			_yesNo.setText('')
 			cls.ui.configureTable.setCellWidget(_index, 0, _yesNo)
 
-			_name = _key
 			_nameItem = QTableWidgetItem(_name)
 			cls.ui.configureTable.setItem(_index, 1, _nameItem)
 			
@@ -81,6 +103,7 @@ class MetadataFinder(QDialog):
 			_index += 1
 			
 	def retrieveValueUnits(cls, mt_run, _name):
+		_name = str(_name)
 		_value = mt_run.getProperty(_name).value
 		if isinstance(_value, float):
 			_value = str(_value)
@@ -106,14 +129,26 @@ class MetadataFinder(QDialog):
 			return
 		
 		cls.ui.inputErrorLabel.setVisible(False)
+		list_metadata_selected = cls.list_metadata_selected
+		
+		_header = ['Run #','IPTS']
+		for name in list_metadata_selected:
+			cls.ui.metadataTable.insertColumn(2)
+			_header.append(name)
+		cls.ui.metadataTable.setHorizontalHeaderLabels(_header)
+		list_nxs = cls.list_nxs
 		
 		_index = 0
 		for _runs in _list_runs:
 			cls.ui.metadataTable.insertRow(_index)
 			
 			_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
-			if _index ==0:
-				cls.filename0 = _filename
+			cls.list_filename.append(_filename)
+			_nxs = LoadEventNexus(Filename=_filename)
+			cls.list_nxs.append(_nxs)
+			cls.list_runs.append(_runs)
+			mt_run = _nxs.getRun()
+
 			_runItem = QTableWidgetItem(str(_runs))
 			cls.ui.metadataTable.setItem(_index, 0, _runItem)
 
@@ -121,13 +156,72 @@ class MetadataFinder(QDialog):
 			_iptsItem = QTableWidgetItem(_ipts)
 			cls.ui.metadataTable.setItem(_index, 1, _iptsItem)
 			
+			column_index = 0			
+			for name in list_metadata_selected:
+				[value,units] = cls.retrieveValueUnits(mt_run, name)
+				_str = str(value) + ' ' + str(units)
+				_item = QTableWidgetItem(_str)
+				cls.ui.metadataTable.setItem(_index, 2+column_index, _item)
+				column_index += 1
+			
 			_index += 1
 			
-			
-			
-			
+		
+	def unselectAll(cls):
+		_config_table = cls.ui.configureTable
+		nbr_row = _config_table.rowCount()
+		for r in range(nbr_row):
+			_name = cls.ui.configureTable.item(r,1).text()
+			_yesNo = QCheckBox()
+			_yesNo.setText('')
+			cls.ui.configureTable.setCellWidget(r, 0, _yesNo)
+	
+	def closeEvent(cls, event=None):
+		cls.saveListMetadataSelected()	
+		
+	def saveListMetadataSelected(cls):
+		_listMetadata = cls.list_metadata_selected
+		from quicknxs.config import metadataSelected
+		metadataSelected.switch_config('listMetadata')
+		metadataSelected.metadata_list = _listMetadata
+		metadataSelected.switch_config('default')
+		
+	def saveMetadataListAsAscii(cls):
+		_filter = u'List Metadata (*_metadata.txt);;All(*.*)'
+		_run_number = cls.run0
+		_default_name = cls.main_gui.path_ascii + '/' + _run_number + '_metadata.txt'
+		filename = QFileDialog.getSaveFileName(cls, u'Save Metadata into ASCII',
+	                                               _default_name,
+	                                               filter=_filter)
+		if filename == '':
+			return
+	
+		cls.main_gui.path_config = os.path.dirname(filename)
+		
+		text = ['# Metadata Selected for run ' + _run_number]
+		text.append('#Name - Value - Units')
+		
+		_metadata_table = cls.ui.metadataTable
+		nbr_row = _metadata_table.rowCount()
+		for r in range(nbr_row):
+			_line = _metadata_table.item(r,0).text() + ' ' + str(_metadata_table.item(r,1).text()) + ' ' + 	str(_metadata_table.item(r,2).text())
+			text.append(_line)
+		utilities.write_ascii_file(filename, text)
+	
+	def importConfiguration(cls):
+		_filter = u"Metadata Configuration (*_metadata.cfg);; All (*.*)"
+		_default_path = cls.main_gui.path_config
+		filename = QFileDialog.getOpenFileName(cls, u'Import Metadata Configuration',
+		                                       directory=_default_path,
+		                                       filter=(_filter))
+		if filename == '':
+			return
+		
+		data = utilities.import_ascii_file(filename)
+		cls.list_metadata_selected = data
+	
 	def getIPTS(cls, filename):
 		parse_path = filename.split('/')
 		return parse_path[3]
-		
-		
+	
+	

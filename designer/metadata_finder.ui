@@ -59,7 +59,7 @@
         <enum>QTabWidget::South</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -118,6 +118,16 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
+            <widget class="QPushButton" name="unselectAll">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Unselect All</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -131,14 +141,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="exportConfiguration">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Export Configuration ...</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="importConfiguration">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string>Import Configuration ...</string>
              </property>
@@ -172,8 +188,59 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>unselectAll</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>unselectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>706</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportConfiguration</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>saveMetadataListAsAscii()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>767</x>
+     <y>706</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>importConfiguration</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>importConfiguration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>904</x>
+     <y>706</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runNumberEditEvent()</slot>
+  <slot>unselectAll()</slot>
+  <slot>saveMetadataListAsAscii()</slot>
+  <slot>importConfiguration()</slot>
  </slots>
 </ui>

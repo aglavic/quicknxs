@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/metadata_finder.ui'
 #
-# Created: Mon Jan 12 15:01:35 2015
+# Created: Mon Jan 12 15:57:28 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -73,22 +73,31 @@ class Ui_Dialog(object):
         self.verticalLayout_3.addWidget(self.configureTable)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.unselectAll = QtGui.QPushButton(self.tab_2)
+        self.unselectAll.setEnabled(False)
+        self.unselectAll.setObjectName("unselectAll")
+        self.horizontalLayout_2.addWidget(self.unselectAll)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.pushButton = QtGui.QPushButton(self.tab_2)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_2.addWidget(self.pushButton)
-        self.pushButton_2 = QtGui.QPushButton(self.tab_2)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout_2.addWidget(self.pushButton_2)
+        self.exportConfiguration = QtGui.QPushButton(self.tab_2)
+        self.exportConfiguration.setEnabled(False)
+        self.exportConfiguration.setObjectName("exportConfiguration")
+        self.horizontalLayout_2.addWidget(self.exportConfiguration)
+        self.importConfiguration = QtGui.QPushButton(self.tab_2)
+        self.importConfiguration.setEnabled(True)
+        self.importConfiguration.setObjectName("importConfiguration")
+        self.horizontalLayout_2.addWidget(self.importConfiguration)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
         self.tabWidget.addTab(self.tab_2, "")
         self.verticalLayout_4.addWidget(self.tabWidget)
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.runNumberEdit, QtCore.SIGNAL("returnPressed()"), Dialog.runNumberEditEvent)
+        QtCore.QObject.connect(self.unselectAll, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
+        QtCore.QObject.connect(self.exportConfiguration, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAscii)
+        QtCore.QObject.connect(self.importConfiguration, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -104,7 +113,8 @@ class Ui_Dialog(object):
         self.configureTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Dialog", "Units", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Export Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("Dialog", "Import Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.unselectAll.setText(QtGui.QApplication.translate("Dialog", "Unselect All", None, QtGui.QApplication.UnicodeUTF8))
+        self.exportConfiguration.setText(QtGui.QApplication.translate("Dialog", "Export Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.importConfiguration.setText(QtGui.QApplication.translate("Dialog", "Import Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("Dialog", "Configuration", None, QtGui.QApplication.UnicodeUTF8))
 
