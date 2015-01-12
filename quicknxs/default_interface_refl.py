@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Jan  8 12:25:30 2015
+# Created: Mon Jan 12 13:16:46 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1973, 1273)
+        MainWindow.resize(1674, 1217)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/General/logo_refl.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -1167,7 +1167,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(False)
+        self.reductionTable.horizontalHeader().setVisible(True)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
         self.reductionTable.horizontalHeader().setSortIndicatorShown(False)
@@ -1327,9 +1327,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.addWidget(self.LogRvsQ_2)
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
         self.plotTab.addTab(self.data_stitching_Tab, "")
-        self.sfCalculatorTab = QtGui.QWidget()
-        self.sfCalculatorTab.setObjectName("sfCalculatorTab")
-        self.plotTab.addTab(self.sfCalculatorTab, "")
         self.logbookTab = QtGui.QWidget()
         self.logbookTab.setObjectName("logbookTab")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.logbookTab)
@@ -1341,12 +1338,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.mainSplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1973, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 21))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
+        self.menuAdvanced = QtGui.QMenu(self.menubar)
+        self.menuAdvanced.setObjectName("menuAdvanced")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -1400,16 +1399,23 @@ class Ui_MainWindow(object):
         self.actionLoadFullConfiguration_2.setObjectName("actionLoadFullConfiguration_2")
         self.actionSaveConfiguration_2 = QtGui.QAction(MainWindow)
         self.actionSaveConfiguration_2.setObjectName("actionSaveConfiguration_2")
+        self.actionSF_Calculator = QtGui.QAction(MainWindow)
+        self.actionSF_Calculator.setObjectName("actionSF_Calculator")
+        self.actionMetadataFinder = QtGui.QAction(MainWindow)
+        self.actionMetadataFinder.setObjectName("actionMetadataFinder")
         self.menuHelp.addAction(self.actionManual)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionLoadConfiguration_2)
         self.menuFile.addAction(self.actionSaveConfiguration_2)
+        self.menuAdvanced.addAction(self.actionMetadataFinder)
+        self.menuAdvanced.addAction(self.actionSF_Calculator)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuAdvanced.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.plotTab.setCurrentIndex(1)
+        self.plotTab.setCurrentIndex(0)
         self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
@@ -1440,7 +1446,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.reduceButton, QtCore.SIGNAL("clicked()"), MainWindow.runReduction)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.reduction_table_cell_double_clicked)
         QtCore.QObject.connect(self.clearTableButton, QtCore.SIGNAL("clicked()"), MainWindow.clear_reductionTable)
-        QtCore.QObject.connect(self.actionLoadFullConfiguration_2, QtCore.SIGNAL("triggered()"), MainWindow.loading_full_configuration)
         QtCore.QObject.connect(self.autoSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_auto)
         QtCore.QObject.connect(self.manualSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_manual)
         QtCore.QObject.connect(self.oneSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_1)
@@ -1478,6 +1483,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.findPeakBack, QtCore.SIGNAL("clicked()"), MainWindow.find_peak_back)
         QtCore.QObject.connect(self.sfBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.sf_browse_button)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), MainWindow.reduction_table_right_click)
+        QtCore.QObject.connect(self.actionMetadataFinder, QtCore.SIGNAL("triggered()"), MainWindow.metadataFinderEvent)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.logarithmic_colorscale)
@@ -1622,10 +1628,10 @@ class Ui_MainWindow(object):
         self.RQ4vsQ_2.setText(QtGui.QApplication.translate("MainWindow", "RQ^4 vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.LogRvsQ_2.setText(QtGui.QApplication.translate("MainWindow", "LogR vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.data_stitching_Tab), QtGui.QApplication.translate("MainWindow", "Data Stitching", None, QtGui.QApplication.UnicodeUTF8))
-        self.plotTab.setTabText(self.plotTab.indexOf(self.sfCalculatorTab), QtGui.QApplication.translate("MainWindow", "SF Calculator", None, QtGui.QApplication.UnicodeUTF8))
         self.plotTab.setTabText(self.plotTab.indexOf(self.logbookTab), QtGui.QApplication.translate("MainWindow", "Logbook", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuAdvanced.setTitle(QtGui.QApplication.translate("MainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setText(QtGui.QApplication.translate("MainWindow", "Open...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setToolTip(QtGui.QApplication.translate("MainWindow", "Open a new file (Ctrl+O)", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
@@ -1662,6 +1668,9 @@ class Ui_MainWindow(object):
         self.actionLoadFullConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Load Configuration (heavy and slow) ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration_2.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSF_Calculator.setText(QtGui.QApplication.translate("MainWindow", "SF Calculator ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMetadataFinder.setText(QtGui.QApplication.translate("MainWindow", "Metadata Finder ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMetadataFinder.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+M", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidgetnolog import MPLWidgetNoLog
 from .mplwidget import MPLWidget

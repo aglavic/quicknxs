@@ -56,8 +56,8 @@ class Plot2dDialogREFL(QDialog):
 		filename = QFileDialog.getSaveFileName(self, 'Create 2D Pixel VS TOF', default_filename)
 	      
 		if str(filename).strip() == '':
-		  info('User Canceled Outpout ASCII')
-		  return
+			info('User Canceled Outpout ASCII')
+			return
 		
 		self.main_gui.path_ascii = os.path.dirname(filename)
 		image = _active_data.ytofdata
@@ -72,8 +72,8 @@ class Plot2dDialogREFL(QDialog):
 		filename = QFileDialog.getSaveFileName(self, 'Create 2D Y Pixel VS X Pixel (Detector View)', default_filename)
 	      
 		if str(filename).strip() == '':
-		  info('User Canceled Outpout ASCII')
-		  return
+			info('User Canceled Outpout ASCII')
+			return
 		
 		self.main_gui.path_ascii = os.path.dirname(filename)
 		image = _active_data.xydata

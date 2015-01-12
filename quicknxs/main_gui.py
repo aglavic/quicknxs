@@ -67,6 +67,7 @@ from display_plots import DisplayPlots
 from selection_bigTable_changed import SelectionBigTableChanged
 from populate_reductionTable import PopulateReductionTable
 from loading_configuration import LoadingConfiguration
+from metadata_finder import MetadataFinder
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -313,6 +314,10 @@ class MainGUI(QtGui.QMainWindow):
       attrib.emit(*args)
     else:
       attrib(*args)
+
+  def metadataFinderEvent(self):
+    _meta_finder = MetadataFinder(self)
+    _meta_finder.show()
 
   @log_input
   def fileOpen(self, filename, do_plot=True, do_add=False):

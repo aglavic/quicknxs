@@ -50,6 +50,13 @@ class DisplayMetadata(QDialog):
 			_meta_table.removeRow(0)
 		_meta_table.show()
 			
+	def clearConfigTable(cls):
+		_config_table = cls.ui.configureTable
+		nbr_row = _config_table.rowCount()
+		for i in range(nbr_row):
+			_config_table.removeRow(0)
+		_config_table.show()
+
 	def populateMetadataTable(cls):
 		cls.clearMetadataTable()
 		list_metadata_selected = cls.list_metadata_selected
@@ -79,6 +86,7 @@ class DisplayMetadata(QDialog):
 		cls.ui.saveMetadataAsAsciiButton.setEnabled(True)
 		
 	def populateConfigTable(cls):
+		cls.clearConfigTable()
 		nxs = cls.active_data.nxs
 		cls.mt_run = nxs.getRun()
 		list_keys = cls.mt_run.keys()

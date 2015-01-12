@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1973</width>
-    <height>1273</height>
+    <width>1674</width>
+    <height>1217</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -676,7 +676,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -2937,7 +2937,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -2973,7 +2973,7 @@ p, li { white-space: pre-wrap; }
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3406,11 +3406,6 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="sfCalculatorTab">
-        <attribute name="title">
-         <string>SF Calculator</string>
-        </attribute>
-       </widget>
        <widget class="QWidget" name="logbookTab">
         <attribute name="title">
          <string>Logbook</string>
@@ -3431,8 +3426,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1973</width>
-     <height>25</height>
+     <width>1674</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -3450,7 +3445,15 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLoadConfiguration_2"/>
     <addaction name="actionSaveConfiguration_2"/>
    </widget>
+   <widget class="QMenu" name="menuAdvanced">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionMetadataFinder"/>
+    <addaction name="actionSF_Calculator"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuAdvanced"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -3610,6 +3613,19 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSF_Calculator">
+   <property name="text">
+    <string>SF Calculator ...</string>
+   </property>
+  </action>
+  <action name="actionMetadataFinder">
+   <property name="text">
+    <string>Metadata Finder ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+M</string>
    </property>
   </action>
  </widget>
@@ -4106,22 +4122,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>504</x>
      <y>1057</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLoadFullConfiguration_2</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>loading_full_configuration()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>
@@ -4721,6 +4721,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionMetadataFinder</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>metadataFinderEvent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>836</x>
+     <y>608</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -4822,5 +4838,6 @@ p, li { white-space: pre-wrap; }
   <slot>useGeometryCorrectionCheckBox()</slot>
   <slot>useScalingFactorConfigCheckBox()</slot>
   <slot>reduction_table_right_click()</slot>
+  <slot>metadataFinderEvent()</slot>
  </slots>
 </ui>
