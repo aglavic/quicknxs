@@ -57,6 +57,10 @@ class MetadataFinder(QDialog):
 		nbr_row = _meta_table.rowCount()
 		for i in range(nbr_row):
 			_meta_table.removeRow(0)
+		nbr_column = _meta_table.columnCount()
+		if nbr_column > 2:
+			for j in range(nbr_column,1,-1):
+				_meta_table.removeColumn(j)
 		_meta_table.show()
 
 	def clearConfigureTable(cls):
@@ -72,6 +76,7 @@ class MetadataFinder(QDialog):
 		cls.clearMetadataTable()
 		cls.populateMetadataTable()
 		cls.populateconfigureTable()
+		cls.ui.runNumberEdit.setText("")
 		
 	def populateconfigureTable(cls):
 		cls.clearConfigureTable()
@@ -122,11 +127,27 @@ class MetadataFinder(QDialog):
 		oListRuns = RunSequenceBreaker(run_sequence)
 		_list_runs = oListRuns.getFinalList()
 		if _list_runs[0] == -1:
-			return
+			if cls.list_nxs == []:
+				return
+			else:
+				_list_runs = cls.list_runs
+				_list_nxs = cls.list_nxs
+				_list_filename = cls.list_filename
 		
-		if _list_runs[0] == -2:
+		elif _list_runs[0] == -2:
 			cls.ui.inputErrorLabel.setVisible(True)
 			return
+		
+		else:
+			cls.list_runs = _list_runs
+			cls.list_filename = []
+			cls.list_nxs = []
+			for _runs in _list_runs:
+				_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
+				cls.list_filename.append(_filename)
+				randomString = utilities.generate_random_workspace_name()
+				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString)
+				cls.list_nxs.append(_nxs)
 		
 		cls.ui.inputErrorLabel.setVisible(False)
 		list_metadata_selected = cls.list_metadata_selected
@@ -137,21 +158,19 @@ class MetadataFinder(QDialog):
 			_header.append(name)
 		cls.ui.metadataTable.setHorizontalHeaderLabels(_header)
 		list_nxs = cls.list_nxs
-		
+				
 		_index = 0
-		for _runs in _list_runs:
+		for i in range(len(cls.list_nxs)):
 			cls.ui.metadataTable.insertRow(_index)
 			
-			_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
-			cls.list_filename.append(_filename)
-			_nxs = LoadEventNexus(Filename=_filename)
-			cls.list_nxs.append(_nxs)
-			cls.list_runs.append(_runs)
+			_nxs = cls.list_nxs[i]
 			mt_run = _nxs.getRun()
-
+			
+			_runs = cls.list_runs[i]
 			_runItem = QTableWidgetItem(str(_runs))
 			cls.ui.metadataTable.setItem(_index, 0, _runItem)
 
+			_filename = cls.list_filename[i]
 			_ipts = cls.getIPTS(_filename)
 			_iptsItem = QTableWidgetItem(_ipts)
 			cls.ui.metadataTable.setItem(_index, 1, _iptsItem)
@@ -165,7 +184,6 @@ class MetadataFinder(QDialog):
 				column_index += 1
 			
 			_index += 1
-			
 		
 	def unselectAll(cls):
 		_config_table = cls.ui.configureTable
@@ -223,5 +241,22 @@ class MetadataFinder(QDialog):
 	def getIPTS(cls, filename):
 		parse_path = filename.split('/')
 		return parse_path[3]
+	
+	def userChangedTab(cls, int):
+		if int ==0: #metadata
+			cls.list_metadata_selected = cls.getNewListMetadataSelected()
+			cls.populateMetadataTable()
+			
+	def getNewListMetadataSelected(cls):
+		_config_table = cls.ui.configureTable
+		nbr_row = _config_table.rowCount()
+		_list_metadata_selected = []
+		for r in range(nbr_row):
+			_is_selected = _config_table.cellWidget(r,0).isChecked()
+			if _is_selected:
+				_name = _config_table.item(r,1).text()
+				_list_metadata_selected.append(_name)
+		return _list_metadata_selected
+		
 	
 	

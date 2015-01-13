@@ -1,6 +1,7 @@
 import math
 import os
 import numpy as np
+from random import randint
 
 def convert_angle (angle=0, from_units='degree', to_units='rad'):
     '''
@@ -249,6 +250,21 @@ def weighted_sum_dim1(dataArray, errorArray):
     
     return [_sumValue, _sumError]
 
+def generate_random_workspace_name():
+    '''
+    This will generate a random workspace name to avoid conflict names
+    '''
+    string = 'abcdefghijklmnopqrstuvwxyz1234567890'
+    stringList = list(string)
+    nbrPara = len(stringList)
+    
+    listRand = []
+    for i in range(5):
+        _tmp = stringList[randint(0,nbrPara-1)]
+        listRand.append(_tmp)
+        
+    randomString = ''.join(listRand)
+    return randomString
 
     
     

@@ -33,6 +33,7 @@ from .config import instrument
 from .decorators import log_call, log_input, log_both
 from .ipython_tools import AttributePloter, StringRepr, NiceDict
 from utilities import convert_angle, weighted_sum
+import utilities
 import numpy as np
 from random import randint
 import constants
@@ -317,21 +318,21 @@ class NXSData(object):
     else:
       return self._read_REFL_file(filename)
 
-  def generate_random_workspace_name(self):
-    '''
-    This will generate a random workspace name to avoid conflict names
-    '''
-    string = 'abcdefghijklmnopqrstuvwxyz1234567890'
-    stringList = list(string)
-    nbrPara = len(stringList)
+  #def generate_random_workspace_name(self):
+    #'''
+    #This will generate a random workspace name to avoid conflict names
+    #'''
+    #string = 'abcdefghijklmnopqrstuvwxyz1234567890'
+    #stringList = list(string)
+    #nbrPara = len(stringList)
     
-    listRand = []
-    for i in range(5):
-      _tmp = stringList[randint(0,nbrPara-1)]
-      listRand.append(_tmp)
+    #listRand = []
+    #for i in range(5):
+      #_tmp = stringList[randint(0,nbrPara-1)]
+      #listRand.append(_tmp)
     
-    randomString = ''.join(listRand)
-    return randomString
+    #randomString = ''.join(listRand)
+    #return randomString
 
   def _read_REFL_file(self, filename):
       '''
@@ -343,7 +344,7 @@ class NXSData(object):
       if self._options['callback']:
         self._options['callback'](0.)
 
-      randomString = self.generate_random_workspace_name()
+      randomString = utilities.generate_random_workspace_name()
 
       if (type(filename) == type([])) and (len(filename) == 1):
         filename = filename[0]

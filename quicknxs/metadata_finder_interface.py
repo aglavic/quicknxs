@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/metadata_finder.ui'
 #
-# Created: Mon Jan 12 15:57:28 2015
+# Created: Tue Jan 13 09:36:57 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -98,13 +98,14 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.unselectAll, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
         QtCore.QObject.connect(self.exportConfiguration, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAscii)
         QtCore.QObject.connect(self.importConfiguration, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
+        QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), Dialog.userChangedTab)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Run(s) number:", None, QtGui.QApplication.UnicodeUTF8))
         self.runNumberEdit.setToolTip(QtGui.QApplication.translate("Dialog", "1234 or 1234,1236 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
-        self.runNumberEdit.setText(QtGui.QApplication.translate("Dialog", "115268, 115270-115273", None, QtGui.QApplication.UnicodeUTF8))
+        self.runNumberEdit.setText(QtGui.QApplication.translate("Dialog", "115268, 115270", None, QtGui.QApplication.UnicodeUTF8))
         self.inputErrorLabel.setText(QtGui.QApplication.translate("Dialog", "ERROR WHIE PARSING ! CHECK YOUR INPUT  ", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Run #", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "IPTS", None, QtGui.QApplication.UnicodeUTF8))

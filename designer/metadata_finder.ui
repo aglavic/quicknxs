@@ -31,7 +31,7 @@
           <string>1234 or 1234,1236 or 1234-1238</string>
          </property>
          <property name="text">
-          <string>115268, 115270-115273</string>
+          <string>115268, 115270</string>
          </property>
         </widget>
        </item>
@@ -236,11 +236,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>Dialog</receiver>
+   <slot>userChangedTab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>496</x>
+     <y>399</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runNumberEditEvent()</slot>
   <slot>unselectAll()</slot>
   <slot>saveMetadataListAsAscii()</slot>
   <slot>importConfiguration()</slot>
+  <slot>userChangedTab()</slot>
  </slots>
 </ui>
