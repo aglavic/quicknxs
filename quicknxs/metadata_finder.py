@@ -181,7 +181,7 @@ class MetadataFinder(QDialog):
 					return
 				cls.list_filename.append(_filename)
 				randomString = utilities.generate_random_workspace_name()
-				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString)
+				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
 				cls.list_nxs.append(_nxs)
 		
 		cls.ui.inputErrorLabel.setVisible(False)
@@ -283,6 +283,8 @@ class MetadataFinder(QDialog):
 	def getNewListMetadataSelected(cls):
 		_config_table = cls.ui.configureTable
 		nbr_row = _config_table.rowCount()
+		if nbr_row == 0:
+			return cls.list_metadata_selected
 		_list_metadata_selected = []
 		for r in range(nbr_row):
 			_is_selected = _config_table.cellWidget(r,0).isChecked()

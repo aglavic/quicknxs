@@ -2390,7 +2390,6 @@ class MainGUI(QtGui.QMainWindow):
       self.ui.metadatatthdUnits.setText('%s'%d.tthd_units)
       self.ui.metadataS1WValue.setText('%.2f'%d.S1W)
       self.ui.metadataS1HValue.setText('%.2f'%d.S1H)
-      print d.isSiThere
       if d.isSiThere:
         self.ui.S2SiWlabel.setText('SiW')
         self.ui.S2SiHlabel.setText('SiH')
