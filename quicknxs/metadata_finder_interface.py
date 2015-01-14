@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/metadata_finder.ui'
 #
-# Created: Tue Jan 13 09:36:57 2015
+# Created: Tue Jan 13 13:43:20 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,6 +23,7 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.runNumberEdit = QtGui.QLineEdit(Dialog)
+        self.runNumberEdit.setText("")
         self.runNumberEdit.setObjectName("runNumberEdit")
         self.horizontalLayout.addWidget(self.runNumberEdit)
         self.inputErrorLabel = QtGui.QLabel(Dialog)
@@ -52,6 +53,14 @@ class Ui_Dialog(object):
         item = QtGui.QTableWidgetItem()
         self.metadataTable.setHorizontalHeaderItem(1, item)
         self.verticalLayout.addWidget(self.metadataTable)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
+        self.saveAsciiButton = QtGui.QPushButton(self.tab)
+        self.saveAsciiButton.setObjectName("saveAsciiButton")
+        self.horizontalLayout_3.addWidget(self.saveAsciiButton)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtGui.QWidget()
@@ -77,14 +86,14 @@ class Ui_Dialog(object):
         self.unselectAll.setEnabled(False)
         self.unselectAll.setObjectName("unselectAll")
         self.horizontalLayout_2.addWidget(self.unselectAll)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.exportConfiguration = QtGui.QPushButton(self.tab_2)
         self.exportConfiguration.setEnabled(False)
         self.exportConfiguration.setObjectName("exportConfiguration")
         self.horizontalLayout_2.addWidget(self.exportConfiguration)
         self.importConfiguration = QtGui.QPushButton(self.tab_2)
-        self.importConfiguration.setEnabled(True)
+        self.importConfiguration.setEnabled(False)
         self.importConfiguration.setObjectName("importConfiguration")
         self.horizontalLayout_2.addWidget(self.importConfiguration)
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
@@ -96,19 +105,20 @@ class Ui_Dialog(object):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.runNumberEdit, QtCore.SIGNAL("returnPressed()"), Dialog.runNumberEditEvent)
         QtCore.QObject.connect(self.unselectAll, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
-        QtCore.QObject.connect(self.exportConfiguration, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAscii)
+        QtCore.QObject.connect(self.exportConfiguration, QtCore.SIGNAL("clicked()"), Dialog.exportConfiguration)
         QtCore.QObject.connect(self.importConfiguration, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
         QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), Dialog.userChangedTab)
+        QtCore.QObject.connect(self.saveAsciiButton, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAsciiFile)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Run(s) number:", None, QtGui.QApplication.UnicodeUTF8))
         self.runNumberEdit.setToolTip(QtGui.QApplication.translate("Dialog", "1234 or 1234,1236 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
-        self.runNumberEdit.setText(QtGui.QApplication.translate("Dialog", "115268, 115270", None, QtGui.QApplication.UnicodeUTF8))
         self.inputErrorLabel.setText(QtGui.QApplication.translate("Dialog", "ERROR WHIE PARSING ! CHECK YOUR INPUT  ", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Run #", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "IPTS", None, QtGui.QApplication.UnicodeUTF8))
+        self.saveAsciiButton.setText(QtGui.QApplication.translate("Dialog", "Save List as ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("Dialog", "Metadata", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Display ?", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Name", None, QtGui.QApplication.UnicodeUTF8))

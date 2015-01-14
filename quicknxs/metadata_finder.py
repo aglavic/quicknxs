@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDialog, QPalette, QTableWidgetItem, QCheckBox
+from PyQt4.QtGui import QDialog, QPalette, QTableWidgetItem, QCheckBox, QFileDialog
 from PyQt4.QtCore import Qt
 from metadata_finder_interface import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
@@ -6,12 +6,13 @@ from run_sequence_breaker import RunSequenceBreaker
 from decorators import waiting_effects
 import utilities
 import os
+import time
 
 class MetadataFinder(QDialog):
 	
 	_open_instances = []
 	main_gui = None
-#	filename0 = ''
+
 	list_metadata_selected = []
 	list_nxs = []
 	list_filename = []
@@ -77,8 +78,23 @@ class MetadataFinder(QDialog):
 		cls.populateMetadataTable()
 		cls.populateconfigureTable()
 		cls.ui.runNumberEdit.setText("")
+		cls.updateGUI()
+		
+	def updateGUI(cls):
+		if cls.list_nxs != []:
+			config_widget_status = True
+		else:
+			config_widget_status = False
+		cls.ui.unselectAll.setEnabled(config_widget_status)
+		cls.ui.exportConfiguration.setEnabled(config_widget_status)
+		cls.ui.importConfiguration.setEnabled(config_widget_status)
+		cls.ui.saveAsciiButton.setEnabled(config_widget_status)
 		
 	def populateconfigureTable(cls):
+		if cls.ui.inputErrorLabel.isVisible():
+			return
+		if cls.list_filename == []:
+			return
 		cls.clearConfigureTable()
 		_filename = cls.list_filename[0]
 		nxs = LoadEventNexus(Filename=_filename)
@@ -143,7 +159,11 @@ class MetadataFinder(QDialog):
 			cls.list_filename = []
 			cls.list_nxs = []
 			for _runs in _list_runs:
-				_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
+				try:
+					_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
+				except:
+					cls.ui.inputErrorLabel.setVisible(True)					
+					return
 				cls.list_filename.append(_filename)
 				randomString = utilities.generate_random_workspace_name()
 				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString)
@@ -203,29 +223,7 @@ class MetadataFinder(QDialog):
 		metadataSelected.switch_config('listMetadata')
 		metadataSelected.metadata_list = _listMetadata
 		metadataSelected.switch_config('default')
-		
-	def saveMetadataListAsAscii(cls):
-		_filter = u'List Metadata (*_metadata.txt);;All(*.*)'
-		_run_number = cls.run0
-		_default_name = cls.main_gui.path_ascii + '/' + _run_number + '_metadata.txt'
-		filename = QFileDialog.getSaveFileName(cls, u'Save Metadata into ASCII',
-	                                               _default_name,
-	                                               filter=_filter)
-		if filename == '':
-			return
-	
-		cls.main_gui.path_config = os.path.dirname(filename)
-		
-		text = ['# Metadata Selected for run ' + _run_number]
-		text.append('#Name - Value - Units')
-		
-		_metadata_table = cls.ui.metadataTable
-		nbr_row = _metadata_table.rowCount()
-		for r in range(nbr_row):
-			_line = _metadata_table.item(r,0).text() + ' ' + str(_metadata_table.item(r,1).text()) + ' ' + 	str(_metadata_table.item(r,2).text())
-			text.append(_line)
-		utilities.write_ascii_file(filename, text)
-	
+			
 	def importConfiguration(cls):
 		_filter = u"Metadata Configuration (*_metadata.cfg);; All (*.*)"
 		_default_path = cls.main_gui.path_config
@@ -237,6 +235,26 @@ class MetadataFinder(QDialog):
 		
 		data = utilities.import_ascii_file(filename)
 		cls.list_metadata_selected = data
+		cls.populateconfigureTable()
+	
+	def exportConfiguration(cls):
+		_filter = u"Metadata Configuration (*_metadata.cfg);; All (*.*)"
+		_date = time.strftime("%d_%m_%Y")
+		_default_name = cls.main_gui.path_config + '/' + _date + '_metadata.cfg'
+		filename = QFileDialog.getSaveFileName(cls, u'Export Metadata Configuration',
+	                                               _default_name,
+	                                               filter = (_filter))
+		if filename == '':
+			return
+		
+		cls.main_gui.path_config = os.path.dirname(filename)
+		
+		list_metadata_selected = cls.list_metadata_selected
+		text = []
+		for _name in list_metadata_selected:
+			text.append(_name)
+			
+		utilities.write_ascii_file(filename, text)
 	
 	def getIPTS(cls, filename):
 		parse_path = filename.split('/')
@@ -258,5 +276,28 @@ class MetadataFinder(QDialog):
 				_list_metadata_selected.append(_name)
 		return _list_metadata_selected
 		
+	def saveMetadataListAsAsciiFile(cls):
+		if cls.list_runs == []:
+			return
+		_filter = u'List Metadata (*_metadata.txt);;All(*.*)'
+		_run_number = str(cls.list_runs[0])
+		_default_name = cls.main_gui.path_ascii + '/' + _run_number + '_metadata.txt'
+		filename = QFileDialog.getSaveFileName(cls, u'Save Metadata into ASCII',
+	                                               _default_name,
+	                                               filter=_filter)
+		if filename == '':
+			return
+	
+		cls.main_gui.path_config = os.path.dirname(filename)
+		
+		text = ['# Metadata Selected for run ' + _run_number]
+		text.append('#Name - Value - Units')
+		
+		_metadata_table = cls.ui.metadataTable
+		nbr_row = _metadata_table.rowCount()
+		for r in range(nbr_row):
+			_line = _metadata_table.item(r,0).text() + ' ' + str(_metadata_table.item(r,1).text()) + ' ' + 	str(_metadata_table.item(r,2).text())
+			text.append(_line)
+		utilities.write_ascii_file(filename, text)
 	
 	

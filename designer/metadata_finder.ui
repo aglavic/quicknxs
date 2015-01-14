@@ -31,7 +31,7 @@
           <string>1234 or 1234,1236 or 1234-1238</string>
          </property>
          <property name="text">
-          <string>115268, 115270</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -81,6 +81,30 @@
               </property>
              </column>
             </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="saveAsciiButton">
+               <property name="text">
+                <string>Save List as ASCII ...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -153,7 +177,7 @@
            <item>
             <widget class="QPushButton" name="importConfiguration">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="text">
               <string>Import Configuration ...</string>
@@ -208,7 +232,7 @@
    <sender>exportConfiguration</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
-   <slot>saveMetadataListAsAscii()</slot>
+   <slot>exportConfiguration()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>767</x>
@@ -252,12 +276,29 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>saveAsciiButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>saveMetadataListAsAsciiFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>910</x>
+     <y>705</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runNumberEditEvent()</slot>
   <slot>unselectAll()</slot>
-  <slot>saveMetadataListAsAscii()</slot>
   <slot>importConfiguration()</slot>
   <slot>userChangedTab()</slot>
+  <slot>exportConfiguration()</slot>
+  <slot>saveMetadataListAsAsciiFile()</slot>
  </slots>
 </ui>
