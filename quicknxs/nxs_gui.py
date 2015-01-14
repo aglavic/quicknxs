@@ -3,7 +3,7 @@
 A Widget that displays raw data information of a given .nxs file.
 '''
 
-import h5py
+
 from PyQt4.QtGui import QDialog, QWidget, QVBoxLayout, QTreeWidgetItem
 from numpy import maximum
 from .nxs_widget import Ui_NXSWidget
