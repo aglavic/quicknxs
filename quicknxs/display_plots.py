@@ -127,9 +127,17 @@ class DisplayPlots(object):
 		self.ui.metadatatthdValue.setText('%.2f'%d.tthd)
 		self.ui.metadatatthdUnits.setText('%s'%d.tthd_units)
 		self.ui.metadataS1WValue.setText('%.2f'%d.S1W)
-		self.ui.metadataS2WValue.setText('%.2f'%d.S2W)
 		self.ui.metadataS1HValue.setText('%.2f'%d.S1H)
-		self.ui.metadataS2HValue.setText('%.2f'%d.S2H)
+		if d.isSiThere:
+			self.ui.S2SiWlabel.setText('SiW')
+			self.ui.S2SiHlabel.setText('SiH')
+			self.ui.metadataS2WValue.setText('%.2f'%d.SiW)
+			self.ui.metadataS2HValue.setText('%.2f'%d.SiH)
+		else:
+			self.ui.S2SiWlabel.setText('S2W')
+			self.ui.S2SiHlabel.setText('S2H')
+			self.ui.metadataS2WValue.setText('%.2f'%d.S2W)
+			self.ui.metadataS2HValue.setText('%.2f'%d.S2H)
 
 	def clearMetadataWidgets(cls):
 		self = cls.self

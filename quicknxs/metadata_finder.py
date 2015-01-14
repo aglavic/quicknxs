@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDialog, QPalette, QTableWidgetItem, QCheckBox, QFileDialog
+from PyQt4.QtGui import QDialog, QPalette, QTableWidgetItem, QCheckBox, QFileDialog, QMessageBox, QPushButton
 from PyQt4.QtCore import Qt
 from metadata_finder_interface import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
@@ -17,6 +17,8 @@ class MetadataFinder(QDialog):
 	list_nxs = []
 	list_filename = []
 	list_runs = []
+	
+	WARNING_NBR_FILES = 10
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -40,6 +42,8 @@ class MetadataFinder(QDialog):
 		palette = QPalette()
 		palette.setColor(QPalette.Foreground, Qt.red)
 		cls.ui.inputErrorLabel.setPalette(palette)
+		
+		cls.ui.saveAsciiButton.setVisible(False) #as long as issue with routine not fixed
 		
 		cls.ui.configureTable.setColumnWidth(0,70)
 		cls.ui.configureTable.setColumnWidth(1,300)
@@ -142,6 +146,17 @@ class MetadataFinder(QDialog):
 		run_sequence = cls.ui.runNumberEdit.text()
 		oListRuns = RunSequenceBreaker(run_sequence)
 		_list_runs = oListRuns.getFinalList()
+		if len(_list_runs) > cls.WARNING_NBR_FILES:
+			msgBox = QMessageBox()
+			_str = "Program is about to load " + str(len(_list_runs)) + " files. Do you want to continue ?" 	                                                              
+			msgBox.setText(_str)
+			msgBox.addButton(QPushButton('NO'), QMessageBox.NoRole)
+			msgBox.addButton(QPushButton('YES'), QMessageBox.YesRole)
+			ret = msgBox.exec_()
+			if ret == 0:
+				cls.ui.inputErrorLabel.setVisible(False)
+				return
+
 		if _list_runs[0] == -1:
 			if cls.list_nxs == []:
 				return

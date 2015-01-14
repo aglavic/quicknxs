@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Jan 12 13:16:46 2015
+# Created: Wed Jan 14 12:07:42 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1074,10 +1074,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_49.addLayout(self.horizontalLayout_78)
         self.horizontalLayout_79 = QtGui.QHBoxLayout()
         self.horizontalLayout_79.setObjectName("horizontalLayout_79")
-        self.label_157 = QtGui.QLabel(self.layoutWidget_3)
-        self.label_157.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.label_157.setObjectName("label_157")
-        self.horizontalLayout_79.addWidget(self.label_157)
+        self.S2SiWlabel = QtGui.QLabel(self.layoutWidget_3)
+        self.S2SiWlabel.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.S2SiWlabel.setObjectName("S2SiWlabel")
+        self.horizontalLayout_79.addWidget(self.S2SiWlabel)
         self.metadataS2WValue = QtGui.QLabel(self.layoutWidget_3)
         self.metadataS2WValue.setMinimumSize(QtCore.QSize(100, 0))
         self.metadataS2WValue.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -1116,10 +1116,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_50.addLayout(self.horizontalLayout_80)
         self.horizontalLayout_81 = QtGui.QHBoxLayout()
         self.horizontalLayout_81.setObjectName("horizontalLayout_81")
-        self.label_161 = QtGui.QLabel(self.layoutWidget_3)
-        self.label_161.setMaximumSize(QtCore.QSize(40, 16777215))
-        self.label_161.setObjectName("label_161")
-        self.horizontalLayout_81.addWidget(self.label_161)
+        self.S2SiHlabel = QtGui.QLabel(self.layoutWidget_3)
+        self.S2SiHlabel.setMaximumSize(QtCore.QSize(40, 16777215))
+        self.S2SiHlabel.setObjectName("S2SiHlabel")
+        self.horizontalLayout_81.addWidget(self.S2SiHlabel)
         self.metadataS2HValue = QtGui.QLabel(self.layoutWidget_3)
         self.metadataS2HValue.setMinimumSize(QtCore.QSize(100, 0))
         self.metadataS2HValue.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -1587,13 +1587,13 @@ class Ui_MainWindow(object):
         self.label_155.setText(QtGui.QApplication.translate("MainWindow", "S1W:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataS1WValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.label_14.setText(QtGui.QApplication.translate("MainWindow", "mm", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_157.setText(QtGui.QApplication.translate("MainWindow", "S2W:", None, QtGui.QApplication.UnicodeUTF8))
+        self.S2SiWlabel.setText(QtGui.QApplication.translate("MainWindow", "S2W:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataS2WValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.label_15.setText(QtGui.QApplication.translate("MainWindow", "mm", None, QtGui.QApplication.UnicodeUTF8))
         self.label_159.setText(QtGui.QApplication.translate("MainWindow", "S1H:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataS1HValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("MainWindow", "mm", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_161.setText(QtGui.QApplication.translate("MainWindow", "S2H:", None, QtGui.QApplication.UnicodeUTF8))
+        self.S2SiHlabel.setText(QtGui.QApplication.translate("MainWindow", "S2H:", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataS2HValue.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.label_17.setText(QtGui.QApplication.translate("MainWindow", "mm", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))

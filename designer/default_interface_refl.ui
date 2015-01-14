@@ -2697,7 +2697,7 @@ p, li { white-space: pre-wrap; }
                         <item>
                          <layout class="QHBoxLayout" name="horizontalLayout_79">
                           <item>
-                           <widget class="QLabel" name="label_157">
+                           <widget class="QLabel" name="S2SiWlabel">
                             <property name="maximumSize">
                              <size>
                               <width>40</width>
@@ -2818,7 +2818,7 @@ p, li { white-space: pre-wrap; }
                         <item>
                          <layout class="QHBoxLayout" name="horizontalLayout_81">
                           <item>
-                           <widget class="QLabel" name="label_161">
+                           <widget class="QLabel" name="S2SiHlabel">
                             <property name="maximumSize">
                              <size>
                               <width>40</width>
