@@ -8,7 +8,7 @@ from . import icons_rc #@UnusedImport
 from .config import plotting
 
 # set the default backend to be compatible with Qt in case someone uses pylab from IPython console
-matplotlib.use('Qt4Agg')
+
 def _set_default_rc():
   matplotlib.rc('font', **plotting.font)
   matplotlib.rc('savefig', **plotting.savefig)
