@@ -1288,6 +1288,7 @@ class LRDataset(object):
   incident_angle = 0
   
   nxs=None # Mantid NeXus workspace
+  nxs_histo=None # Mantid NeXus workspace, rebinned
 
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
@@ -1695,6 +1696,12 @@ class LRDataset(object):
     #output.Exyt_reduction = Exyt_reduction
     
     return output
+
+  def ixyIndex(self, x, y):
+    if self.new_detector_geometry_flag:
+      return 304 * x + y
+    else:
+      return 256 * x + y
 
   @staticmethod
   def getIxyt(nxs_histo, new_detector_flag):
