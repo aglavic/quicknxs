@@ -69,6 +69,7 @@ class ReflectivityBuilder(object):
           # if for some reason the run never existed, continue directly
           if len(self.db('file_id>fid', fid=self.current_index))>0:
             retries=0
+            logging.debug('Skipping run with no existing NeXus file %i.'%self.current_index)
             self.finish_reflectivity()
             self.current_index+=1
             continue
@@ -80,6 +81,7 @@ class ReflectivityBuilder(object):
         if retries>self.MAX_RETRIES:
           # give up when adding reflectivity was not successful after a few tries
           retries=0
+          logging.debug('Giving up as adding dataset to reflectivity failed.')
           self.finish_reflectivity()
           self.current_index+=1
         self.add_dataset()
@@ -215,14 +217,18 @@ class ReflectivityBuilder(object):
       return False
     if dsinfo is None:
       # current dataset was not readable properly, finish reflectivity and increment index
+      logging.debug('Could not read dataset info properly.')
       self.finish_reflectivity()
       self.current_index+=1
       return True
-    if dsinfo.ai<(self.reflectivity_last_ai*0.95) or \
-       dsinfo.lambda_center>self.reflectivity_last_lamda or \
+    if (dsinfo.ai/dsinfo.lambda_center)<\
+       (self.reflectivity_last_ai/self.reflectivity_last_lamda*0.85) or \
        dsinfo.no_states!=self.reflectivity_states:
       # The currenct reflectivity is finished, as this dataset does not correspond to
       # it. Return to the main loop, which will try to add the dataset again.
+      logging.debug('Next dataset at lower Q or number of states different, Qnew: %g Qold: %g'%
+                    (dsinfo.ai/dsinfo.lambda_center,
+                     self.reflectivity_last_ai/self.reflectivity_last_lamda))
       self.finish_reflectivity()
       return True
 
@@ -235,6 +241,7 @@ class ReflectivityBuilder(object):
       # There are no corresponding direct beam runs for this dataset measured before.
       # We have no way of fixing this, so we ignore it and just start from scratch
       # with the next dataset.
+      logging.debug('No direct beam for current dataset.')
       self.finish_reflectivity()
       self.current_index+=1
       return True
@@ -290,7 +297,7 @@ class ReflectivityBuilder(object):
     '''
     if not self.reflectivity_active:
       return None
-    xpix=float(qcalc.get_xpos(live_ds[0]))
+    xpix=float(qcalc.get_xpos(live_ds[0], refine=self.db.refine_xpos, max_width=self.db.maxw_xpos))
     ycenter, ywidth, ignore=qcalc.get_yregion(live_ds[0])
 
     # search for fitting direct beams in database
@@ -320,9 +327,11 @@ class ReflectivityBuilder(object):
                             P0=P0, PN=PN,
                             )
 
-    if (r0.ai*180./numpy.pi)<(self.reflectivity_last_ai*0.95) or \
-      live_ds.lambda_center>self.reflectivity_last_lamda:
-      logging.debug('Live dataset has lower Q, finish current reflectivity')
+    if ((r0.ai*180./numpy.pi)/live_ds.lambda_center)<\
+        (self.reflectivity_last_ai/self.reflectivity_last_lamda*0.85):
+      logging.debug('Live dataset has lower Q, finish current reflectivity. Qnew: %g, Qold: %g'%
+                    ((r0.ai*180./numpy.pi)/live_ds.lambda_center,
+                    self.reflectivity_last_ai/self.reflectivity_last_lamda))
       self.finish_reflectivity()
       self.start_new_reflectivity(live_ds)
     if len(self.reflectivity_items)==0:
@@ -441,7 +450,7 @@ class ReflectivityBuilder(object):
 
   def get_ai(self, ds):
     data=ds[0]
-    xpix=float(qcalc.get_xpos(data))
+    xpix=float(qcalc.get_xpos(data, refine=self.db.refine_xpos, max_width=self.db.maxw_xpos))
 
     grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./numpy.pi
     tth=(data.dangle-data.dangle0)+(data.dpix-xpix)*grad_per_pixel

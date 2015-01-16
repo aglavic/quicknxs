@@ -1,0 +1,8 @@
+.*
+*~
+*.png
+*.pyo
+*.pyc
+MANIFEST
+doc/_*
+dist

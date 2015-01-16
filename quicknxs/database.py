@@ -18,6 +18,9 @@ class DatabaseHandler(object):
   Objects with database handling methods to store and process information about
   nexus files for quick reference.
   '''
+  refine_xpos=False
+  maxw_xpos=100.
+
   db=None
   fields=[]
   
@@ -67,7 +70,7 @@ class DatabaseHandler(object):
     output.append(float(data.tof[0]))
     output.append(float(data.tof[-1]))
 
-    xpix=float(get_xpos(data))
+    xpix=float(get_xpos(data, refine=self.refine_xpos, max_width=self.maxw_xpos))
     output.append(xpix) # xpix
     ycenter, ywidth, ignore=get_yregion(data)
     output.append(float(ycenter)), output.append(float(ywidth))
