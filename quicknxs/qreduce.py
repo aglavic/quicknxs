@@ -1677,40 +1677,6 @@ class LRDataset(object):
       return 256 * x + y
 
   @staticmethod
-  def getIxyt(nxs_histo, new_detector_flag):
-    '''
-    will format the histogrma NeXus to retrieve the full 3D data set
-    '''
-    _tof_axis = nxs_histo.readX(0)[:].copy()
-    nbr_tof = len(_tof_axis)
-    
-    if new_detector_flag:
- 
-      sz_y_axis = 304
-      sz_x_axis = 256
-       
-    else:
-      
-      sz_y_axis = 256
-      sz_x_axis = 304
-
-    _y_axis = zeros((sz_x_axis, sz_y_axis, nbr_tof-1))
-    _y_error_axis = zeros((sz_x_axis, sz_y_axis, nbr_tof-1))
-  
-    x_range = range(sz_x_axis)
-    y_range = range(sz_y_axis)
-      
-    for x in x_range:
-      for y in y_range:
-        _index = int(sz_y_axis*x+y)
-        _tmp_data = nxs_histo.readY(_index)[:].copy()
-        _y_axis[x,y,:] = _tmp_data
-        _tmp_error = nxs_histo.readE(_index)[:].copy()
-        _y_error_axis[x,y,:] = _tmp_error
-
-    return [_tof_axis, _y_axis, _y_error_axis]    
-
-  @staticmethod
   def bin_events(tof_ids, tof_time, tof_edges,
                  callback=None, callback_offset=0., callback_scaling=1.):
     '''

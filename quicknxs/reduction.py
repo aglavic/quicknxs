@@ -261,11 +261,7 @@ class ReductionObject(object):
         nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
         data.nxs_histo = nxs_histo
 
-        [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, data.new_detector_geometry_flag)
-
-        data.tof_axis = _tof_axis
-        data.Ixyt = Ixyt
-        data.Exyt = Exyt
+        data.tof_axis = nxs_histo.readX(0)
         self.oData.active_data = data
 
         self.logbook('-> rebin DATA ... DONE')
@@ -281,11 +277,7 @@ class ReductionObject(object):
             norm_nxs_histo = NormaliseByCurrent(InputWorkspace=norm_nxs_histo)
             norm.nxs_histo = norm_nxs_histo
             
-            [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(norm_nxs_histo, norm.new_detector_geometry_flag)
-            
-            norm.tof_axis = _tof_axis
-            norm.Ixyt = Ixyt
-            norm.Exyt = Exyt
+            norm.tof_axis = norm_nxs_histo.readX(0)
             self.oNorm.active_data = norm
             
             self.logbook('-> rebin NORMALIZATION ... DONE')
