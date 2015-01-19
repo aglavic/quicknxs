@@ -313,7 +313,7 @@ class NXSData(object):
     
     :param str filename: Path to file to read
     '''
-    if instrument.NAME == 'REF_M':
+    if instrument.NAME == 'REF_M': #TODO HARDCODED INSTRUMENT
       return self._read_REFM_file(filename)
     else:
       return self._read_REFL_file(filename)

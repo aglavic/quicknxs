@@ -29,7 +29,7 @@ class OpenRunNumber(object):
 		list_run_number = filter(None, run_number_field.split(','))
 		for run_number in list_run_number:
 			try:
-				full_file_name = FileFinder.findRuns("REF_L_%d" %int(run_number))[0]
+				full_file_name = FileFinder.findRuns("REF_L_%d" %int(run_number))[0] #TODO HARDCODED INSTRUMENT
 				run_found.append(full_file_name)
 				cls.run_number_found.append(run_number)
 			except:
