@@ -1096,11 +1096,11 @@ class MainGUI(QtGui.QMainWindow):
       ix_plot = self.ui.norm_ix_plot
 
     if data.new_detector_geometry_flag:
-      ylim = 303
-      xlim = 255
+      ylim = 303 #TODO MAGIC NUMBER
+      xlim = 255 #TODO MAGIC NUMBER
     else:
-      ylim = 255
-      xlim = 303
+      ylim = 255 #TODO MAGIC NUMBER
+      xlim = 303 #TODO MAGIC NUMBER
 
     # display yt
     if plot_yt:
@@ -1444,7 +1444,7 @@ class MainGUI(QtGui.QMainWindow):
         phi_range=datai.shape[0]*rad_per_pixel*180./pi
         tth_range=datai.shape[1]*rad_per_pixel*180./pi
         phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi #TODO MAGIC NUMBER
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, origin='lower',
@@ -5952,4 +5952,4 @@ Do you want to try to restore the working reduction list?""",
     HDF5 %s
   '''%(str_version, sys.version, npversion, mplversion,
        QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
-      
+
