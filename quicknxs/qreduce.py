@@ -487,8 +487,9 @@ class NXSData(object):
       else:
         self.measurement_type='Polarized'
         mapping=list(MAPPING_HALFPOL)
+    #TODO HARDCODED STRING
     elif 'DASlogs' in nxs[channels[0]] and \
-          nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \ #TODO HARDCODED STRING
+          nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
           channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
       self.measurement_type='Electric Field'
       mapping=list(MAPPING_EFIELD)
@@ -789,7 +790,8 @@ class MRDataset(object):
     output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset #TODO HARDCODED STRING
 
     try:
-      mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\ #TODO HARDCODED STRING
+      #TODO HARDCODED STRING
+      mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
                                             output.dist_mod_det/output.dist_mod_mon
       mon_I_from=data['monitor1']['data'].value.astype(float) #TODO HARDCODED STRING
       mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
@@ -1363,7 +1365,8 @@ class LRDataset(object):
     output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset #TODO HARDCODED STRING
 
     try:
-      mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\ #TODO HARDCODED STRING
+      #TODO HARDCODED STRING
+      mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
                                             output.dist_mod_det/output.dist_mod_mon
       mon_I_from=data['monitor1']['data'].value.astype(float) #TODO HARDCODED STRING
       mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
