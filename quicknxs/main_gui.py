@@ -3484,9 +3484,10 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without data background
     '''
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     flag = self.ui.dataBackgroundFlag.isChecked()
       
@@ -3545,9 +3546,11 @@ Do you want to try to restore the working reduction list?""",
       flagLowRes = False
       flagBack = False
 
-    data = self.active_data
-    if data is None:
-      return
+      bigTableData = self.bigTableData
+      [row,col] = self.getCurrentRowColumnSelected()
+      data = bigTableData[row,col]
+      data = data.active_data
+   
     data.use_it_flag = flag
     self.active_data = data
     
@@ -3578,9 +3581,10 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without normalization background
     '''
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     flag = self.ui.normBackgroundFlag.isChecked()
     
@@ -3601,9 +3605,10 @@ Do you want to try to restore the working reduction list?""",
     With or without normalization low resolution range
     '''
 
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     flag = self.ui.normLowResFlag.isChecked()
 
@@ -3636,9 +3641,10 @@ Do you want to try to restore the working reduction list?""",
     will make sure the min value is < max value    
     '''
 
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     peak1 = self.ui.dataPeakFromValue.value()
     peak2 = self.ui.dataPeakToValue.value()
@@ -3715,9 +3721,10 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     lowres1 = self.ui.dataLowResFromValue.value()
     lowres2 = self.ui.dataLowResToValue.value()
@@ -3757,9 +3764,10 @@ Do you want to try to restore the working reduction list?""",
     will make sure the min value is < max value    
     '''
 
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     peak1 = self.ui.normPeakFromValue.value()
     peak2 = self.ui.normPeakToValue.value()
@@ -3795,9 +3803,10 @@ Do you want to try to restore the working reduction list?""",
     will make sure the min value is < max value  
     '''
 
-    data = self.active_data
-    if data is None:
-      return
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
 
     back1 = self.ui.normBackFromValue.value()
     back2 = self.ui.normBackToValue.value()
@@ -3832,10 +3841,11 @@ Do you want to try to restore the working reduction list?""",
     spinboxes (ENTER, leaving the spinbox) 
     will make sure the min value is < max value  
     '''
-
-    data = self.active_data
-    if data is None:
-      return
+    
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
     
     lowres1 = self.ui.normLowResFromValue.value()
     lowres2 = self.ui.normLowResToValue.value()
