@@ -3,7 +3,6 @@ class RunSequenceBreaker(object):
 	final_list = None
 	
 	def __init__(cls, run_sequence):
-		
 		final_list = []
 		try:
 			# remove white spaces

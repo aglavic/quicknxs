@@ -209,7 +209,8 @@ class NXSData(object):
                        is_data = True,
                        is_auto_peak_finder = False,
                        back_offset_from_peak = 4,
-                       is_auto_tof_finder = True)
+                       is_auto_tof_finder = True,
+                       metadata_only = False)
   _OPTIONS_DESCRTIPTION=dict(
     bin_type="linear in ToF'/'1: linear in Q' - use linear or 1/x spacing for ToF channels in event mode",
     bins='Number of ToF bins for event mode',
@@ -224,7 +225,8 @@ class NXSData(object):
     is_data='True or False (if file is a direct beam data set)',
     is_auto_peak_finder='True or False',
     back_offset_from_peak = 'pixel distance of background from peak',
-    is_auto_tof_finder = 'True or False'
+    is_auto_tof_finder = 'True or False',
+    metadata_only = 'To only load the metadata if turned on'
     )
   COUNT_THREASHOLD=100 #: Number of counts needed for a state to be interpreted as actual data
   MAX_CACHE=20 #: Number of datasets that are kept in the cache
@@ -234,14 +236,13 @@ class NXSData(object):
   @log_both
   def __new__(cls, filename, **options):
 
-    if type(filename) is int:
-      fn=locate_file(filename)
-      if fn is None:
-        raise RuntimeError, 'No file found for index %i'%filename
-      filename=fn
+    #if type(filename) is int:
+      #fn=locate_file(filename)
+      #if fn is None:
+        #raise RuntimeError, 'No file found for index %i'%filename
+      #filename=fn
     
     all_options=cls._get_all_options(options)
-    
     if type(filename) == type([]):
       for i in range(len(filename)):
         filename[i] = os.path.abspath(filename[i])
@@ -257,7 +258,7 @@ class NXSData(object):
         if cached_object._options==compare_options:
           return cached_object
     
-    # else
+        # else
     self=object.__new__(cls)
     self._options=all_options
     # create empty attributes
@@ -344,6 +345,11 @@ class NXSData(object):
         self._options['callback'](0.)
 
       randomString = utilities.generate_random_workspace_name()
+      metadata_only_flag = self._options['metadata_only']
+      
+      print 'type(filename)'
+      print type(filename)
+
 
       if (type(filename) == type([])) and (len(filename) == 1):
         filename = filename[0]
@@ -351,8 +357,7 @@ class NXSData(object):
       if (type(filename) == type(u"")) or (type(filename) == type("")):
 
         try:
-          print '------> filename is: ' + str(filename)
-          nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
+          nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString, MetaDataOnly=metadata_only_flag)
           self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value)
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
@@ -369,7 +374,7 @@ class NXSData(object):
           try:
             
             if _index == 0:
-              nxs=LoadEventNexus(Filename=str(_filename),OutputWorkspace=randomString)
+              nxs=LoadEventNexus(Filename=str(_filename),OutputWorkspace=randomString, MetaDataOnly=metadata_only_flag)
               
               # retrieve lambda requested value
               mt_run = nxs.getRun()
@@ -377,7 +382,7 @@ class NXSData(object):
               _lambda_requested_1 = mt_run.getProperty('LambdaRequest').value
               _index += 1
             else:
-              tmp=LoadEventNexus(Filename=str(_filename))
+              tmp=LoadEventNexus(Filename=str(_filename), MetaDataOnly=metadata_only_flag)
               
               # make sure that the files have the same lambda requested
               mt_run = tmp.getRun()
@@ -1268,6 +1273,7 @@ class LRDataset(object):
   dMD=0 # distance Moderator-Detector
   dMD_units = ''
   filename= ''
+  attenuatorNbr = 0
   
   low_resolution_range = [0,303]
   
@@ -1571,6 +1577,8 @@ class LRDataset(object):
 
     # we will need to access nxs if the user decides to manually select the TOF range
     output.nxs = nxs;
+    if output.read_options['metadata_only']:
+      return output
 
     # retrieve the metadata from the nexus file
     output._collect_info(nxs)
@@ -1807,7 +1815,9 @@ class LRDataset(object):
       self.S2W = mt_run.getProperty('S2HWidth').value[0]
       self.S2H = mt_run.getProperty('S2VHeight').value[0]
 
+    self.attenuatorNbr = mt_run.getProperty('vATT').value[0] - 1
     self.date = mt_run.getProperty('run_start').value
+    self.full_file_name = mt_run.getProperty('Filename').value[0]
 
     sample = nxs.getInstrument().getSample()
     source = nxs.getInstrument().getSource()

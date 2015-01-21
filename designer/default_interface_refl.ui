@@ -3619,6 +3619,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>SF Calculator ...</string>
    </property>
+   <property name="shortcut">
+    <string>Meta+C</string>
+   </property>
   </action>
   <action name="actionMetadataFinder">
    <property name="text">
@@ -4737,6 +4740,22 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSF_Calculator</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>launch_SFcalculator()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>836</x>
+     <y>608</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>signal1()</signal>
@@ -4839,5 +4858,6 @@ p, li { white-space: pre-wrap; }
   <slot>useScalingFactorConfigCheckBox()</slot>
   <slot>reduction_table_right_click()</slot>
   <slot>metadataFinderEvent()</slot>
+  <slot>launch_SFcalculator()</slot>
  </slots>
 </ui>

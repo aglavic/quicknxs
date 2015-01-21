@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/metadata_finder.ui'
 #
-# Created: Tue Jan 13 13:43:20 2015
+# Created: Thu Jan 15 15:44:49 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -102,7 +102,7 @@ class Ui_Dialog(object):
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.runNumberEdit, QtCore.SIGNAL("returnPressed()"), Dialog.runNumberEditEvent)
         QtCore.QObject.connect(self.unselectAll, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
         QtCore.QObject.connect(self.exportConfiguration, QtCore.SIGNAL("clicked()"), Dialog.exportConfiguration)
@@ -120,6 +120,7 @@ class Ui_Dialog(object):
         self.metadataTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "IPTS", None, QtGui.QApplication.UnicodeUTF8))
         self.saveAsciiButton.setText(QtGui.QApplication.translate("Dialog", "Save List as ASCII ...", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("Dialog", "Metadata", None, QtGui.QApplication.UnicodeUTF8))
+        self.configureTable.setSortingEnabled(True)
         self.configureTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Display ?", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.configureTable.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Value", None, QtGui.QApplication.UnicodeUTF8))

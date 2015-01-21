@@ -44,6 +44,7 @@ import utilities
 import constants
 import colors
 from calculate_SF import CalculateSF
+#from isis_calculate_sf import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
@@ -68,6 +69,7 @@ from selection_bigTable_changed import SelectionBigTableChanged
 from populate_reductionTable import PopulateReductionTable
 from loading_configuration import LoadingConfiguration
 from metadata_finder import MetadataFinder
+from sf_calculator import SFcalculator
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -274,6 +276,10 @@ class MainGUI(QtGui.QMainWindow):
     ConfigFileLauncher(self, 3)
   def launch_config_file5(self):
     ConfigFileLauncher(self, 4)
+
+  def launch_SFcalculator(self):
+    sfCalculator = SFcalculator(self)
+    sfCalculator.show()
 
   def raiseError(self):
     '''

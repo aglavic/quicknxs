@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Jan 14 12:07:42 2015
+# Created: Wed Jan 14 17:19:24 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1484,6 +1484,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.sfBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.sf_browse_button)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), MainWindow.reduction_table_right_click)
         QtCore.QObject.connect(self.actionMetadataFinder, QtCore.SIGNAL("triggered()"), MainWindow.metadataFinderEvent)
+        QtCore.QObject.connect(self.actionSF_Calculator, QtCore.SIGNAL("triggered()"), MainWindow.launch_SFcalculator)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
         MainWindow.setTabOrder(self.eventTofBins, self.logarithmic_colorscale)
@@ -1669,6 +1670,7 @@ class Ui_MainWindow(object):
         self.actionSaveConfiguration_2.setText(QtGui.QApplication.translate("MainWindow", "Save Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveConfiguration_2.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSF_Calculator.setText(QtGui.QApplication.translate("MainWindow", "SF Calculator ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSF_Calculator.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMetadataFinder.setText(QtGui.QApplication.translate("MainWindow", "Metadata Finder ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMetadataFinder.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+M", None, QtGui.QApplication.UnicodeUTF8))
 

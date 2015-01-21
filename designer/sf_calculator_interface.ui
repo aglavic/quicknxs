@@ -31,6 +31,9 @@
           <property name="toolTip">
            <string>1234 or 1234,1236,1239 or 1234-1238</string>
           </property>
+          <property name="text">
+           <string>119688</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -38,7 +41,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QWidget" name="widget" native="true">
+         <widget class="MPLWidgetNoLog" name="widget" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -48,7 +51,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_2" native="true">
+         <widget class="MPLWidgetXLog" name="widget_2" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -585,6 +588,40 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MPLWidgetXLog</class>
+   <extends>QWidget</extends>
+   <header location="global">.mplwidgetxlog.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MPLWidgetNoLog</class>
+   <extends>QWidget</extends>
+   <header>mplwidgetnolog.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>runSequenceLineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>runSequenceLineEditEvent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>732</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>runSequenceLineEditEvent()</slot>
+ </slots>
 </ui>
