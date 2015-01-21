@@ -53,7 +53,7 @@ class PlotDialogREFL(QDialog):
 		_new_detector_geometry_flag = self.data.new_detector_geometry_flag
 		if not _new_detector_geometry_flag:
 			self.reset_max_ui_value()
-			self.nbr_pixel_y_axis = 256
+			self.nbr_pixel_y_axis = 256 #TODO MAGIC NUMBER
 		
 		self.init_plot()
 

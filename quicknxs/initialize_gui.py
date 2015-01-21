@@ -77,9 +77,9 @@ class InitializeGui(object):
 		
 	def defineRightDefaultPath(cls):
 		import socket
-		if socket.gethostname() == 'lrac.sns.gov':
-			cls.self.path_config = '/SNS/REF_L/'
-			cls.self.path_ascii = '/SNS/REF_L'
+		if socket.gethostname() == 'lrac.sns.gov': #TODO HARDCODED STRING
+			cls.self.path_config = '/SNS/REF_L/' #TODO HARDCODED INSTRUMENT
+			cls.self.path_ascii = '/SNS/REF_L' #TODO HARDCODED INSTRUMENT
 		
 	def initFileMenu(cls):
 		cls.self.fileMenuObject = InitFileMenu(cls.self)
