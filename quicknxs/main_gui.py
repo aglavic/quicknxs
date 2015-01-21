@@ -3511,11 +3511,11 @@ Do you want to try to restore the working reduction list?""",
     '''
     With or without data low resolution range
     '''
-        
-    data = self.active_data
-    if data is None:
-      return
-
+    bigTableData = self.bigTableData
+    [row,col] = self.getCurrentRowColumnSelected()
+    data = bigTableData[row,col]
+    data = data.active_data
+    
     flag = self.ui.dataLowResFlag.isChecked()
 
     data.low_res_flag = flag

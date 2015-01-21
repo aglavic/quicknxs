@@ -32,7 +32,7 @@
            <string>1234 or 1234,1236,1239 or 1234-1238</string>
           </property>
           <property name="text">
-           <string>119688</string>
+           <string>119688-119689</string>
           </property>
          </widget>
         </item>
@@ -41,7 +41,10 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="MPLWidgetNoLog" name="widget" native="true">
+         <widget class="MPLWidgetNoLog" name="yt_plot" native="true">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -51,7 +54,10 @@
          </widget>
         </item>
         <item>
-         <widget class="MPLWidgetXLog" name="widget_2" native="true">
+         <widget class="MPLWidgetXLog" name="yi_plot" native="true">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -104,6 +110,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_32">
                <item>
                 <widget class="QLabel" name="dataBackFromLabel">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Back2</string>
                  </property>
@@ -111,6 +120,9 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="dataBackToValue">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="palette">
                   <palette>
                    <active>
@@ -182,6 +194,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_33">
                <item>
                 <widget class="QLabel" name="dataPeakFromLabel">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Peak2</string>
                  </property>
@@ -189,6 +204,9 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="dataPeakToValue">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="palette">
                   <palette>
                    <active>
@@ -260,6 +278,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_34">
                <item>
                 <widget class="QLabel" name="dataPeakToLabel">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Peak1</string>
                  </property>
@@ -267,6 +288,9 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="dataPeakFromValue">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="palette">
                   <palette>
                    <active>
@@ -338,6 +362,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_35">
                <item>
                 <widget class="QLabel" name="dataBackToLabel">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Back1</string>
                  </property>
@@ -345,6 +372,9 @@
                </item>
                <item>
                 <widget class="QSpinBox" name="dataBackFromValue">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="palette">
                   <palette>
                    <active>
@@ -414,6 +444,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="dataBackgroundFlag">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>with background</string>
                </property>
@@ -447,6 +480,12 @@
       </item>
       <item>
        <widget class="QTableWidget" name="tableWidget">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
         <column>
          <property name="text">
           <string>Run #</string>
@@ -503,13 +542,20 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QLabel" name="label_2">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="text">
            <string>SF File Name:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="sfFileNameLineEdit"/>
+         <widget class="QLineEdit" name="sfFileNameLineEdit">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="sfFileNameBrowseButton">
@@ -523,7 +569,7 @@
       <item>
        <widget class="QPlainTextEdit" name="sfFileNamePreview">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="textInteractionFlags">
          <set>Qt::NoTextInteraction</set>
@@ -547,6 +593,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="generateSFfileButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>GENERRATE SF FILE</string>
           </property>
@@ -620,8 +669,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>customContextMenuRequested(QPoint)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tableWidgetRightClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>666</x>
+     <y>558</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
+  <slot>tableWidgetRightClick()</slot>
  </slots>
 </ui>

@@ -139,6 +139,11 @@ class DisplayMetadata(QDialog):
 		metadataSelected.switch_config('default')
 
 	def init_gui(cls):
+		_run_number = cls.active_data.run_number
+		title = ('Metadata of run %s'%_run_number)
+		cls.setWindowTitle(title)
+		
+		return
 		dom = minidom.parse(cls.dom_filename)
 		cls.fields = dom.getElementsByTagName('field')
 		_full_file_name = cls.active_data.full_file_name

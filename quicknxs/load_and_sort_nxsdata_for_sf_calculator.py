@@ -75,12 +75,6 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			big_table[index_row, :] = _row
 			index_row += 1
 		cls.big_table = big_table
-
-	def getTableData(cls):
-		return cls.big_table
-	
-	def getListOfRunsLoaded(cls):
-		return cls.loaded_list_runs
 	
 	def isSiThere(cls):
 		return cls.is_using_Si_slits
@@ -104,3 +98,12 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		except:
 			full_file_name = ''
 		return full_file_name
+	
+	def getTableData(cls):
+		return cls.big_table
+	
+	def getListOfRunsLoaded(cls):
+		return cls.loaded_list_runs
+	
+	def getListNXSDataSorted(cls):
+		return cls.list_NXSData_sorted

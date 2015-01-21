@@ -3,6 +3,7 @@ from sf_calculator_interface import Ui_MainWindow
 from run_sequence_breaker import RunSequenceBreaker
 from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
+from displayMetadata import DisplayMetadata
 import numpy as np
 
 class SFcalculator(QtGui.QMainWindow):
@@ -13,6 +14,7 @@ class SFcalculator(QtGui.QMainWindow):
 	big_table = None
 	is_using_Si_slits = False
 	loaded_list_of_runs = []
+	list_nxsdata_sorted = []
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -20,6 +22,28 @@ class SFcalculator(QtGui.QMainWindow):
 		cls._open_instances.append(cls)
 		cls.ui = Ui_MainWindow()
 		cls.ui.setupUi(cls)
+		cls.checkGui()
+		
+	def checkGui(cls):
+		if cls.loaded_list_of_runs == []:
+			wdg_enabled = False
+		else:
+			wdg_enabled = True
+		cls.enabledWidgets(wdg_enabled)
+		
+	def enabledWidgets(cls, is_enabled):
+		cls.ui.yi_plot.setEnabled(is_enabled)
+		cls.ui.yt_plot.setEnabled(is_enabled)
+		cls.ui.dataBackFromLabel.setEnabled(is_enabled)
+		cls.ui.dataBackToLabel.setEnabled(is_enabled)
+		cls.ui.dataBackFromValue.setEnabled(is_enabled)
+		cls.ui.dataBackToValue.setEnabled(is_enabled)
+		cls.ui.dataPeakFromLabel.setEnabled(is_enabled)
+		cls.ui.dataPeakToLabel.setEnabled(is_enabled)
+		cls.ui.dataPeakFromValue.setEnabled(is_enabled)
+		cls.ui.dataPeakToValue.setEnabled(is_enabled)
+		cls.ui.dataBackgroundFlag.setEnabled(is_enabled)
+		cls.ui.tableWidget.setEnabled(is_enabled)
 		
 	def runSequenceLineEditEvent(cls):
 		run_sequence = cls.ui.runSequenceLineEdit.text()
@@ -29,10 +53,12 @@ class SFcalculator(QtGui.QMainWindow):
 		_list_runs = np.unique(np.hstack([_old_runs, _new_runs]))
 		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs)
 		cls.big_table = o_load_and_sort_nxsdata.getTableData()
+		cls.list_nxsdata_sorted = o_load_and_sort_nxsdata.getListNXSDataSorted()
 		cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
 		cls.is_using_Si_slits = o_load_and_sort_nxsdata.is_using_Si_slits
 		cls.fillGuiTable()
 		cls.ui.runSequenceLineEdit.setText("")
+		cls.checkGui()
 		
 	def clearTable(cls):
 		nbrRow = cls.ui.tableWidget.rowCount()
@@ -105,3 +131,36 @@ class SFcalculator(QtGui.QMainWindow):
 			_item = QtGui.QTableWidgetItem(_s2ih)
 			cls.ui.tableWidget.setItem(r,9,_item)
 	
+	def tableWidgetRightClick(cls):
+		menu = QtGui.QMenu(cls)
+		removeRow = menu.addAction("Delete Row")
+		removeAll = menu.addAction("Clear Table")
+		menu.addSeparator()
+		displayMeta = menu.addAction("Display Metadata ...")
+		action = menu.exec_(QtGui.QCursor.pos())
+		
+		if action == removeRow:
+			cls.removeRow()
+		elif action == removeAll:
+			cls.removeAll()
+		elif action  == displayMeta:
+			cls.displayMetadata()
+			
+	def removeRow(cls):
+		print 'removeRow'
+		
+	def removeAll(cls):
+		print 'removeAll'
+		
+	def displayMetadata(cls):
+		[row,col] = cls.getCurrentRowColumnSelected()
+		list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_active_data = list_nxsdata_sorted[row].active_data
+		_displayMeta = DisplayMetadata(cls.main_gui, _active_data)
+		_displayMeta.show()
+		
+	def getCurrentRowColumnSelected(cls):
+		rangeSelected = cls.ui.tableWidget.selectedRanges()
+		col = rangeSelected[0].leftColumn()
+		row = rangeSelected[0].topRow()
+		return [row, col]

@@ -348,24 +348,14 @@ class NXSData(object):
       randomString = utilities.generate_random_workspace_name()
       metadata_only_flag = self._options['metadata_only']
       
-      print 'type(filename)'
-      print type(filename)
-
-
       if (type(filename) == type([])) and (len(filename) == 1):
         filename = filename[0]
 
       if (type(filename) == type(u"")) or (type(filename) == type("")):
 
         try:
-<<<<<<< HEAD
           nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString, MetaDataOnly=metadata_only_flag)
           self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value)
-=======
-          print '------> filename is: ' + str(filename)
-          nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
-          self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value) #TODO HARDCODED STRING
->>>>>>> 5ed26ecd659eb34202306301516443e64a27da1c
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
           return False
