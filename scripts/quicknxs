@@ -45,7 +45,7 @@ def _run(argv=[]):
 
 if __name__=='__main__':
   from quicknxs import config
-  if config.instrument.NAME == "REF_M":
+  if config.instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
     if check_runstate():
       # make sure the debug.log is not overwritten and only one version
       # of the program per user is running

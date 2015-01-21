@@ -1,0 +1,64 @@
+<Reduction>
+ <instrument_name>REFL</instrument_name>
+ <timestamp>Tuesday, 30. December 2014 03:04PM</timestamp>
+ <python_version>2.6.6 (r266:84292, Nov 21 2013, 10:50:32) 
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]</python_version>
+ <platform>Linux</platform>
+ <architecture>x86_64</architecture>
+ <mantid_version>3.2.1</mantid_version>
+ <DataSeries>
+  <RefLData>
+   <peak_selection_type>narrow</peak_selection_type>
+   <from_peak_pixels>112</from_peak_pixels>
+   <to_peak_pixels>125</to_peak_pixels>
+   <peak_discrete_selection>N/A</peak_discrete_selection>
+   <background_flag>0</background_flag>
+   <back_roi1_from>109</back_roi1_from>
+   <back_roi1_to>128</back_roi1_to>
+   <back_roi2_from>0</back_roi2_from>
+   <back_roi2_to>0</back_roi2_to>
+   <tof_range_flag>True</tof_range_flag>
+   <from_tof_range>50126.7181407</from_tof_range>
+   <to_tof_range>62941.067139</to_tof_range>
+   <from_q_range>0.00797</from_q_range>
+   <to_q_range>0.01000</to_q_range>
+   <from_lambda_range>13.30</from_lambda_range>
+   <to_lambda_range>17</to_lambda_range>
+   <incident_angle>1.20</incident_angle>
+   <data_sets>115294,115301</data_sets>
+   <data_full_file_name>/SNS/REF_L/IPTS-10328/0/115294/NeXus/REF_L_115294_event.nxs,/SNS/REF_L/IPTS-10328/0/115301/NeXus/REF_L_115301_event.nxs</data_full_file_name>
+   <x_min_pixel>123</x_min_pixel>
+   <x_max_pixel>187</x_max_pixel>
+   <x_range_flag>True</x_range_flag>
+   <tthd_value>-2.80</tthd_value>
+   <ths_value>-4.00</ths_value>
+   <norm_flag>True</norm_flag>
+   <norm_x_range_flag>1</norm_x_range_flag>
+   <norm_x_max>187</norm_x_max>
+   <norm_x_min>123</norm_x_min>
+   <norm_from_peak_pixels>112</norm_from_peak_pixels>
+   <norm_to_peak_pixels>125</norm_to_peak_pixels>
+   <norm_background_flag>0</norm_background_flag>
+   <norm_from_back_pixels>109</norm_from_back_pixels>
+   <norm_to_back_pixels>128</norm_to_back_pixels>
+   <norm_dataset>115294</norm_dataset>
+   <norm_full_file_name>/SNS/REF_L/IPTS-10328/0/115294/NeXus/REF_L_115294_event.nxs</norm_full_file_name>
+   <auto_q_binning>False</auto_q_binning>
+   <overlap_lowest_error>True</overlap_lowest_error>
+   <angle_offset>0.008</angle_offset>
+   <angle_offset_error>0.001</angle_offset_error>
+   <scaling_factor_flag>True</scaling_factor_flag>
+   <scaling_factor_file>/SNS/REF_L/shared/directBeamDatabaseUsersSpring2014.cfg</scaling_factor_file>
+   <slits_width_flag>True</slits_width_flag>
+   <geometry_correction_switch>False</geometry_correction_switch>
+   <incident_medium_list>Si2InDiam,Si2InDiamNoFrameOverlap,Air</incident_medium_list>
+   <incident_medium_index_selected>3</incident_medium_index_selected>
+   <fourth_column_flag>True</fourth_column_flag>
+   <fourth_column_dq0>0.0002</fourth_column_dq0>
+   <fourth_column_dq_over_q>0.023</fourth_column_dq_over_q>
+   <auto_peak_back_selection_flag>True</auto_peak_back_selection_flag>
+   <auto_peak_back_selection_width>4</auto_peak_back_selection_width>
+   <auto_tof_range_flag>True</auto_tof_range_flag>
+  </RefLData>
+  </DataSeries>
+</Reduction>

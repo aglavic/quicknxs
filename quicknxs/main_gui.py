@@ -886,7 +886,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
 
     # FIXME
-    if instrument.NAME == 'REF_L':
+    if instrument.NAME == 'REF_L': #TODO HARDCODED INSTRUMENT
       return
     
     if self.auto_change_active or not self.active_data:
@@ -924,7 +924,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     X vs. Y and X vs. Tof for main channel.
     '''
-    if instrument.NAME == "REF_M":
+    if instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
       self.plot_overview_REFM()
     else:
       self.plot_overview_REFL()
@@ -1102,11 +1102,11 @@ class MainGUI(QtGui.QMainWindow):
       ix_plot = self.ui.norm_ix_plot
 
     if data.new_detector_geometry_flag:
-      ylim = 303
-      xlim = 255
+      ylim = 303 #TODO MAGIC NUMBER
+      xlim = 255 #TODO MAGIC NUMBER
     else:
-      ylim = 255
-      xlim = 303
+      ylim = 255 #TODO MAGIC NUMBER
+      xlim = 303 #TODO MAGIC NUMBER
 
     # display yt
     if plot_yt:
@@ -1450,7 +1450,7 @@ class MainGUI(QtGui.QMainWindow):
         phi_range=datai.shape[0]*rad_per_pixel*180./pi
         tth_range=datai.shape[1]*rad_per_pixel*180./pi
         phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi
+        tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi #TODO MAGIC NUMBER
 
         plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
                              aspect='auto', cmap=self.color, origin='lower',
@@ -1537,7 +1537,7 @@ class MainGUI(QtGui.QMainWindow):
     if self.active_data is None:
       return
 
-    if instrument.NAME=="REF_L":
+    if instrument.NAME=="REF_L": #TODO HARDCODED INSTRUMENT
       data = self.active_data
     else:
       data=self.active_data[self.active_channel]
@@ -2349,7 +2349,7 @@ class MainGUI(QtGui.QMainWindow):
     Write file metadata to the labels in the overview tab.
     '''
     
-    if instrument.NAME == "REF_M":
+    if instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
 
       d=self.active_data[self.active_channel]
   
@@ -2409,7 +2409,7 @@ class MainGUI(QtGui.QMainWindow):
       
   @log_call
   def toggleColorbars(self):
-    if instrument.NAME == 'REF_M':
+    if instrument.NAME == 'REF_M': #TODO HARDCODED INSTRUMENT
       if not self.auto_change_active:
         plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
                self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
@@ -3282,7 +3282,7 @@ class MainGUI(QtGui.QMainWindow):
     Calculate x and y regions for reflectivity extraction and put them in the
     entry fields.
     '''
-    if instrument.NAME == "REF_M":
+    if instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
       data=self.active_data[self.active_channel]
     else:
       data=self.active_data
@@ -3368,7 +3368,7 @@ Do you want to try to restore the working reduction list?""",
 #    self.ui.overviewSplitter.setSizes(gui.splitters[1])
     self.ui.color_selector.setCurrentIndex(gui.color_selection)
     self.ui.show_colorbars.setChecked(gui.show_colorbars)
-    if instrument.NAME is "REF_M":
+    if instrument.NAME is "REF_M": #TODO HARDCODED INSTRUMENT
       self.ui.normalizeXTof.setChecked(gui.normalizeXTof)
     #for i, fig in enumerate([
                             #self.ui.xy_overview,
@@ -3384,7 +3384,7 @@ Do you want to try to restore the working reduction list?""",
     Save window and dock geometry.
     '''
 
-    if instrument.NAME == 'REF_M':
+    if instrument.NAME == 'REF_M': #TODO HARDCODED INSTRUMENT
 
       # join delay thread
       debug('Shutting down delay trigger')
@@ -4482,7 +4482,7 @@ Do you want to try to restore the working reduction list?""",
       if _row == 0:
         _first_file_name = self.getNodeValue(node, 'data_full_file_name')
         if _first_file_name == '': # no full_file_name defined
-          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
+          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
         else:
           _first_file_name = _first_file_name.split(',')
 
@@ -4705,7 +4705,7 @@ Do you want to try to restore the working reduction list?""",
       if _row == 0:
         _first_file_name = self.getNodeValue(node, 'data_full_file_name')
         if _first_file_name == '': # no full_file_name defined
-          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0]
+          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
         else:
           _first_file_name = _first_file_name.split(',')
 
@@ -5411,7 +5411,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       table_col = 0
     run_number = self.ui.reductionTable.item(row,table_col).text()
-    default_filename = 'REFL_' + run_number + '_crtof.txt'
+    default_filename = 'REFL_' + run_number + '_crtof.txt' #TODO HARDCODED INSTRUMENT
     _path = self.path_ascii
     default_filename = _path + '/' + default_filename
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Create RTOF ASCII file', default_filename)
@@ -5461,7 +5461,7 @@ Do you want to try to restore the working reduction list?""",
     else:
       table_col = 0
     run_number = self.ui.reductionTable.item(row,table_col).text()
-    default_filename = 'REFL_' + run_number + '_rpx.txt'
+    default_filename = 'REFL_' + run_number + '_rpx.txt' #TODO HARDCODED INSTRUMENT
     _path = self.path_ascii
     default_filename = _path + '/' + default_filename
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Create Counts vs Pixel ASCII file', default_filename)
@@ -5515,7 +5515,7 @@ Do you want to try to restore the working reduction list?""",
       return
     
     run_number = self.ui.reductionTable.item(0,0).text()
-    default_filename = 'REFL_' + run_number + '_combined_data.txt'
+    default_filename = 'REFL_' + run_number + '_combined_data.txt' #TODO HARDCODED INSTRUMENT
     _path = self.path_ascii
     default_filename = _path + '/' + default_filename
     filename = QtGui.QFileDialog.getSaveFileName(self, 'Create ASCII file', default_filename)
@@ -5896,7 +5896,7 @@ Do you want to try to restore the working reduction list?""",
     Open a HTML page with the program documentation and place it on the right
     side of the current screen.
     '''
-    if instrument.NAME == "REF_L":
+    if instrument.NAME == "REF_L": #TODO HARDCODED INSTRUMENT
       return
     
     dia=QtGui.QDialog(self)
@@ -5928,7 +5928,7 @@ Do you want to try to restore the working reduction list?""",
     except ImportError:
       pyqtversion='Unknown'
 
-    if instrument.NAME == 'REF_M':
+    if instrument.NAME == 'REF_M': #TODO HARDCODED INSTRUMENT
       QtGui.QMessageBox.about(self, 'About QuickNXS',
   '''
   QuickNXS - SNS Magnetism Reflectometer data reduction program
@@ -5958,4 +5958,4 @@ Do you want to try to restore the working reduction list?""",
     HDF5 %s
   '''%(str_version, sys.version, npversion, mplversion,
        QtCore.QT_VERSION_STR, pyqtversion, h5pyversion, hdf5version))
-      
+

@@ -9,6 +9,7 @@ import time
 
 class DisplayMetadata(QDialog):
 	
+	#TODO HARDCODED STRING
 	dom_filename = '/SNS/users/j35/nexus_metadata_list.xml'  #for testing only
 	
 	_open_instances = []
