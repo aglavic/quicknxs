@@ -41,6 +41,7 @@ from peakfinder import PeakFinder
 from all_plot_axis import AllPlotAxis
 
 ### Parameters needed for some calculations.
+#TODO MAGIC NUMBER
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
 DETECTOR_X_REGION=(8, 295) # the active area of the detector
 DETECTOR_Y_REGION=(8, 246)
@@ -202,7 +203,7 @@ class NXSData(object):
   tmp_e_axis = []
 
   DEFAULT_OPTIONS=dict(bin_type=0, bins=40, use_caching=True, callback=None,
-                       event_split_bins=None, event_split_index=0, low_res_range=[0,303],
+                       event_split_bins=None, event_split_index=0, low_res_range=[0,303], #TODO MAGIC NUMBER
                        event_tof_overwrite=None, 
                        metadata_config_object=None,
                        angle_offset = 0,
@@ -216,7 +217,7 @@ class NXSData(object):
     use_caching='If files should be cached for faster future readouts (last 20 files)',
     event_split_bins='Number of items, to split the events in time or None for no splitting',
     event_split_index='Index of the splitted item to be returned, when event_split_bin is not None',
-    low_res_range='Pixel range of the low resolution axis (0->304 for the REF_L)',
+    low_res_range='Pixel range of the low resolution axis (0->304 for the REF_L)', #TODO MAGIC NUMBER
     event_tof_overwrite='Optional array of ToF edges to be used instead of the ones created from bins and bin_type',
     metadata_config_object='LConfigDataset that is only present when the data comes from a config file',
     angle_offset='angle offset value defined in GUI',
@@ -312,7 +313,7 @@ class NXSData(object):
     
     :param str filename: Path to file to read
     '''
-    if instrument.NAME == 'REF_M':
+    if instrument.NAME == 'REF_M': #TODO HARDCODED INSTRUMENT
       return self._read_REFM_file(filename)
     else:
       return self._read_REFL_file(filename)
@@ -353,7 +354,7 @@ class NXSData(object):
         try:
           print '------> filename is: ' + str(filename)
           nxs = LoadEventNexus(Filename=str(filename),OutputWorkspace=randomString)
-          self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value)
+          self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value) #TODO HARDCODED STRING
         except IOError:
           debug('Could not read nxs file %s'%filename, exc_info=True)
           return False
@@ -373,15 +374,15 @@ class NXSData(object):
               
               # retrieve lambda requested value
               mt_run = nxs.getRun()
-              self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value)
-              _lambda_requested_1 = mt_run.getProperty('LambdaRequest').value
+              self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value) #TODO HARDCODED STRING
+              _lambda_requested_1 = mt_run.getProperty('LambdaRequest').value #TODO HARDCODED STRING
               _index += 1
             else:
               tmp=LoadEventNexus(Filename=str(_filename))
               
               # make sure that the files have the same lambda requested
               mt_run = tmp.getRun()
-              _lambda_requested_2 = mt_run.getProperty('LambdaRequest').value
+              _lambda_requested_2 = mt_run.getProperty('LambdaRequest').value #TODO HARDCODED STRING
               if _lambda_requested_1 != _lambda_requested_2:
                 debug('Lambda Requested of files do not match!')
                 info('Lambda Requested do not match!')
@@ -463,8 +464,8 @@ class NXSData(object):
     if len(channels)==0:
       debug('No valid channels in file')
       return False
-    ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
-    pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+    ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0] #TODO HARDCODED STRING
+    pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0] #TODO HARDCODED STRING
     try:
       smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
     except KeyError:
@@ -486,6 +487,7 @@ class NXSData(object):
       else:
         self.measurement_type='Polarized'
         mapping=list(MAPPING_HALFPOL)
+    #TODO HARDCODED STRING
     elif 'DASlogs' in nxs[channels[0]] and \
           nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
           channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
@@ -515,7 +517,7 @@ class NXSData(object):
       if channel not in channels:
         continue
       raw_data=nxs[channel]
-      if filename.endswith('event.nxs'):
+      if filename.endswith('event.nxs'): #TODO HARDCODED STRING
         data=MRDataset.from_event(raw_data, self._options,
                                   callback=self._options['callback'],
                                   callback_offset=progress,
@@ -526,7 +528,7 @@ class NXSData(object):
           # no data in channel, don't add it
           empty_channels.append(dest)
           continue
-      elif filename.endswith('histo.nxs'):
+      elif filename.endswith('histo.nxs'): #TODO HARDCODED STRING
         data=MRDataset.from_histogram(raw_data, self._options)
       else:
         data=MRDataset.from_old_format(raw_data, self._options)
@@ -735,6 +737,7 @@ class MRDataset(object):
   mon_data=None #: array of monitor counts per ToF bin
 
   # for resolution calculation
+  #TODO MAGIC NUMBER
   slit1_width=3. #: first slit width [mm]
   slit1_dist=2600. #: first slit to sample distance [mm]
   slit2_width=2. #: second slit width [mm]
@@ -780,16 +783,17 @@ class MRDataset(object):
     output.read_options=read_options
     output._collect_info(data)
 
-    output.tof_edges=data['bank1/time_of_flight'].value
+    output.tof_edges=data['bank1/time_of_flight'].value #TODO HARDCODED STRING
     # the data arrays
-    output.data=data['bank1/data'].value.astype(float) # 3D dataset
-    output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
-    output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset
+    output.data=data['bank1/data'].value.astype(float) # 3D dataset #TODO HARDCODED STRING
+    output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset #TODO HARDCODED STRING
+    output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset #TODO HARDCODED STRING
 
     try:
+      #TODO HARDCODED STRING
       mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
                                             output.dist_mod_det/output.dist_mod_mon
-      mon_I_from=data['monitor1']['data'].value.astype(float)
+      mon_I_from=data['monitor1']['data'].value.astype(float) #TODO HARDCODED STRING
       mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
                          weights=mon_I_from)[0]
       output.mon_data=mod_data
@@ -808,9 +812,9 @@ class MRDataset(object):
     output._collect_info(data)
 
     # first ToF edge is 0, prevent that
-    output.tof_edges=data['bank1/time_of_flight'].value[1:]
+    output.tof_edges=data['bank1/time_of_flight'].value[1:] #TODO HARDCODED STRING
     # the data arrays
-    output.data=data['bank1/data'].value.astype(float)[:, :, 1:] # 3D dataset
+    output.data=data['bank1/data'].value.astype(float)[:, :, 1:] # 3D dataset #TODO HARDCODED STRING
     output.xydata=output.data.sum(axis=2).transpose()
     output.xtofdata=output.data.sum(axis=1)
     return output
@@ -835,7 +839,7 @@ class MRDataset(object):
     output._collect_info(data)
 
     if tof_overwrite is None:
-      lcenter=data['DASlogs/LambdaRequest/value'].value[0]
+      lcenter=data['DASlogs/LambdaRequest/value'].value[0] #TODO HARDCODED STRING
       # ToF region for this specific central wavelength
       tmin=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter-1.6)*1e-4
       tmax=output.dist_mod_det/H_OVER_M_NEUTRON*(lcenter+1.6)*1e-4
@@ -852,16 +856,16 @@ class MRDataset(object):
 
     # Histogram the data
     # create ToF edges for the binning and correlate pixel indices with pixel position
-    tof_ids=array(data['bank1_events/event_id'].value, dtype=int)
-    tof_time=data['bank1_events/event_time_offset'].value
+    tof_ids=array(data['bank1_events/event_id'].value, dtype=int) #TODO HARDCODED STRING
+    tof_time=data['bank1_events/event_time_offset'].value #TODO HARDCODED STRING
     # read the corresponding proton charge of each pulse
-    tof_pc=data['DASlogs/proton_charge/value'].value
+    tof_pc=data['DASlogs/proton_charge/value'].value #TODO HARDCODED STRING
     if read_options['event_split_bins']:
       split_bins=read_options['event_split_bins']
       split_index=read_options['event_split_index']
       # read the relative time in seconds from measurement start to event
-      tof_real_time=data['bank1_events/event_time_zero'].value
-      tof_idx_to_id=data['bank1_events/event_index'].value
+      tof_real_time=data['bank1_events/event_time_zero'].value #TODO HARDCODED STRING
+      tof_idx_to_id=data['bank1_events/event_index'].value #TODO HARDCODED STRING
       if total_duration is None:
         split_step=float(tof_real_time[-1]+0.01)/split_bins
       else:
@@ -941,7 +945,7 @@ class MRDataset(object):
       # deepest recursion reached, all items should be within the two ToF edges
       if callback is not None:
         callback(callback_offset+callback_scaling*cbidx)
-      return [bincount(tof_ids, minlength=304*256).reshape(304, 256).tolist()]
+      return [bincount(tof_ids, minlength=304*256).reshape(304, 256).tolist()] #TODO MAGIC NUMBER
     # split all events into two time of flight regions
     split_idx=len(tof_edges)/2
     left_region=tof_time<tof_edges[split_idx]
@@ -966,12 +970,12 @@ class MRDataset(object):
     self.log_units=NiceDict()
     if 'DASlogs' in data:  # the old format does not include the DAS logs
       # get an array of all pulses to make it possible to correlate values with states
-      stimes=data['DASlogs/proton_charge/time'].value
+      stimes=data['DASlogs/proton_charge/time'].value #TODO HARDCODED STRING
       stimes=stimes[::10] # reduce the number of items to speed up the correlation
       # use only values that are not directly before or after a state change
       stimesl, stimesc, stimesr=stimes[:-2], stimes[1:-1], stimes[2:]
       stimes=stimesc[((stimesr-stimesc)<1.)&((stimesc-stimesl)<1.)]
-      for motor, item in data['DASlogs'].items():
+      for motor, item in data['DASlogs'].items(): #TODO HARDCODED STRING
         if motor in ['proton_charge', 'frequency', 'Veto_pulse']:
           continue
         try:
@@ -996,8 +1000,9 @@ class MRDataset(object):
               self.log_minmax[motor]=(val.min(), val.max())
         except:
           continue
-      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0]
-    self.dangle=data['instrument/bank1/DANGLE/value'].value[0]
+      self.lambda_center=data['DASlogs/LambdaRequest/value'].value[0] #TODO HARDCODED STRING
+    self.dangle=data['instrument/bank1/DANGLE/value'].value[0] #TODO HARDCODED STRING
+    #TODO HARDCODED STRING
     if 'instrument/bank1/DANGLE0' in data: # compatibility for ancient file format
       self.dangle0=data['instrument/bank1/DANGLE0/value'].value[0]
       self.dpix=data['instrument/bank1/DIRPIX/value'].value[0]
@@ -1023,7 +1028,7 @@ class MRDataset(object):
 
     self.dist_sam_det=data['instrument/bank1/SampleDetDis/value'].value[0]*1e-3
     self.dist_mod_det=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3+self.dist_sam_det
-    self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75
+    self.dist_mod_mon=data['instrument/moderator/ModeratorSamDis/value'].value[0]*1e-3-2.75 #TODO MAGIC NUMBER
     self.det_size_x=data['instrument/bank1/origin/shape/size'].value[0]
     self.det_size_y=data['instrument/bank1/origin/shape/size'].value[1]
 
@@ -1164,7 +1169,7 @@ class MRDataset(object):
       dpix=self.dpix
     x=self.x
     grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
-    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
+    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel #TODO MAGIC NUMBER
     tth_range=x[::-1]*grad_per_pixel
     return tth0+tth_range
 
@@ -1238,6 +1243,7 @@ class LRDataset(object):
   run_number = '' #: NeXus run number
 
   # for resolution calculation
+  #TODO MAGIC NUMBER
   slit1_width=3. #: first slit width [mm]
   slit1_dist=2600. #: first slit to sample distance [mm]
   slit2_width=2. #: second slit width [mm]
@@ -1269,7 +1275,7 @@ class LRDataset(object):
   dMD_units = ''
   filename= ''
   
-  low_resolution_range = [0,303]
+  low_resolution_range = [0,303] #TODO MAGIC NUMBER
   
   # will be used to keep the GUI in the same state
   full_file_name = ''
@@ -1291,6 +1297,7 @@ class LRDataset(object):
 
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
+  #TODO MAGIC NUMBER
   lambda_center=3.37 #: central wavelength of measurement band [Å]
 
   xydata=None #: 2D array of intensity projected on X-Y
@@ -1316,6 +1323,7 @@ class LRDataset(object):
   experiment='' #: Name of the experiment
   number=0 #: Index of the run
   merge_warnings=''
+  #TODO MAGIC NUMBER
   dist_mod_det=21.2535 #: moderator to detector distance [m]
   dist_sam_det=2.55505 #: sample to detector distance [m]
   det_size_x=0.2128 #: horizontal size of detector [m]
@@ -1350,16 +1358,17 @@ class LRDataset(object):
     output.read_options=read_options
     output._collect_info(data)
 
-    output.tof_edges=data['bank1/time_of_flight'].value
+    output.tof_edges=data['bank1/time_of_flight'].value #TODO HARDCODED STRING
     # the data arrays
-    output.data=data['bank1/data'].value.astype(float) # 3D dataset
-    output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset
-    output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset
+    output.data=data['bank1/data'].value.astype(float) # 3D dataset #TODO HARDCODED STRING
+    output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset #TODO HARDCODED STRING
+    output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset #TODO HARDCODED STRING
 
     try:
+      #TODO HARDCODED STRING
       mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
                                             output.dist_mod_det/output.dist_mod_mon
-      mon_I_from=data['monitor1']['data'].value.astype(float)
+      mon_I_from=data['monitor1']['data'].value.astype(float) #TODO HARDCODED STRING
       mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
                          weights=mon_I_from)[0]
       output.mon_data=mod_data
@@ -1378,6 +1387,7 @@ class LRDataset(object):
     output._collect_info(data)
 
     # first ToF edge is 0, prevent that
+    #TODO HARDCODED STRING
     output.tof_edges=data['bank1/time_of_flight'].value[1:]
     # the data arrays
     output.data=data['bank1/data'].value.astype(float)[:, :, 1:] # 3D dataset
@@ -1583,7 +1593,7 @@ class LRDataset(object):
     output.theta = LRDataset.calculate_theta(output)
 
     if (output.read_options['is_auto_tof_finder']) or (output.tof_range == ['0','0']):
-      
+      #TODO MAGIC NUMBER
       # auto t range
       autotmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 1.7) * 1e-4
       autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
@@ -1615,8 +1625,8 @@ class LRDataset(object):
     nxs_histo = Rebin(InputWorkspace=nxs,Params=params, PreserveEvents=True)
     # normalize by proton charge
 
-    _proton_charge = float(nxs.getRun().getProperty('gd_prtn_chrg').value)
-    _proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units
+    _proton_charge = float(nxs.getRun().getProperty('gd_prtn_chrg').value) #TODO HARDCODED STRING
+    _proton_charge_units = nxs.getRun().getProperty('gd_prtn_chrg').units #TODO HARDCODED STRING
     new_proton_charge_units = 'mC'
     
     output.proton_charge = _proton_charge * 3.6   # to go from microA/h to mC
@@ -1705,12 +1715,12 @@ class LRDataset(object):
     nbr_tof = len(_tof_axis)
     
     if new_detector_flag:
- 
+      #TODO MAGIC NUMBER
       sz_y_axis = 304
       sz_x_axis = 256
        
     else:
-      
+      #TODO MAGIC NUMBER
       sz_y_axis = 256
       sz_x_axis = 304
 
@@ -1765,7 +1775,7 @@ class LRDataset(object):
       # deepest recursion reached, all items should be within the two ToF edges
       if callback is not None:
         callback(callback_offset+callback_scaling*cbidx)
-      return [bincount(tof_ids, minlength=304*256).reshape(304, 256).tolist()]
+      return [bincount(tof_ids, minlength=304*256).reshape(304, 256).tolist()] #TODO MAGIC NUMBER
     # split all events into two time of flight regions
     split_idx=len(tof_edges)/2
     left_region=tof_time<tof_edges[split_idx]
@@ -1785,7 +1795,7 @@ class LRDataset(object):
     :param h5py._hl.group.Group data:
     '''
     mt_run = nxs.getRun()
-    
+    #TODO HARDCODED STRING
     lr = mt_run.getProperty('LambdaRequest').value
     self.run_number = mt_run.getProperty('run_number').value
 #    if len(lr) > 1:
@@ -1814,7 +1824,7 @@ class LRDataset(object):
     self.dMS = sample.getDistance(source) 
     
     #create array of distances pixel->sample
-    dPS_array = zeros((256,304))
+    dPS_array = zeros((256,304)) #TODO MAGIC NUMBER
     for x in range(304):
       for y in range(256):
         _index = 256 * x + y
@@ -1824,7 +1834,7 @@ class LRDataset(object):
     # array of distances pixel->source
     dMP_array = dPS_array + self.dMS
     # distance sample->center of detector
-    self.dSD = dPS_array[256/2, 304/2]
+    self.dSD = dPS_array[256/2, 304/2] #TODO MAGIC NUMBER
     # distance source->center of detector
     self.dMD = self.dSD + self.dMS
 
@@ -1961,7 +1971,7 @@ class LRDataset(object):
       dpix=self.dpix
     x=self.x
     grad_per_pixel=self.det_size_x/self.dist_sam_det/len(x)*180./pi
-    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel
+    tth0=(self.dangle-dangle0)-(304-dpix)*grad_per_pixel #TODO MAGIC NUMBER
     tth_range=x[::-1]*grad_per_pixel
     return tth0+tth_range
 
@@ -2042,6 +2052,7 @@ class Reflectivity(object):
   """
   __metaclass__=OptionsDocMeta
 
+  #TODO MAGIC NUMBER
   DEFAULT_OPTIONS=dict(
        x_pos=None,
        x_width=9,

@@ -27,8 +27,8 @@ class DisplayPlots(object):
 	it_plot_ui = None
 	ix_plot_ui = None
 	
-	xlim = 255
-	ylim = 303
+	xlim = 255 #TODO MAGIC NUMBER
+	ylim = 303 #TODO MAGIC NUMBER
 
 	tofAxis = None
 	fullTofAxis = None
