@@ -259,9 +259,12 @@ class ReductionObject(object):
 
         nxs_histo = Rebin(InputWorkspace=nxs, Params=rebin_params, PreserveEvents=True)
         nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
-        data.nxs_histo = nxs_histo
 
-        data.tof_axis = nxs_histo.readX(0)
+        [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, data.new_detector_geometry_flag)
+
+        data.tof_axis = _tof_axis
+        data.Ixyt = Ixyt
+        data.Exyt = Exyt
         self.oData.active_data = data
 
         self.logbook('-> rebin DATA ... DONE')
@@ -275,9 +278,12 @@ class ReductionObject(object):
             
             norm_nxs_histo = Rebin(InputWorkspace=norm_nxs, Params=rebin_params, PreserveEvents=True)
             norm_nxs_histo = NormaliseByCurrent(InputWorkspace=norm_nxs_histo)
-            norm.nxs_histo = norm_nxs_histo
             
-            norm.tof_axis = norm_nxs_histo.readX(0)
+            [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(norm_nxs_histo, norm.new_detector_geometry_flag)
+            
+            norm.tof_axis = _tof_axis
+            norm.Ixyt = Ixyt
+            norm.Exyt = Exyt
             self.oNorm.active_data = norm
             
             self.logbook('-> rebin NORMALIZATION ... DONE')
@@ -584,24 +590,32 @@ class ReductionObject(object):
         self.logbook('--> from pixel: ' + str(from_pixel))
         self.logbook('--> to pixel: ' + str(to_pixel))
         
+#        print '-> from_pixel: %d' % from_pixel
+#        print '-> to_pixel: %d' % to_pixel
+
+        Ixyt = data.Ixyt   # for example [303,256,471]
+        Exyt = data.Exyt
+         
+#        x_dim = np.size(Ixyt,0)
+#        y_dim = np.size(Ixyt,1)
+#        tof_dim = np.size(Ixyt,2)
+        
+#        _y_error_axis = np.zeros((y_dim, tof_dim))
+        
+#        x_size = to_pixel - from_pixel + 1
+#        x_range = np.arange(x_size) + from_pixel
+        
+#        y_range = np.arange(y_dim)
+
         # calculate y axis
-        nxs = data.nxs_histo
-        x_size = to_pixel - from_pixel
-        y_size = data.ixyIndex(1,0)
-        num_bins = nxs.blocksize()
-        new_data_y_axis = np.zeros((y_size, num_bins))
-        for y in range(y_size):
-            for x in range(x_size):
-                new_data_y_axis[y] += nxs.readY(data.ixyIndex(from_pixel + x,y))
-        self.data_y_axis = new_data_y_axis
+        Ixyt_crop = Ixyt[from_pixel:to_pixel+1,:,:]
+        self.data_y_axis = Ixyt_crop.sum(axis=0)
         
         # calculate error axis
-        new_data_e_axis = np.zeros((y_size, num_bins))
-        for y in range(y_size):
-            for x in range(x_size):
-                    e = nxs.readE(data.ixyIndex(from_pixel + x,y))
-                    new_data_e_axis[y] += e * e
-        self.data_y_error_axis = np.sqrt(new_data_e_axis)
+        Exyt_crop = Exyt[from_pixel:to_pixel+1,:,:]
+        Exyt_crop_sq = Exyt_crop * Exyt_crop
+        _y_error_axis = Exyt_crop_sq.sum(axis=0)
+        self.data_y_error_axis = np.sqrt(_y_error_axis)
 
         # work with Normalization
         if self.oNorm is not None:
@@ -614,24 +628,18 @@ class ReductionObject(object):
                 from_pixel = int(norm.low_resolution_range[0])
                 to_pixel = int(norm.low_resolution_range[1])
         
+            Ixyt = norm.Ixyt   # for example [303,255,471]
+            Exyt = norm.Exyt
+        
             # calculate y axis
-            nxs = norm.nxs_histo
-            x_size = to_pixel - from_pixel
-            y_size = norm.ixyIndex(1,0)
-            num_bins = nxs.blocksize()
-            new_norm_y_axis = np.zeros((y_size, num_bins))
-            for y in range(y_size):
-                for x in range(x_size):
-                    new_norm_y_axis[y] += nxs.readY(norm.ixyIndex(from_pixel + x,y))
-            self.norm_y_axis = new_norm_y_axis
+            Ixyt_crop = Ixyt[from_pixel:to_pixel+1,:,:]
+            self.norm_y_axis = Ixyt_crop.sum(axis=0)
             
             # calculate error axis
-            new_norm_e_axis = np.zeros((y_size, num_bins))
-            for y in range(y_size):
-                for x in range(x_size):
-                        e = nxs.readE(norm.ixyIndex(from_pixel + x,y))
-                        new_norm_e_axis[y] += e * e
-            self.norm_y_error_axis = np.sqrt(new_norm_e_axis)
+            Exyt_crop = Exyt[from_pixel:to_pixel+1,:,:]
+            Exyt_crop_sq = Exyt_crop * Exyt_crop
+            _y_error_axis = Exyt_crop_sq.sum(axis=0)
+            self.norm_y_error_axis = np.sqrt(_y_error_axis)
 
         self.logbook('-> integrate_over_low_res_range ... DONE !')
 
@@ -931,14 +939,14 @@ class ReductionObject(object):
                 full_file_name = oConfig.data_full_file_name
                 if full_file_name == u'' or full_file_name == [''] :
                     _run_number = oConfig.data_sets
-                    full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0] #TODO HARDCODED INSTRUMENT
+                    full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
             else:
                 is_data = False
                 if oConfig.norm_flag:
                     full_file_name = oConfig.norm_full_file_name
                     if full_file_name == u'' or full_file_name == ['']:
                         _run_number = oConfig.norm_sets
-                        full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0] #TODO HARDCODED INSTRUMENT
+                        full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
 
             event_split_bins = None
             event_split_index = 0

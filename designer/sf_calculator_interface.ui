@@ -98,7 +98,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="data_selection_error_label">
+            <widget class="QLabel" name="error_label">
              <property name="text">
               <string>SELECTION ERROR</string>
              </property>
@@ -169,7 +169,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="data_back2_error">
+                <widget class="QLabel" name="back2_error">
                  <property name="font">
                   <font>
                    <pointsize>20</pointsize>
@@ -253,7 +253,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="data_peak2_error">
+                <widget class="QLabel" name="peak2_error">
                  <property name="font">
                   <font>
                    <pointsize>20</pointsize>
@@ -337,7 +337,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="data_peak1_error">
+                <widget class="QLabel" name="peak1_error">
                  <property name="font">
                   <font>
                    <pointsize>20</pointsize>
@@ -421,7 +421,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="data_back1_error">
+                <widget class="QLabel" name="back1_error">
                  <property name="font">
                   <font>
                    <pointsize>20</pointsize>
@@ -613,7 +613,7 @@
      <x>0</x>
      <y>0</y>
      <width>1334</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -22,8 +22,18 @@ class SFcalculator(QtGui.QMainWindow):
 		cls._open_instances.append(cls)
 		cls.ui = Ui_MainWindow()
 		cls.ui.setupUi(cls)
+		cls.initGui()
 		cls.checkGui()
 		
+	def initGui(cls):
+		palette = QtGui.QPalette()
+		palette.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
+		cls.ui.back1_error.setPalette(palette)
+		cls.ui.back2_error.setPalette(palette)
+		cls.ui.peak1_error.setPalette(palette)
+		cls.ui.peak2_error.setPalette(palette)
+		cls.ui.error_label.setPalette(palette)
+	
 	def checkGui(cls):
 		if cls.loaded_list_of_runs == []:
 			wdg_enabled = False
@@ -33,7 +43,30 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.testPeakBackErrorWidgets()
 		
 	def testPeakBackErrorWidgets(cls):
-		pass
+		if cls.list_nxsdata_sorted == []:
+			_show_widgets_1 = False
+			_show_widgets_2 = False
+		else:
+			back_to = int(cls.ui.dataBackToValue.text())
+			back_from = int(cls.ui.dataBackFromValue.text())
+			peak_to = int(cls.ui.dataPeakToValue.text())
+			peak_from = int(cls.ui.dataPeakFromValue.text())
+			back_flag = cls.ui.dataBackgroundFlag.isChecked()
+			
+			_show_widgets_1 = False
+			_show_widgets_2 = False
+			
+			if back_flag:
+				if back_from > peak_from:
+					_show_widgets_1 = True
+				if back_to < peak_to:
+					_show_widgets_2 = True
+					
+		cls.ui.back1_error.setVisible(_show_widgets_1)
+		cls.ui.peak1_error.setVisible(_show_widgets_1)
+		cls.ui.back2_error.setVisible(_show_widgets_2)
+		cls.ui.peak2_error.setVisible(_show_widgets_2)
+		cls.ui.error_label.setVisible(_show_widgets_1 or _show_widgets_2)
 		
 	def enabledWidgets(cls, is_enabled):
 		cls.ui.yi_plot.setEnabled(is_enabled)
