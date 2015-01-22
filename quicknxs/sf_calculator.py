@@ -30,6 +30,10 @@ class SFcalculator(QtGui.QMainWindow):
 		else:
 			wdg_enabled = True
 		cls.enabledWidgets(wdg_enabled)
+		cls.testPeakBackErrorWidgets()
+		
+	def testPeakBackErrorWidgets(cls):
+		pass
 		
 	def enabledWidgets(cls, is_enabled):
 		cls.ui.yi_plot.setEnabled(is_enabled)
