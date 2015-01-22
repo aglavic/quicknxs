@@ -532,11 +532,12 @@ class MainGUI(QtGui.QMainWindow):
     return [_row, _column]
  
   def reduction_table_cell_modified(self, item):
+    return
 #    print 'in reduction_table_cell_modified'
     if self.editing_flag:
       OpenRunNumber(self, item, replaced_data=True)
       self.editing_flag = False
-      DisplayPlots(self)
+    #  DisplayPlots(self)
  
   def reduction_table_cell_double_clicked(self, row, column):
 #    print 'reduction table cell double clicked'
@@ -2167,7 +2168,6 @@ class MainGUI(QtGui.QMainWindow):
     OpenRunNumber(self)
         
     PopulateReductionTable(self)
-
     # selection
     _row = self._prev_row_selected
     _col = self._prev_col_selected

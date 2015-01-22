@@ -10,6 +10,10 @@ class SinglePlotClick(object):
 	def __init__(cls, self, data_type, plot_type, is_pan_or_zoom_activated=False):
 		cls.self = self
 		
+		[row,col] = self.getCurrentRowColumnSelected()
+		_data = self.bigTableData[row, col]
+		self.active_data = _data.active_data
+		
 		if plot_type == 'ix':
 			return
 		
@@ -31,13 +35,14 @@ class SinglePlotClick(object):
 		if self.timeClick1 == -1:
 			self.timeClick1 = time.time()
 			return
-		elif abs(self.timeClick1 - time.time()) > 0.5:
+		elif abs(self.timeClick1 - time.time()) >0.5:
 			self.timeClick1 = time.time()
 			return
 		else:
 			_timeClick2 = time.time()
 	    
 		if (_timeClick2 - self.timeClick1) <= constants.double_click_if_within_time:
+			
 			data = self.active_data
 			dialog_refl = PlotDialogREFL(self, data_type, data)
 			dialog_refl.show()

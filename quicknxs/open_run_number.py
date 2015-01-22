@@ -71,7 +71,6 @@ class OpenRunNumber(object):
 			[r,c] = cls.getRowColumnNextDataSet()
 			if c is not 0:
 				c = 1
-			
 		self.bigTableData[r,c] = data
 		[true_r, true_c] = self.getTrueCurrentRowColumnSelected()
 		if true_r == -1:

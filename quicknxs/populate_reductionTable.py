@@ -8,7 +8,6 @@ class PopulateReductionTable(object):
 	def __init__(cls, self):
 		cls.self = self
 		_bigTableData = self.bigTableData
-		
 		cls.clearTable()
 
 		[nbr_row, nbr_col] = _bigTableData.shape
@@ -25,13 +24,15 @@ class PopulateReductionTable(object):
 			for c in range(2):
 				_obj = _bigTableData[r,c]
 				if c==1:
-					c=6
+					col=6
+				else:
+					col=0
 
 				if _obj == None:
 					_obj_config = _bigTableData[r,2]
 					if (_obj_config is None):
 						_item = QtGui.QTableWidgetItem('')
-						self.ui.reductionTable.setItem(r,c,_item)
+						self.ui.reductionTable.setItem(r,col,_item)
 					else:
 						if c == 0:
 							_data_run_number = _obj_config.data_sets
@@ -47,7 +48,8 @@ class PopulateReductionTable(object):
 					_run_number = _obj.active_data.run_number
 					_item = QtGui.QTableWidgetItem(_run_number)
 					_item.setForeground(QtGui.QColor(13,24,241))
-					self.ui.reductionTable.setItem(r,c,_item)
+
+					self.ui.reductionTable.setItem(r,col,_item)
 					if c==0:
 						cls.addMetadata(r, _obj)
 						
