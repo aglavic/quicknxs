@@ -17,13 +17,13 @@ except ImportError:
 
 
 __package_name__='QuickNXS'
-__author__="Artur Glavic"
+__author__="Jean Bilheux"
 __copyright__="Copyright 2012-2013"
 __license__="GPL v3"
-__email__="glavicag@ornl.gov"
+__email__="bilheuxjm@ornl.gov"
 __author_email__=__email__
 __url__="http://"
-__description__='''Magnetism reflectometer data reduction software'''
+__description__='''Liquids reflectometer data reduction software'''
 
 __scripts__=['scripts/quicknxs']
 __py_modules__=[]

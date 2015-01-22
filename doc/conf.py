@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'QuickNXS'
-copyright=u'2012-2013, Artur Glavic' #@ReservedAssignment
+copyright=u'2014-2015, Jean Bilheux' #@ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
