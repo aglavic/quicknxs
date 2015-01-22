@@ -1296,6 +1296,7 @@ class LRDataset(object):
   incident_angle = 0
   
   nxs=None # Mantid NeXus workspace
+  nxs_histo=None # Mantid NeXus workspace, rebinned
 
   ai=None #: incident angle
   dpix=0 #: pixel of direct beam position at dangle0
@@ -1636,44 +1637,34 @@ class LRDataset(object):
     output.proton_charge = _proton_charge * 3.6   # to go from microA/h to mC
     output.proton_charge_units = new_proton_charge_units
 
-    #if _proton_charge > 0:
-      #nxs_histo = NormaliseByCurrent(InputWorkspace=nxs_histo)
-    
-    # retrieve 3D array
-    [_tof_axis, Ixyt, Exyt] = LRDataset.getIxyt(nxs_histo, output.new_detector_geometry_flag)
-    output.tof_axis_auto_with_margin = _tof_axis
-    
+    output.tof_axis_auto_with_margin = nxs_histo.readX(0)
+
     ## keep only the low resolution range requested
-#    print read_options['low_res_range_flag']
     low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
     from_pixel = min(low_res_range)
     to_pixel = max(low_res_range)
 
-    # keep only low resolution range defined
-    Ixyt = Ixyt[from_pixel:to_pixel,:,:]
-    Exyt = Exyt[from_pixel:to_pixel,:,:]
-    
-    output.Ixyt = Ixyt
-    output.Exyt = Exyt
-    
     # create projections for the 2D datasets
-    Ixy = Ixyt.sum(axis=2)
-    #axisToSum = 2
-    #[Ixy, Exy] = weighted_sum(Ixyt, Exyt, axisToSum)
-    
-    Iyt = Ixyt.sum(axis=0)
+    x_size = to_pixel - from_pixel
+    y_size = output.ixyIndex(1,0)
+    num_bins = nxs_histo.blocksize()
+
+    Iyt = np.zeros((y_size, num_bins))
+    for x in range(x_size):
+      for y in range(y_size):
+        Iyt[y] += nxs_histo.readY(output.ixyIndex(from_pixel + x,y))
     Iit = Iyt.sum(axis=0)
-    Iix = Ixy.sum(axis=1)
     Iyi = Iyt.sum(axis=1)
 
-    # store the data
-    #output.tof_edges=_tof_axis
-    #output.tof_edges_full = [tmin, tmax]
-    #output.tof_edges_auto = [autotmin, autotmax]
-    output.data=Ixyt.astype(float) # 3D dataset
-    output.xydata=Ixy.transpose().astype(float) # 2D dataset
-    output.ytofdata=Iyt.astype(float) # 2D dataset
+    Ixy = np.zeros((x_size,y_size))
+    for x in range(x_size):
+      for y in range(y_size):
+        Ixy[x,y] = np.sum(nxs_histo.readY(output.ixyIndex(from_pixel + x, y)))
+    Iix = Ixy.sum(axis=1)
 
+    # store the data
+    output.xydata = Ixy.transpose().astype(float)
+    output.ytofdata = Iyt.astype(float)
     output.countstofdata = Iit.astype(float)
     output.countsxdata = Iix.astype(float)
     output.ycountsdata = Iyi.astype(float)
@@ -1690,59 +1681,15 @@ class LRDataset(object):
       back1 = int(peak1 - backOffsetFromPeak)
       back2 = int(peak2 + backOffsetFromPeak)
       output.back = [str(back1), str(back2)]
-
-    ### work now with final data
-
-    ## rebin using final data reduction parameters
-    #params_reduction = [float(autotmin), float(tbin), float(autotmax)]
-    #nxs_histo_reduction = Rebin(InputWorkspace=nxs, Params=params_reduction, PreserveEvents=True)
-    ## normalize by proton charge
-    #nxs_histo_reduction = NormaliseByCurrent(InputWorkspace=nxs_histo_reduction)
-
-    ## retrieve 3D array
-    #[_tof_axis_reduction, Ixyt_reduction, Exyt_reduction] = LRDataset.getIxyt(nxs_histo_reduction)
-
-    #Ixyt_reduction = Ixyt_reduction[from_pixel:to_pixel,:,:]
-    #Exyt_reduction = Exyt_reduction[from_pixel:to_pixel,:,:]
-    
-    #output.Ixyt_reduction = Ixyt_reduction
-    #output.Exyt_reduction = Exyt_reduction
     
     return output
 
-  @staticmethod
-  def getIxyt(nxs_histo, new_detector_flag):
-    '''
-    will format the histogrma NeXus to retrieve the full 3D data set
-    '''
-    _tof_axis = nxs_histo.readX(0)[:].copy()
-    nbr_tof = len(_tof_axis)
-    
-    if new_detector_flag:
-      #TODO MAGIC NUMBER
-      sz_y_axis = 304
-      sz_x_axis = 256
-       
+  def ixyIndex(self, x, y):
+    #TODO MAGIC NUMBER
+    if self.new_detector_geometry_flag:
+      return 304 * x + y
     else:
-      #TODO MAGIC NUMBER
-      sz_y_axis = 256
-      sz_x_axis = 304
-
-    _y_axis = zeros((sz_x_axis, sz_y_axis, nbr_tof-1))
-    _y_error_axis = zeros((sz_x_axis, sz_y_axis, nbr_tof-1))
-  
-    x_range = range(sz_x_axis)
-    y_range = range(sz_y_axis)
-      
-    for x in x_range:
-      for y in y_range:
-        _index = int(sz_y_axis*x+y)
-        _tmp_data = nxs_histo.readY(_index)[:].copy()
-        _y_axis[x,y,:] = _tmp_data
-        _tmp_error = nxs_histo.readE(_index)[:].copy()
-        _y_error_axis[x,y,:] = _tmp_error
-
-    return [_tof_axis, _y_axis, _y_error_axis]    
+      return 256 * x + y
 
   @staticmethod
   def bin_events(tof_ids, tof_time, tof_edges,
