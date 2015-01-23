@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Jan 21 10:06:45 2015
+# Created: Fri Jan 23 10:04:49 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -167,7 +167,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.addWidget(self.findPeakBack)
         self.verticalLayout_8.addWidget(self.autoPeakBackSelectionFrame)
         self.autoTofFlag = QtGui.QCheckBox(self.leftEntries)
-        self.autoTofFlag.setChecked(True)
+        self.autoTofFlag.setCheckable(True)
+        self.autoTofFlag.setChecked(False)
         self.autoTofFlag.setObjectName("autoTofFlag")
         self.verticalLayout_8.addWidget(self.autoTofFlag)
         self.verticalLayout_5.addLayout(self.verticalLayout_8)
@@ -1338,7 +1339,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.mainSplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 25))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")

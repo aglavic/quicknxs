@@ -394,8 +394,11 @@ p, li { white-space: pre-wrap; }
             <property name="text">
              <string>Use Auto TOF Range Finder</string>
             </property>
-            <property name="checked">
+            <property name="checkable">
              <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -3427,7 +3430,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1674</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -3634,27 +3637,27 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MPLWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">.mplwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MPLWidgetXLog</class>
    <extends>QWidget</extends>
    <header location="global">.mplwidgetxlog.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MPLWidgetXLogYLog</class>
-   <extends>QWidget</extends>
-   <header location="global">mplwidgetxlogylog.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MPLWidgetNoLog</class>
    <extends>QWidget</extends>
    <header>mplwidgetnolog.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MPLWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">.mplwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MPLWidgetXLogYLog</class>
+   <extends>QWidget</extends>
+   <header location="global">mplwidgetxlogylog.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

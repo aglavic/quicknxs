@@ -126,6 +126,9 @@ class MainGUI(QtGui.QMainWindow):
   _prev_row_selected = 0
   _prev_col_selected = 0
 
+  _cur_row_selected = 0
+  _cur_column_selected = 0
+
   # current TOF status
   _auto_tof_flag = True
   _ms_tof_flag = True
@@ -353,7 +356,9 @@ class MainGUI(QtGui.QMainWindow):
     if do_add:
 
       # get list of previously loaded runs
-      [r,c] = self.getCurrentRowColumnSelected()
+#      [r,c] = self.getCurrentRowColumnSelected()
+      row = self._cur_row_selected
+      col = self._cur_column_selected
       if c is not 0:
         c=1
         
@@ -397,7 +402,9 @@ class MainGUI(QtGui.QMainWindow):
     if data is not None:
       # save the data in the right spot (row, column)
       if do_add:
-        [r,c] = self.getCurrentRowColumnSelected()
+        r = self._cur_row_selected
+        c = self._cur_column_selected        
+       # [r,c] = self.getCurrentRowColumnSelected()
       else:
         [r,c] = self.getRowColumnNextDataSet()
 
@@ -483,7 +490,9 @@ class MainGUI(QtGui.QMainWindow):
       isData = True
 
     if checkStatus:
-      [r,c] = self.getCurrentRowColumnSelected()
+#      [r,c] = self.getCurrentRowColumnSelected()
+      r = self._cur_row_selected
+      c = self._cur_column_selected
       data = self.bigTableData[r,c]
       if data is None:
         status = False
@@ -686,7 +695,9 @@ class MainGUI(QtGui.QMainWindow):
       return
     
     # remove row from table
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     self.ui.reductionTable.removeRow(row)
     self.ui.reductionTable.show()
 
@@ -730,7 +741,9 @@ class MainGUI(QtGui.QMainWindow):
       #do_add = True
       
     if do_add:
-      [r,c] = self.getCurrentRowColumnSelected()
+      #[r,c] = self.getCurrentRowColumnSelected()
+      r = self._cur_row_selected
+      c = self._cur_column_selected
 
       if c !=0:
         _column = 6
@@ -981,7 +994,9 @@ class MainGUI(QtGui.QMainWindow):
                                   plot_it=plot_it, 
                                   plot_ix=plot_ix)
 
-    [r,c] = self.getCurrentRowColumnSelected()
+    #[r,c] = self.getCurrentRowColumnSelected()
+    r = self._cur_row_selected
+    c = self._cur_column_selected
     _data = self.bigTableData[r,c]
     if _data is None:
       return
@@ -1057,7 +1072,9 @@ class MainGUI(QtGui.QMainWindow):
       _item_incident = QtGui.QTableWidgetItem(str(incident_angle))
       _item_incident.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
 
-      [row, column] = self.getCurrentRowColumnSelected()
+#      [row, column] = self.getCurrentRowColumnSelected()
+      row = self._cur_row_selected
+      column = self._cur_column_selected
 
       self.ui.reductionTable.setItem(row, 4, _item_min)
       self.ui.reductionTable.setItem(row, 5, _item_max)
@@ -1847,7 +1864,9 @@ class MainGUI(QtGui.QMainWindow):
  
   def manual_tof_selection(self):
     # first save the manual parameters
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     _data = self.bigTableData[row,col]
     _active_data = _data.active_data
 
@@ -2182,7 +2201,9 @@ class MainGUI(QtGui.QMainWindow):
     if bigTableData[0,0] is None:
       return
     
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     _data = bigTableData[row, col]
     _active_data = _data.active_data
     
@@ -2706,8 +2727,10 @@ class MainGUI(QtGui.QMainWindow):
     self.editing_flag = True
     if self.same_cell_selected(row, column):
       return
-
-    SelectionBigTableChanged(self, row, column)
+    
+    self._cur_column_selected = column
+    self._cur_row_selected = row
+    SelectionBigTableChanged(self)
     DisplayPlots(self)
 
 
@@ -3485,7 +3508,9 @@ Do you want to try to restore the working reduction list?""",
     With or without data background
     '''
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3513,7 +3538,9 @@ Do you want to try to restore the working reduction list?""",
     With or without data low resolution range
     '''
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
     
@@ -3547,7 +3574,9 @@ Do you want to try to restore the working reduction list?""",
       flagBack = False
 
       bigTableData = self.bigTableData
-      [row,col] = self.getCurrentRowColumnSelected()
+#      [row,col] = self.getCurrentRowColumnSelected()
+      row = self._cur_row_selected
+      col = self._cur_column_selected
       data = bigTableData[row,col]
       data = data.active_data
    
@@ -3582,7 +3611,9 @@ Do you want to try to restore the working reduction list?""",
     With or without normalization background
     '''
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3606,7 +3637,9 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3642,7 +3675,9 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3681,7 +3716,13 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     # get current row and column selected
-    [r,c] = self.getCurrentRowColumnSelected()
+    #[r,c] = self.getCurrentRowColumnSelected()
+    r = self._cur_row_selected
+    c = self._cur_column_selected
+    print 'in data_back_spinbox_validation'
+    print 'r: %d' % r
+    print 'c: %d' %c
+    print 
     _data = self.bigTableData[r,c]
     data = _data.active_data
     if data is None:
@@ -3722,7 +3763,9 @@ Do you want to try to restore the working reduction list?""",
     will make sure the min value is < max value  
     '''
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3765,7 +3808,9 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3804,7 +3849,9 @@ Do you want to try to restore the working reduction list?""",
     '''
 
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     data = data.active_data
 
@@ -3843,7 +3890,10 @@ Do you want to try to restore the working reduction list?""",
     '''
     
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+#    [row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
+    
     data = bigTableData[row,col]
     data = data.active_data
     
@@ -3904,11 +3954,15 @@ Do you want to try to restore the working reduction list?""",
   def reduction_table_copy(self):
     _item = self.ui.reductionTable.selectedItems()
     self.reduction_table_copied_field = _item[0].text()
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     self.reduction_table_copied_row_col = [row,col]
  
   def reduction_table_paste(self):
-    [newrow, newcol] = self.getCurrentRowColumnSelected()
+    #[newrow, newcol] = self.getCurrentRowColumnSelected()
+    newrow = self._cur_row_selected
+    newcol = self._cur_column_selected
     [oldrow, oldcol] = self.reduction_table_copied_row_col
     if newrow == oldrow and newcol == oldcol:
       return
@@ -3920,7 +3974,9 @@ Do you want to try to restore the working reduction list?""",
   @waiting_effects
   def reduction_table_display_metadata(self):
     bigTableData = self.bigTableData
-    [row,col] = self.getCurrentRowColumnSelected()
+#    [row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = bigTableData[row,col]
     active_data = data.active_data
     _displayMeta = DisplayMetadata(self, active_data)
@@ -3935,7 +3991,9 @@ Do you want to try to restore the working reduction list?""",
     and will save them in the corresponding data or norm file (if any)
     '''
     
-    [r,c] = self.getCurrentRowColumnSelected()
+    #[r,c] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     data = self.bigTableData[r,c]
 
     if data is None:
@@ -5415,7 +5473,9 @@ Do you want to try to restore the working reduction list?""",
       info('No Data!')
       return
 
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     if col == 1:
       table_col = 6
     else:
@@ -5465,7 +5525,9 @@ Do you want to try to restore the working reduction list?""",
       info('No Data!')
       return
 
-    [row,col] = self.getCurrentRowColumnSelected()
+    #[row,col] = self.getCurrentRowColumnSelected()
+    row = self._cur_row_selected
+    col = self._cur_column_selected
     if col == 1:
       table_col = 6
     else:

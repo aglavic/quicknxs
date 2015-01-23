@@ -71,6 +71,7 @@ class OpenRunNumber(object):
 			[r,c] = cls.getRowColumnNextDataSet()
 			if c is not 0:
 				c = 1
+		data = cls.addConfigParameters(data, r, is_data)
 		self.bigTableData[r,c] = data
 		[true_r, true_c] = self.getTrueCurrentRowColumnSelected()
 		if true_r == -1:
@@ -80,6 +81,33 @@ class OpenRunNumber(object):
 		self._prev_col_selected = true_c
 		
 		self.enableWidgets(status=True)
+
+	def addConfigParameters(cls, data, row, is_data):
+		config_file = cls.self.bigTableData[row,2]
+		if config_file is None:
+			return data
+
+		data_active = data.active_data
+		if is_data:
+			data_active.peak = config_file.data_peak
+			data_active.back = config_file.data_back
+			data_active.low_res = config_file.data_low_res
+			data_active.back_flag = config_file.data_back_flag
+			data_active.low_res_flag = config_file.data_low_res_flag
+			
+		else:
+			data_active.peak = config_file.norm_peak
+			data_active.back = config_file.norm_back
+			data_active.low_res = config_file.norm_low_res
+			data_active.back_flag = config_file.norm_back_flag
+			data_active.low_res_flag = config_file.norm_low_res_flag
+	  
+		data_active.tof_range = config_file.tof_range
+		data_active.tof_units = config_file.tof_units
+		data_active.tof_auto_flag = config_file.tof_auto_flag
+		
+		data.active_data = data_active
+		return data
 
 	def getFirstEmptyLine(cls):
 		self = cls.self

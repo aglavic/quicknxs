@@ -11,10 +11,13 @@ class SelectionBigTableChanged(object):
 	is_data = True
 	active_data = None
 	
-	def __init__(cls, self, row, column):
+	def __init__(cls, self):
 		cls.self = self
-		cls.current_row = row
-		cls.current_column = column
+		cls.current_row = self._cur_row_selected
+		cls.current_column = self._cur_column_selected
+		
+		column = cls.current_column
+		row = cls.current_row
 		
 		if cls.same_cell_selected():
 			print 'same cell selected'
