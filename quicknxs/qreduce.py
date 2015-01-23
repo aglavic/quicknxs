@@ -18,6 +18,7 @@ import os
 import zlib
 import h5py
 import base64
+import traceback
 from copy import deepcopy
 from glob import glob
 from numpy import *
@@ -276,8 +277,12 @@ class NXSData(object):
     if len(channels)==0:
       debug('No valid channels in file')
       return False
-    ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
-    pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+    try:
+      ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
+      pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
+    except KeyError:
+      ana=-1.e10
+      pol=-1.e10
     try:
       smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
     except KeyError:
@@ -660,13 +665,13 @@ class MRDataset(object):
   Representation of one measurement channel of the reflectometer
   including meta data.
   '''
-  proton_charge=0. #: total proton charge on target [pC]
-  total_counts=0 #: total counts on detector
-  total_time=0 #: time counted in this channal
+  proton_charge=1.e9 #: total proton charge on target [pC]
+  total_counts=1 #: total counts on detector
+  total_time=1 #: time counted in this channal
   tof_edges=None #: array of time of flight edges for the bins [µs]
-  dangle=0. #: detector arm angle value in [°]
+  dangle=4. #: detector arm angle value in [°]
   dangle0=4. #: detector arm angle value of direct pixel measurement in [°]
-  sangle=0. #: sample angle [°]
+  sangle=0.5 #: sample angle [°]
   mon_data=None #: array of monitor counts per ToF bin
 
   # for resolution calculation
@@ -678,7 +683,7 @@ class MRDataset(object):
   slit3_dist=714. #: last slit to sample distance [mm]
 
   ai=None #: incident angle
-  dpix=0 #: pixel of direct beam position at dangle0
+  dpix=150 #: pixel of direct beam position at dangle0
   lambda_center=3.37 #: central wavelength of measurement band [Å]
   xydata=None #: 2D array of intensity projected on X-Y
   xtofdata=None #: 2D array of intensity projected on X-ToF
@@ -686,7 +691,7 @@ class MRDataset(object):
   logs={} #: Log information of instrument parameters
   log_units={} #: Units of the parameters given in logs
   experiment='' #: Name of the experiment
-  number=0 #: Index of the run
+  number=1 #: Index of the run
   merge_warnings=''
   dist_mod_det=21.2535 #: moderator to detector distance [m]
   dist_sam_det=2.55505 #: sample to detector distance [m]
@@ -715,7 +720,10 @@ class MRDataset(object):
     '''
     output=cls()
     output.read_options=read_options
-    output._collect_info(data)
+    try:
+      output._collect_info(data)
+    except KeyError:
+      warn('Error while collecting metadata:\n\n'+traceback.format_exc())
 
     output.tof_edges=data['bank1/time_of_flight'].value
     # the data arrays
@@ -742,7 +750,10 @@ class MRDataset(object):
     '''
     output=cls()
     output.read_options=read_options
-    output._collect_info(data)
+    try:
+      output._collect_info(data)
+    except KeyError:
+      warn('Error while collecting metadata:\n\n'+traceback.format_exc())
 
     # first ToF edge is 0, prevent that
     output.tof_edges=data['bank1/time_of_flight'].value[1:]
@@ -769,7 +780,10 @@ class MRDataset(object):
     output.from_event_mode=True
     bin_type=read_options['bin_type']
     bins=read_options['bins']
-    output._collect_info(data)
+    try:
+      output._collect_info(data)
+    except KeyError:
+      warn('Error while collecting metadata:\n\n'+traceback.format_exc())
 
     if tof_overwrite is None:
       lcenter=data['DASlogs/LambdaRequest/value'].value[0]
