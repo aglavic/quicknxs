@@ -7,6 +7,7 @@ from decorators import waiting_effects
 import utilities
 import os
 import time
+import nexus_utilities
 
 class MetadataFinder(QDialog):
 	
@@ -175,7 +176,8 @@ class MetadataFinder(QDialog):
 			cls.list_nxs = []
 			for _runs in _list_runs:
 				try:
-					_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
+					_filename = nexus_utilities.findNeXusFullPath(_runs)
+#					_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
 				except:
 					cls.ui.inputErrorLabel.setVisible(True)					
 					return

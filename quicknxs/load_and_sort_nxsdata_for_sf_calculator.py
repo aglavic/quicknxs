@@ -4,6 +4,7 @@ from sort_nxsdata import SortNXSData
 from decorators import waiting_effects
 import numpy as np
 from PyQt4.QtGui import QTableWidgetItem
+import nexus_utilities
 
 class LoadAndSortNXSDataForSFcalculator(object):
 	
@@ -36,11 +37,15 @@ class LoadAndSortNXSDataForSFcalculator(object):
 					cls.loaded_list_runs.append(_runs)
 				
 	def sortNXSData(cls):
+		if cls.list_NXSData == []:
+			return
 		oSortNXSDataArray = SortNXSData(cls.list_NXSData)
 		cls.list_NXSData_sorted = oSortNXSDataArray.getSortedList()
 
 	def fillTable(cls):
 		_list_NXSData_sorted = cls.list_NXSData_sorted
+		if _list_NXSData_sorted == []:
+			return
 		nbr_row = len(_list_NXSData_sorted)
 		nbr_column = len(cls.list_metadata) + 1 # +1 for the run number
 		big_table = np.empty((nbr_row, nbr_column))
@@ -94,7 +99,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		
 	def findFullFileName(cls, run_number):
 		try:
-			full_file_name = FileFinder.findRuns("REF_L_%d" %int(run_number))[0]
+			full_file_name = nexus_utilities.findNeXusFullPath(run_number)
 		except:
 			full_file_name = ''
 		return full_file_name
