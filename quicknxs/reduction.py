@@ -7,6 +7,7 @@ import os
 import constants
 import utilities
 from qreduce import LRDataset
+import nexus_utilities
 
 class ReductionObject(object):
 
@@ -939,14 +940,16 @@ class ReductionObject(object):
                 full_file_name = oConfig.data_full_file_name
                 if full_file_name == u'' or full_file_name == [''] :
                     _run_number = oConfig.data_sets
-                    full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+#                    full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+                    full_file_name = nexus_utilities.findNeXusFullPath(int(_run_number))                    
             else:
                 is_data = False
                 if oConfig.norm_flag:
                     full_file_name = oConfig.norm_full_file_name
                     if full_file_name == u'' or full_file_name == ['']:
                         _run_number = oConfig.norm_sets
-                        full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+#                        full_file_name = FileFinder.findRuns("REF_L%d" %int(_run_number))[0]
+                        full_file_name = nexus_utilities.findNeXusFullPath(int(_run_number))                    
 
             event_split_bins = None
             event_split_index = 0

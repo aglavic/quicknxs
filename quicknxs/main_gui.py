@@ -43,6 +43,8 @@ from utilities import convert_angle
 import utilities
 import constants
 import colors
+import nexus_utilities
+
 from calculate_SF import CalculateSF
 #from isis_calculate_sf import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
@@ -625,11 +627,13 @@ class MainGUI(QtGui.QMainWindow):
     if len(str_split) == 1:
       # load object
       info('Trying to locate file number %s...'% cell_content)
-      fullFileName = FileFinder.findRuns("REF_L_%d" % int(cell_content))[0]
+      fullFileName = nexus_utilities.findNeXusFullPath(int(cell_content))
+#      fullFileName = FileFinder.findRuns("REF_L_%d" % int(cell_content))[0]
     else:
       fullFileName = []
       for _run in str_split:
-        _fullFileName = FileFinder.findRuns("REF_L_%d" % int(_run))[0]
+#        _fullFileName = FileFinder.findRuns("REF_L_%d" % int(_run))[0]
+        _fullFileName = nexus_utilities.findNeXusFullPath(int(_run))
         fullFileName.append(_fullFileName)
     
     data = NXSData(fullFileName,
@@ -4550,7 +4554,8 @@ Do you want to try to restore the working reduction list?""",
       if _row == 0:
         _first_file_name = self.getNodeValue(node, 'data_full_file_name')
         if _first_file_name == '': # no full_file_name defined
-          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
+          _first_file_name = nexus_utilities.findNeXusFullPath(int(_data_sets))
+#         _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
         else:
           _first_file_name = _first_file_name.split(',')
 
@@ -4773,7 +4778,8 @@ Do you want to try to restore the working reduction list?""",
       if _row == 0:
         _first_file_name = self.getNodeValue(node, 'data_full_file_name')
         if _first_file_name == '': # no full_file_name defined
-          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
+          _first_file_name = nexus_utilities.findNeXusFullPath(int(_data_sets))                    
+#          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
         else:
           _first_file_name = _first_file_name.split(',')
 

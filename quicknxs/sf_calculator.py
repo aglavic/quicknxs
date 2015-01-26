@@ -5,6 +5,7 @@ from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
 from displayMetadata import DisplayMetadata
 import numpy as np
+from logging import info
 
 class SFcalculator(QtGui.QMainWindow):
 	
@@ -89,11 +90,15 @@ class SFcalculator(QtGui.QMainWindow):
 		_old_runs = cls.loaded_list_of_runs
 		_list_runs = np.unique(np.hstack([_old_runs, _new_runs]))
 		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs)
-		cls.big_table = o_load_and_sort_nxsdata.getTableData()
-		cls.list_nxsdata_sorted = o_load_and_sort_nxsdata.getListNXSDataSorted()
-		cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
-		cls.is_using_Si_slits = o_load_and_sort_nxsdata.is_using_Si_slits
-		cls.fillGuiTable()
+		_big_table = o_load_and_sort_nxsdata.getTableData()
+		if _big_table != []:
+			cls.big_table = _big_table
+			cls.list_nxsdata_sorted = o_load_and_sort_nxsdata.getListNXSDataSorted()
+			cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
+			cls.is_using_Si_slits = o_load_and_sort_nxsdata.is_using_Si_slits
+			cls.fillGuiTable()
+		else:
+			info('No Files loaded!')
 		cls.ui.runSequenceLineEdit.setText("")
 		cls.checkGui()
 		
