@@ -177,7 +177,6 @@ class MetadataFinder(QDialog):
 			for _runs in _list_runs:
 				try:
 					_filename = nexus_utilities.findNeXusFullPath(_runs)
-#					_filename = FileFinder.findRuns("REF_L%d" %_runs)[0]
 				except:
 					cls.ui.inputErrorLabel.setVisible(True)					
 					return
