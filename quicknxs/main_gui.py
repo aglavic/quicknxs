@@ -3723,10 +3723,6 @@ Do you want to try to restore the working reduction list?""",
     #[r,c] = self.getCurrentRowColumnSelected()
     r = self._cur_row_selected
     c = self._cur_column_selected
-    print 'in data_back_spinbox_validation'
-    print 'r: %d' % r
-    print 'c: %d' %c
-    print 
     _data = self.bigTableData[r,c]
     data = _data.active_data
     if data is None:
@@ -3996,8 +3992,8 @@ Do you want to try to restore the working reduction list?""",
     '''
     
     #[r,c] = self.getCurrentRowColumnSelected()
-    row = self._cur_row_selected
-    col = self._cur_column_selected
+    r = self._cur_row_selected
+    c = self._cur_column_selected
     data = self.bigTableData[r,c]
 
     if data is None:
