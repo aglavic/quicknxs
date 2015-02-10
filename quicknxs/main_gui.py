@@ -38,7 +38,7 @@ from .qreduce import NXSData, NXSMultiData, Reflectivity, OffSpecular, time_from
 from .rawcompare_plots import RawCompare
 from .separate_plots import ReductionPreviewDialog
 from logging import info, warning, debug
-from reduction import REFLReduction
+from reduction_mantid import REFLReduction
 from utilities import convert_angle
 import utilities
 import constants
@@ -5088,6 +5088,8 @@ Do you want to try to restore the working reduction list?""",
       return
 
     _reduction = REFLReduction(self)
+    return
+    
     
     # calculate auto SF coefficient
     self.calculate_autoSF()

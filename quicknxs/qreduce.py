@@ -1195,16 +1195,18 @@ class LConfigDataset(object):
   keep record of all the information loaded, such as peak, back, TOF range...
   until the data/norm file has been loaded
   '''
+  data_sets = ''
   data_full_file_name = ''
   data_peak = ['0','0']
   data_back = ['0','0']
   data_low_res = ['0','0']
   data_back_flag = True
   data_low_res_flag = True
-  tof = ['0','0'] 
+  tof_range = ['0','0'] 
   tof_units = 'ms'
   tof_auto_flag = True
   
+  norm_sets = ''
   norm_full_file_name = ''
   norm_flag = True
   norm_peak = ['0','0']
@@ -1216,9 +1218,22 @@ class LConfigDataset(object):
   q_range =['0','0']
   lambda_range = ['0','0']
   
-  norm_sets = ''
-  data_sets = ''
- 
+  reduce_q_axis = []
+  reduce_y_axis = []
+  reduce_e_axis = []
+  sf_auto = 1 # auto scaling calculated by program
+  sf_auto_found_match = False 
+  sf_manual = 1 # manual scaling defined by user
+  sf = 1 #scaling factor apply to data (will be either the auto, manual or 1)
+  
+  q_axis_for_display = []
+  y_axis_for_display = []
+  e_axis_for_display = []
+  
+  # use in the auto SF class
+  tmp_y_axis = []
+  tmp_e_axis = []
+
 class LRDataset(object):
   '''
   Representation of one measurement channel of the reflectometer
@@ -1715,7 +1730,8 @@ class LRDataset(object):
     '''
     will format the histogrma NeXus to retrieve the full 3D data set
     '''
-    _tof_axis = nxs_histo.readX(0)[:].copy()
+#    _tof_axis = nxs_histo.readX(0)[:].copy()
+    _tof_axis = nxs_histo.readX(0)[:]
     nbr_tof = len(_tof_axis)
     
     if new_detector_flag:
@@ -1737,9 +1753,11 @@ class LRDataset(object):
     for x in x_range:
       for y in y_range:
         _index = int(sz_y_axis*x+y)
-        _tmp_data = nxs_histo.readY(_index)[:].copy()
+        _tmp_data = nxs_histo.readY(_index)[:]
+#        _tmp_data = nxs_histo.readY(_index)[:].copy()
         _y_axis[x,y,:] = _tmp_data
-        _tmp_error = nxs_histo.readE(_index)[:].copy()
+#        _tmp_error = nxs_histo.readE(_index)[:].copy()
+        _tmp_error = nxs_histo.readE(_index)[:]
         _y_error_axis[x,y,:] = _tmp_error
 
     return [_tof_axis, _y_axis, _y_error_axis]    
