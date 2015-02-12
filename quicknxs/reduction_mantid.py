@@ -268,9 +268,11 @@ class REFLReduction(object):
         cls.logbook('================================================')
 
     def saveReducedData(cls, configObject, outputWorkspace):
+        configObject.proton_charge = float(mtd[outputWorkspace].getRun().getProperty('gd_prtn_chrg').value)
         configObject.reduce_q_axis = mtd[outputWorkspace].readX(0)[:]
         configObject.reduce_y_axis = mtd[outputWorkspace].readY(0)[:]
         configObject.reduce_e_axis = mtd[outputWorkspace].readE(0)[:]
+        
         return configObject
 
     def removeTempWorkspaces(cls, listWorkspaces):

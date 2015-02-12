@@ -1195,6 +1195,8 @@ class LConfigDataset(object):
   keep record of all the information loaded, such as peak, back, TOF range...
   until the data/norm file has been loaded
   '''
+  proton_charge = -1
+
   data_sets = ''
   data_full_file_name = ''
   data_peak = ['0','0']
