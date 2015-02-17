@@ -15,6 +15,8 @@ class DatabaseUpdater(Thread):
   A background thread updating the dataset database whenever a new
   dataset is available.
   '''
+  daemon=True
+
   current_index=None
   sleep_time=30.
   live_data_last_index=0

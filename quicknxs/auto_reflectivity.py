@@ -4,16 +4,226 @@ Use the sample database to try to automatically generate reflectivity plots
 from the most current mesurements.
 '''
 
-import os
+import os, sys
 import logging
 import numpy
+import atexit
+from numpy import sin, pi
+
+from cPickle import dumps, loads
+from threading import Thread, Event, _Event
+from xml.etree import ElementTree
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
-from time import sleep
-from . import database, qreduce, qcalc
+from . import database, qreduce, qcalc, console_logging
 from .config import instrument
+from .version import str_version
 
-class ReflectivityBuilder(object):
+class GroupEvent(_Event):
+  '''
+  A threading Event that will also trigger a root event when it is set.
+  This is useful to wait for any of several events to get triggered.
+  '''
+  def __init__(self, root_event):
+    self.root_event=root_event
+    _Event.__init__(self)
+
+  def set(self):
+    self.root_event.set()
+    _Event.set(self)
+
+class FileCom(Thread):
+  '''
+  A thread that allows the daemon to communicate with other instances through
+  a file as analysis servers don't allow socket communication.
+  This is used to notify the daemon about new translated files.
+  '''
+  bind_path=instrument.autorefl_folder+'REF_M_autorefl.com'
+  parent=None
+  MAX_READ_TIME=1
+  daemon=True
+  last_com=0.
+
+  def __init__(self, parent):
+    Thread.__init__(self, name='FileCom')
+    self.parent=parent
+    self.quit=Event()
+    self.quit.clear()
+
+  def run(self):
+    logging.debug('FileCom started')
+    logging.debug('Creating communication file %s'%self.bind_path)
+    self.clear_com()
+    atexit.register(os.remove, self.bind_path)
+
+    while not self.quit.isSet():
+      try:
+        self._run()
+      except KeyboardInterrupt:
+        return
+      except:
+        logging.warning('Error in FileCom:', exc_info=True)
+        self.quit.wait(30.)
+
+    logging.debug('FileCom closed')
+
+  def _run(self):
+    while not self.quit.isSet():
+      mtime=os.path.getmtime(self.bind_path)
+      if mtime==self.last_com:
+        self.quit.wait(1.)
+        continue
+      logging.info('External program has established connection')
+      try:
+        xml=ElementTree.parse(self.bind_path)
+      except:
+        logging.warn('Communication error, could not parse xml string:', exc_info=True)
+        self.clear_com()
+        continue
+      self.clear_com()
+
+      root=xml.getroot()
+      if root.tag!='QuickNXS_FileCom':
+        logging.warn('Root element of XML %s!=QuickNXS_FileCom'%root.tag)
+      message_dict={}
+      for subele in root:
+        key=subele.tag
+        pickled=bool(eval(subele.get('pickled', 'False')))
+        if pickled:
+          value=loads(subele.get('value'))
+        else:
+          value=eval(subele.get('value'))
+        message_dict[key]=value
+      if not 'action' in message_dict:
+        logging.warn('Message contains no action, discarded')
+        continue
+      action=message_dict['action']
+      if action=='Kill':
+        logging.info('Kill action received, shutting down main thread')
+        self.parent.quit.set()
+        self.quit.set()
+      elif action=='NewFile':
+        logging.info('New file received, ID=%i ; path=%s ; image_path=%s'%(
+                                                                 message_dict['fid'],
+                                                                 message_dict['fname'],
+                                                                 message_dict['image_path']))
+        self.parent.newFileId=message_dict['fid']
+        self.parent.newFileName=message_dict['fname']
+        self.parent.newFileImage=message_dict['image_path']
+        if self.parent.live_data_idx<=self.parent.newFileId:
+          self.parent.live_data_idx=self.parent.newFileId+1
+        self.parent.newFile.set()
+      else:
+        logging.warn('Message action "%s" unknown, discarded'%action)
+        continue
+
+  def clear_com(self):
+    open(self.bind_path, 'w').write('\n')
+    self.last_com=os.path.getmtime(self.bind_path)
+    try:
+      os.chmod(self.bind_path, 0666)
+    except OSError:
+      pass
+
+  @classmethod
+  def _send_message(cls, message_dict):
+    '''
+    Create xml string and send it through the socket to a running server instance.
+    '''
+    logging.debug('Creating xml for socket communication')
+    root=ElementTree.Element('QuickNXS_FileCom')
+    for key, value in sorted(message_dict.items()):
+      attrib={'type': type(value).__name__}
+      if type(value) in [str, unicode, int, float, bool, type(None)]:
+        attrib['pickled']='False'
+        attrib['value']=repr(value)
+      else:
+        attrib['pickled']='True'
+        attrib['value']=dumps(value)
+      sub=ElementTree.Element(key, attrib=attrib)
+      root.append(sub)
+    xml=ElementTree.ElementTree(root)
+    logging.debug('Sending data')
+    xml.write(cls.bind_path)
+    try:
+      os.chmod(cls.bind_path, 0666)
+    except OSError:
+      pass
+    logging.debug('Communication finished')
+
+  @classmethod
+  def kill_daemon(cls):
+    '''Send message to shutdown the reflectivity daemon process'''
+    cls._send_message({'action': 'Kill'})
+
+  @classmethod
+  def send_new_file(cls, fid, fname=None, image_path=None):
+    '''Send a message for a new run file number'''
+    cls._send_message({'action': 'NewFile', 'fid': fid, 'fname': fname,
+                      'image_path': image_path})
+
+  @classmethod
+  def ping(cls):
+    '''Send a message over the socket and wait for reply'''
+    raise NotImplementedError
+
+  @classmethod
+  def check_running(cls):
+    '''
+     Check if socket path exists and if a daemon process is running,
+     otherwise delete the socket path and return False.
+    '''
+    if os.path.exists(cls.bind_path):
+      if os.path.exists(ReflectivityBuilder.PID_FILE):
+          return True
+      else:
+        logging.warn('Found com file but no PID file, deleting socket file')
+        os.remove(cls.bind_path)
+        return False
+    else:
+      return False
+
+class FileWatchDog(Thread):
+  '''
+  Thread that watches the LiveData file for changes to notify
+  the daemon thread about the changes.
+  '''
+  daemon=True
+  live_data_last_mtime=0
+
+  def __init__(self, parent):
+    Thread.__init__(self, name='FileWatchDog')
+    self.parent=parent
+
+    self.quit=Event()
+    self.quit.clear()
+
+  def run(self):
+    logging.debug('FileWatchDog started')
+    while not self.quit.isSet():
+      try:
+        self._run()
+      except KeyboardInterrupt:
+        return
+      except:
+        logging.warning('Error in FileWatchDog:', exc_info=True)
+        self.quit.wait(30.)
+    logging.debug('FileWatchDog closed')
+  
+  def _run(self):
+    self.live_data_last_mtime=os.path.getmtime(instrument.LIVE_DATA)
+    while not self.quit.isSet():
+      new_mtime=os.path.getmtime(instrument.LIVE_DATA)
+      if new_mtime!=self.live_data_last_mtime:
+        logging.debug('Live data updated, mtime %.2f->%.2f'%(
+                            self.live_data_last_mtime, new_mtime))
+        self.parent.newLiveData.set()
+        self.live_data_last_mtime=os.path.getmtime(instrument.LIVE_DATA)
+      self.quit.wait(10.)
+
+
+class ReflectivityBuilder(Thread):
   '''
   Analyze the most recent datafiles to search for corresponding runs to build
   a reflectivity from. Stepping back the sample angle is the main indicator
@@ -26,29 +236,102 @@ class ReflectivityBuilder(object):
 
   reflectivity_items=None
   reflectivity_states=None
-  reflectivity_last_ai=None
-  reflectivity_last_lamda=None
+  reflectivity_last_Q_center=None
+  reflectivity_last_path=None
   reflectivity_active=False
   state_names=None
 
-  MAX_RETRIES=120 # retry loading translated dataset for 20min
-
   live_data_tof_overwrite=None
-  live_data_last_mtime=0
+
+  PID_FILE=instrument.autorefl_folder+'autorefl.pid'
+
+  @classmethod
+  def spawn_daemon(cls, index, fname=None, image_path=None):
+    '''
+    Spawn a new daemon process for reflectivity reduction and setup
+    sockets for communication with this thread.
+    '''
+    # start the daemon process
+    logging.debug('Spawning daemon process')
+    pid = os.fork()
+  
+    if pid != 0:
+      logging.debug('Daemon spawned with PID %i'%pid)
+      try:
+        open(cls.PID_FILE, 'w').write(str(pid)+'\n')
+      except:
+        logging.warn('Could not store pid %i in file:', exc_info=True)
+      return
+
+
+    # reset logging to change the logfile
+    logging.root.removeHandler(console_logging.logfile_handler)
+    console_logging.setup_logging(filename=instrument.autorefl_folder+'autorefl.log',
+                                  setup_console=False)
+
+    pid=os.getpid()
+    atexit.register(os.remove, cls.PID_FILE)
+    logging.info('*** QuickNXS %s ReflectivityBuilder daemon started PID: %i ***'%(str_version, pid))
+
+    rb=cls(index)
+    rb.start()
+    
+    rb.newFileId=index
+    rb.newFileName=fname
+    rb.newFileImage=image_path
+    rb.newFile.set()
+
+    while rb.isAlive():
+      # keep MainThread alive until at least one day of inactivity
+      last_idx=rb.current_index
+      rb.quit.wait(24.*3600)
+      if rb.current_index==last_idx:
+        logging.info('Shutting down due to long period of inactivity')
+        rb.quit.set()
+        rb.join(120.)
+        break
+
+    logging.info('*** QuickNXS %s ReflectivityBuilder daemon closed PID: %i ***'%(str_version, pid))
+    sys.exit(0)
 
   def __init__(self, start_idx=None):
+    Thread.__init__(self, name='ReflectivityBuilder')
     self.db=database.DatabaseHandler()
     self.live_data_idx=start_idx
 
+    self.com=FileCom(self)
+    self.com.start()
+
+    self.watch=FileWatchDog(self)
+    self.watch.start()
+
+    self.action=Event()
+    self.action.set() # make sure the first cycle starts the reflectivity
+
+    self.quit=GroupEvent(self.action)
+    self.quit.clear()
+    self.newFile=GroupEvent(self.action)
+    self.newFile.clear()
+    self.newFileId=None
+    self.newFileName=None
+    self.newFileImage=None
+
+    self.newLiveData=GroupEvent(self.action)
+    self.newLiveData.clear()
+
   def run(self):
-    while True:
+    logging.debug('ReflectivityBuilder started')
+    while not self.quit.isSet():
       try:
         self._run()
       except KeyboardInterrupt:
-        return
+        break
       except:
         logging.warning('Error in ReflectivityBuilder:', exc_info=True)
-        sleep(30.)
+        self.quit.wait(30.)
+    self.com.quit.set()
+    self.watch.quit.set()
+    logging.debug('ReflectivityBuilder closed')
 
   def _run(self):
     '''
@@ -59,38 +342,43 @@ class ReflectivityBuilder(object):
       # when started the first time, set the current_index variable
       self.set_start_index(self.live_data_idx)
 
-    while True:
-      retries=0
+    while not self.quit.isSet():
+      self.action.wait()
+      if self.quit.isSet():
+        return
+      self.action.clear()
+
+      if self.newFile.isSet() and self.live_data_idx<=self.newFileId:
+        self.live_data_idx=self.newFileId+1
+
       #+++++++++++++ Adding data to the plot that has already been translated ++++++++++++++++#
       while self.live_data_idx>self.current_index:
+        if self.quit.isSet():
+          return
         if not self.reflectivity_active:
           self.start_new_reflectivity()
         if not self.get_dsinfo(self.current_index):
           # if for some reason the run never existed, continue directly
           if len(self.db('file_id>fid', fid=self.current_index))>0:
-            retries=0
             logging.debug('Skipping run with no existing NeXus file %i.'%self.current_index)
             self.finish_reflectivity()
             self.current_index+=1
             continue
 
           # if dataset not yet available, wait for translation service to create the file
-          retries+=1
-          sleep(10.)
-          continue
-        if retries>self.MAX_RETRIES:
-          # give up when adding reflectivity was not successful after a few tries
-          retries=0
-          logging.debug('Giving up as adding dataset to reflectivity failed.')
-          self.finish_reflectivity()
-          self.current_index+=1
-        self.add_dataset()
+          if not (self.newFile.isSet() or self.quit.isSet()):
+            self.action.wait()
+            self.action.clear()
+        else:
+          self.add_dataset()
+          self.check_and_plot_newfile()
+      self.check_and_plot_newfile()
       #------------- Adding data to the plot that has already been translated ----------------#
 
-      if os.path.getmtime(instrument.LIVE_DATA)==self.live_data_last_mtime:
+      if not self.newLiveData.isSet():
         # the live data file has not changed, wait and try again
-        sleep(10.)
         continue
+      self.newLiveData.clear()
 
       #+++++++++++++ Plotting the current reflectivity including the live data +++++++++++++++#
       # When all files up to the live data index have been added
@@ -99,11 +387,10 @@ class ReflectivityBuilder(object):
                               event_tof_overwrite=self.live_data_tof_overwrite)
       if live_ds is None:
         continue
-      else:
-        self.live_data_last_mtime=os.path.getmtime(instrument.LIVE_DATA)
       if live_ds.number>self.current_index:
         # if the current run has finished we increment the live data index and add
         # the dataset after translation, which is done in the first step of the main loop
+        logging.debug('Increment live_data_idx to %i'%live_ds.number)
         self.live_data_idx=live_ds.number
         continue
       if live_ds.number<self.current_index:
@@ -123,6 +410,24 @@ class ReflectivityBuilder(object):
       self.plot_reflectivity(data, instrument.AUTOREFL_LIVE_IMAGE, title, False)
       open(instrument.AUTOREFL_LIVE_INDEX, 'w').write('%i\n'%live_ds.number)
       #------------- Plotting the current reflectivity including the live data ---------------#
+
+  def check_and_plot_newfile(self):
+    '''
+    Check if the newFile flag is set and the current_index has reached it
+    already. If it is a valid reflectivity save the image.
+    '''
+    if self.newFile.isSet() and self.current_index>=(self.newFile+1):
+      # create image for the autoreduce script
+      self.newFile.clear()
+      if self.reflectivity_active and self.newFileImage is not None and\
+        self.current_index==(self.newFileId+1):
+        logging.debug('Generate autoreduce image at %s'%self.newFileImage)
+        data=self.combine_reflectivity()
+        numbers='+'.join([r[0].options['number'] for r in self.reflectivity_items])
+        self.plot_reflectivity(data, self.newFileImage, numbers, True)
+      self.newFileId=None
+      self.newFileImage=None
+      self.newFileName=None
 
   def set_start_index(self, start_idx=None):
     '''
@@ -175,9 +480,9 @@ class ReflectivityBuilder(object):
         return False
       logging.info('Creating new reflectivity starting at Live Data (index %i).'%self.current_index)
       self.reflectivity_items=[]
-      self.reflectivity_last_ai=self.get_ai(live_ds)
-      self.reflectivity_last_lamda=live_ds.lambda_center
+      self.reflectivity_last_Q_center=4.*pi/live_ds.lambda_center*sin(self.get_ai(live_ds)/180.*pi)
       self.reflectivity_states=len(live_ds.keys())
+      self.reflectivity_last_path=None
       self.reflectivity_active=True
       self.state_names=None
       return True
@@ -195,9 +500,9 @@ class ReflectivityBuilder(object):
         return False
       logging.info('Creating new reflectivity starting at index %i.'%self.current_index)
       self.reflectivity_items=[]
-      self.reflectivity_last_ai=dsinfo.ai
-      self.reflectivity_last_lamda=dsinfo.lambda_center
+      self.reflectivity_last_Q_center=4.*pi/dsinfo.lambda_center*sin(dsinfo.ai/180.*pi)
       self.reflectivity_states=dsinfo.no_states
+      self.reflectivity_last_path=os.path.dirname(dsinfo.file_path)
       self.reflectivity_active=True
       self.state_names=None
       return True
@@ -221,14 +526,17 @@ class ReflectivityBuilder(object):
       self.finish_reflectivity()
       self.current_index+=1
       return True
-    if (dsinfo.ai/dsinfo.lambda_center)<\
-       (self.reflectivity_last_ai/self.reflectivity_last_lamda*0.85) or \
-       dsinfo.no_states!=self.reflectivity_states:
+    Q_center=4.*pi/dsinfo.lambda_center*sin(dsinfo.ai/180.*pi)
+    file_path=os.path.dirname(dsinfo.file_path)
+    if Q_center<self.reflectivity_last_Q_center or dsinfo.no_states!=self.reflectivity_states or\
+       (self.reflectivity_last_path is not None and self.reflectivity_last_path!=file_path):
       # The currenct reflectivity is finished, as this dataset does not correspond to
       # it. Return to the main loop, which will try to add the dataset again.
-      logging.debug('Next dataset at lower Q or number of states different, Qnew: %g Qold: %g'%
-                    (dsinfo.ai/dsinfo.lambda_center,
-                     self.reflectivity_last_ai/self.reflectivity_last_lamda))
+      logging.debug('Next dataset at lower Q, from different experiment or number of states different:'+\
+                    '\n           Q: %g->%g\n          #States: %i->%i\n          Paths: %s->%s'%
+                    (self.reflectivity_last_Q_center, Q_center,
+                     self.reflectivity_states, dsinfo.no_states,
+                     self.reflectivity_last_path, file_path))
       self.finish_reflectivity()
       return True
 
@@ -286,8 +594,7 @@ class ReflectivityBuilder(object):
     # adding the dataset was successful, add it and increment the index.
     self.reflectivity_items.append(refls)
     self.current_index+=1
-    self.reflectivity_last_ai=dsinfo.ai
-    self.reflectivity_last_lamda=dsinfo.lambda_center
+    self.reflectivity_last_Q_center=Q_center
     self.live_data_tof_overwrite=data[0].tof_edges
     return True
 
@@ -327,11 +634,10 @@ class ReflectivityBuilder(object):
                             P0=P0, PN=PN,
                             )
 
-    if ((r0.ai*180./numpy.pi)/live_ds.lambda_center)<\
-        (self.reflectivity_last_ai/self.reflectivity_last_lamda*0.85):
+    Q_center=4.*pi/live_ds.lambda_center*sin(r0.ai)
+    if Q_center<self.reflectivity_last_Q_center:
       logging.debug('Live dataset has lower Q, finish current reflectivity. Qnew: %g, Qold: %g'%
-                    ((r0.ai*180./numpy.pi)/live_ds.lambda_center,
-                    self.reflectivity_last_ai/self.reflectivity_last_lamda))
+                    (Q_center, self.reflectivity_last_Q_center))
       self.finish_reflectivity()
       self.start_new_reflectivity(live_ds)
     if len(self.reflectivity_items)==0:
@@ -359,7 +665,7 @@ class ReflectivityBuilder(object):
     if self.reflectivity_active:
       self.reflectivity_active=False
       if len(self.reflectivity_items)==0:
-        # don't export empty reflectivityies
+        # don't export empty reflectivities
         return
       data=self.combine_reflectivity()
       numbers='+'.join([r[0].options['number'] for r in self.reflectivity_items])
@@ -379,11 +685,12 @@ class ReflectivityBuilder(object):
     try:
       dsinfo=self.db(file_id=index)[0]
     except IndexError:
-      res=self.db.add_record(index)
-      if res:
-        return self.db(file_id=index)[0]
-      else:
-        return res
+#      res=self.db.add_record(index)
+#      if res:
+#        return self.db(file_id=index)[0]
+#      else:
+#        return res
+      return False
     else:
       return dsinfo
 
@@ -446,7 +753,10 @@ class ReflectivityBuilder(object):
     ax.set_title(title)
     ax.set_xlabel('Q [$\\AA^{-1}$]')
     ax.set_ylabel('R')
-    canvas.print_png(fname)
+    try:
+      canvas.print_png(fname)
+    except IOError:
+      logging.warn('Could not save plot:', exc_info=True)
 
   def get_ai(self, ds):
     data=ds[0]

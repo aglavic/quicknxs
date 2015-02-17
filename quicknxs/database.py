@@ -5,13 +5,13 @@ direct beam measurements.
 '''
 
 import os
+import logging
 from numpy import *
-from .buzhug import Base
+from .buzhug import TS_Base as Base #thread safe database
 from .qreduce import NXSData
 from .qcalc import get_xpos, get_yregion
 from .config import instrument as config
 from .decorators import log_call
-from logging import debug
 
 class DatabaseHandler(object):
   '''
@@ -99,14 +99,14 @@ class DatabaseHandler(object):
     db=self.get_database()
     if type(dataset) is int:
       if len(db(file_id=dataset))>0:
-        debug('Item already in database %s'%repr(dataset))
+        logging.debug('Item already in database %s'%repr(dataset))
         return True
       try:
         dataset=NXSData(dataset, use_caching=False)
       except KeyboardInterrupt:
         raise KeyboardInterrupt
       except:
-        debug('Could not load dataset with index %i:'%dataset, exc_info=True)
+        logging.debug('Could not load dataset with index %i:'%dataset, exc_info=True)
         return False
       else:
         if dataset is None:
@@ -114,17 +114,18 @@ class DatabaseHandler(object):
     try:
       record=self.get_record(dataset)
     except:
-      debug('Could not create record for dataset %s:'%repr(dataset), exc_info=True)
+      logging.debug('Could not create record for dataset %s:'%repr(dataset), exc_info=True)
       return None
     if len(db(file_id=dataset.number))>0:
-      debug('Item already in database %s'%repr(dataset))
+      logging.debug('Item already in database %s'%repr(dataset))
       return True
     db.insert(*record)
     return True
 
   def __del__(self):
-    if self.db is None:
-      self.close_db()
+    if self.db is not None:
+      self.db.close()
+      self.db=None
 
   def __len__(self):
     db=self.get_database()
@@ -172,3 +173,13 @@ class DatabaseHandler(object):
       cmp_vals[key]=[val-diff, val+diff]
 
     return self(**cmp_vals)
+
+  def _delete_wrong_indices(self):
+    wrong=[]
+    db=self.get_database()
+    for record in db:
+      if record.file_id!=int(record.file_path.split('_')[-2]):
+        wrong.append(record)
+    db.delete(wrong)
+    db.cleanup()
+    logging.info('%i wrong recrods deleted'%len(wrong))

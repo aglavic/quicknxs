@@ -20,6 +20,7 @@ EXTENSION_SCRIPTS=u'/SNS/REF_M/shared/quicknxs_scripts'
 AUTOREFL_LIVE_IMAGE=u'/SNS/REF_M/shared/LiveData/autorefl.png'
 AUTOREFL_LIVE_INDEX=u'/SNS/REF_M/shared/LiveData/autorefl_index.txt'
 AUTOREFL_RESULT_IMAGE=u'%(origin_path)s/../shared/autoreduce/reflectivity_%(numbers)s.png'
+autorefl_folder=u'/SNS/REF_M/shared/autoreduce/'
 
 # background pixels selected on startup
 START_BG=(4, 104)

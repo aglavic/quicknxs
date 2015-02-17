@@ -2,6 +2,12 @@
 #-*- coding: utf8 -*-
 '''
 Background program to automatically create reflectivities from the most recent datasets.
+It gets triggered by the reduce_REF_M script whenever there is a new file available.
+
+If there is now instance running it will start one otherwise it will signal
+the running instance about the new file and wait for an acknowledgement,
+if this is not triggered the current instance will be killed and a new
+one started.
 '''
 
 import logging
@@ -17,7 +23,6 @@ except NameError:
   pass
 
 from quicknxs.console_logging import setup_logging
-from quicknxs.database_updater import DatabaseUpdater
 from quicknxs.auto_reflectivity import ReflectivityBuilder
 from quicknxs.version import str_version
 
@@ -32,45 +37,22 @@ argv_options={
                      'set verbosity (smaller is more verbose), default is INFO level of %i'%logging.INFO),
               }
 
-def eval_argv(argv=[]):
-  result=dict([(opt[0], opt[2]) for opt in argv_options.values()])
+def start_new_instance(index):
+  '''
+  Fork a new daemon process and start ReflectivityBuilder thread.
+  '''
+  setup_logging(log_level=logging.INFO)
+  logging.info('*** QuickNXS AutoRefl %s Logging started ***'%str_version)
 
-  for key, (name, vtype, default, ignore) in argv_options.items():
-    if key in argv:
-      i=argv.index(key)
-      argv.pop(i)
-      try:
-        value=vtype(argv.pop(i))
-      except ValueError:
-        exit('Value of "%s" option needs to be of type %s.'%(key, vtype.__name__))
-      else:
-        result[name]=value
-    else:
-      result[name]=default
-  if len(argv)!=0:
-    cline=''
-    dlines=''
-    for key, (name, vtype, ignore, description) in sorted(argv_options.items()):
-      cline+=' {%s [%s]}'%(key, name)
-      dlines+='\n\t\t%s [%s]\t%s'%(key, name, description)
-    exit('Usage:\n\tautorefl %s\n%s'%(cline, dlines))
-  return result
+  rb=ReflectivityBuilder(index-10)
+  rb.start()
+
+  logging.info('*** QuickNXS AutoRefl %s Logging ended ***'%str_version)
 
 if __name__=='__main__':
   opts=eval_argv(sys.argv[1:])
 
-  setup_logging(opts['log_level'])
-  logging.info('*** QuickNXS AutoRefl %s Logging started ***'%str_version)
   
-  dbu=DatabaseUpdater(opts['start_index'])
-  dbu.start()
-  #if opts['start_autorefl'] is None:
-  #  sleep(60.) # give the thread time to update the database before starting the builder
   rb=ReflectivityBuilder(opts['start_autorefl'])
-  rb.run() # this is not a thread, it will block until killed with ctrl+C
+  rb.start()
 
-  # shutdown the database updater
-  logging.info('Reflectivity builder stopped, trying to close database updater thread.')
-  dbu.quit_event.set()
-  dbu.join(10.)
-  logging.info('*** QuickNXS AutoRefl %s Logging ended ***'%str_version)
