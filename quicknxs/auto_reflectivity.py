@@ -372,7 +372,6 @@ class ReflectivityBuilder(Thread):
         else:
           self.add_dataset()
           self.check_and_plot_newfile()
-      self.check_and_plot_newfile()
       #------------- Adding data to the plot that has already been translated ----------------#
 
       if not self.newLiveData.isSet():
@@ -416,7 +415,11 @@ class ReflectivityBuilder(Thread):
     Check if the newFile flag is set and the current_index has reached it
     already. If it is a valid reflectivity save the image.
     '''
-    if self.newFile.isSet() and self.current_index>=(self.newFile+1):
+    # In case the action got triggered by LiveData and not the FileCom
+    # wait a few seconds for pending communiction.
+    if self.newLiveData.is_set() and not self.newFile.isSet():
+      self.newFile.wait(60.)
+    if self.newFile.isSet() and self.current_index>=(self.newFileId+1):
       # create image for the autoreduce script
       self.newFile.clear()
       if self.reflectivity_active and self.newFileImage is not None and\
