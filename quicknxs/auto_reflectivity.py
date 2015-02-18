@@ -760,7 +760,7 @@ class ReflectivityBuilder(Thread):
       fig=Figure(figsize=(10.667, 8.), dpi=150, facecolor='#FFFFFF')
       fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
     elif this_run:
-      fig=Figure(figsize=(11., 8.), dpi=150, facecolor='#FFFFFF')
+      fig=Figure(figsize=(11., 8.), dpi=72, facecolor='#FFFFFF')
       fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
       gs=GridSpec(2, 2, width_ratios=[3, 1])
     else:
@@ -807,7 +807,7 @@ class ReflectivityBuilder(Thread):
     '''
     Generate a graph with only the raw data and no reflectivity plot.
     '''
-    fig=Figure(figsize=(11., 5.), dpi=150, facecolor='#FFFFFF')
+    fig=Figure(figsize=(11., 5.), dpi=72, facecolor='#FFFFFF')
     fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
     canvas=FigureCanvasAgg(fig)
     xy_ax=fig.add_subplot(121)

@@ -593,9 +593,11 @@ class PlotDialog(QDialog):
       dialog.plot.draw()
 
   def closeEvent(self, event):
-    self._open_instances.remove(self)
+    try:
+      self._open_instances.remove(self)
+    except ValueError:
+      debug('Could not remove window from _open_instances %s'%repr(self))
     self.close()
-    #return QDialog.closeEvent(self, event)
 
 class SmoothDialog(QDialog):
   '''

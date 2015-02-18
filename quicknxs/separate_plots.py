@@ -64,7 +64,10 @@ class ReductionPreviewDialog(QDialog):
           ymin=min(ymin, yj[yj>0].min())
         except ValueError:
           pass
-        ymax=max(ymax, yj.max())
+        try:
+          ymax=max(ymax, yj.max())
+        except ValueError:
+          pass
         Q[j]+=Qj.tolist()
         y[j]+=yj.tolist()
         dy[j]+=dyj.tolist()

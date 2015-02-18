@@ -333,7 +333,7 @@ class NXSData(object):
       if channel not in channels:
         continue
       raw_data=nxs[channel]
-      if filename.endswith('event.nxs'):
+      if filename.endswith('event.nxs') and not os.path.exists(filename.replace('_event', '')):
         data=MRDataset.from_event(raw_data, self._options,
                                   callback=self._options['callback'],
                                   callback_offset=progress,
@@ -347,6 +347,10 @@ class NXSData(object):
       elif filename.endswith('histo.nxs'):
         data=MRDataset.from_histogram(raw_data, self._options)
       else:
+        # old format file
+        if filename.endswith('event.nxs'):
+          warn('Event mode not implemented for old file format, please select histogram file.')
+          return False
         data=MRDataset.from_old_format(raw_data, self._options)
       self._channel_data.append(data)
       self._channel_names.append(dest)
@@ -874,7 +878,11 @@ class MRDataset(object):
     bin_type=read_options['bin_type']
     bins=read_options['bins']
 
-    xyxml=minidom.parse(xyfile)
+    try:
+      xyxml=minidom.parse(xyfile)
+    except:
+      warn('Could not parse xml file %s:'%xyfile, exc_info=True)
+      return None
 
     output.total_time=float(xyxml.getElementsByTagName('TotalTime')[0].childNodes[0].data[:-4])
     output.total_counts=int(xyxml.getElementsByTagName('TotalCounts')[0].childNodes[0].data)
@@ -894,7 +902,11 @@ class MRDataset(object):
     output.slit3_width=daslogs['S3HWidth']
 
     xydata=MRDataset._getxml_data(xyxml)
-    tofxxml=minidom.parse(tofxfile)
+    try:
+      tofxxml=minidom.parse(tofxfile)
+    except:
+      warn('Could not parse xml file %s:'%tofxfile, exc_info=True)
+      return None
     tofxdata=MRDataset._getxml_data(tofxxml).T
     
     output.xydata=xydata.T.astype(float)
@@ -1625,7 +1637,7 @@ class Reflectivity(object):
     norm=self.options['normalization']
     normR=where(norm.Rraw>0, norm.Rraw, 1.)
     # normalize each line by the incident intensity including error propagation
-    dR=sqrt((dR/normR[newaxis, :])**2+(R*(norm.dR/normR**2)[newaxis, :])**2)
+    dR=sqrt((dR/normR[newaxis, :])**2+(R*(norm.dRraw/normR**2)[newaxis, :])**2)
     R/=normR[newaxis, :]
     # reduce ToF region to points with incident intensity
 
