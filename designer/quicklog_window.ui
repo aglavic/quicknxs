@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QuickLog</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="system-help">
+    <normaloff/>
+   </iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>1</number>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QCheckBox" name="follow">
+        <property name="text">
+         <string>Follow</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Filter Severity Below</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="minSeverity">
+        <item>
+         <property name="text">
+          <string>DEBUG</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>INFO</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>WARNING</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>ERROR</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>FATAL</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="filterThreadLabel">
+        <property name="text">
+         <string>Filter Thread</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="filterThread">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTreeWidget" name="logTree">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <column>
+       <property name="text">
+        <string>Severity</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Time</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Content</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Source</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Line</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Method</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionReload"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionReload">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>minSeverity</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>updateLog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>255</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>803</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filterThread</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>updateLog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>636</x>
+     <y>34</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>800</x>
+     <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionReload</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reloadFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>updateLog()</slot>
+  <slot>openFile()</slot>
+  <slot>reloadFile()</slot>
+ </slots>
+</ui>

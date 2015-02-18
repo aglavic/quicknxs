@@ -25,7 +25,7 @@ __author_email__=__email__
 __url__="http://"
 __description__='''Magnetism reflectometer data reduction software'''
 
-__scripts__=['scripts/quicknxs', 'scripts/autorefl', 'scripts/nxsdialog']
+__scripts__=['scripts/quicknxs', 'scripts/quicklog', 'scripts/nxsdialog']
 __py_modules__=[]
 __package_dir__={}
 __packages__=['quicknxs', 'quicknxs.config', 'quicknxs.buzhug']

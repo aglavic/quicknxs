@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+'''
+Dialog to show and organize logs written by e.g. QuickNXS.
+The logformat should be:
+
+[{Severity}] - {time} - <optional thread name> - {module}.py:{line}:{method} Info
+...additional content...
+
+'''
+
+import sys
+from PyQt4.QtGui import QApplication
+from quicknxs.quicklog_gui import QuicklogWindow
+
+if __name__=='__main__':
+  app=QApplication([])
+  gui=QuicklogWindow()
+  if len(sys.argv)>1:
+    gui.openFile(sys.argv[1])
+  else:
+    gui.openFile()
+  gui.show()
+  exit(app.exec_())
