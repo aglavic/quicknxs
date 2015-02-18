@@ -8,7 +8,7 @@ import os, sys
 import logging
 import numpy
 import atexit
-from numpy import sin, pi
+from numpy import sin, pi, where
 
 from cPickle import dumps, loads
 from threading import Thread, Event, _Event
@@ -16,6 +16,13 @@ from xml.etree import ElementTree
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
+from matplotlib.gridspec import GridSpec
+from matplotlib import cm, colors
+cmap=colors.LinearSegmentedColormap.from_list('default',
+                  ['#0000ff', '#00ff00', '#ffff00', '#ff0000', '#bd7efc', '#000000'], N=256)
+cm.register_cmap('default', cmap=cmap)
+from matplotlib.colors import LogNorm
+
 from . import database, qreduce, qcalc, console_logging
 from .config import instrument
 from .version import str_version
@@ -422,12 +429,18 @@ class ReflectivityBuilder(Thread):
     if self.newFile.isSet() and self.current_index>=(self.newFileId+1):
       # create image for the autoreduce script
       self.newFile.clear()
-      if self.reflectivity_active and self.newFileImage is not None and\
-        self.current_index==(self.newFileId+1):
-        logging.debug('Generate autoreduce image at %s'%self.newFileImage)
-        data=self.combine_reflectivity()
-        numbers='+'.join([r[0].options['number'] for r in self.reflectivity_items])
-        self.plot_reflectivity(data, self.newFileImage, numbers, True)
+      if self.newFileImage is not None and self.current_index==(self.newFileId+1):
+        if self.reflectivity_active:
+          logging.debug('Generate autoreduce image at %s'%self.newFileImage)
+          data=self.combine_reflectivity(sep_last=True)
+          numbers='+'.join([r[0].options['number'] for r in self.reflectivity_items])
+          self.plot_reflectivity(data, self.newFileImage, numbers, this_run=self.newFileId)
+        else:
+          logging.debug('Generate autoreduce raw image at %s'%self.newFileImage)
+          try:
+            self.plot_raw_only(self.newFileImage, self.newFileId)
+          except:
+            logging.warn('Error in plot_raw_only:', exc_info=True)
       self.newFileId=None
       self.newFileImage=None
       self.newFileName=None
@@ -454,6 +467,7 @@ class ReflectivityBuilder(Thread):
       last_ai=self.get_ai(ds)
       last_channels=len(ds)
       last_lambda=ds.lambda_center
+    last_Q_center=4.*pi/last_lambda*sin(last_ai/180.*pi)
 
     results=self.db('file_id>=start_id and file_id<end_id',
                     start_id=self.current_index-20,
@@ -462,13 +476,14 @@ class ReflectivityBuilder(Thread):
     for result in results:
       if abs(result.ai)<0.1:
         break
-      if result.ai>(last_ai*1.05) and (abs(result.ai-last_ai)>0.01
-                                      or result.lambda_center<=last_lambda):
+      result_Q_center=4.*pi/result.lambda_center*sin(result.ai/180.*pi)
+      if result_Q_center>last_Q_center:
         break
       if result.no_states!=last_channels:
         break
       last_ai=result.ai
       last_lambda=result.lambda_center
+      last_Q_center=result_Q_center
       self.current_index=result.file_id
 
   def start_new_reflectivity(self, live_ds=None):
@@ -706,19 +721,22 @@ class ReflectivityBuilder(Thread):
     PN=res[0]
     return P0, PN
 
-  def combine_reflectivity(self, live_add=[]):
+  def combine_reflectivity(self, live_add=[], sep_last=False):
     '''
     Create plottable arrays from the extracted reflectivities.
     '''
     xitems=[[] for ignore in range(self.reflectivity_states)]
     yitems=[[] for ignore in range(self.reflectivity_states)]
-    for items in self.reflectivity_items+live_add:
+    for idx, items in enumerate(self.reflectivity_items+live_add):
       P0=items[0].options['P0']
       PN=items[0].options['PN']
       Pfrom, Pto=PN, len(items[0].R)-P0
-      for i, ref in enumerate(items):
-        xitems[i].append(ref.Q[Pfrom:Pto])
-        yitems[i].append(ref.R[Pfrom:Pto])
+      if sep_last and idx==(len(self.reflectivity_items)-1):
+        sep_xy=[(ref.Q[Pfrom:Pto], ref.R[Pfrom:Pto])  for ref in items]
+      else:
+        for i, ref in enumerate(items):
+          xitems[i].append(ref.Q[Pfrom:Pto])
+          yitems[i].append(ref.R[Pfrom:Pto])
     out=[]
     for i in range(self.reflectivity_states):
       x=numpy.hstack(xitems[i])
@@ -727,30 +745,54 @@ class ReflectivityBuilder(Thread):
       x=x[ids]
       y=y[ids]
       out.append((x, y, self.state_names[i]))
+    if sep_last:
+      for i, (xi, yi) in enumerate(sep_xy):
+        out.append((xi, yi, self.state_names[i]+'  this run'))
     return out
 
-  def plot_reflectivity(self, data, fname, title='', highres=False):
+  def plot_reflectivity(self, data, fname, title='', highres=False, this_run=None):
+    '''
+    Generate a graph with a combined reflectivity plot for all spin-states.
+    If this_run is given it's raw data is shown on the right side of the same graph, too.
+    '''
     logging.info('Saving plot to "%s".'%fname)
     if highres:
       fig=Figure(figsize=(10.667, 8.), dpi=150, facecolor='#FFFFFF')
       fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
+    elif this_run:
+      fig=Figure(figsize=(11., 8.), dpi=150, facecolor='#FFFFFF')
+      fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
+      gs=GridSpec(2, 2, width_ratios=[3, 1])
     else:
       fig=Figure(figsize=(6., 4.), dpi=72, facecolor='#FFFFFF')
       fig.subplots_adjust(left=0.12, bottom=0.13, top=0.94, right=0.98)
     canvas=FigureCanvasAgg(fig)
-    ax=fig.add_subplot(111)
+    if this_run:
+      ax=fig.add_subplot(gs[:, 0])
+      xy_ax=fig.add_subplot(gs[0,1])
+      tof_ax=fig.add_subplot(gs[1, 1])
+      p1, p2=self.plot_raw(xy_ax, tof_ax, this_run)
+      fig.colorbar(p1, ax=xy_ax, orientation='horizontal')
+      fig.colorbar(p2, ax=tof_ax, orientation='horizontal')
+    else:
+      ax=fig.add_subplot(111)
 
     ymin=1e10
     ymax=1e-10
+    xmin=0.1
+    xmax=0.01
     for x, y, label in data:
       try:
         ymin=min(y[y>0].min(), ymin)
       except ValueError:
         # ignore plots with zero intensity
         continue
+      else:
+        xmin=min(x.min(), xmin)
+        xmax=max(x.max(), xmax)
       ymax=max(y.max(), ymax)
       ax.semilogy(x, y, label=label)
-    ax.set_xlim(x.min()-x.min()%0.005, x.max()-x.max()%0.005+0.005)
+    ax.set_xlim(xmin-xmin%0.005, xmax-xmax%0.005+0.005)
     ax.set_ylim(ymin*0.75, ymax*1.25)
     ax.legend()
     ax.set_title(title)
@@ -760,6 +802,51 @@ class ReflectivityBuilder(Thread):
       canvas.print_png(fname)
     except IOError:
       logging.warn('Could not save plot:', exc_info=True)
+
+  def plot_raw_only(self, fname, this_run):
+    '''
+    Generate a graph with only the raw data and no reflectivity plot.
+    '''
+    fig=Figure(figsize=(11., 5.), dpi=150, facecolor='#FFFFFF')
+    fig.subplots_adjust(left=0.1, bottom=0.1, top=0.95, right=0.98)
+    canvas=FigureCanvasAgg(fig)
+    xy_ax=fig.add_subplot(121)
+    tof_ax=fig.add_subplot(122)
+    p1, p2=self.plot_raw(xy_ax, tof_ax, this_run)
+    fig.colorbar(p1, ax=xy_ax, orientation='vertical')
+    fig.colorbar(p2, ax=tof_ax, orientation='vertical')
+    try:
+      canvas.print_png(fname)
+    except IOError:
+      logging.warn('Could not save raw plot:', exc_info=True)
+
+
+  def plot_raw(self, xy_ax, tof_ax, this_run):
+    '''
+    Plot X-Y and ToF-X images into two axis for a given run number.
+    '''
+    data=qreduce.NXSData(this_run, use_caching=False)[0]
+    xyd=data.xydata
+    p1=xy_ax.imshow(xyd, aspect='auto', origin='lower', cmap='default',
+                    norm=LogNorm(xyd[xyd>0].min(), xyd.max()))
+    xy_ax.set_title('%i: X-Y View'%this_run)
+    xy_ax.set_xlabel('x [pix]')
+    xy_ax.set_ylabel('y [pix]')
+
+    tofdata=data.tofdata
+    tofpos=where(tofdata>0)[0]
+    tof_from=tofpos[0]
+    tof_to=tofpos[-1]+1
+
+    xyd=data.xtofdata[:, tof_from:tof_to]
+    tof=data.tof[tof_from:tof_to]
+    p2=tof_ax.imshow(xyd, aspect='auto', origin='lower', cmap='default',
+                     norm=LogNorm(xyd[xyd>0].min(), xyd.max()),
+                     extent=[tof[0]*1e-3, tof[-1]*1e-3, 0, xyd.shape[0]-1])
+    tof_ax.set_title('%i: ToF-X View'%this_run)
+    tof_ax.set_xlabel('ToF [ms]')
+    tof_ax.set_ylabel('x [pix]')
+    return p1, p2
 
   def get_ai(self, ds):
     data=ds[0]
