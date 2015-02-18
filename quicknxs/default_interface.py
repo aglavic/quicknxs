@@ -3,7 +3,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface.ui'
 #
-# Created: Mon Jun  9 12:58:15 2014
+# Created: Wed Feb 18 16:00:09 2015
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -259,7 +259,7 @@ class Ui_MainWindow(object):
     self.gridLayout_3.addWidget(self.bgActive, 3, 1, 1, 1)
     self.toolBox.addItem(self.page, _fromUtf8(""))
     self.page_2 = QtGui.QWidget()
-    self.page_2.setGeometry(QtCore.QRect(0, 0, 256, 129))
+    self.page_2.setGeometry(QtCore.QRect(0, 0, 251, 129))
     self.page_2.setObjectName(_fromUtf8("page_2"))
     self.gridLayout_15 = QtGui.QGridLayout(self.page_2)
     self.gridLayout_15.setMargin(2)
@@ -325,7 +325,7 @@ class Ui_MainWindow(object):
     self.gridLayout_15.addWidget(self.fanReflectivity, 5, 0, 1, 2)
     self.toolBox.addItem(self.page_2, _fromUtf8(""))
     self.page_3 = QtGui.QWidget()
-    self.page_3.setGeometry(QtCore.QRect(0, 0, 256, 128))
+    self.page_3.setGeometry(QtCore.QRect(0, 0, 145, 128))
     self.page_3.setObjectName(_fromUtf8("page_3"))
     self.gridLayout_17 = QtGui.QGridLayout(self.page_3)
     self.gridLayout_17.setMargin(2)
@@ -1345,6 +1345,8 @@ class Ui_MainWindow(object):
     self.actionAutoNorm.setObjectName(_fromUtf8("actionAutoNorm"))
     self.actionSearch_Database = QtGui.QAction(MainWindow)
     self.actionSearch_Database.setObjectName(_fromUtf8("actionSearch_Database"))
+    self.actionShow_Logs = QtGui.QAction(MainWindow)
+    self.actionShow_Logs.setObjectName(_fromUtf8("actionShow_Logs"))
     self.menuFile.addAction(self.actionOpen)
     self.menuFile.addAction(self.actionOpen_Sum)
     self.menuFile.addAction(self.actionNext_File)
@@ -1352,6 +1354,8 @@ class Ui_MainWindow(object):
     self.menuFile.addSeparator()
     self.menuFile.addAction(self.actionLoad_Extraction)
     self.menuDebug.addAction(self.actionLog_Debug_Messages)
+    self.menuDebug.addAction(self.actionShow_Logs)
+    self.menuDebug.addSeparator()
     self.menuDebug.addAction(self.actionRaise_Error)
     self.menuAdvanced.addAction(self.actionAdvanced_Background)
     self.menuAdvanced.addAction(self.actionAdjust_Dirct_Beam)
@@ -1514,6 +1518,7 @@ class Ui_MainWindow(object):
     QtCore.QObject.connect(self.actionOpen_Reduction_Preview, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_reduction_preview)
     QtCore.QObject.connect(self.pushButton_3, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.live_open)
     QtCore.QObject.connect(self.actionSearch_Database, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_database_search)
+    QtCore.QObject.connect(self.actionShow_Logs, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.open_logfile_viewer)
     QtCore.QMetaObject.connectSlotsByName(MainWindow)
     MainWindow.setTabOrder(self.numberSearchEntry, self.histogramActive)
     MainWindow.setTabOrder(self.histogramActive, self.eventActive)
@@ -1880,6 +1885,7 @@ class Ui_MainWindow(object):
     self.actionAutoNorm.setText(_translate("MainWindow", "AutoNorm", None))
     self.actionAutoNorm.setToolTip(_translate("MainWindow", "Automatically select normalization file with closest slit sizes", None))
     self.actionSearch_Database.setText(_translate("MainWindow", "Search Database...", None))
+    self.actionShow_Logs.setText(_translate("MainWindow", "Show Logs...", None))
 
 from .compare_plots import CompareWidget
 from .mplwidget import MPLWidget

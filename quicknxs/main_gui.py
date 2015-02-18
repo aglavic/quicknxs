@@ -19,6 +19,7 @@ from .default_interface import Ui_MainWindow
 from .gui_logging import install_gui_handler, excepthook_overwrite
 from .gui_utils import DelayedTrigger, ReduceDialog, Reducer
 from .nxs_gui import NXSDialog
+from .quicklog_gui import QuicklogWindow
 from .point_picker import PointPicker
 from .polarization_gui import PolarizationDialog
 from .qcalc import get_total_reflection, get_scaling, get_xpos, get_yregion
@@ -2369,6 +2370,12 @@ Do you want to try to restore the working reduction list?""",
     if self.active_data is None: return
     dia=NXSDialog(self, self.active_data.origin)
     dia.show()
+
+  @log_call
+  def open_logfile_viewer(self):
+    window=QuicklogWindow(parent=self)
+    window.openFile(paths.LOG_FILE)
+    window.show()
 
   def open_database_search(self):
     dia=DatabaseDialog(self)

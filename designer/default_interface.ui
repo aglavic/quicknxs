@@ -570,7 +570,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>256</width>
+             <width>251</width>
              <height>129</height>
             </rect>
            </property>
@@ -753,7 +753,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>256</width>
+             <width>145</width>
              <height>128</height>
             </rect>
            </property>
@@ -2699,6 +2699,8 @@
       <string>Debug</string>
      </property>
      <addaction name="actionLog_Debug_Messages"/>
+     <addaction name="actionShow_Logs"/>
+     <addaction name="separator"/>
      <addaction name="actionRaise_Error"/>
     </widget>
     <addaction name="actionAdvanced_Background"/>
@@ -3173,6 +3175,11 @@
   <action name="actionSearch_Database">
    <property name="text">
     <string>Search Database...</string>
+   </property>
+  </action>
+  <action name="actionShow_Logs">
+   <property name="text">
+    <string>Show Logs...</string>
    </property>
   </action>
  </widget>
@@ -4631,8 +4638,24 @@
    <slot>open_database_search()</slot>
    <hints>
     <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
      <x>494</x>
      <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_Logs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>open_logfile_viewer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>494</x>
@@ -4693,5 +4716,6 @@
   <slot>open_reduction_preview()</slot>
   <slot>live_open()</slot>
   <slot>open_database_search()</slot>
+  <slot>open_logfile_viewer()</slot>
  </slots>
 </ui>

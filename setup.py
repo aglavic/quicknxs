@@ -18,7 +18,7 @@ except ImportError:
 
 __package_name__='QuickNXS'
 __author__="Artur Glavic"
-__copyright__="Copyright 2012-2013"
+__copyright__="Copyright 2012-2015"
 __license__="GPL v3"
 __email__="glavicag@ornl.gov"
 __author_email__=__email__
