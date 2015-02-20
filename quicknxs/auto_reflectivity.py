@@ -350,7 +350,9 @@ class ReflectivityBuilder(Thread):
       self.set_start_index(self.live_data_idx)
 
     while not self.quit.isSet():
+      logging.debug('Wait step 1, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
       self.action.wait()
+      logging.debug('Continue step 1, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
       if self.quit.isSet():
         return
       self.action.clear()
@@ -363,7 +365,10 @@ class ReflectivityBuilder(Thread):
         if self.quit.isSet():
           return
         if not self.reflectivity_active:
-          self.start_new_reflectivity()
+          new_started=self.start_new_reflectivity()
+          if not new_started:
+            self.check_and_plot_newfile()
+            continue
         if not self.get_dsinfo(self.current_index):
           # if for some reason the run never existed, continue directly
           if len(self.db('file_id>fid', fid=self.current_index))>0:
@@ -374,11 +379,18 @@ class ReflectivityBuilder(Thread):
 
           # if dataset not yet available, wait for translation service to create the file
           if not (self.newFile.isSet() or self.quit.isSet()):
+            logging.debug('Wait step 2, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
             self.action.wait()
+            logging.debug('Continue step 2, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
             self.action.clear()
         else:
           self.add_dataset()
           self.check_and_plot_newfile()
+#          if exported and self.live_data_idx>self.current_index:
+#            logging.debug('Wait step 3, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
+#            self.action.wait()
+#            logging.debug('Continue step 3, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
+#            self.action.clear()
       #------------- Adding data to the plot that has already been translated ----------------#
 
       if not self.newLiveData.isSet():
@@ -424,8 +436,11 @@ class ReflectivityBuilder(Thread):
     '''
     # In case the action got triggered by LiveData and not the FileCom
     # wait a few seconds for pending communiction.
+    logging.debug('Checking if autoreduce file needs to be generated.')
     if self.newLiveData.is_set() and not self.newFile.isSet():
+      logging.debug('Wait newFile, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
       self.newFile.wait(60.)
+      logging.debug('Continue newFile, LDI: %i, CI: %i'%(self.live_data_idx, self.current_index))
     if self.newFile.isSet() and self.current_index>=(self.newFileId+1):
       # create image for the autoreduce script
       self.newFile.clear()
@@ -444,6 +459,8 @@ class ReflectivityBuilder(Thread):
       self.newFileId=None
       self.newFileImage=None
       self.newFileName=None
+      return True
+    return False
 
   def set_start_index(self, start_idx=None):
     '''
@@ -508,12 +525,14 @@ class ReflectivityBuilder(Thread):
       # the first dataset is already translated, use database information to begin reflecitvity
       dsinfo=self.get_dsinfo(self.current_index)
       if dsinfo is False:
+        logging.debug('Could not get dsinfo')
         return False
       if dsinfo is None:
         # dataset could not be processed properly, increment index
         self.current_index+=1
         return False
       elif dsinfo.ai<0.1:
+        logging.debug('Direct beam run, stepping over')
         self.current_index+=1
         return False
       logging.info('Creating new reflectivity starting at index %i.'%self.current_index)
@@ -653,7 +672,7 @@ class ReflectivityBuilder(Thread):
                             )
 
     Q_center=4.*pi/live_ds.lambda_center*sin(r0.ai)
-    if Q_center<self.reflectivity_last_Q_center:
+    if Q_center<self.reflectivity_last_Q_center or self.reflectivity_states!=len(live_ds):
       logging.debug('Live dataset has lower Q, finish current reflectivity. Qnew: %g, Qold: %g'%
                     (Q_center, self.reflectivity_last_Q_center))
       self.finish_reflectivity()
@@ -738,13 +757,14 @@ class ReflectivityBuilder(Thread):
           xitems[i].append(ref.Q[Pfrom:Pto])
           yitems[i].append(ref.R[Pfrom:Pto])
     out=[]
-    for i in range(self.reflectivity_states):
-      x=numpy.hstack(xitems[i])
-      y=numpy.hstack(yitems[i])
-      ids=x.argsort()
-      x=x[ids]
-      y=y[ids]
-      out.append((x, y, self.state_names[i]))
+    if len(xitems[0])!=0:
+      for i in range(self.reflectivity_states):
+        x=numpy.hstack(xitems[i])
+        y=numpy.hstack(yitems[i])
+        ids=x.argsort()
+        x=x[ids]
+        y=y[ids]
+        out.append((x, y, self.state_names[i]))
     if sep_last:
       for i, (xi, yi) in enumerate(sep_xy):
         out.append((xi, yi, self.state_names[i]+'  this run'))
