@@ -900,8 +900,8 @@ class ReductionObject(object):
             dataDen += tmpFactor
     
         if dataDen == 0:
-            data_mean = np.NAN
-            mean_error = np.NAN
+            data_mean = np.nan
+            mean_error = np.nan
         else:            
             data_mean = float(dataNum) / float(dataDen)
             mean_error = math.sqrt(1/dataDen)     
