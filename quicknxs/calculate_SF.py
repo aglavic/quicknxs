@@ -253,8 +253,8 @@ class CalculateSF(object):
 			dataDen += tmpFactor
 	    
 		if dataDen == 0:
-			data_mean = float('nan')
-			mean_error = float('nan')
+			data_mean = np.nan
+			mean_error = np.nan
 		else:
 			data_mean = float(dataNum) / float(dataDen)
 			mean_error = math.sqrt(1/dataDen)
@@ -271,4 +271,3 @@ class CalculateSF(object):
 		else:
 		    self.main_gui.ui.logbook.undo()
 		    self.main_gui.ui.logbook.append(text)
-	
