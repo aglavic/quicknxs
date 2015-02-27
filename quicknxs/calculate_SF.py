@@ -36,7 +36,7 @@ class CalculateSF(object):
 		
 		_y_axis = dataSet.reduce_y_axis
 		_e_axis = dataSet.reduce_e_axis
-		error_0 = 1./dataSet.active_data.proton_charge
+		error_0 = 1./configObject.proton_charge
 		[data_mean, mean_error] = self.weightedMean(_y_axis, _e_axis, error_0)
 		_sf = 1./data_mean 
 		
