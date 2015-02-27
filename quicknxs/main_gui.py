@@ -5088,13 +5088,12 @@ Do you want to try to restore the working reduction list?""",
       return
 
     _reduction = REFLReduction(self)
-    return
-    
     
     # calculate auto SF coefficient
     self.calculate_autoSF()
     bigTableData = self.bigTableData
     
+    return
     # select right SF
     self.select_current_SF()
     

@@ -32,7 +32,7 @@ class CalculateSF(object):
 		'''
 		self.logbook('-> Calculate scaling factor of Critical Edge file:')
 
-		dataSet = self.bigTableData[0,0]
+		dataSet = self.bigTableData[0,2]
 		
 		_y_axis = dataSet.reduce_y_axis
 		_e_axis = dataSet.reduce_e_axis
@@ -40,9 +40,9 @@ class CalculateSF(object):
 		[data_mean, mean_error] = self.weightedMean(_y_axis, _e_axis, error_0)
 		_sf = 1./data_mean 
 		
-		data_CE = self.bigTableData[0,0]
-		data_CE.sf_auto = _sf
-		self.bigTableData[0,0] = data_CE
+#		data_CE = self.bigTableData[0,0]
+		dataSet.sf_auto = _sf
+		self.bigTableData[0,2] = dataSet
 	
 		self.logbook('--> SF = ' + str(_sf))
 	
@@ -55,13 +55,13 @@ class CalculateSF(object):
 
 		nbr_row = self.main_gui.ui.reductionTable.rowCount()
 		for j in range(1,nbr_row):
-			left_set = self.applyLeftSF(self.bigTableData[j-1, 0])
-			right_set = self.bigTableData[j, 0]
+			left_set = self.applyLeftSF(self.bigTableData[j-1, 2])
+			right_set = self.bigTableData[j, 2]
 
 			_sf = 1./self.fitDataOfOverlapRange(left_set, right_set)
 
 			right_set.sf_auto = _sf
-			self.bigTableData[j,0] = right_set
+			self.bigTableData[j,2] = right_set
 			
 			self.logbook('--> SF of data set #' + str(j) + ' = ' + str(_sf))
 	
@@ -253,8 +253,8 @@ class CalculateSF(object):
 			dataDen += tmpFactor
 	    
 		if dataDen == 0:
-			data_mean = NAN
-			mean_error = NAN
+			data_mean = float('nan')
+			mean_error = float('nan')
 		else:
 			data_mean = float(dataNum) / float(dataDen)
 			mean_error = math.sqrt(1/dataDen)
