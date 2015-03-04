@@ -36,10 +36,10 @@ class CalculateSF(object):
 		
 		_y_axis = dataSet.reduce_y_axis
 		_e_axis = dataSet.reduce_e_axis
-		error_0 = 1./configObject.proton_charge
+#		error_0 = 1./configObject.proton_charge
+		error_0 = 1./dataSet.proton_charge
 		[data_mean, mean_error] = self.weightedMean(_y_axis, _e_axis, error_0)
 		_sf = 1./data_mean 
-		
 #		data_CE = self.bigTableData[0,0]
 		dataSet.sf_auto = _sf
 		self.bigTableData[0,2] = dataSet
@@ -138,6 +138,7 @@ class CalculateSF(object):
 			y_axis = data_set.reduce_y_axis[0:threshold_index]
 			e_axis = data_set.reduce_e_axis[0:threshold_index]
 		
+
 		dataToFit = CreateWorkspace(DataX = x_axis,
 		                            DataY = y_axis,
 		                            DataE = e_axis,
