@@ -5259,7 +5259,6 @@ Do you want to try to restore the working reduction list?""",
 		data0_active_data = data0.active_data
 		isylog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
 		isxlog = data0_active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
-
 		self.stitchingAsciiWidgetObject.updateDisplay(isylog=isylog, isxlog=isxlog)
 
 		# refresh reductionTable content (lambda range, Q range...etc)

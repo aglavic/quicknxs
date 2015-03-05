@@ -222,8 +222,6 @@ class REFLReduction(object):
 			outputWorkspace = str("reflectivity_%s" % runNumbers)
 			listWorkspaces.append(outputWorkspace)
 
-#			tofRange = [0, 200000]
-
 			RefLReduction(RunNumbers=runNumbers,
 			              NormalizationRunNumber=normalizationRunNumbers,
 			              SignalPeakPixelRange=signalPeakPixelRange,
@@ -277,14 +275,6 @@ class REFLReduction(object):
 		configObject.q_axis_for_display = mtd[outputWorkspace].readX(0)[:]
 		configObject.y_axis_for_display = mtd[outputWorkspace].readY(0)[:]
 		configObject.e_axis_for_display = mtd[outputWorkspace].readE(0)[:]
-		
-		print 'q_axis:'
-		print configObject.q_axis_for_display
-		print 'y_axis'
-		print configObject.y_axis_for_display
-		print ' ---------'
-		
-		
 		
 		return configObject
 

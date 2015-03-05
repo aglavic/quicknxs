@@ -129,7 +129,7 @@ class stitchingAsciiWidgetObject(object):
 		_data0 = bigTableData[0,0]
 		
 		i=0
-		while (bigTableData[i,0] is not None):
+		while (bigTableData[i,2] is not None):
 			
 			_data = bigTableData[i,2]
 			_q_axis = _data.q_axis_for_display
