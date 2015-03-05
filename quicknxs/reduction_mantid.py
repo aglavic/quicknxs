@@ -275,6 +275,7 @@ class REFLReduction(object):
 		configObject.q_axis_for_display = mtd[outputWorkspace].readX(0)[:]
 		configObject.y_axis_for_display = mtd[outputWorkspace].readY(0)[:]
 		configObject.e_axis_for_display = mtd[outputWorkspace].readE(0)[:]
+		configObject.sf_auto_found_match = mtd[outputWorkspace].getRun().getProperty('isSFfound').value
 		
 		return configObject
 

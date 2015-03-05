@@ -17,6 +17,7 @@ from xml.dom import minidom
 from distutils.util import strtobool
 import numpy as np
 import time
+from distutils.util import strtobool
 #import pickle
 #QtWebKit
 
@@ -5856,7 +5857,7 @@ Do you want to try to restore the working reduction list?""",
 			self.ui.dataStitchingTable.setItem(i,0,_run_number_item)
 
 			_brush = QtGui.QBrush()
-			if _data.sf_auto_found_match:
+			if strtobool(_data.sf_auto_found_match):
 				_brush.setColor(QtCore.Qt.green)
 			else:
 				_brush.setColor(QtCore.Qt.red)
