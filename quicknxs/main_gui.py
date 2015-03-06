@@ -2736,7 +2736,7 @@ class MainGUI(QtGui.QMainWindow):
 		self._cur_column_selected = column
 		self._cur_row_selected = row
 		SelectionBigTableChanged(self)
-		DisplayPlots(self)
+#		DisplayPlots(self)
 
 
 	def data_norm_tab_changed(self, index):
@@ -3995,12 +3995,12 @@ Do you want to try to restore the working reduction list?""",
 		#[r,c] = self.getCurrentRowColumnSelected()
 		r = self._cur_row_selected
 		c = self._cur_column_selected
-		data = self.bigTableData[r,c]
+		data = self.bigTableData[r,2]
 
 		if data is None:
 			return
 
-		_active_data = data.active_data
+#		_active_data = data.active_data
 
 		if c==0: #data
 
@@ -4008,53 +4008,57 @@ Do you want to try to restore the working reduction list?""",
 
 			peak = [self.ui.dataPeakFromValue.value(), 
 			        self.ui.dataPeakToValue.value()]
+			data.data_peak = peak
 
 			back = [self.ui.dataBackFromValue.value(),
 			        self.ui.dataBackToValue.value()]
+			data.data_back = back
 
 			low_res = [self.ui.dataLowResFromValue.value(),
 			           self.ui.dataLowResToValue.value()]
+			data.data_low_res = low_res
 
 			back_flag = self.ui.dataBackgroundFlag.isChecked()
+			data.data_back_flag = back_flag
 
 			low_res_flag = self.ui.dataLowResFlag.isChecked()
+			data.data_low_res_flag = low_res_flag
 
 		else:
 
 			use_it_flag = self.ui.useNormalizationFlag.isChecked()
+			data.norm_flag = use_it_flag
 
 			peak = [self.ui.normPeakFromValue.value(),
 			        self.ui.normPeakToValue.value()]
+			data.norm_peak = peak
 
 			back = [self.ui.normBackFromValue.value(),
 			        self.ui.normBackToValue.value()]
+			data.norm_back = back
 
 			back_flag = self.ui.normBackgroundFlag.isChecked()
+			data.norm_back_flag = back_flag
 
 			low_res = [self.ui.normLowResFromValue.value(),
 			           self.ui.normLowResToValue.value()]
+			data.norm_low_res = low_res
 
 			low_res_flag = self.ui.normLowResFlag.isChecked()
-
+			data.norm_low_res_flag = low_res_flag
 
 		tof_range = [self.ui.TOFmanualFromValue.text(),
 		             self.ui.TOFmanualToValue.text()]
-		tof_units = 'ms'
-		tof_auto_flag = self.ui.dataTOFautoMode.isChecked()
+		data.tof_range = tof_range
 
-		_active_data.peak = peak
-		_active_data.back = back
-		_active_data.low_res = low_res
-		_active_data.back_flag = back_flag
-		_active_data.low_res_flag = low_res_flag
-		_active_data.tof_range = tof_range
-		_active_data.tof_units = tof_units
-		_active_data.tof_auto_flag = tof_auto_flag
-		_active_data.use_it_flag = use_it_flag
+		tof_units = 'ms'
+		data.tof_units = tof_units
+		
+		tof_auto_flag = self.ui.dataTOFautoMode.isChecked()
+		data.tof_auto_flag = tof_auto_flag
 
 		# put back info in right place
-		data.active_data = _active_data
-		self.bigTableData[r,c] = data
+		self.bigTableData[r,2] = data
 
 
 	def getTrueCurrentRowColumnSelected(self):

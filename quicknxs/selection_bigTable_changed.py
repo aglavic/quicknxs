@@ -20,7 +20,7 @@ class SelectionBigTableChanged(object):
 		row = cls.current_row
 		
 		if cls.same_cell_selected():
-			print 'same cell selected'
+#			print 'same cell selected'
 			return
 		
 		if column == 6:

@@ -1204,6 +1204,7 @@ class LConfigDataset(object):
   data_low_res = ['0','0']
   data_back_flag = True
   data_low_res_flag = True
+
   tof_range = ['0','0'] 
   tof_units = 'ms'
   tof_auto_flag = True
@@ -1631,8 +1632,8 @@ class LRDataset(object):
       tmin = np.float(autotmin - 0.4e4)
       tmax = np.float(autotmax + 0.4e4)
   
-    output.tof_range_auto = [autotmin, autotmax]
-    output.tof_range_auto_with_margin = [tmin, tmax]
+    output.tof_range_auto = [autotmin, autotmax] #microS
+    output.tof_range_auto_with_margin = [tmin, tmax] #microS
     output.tof_range = [autotmin, autotmax] # for the first time, initialize tof_range like auto (microS)
     
     output.q_range = LRDataset.calculate_q_range(output)
@@ -1707,23 +1708,6 @@ class LRDataset(object):
       back1 = int(peak1 - backOffsetFromPeak)
       back2 = int(peak2 + backOffsetFromPeak)
       output.back = [str(back1), str(back2)]
-
-    ### work now with final data
-
-    ## rebin using final data reduction parameters
-    #params_reduction = [float(autotmin), float(tbin), float(autotmax)]
-    #nxs_histo_reduction = Rebin(InputWorkspace=nxs, Params=params_reduction, PreserveEvents=True)
-    ## normalize by proton charge
-    #nxs_histo_reduction = NormaliseByCurrent(InputWorkspace=nxs_histo_reduction)
-
-    ## retrieve 3D array
-    #[_tof_axis_reduction, Ixyt_reduction, Exyt_reduction] = LRDataset.getIxyt(nxs_histo_reduction)
-
-    #Ixyt_reduction = Ixyt_reduction[from_pixel:to_pixel,:,:]
-    #Exyt_reduction = Exyt_reduction[from_pixel:to_pixel,:,:]
-    
-    #output.Ixyt_reduction = Ixyt_reduction
-    #output.Exyt_reduction = Exyt_reduction
     
     return output
 

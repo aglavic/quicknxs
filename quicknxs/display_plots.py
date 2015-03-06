@@ -215,8 +215,10 @@ class DisplayPlots(object):
 			cls.yi_plot_ui.canvas.draw()
 
 	def plot_it(cls):
+		print '***** Entering plot_it ********'
 		_tof_axis =cls.fullTofAxis
 		_countstofdata = cls.countstofdata
+		
 		cls.it_plot_ui.canvas.ax.plot(_tof_axis[0:-1], _countstofdata)
 		cls.it_plot_ui.canvas.ax.set_xlabel(u't (ms)')
 		cls.it_plot_ui.canvas.ax.set_ylabel(u'Counts')
@@ -261,8 +263,8 @@ class DisplayPlots(object):
 		autotmax = float(cls.tofRangeAuto[1])
 		cls.displayTOFrange(autotmin, autotmax, 'ms')
 		[tmin, tmax] = cls.getTOFrangeInMs([autotmin, autotmax])
-		cls.yt_plot_ui.canvas.ax.axvline(tmin, color=colors.TOF_SELECTION_COLOR)
-		cls.yt_plot_ui.canvas.ax.axvline(tmax, color=colors.TOF_SELECTION_COLOR)
+		#cls.yt_plot_ui.canvas.ax.axvline(tmin, color=colors.TOF_SELECTION_COLOR)
+		#cls.yt_plot_ui.canvas.ax.axvline(tmax, color=colors.TOF_SELECTION_COLOR)
 		
 		cls.yt_plot_ui.canvas.ax.axhline(cls.peak[0], color=colors.PEAK_SELECTION_COLOR)
 		cls.yt_plot_ui.canvas.ax.axhline(cls.peak[1], color=colors.PEAK_SELECTION_COLOR)
@@ -293,8 +295,8 @@ class DisplayPlots(object):
 	def displayTOFrange(cls, tmin, tmax, units):
 		self = cls.self
 	  
-		_tmin = 1e-3 * float(tmin)
-		_tmax = 1e-3 * float(tmax)
+		_tmin = float(tmin)
+		_tmax = float(tmax)
 		
 		stmin = str("%.2f" % _tmin)
 		stmax = str("%.2f" % _tmax)
