@@ -111,6 +111,10 @@ class DisplayPlots(object):
 			else:
 				self.ui.normNameOfFile.setText('%s'%(cls.filename))
 			cls.displayMetadata()
+		
+		#_active_data = cls.activeData
+		#_data.active_data = _active_data
+		#self.bigTableData[row,col] = _data
 			
 	def displayMetadata(cls):
 		cls.clearMetadataWidgets()
@@ -219,6 +223,7 @@ class DisplayPlots(object):
 		_tof_axis =cls.fullTofAxis
 		_countstofdata = cls.countstofdata
 		
+		print _tof_axis
 		cls.it_plot_ui.canvas.ax.plot(_tof_axis[0:-1], _countstofdata)
 		cls.it_plot_ui.canvas.ax.set_xlabel(u't (ms)')
 		cls.it_plot_ui.canvas.ax.set_ylabel(u'Counts')
@@ -227,11 +232,15 @@ class DisplayPlots(object):
 		autotmax = float(cls.tofRangeAuto[1])
 		cls.it_plot_ui.canvas.ax.axvline(autotmin, color=colors.TOF_SELECTION_COLOR)
 		cls.it_plot_ui.canvas.ax.axvline(autotmax, color=colors.TOF_SELECTION_COLOR)
+		cls.it_plot_ui.canvas.draw()
 		
 		if cls.activeData.all_plot_axis.is_it_ylog:
 			cls.it_plot_ui.canvas.ax.set_yscale('log')
 		else:
 			cls.it_plot_ui.canvas.ax.set_yscale('linear')
+		cls.it_plot_ui.canvas.draw()
+
+		return
 			
 		if cls.activeData.all_plot_axis.it_data_interval is None:
 			cls.it_plot_ui.canvas.draw()
@@ -263,9 +272,8 @@ class DisplayPlots(object):
 		autotmax = float(cls.tofRangeAuto[1])
 		cls.displayTOFrange(autotmin, autotmax, 'ms')
 		[tmin, tmax] = cls.getTOFrangeInMs([autotmin, autotmax])
-		#cls.yt_plot_ui.canvas.ax.axvline(tmin, color=colors.TOF_SELECTION_COLOR)
-		#cls.yt_plot_ui.canvas.ax.axvline(tmax, color=colors.TOF_SELECTION_COLOR)
-		
+		cls.yt_plot_ui.canvas.ax.axvline(tmin, color=colors.TOF_SELECTION_COLOR)
+		cls.yt_plot_ui.canvas.ax.axvline(tmax, color=colors.TOF_SELECTION_COLOR)
 		cls.yt_plot_ui.canvas.ax.axhline(cls.peak[0], color=colors.PEAK_SELECTION_COLOR)
 		cls.yt_plot_ui.canvas.ax.axhline(cls.peak[1], color=colors.PEAK_SELECTION_COLOR)
 		

@@ -1716,8 +1716,8 @@ class LRDataset(object):
     '''
     will format the histogrma NeXus to retrieve the full 3D data set
     '''
-#    _tof_axis = nxs_histo.readX(0)[:].copy()
-    _tof_axis = nxs_histo.readX(0)[:]
+    _tof_axis = nxs_histo.readX(0)[:].copy()
+#    _tof_axis = nxs_histo.readX(0)[:]
     nbr_tof = len(_tof_axis)
     
     if new_detector_flag:
@@ -1740,7 +1740,7 @@ class LRDataset(object):
       for y in y_range:
         _index = int(sz_y_axis*x+y)
         _tmp_data = nxs_histo.readY(_index)[:]
-#        _tmp_data = nxs_histo.readY(_index)[:].copy()
+ #       _tmp_data = nxs_histo.readY(_index)[:].copy()
         _y_axis[x,y,:] = _tmp_data
 #        _tmp_error = nxs_histo.readE(_index)[:].copy()
         _tmp_error = nxs_histo.readE(_index)[:]

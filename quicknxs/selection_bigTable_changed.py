@@ -20,7 +20,6 @@ class SelectionBigTableChanged(object):
 		row = cls.current_row
 		
 		if cls.same_cell_selected():
-#			print 'same cell selected'
 			return
 		
 		if column == 6:
@@ -39,15 +38,19 @@ class SelectionBigTableChanged(object):
 		cls.load_and_display_cell()
 				
 	def load_and_display_cell(cls):
+		print 'in load_and_display_cell'
 		cell = cls.self.ui.reductionTable.selectedItems()
 		if cell == [] or cell[0] == '' or cell[0].text() == '':
 			ClearPlots(cls.self, is_data=cls.is_data, is_norm=not cls.is_data, all_plots=True)
 		else:
 			cell = cell[0]
 			if (cls.active_data is not None) and (cls.active_data.nxs is not None):
+				print 'entering DisplayPlots'
 				DisplayPlots(cls.self)
 			else:
+				print 'entering OpenRunNumber'
 				OpenRunNumber(cls.self, cell, replaced_data=True)
+				DisplayPlots(cls.self)
 		
 	def record_new_row_col_selected(cls):
 		cls.self._prev_row_selected = cls.current_row

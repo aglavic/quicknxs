@@ -1015,6 +1015,7 @@ class MainGUI(QtGui.QMainWindow):
 			tof_range_auto = data.tof_range_auto
 
 		tof_axis = data.tof_axis_auto_with_margin
+		tof_axis_ms = tof_axis / float(1000)
 
 		xy = data.xydata
 		ytof = data.ytofdata
@@ -1029,7 +1030,6 @@ class MainGUI(QtGui.QMainWindow):
 		low_res_flag = bool(data.low_res_flag)
 
 		if isDataSelected: # data
-
 			self.ui.dataNameOfFile.setText('%s'%filename)
 
 			# repopulate the tab
@@ -1136,7 +1136,7 @@ class MainGUI(QtGui.QMainWindow):
 
 			yt_plot.imshow(ytof, log=self.ui.logarithmic_colorscale.isChecked(),
 			               aspect='auto', cmap=self.color, origin='lower',
-			               extent=[tof_axis[0]*1e-3, tof_axis[-1]*1e-3, 0, data.y.shape[0]-1])
+			               extent=[tof_axis_ms[0], tof_axis_ms[-1], 0, data.y.shape[0]-1])
 			yt_plot.set_xlabel(u't (ms)')
 			yt_plot.set_ylabel(u'y (pixel)')
 
@@ -1179,8 +1179,7 @@ class MainGUI(QtGui.QMainWindow):
 
 		# display it
 		if plot_it:
-
-			it_plot.canvas.ax.plot(tof_axis[0:-1]/1000,countstofdata, color='#0000aa')
+			it_plot.canvas.ax.plot(tof_axis_ms[0:-1],countstofdata, color='#0000aa')
 			it_plot.canvas.ax.set_xlabel(u't (ms)')
 #      u'\u03bcs
 			it_plot.canvas.ax.set_ylabel(u'Counts')
@@ -1195,6 +1194,7 @@ class MainGUI(QtGui.QMainWindow):
 				it_plot.canvas.ax.set_yscale('linear')
 
 			if data.all_plot_axis.it_data_interval is None:
+				it_plot.canvas.draw()
 				[xmin,xmax] = it_plot.canvas.ax.xaxis.get_view_interval()
 				[ymin,ymax] = it_plot.canvas.ax.yaxis.get_view_interval()
 				data.all_plot_axis.it_data_interval = [xmin,xmax,ymin,ymax]
@@ -1204,12 +1204,9 @@ class MainGUI(QtGui.QMainWindow):
 				[xmin,xmax,ymin,ymax]=data.all_plot_axis.it_view_interval
 				it_plot.canvas.ax.set_xlim([xmin,xmax])
 				it_plot.canvas.ax.set_ylim([ymin,ymax])
-			it_plot.canvas.draw()
-
-			it_plot.canvas.draw()
-
+				it_plot.canvas.draw()
+				
 		if plot_yi:
-
 			xaxis = range(len(ycountsdata))
 			yi_plot.canvas.ax.plot(ycountsdata,xaxis)
 			yi_plot.canvas.ax.set_xlabel(u'counts')
@@ -2767,7 +2764,7 @@ class MainGUI(QtGui.QMainWindow):
 		self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
 		self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,col,r,col),True)                                                                                   	
 
-		self.bigTable_selection_changed(r, col)
+		#self.bigTable_selection_changed(r, col)
 
 	@log_input
 	def reductionTableChanged(self, item):
