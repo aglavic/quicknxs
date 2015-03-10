@@ -703,7 +703,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -2916,7 +2916,7 @@ p, li { white-space: pre-wrap; }
                      <enum>Qt::CustomContextMenu</enum>
                     </property>
                     <property name="editTriggers">
-                     <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+                     <set>QAbstractItemView::SelectedClicked</set>
                     </property>
                     <property name="showDropIndicator" stdset="0">
                      <bool>true</bool>

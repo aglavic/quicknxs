@@ -219,11 +219,9 @@ class DisplayPlots(object):
 			cls.yi_plot_ui.canvas.draw()
 
 	def plot_it(cls):
-		print '***** Entering plot_it ********'
 		_tof_axis =cls.fullTofAxis
 		_countstofdata = cls.countstofdata
 		
-		print _tof_axis
 		cls.it_plot_ui.canvas.ax.plot(_tof_axis[0:-1], _countstofdata)
 		cls.it_plot_ui.canvas.ax.set_xlabel(u't (ms)')
 		cls.it_plot_ui.canvas.ax.set_ylabel(u'Counts')

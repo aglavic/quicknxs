@@ -6,6 +6,7 @@ class PopulateReductionTable(object):
 	self = None
 	
 	def __init__(cls, self):
+
 		cls.self = self
 		_bigTableData = self.bigTableData
 		cls.clearTable()

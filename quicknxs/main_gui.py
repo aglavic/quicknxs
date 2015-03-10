@@ -545,26 +545,22 @@ class MainGUI(QtGui.QMainWindow):
 
 	def reduction_table_cell_modified(self, item):
 		return
-#    print 'in reduction_table_cell_modified'
 		if self.editing_flag:
 			OpenRunNumber(self, item, replaced_data=True)
 			self.editing_flag = False
 		#  DisplayPlots(self)
 
 	def reduction_table_cell_double_clicked(self, row, column):
-#    print 'reduction table cell double clicked'
 		if column == 0 or column == 6:
 			self.editing_flag = True
 
 	def reduction_table_cell_single_clicked(self, item):
 		pass
-	#   print 'reduction_table_cell_single_clicked'
 #    self.editing_flag = True
 	#  self.reductionTable_manual_entry(item)
 
 	@waiting_effects
 	def reductionTable_manual_entry(self, item):
-	#   print 'reductionTable_manual_entry'
 #    OpenRunNumber(self, item)
 		return
 
@@ -2726,6 +2722,7 @@ class MainGUI(QtGui.QMainWindow):
 
 	@waiting_effects          
 	def bigTable_selection_changed(self, row, column):    
+		self.userClickedInTable = True
 		self.editing_flag = True
 		if self.same_cell_selected(row, column):
 			return
@@ -2735,14 +2732,9 @@ class MainGUI(QtGui.QMainWindow):
 		SelectionBigTableChanged(self)
 #		DisplayPlots(self)
 
-
 	def data_norm_tab_changed(self, index):
-		'''
-		When user switch data - Norm, the selection should follow accordingly
-		and the display of all the plots as well
-		'''
-
 		if self.userClickedInTable:
+			self.userClickedInTable = False
 			return
 
 		[r,col] = self.getTrueCurrentRowColumnSelected()
@@ -2764,7 +2756,8 @@ class MainGUI(QtGui.QMainWindow):
 		self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,0,r,6),False)                                                                                   	    
 		self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,col,r,col),True)                                                                                   	
 
-		#self.bigTable_selection_changed(r, col)
+		self.bigTable_selection_changed(r, col)
+
 
 	@log_input
 	def reductionTableChanged(self, item):
@@ -3181,9 +3174,8 @@ class MainGUI(QtGui.QMainWindow):
 			self.auto_change_active=False
 			self.ui.refYWidth.setValue(yw)
 
-	def lin_log_toggle(self):
-
-		print 'lin_log_toggle'
+	#def lin_log_toggle(self):
+		#print 'lin_log_toggle'
 
 
 	def plotPickXToF(self, event):
@@ -3796,7 +3788,6 @@ Do you want to try to restore the working reduction list?""",
 		self.norm_peak_spinbox_validation(withPlotUpdate)
 		self.norm_back_spinbox_validation(withPlotUpdate)
 
-
 	# norm peak spinboxes
 	def norm_peak_spinbox_validation(self, withPlotUpdate=True):
 		'''
@@ -3886,11 +3877,11 @@ Do you want to try to restore the working reduction list?""",
 		spinboxes (ENTER, leaving the spinbox) 
 		will make sure the min value is < max value  
 		'''
-
 		bigTableData = self.bigTableData
-#    [row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 
 		data = bigTableData[row,col]
 		data = data.active_data
@@ -3927,6 +3918,7 @@ Do you want to try to restore the working reduction list?""",
 		self.ui.scalingFactorConfigFrame.setEnabled(status)
 
 	def reduction_table_right_click(self, pos):
+		print 'reduction_table_right_click'
 		menu = QtGui.QMenu(self)
 		copy = menu.addAction("Copy")
 		paste = menu.addAction("Paste")
@@ -5885,6 +5877,7 @@ Do you want to try to restore the working reduction list?""",
 		'''
 		will refresh the content of the reductionTable (lambda, Q ranges...)
 		'''
+		print 'update_reduction_table'
 		bigTableData = self.bigTableData
 		nbr_row = self.ui.reductionTable.rowCount()
 

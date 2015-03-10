@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Fri Jan 23 10:04:49 2015
+# Created: Tue Mar 10 11:22:59 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1143,7 +1143,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setMaximumSize(QtCore.QSize(16777215, 300))
         self.reductionTable.setFocusPolicy(QtCore.Qt.TabFocus)
         self.reductionTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.AnyKeyPressed|QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed|QtGui.QAbstractItemView.SelectedClicked)
+        self.reductionTable.setEditTriggers(QtGui.QAbstractItemView.SelectedClicked)
         self.reductionTable.setProperty("showDropIndicator", True)
         self.reductionTable.setDragDropOverwriteMode(True)
         self.reductionTable.setAlternatingRowColors(True)
@@ -1417,7 +1417,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
