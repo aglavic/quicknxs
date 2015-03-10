@@ -3967,6 +3967,8 @@ Do you want to try to restore the working reduction list?""",
 #    [row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		active_data = data.active_data
 		_displayMeta = DisplayMetadata(self, active_data)
