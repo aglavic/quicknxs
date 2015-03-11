@@ -50,10 +50,12 @@ class TableReductionRunEditor(QtGui.QDialog):
 		else:
 			lambda_value = str(norm_lambda)
 		cls.ui.lambdaValue.setText(lambda_value)
-		
-		
+
 	def initLayout(cls):
 		if cls.col == 0: #data then hide norm frame
 			cls.ui.norm_groupBox.setHidden(True)
 		else:
 			cls.ui.data_groupBox.setHidden(True)
+			
+	def closeEvent(cls, event=None):
+		cls.close()

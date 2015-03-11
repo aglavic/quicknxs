@@ -298,7 +298,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="cancelButton">
        <property name="text">
         <string>CANCEL</string>
        </property>
@@ -339,5 +339,25 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>pressed()</signal>
+   <receiver>Dialog</receiver>
+   <slot>closeEvent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>757</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>390</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>closeEvent()</slot>
+ </slots>
 </ui>

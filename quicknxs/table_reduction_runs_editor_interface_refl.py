@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/table_reduction_runs_editor.ui'
 #
-# Created: Wed Mar 11 16:06:45 2015
+# Created: Wed Mar 11 16:38:20 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -131,9 +131,9 @@ class Ui_Dialog(object):
         self.verticalLayout_4.addWidget(self.groupBox_3)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.pushButton = QtGui.QPushButton(Dialog)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_6.addWidget(self.pushButton)
+        self.cancelButton = QtGui.QPushButton(Dialog)
+        self.cancelButton.setObjectName("cancelButton")
+        self.horizontalLayout_6.addWidget(self.cancelButton)
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem6)
         self.pushButton_2 = QtGui.QPushButton(Dialog)
@@ -146,6 +146,7 @@ class Ui_Dialog(object):
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
 
         self.retranslateUi(Dialog)
+        QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL("pressed()"), Dialog.closeEvent)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -171,7 +172,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Lambda Requested", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Normalization", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Dialog", "Lambda Requested", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("Dialog", "CANCEL", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelButton.setText(QtGui.QApplication.translate("Dialog", "CANCEL", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_2.setText(QtGui.QApplication.translate("Dialog", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_3.setText(QtGui.QApplication.translate("Dialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
 
