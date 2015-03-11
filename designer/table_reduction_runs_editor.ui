@@ -15,6 +15,69 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Lambda requested:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lambdaValue">
+       <property name="text">
+        <string>10.5</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lambdaUnits">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Angstroms</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QGroupBox" name="data_groupBox">
      <property name="title">
       <string>New Data Run(s)</string>
@@ -67,40 +130,6 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Lambda requested:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="oldDataLambda">
-          <property name="text">
-           <string>10.5</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="oldDataLambdaUnits">
-          <property name="text">
-           <string>Angstroms</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </item>
       <item>
@@ -121,40 +150,6 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>Lambda requested:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="normLambda">
-          <property name="text">
-           <string>10.5</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="normLambdaUnits">
-          <property name="text">
-           <string>Angstroms</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -195,40 +190,6 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_18">
-          <property name="text">
-           <string>Lambda requested:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="dataLambda">
-          <property name="text">
-           <string>10.5</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="dataLambdaUnits">
-          <property name="text">
-           <string>Angstroms</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_6">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -285,40 +246,6 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>Lambda requested:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="oldNormLambda">
-          <property name="text">
-           <string>10.5</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="oldNormLambdaUnits">
-          <property name="text">
-           <string>Angstroms</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_8">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

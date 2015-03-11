@@ -26,10 +26,7 @@ class TableReductionRunEditor(QtGui.QDialog):
 		cls.initContent()
 		
 	def initContent(cls):
-		cls.ui.oldDataLambdaUnits.setText(u'\u00c5')
-		cls.ui.dataLambdaUnits.setText(u'\u00c5')
-		cls.ui.oldNormLambdaUnits.setText(u'\u00c5')
-		cls.ui.normLambdaUnits.setText(u'\u00c5')
+		cls.ui.lambdaUnits.setText(u'\u00c5')
 		
 		verticalHeader = ["Data Run #", u'Lambda Requested (\u00c5)', 'Norm Run', u'Lambda Requested (\u00c5)']
 		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
@@ -37,7 +34,6 @@ class TableReductionRunEditor(QtGui.QDialog):
 		
 		data_run = cls.main_gui.ui.reductionTable.item(cls.row, 0).text()
 		norm_run = cls.main_gui.ui.reductionTable.item(cls.row, 6).text()
-		
 		if cls.col == 0:
 			cls.ui.oldDataRun.setText(data_run)
 			cls.ui.normRun.setText(norm_run)
@@ -45,7 +41,15 @@ class TableReductionRunEditor(QtGui.QDialog):
 			cls.ui.dataRun.setText(data_run)
 			cls.ui.oldNormRun.setText(norm_run)
 			
-			
+		config = cls.main_gui.bigTableData[cls.row, 2]
+
+		data_lambda = config.data_lambda_requested
+		norm_lambda = config.norm_lambda_requested
+		if data_lambda != -1:
+			lambda_value = str(data_lambda)
+		else:
+			lambda_value = str(norm_lambda)
+		cls.ui.lambdaValue.setText(lambda_value)
 		
 		
 	def initLayout(cls):
