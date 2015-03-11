@@ -4284,6 +4284,7 @@ Do you want to try to restore the working reduction list?""",
 				data_low_res = _data.low_res
 				data_back_flag = _data.back_flag
 				data_low_res_flag = bool(_data.low_res_flag)
+				data_lambda_requested = _data.lambda_requested
 				tof = _data.tof_range
 				tof_units = _data.tof_units
 				tof_auto_flag = _data.tof_auto_flag
@@ -4299,6 +4300,7 @@ Do you want to try to restore the working reduction list?""",
 					data_low_res = _metadata.data_low_res
 					data_back_flag = _metadata.data_back_flag
 					data_low_res_flag = _metadata.data_low_res_flag
+					data_lambda_requested = _metadata.data_lambda_requested
 					tof = _metadata.tof
 
 					# for old config file that do not have this flag yet
@@ -4327,6 +4329,7 @@ Do you want to try to restore the working reduction list?""",
 					data_low_res = ['0','0']
 					data_back_flag = True
 					data_low_res_flag = True
+					data_lambda_requested = -1
 					tof = ['0','0']
 					tof_units = 'ms'
 					tof_auto_flag = True
@@ -4348,6 +4351,7 @@ Do you want to try to restore the working reduction list?""",
 				norm_back_flag = _norm.back_flag
 				norm_low_res = _norm.low_res
 				norm_low_res_flag = _norm.low_res_flag
+				norm_lambda_requested = _norm.lambda_requested
 
 			else:
 
@@ -4360,6 +4364,7 @@ Do you want to try to restore the working reduction list?""",
 					norm_back_flag = _metadata.norm_back_flag
 					norm_low_res = _metadata.norm_low_res
 					norm_low_res_flag = _metadata.norm_low_res_flag
+					norm_lambda_requested = _metadata.norm_lambda_requested
 
 				else:
 					norm_full_file_name = ''
@@ -4369,6 +4374,7 @@ Do you want to try to restore the working reduction list?""",
 					norm_back_flag = True
 					norm_low_res = ['0','0']
 					norm_low_res_flag = True
+					norm_lambda_requested = -1
 
 			strArray.append('   <from_peak_pixels>' + str(data_peak[0]) + '</from_peak_pixels>\n')
 			strArray.append('   <to_peak_pixels>' + str(data_peak[1]) + '</to_peak_pixels>\n')
@@ -4401,6 +4407,7 @@ Do you want to try to restore the working reduction list?""",
 			strArray.append('   <tthd_value>' + tthd + '</tthd_value>\n')
 			ths = self.ui.metadatathiValue.text()
 			strArray.append('   <ths_value>' + ths + '</ths_value>\n')
+			strArray.append('   <data_lambda_requested>' + str(data_lambda_requested) + '</data_lambda_requested>\n')
 
 			strArray.append('   <norm_flag>' + str(norm_flag) + '</norm_flag>\n')
 			strArray.append('   <norm_x_range_flag>' + str(norm_low_res_flag) + '</norm_x_range_flag>\n')
@@ -4411,7 +4418,8 @@ Do you want to try to restore the working reduction list?""",
 			strArray.append('   <norm_background_flag>' + str(norm_back_flag) + '</norm_background_flag>\n')
 			strArray.append('   <norm_from_back_pixels>' + str(norm_back[0]) + '</norm_from_back_pixels>\n')
 			strArray.append('   <norm_to_back_pixels>' + str(norm_back[1]) + '</norm_to_back_pixels>\n')
-
+			strArray.append('   <norm_lambda_requested>' + str(norm_lambda_requested) + '</norm_lambda_requested>\n')
+			
 			_norm_run_number_cell = self.ui.reductionTable.item(row,6)
 			if _norm_run_number_cell is not None:
 				_norm_run_number = _norm_run_number_cell.text()
@@ -4975,6 +4983,9 @@ Do you want to try to restore the working reduction list?""",
 
 		_data_sets = self.getNodeValue(node, 'data_sets')
 		iMetadata.data_sets = _data_sets
+		
+		_data_lambda = self.getNodeValue(node, 'data_lambda_requested')
+		iMetadata.data_lambda_requested = _data_lambda
 
 		_tof_auto = self.getNodeValue(node, 'tof_range_flag')
 		iMetadata.tof_auto_flag = _tof_auto
@@ -5002,6 +5013,9 @@ Do you want to try to restore the working reduction list?""",
 
 		_low_res_flag = self.getNodeValue(node, 'norm_x_range_flag')
 		iMetadata.norm_low_res_flag = _low_res_flag
+
+		_norm_lambda = self.getNodeValue(node, 'norm_lambda_requested')
+		iMetadata.norm_lambda_requested = _norm_lambda
 
 		return iMetadata
 

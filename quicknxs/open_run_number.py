@@ -98,6 +98,7 @@ class OpenRunNumber(object):
 			config_file.data_low_res = data_active.low_res
 			config_file.data_back_flag = data_active.back_flag
 			config_file.data_low_res_flag = data_active.low_res_flag
+			config_file.data_lambda_requested = data_active.lambda_requested
 		else:
 			config_file.norm_flag = data_active.use_it_flag
 			config_file.norm_full_file_name = data_active.full_file_name
@@ -106,9 +107,9 @@ class OpenRunNumber(object):
 			config_file.norm_low_res = data_active.low_res
 			config_file.norm_back_flag = data_active.back_flag
 			config_file.norm_low_res_flag = data_active.low_res_flag
+			config_file.norm_lambda_requested = data_active.lambda_requested
 
 		config_file.tof_range = data_active.tof_range
-		print data_active.tof_range
 		config_file.q_range = data_active.q_range
 		config_file.lambda_range = data_active.lambda_range
 		config_file.tof_auto_flag = data_active.tof_range_auto

@@ -1204,6 +1204,7 @@ class LConfigDataset(object):
   data_low_res = ['0','0']
   data_back_flag = True
   data_low_res_flag = True
+  data_lambda_requested = 0
 
   tof_range = ['0','0'] 
   tof_units = 'ms'
@@ -1217,6 +1218,7 @@ class LConfigDataset(object):
   norm_back_flag = True
   norm_low_res = ['0','0']
   norm_low_res_flag = True
+  norm_lambda_requested = 0
  
   q_range =['0','0']
   lambda_range = ['0','0']
