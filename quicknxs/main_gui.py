@@ -73,6 +73,7 @@ from populate_reductionTable import PopulateReductionTable
 from loading_configuration import LoadingConfiguration
 from metadata_finder import MetadataFinder
 from sf_calculator import SFcalculator
+from table_reduction_run_editor import TableReductionRunEditor
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -3918,8 +3919,9 @@ Do you want to try to restore the working reduction list?""",
 		self.ui.scalingFactorConfigFrame.setEnabled(status)
 
 	def reduction_table_right_click(self, pos):
-		print 'reduction_table_right_click'
 		menu = QtGui.QMenu(self)
+		modify = menu.addAction("Edit ...")
+		menu.addSeparator()
 		copy = menu.addAction("Copy")
 		paste = menu.addAction("Paste")
 		if self.reduction_table_copied_field != '':
@@ -3931,14 +3933,16 @@ Do you want to try to restore the working reduction list?""",
 		menu.addSeparator()
 		displayMeta = menu.addAction("Display Metadata ...")
 		action = menu.exec_(QtGui.QCursor.pos())
-
-		if action == copy:
+		
+		if action == modify:
+			self.reduction_table_edit()
+		elif action == copy:
 			self.reduction_table_copy()
-		if action == paste:
+		elif action == paste:
 			self.reduction_table_paste()
-		if action == removeRow:
+		elif action == removeRow:
 			self.reduction_table_delete_row()
-		if action == displayMeta:
+		elif action == displayMeta:
 			self.reduction_table_display_metadata()
 
 	def reduction_table_copy(self):
@@ -3960,6 +3964,12 @@ Do you want to try to restore the working reduction list?""",
 		bigTable[newrow,newcol] = bigTable[oldrow,oldcol]
 		self.bigTableData = bigTable
 		self._fileOpenDoneREFL(data=bigTable[newrow, newcol])
+		
+	def 	reduction_table_edit(self):
+		''' Modify data or norm run number '''
+		[row,col] = self.getCurrentRowColumnSelected()
+		_editTable = TableReductionRunEditor(parent=self, col=col, row=row)
+		_editTable.show()
 
 	@waiting_effects
 	def reduction_table_display_metadata(self):
