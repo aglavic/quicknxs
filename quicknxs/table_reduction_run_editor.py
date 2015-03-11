@@ -22,6 +22,33 @@ class TableReductionRunEditor(QtGui.QDialog):
 		cls.initGui()
 		
 	def initGui(cls):
+		cls.initLayout()
+		cls.initContent()
+		
+	def initContent(cls):
+		cls.ui.oldDataLambdaUnits.setText(u'\u00c5')
+		cls.ui.dataLambdaUnits.setText(u'\u00c5')
+		cls.ui.oldNormLambdaUnits.setText(u'\u00c5')
+		cls.ui.normLambdaUnits.setText(u'\u00c5')
+		
+		verticalHeader = ["Data Run #", u'Lambda Requested (\u00c5)', 'Norm Run', u'Lambda Requested (\u00c5)']
+		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
+		cls.ui.tableWidget.resizeColumnsToContents()
+		
+		data_run = cls.main_gui.ui.reductionTable.item(cls.row, 0).text()
+		norm_run = cls.main_gui.ui.reductionTable.item(cls.row, 6).text()
+		
+		if cls.col == 0:
+			cls.ui.oldDataRun.setText(data_run)
+			cls.ui.normRun.setText(norm_run)
+		else:
+			cls.ui.dataRun.setText(data_run)
+			cls.ui.oldNormRun.setText(norm_run)
+			
+			
+		
+		
+	def initLayout(cls):
 		if cls.col == 0: #data then hide norm frame
 			cls.ui.norm_groupBox.setHidden(True)
 		else:

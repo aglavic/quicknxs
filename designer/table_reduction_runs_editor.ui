@@ -48,7 +48,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="oldDataRun">
           <property name="text">
            <string>13445,45454,3454545</string>
           </property>
@@ -75,14 +75,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_6">
+         <widget class="QLabel" name="oldDataLambda">
           <property name="text">
            <string>10.5</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="oldDataLambdaUnits">
           <property name="text">
            <string>Angstroms</string>
           </property>
@@ -113,7 +113,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_9">
+         <widget class="QLabel" name="normRun">
           <property name="text">
            <string>4545545</string>
           </property>
@@ -140,14 +140,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_10">
+         <widget class="QLabel" name="normLambda">
           <property name="text">
            <string>10.5</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_11">
+         <widget class="QLabel" name="normLambdaUnits">
           <property name="text">
            <string>Angstroms</string>
           </property>
@@ -187,7 +187,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_22">
+         <widget class="QLabel" name="dataRun">
           <property name="text">
            <string>4545545,4545454,45454</string>
           </property>
@@ -214,14 +214,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_16">
+         <widget class="QLabel" name="dataLambda">
           <property name="text">
            <string>10.5</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_17">
+         <widget class="QLabel" name="dataLambdaUnits">
           <property name="text">
            <string>Angstroms</string>
           </property>
@@ -277,7 +277,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_24">
+         <widget class="QLabel" name="oldNormRun">
           <property name="text">
            <string>13445</string>
           </property>
@@ -304,14 +304,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_23">
+         <widget class="QLabel" name="oldNormLambda">
           <property name="text">
            <string>10.5</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_20">
+         <widget class="QLabel" name="oldNormLambdaUnits">
           <property name="text">
            <string>Angstroms</string>
           </property>
