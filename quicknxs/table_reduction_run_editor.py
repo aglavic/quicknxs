@@ -1,7 +1,9 @@
 from PyQt4 import QtGui, QtCore
-from table_reduction_runs_editor_interface_refl import Ui_Dialog
+from table_reduction_runs_editor_interface_refl import Ui_MainWindow
+from run_sequence_breaker import RunSequenceBreaker
+from decorators import waiting_effects
 
-class TableReductionRunEditor(QtGui.QDialog):
+class TableReductionRunEditor(QtGui.QMainWindow):
 	
 	_open_instances = []
 	main_gui = None
@@ -13,10 +15,10 @@ class TableReductionRunEditor(QtGui.QDialog):
 		cls.col = col
 		cls.row = row
 		
-		QtGui.QDialog.__init__(cls, parent=parent)
+		QtGui.QMainWindow.__init__(cls, parent=parent)
 		cls.setWindowModality(False)
 		cls._open_instances.append(cls)
-		cls.ui = Ui_Dialog()
+		cls.ui = Ui_MainWindow()
 		cls.ui.setupUi(cls)
 		
 		cls.initGui()
@@ -28,7 +30,8 @@ class TableReductionRunEditor(QtGui.QDialog):
 	def initContent(cls):
 		cls.ui.lambdaUnits.setText(u'\u00c5')
 		
-		verticalHeader = ["Data Run #", u'Lambda Requested (\u00c5)', 'Norm Run', u'Lambda Requested (\u00c5)']
+		verticalHeader = ["Data Run #", u'Lambda Requested (\u00c5)', 
+		                  'Norm Run', u'Lambda Requested (\u00c5)']
 		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
 		cls.ui.tableWidget.resizeColumnsToContents()
 		
@@ -56,6 +59,13 @@ class TableReductionRunEditor(QtGui.QDialog):
 			cls.ui.norm_groupBox.setHidden(True)
 		else:
 			cls.ui.data_groupBox.setHidden(True)
-			
+					
+	def dataLineEditValidate(cls):
+		print 'dataLineEdit'
+		
+	def normLineEditValidate(cls):
+		print 'normLineEdit'
+		
 	def closeEvent(cls, event=None):
 		cls.close()
+	
