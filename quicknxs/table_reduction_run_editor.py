@@ -2,6 +2,10 @@ from PyQt4 import QtGui, QtCore
 from table_reduction_runs_editor_interface_refl import Ui_MainWindow
 from run_sequence_breaker import RunSequenceBreaker
 from decorators import waiting_effects
+from mantid.simpleapi import *
+import nexus_utilities
+import utilities
+
 
 class TableReductionRunEditor(QtGui.QMainWindow):
 	
@@ -9,6 +13,9 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	main_gui = None
 	col = 0
 	row = 0
+	
+	list_filename = []
+	list_nxs = []
 	
 	def __init__(cls, parent=None, col=0, row=0):
 		cls.main_gui = parent
@@ -61,11 +68,30 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			cls.ui.data_groupBox.setHidden(True)
 					
 	def dataLineEditValidate(cls):
-		print 'dataLineEdit'
+		run_sequence = cls.ui.dataLineEdit.text()
+		oListRuns = RunSequenceBreaker(run_sequence)
+		_list_runs = oListRuns.getFinalList()
+		cls.ui.dataLineEdit.setText("")
+
+		cls.list_filename = []
+		cls.list_nxs = []
+		if _list_runs[0] == -1:
+			return
+		for _runs in _list_runs:
+			try:
+				_filename = nexus_utilities.findNeXusFullPath(_runs)
+			except:
+				pass
+			cls.list_filename.append(_filename)
+			randomString = utilities.generate_random_workspace_name()
+			_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+			cls.list_nxs.append(_nxs)
 		
 	def normLineEditValidate(cls):
-		print 'normLineEdit'
+		_norm_run = cls.ui.normLineEdit.text()
+		cls.ui.normLineEdit.setText("")
 		
 	def closeEvent(cls, event=None):
 		cls.close()
+	
 	

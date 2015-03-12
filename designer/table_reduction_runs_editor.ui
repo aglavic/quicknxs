@@ -319,19 +319,12 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>VALIDATE</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="pushButton_3">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>OK</string>
+         <string>INSERT NEW RUNS</string>
         </property>
        </widget>
       </item>
