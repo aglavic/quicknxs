@@ -5157,52 +5157,6 @@ Do you want to try to restore the working reduction list?""",
 		self.bigTableData = bigTableData
 		self.ui.data_stitching_plot.toolbar.home_settings = [xmin,xmax,ymin,ymax]
 
-	def plot_stitched_scaled_data(self):
-
-		bigTableData = self.bigTableData
-		nbr_row = self.ui.reductionTable.rowCount()
-
-		_colors = colors.COLOR_LIST
-		_colors.append(_colors)
-
-		self.ui.data_stitching_plot.clear()
-		self.ui.data_stitching_plot.draw()
-
-		_data0 = bigTableData[0,0]
-		_isxlog = _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
-		_isylog = _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
-		[xmin,xmax,ymin,ymax] = _data0.active_data.all_plot_axis.reduced_plot_stitching_tab_view_interval
-
-		for i in range(nbr_row):
-
-			_data = bigTableData[i,0]
-			_q_axis = _data.q_axis_for_display
-			_y_axis = _data.y_axis_for_display
-			_e_axis = _data.e_axis_for_display
-
-			sf = _data.sf
-
-			_y_axis = _y_axis * sf
-			_e_axis = _e_axis * sf
-
-			self.ui.data_stitching_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
-			self.ui.data_stitching_plot.draw()
-
-		self.ui.data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
-		self.ui.data_stitching_plot.set_ylabel(u'R')
-		if _isxlog:
-			self.ui.data_stitching_plot.set_xscale('log')
-		else:
-			self.ui.data_stitching_plot.set_xscale('linear')
-		if _isylog:
-			self.ui.data_stitching_plot.set_yscale('log')
-		else:
-			self.ui.data_stitching_plot.set_yscale('linear')
-		self.ui.data_stitching_plot.canvas.ax.set_xlim([xmin, xmax])
-		self.ui.data_stitching_plot.canvas.ax.set_ylim([ymin, ymax])
-		self.ui.data_stitching_plot.draw()
-
-
 	def reduce_plot_RvsQ_radiobutton(self):
 		self.reduce_plot_radiobuttons(option='RvsQ')
 
@@ -5813,12 +5767,12 @@ Do you want to try to restore the working reduction list?""",
 		# save all manual parameters
 		nbr_row = self.ui.dataStitchingTable.rowCount()
 		for i in range(nbr_row):
-			_data = bigTableData[i,0]
+			_data = bigTableData[i,2]
 
 			_sf_manual = self.ui.dataStitchingTable.cellWidget(i,2).value()
 			_data.sf_manual = _sf_manual
 
-			bigTableData[i,0] = _data
+			bigTableData[i,2] = _data
 
 		self.data_stitching_mode('manual')
 
@@ -5835,26 +5789,76 @@ Do you want to try to restore the working reduction list?""",
 		if _data is None:
 			return
 
+		_data = bigTableData[0,2]
 		if _data.q_axis_for_display == []:
 			return
 
 		if type == "auto":
 			for i in range(nbr_row):
-				_data = bigTableData[i,0]
+				_data = bigTableData[i,2]
 				_data.sf = _data.sf_auto
+				bigTableData[i,2] = _data
 
 		elif type == "manual":
 			# recover manual input 
 			for i in range(nbr_row):
-				_data = bigTableData[i,0]
+				_data = bigTableData[i,2]
 				_data.sf = _data.sf_manual
+				bigTableData[i,2] = _data
 
 		else: # no scaling apply, just plot data
 			for i in range(nbr_row):
-				_data = bigTableData[i,0]
+				_data = bigTableData[i,2]
 				_data.sf = 1
-
+				bigTableData[i,2] = _data
+				
+		self.bigTableData = bigTableData
 		self.plot_stitched_scaled_data()
+
+	def plot_stitched_scaled_data(self):
+
+		bigTableData = self.bigTableData
+		nbr_row = self.ui.reductionTable.rowCount()
+
+		_colors = colors.COLOR_LIST
+		_colors.append(_colors)
+
+		self.ui.data_stitching_plot.clear()
+		self.ui.data_stitching_plot.draw()
+
+		_data0 = bigTableData[0,0]
+		_isxlog = _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_xlog
+		_isylog = _data0.active_data.all_plot_axis.is_reduced_plot_stitching_tab_ylog
+		[xmin,xmax,ymin,ymax] = _data0.active_data.all_plot_axis.reduced_plot_stitching_tab_view_interval
+
+		for i in range(nbr_row):
+
+			_data = bigTableData[i,2]
+			_q_axis = _data.q_axis_for_display
+			_y_axis = _data.y_axis_for_display
+			_e_axis = _data.e_axis_for_display
+
+			sf = _data.sf
+
+			_y_axis = _y_axis * sf
+			_e_axis = _e_axis * sf
+
+			self.ui.data_stitching_plot.errorbar(_q_axis, _y_axis, yerr=_e_axis, color=_colors[i])
+			self.ui.data_stitching_plot.draw()
+
+		self.ui.data_stitching_plot.set_xlabel(u'Q (1/Angstroms)')
+		self.ui.data_stitching_plot.set_ylabel(u'R')
+		if _isxlog:
+			self.ui.data_stitching_plot.set_xscale('log')
+		else:
+			self.ui.data_stitching_plot.set_xscale('linear')
+		if _isylog:
+			self.ui.data_stitching_plot.set_yscale('log')
+		else:
+			self.ui.data_stitching_plot.set_yscale('linear')
+		self.ui.data_stitching_plot.canvas.ax.set_xlim([xmin, xmax])
+		self.ui.data_stitching_plot.canvas.ax.set_ylim([ymin, ymax])
+		self.ui.data_stitching_plot.draw()
 
 	def update_stitchingTable(self):
 		'''
