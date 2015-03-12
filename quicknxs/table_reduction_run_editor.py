@@ -27,7 +27,6 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		cls._open_instances.append(cls)
 		cls.ui = Ui_MainWindow()
 		cls.ui.setupUi(cls)
-		
 		cls.initGui()
 		
 	def initGui(cls):
@@ -53,13 +52,46 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			
 		config = cls.main_gui.bigTableData[cls.row, 2]
 
-		data_lambda = config.data_lambda_requested
-		norm_lambda = config.norm_lambda_requested
-		if data_lambda != -1:
-			lambda_value = str(data_lambda)
-		else:
-			lambda_value = str(norm_lambda)
+		lambda_value = cls.retrieveLambdaRequestedForThisRow()
 		cls.ui.lambdaValue.setText(lambda_value)
+
+	def  retrieveLambdaRequestedForThisRow(cls):
+		lambda_requested = ''
+		
+		# try to retrieve from bigTable[i,0]
+		
+		# try to retrieve from bigTable[i,2] -> data_lambda_requested
+		
+		# try to retrieve from bigTable[i,1]
+		
+		# try to retrieve from bigTable[i,2] -> norm_lambda_requested
+		
+		# try from data_run, if not None -> load and retrieve
+		
+		# try from norm_run, if not None -> load and retrieve
+		
+		# give up and return 'N/A'
+		
+		
+		
+		data_lambda = config.data_lambda_requested
+		if data_lambda == -1:
+			data = cls.main_gui.bigTableData[cls.row, 0]
+			if data is not None:
+				_active_data = data.active_data
+				lambda_value = _active_data.lambda_requested
+				if lambda_value == '':
+					pass
+		else:
+			lambda_value = str(data_lambda)
+
+			#else:
+				#lambda_value = str(norm_lambda)
+		
+		return lambda_requested
+
+
+
 
 	def initLayout(cls):
 		if cls.col == 0: #data then hide norm frame
@@ -71,6 +103,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		run_sequence = cls.ui.dataLineEdit.text()
 		oListRuns = RunSequenceBreaker(run_sequence)
 		_list_runs = oListRuns.getFinalList()
+		cls.list_runs = _list_runs
 		cls.ui.dataLineEdit.setText("")
 
 		cls.list_filename = []
@@ -86,6 +119,47 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			randomString = utilities.generate_random_workspace_name()
 			_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
 			cls.list_nxs.append(_nxs)
+			
+		cls.updateTable()
+		
+	def updateTable(cls):
+		#norm_run = cls.ui.normRun.text()
+		#try:
+			#_filename = nexus_utilities.findNeXusFullPath(norm_run)
+		#except:
+			#pass
+		#cls.list_filename.append(_filename)
+		#randomString = utilities.generate_random_workspace_name()
+		#_nxs_norm = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+		#_lambda_norm  = cls.retrieveMetadataFromNxs(_nxs_norm, 'LambdaRequest')
+
+		cls.ui.tableWidget.clearContents()
+		nbr_row = len(cls.list_nxs)
+		_runs = cls.list_runs
+		for _row in range(nbr_row):
+			cls.ui.tableWidget.insertRow(_row)
+
+			_nxs = cls.list_nxs[_row]
+			_run = _runs[_row]
+
+			cls.addItemToTable(value=_run, row=_row, column=0)
+			_lambda =  cls.retrieveMetadataFromNxs(_nxs, 'LambdaRequest')
+			cls.addItemToTable(value=_lambda, row=_row, column=1)
+			
+			#cls.addItemToTable(value=norm_run, row=_row, column=2)
+			#cls.addItemToTable(value=_lambda_norm, row=_row, column=3)
+		
+		
+			
+	def retrieveMetadataFromNxs(cls, nexus=None, tag=''):
+		if nexus is None:
+			return ''
+		mt_run = nexus.getRun()
+		return mt_run.getProperty(tag).value[0]
+			
+	def addItemToTable(cls, value='', row=0, column=0):
+		_item = QtGui.QTableWidgetItem(str(value))
+		cls.ui.tableWidget.setItem(row, column, _item)
 		
 	def normLineEditValidate(cls):
 		_norm_run = cls.ui.normLineEdit.text()

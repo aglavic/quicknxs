@@ -281,16 +281,6 @@
            <string>Lambda Requested</string>
           </property>
          </column>
-         <column>
-          <property name="text">
-           <string>Normalization</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Lambda Requested</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -324,7 +314,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>INSERT NEW RUNS</string>
+         <string>INSERT RUNS</string>
         </property>
        </widget>
       </item>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/table_reduction_runs_editor.ui'
 #
-# Created: Wed Mar 11 17:28:00 2015
+# Created: Thu Mar 12 15:05:23 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -119,16 +119,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.tableWidget = QtGui.QTableWidget(self.groupBox_3)
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(4)
+        self.tableWidget.setColumnCount(2)
         self.tableWidget.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(1, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, item)
         self.verticalLayout_3.addWidget(self.tableWidget)
         self.verticalLayout_4.addWidget(self.groupBox_3)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
@@ -138,9 +134,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.cancelButton)
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem6)
-        self.pushButton_2 = QtGui.QPushButton(self.centralwidget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout_6.addWidget(self.pushButton_2)
         self.pushButton_3 = QtGui.QPushButton(self.centralwidget)
         self.pushButton_3.setEnabled(False)
         self.pushButton_3.setObjectName("pushButton_3")
@@ -182,9 +175,6 @@ class Ui_MainWindow(object):
         self.groupBox_3.setTitle(QtGui.QApplication.translate("MainWindow", "Checking Matching Lambdas", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "Data", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Lambda Requested", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "Normalization", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("MainWindow", "Lambda Requested", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "CANCEL", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "VALIDATE", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_3.setText(QtGui.QApplication.translate("MainWindow", "OK", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_3.setText(QtGui.QApplication.translate("MainWindow", "INSERT RUNS", None, QtGui.QApplication.UnicodeUTF8))
 
