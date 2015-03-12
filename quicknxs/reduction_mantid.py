@@ -212,11 +212,18 @@ class REFLReduction(object):
 			normFlag = bool(configObject.norm_flag)
 			normPeakPixelRange = [int(configObject.norm_peak[0]), int(configObject.norm_peak[1])]
 			normBackgroundPixelRange = [int(configObject.norm_back[0]), int(configObject.norm_back[1])]
+
 			subtractNormBackground = bool(configObject.norm_back_flag)
 			lowResDataAxisPixelRangeFlag = bool(configObject.data_low_res_flag)
 			lowResDataAxisPixelRange = [int(configObject.data_low_res[0]), int(configObject.data_low_res[1])]
+			if lowResDataAxisPixelRange[0] == lowResDataAxisPixelRange[1]:
+				lowResDataAxisPixelRangeFlag = False
+			
 			lowResNormAxisPixelRangeFlag = bool(configObject.norm_low_res_flag)
 			lowResNormAxisPixelRange = [int(configObject.norm_low_res[0]), int(configObject.data_low_res[1])]
+			if lowResNormAxisPixelRange[0] == lowResNormAxisPixelRange[1]:
+				lowResNormAxisPixelRangeFlag = False
+			
 			tofRange = [float(configObject.tof_range[0]), float(configObject.tof_range[-1])]
 #            qmin = str(configObject.q_range[0])
 			outputWorkspace = str("reflectivity_%s" % runNumbers)
