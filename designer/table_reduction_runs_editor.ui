@@ -415,10 +415,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>insertValidRunsButton</sender>
+   <signal>pressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>insertValidRunsButton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>716</x>
+     <y>554</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>closeEvent()</slot>
   <slot>dataLineEditValidate()</slot>
   <slot>normLineEditValidate()</slot>
+  <slot>insertValidRunsButton()</slot>
  </slots>
 </ui>

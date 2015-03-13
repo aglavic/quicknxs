@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/table_reduction_runs_editor.ui'
 #
-# Created: Fri Mar 13 10:30:17 2015
+# Created: Fri Mar 13 11:02:01 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -163,6 +163,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL("clicked()"), MainWindow.closeEvent)
         QtCore.QObject.connect(self.dataLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.dataLineEditValidate)
         QtCore.QObject.connect(self.normLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.normLineEditValidate)
+        QtCore.QObject.connect(self.insertValidRunsButton, QtCore.SIGNAL("pressed()"), MainWindow.insertValidRunsButton)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

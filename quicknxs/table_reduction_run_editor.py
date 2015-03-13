@@ -15,6 +15,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	row = 0
 	lambda_requested = 'N/A'
 	at_least_one_same_lambda = False
+	valid_runs = []
 	
 	list_filename = []
 	list_nxs = []
@@ -152,9 +153,14 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	def updateInsertValidRunsButton(cls):
 		cls.ui.insertValidRunsButton.setEnabled(cls.at_least_one_same_lambda)
 		
+	def insertValidRunsButton(cls):
+		_validRuns = cls.valid_runs
+		nbr_runs = len(_validRuns)
+	
 	def updateTable(cls):
 		lambda_requested = str(cls.ui.lambdaValue.text())
 		cls.at_least_one_same_lambda = False
+		cls.valid_runs = []
 
 		cls.clearTable()
 		cls.ui.tableWidget.clearContents()
@@ -173,6 +179,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			elif lambda_requested == _lambda:
 				same_lambda_flag = True
 				cls.at_least_one_same_lambda = True
+				cls.valid_runs.append(_run)
 				
 			cls.addItemToTable(value=_run, row=_row, column=0, isSameLambda=same_lambda_flag)
 			cls.addItemToTable(value=_lambda, row=_row, column=1, isSameLambda=same_lambda_flag)
