@@ -57,41 +57,56 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 
 	def  retrieveLambdaRequestedForThisRow(cls):
 		lambda_requested = ''
+		bigTable = cls.main_gui.bigTableData
 		
 		# try to retrieve from bigTable[i,0]
+		data_obj = bigTable[cls.row, 0]
+		if data_obj is not None:
+			_active_data = data_obj.active_data
+			return str(_active_data.lambda_requested)
 		
 		# try to retrieve from bigTable[i,2] -> data_lambda_requested
+		config_obj = bigTable[cls.row, 2]
+		if config_obj.data_lambda_requested != -1:
+			return str(config_obj.data_lambda_requested)
 		
 		# try to retrieve from bigTable[i,1]
+		norm_obj = bigTable[cls.row, 1]
+		if norm_obj is not None:
+			_active_norm = norm_obj.active_data
+			return str(_active_norm.lambda_requested)
 		
 		# try to retrieve from bigTable[i,2] -> norm_lambda_requested
+		if config_obj.norm_lambda_requested != -1:
+			return str(config_obj.norm_lambda_requested)
 		
 		# try from data_run, if not None -> load and retrieve
+		data_run = cls.main_gui.ui.reductionTable.item(cls.row, 0).text()
+		if data_run != '':
+			try:
+				_filename = nexus_utilities.findNeXusFullPath(data_run)
+				cls.list_filename.append(_filename)
+				randomString = utilities.generate_random_workspace_name()
+				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+				return str(_nxs.getRun().getProperty('LambdaRequest').value[0])
+			except:
+				pass
 		
 		# try from norm_run, if not None -> load and retrieve
+		norm_run = cls.main_gui.ui.reductionTable.item(cls.row, 6).text()
+		if norm_run != '':
+			try:
+				_filename = nexus_utilities.findNeXusFullPath(norm_run)
+				cls.list_filename.append(_filename)
+				randomString = utilities.generate_random_workspace_name()
+				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetanormOnly=True)
+				return str(_nxs.getRun().getProperty('LambdaRequest').value[0])
+			except:
+				pass
 		
 		# give up and return 'N/A'
+		return 'N/A'
 		
-		
-		
-		data_lambda = config.data_lambda_requested
-		if data_lambda == -1:
-			data = cls.main_gui.bigTableData[cls.row, 0]
-			if data is not None:
-				_active_data = data.active_data
-				lambda_value = _active_data.lambda_requested
-				if lambda_value == '':
-					pass
-		else:
-			lambda_value = str(data_lambda)
-
-			#else:
-				#lambda_value = str(norm_lambda)
-		
-		return lambda_requested
-
-
-
 
 	def initLayout(cls):
 		if cls.col == 0: #data then hide norm frame
