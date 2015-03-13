@@ -283,6 +283,37 @@
          </column>
         </widget>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="validRunLabel">
+           <property name="text">
+            <string>Valid Run (Matching Lambda Requested)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="invalidRunLabel">
+           <property name="text">
+            <string>Invalid Run (No Matching Lambda Requested) </string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </item>
@@ -309,12 +340,12 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="insertValidRunsButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>INSERT RUNS</string>
+         <string>INSERT VALID RUNS</string>
         </property>
        </widget>
       </item>

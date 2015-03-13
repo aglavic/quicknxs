@@ -13,6 +13,8 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	main_gui = None
 	col = 0
 	row = 0
+	lambda_requested = 'N/A'
+	at_least_one_same_lambda = False
 	
 	list_filename = []
 	list_nxs = []
@@ -36,6 +38,14 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	def initContent(cls):
 		cls.ui.lambdaUnits.setText(u'\u00c5')
 		
+		palette_green = QtGui.QPalette()
+		palette_green.setColor(QtGui.QPalette.Foreground, QtCore.Qt.green)
+		cls.ui.validRunLabel.setPalette(palette_green)
+		
+		palette_red = QtGui.QPalette()
+		palette_red.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
+		cls.ui.invalidRunLabel.setPalette(palette_red)
+
 		verticalHeader = ["Data Run #", u'Lambda Requested (\u00c5)', 
 		                  'Norm Run', u'Lambda Requested (\u00c5)']
 		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
@@ -53,6 +63,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		config = cls.main_gui.bigTableData[cls.row, 2]
 
 		lambda_value = cls.retrieveLambdaRequestedForThisRow()
+		cls.lambda_requested = lambda_value
 		cls.ui.lambdaValue.setText(lambda_value)
 
 	def  retrieveLambdaRequestedForThisRow(cls):
@@ -106,14 +117,14 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		
 		# give up and return 'N/A'
 		return 'N/A'
-		
 
 	def initLayout(cls):
 		if cls.col == 0: #data then hide norm frame
 			cls.ui.norm_groupBox.setHidden(True)
 		else:
 			cls.ui.data_groupBox.setHidden(True)
-					
+			
+	@waiting_effects		
 	def dataLineEditValidate(cls):
 		run_sequence = cls.ui.dataLineEdit.text()
 		oListRuns = RunSequenceBreaker(run_sequence)
@@ -136,44 +147,57 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			cls.list_nxs.append(_nxs)
 			
 		cls.updateTable()
+		cls.updateInsertValidRunsButton()
+		
+	def updateInsertValidRunsButton(cls):
+		cls.ui.insertValidRunsButton.setEnabled(cls.at_least_one_same_lambda)
 		
 	def updateTable(cls):
-		#norm_run = cls.ui.normRun.text()
-		#try:
-			#_filename = nexus_utilities.findNeXusFullPath(norm_run)
-		#except:
-			#pass
-		#cls.list_filename.append(_filename)
-		#randomString = utilities.generate_random_workspace_name()
-		#_nxs_norm = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
-		#_lambda_norm  = cls.retrieveMetadataFromNxs(_nxs_norm, 'LambdaRequest')
+		lambda_requested = str(cls.ui.lambdaValue.text())
+		cls.at_least_one_same_lambda = False
 
+		cls.clearTable()
 		cls.ui.tableWidget.clearContents()
 		nbr_row = len(cls.list_nxs)
 		_runs = cls.list_runs
 		for _row in range(nbr_row):
 			cls.ui.tableWidget.insertRow(_row)
+			same_lambda_flag = False
 
 			_nxs = cls.list_nxs[_row]
 			_run = _runs[_row]
 
-			cls.addItemToTable(value=_run, row=_row, column=0)
-			_lambda =  cls.retrieveMetadataFromNxs(_nxs, 'LambdaRequest')
-			cls.addItemToTable(value=_lambda, row=_row, column=1)
-			
-			#cls.addItemToTable(value=norm_run, row=_row, column=2)
-			#cls.addItemToTable(value=_lambda_norm, row=_row, column=3)
+			_lambda =  str(cls.retrieveMetadataFromNxs(_nxs, 'LambdaRequest'))
+			if lambda_requested == 'N/A/':
+				same_lambda_flag = False
+			elif lambda_requested == _lambda:
+				same_lambda_flag = True
+				cls.at_least_one_same_lambda = True
+				
+			cls.addItemToTable(value=_run, row=_row, column=0, isSameLambda=same_lambda_flag)
+			cls.addItemToTable(value=_lambda, row=_row, column=1, isSameLambda=same_lambda_flag)
 		
-		
 			
+	def 	clearTable(cls):
+		nbr_row = cls.ui.tableWidget.rowCount()
+		if nbr_row > 0:
+			for i in range(nbr_row):
+				cls.ui.tableWidget.removeRow(i)
+		
 	def retrieveMetadataFromNxs(cls, nexus=None, tag=''):
 		if nexus is None:
 			return ''
 		mt_run = nexus.getRun()
 		return mt_run.getProperty(tag).value[0]
 			
-	def addItemToTable(cls, value='', row=0, column=0):
+	def addItemToTable(cls, value='', row=0, column=0, isSameLambda=False):
+		if isSameLambda:
+			color = QtGui.QColor(0,255,0)
+		else:
+			color = QtGui.QColor(255,0,0)
 		_item = QtGui.QTableWidgetItem(str(value))
+		_item.setForeground(color)
+		
 		cls.ui.tableWidget.setItem(row, column, _item)
 		
 	def normLineEditValidate(cls):

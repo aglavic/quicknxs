@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/table_reduction_runs_editor.ui'
 #
-# Created: Thu Mar 12 15:05:23 2015
+# Created: Fri Mar 13 10:30:17 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -126,18 +126,29 @@ class Ui_MainWindow(object):
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(1, item)
         self.verticalLayout_3.addWidget(self.tableWidget)
+        self.horizontalLayout_8 = QtGui.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.validRunLabel = QtGui.QLabel(self.groupBox_3)
+        self.validRunLabel.setObjectName("validRunLabel")
+        self.horizontalLayout_8.addWidget(self.validRunLabel)
+        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_8.addItem(spacerItem6)
+        self.invalidRunLabel = QtGui.QLabel(self.groupBox_3)
+        self.invalidRunLabel.setObjectName("invalidRunLabel")
+        self.horizontalLayout_8.addWidget(self.invalidRunLabel)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_8)
         self.verticalLayout_4.addWidget(self.groupBox_3)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.cancelButton = QtGui.QPushButton(self.centralwidget)
         self.cancelButton.setObjectName("cancelButton")
         self.horizontalLayout_6.addWidget(self.cancelButton)
-        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_6.addItem(spacerItem6)
-        self.pushButton_3 = QtGui.QPushButton(self.centralwidget)
-        self.pushButton_3.setEnabled(False)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.horizontalLayout_6.addWidget(self.pushButton_3)
+        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem7)
+        self.insertValidRunsButton = QtGui.QPushButton(self.centralwidget)
+        self.insertValidRunsButton.setEnabled(False)
+        self.insertValidRunsButton.setObjectName("insertValidRunsButton")
+        self.horizontalLayout_6.addWidget(self.insertValidRunsButton)
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
@@ -175,6 +186,8 @@ class Ui_MainWindow(object):
         self.groupBox_3.setTitle(QtGui.QApplication.translate("MainWindow", "Checking Matching Lambdas", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "Data", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Lambda Requested", None, QtGui.QApplication.UnicodeUTF8))
+        self.validRunLabel.setText(QtGui.QApplication.translate("MainWindow", "Valid Run (Matching Lambda Requested)", None, QtGui.QApplication.UnicodeUTF8))
+        self.invalidRunLabel.setText(QtGui.QApplication.translate("MainWindow", "Invalid Run (No Matching Lambda Requested) ", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelButton.setText(QtGui.QApplication.translate("MainWindow", "CANCEL", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_3.setText(QtGui.QApplication.translate("MainWindow", "INSERT RUNS", None, QtGui.QApplication.UnicodeUTF8))
+        self.insertValidRunsButton.setText(QtGui.QApplication.translate("MainWindow", "INSERT VALID RUNS", None, QtGui.QApplication.UnicodeUTF8))
 
