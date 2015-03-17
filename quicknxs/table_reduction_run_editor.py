@@ -173,10 +173,20 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		cls.ui.insertValidRunsButton.setEnabled(cls.at_least_one_same_lambda)
 		
 	def insertValidRunsButton(cls):
-		_validRuns = cls.valid_runs
-		nbr_runs = len(_validRuns)
-		print _validRuns
-	
+		_valid_runs = cls.valid_runs
+		cls.replaceRunsIntoMainGui(_valid_runs)
+		
+	def replaceRunsIntoMainGui(cls, _valid_runs):
+		cls.updateReductionTable(_valid_runs)
+		
+		
+	def updateReductionTable(cls, _valid_runs):
+		_col = cls.col
+		_row = cls.row
+		new_runs = ",".join(_valid_runs)
+		_item = QtGui.QTableWidgetItem(str(new_runs))
+		cls.main_gui.ui.reductionTable.setItem(_row, _col, _item)
+
 	def updateDataTable(cls):
 		lambda_requested = str(cls.ui.lambdaValue.text())
 		cls.at_least_one_same_lambda = False
@@ -199,7 +209,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			elif lambda_requested == _lambda:
 				same_lambda_flag = True
 				cls.at_least_one_same_lambda = True
-				cls.valid_runs.append(_run)
+				cls.valid_runs.append(str(_run))
 				
 			cls.addItemToTable(value=_run, row=_row, column=0, isSameLambda=same_lambda_flag)
 			cls.addItemToTable(value=_lambda, row=_row, column=1, isSameLambda=same_lambda_flag)
