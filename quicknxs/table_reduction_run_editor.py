@@ -13,17 +13,23 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	main_gui = None
 	col = 0
 	row = 0
+	is_working_with_data = True
 	lambda_requested = 'N/A'
 	at_least_one_same_lambda = False
 	valid_runs = []
 	
 	list_filename = []
 	list_nxs = []
+	list_runs = []
+	str_list_runs = []
 	
 	def __init__(cls, parent=None, col=0, row=0):
 		cls.main_gui = parent
 		cls.col = col
 		cls.row = row
+		
+		if col != 0:
+			cls.is_working_with_data = False
 		
 		QtGui.QMainWindow.__init__(cls, parent=parent)
 		cls.setWindowModality(False)
@@ -142,10 +148,12 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 				_filename = nexus_utilities.findNeXusFullPath(_runs)
 			except:
 				pass
-			cls.list_filename.append(_filename)
-			randomString = utilities.generate_random_workspace_name()
-			_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
-			cls.list_nxs.append(_nxs)
+			else:
+				cls.list_filename.append(_filename)
+				randomString = utilities.generate_random_workspace_name()
+				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+				cls.list_nxs.append(_nxs)
+				cls.str_list_runs.append(str(_runs))
 			
 		cls.updateDataTable()
 		cls.updateInsertValidRunsButton()
@@ -175,10 +183,24 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	def insertValidRunsButton(cls):
 		_valid_runs = cls.valid_runs
 		cls.replaceRunsIntoMainGui(_valid_runs)
+		cls.close()
 		
 	def replaceRunsIntoMainGui(cls, _valid_runs):
 		cls.updateReductionTable(_valid_runs)
+		cls.updateConfigObject()
 		
+	def updateConfigObject(cls):
+		_row = cls.row
+		bigTableData = cls.main_gui.bigTableData
+		config_object = bigTableData[_row, 2]
+		if cls.is_working_with_data:
+			config_object.data_sets = ",".join(cls.str_list_runs)
+			config_object.data_full_file_name = ",".join(cls.list_filename)
+		else:
+			config_object.norm_sets = ",".join(cls.str_list_runs)
+			config_object.norm_full_file_name = ",".join(cls.list_filename)
+		bigTableData[_row,2] = config_object
+		cls.main_gui.bigTableData = bigTableData
 		
 	def updateReductionTable(cls, _valid_runs):
 		_col = cls.col

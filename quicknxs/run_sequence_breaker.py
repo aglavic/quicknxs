@@ -1,15 +1,18 @@
 class RunSequenceBreaker(object):
 	
 	final_list = None
+	str_final_list = None
 	
 	def __init__(cls, run_sequence):
 		final_list = []
+		str_final_list = []
 		try:
 			# remove white spaces
 			_run_sequence = run_sequence.replace(" ", "")
 			
 			if _run_sequence == "":
 				cls.final_list = [-1]
+				cls.str_final_list = ['']
 				return
 			
 			# coma separated
@@ -22,11 +25,16 @@ class RunSequenceBreaker(object):
 					_range = cls.getRangeBetweenTwoNumbers(hypen_separated[0], hypen_separated[1])
 					for _r in _range:
 						final_list.append(_r)
+						str_final_list.append(str(_r))
+						
 				else:
 					final_list.append(int(hypen_separated[0]))
+					str_final_list.append(str(hypen_separated[0]))
 		except:
 			final_list = [-2]
+			str_final_list = ['']
 		cls.final_list = final_list
+		cls.str_final_list = str_final_list
 	
 	def getRangeBetweenTwoNumbers(cls, num1, num2):
 		_num1 = int(num1)
@@ -38,4 +46,7 @@ class RunSequenceBreaker(object):
 	
 	def getFinalList(cls):
 		return cls.final_list
+	
+	def getStringFinalList(cls):
+		return cls.str_final_list
 		
