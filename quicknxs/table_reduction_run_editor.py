@@ -79,7 +79,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		
 		# try to retrieve from bigTable[i,2] -> data_lambda_requested
 		config_obj = bigTable[cls.row, 2]
-		if config_obj.data_lambda_requested != -1:
+		if (config_obj.data_lambda_requested != -1) and (config_obj.data_lambda_requested != '') :
 			return str(config_obj.data_lambda_requested)
 		
 		# try to retrieve from bigTable[i,1]
@@ -89,7 +89,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			return str(_active_norm.lambda_requested)
 		
 		# try to retrieve from bigTable[i,2] -> norm_lambda_requested
-		if config_obj.norm_lambda_requested != -1:
+		if (config_obj.norm_lambda_requested != -1) and (config_obj.data_lambda_requested != ''):
 			return str(config_obj.norm_lambda_requested)
 		
 		# try from data_run, if not None -> load and retrieve
@@ -147,7 +147,26 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
 			cls.list_nxs.append(_nxs)
 			
-		cls.updateTable()
+		cls.updateDataTable()
+		cls.updateInsertValidRunsButton()
+		
+	@waiting_effects
+	def normLineEditValidate(cls):
+		_run = cls.ui.normLineEdit.text()
+		cls.ui.normLineEdit.setText("")
+		if _run == '':
+			return
+		cls.list_runs = [_run]
+		try:
+			_filename = nexus_utilities.findNeXusFullPath(_run)
+		except:
+			pass
+		cls.list_filename.append(_filename)
+		randomString = utilities.generate_random_workspace_name()
+		_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+		cls.list_nxs = [_nxs]
+
+		cls.updateNormTable()
 		cls.updateInsertValidRunsButton()
 		
 	def updateInsertValidRunsButton(cls):
@@ -156,8 +175,9 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	def insertValidRunsButton(cls):
 		_validRuns = cls.valid_runs
 		nbr_runs = len(_validRuns)
+		print _validRuns
 	
-	def updateTable(cls):
+	def updateDataTable(cls):
 		lambda_requested = str(cls.ui.lambdaValue.text())
 		cls.at_least_one_same_lambda = False
 		cls.valid_runs = []
@@ -184,6 +204,27 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			cls.addItemToTable(value=_run, row=_row, column=0, isSameLambda=same_lambda_flag)
 			cls.addItemToTable(value=_lambda, row=_row, column=1, isSameLambda=same_lambda_flag)
 		
+	def updateNormTable(cls):
+		lambda_requested = str(cls.ui.lambdaValue.text())
+		cls.at_least_one_same_lambda = False
+		cls.clearTable()
+		cls.ui.tableWidget.clearContents()
+
+		cls.ui.tableWidget.insertRow(0)
+		same_lambda_flag = False
+		
+		_nxs = cls.list_nxs[0]
+		_run = cls.list_runs[0]
+		_lambda =  str(cls.retrieveMetadataFromNxs(_nxs, 'LambdaRequest'))
+		if lambda_requested == 'N/A/':
+			same_lambda_flag = False
+		elif lambda_requested == _lambda:
+			same_lambda_flag = True
+			cls.at_least_one_same_lambda = True
+			cls.valid_runs.append(_run)
+			
+		cls.addItemToTable(value=_run, row=0, column=0, isSameLambda=same_lambda_flag)
+		cls.addItemToTable(value=_lambda, row=0, column=1, isSameLambda=same_lambda_flag)
 			
 	def 	clearTable(cls):
 		nbr_row = cls.ui.tableWidget.rowCount()
@@ -206,11 +247,7 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		_item.setForeground(color)
 		
 		cls.ui.tableWidget.setItem(row, column, _item)
-		
-	def normLineEditValidate(cls):
-		_norm_run = cls.ui.normLineEdit.text()
-		cls.ui.normLineEdit.setText("")
-		
+				
 	def closeEvent(cls, event=None):
 		cls.close()
 	
