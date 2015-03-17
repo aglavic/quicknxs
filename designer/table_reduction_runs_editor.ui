@@ -205,29 +205,52 @@
         </layout>
        </item>
        <item>
-        <widget class="QLineEdit" name="normLineEdit">
-         <property name="toolTip">
-          <string>Enter Normalization Run and Hit ENTER</string>
-         </property>
-         <property name="statusTip">
-          <string/>
-         </property>
-         <property name="whatsThis">
-          <string/>
-         </property>
-         <property name="accessibleName">
-          <string/>
-         </property>
-         <property name="accessibleDescription">
-          <string/>
-         </property>
-         <property name="inputMask">
-          <string/>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLineEdit" name="normLineEdit">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Enter Normalization Run and Hit ENTER</string>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
+           <property name="whatsThis">
+            <string/>
+           </property>
+           <property name="accessibleName">
+            <string/>
+           </property>
+           <property name="accessibleDescription">
+            <string/>
+           </property>
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -400,22 +423,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>normLineEdit</sender>
-   <signal>returnPressed()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>normLineEditValidate()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>403</x>
-     <y>255</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>insertValidRunsButton</sender>
    <signal>pressed()</signal>
    <receiver>MainWindow</receiver>
@@ -424,6 +431,22 @@
     <hint type="sourcelabel">
      <x>716</x>
      <y>554</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normLineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>normLineEditValidate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel">
      <x>399</x>

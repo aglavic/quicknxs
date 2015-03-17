@@ -169,11 +169,13 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 			_filename = nexus_utilities.findNeXusFullPath(_run)
 		except:
 			pass
-		cls.list_filename.append(_filename)
-		randomString = utilities.generate_random_workspace_name()
-		_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
-		cls.list_nxs = [_nxs]
-
+		else:
+			cls.list_filename.append(_filename)
+			randomString = utilities.generate_random_workspace_name()
+			_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+			cls.list_nxs = [_nxs]
+			cls.str_list_runs.append(str(_run))
+			
 		cls.updateNormTable()
 		cls.updateInsertValidRunsButton()
 		
@@ -188,6 +190,14 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	def replaceRunsIntoMainGui(cls, _valid_runs):
 		cls.updateReductionTable(_valid_runs)
 		cls.updateConfigObject()
+		cls.updateBigTableData()
+		
+	def updateBigTableData(cls):
+		_row = cls.row
+		_col = cls.col
+		bigTableData = cls.main_gui.bigTableData
+		bigTableData[_row,_col] = None
+		cls.main_gui.bigTableData = bigTableData
 		
 	def updateConfigObject(cls):
 		_row = cls.row
@@ -204,6 +214,8 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 		
 	def updateReductionTable(cls, _valid_runs):
 		_col = cls.col
+		if _col != 0:
+			_col = 6
 		_row = cls.row
 		new_runs = ",".join(_valid_runs)
 		_item = QtGui.QTableWidgetItem(str(new_runs))

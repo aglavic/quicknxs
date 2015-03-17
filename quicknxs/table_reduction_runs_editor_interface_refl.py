@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/table_reduction_runs_editor.ui'
 #
-# Created: Fri Mar 13 11:02:01 2015
+# Created: Tue Mar 17 13:59:29 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,7 +92,10 @@ class Ui_MainWindow(object):
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem4)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_10 = QtGui.QHBoxLayout()
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.normLineEdit = QtGui.QLineEdit(self.norm_groupBox)
+        self.normLineEdit.setMaximumSize(QtCore.QSize(100, 16777215))
         self.normLineEdit.setStatusTip("")
         self.normLineEdit.setWhatsThis("")
         self.normLineEdit.setAccessibleName("")
@@ -100,7 +103,10 @@ class Ui_MainWindow(object):
         self.normLineEdit.setInputMask("")
         self.normLineEdit.setText("")
         self.normLineEdit.setObjectName("normLineEdit")
-        self.verticalLayout_2.addWidget(self.normLineEdit)
+        self.horizontalLayout_10.addWidget(self.normLineEdit)
+        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem5)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.label_21 = QtGui.QLabel(self.norm_groupBox)
@@ -109,8 +115,8 @@ class Ui_MainWindow(object):
         self.oldNormRun = QtGui.QLabel(self.norm_groupBox)
         self.oldNormRun.setObjectName("oldNormRun")
         self.horizontalLayout_5.addWidget(self.oldNormRun)
-        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem5)
+        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem6)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.verticalLayout_4.addWidget(self.norm_groupBox)
         self.groupBox_3 = QtGui.QGroupBox(self.centralwidget)
@@ -131,8 +137,8 @@ class Ui_MainWindow(object):
         self.validRunLabel = QtGui.QLabel(self.groupBox_3)
         self.validRunLabel.setObjectName("validRunLabel")
         self.horizontalLayout_8.addWidget(self.validRunLabel)
-        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem6)
+        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_8.addItem(spacerItem7)
         self.invalidRunLabel = QtGui.QLabel(self.groupBox_3)
         self.invalidRunLabel.setObjectName("invalidRunLabel")
         self.horizontalLayout_8.addWidget(self.invalidRunLabel)
@@ -143,8 +149,8 @@ class Ui_MainWindow(object):
         self.cancelButton = QtGui.QPushButton(self.centralwidget)
         self.cancelButton.setObjectName("cancelButton")
         self.horizontalLayout_6.addWidget(self.cancelButton)
-        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_6.addItem(spacerItem7)
+        spacerItem8 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem8)
         self.insertValidRunsButton = QtGui.QPushButton(self.centralwidget)
         self.insertValidRunsButton.setEnabled(False)
         self.insertValidRunsButton.setObjectName("insertValidRunsButton")
@@ -162,8 +168,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.cancelButton, QtCore.SIGNAL("clicked()"), MainWindow.closeEvent)
         QtCore.QObject.connect(self.dataLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.dataLineEditValidate)
-        QtCore.QObject.connect(self.normLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.normLineEditValidate)
         QtCore.QObject.connect(self.insertValidRunsButton, QtCore.SIGNAL("pressed()"), MainWindow.insertValidRunsButton)
+        QtCore.QObject.connect(self.normLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.normLineEditValidate)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
