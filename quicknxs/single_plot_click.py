@@ -1,5 +1,5 @@
-from plotdialogrefl import PlotDialogREFL
-from plot2ddialogrefl import Plot2dDialogREFL
+from plot_dialog_refl import PlotDialogREFL
+from plot2d_dialog_refl import Plot2dDialogREFL
 import constants
 import time
 

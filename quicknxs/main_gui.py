@@ -51,12 +51,12 @@ from calculate_SF import CalculateSF
 from reduced_ascii_loader import reducedAsciiLoader
 from stitching_ascii_widget import stitchingAsciiWidgetObject
 from peakfinder import PeakFinder
-from plotdialogrefl import PlotDialogREFL
-from plot2ddialogrefl import Plot2dDialogREFL
+from plot_dialog_refl import PlotDialogREFL
+from plot2d_dialog_refl import Plot2dDialogREFL
 #from all_plot_axis import AllPlotAxis
-from outputReducedDataDialog import OutputReducedDataDialog
+from output_reduced_data import OutputReducedData
 from export_stitching_ascii_settings import ExportStitchingAsciiSettings
-from displayMetadata import DisplayMetadata
+from display_metadata import DisplayMetadata
 from make_gui_connections import MakeGuiConnections
 from initialize_gui import InitializeGui
 from check_peak_back_error_widgets import CheckErrorWidgets

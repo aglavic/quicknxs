@@ -1,4 +1,4 @@
-from plot2ddialogrefl import Plot2dDialogREFL
+from plot2d_dialog_refl import Plot2dDialogREFL
 
 class MakeGuiConnections(object):
     

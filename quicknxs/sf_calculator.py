@@ -3,7 +3,7 @@ from sf_calculator_interface import Ui_MainWindow
 from run_sequence_breaker import RunSequenceBreaker
 from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
-from displayMetadata import DisplayMetadata
+from display_metadata import DisplayMetadata
 import numpy as np
 from logging import info
 

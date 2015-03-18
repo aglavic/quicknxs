@@ -2,7 +2,7 @@ from PyQt4 import QtGui
 from logging import info, warning, debug
 import os
 import utilities
-from outputReducedDataDialog import OutputReducedDataDialog
+from output_reduced_data import OutputReducedData
 
 class ExportPlotAscii(object):
 	
@@ -129,6 +129,6 @@ class ExportPlotAscii(object):
 		
 	def export_stitched(cls):
 		self = cls.self
-		_tmp = OutputReducedDataDialog(self, self.stitchingAsciiWidgetObject)
+		_tmp = OutputReducedData(self, self.stitchingAsciiWidgetObject)
 		_tmp.show()
 		

@@ -8,7 +8,7 @@ import os
 import utilities
 
 
-class OutputReducedDataDialog(QDialog):
+class OutputReducedData(QDialog):
 	
 	_open_instances = []
 	stitchingAsciiWidgetObject = None
