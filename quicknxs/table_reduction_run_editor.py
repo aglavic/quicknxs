@@ -3,6 +3,7 @@ from table_reduction_runs_editor_interface_refl import Ui_MainWindow
 from run_sequence_breaker import RunSequenceBreaker
 from decorators import waiting_effects
 from mantid.simpleapi import *
+from selection_bigTable_changed import SelectionBigTableChanged
 import nexus_utilities
 import utilities
 
@@ -182,10 +183,22 @@ class TableReductionRunEditor(QtGui.QMainWindow):
 	def updateInsertValidRunsButton(cls):
 		cls.ui.insertValidRunsButton.setEnabled(cls.at_least_one_same_lambda)
 		
+	@waiting_effects
 	def insertValidRunsButton(cls):
+		''' Reach by the valid button '''
 		_valid_runs = cls.valid_runs
 		cls.replaceRunsIntoMainGui(_valid_runs)
 		cls.close()
+		cls.replotMainGuiSelectedField()
+		
+	def replotMainGuiSelectedField(cls):
+		if cls.col != 0:
+			_col = 6
+		else:
+			_col = 0
+		cls.main_gui._cur_column_selected = _col
+		cls.main_gui._cur_row_selected = cls.row
+		SelectionBigTableChanged(cls.main_gui)
 		
 	def replaceRunsIntoMainGui(cls, _valid_runs):
 		cls.updateReductionTable(_valid_runs)
