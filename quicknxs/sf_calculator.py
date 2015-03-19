@@ -225,6 +225,8 @@ class SFcalculator(QtGui.QMainWindow):
 			
 	def displayConfigFile(cls, file_name):
 		data = import_ascii_file(file_name)
+		if not data:
+			data = 'EMPTY FILE'
 		cls.ui.sfFileNamePreview.setPlainText(data)
 		cls.ui.sfFileNamePreview.setEnabled(True)
 
