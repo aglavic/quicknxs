@@ -6,9 +6,10 @@ from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalcu
 from display_metadata import DisplayMetadata
 from logging import info
 from utilities import touch, import_ascii_file
+from create_sf_config_xml_file import CreateSFConfigXmlFile
 
 import numpy as np
-import os.path
+import os
 
 class SFcalculator(QtGui.QMainWindow):
 	
@@ -94,7 +95,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_list_runs = np.unique(np.hstack([_old_runs, _new_runs]))
 		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs)
 		_big_table = o_load_and_sort_nxsdata.getTableData()
-		if not _big_table :
+		if _big_table != [] :
 			cls.big_table = _big_table
 			cls.list_nxsdata_sorted = o_load_and_sort_nxsdata.getListNXSDataSorted()
 			cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
@@ -230,6 +231,15 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.sfFileNamePreview.setPlainText(data)
 		cls.ui.sfFileNamePreview.setEnabled(True)
 
+	def savingConfiguration(cls):
+		_path = cls.main_gui.path_config
+		filename = QtGui.QFileDialog.getSaveFileName(cls, 'Save SF Configuration File', _path)
+		if not(filename == ''):
+			cls.main_gui.path_config = os.path.dirname(filename)
+			cls.exportConfiguration(filename)
+			
+	def exportConfiguration(cls, filename):
+		_configFile = CreateSFConfigXmlFile(parent=cls, filename=filename)
 		
 		
 			
