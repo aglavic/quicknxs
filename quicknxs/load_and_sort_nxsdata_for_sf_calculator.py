@@ -59,8 +59,8 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			_lambda_max = _active_data.lambda_range[1]
 			_proton_charge = _active_data.proton_charge
 			_lambda_requested = _active_data.lambda_requested
-			_S1W = _active_data.S1H
-			_S1H = _active_data.S1W
+			_S1W = _active_data.S1W
+			_S1H = _active_data.S1H
 			cls.is_using_Si_slits = _active_data.isSiThere
 			if _active_data.isSiThere:
 				_Si2W = _active_data.SiW

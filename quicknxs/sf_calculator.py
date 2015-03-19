@@ -119,7 +119,7 @@ class SFcalculator(QtGui.QMainWindow):
 		                  u"\u03bbmax(\u00c5)",
 		                  "Proton Charge (mC)",
 		                  u"\u03bb requested (\u00c5)",
-		                  "S1H","S1W",s2ih, s2iw]
+		                  "S1W","S1H",s2iw, s2ih]
 		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
 
 		cls.clearTable()
