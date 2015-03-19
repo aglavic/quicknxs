@@ -685,9 +685,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>sfFileNameBrowseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>browseFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1280</x>
+     <y>744</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
   <slot>tableWidgetRightClick()</slot>
+  <slot>browseFile()</slot>
  </slots>
 </ui>

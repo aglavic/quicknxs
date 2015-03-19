@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Thu Mar 19 09:03:33 2015
+# Created: Thu Mar 19 09:44:24 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -285,6 +285,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.runSequenceLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.runSequenceLineEditEvent)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), MainWindow.tableWidgetRightClick)
+        QtCore.QObject.connect(self.sfFileNameBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.browseFile)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

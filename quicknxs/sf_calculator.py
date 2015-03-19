@@ -4,8 +4,11 @@ from run_sequence_breaker import RunSequenceBreaker
 from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
 from display_metadata import DisplayMetadata
-import numpy as np
 from logging import info
+from utilities import touch, import_ascii_file
+
+import numpy as np
+import os.path
 
 class SFcalculator(QtGui.QMainWindow):
 	
@@ -91,7 +94,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_list_runs = np.unique(np.hstack([_old_runs, _new_runs]))
 		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs)
 		_big_table = o_load_and_sort_nxsdata.getTableData()
-		if _big_table != []:
+		if not _big_table :
 			cls.big_table = _big_table
 			cls.list_nxsdata_sorted = o_load_and_sort_nxsdata.getListNXSDataSorted()
 			cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
@@ -206,3 +209,25 @@ class SFcalculator(QtGui.QMainWindow):
 		col = rangeSelected[0].leftColumn()
 		row = rangeSelected[0].topRow()
 		return [row, col]
+	
+	def browseFile(cls):
+		_filter = u'SF config (*.txt);;All (*.*)'
+		fileSelector = QtGui.QFileDialog()
+		fileSelector.setFileMode(QtGui.QFileDialog.AnyFile)
+		fileSelector.setFilter(_filter)
+		fileSelector.setViewMode(QtGui.QFileDialog.List)
+		fileSelector.setDirectory(cls.main_gui.path_ascii)
+		if (fileSelector.exec_()):
+			file_name = str(fileSelector.selectedFiles()[0])
+			if not os.path.isfile(file_name):
+				touch(file_name)
+			cls.displayConfigFile(file_name)
+			
+	def displayConfigFile(cls, file_name):
+		data = import_ascii_file(file_name)
+		cls.ui.sfFileNamePreview.setPlainText(data)
+		cls.ui.sfFileNamePreview.setEnabled(True)
+
+		
+		
+			

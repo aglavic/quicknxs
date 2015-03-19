@@ -266,6 +266,9 @@ def generate_random_workspace_name():
     randomString = ''.join(listRand)
     return randomString
 
+def touch(full_file_name):
+    with open(full_file_name, 'a'):
+        os.utime(full_file_name, None)
     
     
     
