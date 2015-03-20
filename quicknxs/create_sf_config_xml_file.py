@@ -1,12 +1,12 @@
 
 class CreateSFConfigXmlFile(object):
 	
-	main_gui = None
+	sf_gui = None
 	output_filename = ''
 	str_array = []
 	
 	def __init__(cls, parent=None, filename=''):
-		cls.main_gui = parent
+		cls.sf_gui = parent
 		cls.output_filename = filename
 		
 		cls.topPart()
@@ -54,11 +54,17 @@ class CreateSFConfigXmlFile(object):
 		cls.str_array = str_array
 	
 	def retrieveDataTable(cls):
-		data_table_ui = cls.main_gui.ui.tableWidget
+		data_table_ui = cls.sf_gui.ui.tableWidget
 		nbr_row = data_table_ui.rowCount()
 		if nbr_row == 0:
 			return []
 
+		[_incident_medium_list, _incident_medium_index] = cls.retrieveIncidentMediumListAndIndex()
+		print _incident_medium_list
+		print
+		print _incident_medium_index
+		
+		
 		str_array = cls.str_array
 		for row in range(nbr_row):
 			
@@ -67,11 +73,16 @@ class CreateSFConfigXmlFile(object):
 			for col in range(10):
 				
 				if col == 1:
-					_item = data_table_ui.cellWidget(row, col).value()
+					_item = str(data_table_ui.cellWidget(row, col).value())
 				else:
-					_item = data_table_ui.item(row, col).text()
-				print _item
+					_item = str(data_table_ui.item(row, col).text())
+					
 			
+			
+				#if col == 0:
+					#str_array.append(' <')
 
-
-
+	def retrieveIncidentMediumListAndIndex(cls):
+		_list = [cls.sf_gui.ui.incidentMediumComboBox.itemText(i) for i in range(cls.sf_gui.ui.incidentMediumComboBox.count())]
+		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()
+		return [_list, _current_index]

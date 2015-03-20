@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Thu Mar 19 11:03:16 2015
+# Created: Fri Mar 20 09:38:14 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,6 +27,12 @@ class Ui_MainWindow(object):
         self.runSequenceLineEdit = QtGui.QLineEdit(self.centralwidget)
         self.runSequenceLineEdit.setObjectName("runSequenceLineEdit")
         self.horizontalLayout_2.addWidget(self.runSequenceLineEdit)
+        self.incidentMediumComboBox = QtGui.QComboBox(self.centralwidget)
+        self.incidentMediumComboBox.setMinimumSize(QtCore.QSize(300, 0))
+        self.incidentMediumComboBox.setEditable(True)
+        self.incidentMediumComboBox.setObjectName("incidentMediumComboBox")
+        self.incidentMediumComboBox.addItem("")
+        self.horizontalLayout_2.addWidget(self.incidentMediumComboBox)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -294,6 +300,7 @@ class Ui_MainWindow(object):
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Run or Sequence of Runs:", None, QtGui.QApplication.UnicodeUTF8))
         self.runSequenceLineEdit.setToolTip(QtGui.QApplication.translate("MainWindow", "1234 or 1234,1236,1239 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
         self.runSequenceLineEdit.setText(QtGui.QApplication.translate("MainWindow", "122357-122360", None, QtGui.QApplication.UnicodeUTF8))
+        self.incidentMediumComboBox.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select or Define Incident Medium", None, QtGui.QApplication.UnicodeUTF8))
         self.error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
         self.back2_error.setText(QtGui.QApplication.translate("MainWindow", "*", None, QtGui.QApplication.UnicodeUTF8))

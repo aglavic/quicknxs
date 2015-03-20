@@ -36,6 +36,24 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QComboBox" name="incidentMediumComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>Select or Define Incident Medium</string>
+           </property>
+          </item>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
