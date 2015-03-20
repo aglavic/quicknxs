@@ -951,11 +951,45 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dataTOFautoMode</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectAutoTOF()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataTOFmanualMode</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectManualTOF()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>240</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
   <slot>tableWidgetRightClick()</slot>
   <slot>browseFile()</slot>
   <slot>savingConfiguration()</slot>
+  <slot>selectAutoTOF()</slot>
+  <slot>selectManualTOF()</slot>
  </slots>
 </ui>

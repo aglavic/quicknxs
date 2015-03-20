@@ -241,5 +241,18 @@ class SFcalculator(QtGui.QMainWindow):
 	def exportConfiguration(cls, filename):
 		_configFile = CreateSFConfigXmlFile(parent=cls, filename=filename)
 		
+	def selectAutoTOF(cls):
+		cls.manualTOFWidgetsEnabled(False)
+	
+	def selectManualTOF(cls):
+		cls.manualTOFWidgetsEnabled(True)
+
+	def manualTOFWidgetsEnabled(cls, status):
+		cls.ui.TOFmanualFromLabel.setEnabled(status)
+		cls.ui.TOFmanualFromUnitsValue.setEnabled(status)
+		cls.ui.TOFmanualFromValue.setEnabled(status)
+		cls.ui.TOFmanualToLabel.setEnabled(status)
+		cls.ui.TOFmanualToUnitsValue.setEnabled(status)
+		cls.ui.TOFmanualToValue.setEnabled(status)
 		
-			
+		
