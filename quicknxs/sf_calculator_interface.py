@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Fri Mar 20 10:11:04 2015
+# Created: Fri Mar 20 10:57:46 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1334, 1156)
+        MainWindow.resize(1658, 1147)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.centralwidget)
@@ -292,7 +292,7 @@ class Ui_MainWindow(object):
         self.tableWidget.setEnabled(False)
         self.tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(10)
+        self.tableWidget.setColumnCount(16)
         self.tableWidget.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -314,6 +314,18 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(8, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(9, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(10, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(11, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(12, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(13, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(14, item)
+        item = QtGui.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(15, item)
         self.verticalLayout.addWidget(self.tableWidget)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -346,7 +358,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1334, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1658, 25))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -397,15 +409,21 @@ class Ui_MainWindow(object):
         self.TOFmanualToValue.setText(QtGui.QApplication.translate("MainWindow", "200", None, QtGui.QApplication.UnicodeUTF8))
         self.TOFmanualToUnitsValue.setText(QtGui.QApplication.translate("MainWindow", "ms", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "Run #", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Nbr of Attenuators", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "ttenuators nbr", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "lambda min", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("MainWindow", "lambda max", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "Proton Charge", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "p Charge", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("MainWindow", "lambda Requested", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("MainWindow", "S1W", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(7).setText(QtGui.QApplication.translate("MainWindow", "S1H", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(8).setText(QtGui.QApplication.translate("MainWindow", "SiW", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(9).setText(QtGui.QApplication.translate("MainWindow", "SiH", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(10).setText(QtGui.QApplication.translate("MainWindow", "Peak1", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(11).setText(QtGui.QApplication.translate("MainWindow", "Peak2", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(12).setText(QtGui.QApplication.translate("MainWindow", "Back1", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(13).setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(14).setText(QtGui.QApplication.translate("MainWindow", "TOF1 (ms)", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(15).setText(QtGui.QApplication.translate("MainWindow", "TOF2 (ms)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "SF File Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SF FILE", None, QtGui.QApplication.UnicodeUTF8))

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1334</width>
-    <height>1156</height>
+    <width>1658</width>
+    <height>1147</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -727,7 +727,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Nbr of Attenuators</string>
+          <string>ttenuators nbr</string>
          </property>
         </column>
         <column>
@@ -742,7 +742,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Proton Charge</string>
+          <string>p Charge</string>
          </property>
         </column>
         <column>
@@ -768,6 +768,36 @@
         <column>
          <property name="text">
           <string>SiH</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Peak1</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Peak2</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Back1</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Back2</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>TOF1 (ms)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>TOF2 (ms)</string>
          </property>
         </column>
        </widget>
@@ -846,7 +876,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1334</width>
+     <width>1658</width>
      <height>25</height>
     </rect>
    </property>

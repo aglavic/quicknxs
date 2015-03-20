@@ -121,9 +121,12 @@ class SFcalculator(QtGui.QMainWindow):
 			s2iw = 'S2W'
 		verticalHeader = ["Run #","Nbr. Attenuator",u"\u03bbmin(\u00c5)",
 		                  u"\u03bbmax(\u00c5)",
-		                  "Proton Charge (mC)",
+		                  "p Charge (mC)",
 		                  u"\u03bb requested (\u00c5)",
-		                  "S1W","S1H",s2iw, s2ih]
+		                  "S1W","S1H",s2iw, s2ih,
+		                  "Peak1","Peak2",
+		                  "Back1", "Back2",
+		                  "TOF1 (ms)", "TOF2 (ms)"]
 		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
 
 		cls.clearTable()
@@ -135,7 +138,10 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.ui.tableWidget.insertRow(r)
 			
 			_run_number = str(int(_row[0]))
+			_brush = QtGui.QBrush()
+			_brush.setColor(QtCore.Qt.red)
 			_item = QtGui.QTableWidgetItem(_run_number)
+			_item.setForeground(_brush)
 			cls.ui.tableWidget.setItem(r, 0, _item)
 			
 			_atte = int(_row[1])
@@ -176,6 +182,13 @@ class SFcalculator(QtGui.QMainWindow):
 			_s2ih = ("%.2f"%(float(_row[9])))
 			_item = QtGui.QTableWidgetItem(_s2ih)
 			cls.ui.tableWidget.setItem(r,9,_item)
+			
+			for k in range(10,16):
+				_brush = QtGui.QBrush()
+				_brush.setColor(QtCore.Qt.red)				
+				_item = QtGui.QTableWidgetItem("N/A")
+				_item.setForeground(_brush)
+				cls.ui.tableWidget.setItem(r,k,_item)
 	
 	def tableWidgetRightClick(cls):
 		menu = QtGui.QMenu(cls)
