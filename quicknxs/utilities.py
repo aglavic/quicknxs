@@ -148,6 +148,12 @@ def write_ascii_file(filename, text):
         f.write(_line + '\n')
     f.close()
 
+def createAsciiFile(filename, str_list):
+    f = open(filename,'w')
+    for _line in str_list:
+        f.write(_line)
+    f.close()
+
 
 def weighted_sum(dataArray, errorArray, axisToSum=0):
 

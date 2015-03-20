@@ -1,3 +1,4 @@
+from utilities import createAsciiFile
 
 class CreateSFConfigXmlFile(object):
 	
@@ -15,6 +16,8 @@ class CreateSFConfigXmlFile(object):
 		cls.topPart()
 		cls.mainPart()
 		cls.bottomPart()
+		
+		cls.createConfigFile()
 		
 	def topPart(cls):
 		str_array = cls.str_array
@@ -45,18 +48,16 @@ class CreateSFConfigXmlFile(object):
 		
 		cls.str_array = str_array
 		
-	def mainPart(cls):
-		data_table = cls.retrieveDataTable()
 	
 	def bottomPart(cls):
 		str_array = cls.str_array
 		
-		str_array.append(' </DataSeries>\n')
+		str_array.append('</DataSeries>\n')
 		str_array.append('</Reduction>\n')
 		
 		cls.str_array = str_array
 	
-	def retrieveDataTable(cls):
+	def mainPart(cls):
 		data_table_ui = cls.sf_gui.ui.tableWidget
 		nbr_row = data_table_ui.rowCount()
 		if nbr_row == 0:
@@ -78,12 +79,10 @@ class CreateSFConfigXmlFile(object):
 					_item = str(data_table_ui.item(row, col).text())
 					
 				str_array.append(cls.builtItemString(index=col, item=_item))
-					
-					
 
 			str_array.append(' </RefLSFCalculator>\n')
 		
-		print str_array
+		cls.str_array = str_array
 
 	def 	builtItemString(cls, index=0, item=''):			
 		_list_item = cls.list_item
@@ -96,3 +95,5 @@ class CreateSFConfigXmlFile(object):
 		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()
 		_str_list = ",".join(_list)
 		return [_str_list, _current_index]
+	def createConfigFile(cls):
+		createAsciiFile(cls.output_filename, cls.str_array)
