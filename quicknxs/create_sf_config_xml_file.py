@@ -60,17 +60,17 @@ class CreateSFConfigXmlFile(object):
 			return []
 
 		[_incident_medium_list, _incident_medium_index] = cls.retrieveIncidentMediumListAndIndex()
-		print _incident_medium_list
-		print
-		print _incident_medium_index
-		
 		
 		str_array = cls.str_array
 		for row in range(nbr_row):
 			
 			str_array.append(' <RefLSFCalculator>\n')
+			str_array.append(' <incident_medium_list>' + _incident_medium_list + '</incident_medium_list>\n')
+			str_array.append(' <incident_medium_index_selected>' + str(_incident_medium_index) + '</incident_medium_index_selected>\n')
 			
 			for col in range(10):
+				
+
 				
 				if col == 1:
 					_item = str(data_table_ui.cellWidget(row, col).value())
@@ -81,8 +81,11 @@ class CreateSFConfigXmlFile(object):
 			
 				#if col == 0:
 					#str_array.append(' <')
+			str_array.append(' </RefLSFCalculator>\n')
+		
+		print str_array
 
 	def retrieveIncidentMediumListAndIndex(cls):
-		_list = [cls.sf_gui.ui.incidentMediumComboBox.itemText(i) for i in range(cls.sf_gui.ui.incidentMediumComboBox.count())]
+		_list = [str(cls.sf_gui.ui.incidentMediumComboBox.itemText(i)) for i in range(cls.sf_gui.ui.incidentMediumComboBox.count())]
 		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()
 		return [_list, _current_index]
