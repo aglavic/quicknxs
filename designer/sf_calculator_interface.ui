@@ -727,7 +727,7 @@
         </column>
         <column>
          <property name="text">
-          <string>ttenuators nbr</string>
+          <string>Nbr of Attenuators</string>
          </property>
         </column>
         <column>

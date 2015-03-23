@@ -246,7 +246,10 @@ class SFcalculator(QtGui.QMainWindow):
 
 	def savingConfiguration(cls):
 		_path = cls.main_gui.path_config
-		filename = QtGui.QFileDialog.getSaveFileName(cls, 'Save SF Configuration File', _path)
+		filename = QtGui.QFileDialog.getSaveFileName(cls,
+		                                             'Save SF Configuration File',
+		                                             _path,
+		                                             "XML files (*.xml);;All files (*.*)")
 		if not(filename == ''):
 			cls.main_gui.path_config = os.path.dirname(filename)
 			cls.exportConfiguration(filename)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Fri Mar 20 10:57:46 2015
+# Created: Mon Mar 23 09:16:20 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -409,7 +409,7 @@ class Ui_MainWindow(object):
         self.TOFmanualToValue.setText(QtGui.QApplication.translate("MainWindow", "200", None, QtGui.QApplication.UnicodeUTF8))
         self.TOFmanualToUnitsValue.setText(QtGui.QApplication.translate("MainWindow", "ms", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "Run #", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "ttenuators nbr", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Nbr of Attenuators", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "lambda min", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("MainWindow", "lambda max", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "p Charge", None, QtGui.QApplication.UnicodeUTF8))

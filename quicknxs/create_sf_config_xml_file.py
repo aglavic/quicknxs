@@ -1,4 +1,5 @@
 from utilities import createAsciiFile
+import os
 
 class CreateSFConfigXmlFile(object):
 	
@@ -11,6 +12,7 @@ class CreateSFConfigXmlFile(object):
 	
 	def __init__(cls, parent=None, filename=''):
 		cls.sf_gui = parent
+		cls.makeSureFileHasExtension(filename)
 		cls.output_filename = filename
 		
 		cls.topPart()
@@ -19,6 +21,12 @@ class CreateSFConfigXmlFile(object):
 		
 		cls.createConfigFile()
 		
+	def makeSureFileHasExtension(cls, filename):
+		short_filename, file_extension = os.path.splitext(filename)
+		if file_extension == '':
+			filename += ".xml"
+		cls.output_filename = filename
+
 	def topPart(cls):
 		str_array = cls.str_array
 		str_array.append('<Reduction>\n')
