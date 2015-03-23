@@ -7,13 +7,12 @@ from display_metadata import DisplayMetadata
 from logging import info
 from utilities import touch, import_ascii_file, makeSureFileHasExtension
 from create_sf_config_xml_file import CreateSFConfigXmlFile
-from load_sf_config_xml_file import LoadSFConfigXmlFile
+from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 
 import numpy as np
 import os
 
 class SFcalculator(QtGui.QMainWindow):
-	
 	_open_instances = []
 	main_gui = None
 	data_list = []
@@ -249,15 +248,16 @@ class SFcalculator(QtGui.QMainWindow):
 
 	def loadingConfiguration(cls):
 		_path = cls.main_gui.path_config
-		filename = QtGui.FileDialog.getOpenFileName(cls,
+		filename = QtGui.QFileDialog.getOpenFileName(cls,
 		                                            'Load SF Configuration File',
 		                                            _path,
 		                                            "XML files (*.xml);;All files (*.*)")
 		
-		if not(filename) == ''):
+		if not(filename == ''):
 			cls.main_gui.path_config = os.path.dirname(filename)
-			cls.importConfiguration(filename)
-			cls.setWindowTitle(cls.window_title + filename)
+			status = cls.importConfiguration(filename)
+			if status:
+				cls.setWindowTitle(cls.window_title + filename)
 
 	def savingConfiguration(cls):
 		_path = cls.main_gui.path_config
@@ -275,7 +275,8 @@ class SFcalculator(QtGui.QMainWindow):
 		_configObject= CreateSFConfigXmlFile(parent=cls, filename=filename)
 		
 	def importConfiguration(cls, filename):
-		_configObject = LoadSFConfigXmlFile(parent=cls, filename=filename)
+		_configObject = LoadSFConfigAndPopulateGUI(parent=cls, filename=filename)
+		return _configObject.getLoadingStatus()
 		
 	def selectAutoTOF(cls):
 		cls.manualTOFWidgetsEnabled(False)
