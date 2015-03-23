@@ -20,6 +20,7 @@ class SFcalculator(QtGui.QMainWindow):
 	is_using_Si_slits = False
 	loaded_list_of_runs = []
 	list_nxsdata_sorted = []
+	window_title = 'SF Calculator - '
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -46,6 +47,7 @@ class SFcalculator(QtGui.QMainWindow):
 			wdg_enabled = True
 		cls.enabledWidgets(wdg_enabled)
 		cls.testPeakBackErrorWidgets()
+		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
 		
 	def testPeakBackErrorWidgets(cls):
 		if cls.list_nxsdata_sorted == []:
@@ -253,6 +255,7 @@ class SFcalculator(QtGui.QMainWindow):
 		if not(filename == ''):
 			cls.main_gui.path_config = os.path.dirname(filename)
 			cls.exportConfiguration(filename)
+			cls.setWindowTitle(cls.window_title + filename)
 			
 	def exportConfiguration(cls, filename):
 		_configFile = CreateSFConfigXmlFile(parent=cls, filename=filename)

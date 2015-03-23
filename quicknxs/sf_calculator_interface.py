@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Mon Mar 23 09:16:20 2015
+# Created: Mon Mar 23 09:52:48 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -366,19 +366,20 @@ class Ui_MainWindow(object):
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.actionLoading_Configuration = QtGui.QAction(MainWindow)
-        self.actionLoading_Configuration.setObjectName("actionLoading_Configuration")
-        self.actionSaving_Configuration = QtGui.QAction(MainWindow)
-        self.actionSaving_Configuration.setObjectName("actionSaving_Configuration")
-        self.menuFile.addAction(self.actionLoading_Configuration)
-        self.menuFile.addAction(self.actionSaving_Configuration)
+        self.actionLoadingConfiguration = QtGui.QAction(MainWindow)
+        self.actionLoadingConfiguration.setObjectName("actionLoadingConfiguration")
+        self.actionSavingConfiguration = QtGui.QAction(MainWindow)
+        self.actionSavingConfiguration.setEnabled(False)
+        self.actionSavingConfiguration.setObjectName("actionSavingConfiguration")
+        self.menuFile.addAction(self.actionLoadingConfiguration)
+        self.menuFile.addAction(self.actionSavingConfiguration)
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.runSequenceLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.runSequenceLineEditEvent)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), MainWindow.tableWidgetRightClick)
         QtCore.QObject.connect(self.sfFileNameBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.browseFile)
-        QtCore.QObject.connect(self.actionSaving_Configuration, QtCore.SIGNAL("triggered()"), MainWindow.savingConfiguration)
+        QtCore.QObject.connect(self.actionSavingConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.savingConfiguration)
         QtCore.QObject.connect(self.dataTOFautoMode, QtCore.SIGNAL("clicked()"), MainWindow.selectAutoTOF)
         QtCore.QObject.connect(self.dataTOFmanualMode, QtCore.SIGNAL("clicked()"), MainWindow.selectManualTOF)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -428,8 +429,8 @@ class Ui_MainWindow(object):
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SF FILE", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLoading_Configuration.setText(QtGui.QApplication.translate("MainWindow", "Loading Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSaving_Configuration.setText(QtGui.QApplication.translate("MainWindow", "Saving Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Loading Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSavingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Saving Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidgetnolog import MPLWidgetNoLog
 from .mplwidgetxlog import MPLWidgetXLog

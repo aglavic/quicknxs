@@ -884,18 +884,21 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLoading_Configuration"/>
-    <addaction name="actionSaving_Configuration"/>
+    <addaction name="actionLoadingConfiguration"/>
+    <addaction name="actionSavingConfiguration"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoading_Configuration">
+  <action name="actionLoadingConfiguration">
    <property name="text">
     <string>Loading Configuration ...</string>
    </property>
   </action>
-  <action name="actionSaving_Configuration">
+  <action name="actionSavingConfiguration">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Saving Configuration ...</string>
    </property>
@@ -966,7 +969,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionSaving_Configuration</sender>
+   <sender>actionSavingConfiguration</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>savingConfiguration()</slot>
