@@ -14,13 +14,13 @@ class CreateSFConfigXmlFile(object):
 		cls.sf_gui = parent
 		cls.output_filename = filename
 		
-		cls.topPart()
-		cls.mainPart()
-		cls.bottomPart()
+		cls.makeTopPart()
+		cls.makeMainPart()
+		cls.makeBottomPart()
 		
 		cls.createConfigFile()
 
-	def topPart(cls):
+	def makeTopPart(cls):
 		str_array = cls.str_array
 		str_array.append('<Reduction>\n')
 		str_array.append(' <instrument_name>REFSF</instrument_name>\n')
@@ -50,7 +50,7 @@ class CreateSFConfigXmlFile(object):
 		cls.str_array = str_array
 		
 	
-	def bottomPart(cls):
+	def makeBottomPart(cls):
 		str_array = cls.str_array
 		
 		str_array.append('</DataSeries>\n')
@@ -58,7 +58,7 @@ class CreateSFConfigXmlFile(object):
 		
 		cls.str_array = str_array
 	
-	def mainPart(cls):
+	def makeMainPart(cls):
 		data_table_ui = cls.sf_gui.ui.tableWidget
 		nbr_row = data_table_ui.rowCount()
 		if nbr_row == 0:

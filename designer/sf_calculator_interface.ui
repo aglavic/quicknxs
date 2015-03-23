@@ -1016,6 +1016,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLoadingConfiguration</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadingConfiguration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1024,5 +1040,6 @@
   <slot>savingConfiguration()</slot>
   <slot>selectAutoTOF()</slot>
   <slot>selectManualTOF()</slot>
+  <slot>loadingConfiguration()</slot>
  </slots>
 </ui>

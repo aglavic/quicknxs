@@ -7,6 +7,7 @@ from display_metadata import DisplayMetadata
 from logging import info
 from utilities import touch, import_ascii_file, makeSureFileHasExtension
 from create_sf_config_xml_file import CreateSFConfigXmlFile
+from load_sf_config_xml_file import LoadSFConfigXmlFile
 
 import numpy as np
 import os
@@ -246,6 +247,18 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.sfFileNamePreview.setPlainText(data)
 		cls.ui.sfFileNamePreview.setEnabled(True)
 
+	def loadingConfiguration(cls):
+		_path = cls.main_gui.path_config
+		filename = QtGui.FileDialog.getOpenFileName(cls,
+		                                            'Load SF Configuration File',
+		                                            _path,
+		                                            "XML files (*.xml);;All files (*.*)")
+		
+		if not(filename) == ''):
+			cls.main_gui.path_config = os.path.dirname(filename)
+			cls.importConfiguration(filename)
+			cls.setWindowTitle(cls.window_title + filename)
+
 	def savingConfiguration(cls):
 		_path = cls.main_gui.path_config
 		filename = QtGui.QFileDialog.getSaveFileName(cls,
@@ -259,7 +272,10 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.setWindowTitle(cls.window_title + filename)
 			
 	def exportConfiguration(cls, filename):
-		_configFile = CreateSFConfigXmlFile(parent=cls, filename=filename)
+		_configObject= CreateSFConfigXmlFile(parent=cls, filename=filename)
+		
+	def importConfiguration(cls, filename):
+		_configObject = LoadSFConfigXmlFile(parent=cls, filename=filename)
 		
 	def selectAutoTOF(cls):
 		cls.manualTOFWidgetsEnabled(False)
