@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
 from display_metadata import DisplayMetadata
 from logging import info
-from utilities import touch, import_ascii_file
+from utilities import touch, import_ascii_file, makeSureFileHasExtension
 from create_sf_config_xml_file import CreateSFConfigXmlFile
 
 import numpy as np
@@ -254,6 +254,7 @@ class SFcalculator(QtGui.QMainWindow):
 		                                             "XML files (*.xml);;All files (*.*)")
 		if not(filename == ''):
 			cls.main_gui.path_config = os.path.dirname(filename)
+			filename = makeSureFileHasExtension(filename)
 			cls.exportConfiguration(filename)
 			cls.setWindowTitle(cls.window_title + filename)
 			

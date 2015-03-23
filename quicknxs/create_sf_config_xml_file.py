@@ -12,7 +12,6 @@ class CreateSFConfigXmlFile(object):
 	
 	def __init__(cls, parent=None, filename=''):
 		cls.sf_gui = parent
-		cls.makeSureFileHasExtension(filename)
 		cls.output_filename = filename
 		
 		cls.topPart()
@@ -20,12 +19,6 @@ class CreateSFConfigXmlFile(object):
 		cls.bottomPart()
 		
 		cls.createConfigFile()
-		
-	def makeSureFileHasExtension(cls, filename):
-		short_filename, file_extension = os.path.splitext(filename)
-		if file_extension == '':
-			filename += ".xml"
-		cls.output_filename = filename
 
 	def topPart(cls):
 		str_array = cls.str_array
@@ -99,9 +92,10 @@ class CreateSFConfigXmlFile(object):
 		return _str
 		
 	def retrieveIncidentMediumListAndIndex(cls):
-		_list = [str(cls.sf_gui.ui.incidentMediumComboBox.itemText(i)) for i in range(cls.sf_gui.ui.incidentMediumComboBox.count())]
-		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()
+		_list = [str(cls.sf_gui.ui.incidentMediumComboBox.itemText(i)) for i in range(1,cls.sf_gui.ui.incidentMediumComboBox.count())]
+		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()-1
 		_str_list = ",".join(_list)
 		return [_str_list, _current_index]
+
 	def createConfigFile(cls):
 		createAsciiFile(cls.output_filename, cls.str_array)

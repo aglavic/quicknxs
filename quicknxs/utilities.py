@@ -275,6 +275,13 @@ def generate_random_workspace_name():
 def touch(full_file_name):
     with open(full_file_name, 'a'):
         os.utime(full_file_name, None)
+        
+def makeSureFileHasExtension(filename, default_ext=".xml"):
+	short_filename, file_extension = os.path.splitext(filename)
+	if file_extension == '':
+		filename += default_ext
+	return filename
+        
     
     
     
