@@ -18,6 +18,7 @@ class LoadSFConfigXmlFile (object):
 			cls.dom = minidom.parse(_filename)
 		except:
 			return
+		cls.loading_status = True
 		
 	def getDom(cls):
 		return cls.dom

@@ -8,6 +8,7 @@ from logging import info
 from utilities import touch, import_ascii_file, makeSureFileHasExtension
 from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
+from fill_sf_gui_table import FillSFGuiTable
 
 import numpy as np
 import os

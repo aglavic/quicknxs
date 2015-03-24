@@ -5212,7 +5212,6 @@ Do you want to try to restore the working reduction list?""",
 		self.replot_stitched_data()
 
 	def clearStitchingTable(self):
-
 		self.ui.dataStitchingTable.clearContents()
 		nbrRow = self.ui.dataStitchingTable.rowCount()
 		if nbrRow > 0:
