@@ -12,6 +12,7 @@ class LoadSFConfigAndPopulateGUI(object):
 	incident_medium_index_selected = -1
 	sf_data_table = None
 	is_using_si_slits = False
+	scaling_factor_file = ''
 
 	INFO_MSG = 'Select or Define Incident Medium ...'
 	
@@ -32,6 +33,7 @@ class LoadSFConfigAndPopulateGUI(object):
 		_sf_data_table = cls.sf_data_table
 		cls.populateIncidentMedium()
 		_fill_sf_gui = FillSFGuiTable(parent=cls.sf_gui, table=_sf_data_table, is_using_si_slits=cls.is_using_si_slits)
+		cls.populateScalingFactorFile()
 
 	def clearSFtable(cls):
 		cls.sf_gui.ui.tableWidget.clearContents()
@@ -48,6 +50,12 @@ class LoadSFConfigAndPopulateGUI(object):
 		cls.sf_gui.ui.incidentMediumComboBox.addItems(cls.incident_medium_list)
 		cls.sf_gui.ui.incidentMediumComboBox.setCurrentIndex(cls.incident_medium_index_selected)
 
+	def populateScalingFactorFile(cls):
+		cls.sf_gui.ui.sfFileNameLabel.setText(cls.scaling_factor_file)
+		if cls.scaling_factor_file == '':
+			cls.sf_gui.ui.sfFileNamePreview.setPlainText('')
+		else:
+			cls.sf_gui.displayConfigFile(cls.scaling_factor_file)
 		
 	def parseDom(cls):
 		_dom = cls.dom
@@ -60,6 +68,7 @@ class LoadSFConfigAndPopulateGUI(object):
 				cls.incident_medium_index_selected =int(cls.getNodeValue(node, 'incident_medium_index_selected'))
 				cls.incident_medium_list = cls.getNodeValue(node, 'incident_medium_list').split(',')
 				cls.is_using_si_slits = cls.getNodeValue(node,'is_using_si_slits')
+				cls.scaling_factor_file = cls.getNodeValue(node,'scaling_factor_file')
 			
 			_sf_data_table[index, 0] = cls.getNodeValue(node, 'data_file')
 			_sf_data_table[index, 1] = cls.getNodeValue(node, 'number_attenuator')

@@ -70,9 +70,10 @@ class CreateSFConfigXmlFile(object):
 		for row in range(nbr_row):
 			
 			str_array.append(' <RefLSFCalculator>\n')
-			str_array.append(' <incident_medium_list>' + _incident_medium_list + '</incident_medium_list>\n')
-			str_array.append(' <incident_medium_index_selected>' + str(_incident_medium_index) + '</incident_medium_index_selected>\n')
-			str_array.append(' <is_using_si_slits>' + str(cls.sf_gui.is_using_si_slits) + '</is_using_si_slits>\n')
+			str_array.append('  <incident_medium_list>' + _incident_medium_list + '</incident_medium_list>\n')
+			str_array.append('  <incident_medium_index_selected>' + str(_incident_medium_index) + '</incident_medium_index_selected>\n')
+			str_array.append('  <is_using_si_slits>' + str(cls.sf_gui.is_using_si_slits) + '</is_using_si_slits>\n')
+			str_array.append('  <scaling_factor_file>' + cls.sf_gui.ui.sfFileNameLabel.text() + '</scaling_factor_file>\n')
 			
 			for col in range(16):
 				if col == 1:
@@ -89,7 +90,7 @@ class CreateSFConfigXmlFile(object):
 	def 	builtItemString(cls, index=0, item=''):			
 		_list_item = cls.list_item
 		_item_str = _list_item[index]
-		_str = ' <' + _list_item[index] + '>' + item +'</' + _list_item[index] + '>\n'
+		_str = ' < ' + _list_item[index] + '>' + item +'</' + _list_item[index] + '>\n'
 		return _str
 		
 	def retrieveIncidentMediumListAndIndex(cls):

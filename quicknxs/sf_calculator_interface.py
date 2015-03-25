@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Wed Mar 25 11:15:46 2015
+# Created: Wed Mar 25 14:25:48 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -331,13 +331,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_2 = QtGui.QLabel(self.centralwidget)
         self.label_2.setEnabled(True)
+        self.label_2.setMaximumSize(QtCore.QSize(80, 16777215))
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_3.addWidget(self.label_2)
-        self.sfFileNameLineEdit = QtGui.QLineEdit(self.centralwidget)
-        self.sfFileNameLineEdit.setEnabled(True)
-        self.sfFileNameLineEdit.setObjectName("sfFileNameLineEdit")
-        self.horizontalLayout_3.addWidget(self.sfFileNameLineEdit)
+        self.sfFileNameLabel = QtGui.QLabel(self.centralwidget)
+        self.sfFileNameLabel.setObjectName("sfFileNameLabel")
+        self.horizontalLayout_3.addWidget(self.sfFileNameLabel)
         self.sfFileNameBrowseButton = QtGui.QPushButton(self.centralwidget)
+        self.sfFileNameBrowseButton.setMaximumSize(QtCore.QSize(150, 16777215))
         self.sfFileNameBrowseButton.setObjectName("sfFileNameBrowseButton")
         self.horizontalLayout_3.addWidget(self.sfFileNameBrowseButton)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
@@ -427,6 +428,7 @@ class Ui_MainWindow(object):
         self.tableWidget.horizontalHeaderItem(14).setText(QtGui.QApplication.translate("MainWindow", "TOF1 (ms)", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(15).setText(QtGui.QApplication.translate("MainWindow", "TOF2 (ms)", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "SF File Name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.sfFileNameLabel.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SF FILE", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))

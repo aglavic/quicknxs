@@ -160,6 +160,9 @@ class SFcalculator(QtGui.QMainWindow):
 			if not os.path.isfile(file_name):
 				touch(file_name)
 			cls.displayConfigFile(file_name)
+			cls.ui.sfFileNameLabel.setText(file_name)
+		else:
+			cls.ui.sfFileNameLabel.setText("N/A")
 			
 	def displayConfigFile(cls, file_name):
 		data = import_ascii_file(file_name)
