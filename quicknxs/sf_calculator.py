@@ -18,6 +18,7 @@ class SFcalculator(QtGui.QMainWindow):
 	main_gui = None
 	data_list = []
 	big_table = None
+	big_table_nxdata = []
 	is_using_si_slits = False
 	loaded_list_of_runs = []
 	list_nxsdata_sorted = []
@@ -110,7 +111,6 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.runSequenceLineEdit.setText("")
 		cls.checkGui()
 		
-		
 	def fillGuiTable(cls):
 		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
 	
@@ -184,7 +184,6 @@ class SFcalculator(QtGui.QMainWindow):
 			if status:
 				cls.setWindowTitle(cls.window_title + filename)
 			cls.checkGui()
-			
 
 	def savingConfiguration(cls):
 		_path = cls.main_gui.path_config
@@ -222,3 +221,9 @@ class SFcalculator(QtGui.QMainWindow):
 	def tableWidgetCellSelected(cls, row, col):
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
+		cls.displaySelectedRow(cls, row)
+		
+	def displaySelectedRow(cls, row):
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxsdata_row = _list_nxsdata_sorted[row]
+		print _nxsdata_row

@@ -13,6 +13,7 @@ class LoadSFConfigAndPopulateGUI(object):
 	sf_data_table = None
 	is_using_si_slits = False
 	scaling_factor_file = ''
+	nbr_row_loaded = 0
 
 	INFO_MSG = 'Select or Define Incident Medium ...'
 	
@@ -25,9 +26,17 @@ class LoadSFConfigAndPopulateGUI(object):
 			cls.dom = _domObject.getDom()
 			cls.parseDom()
 			cls.populateSFGui()
+			cls.initListNxsdataSorted()
 			
 		cls.sf_gui.big_table = cls.sf_data_table
 		cls.loading_status = True
+
+	def initListNxsdataSorted(cls):
+		nbr_row = cls.nbr_row_loaded
+		_list_nxsdata_sorted = []
+		for i in range(nbr_row):
+			_list_nxsdata_sorted.append(None)
+		cls.sf_gui.list_nxsdata_sorted = _list_nxsdata_sorted
 
 	def populateSFGui(cls):
 		_sf_data_table = cls.sf_data_table
@@ -61,6 +70,7 @@ class LoadSFConfigAndPopulateGUI(object):
 		_dom = cls.dom
 		_reflsfdata = _dom.getElementsByTagName('RefLSFCalculator')
 		nbr_row = len(_reflsfdata)
+		cls.nbr_row_loaded = nbr_row
 		
 		_sf_data_table = empty((nbr_row, 16), dtype=object)
 		for index, node in enumerate(_reflsfdata):
