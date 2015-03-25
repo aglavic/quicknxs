@@ -894,6 +894,9 @@
    <property name="text">
     <string>Loading Configuration ...</string>
    </property>
+   <property name="shortcut">
+    <string>Meta+O</string>
+   </property>
   </action>
   <action name="actionSavingConfiguration">
    <property name="enabled">
@@ -901,6 +904,9 @@
    </property>
    <property name="text">
     <string>Saving Configuration ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+S</string>
    </property>
   </action>
  </widget>

@@ -18,7 +18,7 @@ class SFcalculator(QtGui.QMainWindow):
 	main_gui = None
 	data_list = []
 	big_table = None
-	is_using_Si_slits = False
+	is_using_si_slits = False
 	loaded_list_of_runs = []
 	list_nxsdata_sorted = []
 	window_title = 'SF Calculator - '
@@ -42,14 +42,15 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.error_label.setPalette(palette)
 	
 	def checkGui(cls):
-		if cls.loaded_list_of_runs == []:
-			wdg_enabled = False
-		else:
+		if (cls.loaded_list_of_runs != []) or (cls.big_table != []):
 			wdg_enabled = True
+		else:
+			wdg_enabled = False
 		cls.enabledWidgets(wdg_enabled)
 		cls.testPeakBackErrorWidgets()
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
-		
+		cls.ui.tableWidget.setEnabled(wdg_enabled)
+				
 	def testPeakBackErrorWidgets(cls):
 		if cls.list_nxsdata_sorted == []:
 			_show_widgets_1 = False
@@ -102,96 +103,16 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.big_table = _big_table
 			cls.list_nxsdata_sorted = o_load_and_sort_nxsdata.getListNXSDataSorted()
 			cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
-			cls.is_using_Si_slits = o_load_and_sort_nxsdata.is_using_Si_slits
+			cls.is_using_si_slits = o_load_and_sort_nxsdata.is_using_si_slits
 			cls.fillGuiTable()
 		else:
 			info('No Files loaded!')
 		cls.ui.runSequenceLineEdit.setText("")
 		cls.checkGui()
 		
-	def clearTable(cls):
-		nbrRow = cls.ui.tableWidget.rowCount()
-		if nbrRow > 0:
-			for _row in range(nbrRow):
-				cls.ui.tableWidget.removeRow(0)
 		
 	def fillGuiTable(cls):
-		if cls.is_using_Si_slits:
-			s2ih = 'SiH'
-			s2iw = 'SiW'
-		else:
-			s2ih = 'S2H'
-			s2iw = 'S2W'
-		verticalHeader = ["Run #","Nbr. Attenuator",u"\u03bbmin(\u00c5)",
-		                  u"\u03bbmax(\u00c5)",
-		                  "p Charge (mC)",
-		                  u"\u03bb requested (\u00c5)",
-		                  "S1W","S1H",s2iw, s2ih,
-		                  "Peak1","Peak2",
-		                  "Back1", "Back2",
-		                  "TOF1 (ms)", "TOF2 (ms)"]
-		cls.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
-
-		cls.clearTable()
-		_big_table = cls.big_table
-		[nbr_row, nbr_column] = _big_table.shape
-		for r in range(nbr_row):
-			_row = _big_table[r,:]
-			
-			cls.ui.tableWidget.insertRow(r)
-			
-			_run_number = str(int(_row[0]))
-			_brush = QtGui.QBrush()
-			_brush.setColor(QtCore.Qt.red)
-			_item = QtGui.QTableWidgetItem(_run_number)
-			_item.setForeground(_brush)
-			cls.ui.tableWidget.setItem(r, 0, _item)
-			
-			_atte = int(_row[1])
-			_widget = QtGui.QSpinBox()
-			_widget.setMinimum(0)
-			_widget.setMaximum(20)
-			_widget.setValue(_atte)
-			cls.ui.tableWidget.setCellWidget(r,1,_widget)
-			
-			_lambda_min = str(float(_row[2]))
-			_item = QtGui.QTableWidgetItem(_lambda_min)
-			cls.ui.tableWidget.setItem(r,2,_item)
-			
-			_lambda_max = str(float(_row[3]))
-			_item = QtGui.QTableWidgetItem(_lambda_max)
-			cls.ui.tableWidget.setItem(r,3,_item)
-			
-			_proton_charge = ("%.2e"%(float(_row[4])))
-			_item = QtGui.QTableWidgetItem(_proton_charge)
-			cls.ui.tableWidget.setItem(r,4,_item)
-			
-			_lambda_req = ("%.2f" %(float(_row[5])))
-			_item = QtGui.QTableWidgetItem(_lambda_req)
-			cls.ui.tableWidget.setItem(r,5,_item)
-			
-			_s1w = ("%.2f"%(float(_row[6])))
-			_item = QtGui.QTableWidgetItem(_s1w)
-			cls.ui.tableWidget.setItem(r,6,_item)
-			
-			_s1h = ("%.2f"%(float(_row[7])))
-			_item = QtGui.QTableWidgetItem(_s1h)
-			cls.ui.tableWidget.setItem(r,7,_item)
-
-			_s2iw = ("%.2f"%(float(_row[8])))
-			_item = QtGui.QTableWidgetItem(_s2iw)
-			cls.ui.tableWidget.setItem(r,8,_item)
-
-			_s2ih = ("%.2f"%(float(_row[9])))
-			_item = QtGui.QTableWidgetItem(_s2ih)
-			cls.ui.tableWidget.setItem(r,9,_item)
-			
-			for k in range(10,16):
-				_brush = QtGui.QBrush()
-				_brush.setColor(QtCore.Qt.red)				
-				_item = QtGui.QTableWidgetItem("N/A")
-				_item.setForeground(_brush)
-				cls.ui.tableWidget.setItem(r,k,_item)
+		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
 	
 	def tableWidgetRightClick(cls):
 		menu = QtGui.QMenu(cls)
@@ -259,6 +180,8 @@ class SFcalculator(QtGui.QMainWindow):
 			status = cls.importConfiguration(filename)
 			if status:
 				cls.setWindowTitle(cls.window_title + filename)
+			cls.checkGui()
+			
 
 	def savingConfiguration(cls):
 		_path = cls.main_gui.path_config

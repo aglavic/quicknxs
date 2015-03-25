@@ -11,6 +11,7 @@ class LoadSFConfigAndPopulateGUI(object):
 	incident_medium_list = []
 	incident_medium_index_selected = -1
 	sf_data_table = None
+	is_using_si_slits = False
 
 	INFO_MSG = 'Select or Define Incident Medium ...'
 	
@@ -24,20 +25,13 @@ class LoadSFConfigAndPopulateGUI(object):
 			cls.parseDom()
 			cls.populateSFGui()
 			
+		cls.sf_gui.big_table = cls.sf_data_table
 		cls.loading_status = True
 
 	def populateSFGui(cls):
 		_sf_data_table = cls.sf_data_table
 		cls.populateIncidentMedium()
-		
-		cls.clearSFtable()
-		[nbr_row, nbr_column] = _sf_data_table.shape
-		for row in range(nbr_row):
-			pass
-			
-
-
-
+		_fill_sf_gui = FillSFGuiTable(parent=cls.sf_gui, table=_sf_data_table, is_using_si_slits=cls.is_using_si_slits)
 
 	def clearSFtable(cls):
 		cls.sf_gui.ui.tableWidget.clearContents()
@@ -60,11 +54,12 @@ class LoadSFConfigAndPopulateGUI(object):
 		_reflsfdata = _dom.getElementsByTagName('RefLSFCalculator')
 		nbr_row = len(_reflsfdata)
 		
-		_sf_data_table = empty((nbr_row, 16), dtype=str)
+		_sf_data_table = empty((nbr_row, 16), dtype=object)
 		for index, node in enumerate(_reflsfdata):
 			if index == 0:
 				cls.incident_medium_index_selected =int(cls.getNodeValue(node, 'incident_medium_index_selected'))
 				cls.incident_medium_list = cls.getNodeValue(node, 'incident_medium_list').split(',')
+				cls.is_using_si_slits = cls.getNodeValue(node,'is_using_si_slits')
 			
 			_sf_data_table[index, 0] = cls.getNodeValue(node, 'data_file')
 			_sf_data_table[index, 1] = cls.getNodeValue(node, 'number_attenuator')

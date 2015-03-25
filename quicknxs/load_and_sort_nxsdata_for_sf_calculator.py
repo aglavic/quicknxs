@@ -16,7 +16,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 	                 'S2HWidth','S2VHeight','SiHWidth','SiVHeight',
 	                 'LambdaRequest','vATT']
 	big_table = []
-	is_using_Si_slits = False
+	is_using_si_slits = False
 	
 	def __init__(cls, list_runs):
 		cls.list_runs = list_runs
@@ -61,7 +61,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			_lambda_requested = _active_data.lambda_requested
 			_S1W = _active_data.S1W
 			_S1H = _active_data.S1H
-			cls.is_using_Si_slits = _active_data.isSiThere
+			cls.is_using_si_slits = _active_data.isSiThere
 			if _active_data.isSiThere:
 				_Si2W = _active_data.SiW
 				_Si2H = _active_data.SiH

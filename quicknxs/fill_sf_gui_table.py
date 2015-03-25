@@ -8,7 +8,7 @@ class FillSFGuiTable(object):
 	def __init__(cls, parent=None, table=None, is_using_si_slits=False):
 		
 		cls.parent = parent
-		if is_using_Si_slits:
+		if is_using_si_slits:
 			s2ih = 'SiH'
 			s2iw = 'SiW'
 		else:
@@ -25,7 +25,7 @@ class FillSFGuiTable(object):
 		parent.ui.tableWidget.setHorizontalHeaderLabels(verticalHeader)
 
 		cls.clearTable()
-		_big_table = cls.big_table
+		_big_table = table
 		[nbr_row, nbr_column] = _big_table.shape
 		for r in range(nbr_row):
 			_row = _big_table[r,:]
@@ -37,6 +37,7 @@ class FillSFGuiTable(object):
 			_brush.setColor(QtCore.Qt.red)
 			_item = QtGui.QTableWidgetItem(_run_number)
 			_item.setForeground(_brush)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r, 0, _item)
 			
 			_atte = int(_row[1])
@@ -48,34 +49,42 @@ class FillSFGuiTable(object):
 			
 			_lambda_min = str(float(_row[2]))
 			_item = QtGui.QTableWidgetItem(_lambda_min)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,2,_item)
 			
 			_lambda_max = str(float(_row[3]))
 			_item = QtGui.QTableWidgetItem(_lambda_max)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,3,_item)
 			
 			_proton_charge = ("%.2e"%(float(_row[4])))
 			_item = QtGui.QTableWidgetItem(_proton_charge)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,4,_item)
 			
 			_lambda_req = ("%.2f" %(float(_row[5])))
 			_item = QtGui.QTableWidgetItem(_lambda_req)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,5,_item)
 			
 			_s1w = ("%.2f"%(float(_row[6])))
 			_item = QtGui.QTableWidgetItem(_s1w)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,6,_item)
 			
 			_s1h = ("%.2f"%(float(_row[7])))
 			_item = QtGui.QTableWidgetItem(_s1h)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,7,_item)
 
 			_s2iw = ("%.2f"%(float(_row[8])))
 			_item = QtGui.QTableWidgetItem(_s2iw)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,8,_item)
 
 			_s2ih = ("%.2f"%(float(_row[9])))
 			_item = QtGui.QTableWidgetItem(_s2ih)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r,9,_item)
 			
 			for k in range(10,16):

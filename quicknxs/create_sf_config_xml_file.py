@@ -72,6 +72,7 @@ class CreateSFConfigXmlFile(object):
 			str_array.append(' <RefLSFCalculator>\n')
 			str_array.append(' <incident_medium_list>' + _incident_medium_list + '</incident_medium_list>\n')
 			str_array.append(' <incident_medium_index_selected>' + str(_incident_medium_index) + '</incident_medium_index_selected>\n')
+			str_array.append(' <is_using_si_slits>' + str(cls.sf_gui.is_using_si_slits) + '</is_using_si_slits>\n')
 			
 			for col in range(16):
 				if col == 1:
