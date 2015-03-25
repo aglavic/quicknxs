@@ -90,7 +90,7 @@ class CreateSFConfigXmlFile(object):
 	def 	builtItemString(cls, index=0, item=''):			
 		_list_item = cls.list_item
 		_item_str = _list_item[index]
-		_str = ' < ' + _list_item[index] + '>' + item +'</' + _list_item[index] + '>\n'
+		_str = '  <' + _list_item[index] + '>' + item +'</' + _list_item[index] + '>\n'
 		return _str
 		
 	def retrieveIncidentMediumListAndIndex(cls):
