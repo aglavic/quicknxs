@@ -1050,6 +1050,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellPressed(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tableWidgetCellSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>828</x>
+     <y>577</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1059,5 +1075,6 @@
   <slot>selectAutoTOF()</slot>
   <slot>selectManualTOF()</slot>
   <slot>loadingConfiguration()</slot>
+  <slot>tableWidgetCellSelected()</slot>
  </slots>
 </ui>

@@ -52,7 +52,6 @@ class CreateSFConfigXmlFile(object):
 	
 	def makeBottomPart(cls):
 		str_array = cls.str_array
-		
 		str_array.append('</DataSeries>\n')
 		str_array.append('</Reduction>\n')
 		

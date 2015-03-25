@@ -219,4 +219,6 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualToUnitsValue.setEnabled(status)
 		cls.ui.TOFmanualToValue.setEnabled(status)
 		
-		
+	def tableWidgetCellSelected(cls, row, col):
+		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
+		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
