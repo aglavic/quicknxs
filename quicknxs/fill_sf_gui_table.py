@@ -1,4 +1,5 @@
 from PyQt4 import QtGui, QtCore
+import colors
 
 class FillSFGuiTable(object):
 	
@@ -29,17 +30,10 @@ class FillSFGuiTable(object):
 		[nbr_row, nbr_column] = _big_table.shape
 		for r in range(nbr_row):
 			_row = _big_table[r,:]
+			is_any_red = False
 			
 			parent.ui.tableWidget.insertRow(r)
-			
-			_run_number = str(int(_row[0]))
-			_brush = QtGui.QBrush()
-			_brush.setColor(QtCore.Qt.red)
-			_item = QtGui.QTableWidgetItem(_run_number)
-			_item.setForeground(_brush)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			parent.ui.tableWidget.setItem(r, 0, _item)
-			
+						
 			_atte = int(_row[1])
 			_widget = QtGui.QSpinBox()
 			_widget.setMinimum(0)
@@ -88,11 +82,31 @@ class FillSFGuiTable(object):
 			parent.ui.tableWidget.setItem(r,9,_item)
 			
 			for k in range(10,16):
+				_value = _row[k]
 				_brush = QtGui.QBrush()
-				_brush.setColor(QtCore.Qt.red)				
-				_item = QtGui.QTableWidgetItem("N/A")
+				if _value == '0':
+					_value = 'N/A'
+					_brush.setColor(colors.VALUE_BAD)
+					is_any_red = True
+				else:
+					_value = str(int(_value))
+					_brush.setColor(colors.VALUE_OK)
+				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)
 				parent.ui.tableWidget.setItem(r,k,_item)
+
+			_run_number = str(int(_row[0]))
+			_brush = QtGui.QBrush()
+			if is_any_red:
+				_brush.setColor(colors.VALUE_BAD)
+			else:
+				_brush.setColor(colors.VALUE_OK)
+			_item = QtGui.QTableWidgetItem(_run_number)
+			_item.setForeground(_brush)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			parent.ui.tableWidget.setItem(r, 0, _item)
+
+
 
 	def clearTable(cls):
 		nbrRow = cls.parent.ui.tableWidget.rowCount()

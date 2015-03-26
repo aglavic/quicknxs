@@ -32,7 +32,7 @@
            <string>1234 or 1234,1236,1239 or 1234-1238</string>
           </property>
           <property name="text">
-           <string>122357-122360</string>
+           <string>120142-120143</string>
           </property>
          </widget>
         </item>
@@ -903,6 +903,9 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoadingConfiguration">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Loading Configuration ...</string>
    </property>

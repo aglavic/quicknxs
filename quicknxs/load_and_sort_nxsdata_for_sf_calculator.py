@@ -31,7 +31,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		for _runs in _list_runs:
 			_full_file_name = cls.findFullFileName(_runs)
 			if _full_file_name != '':
-				_data = NXSData(_full_file_name, bins=500)
+				_data = NXSData(_full_file_name, bins=500, is_auto_peak_finder=True)
 				if _data is not None:
 					cls.list_NXSData.append(_data)
 					cls.loaded_list_runs.append(_runs)
@@ -47,7 +47,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		if _list_NXSData_sorted == []:
 			return
 		nbr_row = len(_list_NXSData_sorted)
-		nbr_column = len(cls.list_metadata) + 1 # +1 for the run number
+		nbr_column = len(cls.list_metadata) + 7 # +1 for the run number + peak/back/tof
 		big_table = np.empty((nbr_row, nbr_column))
 		index_row = 0
 		for _nxs in _list_NXSData_sorted:
@@ -68,6 +68,12 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			else:
 				_Si2W = _active_data.S2W
 				_Si2H = _active_data.S2H
+			_peak1 = _active_data.peak[0]
+			_peak2 = _active_data.peak[1]
+			_back1 = _active_data.back[0]
+			_back2 = _active_data.back[1]
+			_tof1 = _active_data.tof_range_auto[0]
+			_tof2 = _active_data.tof_range_auto[1]
 			
 			_row = [_run_number,
 			        _nbr_attenuator, 
@@ -76,7 +82,10 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			        _proton_charge,
 			        _lambda_requested,
 			        _S1W, _S1H,
-			        _Si2W, _Si2H]
+			        _Si2W, _Si2H,
+			        _peak1, _peak2,
+			        _back1, _back2, 
+			        _tof1, _tof2]
 			big_table[index_row, :] = _row
 			index_row += 1
 		cls.big_table = big_table

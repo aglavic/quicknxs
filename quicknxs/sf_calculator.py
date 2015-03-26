@@ -10,6 +10,7 @@ from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
 
+import colors
 import numpy as np
 import os
 
@@ -35,7 +36,7 @@ class SFcalculator(QtGui.QMainWindow):
 		
 	def initGui(cls):
 		palette = QtGui.QPalette()
-		palette.setColor(QtGui.QPalette.Foreground, QtCore.Qt.red)
+		palette.setColor(QtGui.QPalette.Foreground, colors.VALUE_BAD)
 		cls.ui.back1_error.setPalette(palette)
 		cls.ui.back2_error.setPalette(palette)
 		cls.ui.peak1_error.setPalette(palette)
