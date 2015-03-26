@@ -222,7 +222,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def tableWidgetCellSelected(cls, row, col):
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
-		cls.displaySelectedRow(cls, row)
+		cls.displaySelectedRow(row)
 		
 	def displaySelectedRow(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
