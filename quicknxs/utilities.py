@@ -17,8 +17,34 @@ def convert_angle (angle=0, from_units='degree', to_units='rad'):
         coeff = float(180) / math.pi
     else:
         coeff = 1
-
     return float(angle) * coeff
+
+def arrayByValue(array, value):
+    for [index,_ele] in enumerate(array):
+	array[index] = float(array[index]) * value
+    return array
+
+def convertTOF(TOFarray=None, from_units='micros', to_units='ms'):
+    try:
+	if TOFarray is None:
+	    return None
+	if from_units == to_units:
+	    return TOFarray
+	if from_units == 'micros':
+	    if to_units == 'ms':		
+		return arrayByValue(TOFarray,0.001)
+	    else:
+		raise NameError(to_units)
+	elif from_units == 'ms':
+	    if to_units == 'micros':
+		return arrayByValue(TOFarray, 1000)
+	    else:
+		raise NameError(to_units)
+	else:
+	    raise NameError(from_units)
+    except NameError:
+	print 'units not supported'
+	return None
 
 def output_2d_ascii_file(filename, image):
     f=open(filename,'w')

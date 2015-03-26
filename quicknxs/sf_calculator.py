@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
 from display_metadata import DisplayMetadata
 from logging import info
-from utilities import touch, import_ascii_file, makeSureFileHasExtension
+from utilities import touch, import_ascii_file, makeSureFileHasExtension, convertTOF
 from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
@@ -223,8 +223,45 @@ class SFcalculator(QtGui.QMainWindow):
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
+		cls.updatePeakBackTofWidgets(row)
+		
+	def updatePeakBackTofWidgets(cls, row):
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxsdata_row = _list_nxsdata_sorted[row]
+		[peak1, peak2] = _nxsdata_row.active_data.peak
+		cls.ui.dataPeakFromValue.setValue(int(peak1))
+		cls.ui.dataPeakToValue.setValue(int(peak2))
+		
+		[back1, back2] = _nxsdata_row.active_data.back
+		cls.ui.dataBackFromValue.setValue(int(back1))
+		cls.ui.dataBackToValue.setValue(int(back2))
+
+		[tof1, tof2] = _nxsdata_row.active_data.tof_range_auto
+		[tof1ms, tof2ms] = convertTOF([tof1, tof2])
+		cls.ui.TOFmanualFromValue.setText("%.2f"%float(tof1ms))
+		cls.ui.TOFmanualToValue.setText("%.2f"%float(tof2ms))
+
 		
 	def displaySelectedRow(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxsdata_row = _list_nxsdata_sorted[row]
-		print _nxsdata_row
+		cls.displayPlot(_nxsdata_row, yt_plot=True, yi_plot=True)
+
+	def displayPlot(cls, nxsdata=None, yt_plot=True, yi_plot=True):
+		cls.clearPlot(yt_plot=True, yi_plot=True)
+		if nxsdata is None:
+			return
+		if yt_plot:
+			pass
+		if yi_plot:
+			pass
+		
+		
+
+	def clearPlot(cls, yt_plot=True, yi_plot=True):
+		if yt_plot:
+			cls.ui.yt_plot.clear()
+			cls.ui.yt_plot.draw()
+		if yi_plot:
+			cls.ui.yi_plot.clear()
+			cls.ui.yi_plot.draw()
