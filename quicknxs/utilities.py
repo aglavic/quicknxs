@@ -97,10 +97,12 @@ def output_ascii_file(file_name,
     f.close
     
 def import_ascii_file(filename):
-    
-    f=open(filename,'r')
-    data = f.read()
-    f.close()
+    try:
+	f=open(filename,'r')
+	data = f.read()
+	f.close()
+    except:
+	data = []
     return data
     
 def output_big_Q_ascii_file(file_name,
