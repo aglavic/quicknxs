@@ -346,7 +346,14 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.plotYI(nxsdata)
 			
 	def plotYT(cls, nxsdata):
-		pass
+		ytof = nxsdata.active_data.ytofdata
+		tof_min_ms = float(nxsdata.active_data.tof_range_auto[0])/1000
+		tof_max_ms = float(nxsdata.active_data.tof_range_auto[1])/1000
+		cls.ui.yt_plot.imshow(ytof, log=True, aspect='auto',origin='lower',extent=[tof_min_ms, tof_max_ms, 0, nxsdata.active_data.y.shape[0]-1])
+		cls.ui.yt_plot.set_xlabel(u't (ms)')
+		cls.ui.yt_plot.set_ylabel(u'y (pixel)')
+		cls.ui.yt_plot.canvas.draw()
+		
 	
 	def plotYI(cls, nxsdata):
 		pass
