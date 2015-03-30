@@ -224,16 +224,16 @@ class SFcalculator(QtGui.QMainWindow):
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
-		cls.updatePeakBackTofWidgets(row)
 		cls.updateTableWidgetPeakBackTof(row)
 		
 	def updateTableWidgetPeakBackTof(cls, row):
 		is_peak_back_fully_defined = cls.isPeakOrBackFullyDefined(row=row)
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxdata  = _list_nxsdata_sorted[row]
 		if not is_peak_back_fully_defined:
+			cls.updatePeakBackTofWidgets(row)
 			_brush = QtGui.QBrush()
 			_brush.setColor(colors.VALUE_OK)
-			_list_nxsdata_sorted = cls.list_nxsdata_sorted
-			_nxdata  = _list_nxsdata_sorted[row]
 
 			[peak1, peak2] = _nxdata.active_data.peak
 			_item = QtGui.QTableWidgetItem(peak1)
@@ -268,6 +268,22 @@ class SFcalculator(QtGui.QMainWindow):
 			_item = cls.ui.tableWidget.item(row,0)
 			_item.setForeground(_brush)
 			cls.ui.tableWidget.setItem(row,0,_item)
+		else:
+			peak1 = cls.ui.tableWidget.item(row, 10).text()
+			peak2 = cls.ui.tableWidget.item(row, 11).text()
+			back1 = cls.ui.tableWidget.item(row, 12).text()
+			back2 = cls.ui.tableWidget.item(row, 13).text()
+			tof1 = cls.ui.tableWidget.item(row, 14).text()
+			tof2 = cls.ui.tableWidget.item(row, 15).text()
+			peak = [peak1, peak2]
+			back = [back1, back2]
+			tof = [tof1, tof2]
+			_nxdata.active_data.peak = peak
+			_nxdata.active_data.back = back
+			_nxdata.active_data.tof_range_auto = tof
+			_list_nxsdata_sorted[row] = _nxdata
+			cls.list_nxsdata_sorted = _list_nxsdata_sorted
+			cls.updatePeakBackTofWidgets(row)
 		
 	def updatePeakBackTofWidgets(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
