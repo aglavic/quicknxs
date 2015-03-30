@@ -228,8 +228,8 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.updateTableWidgetPeakBackTof(row)
 		
 	def updateTableWidgetPeakBackTof(cls, row):
-		is_auto_peak_finder = cls.isPeakOrBackFullyDefined(row=row)
-		if is_auto_peak_finder:
+		is_peak_back_fully_defined = cls.isPeakOrBackFullyDefined(row=row)
+		if not is_peak_back_fully_defined:
 			_brush = QtGui.QBrush()
 			_brush.setColor(colors.VALUE_OK)
 			_list_nxsdata_sorted = cls.list_nxsdata_sorted
@@ -267,7 +267,7 @@ class SFcalculator(QtGui.QMainWindow):
 			
 			_item = cls.ui.tableWidget.item(row,0)
 			_item.setForeground(_brush)
-			cls.ui.tableWidget.setitem(row,0,_item)
+			cls.ui.tableWidget.setItem(row,0,_item)
 		
 	def updatePeakBackTofWidgets(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
