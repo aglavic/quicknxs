@@ -225,6 +225,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
 		cls.updateTableWidgetPeakBackTof(row)
+		cls.displayPlot(row, yt_plot=True, yi_plot=True)
 		
 	def updateTableWidgetPeakBackTof(cls, row):
 		is_peak_back_fully_defined = cls.isPeakOrBackFullyDefined(row=row)
@@ -308,7 +309,6 @@ class SFcalculator(QtGui.QMainWindow):
 		_nxsdata_row = _list_nxsdata_sorted[row]
 		if _nxsdata_row is None:
 			cls.loadSelectedNxsRuns(row)
-		cls.displayPlot(_nxsdata_row, yt_plot=True, yi_plot=True)
 
 	def loadSelectedNxsRuns(cls, row):
 		list_runs = cls.getListOfRunsFromSelectedCell(row)
@@ -334,17 +334,23 @@ class SFcalculator(QtGui.QMainWindow):
 				return False
 		return True
 
-	def displayPlot(cls, nxsdata=None, yt_plot=True, yi_plot=True):
+	def displayPlot(cls, row=-1, yt_plot=True, yi_plot=True):
+		list_nxsdata_sorted = cls.list_nxsdata_sorted
+		nxsdata = list_nxsdata_sorted[row]
 		cls.clearPlot(yt_plot=True, yi_plot=True)
 		if nxsdata is None:
 			return
 		if yt_plot:
-			pass
+			cls.plotYT(nxsdata)
 		if yi_plot:
-			pass
+			cls.plotYI(nxsdata)
+			
+	def plotYT(cls, nxsdata):
+		pass
+	
+	def plotYI(cls, nxsdata):
+		pass
 		
-		
-
 	def clearPlot(cls, yt_plot=True, yi_plot=True):
 		if yt_plot:
 			cls.ui.yt_plot.clear()
