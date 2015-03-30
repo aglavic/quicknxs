@@ -224,11 +224,56 @@ class SFcalculator(QtGui.QMainWindow):
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
-#		cls.updatePeakBackTofWidgets(row)
+		cls.updatePeakBackTofWidgets(row)
+		cls.updateTableWidgetPeakBackTof(row)
+		
+	def updateTableWidgetPeakBackTof(cls, row):
+		is_auto_peak_finder = cls.isPeakOrBackFullyDefined(row=row)
+		if is_auto_peak_finder:
+			_brush = QtGui.QBrush()
+			_brush.setColor(colors.VALUE_OK)
+			_list_nxsdata_sorted = cls.list_nxsdata_sorted
+			_nxdata  = _list_nxsdata_sorted[row]
+
+			[peak1, peak2] = _nxdata.active_data.peak
+			_item = QtGui.QTableWidgetItem(peak1)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setItem(row, 10, _item)
+			_item = QtGui.QTableWidgetItem(peak2)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setItem(row, 11, _item)
+			
+			[back1, back2]  = _nxdata.active_data.back
+			_item = QtGui.QTableWidgetItem(back1)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setItem(row, 12, _item)
+			_item = QtGui.QTableWidgetItem(back2)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setItem(row, 13, _item)
+
+			[tof1, tof2] = _nxdata.active_data.tof_range_auto
+			_item = QtGui.QTableWidgetItem(tof1)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setItem(row, 14, _item)
+			_item = QtGui.QTableWidgetItem(tof2)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setItem(row, 15, _item)
+			
+			_item = cls.ui.tableWidget.item(row,0)
+			_item.setForeground(_brush)
+			cls.ui.tableWidget.setitem(row,0,_item)
 		
 	def updatePeakBackTofWidgets(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxsdata_row = _list_nxsdata_sorted[row]
+		if _nxsdata_row == None:
+			return
 		[peak1, peak2] = _nxsdata_row.active_data.peak
 		cls.ui.dataPeakFromValue.setValue(int(peak1))
 		cls.ui.dataPeakToValue.setValue(int(peak2))
@@ -254,7 +299,10 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.tableWidget.item(row,0).text()
 		is_auto_peak_finder = cls.isPeakOrBackFullyDefined(row=row)
 		_loadNXData = LoadNXData(list_runs, is_auto_peak_finder=(not is_auto_peak_finder))
-		_nxdata = _loadNXData.getNXData
+		_nxdata = _loadNXData.getNXData()
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_list_nxsdata_sorted[row] = _nxdata
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
 
 	def getListOfRunsFromSelectedCell(cls, row):
 		str_runs = str(cls.ui.tableWidget.item(row,0).text())

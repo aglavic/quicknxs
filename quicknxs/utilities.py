@@ -2,6 +2,7 @@ import math
 import os
 import numpy as np
 from random import randint
+import nexus_utilities
 
 def convert_angle (angle=0, from_units='degree', to_units='rad'):
     '''
