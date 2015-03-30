@@ -9,6 +9,7 @@ from utilities import touch, import_ascii_file, makeSureFileHasExtension, conver
 from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
+from load_nx_data import LoadNXData
 
 import colors
 import numpy as np
@@ -223,7 +224,7 @@ class SFcalculator(QtGui.QMainWindow):
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
-		cls.updatePeakBackTofWidgets(row)
+#		cls.updatePeakBackTofWidgets(row)
 		
 	def updatePeakBackTofWidgets(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
@@ -241,11 +242,33 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualFromValue.setText("%.2f"%float(tof1ms))
 		cls.ui.TOFmanualToValue.setText("%.2f"%float(tof2ms))
 
-		
 	def displaySelectedRow(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxsdata_row = _list_nxsdata_sorted[row]
+		if _nxsdata_row is None:
+			cls.loadSelectedNxsRuns(row)
 		cls.displayPlot(_nxsdata_row, yt_plot=True, yi_plot=True)
+
+	def loadSelectedNxsRuns(cls, row):
+		list_runs = cls.getListOfRunsFromSelectedCell(row)
+		cls.ui.tableWidget.item(row,0).text()
+		is_auto_peak_finder = cls.isPeakOrBackFullyDefined(row=row)
+		_loadNXData = LoadNXData(list_runs, is_auto_peak_finder=(not is_auto_peak_finder))
+		_nxdata = _loadNXData.getNXData
+
+	def getListOfRunsFromSelectedCell(cls, row):
+		str_runs = str(cls.ui.tableWidget.item(row,0).text())
+		list_runs = str_runs.split(',')
+		return list_runs
+
+	def isPeakOrBackFullyDefined(cls, row=-1):
+		if row == -1:
+			return False
+		for col in range(10,14):
+			_value = cls.ui.tableWidget.item(row, col).text()
+			if _value == 'N/A':
+				return False
+		return True
 
 	def displayPlot(cls, nxsdata=None, yt_plot=True, yi_plot=True):
 		cls.clearPlot(yt_plot=True, yi_plot=True)

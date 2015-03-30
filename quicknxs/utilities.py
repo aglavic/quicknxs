@@ -308,6 +308,12 @@ def makeSureFileHasExtension(filename, default_ext=".xml"):
 		filename += default_ext
 	return filename
         
-    
+def findFullFileName(run_number):
+	try:
+		full_file_name = nexus_utilities.findNeXusFullPath(run_number)
+	except:
+		full_file_name = ''
+	return full_file_name
+
     
     

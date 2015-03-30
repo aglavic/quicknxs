@@ -5,6 +5,7 @@ from decorators import waiting_effects
 import numpy as np
 from PyQt4.QtGui import QTableWidgetItem
 import nexus_utilities
+import utilities
 
 class LoadAndSortNXSDataForSFcalculator(object):
 	
@@ -29,7 +30,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		cls.list_NXSData = []
 		_list_runs = cls.list_runs
 		for _runs in _list_runs:
-			_full_file_name = cls.findFullFileName(_runs)
+			_full_file_name = utilities.findFullFileName(_runs)
 			if _full_file_name != '':
 				_data = NXSData(_full_file_name, bins=500, is_auto_peak_finder=True)
 				if _data is not None:
@@ -105,14 +106,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		else:
 			_value = '[' + str(_value[0]) + ',...]' + '-> (' + str(len(_value)) + ' entries)'
 		return _value
-		
-	def findFullFileName(cls, run_number):
-		try:
-			full_file_name = nexus_utilities.findNeXusFullPath(run_number)
-		except:
-			full_file_name = ''
-		return full_file_name
-	
+			
 	def getTableData(cls):
 		return cls.big_table
 	
