@@ -353,10 +353,15 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.yt_plot.set_xlabel(u't (ms)')
 		cls.ui.yt_plot.set_ylabel(u'y (pixel)')
 		cls.ui.yt_plot.canvas.draw()
-		
 	
 	def plotYI(cls, nxsdata):
-		pass
+		ycountsdata = nxsdata.active_data.ycountsdata
+		xaxis = range(len(ycountsdata))
+		cls.ui.yi_plot.canvas.ax.plot(ycountsdata, xaxis)
+		cls.ui.yi_plot.canvas.ax.set_xlabel(u'counts')
+		cls.ui.yi_plot.canvas.ax.set_ylabel(u'y (pixel)')
+		cls.ui.yi_plot.canvas.ax.set_xscale('log')
+		cls.ui.yi_plot.canvas.draw()
 		
 	def clearPlot(cls, yt_plot=True, yi_plot=True):
 		if yt_plot:
