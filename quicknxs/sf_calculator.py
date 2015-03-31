@@ -25,6 +25,8 @@ class SFcalculator(QtGui.QMainWindow):
 	loaded_list_of_runs = []
 	list_nxsdata_sorted = []
 	window_title = 'SF Calculator - '
+	current_table_row_selected = -1
+	
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -222,6 +224,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualToValue.setEnabled(status)
 		
 	def tableWidgetCellSelected(cls, row, col):
+		cls.current_table_row_selected = row
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
@@ -427,7 +430,6 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.peakBackSpinBoxValueChanged('back2')
 
 	def peakBackSpinBoxValueChanged(cls, type):
-
 		if 'peak' in type:
 			peak1 = cls.ui.dataPeakFromValue.value()
 			peak2 = cls.ui.dataPeakToValue.value()
@@ -457,5 +459,29 @@ class SFcalculator(QtGui.QMainWindow):
 				cls.ui.dataBackToValue.setValue(back_max)
 		
 		cls.testPeakBackErrorWidgets()
+		cls.updateNXSData(row=cls.current_table_row_selected, source='spinbox', type=type)
+		cls.displayPlot(row=cls.current_table_row_selected, yt_plot=True, yi_plot=True)
 		
+	def updateNXSData(cls, row=0, source='spinbox', type='peak1'):
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxsdata_row = _list_nxsdata_sorted[row]
+		if 'peak' in type:
+			if source == 'spinbox':
+				peak1 = str(cls.ui.dataPeakFromValue.value())
+				peak2 = str(cls.ui.dataPeakToValue.value())
+			else:
+				peak1 = cls.ui.tableWidget.item(row, 10).text()
+				peak2 = cls.u.tableWidget.item(row, 11).text()
+			_nxsdata_row.active_data.peak = [peak1, peak2]
+		else:
+			if source == 'spinbox':
+				back1 = str(cls.ui.dataBackFromValue.value())
+				back2 = str(cls.ui.dataBackToValue.value())
+			else:
+				back1 = cls.ui.tableWidget.item(row, 12).text()
+				back2 = cls.ui.tableWidget.item(row, 13).text()
+			_nxsdata_row.active_data.back = [back1, back2]
+		_list_nxsdata_sorted[row] = _nxsdata_row
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
+		cls.updateTableWidgetPeakBackTof(row)
 		
