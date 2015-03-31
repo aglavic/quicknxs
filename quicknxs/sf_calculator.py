@@ -413,3 +413,49 @@ class SFcalculator(QtGui.QMainWindow):
 		if yi_plot:
 			cls.ui.yi_plot.clear()
 			cls.ui.yi_plot.draw()
+
+	def peak1SpinBoxValueChanged(cls):
+		cls.peakBackSpinBoxValueChanged('peak1')
+
+	def peak2SpinBoxValueChanged(cls):
+		cls.peakBackSpinBoxValueChanged('peak2')
+
+	def back1SpinBoxValueChanged(cls):
+		cls.peakBackSpinBoxValueChanged('back1')
+
+	def back2SpinBoxValueChanged(cls):
+		cls.peakBackSpinBoxValueChanged('back2')
+
+	def peakBackSpinBoxValueChanged(cls, type):
+
+		if 'peak' in type:
+			peak1 = cls.ui.dataPeakFromValue.value()
+			peak2 = cls.ui.dataPeakToValue.value()
+			peak_min = min([peak1, peak2])
+			peak_max = max([peak1, peak2])
+
+			if peak1 == peak_max:
+				if type == 'peak1':
+					cls.ui.dataPeakToValue.setFocus()
+				else:
+					cls.ui.dataPeakFromValue.setFocus()
+				cls.ui.dataPeakFromValue.setValue(peak_min)
+				cls.ui.dataPeakToValue.setValue(peak_max)
+		
+		if 'back' in type:
+			back1 = cls.ui.dataBackFromValue.value()
+			back2 = cls.ui.dataBackToValue.value()
+			back_min = min([back1, back2])
+			back_max = max([back1, back2])
+			
+			if back1 == back_max:
+				if type == 'back1':
+					cls.ui.dataBackToValue.setFocus()
+				else:
+					cls.ui.dataBackFromValue.setFocus()
+				cls.ui.dataBackFromValue.setValue(back_min)
+				cls.ui.dataBackToValue.setValue(back_max)
+		
+		cls.testPeakBackErrorWidgets()
+		
+		

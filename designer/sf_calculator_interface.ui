@@ -1069,6 +1069,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>dataBackToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>back2SpinBoxValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1587</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataBackFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>back1SpinBoxValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1587</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakFromValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>peak1SpinBoxValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1586</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataPeakToValue</sender>
+   <signal>editingFinished()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>peak2SpinBoxValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1586</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1079,5 +1143,10 @@
   <slot>selectManualTOF()</slot>
   <slot>loadingConfiguration()</slot>
   <slot>tableWidgetCellSelected()</slot>
+  <slot>peakBackSpinBoxValueChanged()</slot>
+  <slot>peak1SpinBoxValueChanged()</slot>
+  <slot>peak2SpinBoxValueChanged()</slot>
+  <slot>back1SpinBoxValueChanged()</slot>
+  <slot>back2SpinBoxValueChanged()</slot>
  </slots>
 </ui>
