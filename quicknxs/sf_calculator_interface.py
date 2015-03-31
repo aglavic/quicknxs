@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Thu Mar 26 11:20:55 2015
+# Created: Tue Mar 31 13:29:52 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,6 +25,7 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
         self.runSequenceLineEdit = QtGui.QLineEdit(self.centralwidget)
+        self.runSequenceLineEdit.setText("")
         self.runSequenceLineEdit.setObjectName("runSequenceLineEdit")
         self.horizontalLayout_2.addWidget(self.runSequenceLineEdit)
         self.incidentMediumComboBox = QtGui.QComboBox(self.centralwidget)
@@ -392,7 +393,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "SF Calculator", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Run or Sequence of Runs:", None, QtGui.QApplication.UnicodeUTF8))
         self.runSequenceLineEdit.setToolTip(QtGui.QApplication.translate("MainWindow", "1234 or 1234,1236,1239 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
-        self.runSequenceLineEdit.setText(QtGui.QApplication.translate("MainWindow", "120142-120143", None, QtGui.QApplication.UnicodeUTF8))
         self.incidentMediumComboBox.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select or Define Incident Medium ...", None, QtGui.QApplication.UnicodeUTF8))
         self.error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))

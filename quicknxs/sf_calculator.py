@@ -45,7 +45,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.error_label.setPalette(palette)
 	
 	def checkGui(cls):
-		if (cls.loaded_list_of_runs != []) or (cls.big_table != []):
+		if (cls.loaded_list_of_runs != []) or (cls.big_table != None):
 			wdg_enabled = True
 		else:
 			wdg_enabled = False
@@ -186,6 +186,7 @@ class SFcalculator(QtGui.QMainWindow):
 			if status:
 				cls.setWindowTitle(cls.window_title + filename)
 			cls.checkGui()
+			cls.tableWidgetCellSelected(0, 0)
 
 	def savingConfiguration(cls):
 		_path = cls.main_gui.path_config

@@ -32,7 +32,7 @@
            <string>1234 or 1234,1236,1239 or 1234-1238</string>
           </property>
           <property name="text">
-           <string>120142-120143</string>
+           <string/>
           </property>
          </widget>
         </item>
