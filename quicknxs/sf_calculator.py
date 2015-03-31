@@ -347,11 +347,36 @@ class SFcalculator(QtGui.QMainWindow):
 			
 	def plotYT(cls, nxsdata):
 		ytof = nxsdata.active_data.ytofdata
+#		tof_min_ms = float(nxsdata.active_data.tof_axis_auto_with_margin[0])/1000
+#		tof_max_ms = float(nxsdata.active_data.tof_axis_auto_with_margin[1])/1000
 		tof_min_ms = float(nxsdata.active_data.tof_range_auto[0])/1000
 		tof_max_ms = float(nxsdata.active_data.tof_range_auto[1])/1000
 		cls.ui.yt_plot.imshow(ytof, log=True, aspect='auto',origin='lower',extent=[tof_min_ms, tof_max_ms, 0, nxsdata.active_data.y.shape[0]-1])
 		cls.ui.yt_plot.set_xlabel(u't (ms)')
 		cls.ui.yt_plot.set_ylabel(u'y (pixel)')
+#		cls.ui.yt_plot.canvas.ax.set_yscale('log')
+
+		[peak1, peak2] = nxsdata.active_data.peak
+		peak1 = int(peak1)
+		peak2 = int(peak2)
+		
+		[back1, back2] = nxsdata.active_data.back
+		back1 = int(back1)
+		back2 = int(back2)
+		
+		[tof1, tof2] = nxsdata.active_data.tof_range_auto
+		tof1 = float(tof1) * 1e-3
+		tof2 = float(tof2) * 1e-3
+
+		#cls.ui.yt_plot.canvas.ax.axvline(tof1, color=colors.TOF_SELECTION_COLOR)
+		#cls.ui.yt_plot.canvas.ax.axvline(tof2, color=colors.TOF_SELECTION_COLOR)
+		
+		#cls.ui.yt_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		#cls.ui.yt_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		
+		#cls.ui.yt_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+		#cls.ui.yt_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+
 		cls.ui.yt_plot.canvas.draw()
 	
 	def plotYI(cls, nxsdata):
