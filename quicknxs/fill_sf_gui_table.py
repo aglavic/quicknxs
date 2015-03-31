@@ -89,7 +89,12 @@ class FillSFGuiTable(object):
 					_brush.setColor(colors.VALUE_BAD)
 					is_any_red = True
 				else:
-					_value = str(int(_value))
+					if k in [14,15]:
+						if int(_value) > 1000:
+							_value = float(_value)/1000
+							_value = ("%.2f" % _value)
+						else:
+							_value = str(int(_value))
 					_brush.setColor(colors.VALUE_OK)
 				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)
