@@ -388,6 +388,21 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.yi_plot.canvas.ax.set_xlabel(u'counts')
 		cls.ui.yi_plot.canvas.ax.set_ylabel(u'y (pixel)')
 		cls.ui.yi_plot.canvas.ax.set_xscale('log')
+
+		[peak1, peak2] = nxsdata.active_data.peak
+		peak1 = int(peak1)
+		peak2 = int(peak2)
+		
+		[back1, back2] = nxsdata.active_data.back
+		back1 = int(back1)
+		back2 = int(back2)
+		
+		cls.ui.yi_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		cls.ui.yi_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		
+		cls.ui.yi_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+		cls.ui.yi_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+
 		cls.ui.yi_plot.canvas.draw()
 		
 	def clearPlot(cls, yt_plot=True, yi_plot=True):
