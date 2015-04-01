@@ -231,11 +231,11 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.updateTableWidgetPeakBackTof(row)
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
 		
-	def updateTableWidgetPeakBackTof(cls, row):
+	def updateTableWidgetPeakBackTof(cls, row, force_spinbox_source=False):
 		is_peak_back_fully_defined = cls.isPeakOrBackFullyDefined(row=row)
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxdata  = _list_nxsdata_sorted[row]
-		if not is_peak_back_fully_defined:
+		if (not is_peak_back_fully_defined) or force_spinbox_source:
 			cls.updatePeakBackTofWidgets(row)
 			_brush = QtGui.QBrush()
 			_brush.setColor(colors.VALUE_OK)
@@ -483,5 +483,5 @@ class SFcalculator(QtGui.QMainWindow):
 			_nxsdata_row.active_data.back = [back1, back2]
 		_list_nxsdata_sorted[row] = _nxsdata_row
 		cls.list_nxsdata_sorted = _list_nxsdata_sorted
-		cls.updateTableWidgetPeakBackTof(row)
+		cls.updateTableWidgetPeakBackTof(row, force_spinbox_source=(source == 'spinbox'))
 		
