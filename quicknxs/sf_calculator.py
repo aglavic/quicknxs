@@ -10,6 +10,7 @@ from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
 from load_nx_data import LoadNXData
+from sf_single_plot_click import SFSinglePlotClick
 
 import colors
 import numpy as np
@@ -26,7 +27,7 @@ class SFcalculator(QtGui.QMainWindow):
 	list_nxsdata_sorted = []
 	window_title = 'SF Calculator - '
 	current_table_row_selected = -1
-	
+	time_click1 = -1
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -36,6 +37,11 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.setupUi(cls)
 		cls.initGui()
 		cls.checkGui()
+		cls.initConnections()
+		
+	def initConnections(cls):
+		cls.ui.yt_plot.singleClick.connect(cls.single_yt_plot)
+		cls.ui.yi_plot.singleClick.connect(cls.single_yi_plot)
 		
 	def initGui(cls):
 		palette = QtGui.QPalette()
@@ -55,6 +61,12 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.testPeakBackErrorWidgets()
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
+		
+	def single_yt_plot(cls, is_pan_or_zoom_activated):
+		SFSinglePlotClick(cls, 'yt', is_pan_or_zoom_activated = is_pan_or_zoom_activated)
+		
+	def single_yi_plot(cls, is_pan_or_zoom_activated):
+		SFSinglePlotClick(cls, 'yi', is_pan_or_zoom_activated = is_pan_or_zoom_activated)
 				
 	def testPeakBackErrorWidgets(cls):
 		if cls.list_nxsdata_sorted == []:
