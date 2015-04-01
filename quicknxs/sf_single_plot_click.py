@@ -6,13 +6,14 @@ import time
 class SFSinglePlotClick(object):
 	
 	self = None
+	nxsdata = None
 	
 	def __init__(cls, self, plot_type, is_pan_or_zoom_activated=False):
 		cls.self = self
 		
-		#[row,col] = self.getCurrentRowColumnSelected()
-		#_data = self.bigTableData[row, col]
-		#self.active_data = _data.active_data
+		row = self.current_table_row_selected
+		list_nxsdata_sorted = self.list_nxsdata_sorted
+		nxsdata = list_nxsdata_sorted[row]
 		
 		if plot_type == 'yi':
 			cls.single_yi_plot_click()
@@ -34,7 +35,6 @@ class SFSinglePlotClick(object):
 	    
 		if (_time_click2 - self.time_click1) <= constants.double_click_if_within_time:
 			pass
-			#data = self.active_data
 			#dialog_refl = PlotDialogREFL(self, data_type, data)
 			#dialog_refl.show()
 			
