@@ -248,6 +248,10 @@ class SFcalculator(QtGui.QMainWindow):
 				_brush_BAD = QtGui.QBrush()
 				_brush_BAD.setColor(colors.VALUE_BAD)
 				_item.setForeground(_brush_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_item.setFont(_font)
 				_at_least_one_bad = True
 			else:
 				_brush_OK = QtGui.QBrush()
@@ -261,6 +265,10 @@ class SFcalculator(QtGui.QMainWindow):
 				_brush_BAD = QtGui.QBrush()
 				_brush_BAD.setColor(colors.VALUE_BAD)
 				_item.setForeground(_brush_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_item.setFont(_font)
 				_at_least_one_bad = True
 			else:
 				_brush_OK = QtGui.QBrush()
@@ -273,6 +281,10 @@ class SFcalculator(QtGui.QMainWindow):
 			if back1 > peak1:
 				_brush_BAD = QtGui.QBrush()				
 				_brush_BAD.setColor(colors.VALUE_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_item.setFont(_font)
 				_item.setForeground(_brush_BAD)
 			else:
 				_brush_OK = QtGui.QBrush()
@@ -285,6 +297,10 @@ class SFcalculator(QtGui.QMainWindow):
 			if back2 < peak2:
 				_brush_BAD = QtGui.QBrush()
 				_brush_BAD.setColor(colors.VALUE_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_item.setFont(_font)
 				_item.setForeground(_brush_BAD)
 			else:
 				_brush_OK = QtGui.QBrush()
@@ -313,6 +329,10 @@ class SFcalculator(QtGui.QMainWindow):
 			if _at_least_one_bad:
 				_brush_BAD = QtGui.QBrush()
 				_brush_BAD.setColor(colors.VALUE_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_item.setFont(_font)
 				_item.setForeground(_brush_BAD)
 			else:
 				_brush_OK = QtGui.QBrush()
