@@ -237,41 +237,67 @@ class SFcalculator(QtGui.QMainWindow):
 		_nxdata  = _list_nxsdata_sorted[row]
 		if (not is_peak_back_fully_defined) or force_spinbox_source:
 			cls.updatePeakBackTofWidgets(row)
-			_brush = QtGui.QBrush()
-			_brush.setColor(colors.VALUE_OK)
+			_brush_OK = QtGui.QBrush()
+			_brush_OK.setColor(colors.VALUE_OK)
+			_brush_BAD = QtGui.QBrush()
+			_brush_BAD.setColor(colors.VALUE_BAD)
+			_at_least_one_bad = False
 
 			[peak1, peak2] = _nxdata.active_data.peak
+			[back1, back2]  = _nxdata.active_data.back
+			
 			_item = QtGui.QTableWidgetItem(peak1)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			_item.setForeground(_brush)
+			if back1 > peak1:
+				_item.setForeground(_brush_BAD)
+				_at_least_one_bad = True
+			else:
+				_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 10, _item)
+
 			_item = QtGui.QTableWidgetItem(peak2)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			_item.setForeground(_brush)
+			if back2 < peak2:
+				_item.setForeground(_brush_BAD)
+				_at_least_one_bad = True
+			else:
+				_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 11, _item)
 			
-			[back1, back2]  = _nxdata.active_data.back
 			_item = QtGui.QTableWidgetItem(back1)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			_item.setForeground(_brush)
+			if back1 > peak1:
+				_item.setForeground(_brush_BAD)
+			else:
+				_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 12, _item)
+
 			_item = QtGui.QTableWidgetItem(back2)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			_item.setForeground(_brush)
+			if back2 < peak2:
+				_item.setForeground(_brush_BAD)
+			else:
+				_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 13, _item)
 
 			[tof1, tof2] = _nxdata.active_data.tof_range_auto
+			if float(tof1) > 1000:
+				tof1 = "%.2f" % (float(tof1)/1000)
+				tof2 = "%.2f" % (float(tof2)/1000)
 			_item = QtGui.QTableWidgetItem(tof1)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			_item.setForeground(_brush)
+			_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 14, _item)
 			_item = QtGui.QTableWidgetItem(tof2)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			_item.setForeground(_brush)
+			_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 15, _item)
 			
 			_item = cls.ui.tableWidget.item(row,0)
-			_item.setForeground(_brush)
+			if _at_least_one_bad:
+				_item.setForeground(_brush_BAD)
+			else:
+				_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row,0,_item)
 
 		else:
