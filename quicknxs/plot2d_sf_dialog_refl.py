@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QDialog, QPalette, QFileDialog
 from PyQt4.QtCore import Qt
-from plot2d_dialog_refl_interface import Ui_Dialog as UiPlot
+from plot2d_sf_dialog_refl_interface import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
 import colors
 import utilities
@@ -117,12 +117,8 @@ class Plot2dSFDialogREFL(QDialog):
 		self.ui.detector_plot.set_xlabel(u'x (pixel)')
 		self.ui.detector_plot.set_ylabel(u'y (pixel)')
 	
-		[lowres1, lowres2, lowresFlag, peak1, peak2, back1, back2, backFlag] = self.retrieveLowResPeakBack()
+		[peak1, peak2, back1, back2, backFlag] = self.retrievePeakBack()
 	
-		if lowresFlag:
-			lr1 = self.ui.detector_plot.canvas.ax.axvline(lowres1, color=colors.LOWRESOLUTION_SELECTION_COLOR)
-			lr2 = self.ui.detector_plot.canvas.ax.axvline(lowres2, color=colors.LOWRESOLUTION_SELECTION_COLOR)
-		
 		p1 = self.ui.detector_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
 		p2 = self.ui.detector_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
 		
@@ -191,20 +187,7 @@ class Plot2dSFDialogREFL(QDialog):
 		tmax = float(self.ui.tof_to.text())
 		[peak1,peak2,back1,back2, backFlag] = self.retrievePeakBack()
 		return [tmin, tmax, peak1, peak2, back1, back2, backFlag]
-		
-	def retrieveLowResPeakBack(self):
-		lowres1 = self.ui.low_res1.value()
-		lowres2 = self.ui.low_res2.value()
-		lowresFlag = self.ui.low_res_flag.isChecked()
-		[peak1,peak2,back1,back2, backFlag] = self.retrievePeakBack()
-		return [lowres1,lowres2,lowresFlag,peak1,peak2,back1,back2,backFlag]
-	
-	def retrieveLowRes(self):
-		lowres1 = self.ui.low_res1.value()
-		lowres2 = self.ui.low_res2.value()
-		lowresFlag = self.ui.low_res_flag.isChecked()
-		return [lowres1, lowres2, lowresFlag]
-	
+				
 	def retrievePeakBack(self):
 		peak1 = self.ui.peak1.value()
 		peak2 = self.ui.peak2.value()
@@ -258,8 +241,6 @@ class Plot2dSFDialogREFL(QDialog):
 		peak = _data.peak
 		back = _data.back
 		back_flag = _data.back_flag
-		low_res = _data.low_res
-		low_res_flag = _data.low_res_flag
 		tof_auto_flag = _data.tof_auto_flag
 		tof_range_auto = _data.tof_range_auto
 		tof_range = _data.tof_range
@@ -289,25 +270,14 @@ class Plot2dSFDialogREFL(QDialog):
 		self.ui.back2.setValue(int(back[1]))
 
 		self.activate_or_not_back_widgets(back_flag)
-		
-		self.ui.low_res1.setValue(int(low_res[0]))
-		self.ui.low_res2.setValue(int(low_res[1]))
-		self.activate_or_not_low_res_widgets(low_res_flag)
-		
+				
 	def activate_or_not_back_widgets(self, back_flag):
 		self.ui.back_flag.setChecked(back_flag)
 		self.ui.back1.setEnabled(back_flag)
 		self.ui.back2.setEnabled(back_flag)
 		self.check_peak_back_input_validity()
 		self.update_plots()
-	
-	def activate_or_not_low_res_widgets(self, low_res_flag):
-		self.ui.low_res1.setEnabled(low_res_flag)
-		self.ui.low_res2.setEnabled(low_res_flag)
-		self.ui.low_res1_label.setEnabled(low_res_flag)
-		self.ui.low_res2_label.setEnabled(low_res_flag)
-		self.update_detector_tab_plot()
-		
+			
 	def sort_peak_back_input(self):		
 		peak1 = self.ui.peak1.value()
 		peak2 = self.ui.peak2.value()		
@@ -377,8 +347,6 @@ class Plot2dSFDialogREFL(QDialog):
 		value2 = self.ui.low_res2.value()
 		value_min = min([value1,value2])
 		value_max = max([value1,value2])
-		self.ui.low_res1.setValue(value_min)
-		self.ui.low_res2.setValue(value_max)
 		self.ui.detector_plot()
 	
 	def manual_input_of_tof_field(self):
@@ -417,42 +385,17 @@ class Plot2dSFDialogREFL(QDialog):
 
 	def closeEvent(self, event=None):
 		# collect values
-		[lowres1, lowres2, lowresFlag] = self.retrieveLowRes()
 		[peak1, peak2, back1, back2, backFlag]= self.retrievePeakBack()
 	
-		if self.type == 'data':
-			self.main_gui.ui.dataPeakFromValue.setValue(peak1)
-			self.main_gui.ui.dataPeakToValue.setValue(peak2)
-			self.main_gui.ui.dataBackFromValue.setValue(back1)
-			self.main_gui.ui.dataBackToValue.setValue(back2)
-			self.main_gui.ui.dataBackgroundFlag.setChecked(backFlag)
-			self.main_gui.data_peak_and_back_validation(False)
-			self.main_gui.ui.dataBackFromLabel.setEnabled(backFlag)
-			self.main_gui.ui.dataBackFromValue.setEnabled(backFlag)
-			self.main_gui.ui.dataBackToLabel.setEnabled(backFlag)
-			self.main_gui.ui.dataBackToValue.setEnabled(backFlag)
-			self.main_gui.ui.dataLowResFromValue.setValue(lowres1)
-			self.main_gui.ui.dataLowResToValue.setValue(lowres2)
-			self.main_gui.ui.dataLowResFromLabel.setEnabled(lowresFlag)
-			self.main_gui.ui.dataLowResFromValue.setEnabled(lowresFlag)
-			self.main_gui.ui.dataLowResToLabel.setEnabled(lowresFlag)
-			self.main_gui.ui.dataLowResToValue.setEnabled(lowresFlag)
-		else:
-			self.main_gui.ui.normPeakFromValue.setValue(peak1)
-			self.main_gui.ui.normPeakToValue.setValue(peak2)
-			self.main_gui.ui.normBackFromValue.setValue(back1)
-			self.main_gui.ui.normBackToValue.setValue(back2)
-			self.main_gui.ui.normBackgroundFlag.setChecked(backFlag)
-			self.main_gui.norm_peak_and_back_validation(False)
-			self.main_gui.ui.normBackFromLabel.setEnabled(backFlag)
-			self.main_gui.ui.normBackFromValue.setEnabled(backFlag)
-			self.main_gui.ui.normBackToLabel.setEnabled(backFlag)
-			self.main_gui.ui.normBackToValue.setEnabled(backFlag)
-			self.main_gui.ui.normLowResFromValue.setValue(lowres1)
-			self.main_gui.ui.normLowResToValue.setValue(lowres2)
-			self.main_gui.ui.normLowResFromLabel.setEnabled(lowresFlag)
-			self.main_gui.ui.normLowResFromValue.setEnabled(lowresFlag)
-			self.main_gui.ui.normLowResToLabel.setEnabled(lowresFlag)
-			self.main_gui.ui.normLowResToValue.setEnabled(lowresFlag)
+		self.main_gui.ui.dataPeakFromValue.setValue(peak1)
+		self.main_gui.ui.dataPeakToValue.setValue(peak2)
+		self.main_gui.ui.dataBackFromValue.setValue(back1)
+		self.main_gui.ui.dataBackToValue.setValue(back2)
+		self.main_gui.ui.dataBackgroundFlag.setChecked(backFlag)
+		self.main_gui.data_peak_and_back_validation(False)
+		self.main_gui.ui.dataBackFromLabel.setEnabled(backFlag)
+		self.main_gui.ui.dataBackFromValue.setEnabled(backFlag)
+		self.main_gui.ui.dataBackToLabel.setEnabled(backFlag)
+		self.main_gui.ui.dataBackToValue.setEnabled(backFlag)
 			
-		self.main_gui.plot_overview_REFL()
+		self.main_gui.displayPlot()
