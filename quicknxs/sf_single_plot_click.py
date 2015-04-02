@@ -1,4 +1,4 @@
-#from plot_dialog_refl import PlotDialogREFL
+from plot_sf_dialog_refl import PlotSFDialogREFL
 from plot2d_sf_dialog_refl import Plot2dSFDialogREFL
 import constants
 import time
@@ -34,10 +34,9 @@ class SFSinglePlotClick(object):
 			_time_click2 = time.time()
 	    
 		if (_time_click2 - self.time_click1) <= constants.double_click_if_within_time:			
-			pass
 			data = cls.nxsdata
-			#dialog_refl = PlotDialogREFL(self, data_type, data)
-			#dialog_refl.show()
+			dialog_refl = PlotSFDialogREFL(self, data.active_data)
+			dialog_refl.show()
 			
 		self.time_click1 = -1
 	
@@ -55,7 +54,7 @@ class SFSinglePlotClick(object):
 	      
 		if (_time_click2 - self.time_click1) <= constants.double_click_if_within_time:
 			data = cls.nxsdata
-			dialog_refl2d = Plot2dSFDialogREFL(self, data)
+			dialog_refl2d = Plot2dSFDialogREFL(self, data.active_data)
 			dialog_refl2d.show()
 			
 		self.time_click1 = -1
