@@ -1,5 +1,5 @@
 #from plot_dialog_refl import PlotDialogREFL
-#from plot2d_dialog_refl import Plot2dDialogREFL
+from plot2d_sf_dialog_refl import Plot2dSFDialogREFL
 import constants
 import time
 
@@ -13,7 +13,7 @@ class SFSinglePlotClick(object):
 		
 		row = self.current_table_row_selected
 		list_nxsdata_sorted = self.list_nxsdata_sorted
-		nxsdata = list_nxsdata_sorted[row]
+		cls.nxsdata = list_nxsdata_sorted[row]
 		
 		if plot_type == 'yi':
 			cls.single_yi_plot_click()
@@ -33,8 +33,9 @@ class SFSinglePlotClick(object):
 		else:
 			_time_click2 = time.time()
 	    
-		if (_time_click2 - self.time_click1) <= constants.double_click_if_within_time:
+		if (_time_click2 - self.time_click1) <= constants.double_click_if_within_time:			
 			pass
+			data = cls.nxsdata
 			#dialog_refl = PlotDialogREFL(self, data_type, data)
 			#dialog_refl.show()
 			
@@ -53,9 +54,8 @@ class SFSinglePlotClick(object):
 			_time_click2 = time.time()
 	      
 		if (_time_click2 - self.time_click1) <= constants.double_click_if_within_time:
-			pass
-			#data = self.active_data
-			#dialog_refl2d = Plot2dDialogREFL(self, data_type, data)
-			#dialog_refl2d.show()
+			data = cls.nxsdata
+			dialog_refl2d = Plot2dSFDialogREFL(self, data)
+			dialog_refl2d.show()
 			
 		self.time_click1 = -1
