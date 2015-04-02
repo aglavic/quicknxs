@@ -421,6 +421,8 @@ class SFcalculator(QtGui.QMainWindow):
 		return True
 
 	def displayPlot(cls, row=-1, yt_plot=True, yi_plot=True):
+		if row == -1:
+			row = cls.current_table_row_selected
 		list_nxsdata_sorted = cls.list_nxsdata_sorted
 		nxsdata = list_nxsdata_sorted[row]
 		cls.clearPlot(yt_plot=True, yi_plot=True)
@@ -563,3 +565,8 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.list_nxsdata_sorted = _list_nxsdata_sorted
 		cls.updateTableWidgetPeakBackTof(row, force_spinbox_source=(source == 'spinbox'))
 		
+	def dataPeakAndBackValidation(cls, with_plot_update=True):
+		cls.peakBackSpinBoxValueChanged('peak')
+		cls.peakBackSpinBoxValueChanged('back')
+		cls.testPeakBackErrorWidgets()
+	
