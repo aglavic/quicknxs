@@ -419,7 +419,8 @@ class Plot2dDialogREFL(QDialog):
 	def closeEvent(self, event=None):
 		# collect values
 		[lowres1, lowres2, lowresFlag] = self.retrieveLowRes()
-		[peak1, peak2, back1, back2, backFlag]= self.retrievePeakBack()
+		[tof1, tof2, peak1, peak2, back1, back2, backFlag]= self.retrieveTofPeakBack()
+		tof_auto_switch = self.ui.tof_auto_flag.isChecked()	
 	
 		if self.type == 'data':
 			self.main_gui.ui.dataPeakFromValue.setValue(peak1)
@@ -456,4 +457,5 @@ class Plot2dDialogREFL(QDialog):
 			self.main_gui.ui.normLowResToLabel.setEnabled(lowresFlag)
 			self.main_gui.ui.normLowResToValue.setEnabled(lowresFlag)
 			
+		self.main_gui.tofValidation(tof_auto_switch,  tof1, tof2)
 		self.main_gui.plot_overview_REFL()
