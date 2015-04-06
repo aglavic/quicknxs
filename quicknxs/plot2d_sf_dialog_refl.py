@@ -395,7 +395,7 @@ class Plot2dSFDialogREFL(QDialog):
 		self.main_gui.ui.dataBackFromValue.setValue(back1)
 		self.main_gui.ui.dataBackToValue.setValue(back2)
 		self.main_gui.ui.dataBackgroundFlag.setChecked(backFlag)
-		self.main_gui.data_peak_and_back_validation(False)
+		self.main_gui.dataPeakAndBackValidation(False)
 		self.main_gui.ui.dataBackFromLabel.setEnabled(backFlag)
 		self.main_gui.ui.dataBackFromValue.setEnabled(backFlag)
 		self.main_gui.ui.dataBackToLabel.setEnabled(backFlag)
