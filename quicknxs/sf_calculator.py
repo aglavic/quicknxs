@@ -234,6 +234,14 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualFromValue.setText("%.2f"%tof1)
 		cls.ui.TOFmanualToValue.setText("%.2f"%tof2)
 	
+	def tofValidation(cls, tof_auto_switch, tof1, tof2):	
+		cls.ui.dataTOFautoMode.setChecked(tof_auto_switch)
+		cls.ui.dataTOFmanualMode.setChecked(not tof_auto_switch)
+		cls.manualTOFWidgetsEnabled(not tof_auto_switch)
+		cls.ui.TOFmanualFromValue.setText("%.2f"%tof1)
+		cls.ui.TOFmanualToValue.setText("%.2f"%tof2)
+		cls.manualTOFtextFieldValidated()
+	
 	def saveManualTOFmode(cls):
 		tof1 = float(cls.ui.TOFmanualFromValue.text())
 		tof2 = float(cls.ui.TOFmanualToValue.text())

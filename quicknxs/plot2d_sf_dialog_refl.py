@@ -388,8 +388,7 @@ class Plot2dSFDialogREFL(QDialog):
 
 	def closeEvent(self, event=None):
 		# collect values
-		[peak1, peak2, back1, back2, backFlag]= self.retrievePeakBack()
-	
+		[tof1, tof2, peak1, peak2, back1, back2, backFlag]= self.retrieveTofPeakBack()
 		self.main_gui.ui.dataPeakFromValue.setValue(peak1)
 		self.main_gui.ui.dataPeakToValue.setValue(peak2)
 		self.main_gui.ui.dataBackFromValue.setValue(back1)
@@ -400,6 +399,9 @@ class Plot2dSFDialogREFL(QDialog):
 		self.main_gui.ui.dataBackFromValue.setEnabled(backFlag)
 		self.main_gui.ui.dataBackToLabel.setEnabled(backFlag)
 		self.main_gui.ui.dataBackToValue.setEnabled(backFlag)
+		
+		tof_auto_switch = self.ui.tof_auto_flag.isChecked()
+		self.main_gui.tofValidation(tof_auto_switch, tof1, tof2)
 			
 		self.main_gui.displayPlot()
 		
