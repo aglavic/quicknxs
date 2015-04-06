@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QDialog, QPalette, QFileDialog
 from PyQt4.QtCore import Qt
-from plot2d_sf_dialog_refl_interface import Ui_Dialog as UiPlot
+from plot2d_dialog_refl_interface import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
 import colors
 import utilities
@@ -45,6 +45,9 @@ class Plot2dSFDialogREFL(QDialog):
 		self.ui.detector_plot.leaveFigure.connect(self.leave_figure_detector_plot)
 		self.ui.detector_plot.toolbar.homeClicked.connect(self.home_clicked_detector_plot)
 		self.ui.detector_plot.toolbar.exportClicked.connect(self.export_detector_view)
+		
+		# hide low_res widgets
+		self.ui.frame_20.setVisible(False)
 		
 	def export_yt(self):
 		_active_data = self.data
@@ -399,3 +402,11 @@ class Plot2dSFDialogREFL(QDialog):
 		self.main_gui.ui.dataBackToValue.setEnabled(backFlag)
 			
 		self.main_gui.displayPlot()
+		
+	def activate_or_not_low_res_widgets(self, low_res_flag):
+		pass
+	
+	def manual_input_of_low_res_field(self):
+		pass
+
+	

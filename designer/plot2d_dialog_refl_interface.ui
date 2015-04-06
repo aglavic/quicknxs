@@ -825,22 +825,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>low_res_flag</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>Dialog</receiver>
-   <slot>activate_or_not_low_res_widgets()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>309</x>
-     <y>1118</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>689</x>
-     <y>593</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>back_flag</sender>
    <signal>clicked(bool)</signal>
    <receiver>Dialog</receiver>
@@ -921,14 +905,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>low_res1</sender>
+   <sender>tof_from</sender>
    <signal>editingFinished()</signal>
    <receiver>Dialog</receiver>
-   <slot>manual_input_of_low_res_field()</slot>
+   <slot>manual_input_of_tof_field()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>689</x>
-     <y>1119</y>
+     <x>437</x>
+     <y>1121</y>
     </hint>
     <hint type="destinationlabel">
      <x>689</x>
@@ -953,14 +937,46 @@
    </hints>
   </connection>
   <connection>
-   <sender>tof_from</sender>
-   <signal>editingFinished()</signal>
+   <sender>tof_manual_flag</sender>
+   <signal>clicked()</signal>
    <receiver>Dialog</receiver>
-   <slot>manual_input_of_tof_field()</slot>
+   <slot>manual_auto_tof_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>437</x>
+     <x>251</x>
      <y>1121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>low_res_flag</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>Dialog</receiver>
+   <slot>activate_or_not_low_res_widgets()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>1118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>689</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>low_res1</sender>
+   <signal>editingFinished()</signal>
+   <receiver>Dialog</receiver>
+   <slot>manual_input_of_low_res_field()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>689</x>
+     <y>1119</y>
     </hint>
     <hint type="destinationlabel">
      <x>689</x>
@@ -992,22 +1008,6 @@
    <hints>
     <hint type="sourcelabel">
      <x>132</x>
-     <y>1121</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>689</x>
-     <y>593</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>tof_manual_flag</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>manual_auto_tof_clicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>251</x>
      <y>1121</y>
     </hint>
     <hint type="destinationlabel">
