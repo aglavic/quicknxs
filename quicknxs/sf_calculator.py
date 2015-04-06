@@ -221,11 +221,42 @@ class SFcalculator(QtGui.QMainWindow):
 		_configObject = LoadSFConfigAndPopulateGUI(parent=cls, filename=filename)
 		return _configObject.getLoadingStatus()
 		
+	def displaySelectedTOF(cls, mode='auto'):
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxdata  = _list_nxsdata_sorted[cls.current_table_row_selected]
+		if mode == 'auto':
+			[tof1, tof2] = _nxdata.active_data.tof_range_auto
+		else:
+			[tof1, tof2] = _nxdata.active_data.tof_range
+		tof1 = float(tof1) * 1e-3
+		tof2 = float(tof2) * 1e-3
+		
+		cls.ui.TOFmanualFromValue.setText("%.2f"%tof1)
+		cls.ui.TOFmanualToValue.setText("%.2f"%tof2)
+	
+	def saveManualTOFmode(cls):
+		tof1 = float(cls.ui.TOFmanualFromValue.text())
+		tof2 = float(cls.ui.TOFmanualToValue.text())
+		tof_min = min([tof1, tof2])
+		tof_max = max([tof1, tof2])
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxdata  = _list_nxsdata_sorted[cls.current_table_row_selected]
+		tof1 = 1000 * tof_min
+		tof2 = 1000 * tof_max
+		_nxdata.active_data.tof_range = [tof1, tof2]
+		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
+
 	def selectAutoTOF(cls):
 		cls.manualTOFWidgetsEnabled(False)
+		cls.saveManualTOFmode()
+		cls.displaySelectedTOF(mode='auto')
+		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
 	
 	def selectManualTOF(cls):
 		cls.manualTOFWidgetsEnabled(True)
+		cls.displaySelectedTOF(mode='manual')
+		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
 
 	def manualTOFWidgetsEnabled(cls, status):
 		cls.ui.TOFmanualFromLabel.setEnabled(status)
@@ -234,6 +265,18 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualToLabel.setEnabled(status)
 		cls.ui.TOFmanualToUnitsValue.setEnabled(status)
 		cls.ui.TOFmanualToValue.setEnabled(status)
+
+	def manualTOFtextFieldValidated(cls):
+		tof1 = float(cls.ui.TOFmanualFromValue.text())
+		tof2 = float(cls.ui.TOFmanualToValue.text())
+		tof_min = min([tof1, tof2]) * 1000
+		tof_max = max([tof1, tof2]) * 1000
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxdata  = _list_nxsdata_sorted[cls.current_table_row_selected]
+		_nxdata.active_data.tof_range = [tof_min, tof_max]
+		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
+		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
 		
 	def tableWidgetCellSelected(cls, row, col):
 		cls.current_table_row_selected = row
@@ -425,7 +468,7 @@ class SFcalculator(QtGui.QMainWindow):
 			row = cls.current_table_row_selected
 		list_nxsdata_sorted = cls.list_nxsdata_sorted
 		nxsdata = list_nxsdata_sorted[row]
-		cls.clearPlot(yt_plot=True, yi_plot=True)
+		cls.clearPlot(yt_plot=yt_plot, yi_plot=yi_plot)
 		if nxsdata is None:
 			return
 		if yt_plot:
@@ -450,7 +493,10 @@ class SFcalculator(QtGui.QMainWindow):
 		back1 = int(back1)
 		back2 = int(back2)
 		
-		[tof1, tof2] = nxsdata.active_data.tof_range_auto
+		if cls.ui.dataTOFautoMode.isChecked():
+			[tof1, tof2] = nxsdata.active_data.tof_range_auto
+		else:
+			[tof1, tof2] = nxsdata.active_data.tof_range
 		tof1 = float(tof1) * 1e-3
 		tof2 = float(tof2) * 1e-3
 

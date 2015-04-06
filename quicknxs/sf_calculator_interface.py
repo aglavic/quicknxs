@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Tue Mar 31 14:28:15 2015
+# Created: Mon Apr  6 13:26:01 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -391,6 +391,8 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.dataBackFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.back1SpinBoxValueChanged)
         QtCore.QObject.connect(self.dataPeakFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.peak1SpinBoxValueChanged)
         QtCore.QObject.connect(self.dataPeakToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.peak2SpinBoxValueChanged)
+        QtCore.QObject.connect(self.TOFmanualFromValue, QtCore.SIGNAL("returnPressed()"), MainWindow.manualTOFtextFieldValidated)
+        QtCore.QObject.connect(self.TOFmanualToValue, QtCore.SIGNAL("returnPressed()"), MainWindow.manualTOFtextFieldValidated)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
