@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
 from display_metadata import DisplayMetadata
 from logging import info
-from utilities import touch, import_ascii_file, makeSureFileHasExtension, convertTOF
+from utilities import touch, import_ascii_file, makeSureFileHasExtension, convertTOF, str2bool
 from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
@@ -260,6 +260,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def selectAutoTOF(cls):
 		cls.manualTOFWidgetsEnabled(False)
 		cls.saveManualTOFmode()
+		cls.saveTOFautoFlag(auto_flag = True)
 		cls.displaySelectedTOFandUpdateTable(mode='auto')
 		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
 	
@@ -268,7 +269,10 @@ class SFcalculator(QtGui.QMainWindow):
 		_nxdata  = _list_nxsdata_sorted[cls.current_table_row_selected]
 		_nxdata.active_data.tof_auto_flag = auto_flag
 		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
-		cls.list_nxsdata_sorted = _list_nxsdata_sorted		
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
+		_big_table = cls.big_table
+		_big_table[cls.current_table_row_selected, 16] = str(auto_flag)
+		cls.big_table = _big_table
 	
 	def selectManualTOF(cls):
 		cls.manualTOFWidgetsEnabled(True)
@@ -453,6 +457,13 @@ class SFcalculator(QtGui.QMainWindow):
 			_nxdata.active_data.peak = peak
 			_nxdata.active_data.back = back
 			_nxdata.active_data.tof_range_auto = tof
+
+			_big_table = cls.big_table
+			tof_auto_flag = str2bool(_big_table[row, 16])
+			_nxdata.active_data.tof_auto_flag = tof_auto_flag
+			cls.ui.dataTOFautoMode.setChecked(tof_auto_flag)
+			cls.ui.dataTOFmanualMode.setChecked(not tof_auto_flag)
+
 			_list_nxsdata_sorted[row] = _nxdata
 			cls.list_nxsdata_sorted = _list_nxsdata_sorted
 			cls.updatePeakBackTofWidgets(row)

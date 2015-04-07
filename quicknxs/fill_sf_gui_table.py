@@ -96,6 +96,8 @@ class FillSFGuiTable(object):
 							_value = ("%.2f" % _value)
 						else:
 							_value = str(int(float(_value)))
+					else:
+						_value = "%d"%_value
 					_brush.setColor(colors.VALUE_OK)
 				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)

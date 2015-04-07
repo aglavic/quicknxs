@@ -1253,6 +1253,7 @@ class LRDataset(object):
   tof_range_auto_with_margin = None # [tof_min_auto_margin, tof_max_auto_margin]
   tof_range = ['0','0'] # [tof_min, tof_max] manual tof defined
   tof_axis = None # manual tof axis
+  tof_auto_flag = True
 
   #tof_edges=None #: array of time of flight edges for the bins [µs]
   #tof_edges_full = None
@@ -1309,7 +1310,6 @@ class LRDataset(object):
   low_res_flag = True
   #tof_range = ['0','0'] 
   tof_units = 'ms'
-  tof_auto_flag = True
   q_range = ['0','0']
   lambda_range = ['0','0']
   theta = 0

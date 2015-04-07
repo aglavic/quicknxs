@@ -317,6 +317,15 @@ def findFullFileName(run_number):
 	except:
 		full_file_name = ''
 	return full_file_name
+    
+def str2bool(v):
+    try:
+	return v.lower() in ("yes", "true", "t", "1")
+    except:
+	if float(v) == 0:
+	    return False
+	else:
+	    return True
 
     
     

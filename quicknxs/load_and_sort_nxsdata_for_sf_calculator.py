@@ -48,7 +48,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		if _list_NXSData_sorted == []:
 			return
 		nbr_row = len(_list_NXSData_sorted)
-		nbr_column = len(cls.list_metadata) + 7 # +1 for the run number + peak/back/tof
+		nbr_column = len(cls.list_metadata) + 8 # +1 for the run number + peak/back/tof/auto_flag
 		big_table = np.empty((nbr_row, nbr_column))
 		index_row = 0
 		for _nxs in _list_NXSData_sorted:
@@ -75,7 +75,10 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			_back2 = _active_data.back[1]
 			_tof1 = _active_data.tof_range_auto[0]
 			_tof2 = _active_data.tof_range_auto[1]
-			_tof_auto_flag = _active_data.tof_auto_flag
+			if _active_data.tof_auto_flag:
+				_tof_auto_flag =  1
+			else:
+				_tof_auto_flag = 0
 			
 			_row = [_run_number,
 			        _nbr_attenuator, 
