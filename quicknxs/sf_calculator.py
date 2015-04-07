@@ -221,7 +221,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_configObject = LoadSFConfigAndPopulateGUI(parent=cls, filename=filename)
 		return _configObject.getLoadingStatus()
 		
-	def displaySelectedTOF(cls, mode='auto'):
+	def displaySelectedTOFandUpdateTable(cls, mode='auto'):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxdata  = _list_nxsdata_sorted[cls.current_table_row_selected]
 		if mode == 'auto':
@@ -231,6 +231,7 @@ class SFcalculator(QtGui.QMainWindow):
 		tof1 = float(tof1) * 1e-3
 		tof2 = float(tof2) * 1e-3
 		
+		cls.updateTableWithTOFinfos(tof1, tof2)
 		cls.ui.TOFmanualFromValue.setText("%.2f"%tof1)
 		cls.ui.TOFmanualToValue.setText("%.2f"%tof2)
 	
@@ -252,19 +253,43 @@ class SFcalculator(QtGui.QMainWindow):
 		tof1 = 1000 * tof_min
 		tof2 = 1000 * tof_max
 		_nxdata.active_data.tof_range = [tof1, tof2]
+		_nxdata.active_data.tof_auto_flag = True
 		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
 		cls.list_nxsdata_sorted = _list_nxsdata_sorted
 
 	def selectAutoTOF(cls):
 		cls.manualTOFWidgetsEnabled(False)
 		cls.saveManualTOFmode()
-		cls.displaySelectedTOF(mode='auto')
+		cls.displaySelectedTOFandUpdateTable(mode='auto')
 		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
+	
+	def saveTOFautoFlag(cls, auto_flag = False):
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxdata  = _list_nxsdata_sorted[cls.current_table_row_selected]
+		_nxdata.active_data.tof_auto_flag = auto_flag
+		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted		
 	
 	def selectManualTOF(cls):
 		cls.manualTOFWidgetsEnabled(True)
-		cls.displaySelectedTOF(mode='manual')
+		cls.saveTOFautoFlag(auto_flag = False)
+		cls.displaySelectedTOFandUpdateTable(mode='manual')
 		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
+
+	def updateTableWithTOFinfos(cls, tof1_ms, tof2_ms):
+		_row = cls.current_table_row_selected
+		_item = QtGui.QTableWidgetItem("%.2f"%tof1_ms)
+		_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+		_brush_OK = QtGui.QBrush()
+		_brush_OK.setColor(colors.VALUE_OK)			
+		_item.setForeground(_brush_OK)
+		cls.ui.tableWidget.setItem(_row, 14, _item)
+		_item = QtGui.QTableWidgetItem("%.2f"%tof2_ms)
+		_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+		_brush_OK = QtGui.QBrush()
+		_brush_OK.setColor(colors.VALUE_OK)			
+		_item.setForeground(_brush_OK)
+		cls.ui.tableWidget.setItem(_row, 15, _item)
 
 	def manualTOFWidgetsEnabled(cls, status):
 		cls.ui.TOFmanualFromLabel.setEnabled(status)
@@ -277,6 +302,8 @@ class SFcalculator(QtGui.QMainWindow):
 	def manualTOFtextFieldValidated(cls):
 		tof1 = float(cls.ui.TOFmanualFromValue.text())
 		tof2 = float(cls.ui.TOFmanualToValue.text())
+		cls.updateTableWithTOFinfos(tof1, tof2)
+		
 		tof_min = min([tof1, tof2]) * 1000
 		tof_max = max([tof1, tof2]) * 1000
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
@@ -371,7 +398,14 @@ class SFcalculator(QtGui.QMainWindow):
 				_item.setForeground(_brush_OK)
 			cls.ui.tableWidget.setItem(row, 13, _item)
 
-			[tof1, tof2] = _nxdata.active_data.tof_range_auto
+			tof_auto_flag = _nxdata.active_data.tof_auto_flag
+			cls.ui.dataTOFautoMode.setChecked(tof_auto_flag)
+			cls.ui.dataTOFmanualMode.setChecked(not tof_auto_flag)
+			if tof_auto_flag:
+				[tof1, tof2] = _nxdata.active_data.tof_range_auto
+			else:
+				[tof1, tof2] = _nxdata.active_data.tof_range
+
 			if float(tof1) > 1000:
 				tof1 = "%.2f" % (float(tof1)/1000)
 				tof2 = "%.2f" % (float(tof2)/1000)

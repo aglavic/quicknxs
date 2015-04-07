@@ -73,6 +73,11 @@ class CreateSFConfigXmlFile(object):
 			str_array.append('  <incident_medium_index_selected>' + str(_incident_medium_index) + '</incident_medium_index_selected>\n')
 			str_array.append('  <is_using_si_slits>' + str(cls.sf_gui.is_using_si_slits) + '</is_using_si_slits>\n')
 			str_array.append('  <scaling_factor_file>' + cls.sf_gui.ui.sfFileNameLabel.text() + '</scaling_factor_file>\n')
+
+			_current_table_row_selected = cls.sf_gui.current_table_row_selected
+			_list_nxsdata_sorted = cls.sf_gui.list_nxsdata_sorted
+			_active_data = _list_nxsdata_sorted[_current_table_row_selected].active_data
+			str_array.append('  <tof_range_auto>' + str(_active_data.tof_auto_flag) + '</tof_range_auto>\n')
 			
 			for col in range(16):
 				if col == 1:

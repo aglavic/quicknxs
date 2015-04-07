@@ -75,6 +75,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			_back2 = _active_data.back[1]
 			_tof1 = _active_data.tof_range_auto[0]
 			_tof2 = _active_data.tof_range_auto[1]
+			_tof_auto_flag = _active_data.tof_auto_flag
 			
 			_row = [_run_number,
 			        _nbr_attenuator, 
@@ -86,7 +87,8 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			        _Si2W, _Si2H,
 			        _peak1, _peak2,
 			        _back1, _back2, 
-			        _tof1, _tof2]
+			        _tof1, _tof2, 
+			        _tof_auto_flag]
 			big_table[index_row, :] = _row
 			index_row += 1
 		cls.big_table = big_table

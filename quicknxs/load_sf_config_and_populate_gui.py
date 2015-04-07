@@ -72,7 +72,7 @@ class LoadSFConfigAndPopulateGUI(object):
 		nbr_row = len(_reflsfdata)
 		cls.nbr_row_loaded = nbr_row
 		
-		_sf_data_table = empty((nbr_row, 16), dtype=object)
+		_sf_data_table = empty((nbr_row, 17), dtype=object)
 		for index, node in enumerate(_reflsfdata):
 			if index == 0:
 				cls.incident_medium_index_selected =int(cls.getNodeValue(node, 'incident_medium_index_selected'))
@@ -96,6 +96,7 @@ class LoadSFConfigAndPopulateGUI(object):
 			_sf_data_table[index, 13] = cls.getNodeValue(node, 'back2')
 			_sf_data_table[index, 14] = cls.getNodeValue(node, 'tof1')
 			_sf_data_table[index, 15] = cls.getNodeValue(node, 'tof2')
+			_sf_data_table[index, 16] = cls.getNodeValue(node, 'tof_range_auto')
 			
 		cls.sf_data_table = _sf_data_table
 
