@@ -160,6 +160,9 @@ class Plot2dSFDialogREFL(QDialog):
 		self.ui.y_pixel_vs_tof_plot.set_ylabel(u'y (pixel)')
 
 		[tmin,tmax,peak1,peak2,back1,back2,backFlag] = self.retrieveTofPeakBack()
+		if tmin > 1000: # stay in ms
+			tmin /= 1000
+			tmax /= 1000
 		
 		t1 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axvline(tmin, color=colors.TOF_SELECTION_COLOR)
 		t2 = self.ui.y_pixel_vs_tof_plot.canvas.ax.axvline(tmax, color=colors.TOF_SELECTION_COLOR)
@@ -264,7 +267,7 @@ class Plot2dSFDialogREFL(QDialog):
 			tof_range_manual_max /= 1000.
 		self.manual_max_tof = tof_range_manual_max
 		self.manual_min_tof = tof_range_manual_min
-		self.manual_auto_tof_clicked()
+		self.manual_auto_tof_clicked(plot_refresh=False)
 	
 		self.ui.peak1.setValue(int(peak[0]))
 		self.ui.peak2.setValue(int(peak[1]))
@@ -272,14 +275,15 @@ class Plot2dSFDialogREFL(QDialog):
 		self.ui.back1.setValue(int(back[0]))
 		self.ui.back2.setValue(int(back[1]))
 
-		self.activate_or_not_back_widgets(back_flag)
+		self.activate_or_not_back_widgets(back_flag, plot_refresh=False)
 				
-	def activate_or_not_back_widgets(self, back_flag):
+	def activate_or_not_back_widgets(self, back_flag, plot_refresh=True):
 		self.ui.back_flag.setChecked(back_flag)
 		self.ui.back1.setEnabled(back_flag)
 		self.ui.back2.setEnabled(back_flag)
 		self.check_peak_back_input_validity()
-		self.update_plots()
+		if plot_refresh:
+			self.update_plots()
 			
 	def sort_peak_back_input(self):		
 		peak1 = self.ui.peak1.value()
@@ -365,7 +369,7 @@ class Plot2dSFDialogREFL(QDialog):
 		self.manual_max_tof = tof_max
 		self.update_pixel_vs_tof_tab_plot()
 	
-	def manual_auto_tof_clicked(self):
+	def manual_auto_tof_clicked(self, plot_refresh=True):
 		isManualChecked = self.ui.tof_manual_flag.isChecked()
 		self.activate_tof_widgets(isManualChecked)
 		if isManualChecked:
@@ -376,6 +380,8 @@ class Plot2dSFDialogREFL(QDialog):
 			_to_value = "%.2f"%self.auto_max_tof
 		self.ui.tof_from.setText(_from_value)
 		self.ui.tof_to.setText(_to_value)
+		if plot_refresh:
+			self.update_pixel_vs_tof_tab_plot()
 		
 	def activate_tof_widgets(self, status):
 		self.ui.tof_from.setEnabled(status)
@@ -384,7 +390,7 @@ class Plot2dSFDialogREFL(QDialog):
 		self.ui.tof_to_label.setEnabled(status)
 		self.ui.tof_from_units.setEnabled(status)
 		self.ui.tof_to_units.setEnabled(status)
-		self.update_pixel_vs_tof_tab_plot()
+#		self.update_pixel_vs_tof_tab_plot()
 
 	def closeEvent(self, event=None):
 		# collect values
