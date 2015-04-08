@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Tue Apr  7 16:01:21 2015
+# Created: Wed Apr  8 13:00:38 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -217,7 +217,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_40 = QtGui.QHBoxLayout()
         self.horizontalLayout_40.setObjectName("horizontalLayout_40")
         self.dataTOFmanualLabel = QtGui.QLabel(self.centralwidget)
-        self.dataTOFmanualLabel.setEnabled(True)
+        self.dataTOFmanualLabel.setEnabled(False)
         self.dataTOFmanualLabel.setObjectName("dataTOFmanualLabel")
         self.horizontalLayout_40.addWidget(self.dataTOFmanualLabel)
         self.frame_14 = QtGui.QFrame(self.centralwidget)
@@ -230,6 +230,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_42 = QtGui.QHBoxLayout()
         self.horizontalLayout_42.setObjectName("horizontalLayout_42")
         self.dataTOFautoMode = QtGui.QRadioButton(self.frame_14)
+        self.dataTOFautoMode.setEnabled(False)
         self.dataTOFautoMode.setChecked(True)
         self.dataTOFautoMode.setAutoExclusive(True)
         self.dataTOFautoMode.setObjectName("dataTOFautoMode")
@@ -237,7 +238,7 @@ class Ui_MainWindow(object):
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_42.addItem(spacerItem2)
         self.dataTOFmanualMode = QtGui.QRadioButton(self.frame_14)
-        self.dataTOFmanualMode.setEnabled(True)
+        self.dataTOFmanualMode.setEnabled(False)
         self.dataTOFmanualMode.setAutoExclusive(True)
         self.dataTOFmanualMode.setObjectName("dataTOFmanualMode")
         self.horizontalLayout_42.addWidget(self.dataTOFmanualMode)

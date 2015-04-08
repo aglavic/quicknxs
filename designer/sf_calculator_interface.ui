@@ -501,7 +501,7 @@
         <item>
          <widget class="QLabel" name="dataTOFmanualLabel">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>TOF range</string>
@@ -524,6 +524,9 @@
             <layout class="QHBoxLayout" name="horizontalLayout_42">
              <item>
               <widget class="QRadioButton" name="dataTOFautoMode">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Auto</string>
                </property>
@@ -554,7 +557,7 @@
              <item>
               <widget class="QRadioButton" name="dataTOFmanualMode">
                <property name="enabled">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="text">
                 <string>Manual</string>

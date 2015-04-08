@@ -57,6 +57,7 @@ class SFcalculator(QtGui.QMainWindow):
 			wdg_enabled = True
 		else:
 			wdg_enabled = False
+			cls.setWindowTitle(cls.window_title)
 		cls.enabledWidgets(wdg_enabled)
 		cls.testPeakBackErrorWidgets()
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
@@ -107,6 +108,13 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.dataPeakToValue.setEnabled(is_enabled)
 		cls.ui.dataBackgroundFlag.setEnabled(is_enabled)
 		cls.ui.tableWidget.setEnabled(is_enabled)
+		cls.ui.incidentMediumComboBox.setEnabled(is_enabled)
+		cls.ui.dataTOFautoMode.setEnabled(is_enabled)
+		cls.ui.dataTOFmanualMode.setEnabled(is_enabled)
+		if is_enabled:
+			cls.manualTOFWidgetsEnabled(cls.ui.dataTOFmanualMode.isChecked())
+		else:
+			cls.manualTOFWidgetsEnabled(False)
 		
 	def runSequenceLineEditEvent(cls):
 		run_sequence = cls.ui.runSequenceLineEdit.text()
@@ -157,6 +165,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.selectNewRowAfterRemovingRow()
 		cls.fillGuiTable()
 		cls.tableWidgetCellSelected(cls.current_table_row_selected, 0)
+		cls.checkGui()
 		
 	def selectNewRowAfterRemovingRow(cls):
 		_row = cls.current_table_row_selected
@@ -189,6 +198,10 @@ class SFcalculator(QtGui.QMainWindow):
 	def removeAll(cls):
 		cls.big_table = None
 		cls.list_nxsdata_sorted = []
+		cls.selectNewRowAfterRemovingRow()
+		cls.fillGuiTable()
+		cls.tableWidgetCellSelected(cls.current_table_row_selected, 0)
+		cls.checkGui()
 		
 	def displayMetadata(cls):
 		[row,col] = cls.getCurrentRowColumnSelected()
@@ -365,6 +378,8 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
 		
 	def updateTableWidgetPeakBackTof(cls, row, force_spinbox_source=False):
+		if row == -1:
+			return
 		is_peak_back_fully_defined = cls.isPeakOrBackFullyDefined(row=row)
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxdata  = _list_nxsdata_sorted[row]
@@ -560,7 +575,8 @@ class SFcalculator(QtGui.QMainWindow):
 
 	def displayPlot(cls, row=-1, yt_plot=True, yi_plot=True):
 		if row == -1:
-			row = cls.current_table_row_selected
+			cls.clearPlot()
+			return
 		list_nxsdata_sorted = cls.list_nxsdata_sorted
 		nxsdata = list_nxsdata_sorted[row]
 		cls.clearPlot(yt_plot=yt_plot, yi_plot=yi_plot)
