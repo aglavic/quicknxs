@@ -103,6 +103,7 @@ class FillSFGuiTable(object):
 					_brush.setColor(colors.VALUE_OK)
 				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)
+				_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)				
 				parent.ui.tableWidget.setItem(r,k,_item)
 
 			_run_number = str(int(_row[0]))
