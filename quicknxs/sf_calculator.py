@@ -126,6 +126,7 @@ class SFcalculator(QtGui.QMainWindow):
 			info('No Files loaded!')
 		cls.ui.runSequenceLineEdit.setText("")
 		cls.checkGui()
+		cls.tableWidgetCellSelected(0, 0)
 		
 	def fillGuiTable(cls):
 		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
