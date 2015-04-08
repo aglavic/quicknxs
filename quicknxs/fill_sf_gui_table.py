@@ -27,6 +27,8 @@ class FillSFGuiTable(object):
 
 		cls.clearTable()
 		_big_table = table
+		if table == None:
+			return
 		parent.big_table = _big_table
 		[nbr_row, nbr_column] = _big_table.shape
 		for r in range(nbr_row):
@@ -97,7 +99,7 @@ class FillSFGuiTable(object):
 						else:
 							_value = str(int(float(_value)))
 					else:
-						_value = "%d"%_value
+						_value = "%d"%int(float(_value))
 					_brush.setColor(colors.VALUE_OK)
 				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)

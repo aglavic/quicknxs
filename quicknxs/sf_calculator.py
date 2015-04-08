@@ -147,10 +147,48 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.displayMetadata()
 			
 	def removeRow(cls):
-		print 'removeRow'
+		_row = cls.current_table_row_selected
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		nbr_entries = len(_list_nxsdata_sorted)
+		if nbr_entries <= 1:
+			cls.removeAll()
+		else:
+			cls.removeRowNumber(_row)
+		cls.selectNewRowAfterRemovingRow()
+		cls.fillGuiTable()
+		cls.tableWidgetCellSelected(cls.current_table_row_selected, 0)
+		
+	def selectNewRowAfterRemovingRow(cls):
+		_row = cls.current_table_row_selected
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		nbr_entries = len(_list_nxsdata_sorted)
+		
+		if nbr_entries == 0:
+			cls.current_table_row_selected = -1
+		elif nbr_entries == 1:
+			cls.current_table_row_selected = 0
+		else:
+			if _row == nbr_entries:
+				cls.current_table_row_selected -= 1
+			elif _row < nbr_entries:
+				cls.current_table_row_selected = _row
+			else:
+				cls.current_table_row_selected -= 1
+			
+	def removeRowNumber(cls, row):
+		_big_table  = cls.big_table
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		nbr_entries = len(_list_nxsdata_sorted)
+		
+		new_big_table = np.delete(_big_table, row, 0)
+		cls.big_table = new_big_table
+		
+		del(_list_nxsdata_sorted[row])
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
 		
 	def removeAll(cls):
-		print 'removeAll'
+		cls.big_table = None
+		cls.list_nxsdata_sorted = []
 		
 	def displayMetadata(cls):
 		[row,col] = cls.getCurrentRowColumnSelected()
@@ -489,6 +527,9 @@ class SFcalculator(QtGui.QMainWindow):
 
 	def displaySelectedRow(cls, row):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		if _list_nxsdata_sorted == []:
+			cls.clearPlot()
+			return
 		_nxsdata_row = _list_nxsdata_sorted[row]
 		if _nxsdata_row is None:
 			cls.loadSelectedNxsRuns(row)
