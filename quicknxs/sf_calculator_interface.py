@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Thu Apr  9 13:59:41 2015
+# Created: Thu Apr  9 14:59:32 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -390,7 +390,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.dataTOFautoMode, QtCore.SIGNAL("clicked()"), MainWindow.selectAutoTOF)
         QtCore.QObject.connect(self.dataTOFmanualMode, QtCore.SIGNAL("clicked()"), MainWindow.selectManualTOF)
         QtCore.QObject.connect(self.actionLoadingConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loadingConfiguration)
-        QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL("cellPressed(int,int)"), MainWindow.tableWidgetCellSelected)
+        QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL("cellClicked(int,int)"), MainWindow.tableWidgetCellSelected)
         QtCore.QObject.connect(self.dataBackToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.back2SpinBoxValueChanged)
         QtCore.QObject.connect(self.dataBackFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.back1SpinBoxValueChanged)
         QtCore.QObject.connect(self.dataPeakFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.peak1SpinBoxValueChanged)

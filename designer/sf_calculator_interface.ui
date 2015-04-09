@@ -1070,7 +1070,7 @@
   </connection>
   <connection>
    <sender>tableWidget</sender>
-   <signal>cellPressed(int,int)</signal>
+   <signal>cellClicked(int,int)</signal>
    <receiver>MainWindow</receiver>
    <slot>tableWidgetCellSelected()</slot>
    <hints>

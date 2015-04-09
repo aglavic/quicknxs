@@ -216,6 +216,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def removeAll(cls):
 		cls.big_table = None
 		cls.list_nxsdata_sorted = []
+		cls.loaded_list_of_runs = []
 		cls.selectNewRowAfterRemovingRow()
 		cls.fillGuiTable()
 		cls.tableWidgetCellSelected(cls.current_table_row_selected, 0)
