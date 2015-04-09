@@ -900,6 +900,7 @@
      <string>File</string>
     </property>
     <addaction name="actionLoadingConfiguration"/>
+    <addaction name="actionSavingAsConfiguration"/>
     <addaction name="actionSavingConfiguration"/>
    </widget>
    <addaction name="menuFile"/>
@@ -916,12 +917,23 @@
     <string>Meta+O</string>
    </property>
   </action>
-  <action name="actionSavingConfiguration">
+  <action name="actionSavingAsConfiguration">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
     <string>Saving Configuration ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionSavingConfiguration">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Saving Configuration</string>
    </property>
    <property name="shortcut">
     <string>Meta+S</string>
@@ -993,7 +1005,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionSavingConfiguration</sender>
+   <sender>actionSavingAsConfiguration</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>savingConfiguration()</slot>
@@ -1184,12 +1196,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSavingConfiguration</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>savingConfiguration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
   <slot>tableWidgetRightClick()</slot>
   <slot>browseFile()</slot>
-  <slot>savingConfiguration()</slot>
+  <slot>savingAsConfiguration()</slot>
   <slot>selectAutoTOF()</slot>
   <slot>selectManualTOF()</slot>
   <slot>loadingConfiguration()</slot>
@@ -1201,5 +1229,6 @@
   <slot>back2SpinBoxValueChanged()</slot>
   <slot>manualTOFtextFieldValidated()</slot>
   <slot>incidentMediumComboBoxChanged()</slot>
+  <slot>savingConfiguration()</slot>
  </slots>
 </ui>

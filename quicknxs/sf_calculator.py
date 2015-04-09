@@ -27,7 +27,7 @@ class SFcalculator(QtGui.QMainWindow):
 	list_nxsdata_sorted = []
 	window_title = 'SF Calculator - '
 	current_table_row_selected = -1
-	current_loaded_file = ''
+	current_loaded_file = 'tmp.xml'
 	time_click1 = -1
 	
 	def __init__(cls, main_gui, parent=None):
@@ -36,6 +36,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls._open_instances.append(cls)
 		cls.ui = Ui_MainWindow()
 		cls.ui.setupUi(cls)
+		cls.initCurrentLoadedFile()
 		cls.initGui()
 		cls.checkGui()
 		cls.initConnections()
@@ -53,14 +54,20 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.peak2_error.setPalette(palette)
 		cls.ui.error_label.setPalette(palette)
 	
+	def initCurrentLoadedFile(cls):
+		_current_loaded_file = cls.current_loaded_file
+		_home_path = os.path.expanduser('~')
+		cls.current_loaded_file = _home_path + '/' +  _current_loaded_file
+	
 	def checkGui(cls):
 		if (cls.loaded_list_of_runs != []) or (cls.big_table != None):
 			wdg_enabled = True
 		else:
 			wdg_enabled = False
-			cls.setWindowTitle(cls.window_title)
+			cls.setWindowTitle(cls.window_title + cls.current_loaded_file)
 		cls.enabledWidgets(wdg_enabled)
 		cls.testPeakBackErrorWidgets()
+		cls.ui.actionSavingAsConfiguration.setEnabled(wdg_enabled)
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
 		
@@ -266,7 +273,7 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.checkGui()
 			cls.tableWidgetCellSelected(0, 0)
 
-	def savingConfiguration(cls):
+	def savingAsConfiguration(cls):
 		_path = cls.main_gui.path_config
 		filename = QtGui.QFileDialog.getSaveFileName(cls,
 		                                             'Save SF Configuration File',
@@ -280,6 +287,14 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.exportConfiguration(filename)
 			cls.setWindowTitle(cls.window_title + filename)
 			
+	def savingConfiguration(cls):
+		filename = cls.current_loaded_file
+		cls.resetFileHasBeenModified()
+		cls.main_gui.path_config = os.path.dirname(filename)
+		filename = makeSureFileHasExtension(filename)
+		cls.exportConfiguration(filename)
+		cls.setWindowTitle(cls.window_title + filename)
+					
 	def exportConfiguration(cls, filename):
 		_configObject= CreateSFConfigXmlFile(parent=cls, filename=filename)
 		
