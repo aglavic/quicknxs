@@ -27,6 +27,7 @@ class SFcalculator(QtGui.QMainWindow):
 	list_nxsdata_sorted = []
 	window_title = 'SF Calculator - '
 	current_table_row_selected = -1
+	current_loaded_file = ''
 	time_click1 = -1
 	
 	def __init__(cls, main_gui, parent=None):
@@ -62,6 +63,15 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.testPeakBackErrorWidgets()
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
+		
+	def fileHasBeenModified(cls):
+		dialog_title = cls.windowTitle()
+		new_dialog_title = dialog_title + '*'
+		cls.setWindowTitle(new_dialog_title)
+		
+	def resetFileHasBeenModified(cls):
+		dialog_title = cls.window_title + cls.current_loaded_file
+		cls.setWindowTitle(dialog_title)
 		
 	def single_yt_plot(cls, is_pan_or_zoom_activated):
 		SFSinglePlotClick(cls, 'yt', is_pan_or_zoom_activated = is_pan_or_zoom_activated)
@@ -247,6 +257,8 @@ class SFcalculator(QtGui.QMainWindow):
 		                                            "XML files (*.xml);;All files (*.*)")
 		
 		if not(filename == ''):
+			cls.current_loaded_file = filename
+			cls.resetFileHasBeenModified()			
 			cls.main_gui.path_config = os.path.dirname(filename)
 			status = cls.importConfiguration(filename)
 			if status:
@@ -261,6 +273,8 @@ class SFcalculator(QtGui.QMainWindow):
 		                                             _path,
 		                                             "XML files (*.xml);;All files (*.*)")
 		if not(filename == ''):
+			cls.current_loaded_file = filename
+			cls.resetFileHasBeenModified()
 			cls.main_gui.path_config = os.path.dirname(filename)
 			filename = makeSureFileHasExtension(filename)
 			cls.exportConfiguration(filename)
@@ -315,6 +329,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.saveTOFautoFlag(auto_flag = True)
 		cls.displaySelectedTOFandUpdateTable(mode='auto')
 		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
+		cls.fileHasBeenModified()
 	
 	def saveTOFautoFlag(cls, auto_flag = False):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
@@ -331,6 +346,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.saveTOFautoFlag(auto_flag = False)
 		cls.displaySelectedTOFandUpdateTable(mode='manual')
 		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
+		cls.fileHasBeenModified()
 
 	def updateTableWithTOFinfos(cls, tof1_ms, tof2_ms):
 		_row = cls.current_table_row_selected
@@ -368,6 +384,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
 		cls.list_nxsdata_sorted = _list_nxsdata_sorted
 		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
+		cls.fileHasBeenModified()
 		
 	def tableWidgetCellSelected(cls, row, col):
 		cls.current_table_row_selected = row
@@ -376,6 +393,9 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.displaySelectedRow(row)
 		cls.updateTableWidgetPeakBackTof(row)
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
+
+	def incidentMediumComboBoxChanged(cls):
+		cls.fileHasBeenModified()
 		
 	def updateTableWidgetPeakBackTof(cls, row, force_spinbox_source=False):
 		if row == -1:
@@ -698,6 +718,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.testPeakBackErrorWidgets()
 		cls.updateNXSData(row=cls.current_table_row_selected, source='spinbox', type=type)
 		cls.displayPlot(row=cls.current_table_row_selected, yt_plot=True, yi_plot=True)
+		cls.fileHasBeenModified()
 		
 	def updateNXSData(cls, row=0, source='spinbox', type='peak1'):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted

@@ -1168,6 +1168,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>incidentMediumComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>incidentMediumComboBoxChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1496</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1184,5 +1200,6 @@
   <slot>back1SpinBoxValueChanged()</slot>
   <slot>back2SpinBoxValueChanged()</slot>
   <slot>manualTOFtextFieldValidated()</slot>
+  <slot>incidentMediumComboBoxChanged()</slot>
  </slots>
 </ui>
