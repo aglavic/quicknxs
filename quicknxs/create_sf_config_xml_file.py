@@ -1,4 +1,4 @@
-from utilities import createAsciiFile
+from utilities import createAsciiFile, removeEmptyStrElementAndUpdateIndexSelected
 import os
 
 class CreateSFConfigXmlFile(object):
@@ -100,8 +100,9 @@ class CreateSFConfigXmlFile(object):
 	def retrieveIncidentMediumListAndIndex(cls):
 		_list = [str(cls.sf_gui.ui.incidentMediumComboBox.itemText(i)) for i in range(1,cls.sf_gui.ui.incidentMediumComboBox.count())]
 		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()-1
-		_str_list = ",".join(_list)
-		return [_str_list, _current_index]
+		[_list, current_index] = removeEmptyStrElementAndUpdateIndexSelected(_list, _current_index)
+		str_list = ",".join(_list)
+		return [_str_list, current_index]
 
 	def createConfigFile(cls):
 		createAsciiFile(cls.output_filename, cls.str_array)

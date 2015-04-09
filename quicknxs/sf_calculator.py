@@ -65,7 +65,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
 		
 	def fileHasBeenModified(cls):
-		dialog_title = cls.windowTitle()
+		dialog_title = cls.window_title
 		new_dialog_title = dialog_title + '*'
 		cls.setWindowTitle(new_dialog_title)
 		

@@ -327,5 +327,15 @@ def str2bool(v):
 	else:
 	    return True
 
-    
-    
+def removeEmptyStrElementAndUpdateIndexSelected(str_list, index_selected):
+    sz = len(str_list)
+    final_list = []
+    final_index = index_selected
+    for i in range(sz):
+	_element = str_list[i]
+	if _element.strip() != '':
+	    final_list.append(_element)
+	else:
+	    if final_index >= i:
+		final_index -= 1
+    return [final_list, final_index]
