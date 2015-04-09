@@ -65,7 +65,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
 		
 	def fileHasBeenModified(cls):
-		dialog_title = cls.window_title
+		dialog_title = cls.window_title + cls.current_loaded_file
 		new_dialog_title = dialog_title + '*'
 		cls.setWindowTitle(new_dialog_title)
 		
@@ -145,6 +145,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.runSequenceLineEdit.setText("")
 		cls.checkGui()
 		cls.tableWidgetCellSelected(0, 0)
+		cls.fileHasBeenModified()					
 		
 	def fillGuiTable(cls):
 		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
@@ -239,8 +240,7 @@ class SFcalculator(QtGui.QMainWindow):
 				touch(file_name)
 			cls.displayConfigFile(file_name)
 			cls.ui.sfFileNameLabel.setText(file_name)
-		else:
-			cls.ui.sfFileNameLabel.setText("N/A")
+			cls.fileHasBeenModified()			
 			
 	def displayConfigFile(cls, file_name):
 		data = import_ascii_file(file_name)
@@ -748,3 +748,6 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.peakBackSpinBoxValueChanged('back')
 		cls.testPeakBackErrorWidgets()
 	
+	def attenuatorValueChanged(cls, value):
+		cls.fileHasBeenModified()			
+		

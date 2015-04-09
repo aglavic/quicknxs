@@ -42,6 +42,7 @@ class FillSFGuiTable(object):
 			_widget.setMinimum(0)
 			_widget.setMaximum(20)
 			_widget.setValue(_atte)
+			QtCore.QObject.connect(_widget, QtCore.SIGNAL("valueChanged(int)"), cls.parent.attenuatorValueChanged)
 			parent.ui.tableWidget.setCellWidget(r,1,_widget)
 			
 			_lambda_min = str(float(_row[2]))

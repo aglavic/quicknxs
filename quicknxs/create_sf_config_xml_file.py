@@ -102,7 +102,7 @@ class CreateSFConfigXmlFile(object):
 		_current_index = cls.sf_gui.ui.incidentMediumComboBox.currentIndex()-1
 		[_list, current_index] = removeEmptyStrElementAndUpdateIndexSelected(_list, _current_index)
 		str_list = ",".join(_list)
-		return [_str_list, current_index]
+		return [str_list, current_index]
 
 	def createConfigFile(cls):
 		createAsciiFile(cls.output_filename, cls.str_array)
