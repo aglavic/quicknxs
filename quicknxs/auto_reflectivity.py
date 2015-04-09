@@ -367,7 +367,11 @@ class ReflectivityBuilder(Thread):
         if not self.reflectivity_active:
           new_started=self.start_new_reflectivity()
           if not new_started:
-            self.check_and_plot_newfile()
+            if not self.get_dsinfo(self.current_index) and self.newFileId>self.current_index:
+              logging.debug('Skipping run with no existing NeXus file %i.'%self.current_index)
+              self.current_index+=1
+            else:
+              self.check_and_plot_newfile()
             continue
         if not self.get_dsinfo(self.current_index):
           # if for some reason the run never existed, continue directly

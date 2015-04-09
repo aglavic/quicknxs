@@ -156,7 +156,10 @@ class Reducer(object):
     '''
     output_data=dict([(channel, []) for channel in self.channels])
     for refli in self.refls:
-      opts=refli.options
+      opts=dict(refli.options)
+      opts['gisans_no_DP']=False
+      opts['P0']=0
+      opts['PN']=0
       index=opts['number']
       fdata=self.exporter.raw_data[index]
       for channel in self.channels:
@@ -170,20 +173,22 @@ class Reducer(object):
     gridQz=dia.ui.gridQz.value()
     nslices=dia.ui.numberSlices.value()
     dia.destroy()
+    use_pf=dia.ui.usePf.isChecked()
     app=QApplication.instance()
     if result==QDialog.Accepted:
       if not dia.ui.lambdaNoDirectPulse.isChecked():
         output_data=dict([(channel, []) for channel in self.channels])
         for refli in self.refls:
           opts=dict(refli.options)
-          opts['gisans_no_DP']=False
+          opts['gisans_no_DP']=dia.ui.lambdaNoDirectPulse.isChecked()
           index=opts['number']
           fdata=self.exporter.raw_data[index]
           for channel in self.channels:
             gisans=GISANS(fdata[channel], **opts)
             output_data[channel].append(gisans)
       for channel in self.channels:
-        thread=GISANSCalculation(output_data[channel], lmin, lmax, nslices, gridQy, gridQz)
+        thread=GISANSCalculation(output_data[channel], lmin, lmax, nslices, gridQy, gridQz,
+                                 use_pf=use_pf)
         thread.start()
         while not thread.isFinished():
           app.processEvents()
@@ -193,7 +198,10 @@ class Reducer(object):
       for i in range(nslices):
         output=dict([(channel, [output_data[channel][i]]) for channel in self.channels])
         output['column_units']=['A^-1', 'A^-1', 'a.u.', 'a.u.']
-        output['column_names']=['Qy', 'Qz', 'I', 'dI']
+        if use_pf:
+          output['column_names']=['Qy', 'pf', 'I', 'dI']
+        else:
+          output['column_names']=['Qy', 'Qz', 'I', 'dI']
         lmin_i=lmin+(lmax-lmin)/nslices*i
         lmax_i=lmin+(lmax-lmin)/nslices*(i+1)
         self.exporter.output_data['GISANS_%.3f-%.3f'%(lmin_i, lmax_i)]=output
@@ -788,17 +796,18 @@ class SmoothDialog(QDialog):
 class GISANSCalculation(QThread):
   '''
     Perform gisans projection calculation in the background and
-    send a signal aver each subframe has been finished.
+    send a signal after each subframe has been finished.
   '''
   frameFinished=pyqtSignal(int)
 
-  def __init__(self, datasets, lmin, lmax, lsteps, gridQy=50, gridQz=50):
+  def __init__(self, datasets, lmin, lmax, lsteps, gridQy=50, gridQz=50, use_pf=False):
     QThread.__init__(self)
     self.datasets=datasets
     self.lmin=lmin
     self.lmax=lmax
     self.lsteps=lsteps
     self.grid=(gridQy+1, gridQz+1)
+    self.use_pf=use_pf
 
   def run(self):
     self.results=[]
@@ -820,7 +829,10 @@ class GISANSCalculation(QThread):
     I=data.S[:, :, region].flatten()
     dI=data.dS[:, :, region].flatten()
     qy=data.Qy[:, :, region].flatten()
-    qz=data.Qz[:, :, region].flatten()
+    if self.use_pf:
+      qz=data.pf[:, :, region].flatten()
+    else:
+      qz=data.Qz[:, :, region].flatten()
     for data in self.datasets[1:]:
       # add points from all datasets
       P0=len(data.lamda)-data.options['P0']
@@ -830,7 +842,10 @@ class GISANSCalculation(QThread):
       I=hstack([I, data.S[:, :, region].flatten()])
       dI=hstack([dI, data.dS[:, :, region].flatten()])
       qy=hstack([qy, data.Qy[:, :, region].flatten()])
-      qz=hstack([qz, data.Qz[:, :, region].flatten()])
+      if self.use_pf:
+        qz=hstack([qz, data.pf[:, :, region].flatten()])
+      else:
+        qz=hstack([qz, data.Qz[:, :, region].flatten()])
     Isum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=I)
     dIsum, ignore, ignore=histogram2d(qy, qz, bins=self.grid, weights=dI**2)
     Npoints, Qy, Qz=histogram2d(qy, qz, bins=self.grid)
@@ -936,7 +951,7 @@ class GISANSDialog(QDialog):
   @log_call
   def createProjectionPlots(self):
     '''
-    Start a thread that calculates porjections to be plotted.
+    Start a thread that calculates projections to be plotted.
     '''
     for child in self.ui.resultImageArea.children():
       if not type(child) is MPLWidget:
@@ -947,7 +962,8 @@ class GISANSDialog(QDialog):
     self.projection_plots=[]
     self._calculator=GISANSCalculation(self.datasets, self.ui.lambdaMin.value(),
                                        self.ui.lambdaMax.value(), self.ui.numberSlices.value(),
-                                       self.ui.gridQy.value(), self.ui.gridQz.value())
+                                       self.ui.gridQy.value(), self.ui.gridQz.value(),
+                                       self.ui.usePf.isChecked())
     self._calculator.frameFinished.connect(self.drawProjectionPlot)
     self._calculator.start()
     self._calculator.setPriority(QThread.LowPriority)
@@ -971,7 +987,10 @@ class GISANSDialog(QDialog):
     plot.canvas.ax.set_xlim(r0[1].min(), r0[1].max())
     plot.canvas.ax.set_ylim(r0[2].min(), r0[2].max())
     plot.set_xlabel(u'Q$_y$ [Å$^{-1}$]')
-    plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
+    if self.ui.usePf.isChecked():
+      plot.set_ylabel(u'p$_f$ [Å$^{-1}$]')
+    else:
+      plot.set_ylabel(u'Q$_z$ [Å$^{-1}$]')
     title=u'$\\lambda{}$=%.2f-%.2fÅ'%(result[3], result[4])
     list_title=u'λ=%.2f-%.2fÅ'%(result[3], result[4])
     plot.set_title(title)

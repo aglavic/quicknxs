@@ -1976,11 +1976,11 @@ class GISANS(Reflectivity):
   def __repr__(self):
     if type(self.origin) is list:
       fnames='+'.join([os.path.basename(item[0]) for item in self.origin])
-      output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), fnames,
+      output='<GISANS[%i,%i] "%s/%s"'%(self.Qz.shape[0], self.Qz.shape[1], fnames,
                                         self.origin[0][1])
     else:
-      output='<OffSpecular[%i] "%s/%s"'%(len(self.Qz), os.path.basename(self.origin[0]),
-                                        self.origin[1])
+      output='<GISANS[%i,%i] "%s/%s"'%(self.Qz.shape[0], self.Qz.shape[1],
+                                       os.path.basename(self.origin[0]), self.origin[1])
     if self.options['normalization'] is None:
       output+=' NOT normalized'
     output+='>'

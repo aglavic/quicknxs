@@ -30,7 +30,7 @@ def setup_logging(log_level=logging.INFO, filename='/tmp/quicknxs.log', setup_co
   else:
     rollover=False
   logfile=logging.handlers.RotatingFileHandler(filename, encoding='utf8', mode='a',
-                                               maxBytes=200*1024**2, backupCount=5)
+                                               maxBytes=200*1024**2, backupCount=20)
   if rollover: logfile.doRollover()
   formatter=logging.Formatter('[%(levelname)s] - %(asctime)s - %(threadName)s - %(filename)s:%(lineno)i:%(funcName)s %(message)s', '')
   logfile.setFormatter(formatter)

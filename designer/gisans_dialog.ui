@@ -168,8 +168,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>476</width>
-            <height>286</height>
+            <width>447</width>
+            <height>208</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -235,7 +235,7 @@
              </sizepolicy>
             </property>
             <layout class="QGridLayout" name="gridLayout">
-             <item row="0" column="3">
+             <item row="0" column="4">
               <widget class="QSpinBox" name="gridQy">
                <property name="minimum">
                 <number>20</number>
@@ -251,7 +251,7 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="3">
+             <item row="5" column="4">
               <widget class="QSpinBox" name="numberSlices">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -270,21 +270,14 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="4">
+             <item row="3" column="5">
               <widget class="QLabel" name="label_3">
                <property name="text">
                 <string>Å</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string>Grid Points Qy</string>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="3" colspan="2">
+             <item row="7" column="4" colspan="2">
               <widget class="QComboBox" name="projectionMethod">
                <item>
                 <property name="text">
@@ -293,7 +286,7 @@
                </item>
               </widget>
              </item>
-             <item row="3" column="3">
+             <item row="3" column="4">
               <widget class="QDoubleSpinBox" name="lambdaMin">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -318,33 +311,7 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="2">
-              <widget class="QLabel" name="label_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>λ-Max</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="label">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>λ-Min</string>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="3">
+             <item row="9" column="4">
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -357,27 +324,14 @@
                </property>
               </spacer>
              </item>
-             <item row="5" column="2">
-              <widget class="QLabel" name="label_5">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>No. of Slices</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="4">
+             <item row="4" column="5">
               <widget class="QLabel" name="label_4">
                <property name="text">
                 <string>Å</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="3">
+             <item row="4" column="4">
               <widget class="QDoubleSpinBox" name="lambdaMax">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -402,26 +356,6 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="2">
-              <widget class="QLabel" name="label_6">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Projection Method</string>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="2">
-              <widget class="QPushButton" name="pushButton">
-               <property name="text">
-                <string>Create Preview</string>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="2">
               <widget class="Line" name="line">
                <property name="orientation">
@@ -436,7 +370,7 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
+             <item row="1" column="4">
               <widget class="QSpinBox" name="gridQz">
                <property name="minimum">
                 <number>20</number>
@@ -452,13 +386,86 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="2" colspan="3">
+             <item row="6" column="2" colspan="4">
               <widget class="QCheckBox" name="lambdaNoDirectPulse">
                <property name="text">
                 <string>Remove Direct Pulse</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QCheckBox" name="usePf">
+               <property name="text">
+                <string>/pf</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" colspan="2">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Grid Points Qy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2" colspan="2">
+              <widget class="QLabel" name="label">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>λ-Min</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2" colspan="2">
+              <widget class="QLabel" name="label_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>λ-Max</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2" colspan="2">
+              <widget class="QLabel" name="label_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>No. of Slices</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="2" colspan="2">
+              <widget class="QLabel" name="label_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Projection Method</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="2" colspan="2">
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>Create Preview</string>
                </property>
               </widget>
              </item>
