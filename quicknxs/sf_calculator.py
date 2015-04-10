@@ -5,7 +5,7 @@ from mantid.simpleapi import *
 from load_and_sort_nxsdata_for_sf_calculator import LoadAndSortNXSDataForSFcalculator
 from display_metadata import DisplayMetadata
 from logging import info
-from utilities import touch, import_ascii_file, makeSureFileHasExtension, convertTOF, str2bool
+from utilities import touch, import_ascii_file, makeSureFileHasExtension, convertTOF, str2bool, output_2d_ascii_file, write_ascii_file
 from create_sf_config_xml_file import CreateSFConfigXmlFile
 from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
@@ -43,11 +43,12 @@ class SFcalculator(QtGui.QMainWindow):
 		
 	def initConnections(cls):
 		cls.ui.yt_plot.singleClick.connect(cls.single_yt_plot)
-		cls.ui.yt_plot.leaveFigure.connect(cls.leave_yt_plot)
-		cls.ui.yt_plot.toolbar.homeClicked.connect(cls.home_yt_plot)
+		cls.ui.yt_plot.toolbar.homeClicked.connect(cls.homeYtPlot)
+		cls.ui.yt_plot.toolbar.exportClicked.connect(cls.exportYtPlot)
 		
 		cls.ui.yi_plot.singleClick.connect(cls.single_yi_plot)
-		cls.ui.yi_plot.toolbar.homeClicked.connect(cls.home_yi_plot)
+		cls.ui.yi_plot.toolbar.homeClicked.connect(cls.homeYiPlot)
+		cls.ui.yi_plot.toolbar.exportClicked.connect(cls.exportYiPlot)
 		
 	def initGui(cls):
 		palette = QtGui.QPalette()
@@ -58,16 +59,59 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.peak2_error.setPalette(palette)
 		cls.ui.error_label.setPalette(palette)
 	
-	def leave_yt_plot(cls):
-		pass
+	def exportYtPlot(cls):
+		row = cls.current_table_row_selected
+		list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_data = list_nxsdata_sorted[row]
+		_active_data = _data.active_data
+		run_number = _active_data.run_number
+		default_filename = 'REFL_' + run_number + '_2dPxVsTof.txt'
+		path = cls.main_gui.path_ascii
+		default_filename = path + '/' + default_filename
+		filename = QtGui.QFileDialog.getSaveFileName(cls, 'Create 2D Pixel VS TOF', default_filename)
+		
+		if str(filename).strip() == '':
+			info('User Canceled Outpout ASCII')
+			return
+		  
+		cls.main_gui.path_ascii = os.path.dirname(filename)
+		image = _active_data.ytofdata
+		output_2d_ascii_file(filename, image)
 	
-	def home_yt_plot(cls):
+	def exportYiPlot(cls):
+		row = cls.current_table_row_selected
+		list_nxsdata = cls.list_nxsdata_sorted
+		_data = list_nxsdata[row]
+		_active_data = _data.active_data
+		run_number = _active_data.run_number
+		default_filename = 'REFL_' + run_number + '_rpx.txt'
+		path = cls.main_gui.path_ascii
+		default_filename = path + '/' + default_filename
+		filename = QtGui.QFileDialog.getSaveFileName(cls, 'Create Counts vs Pixel ASCII File', default_filename)
+		
+		if str(filename).strip() == '':
+			info('User Canceled Output ASCII')
+			return
+		
+		cls.main_gui.path_ascii = os.path.dirname(filename)
+	      
+		ycountsdata = _active_data.ycountsdata
+		pixelaxis = range(len(ycountsdata))
+		
+		text = ['#Counts vs Pixels','#Pixel - Counts']
+		sz = len(pixelaxis)
+		for i in range(sz):
+			_line = str(pixelaxis[i]) + ' ' + str(ycountsdata[i])
+			text.append(_line)
+		write_ascii_file(filename, text)
+		
+	def homeYtPlot(cls):
 		[xmin, xmax, ymin, ymax] = cls.ui.yt_plot.toolbar.home_settings
 		cls.ui.yt_plot.canvas.ax.set_xlim([xmin, xmax])
 		cls.ui.yt_plot.canvas.ax.set_ylim([ymin, ymax])
 		cls.ui.yt_plot.canvas.draw()
 	
-	def home_yi_plot(cls):
+	def homeYiPlot(cls):
 		[xmin, xmax, ymin, ymax] = cls.ui.yi_plot.toolbar.home_settings
 		cls.ui.yi_plot.canvas.ax.set_xlim([xmin, xmax])
 		cls.ui.yi_plot.canvas.ax.set_ylim([ymin, ymax])
