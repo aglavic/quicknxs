@@ -45,10 +45,14 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.yt_plot.singleClick.connect(cls.single_yt_plot)
 		cls.ui.yt_plot.toolbar.homeClicked.connect(cls.homeYtPlot)
 		cls.ui.yt_plot.toolbar.exportClicked.connect(cls.exportYtPlot)
+		cls.ui.yt_plot.leaveFigure.connect(cls.leaveYtPlot)
+		cls.ui.yt_plot.logtogy.connect(cls.logyToggleYtPlot)
 		
 		cls.ui.yi_plot.singleClick.connect(cls.single_yi_plot)
 		cls.ui.yi_plot.toolbar.homeClicked.connect(cls.homeYiPlot)
 		cls.ui.yi_plot.toolbar.exportClicked.connect(cls.exportYiPlot)
+		cls.ui.yi_plot.leaveFigure.connect(cls.leaveYiPlot)
+		cls.ui.yi_plot.logtogx.connect(cls.logxToggleYiPlot)
 		
 	def initGui(cls):
 		palette = QtGui.QPalette()
@@ -58,6 +62,36 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.peak1_error.setPalette(palette)
 		cls.ui.peak2_error.setPalette(palette)
 		cls.ui.error_label.setPalette(palette)
+	
+	def logyToggleYtPlot(cls, checked):
+		row = cls.current_table_row_selected
+		list_nxsdata = cls.list_nxsdata_sorted
+		data = list_nxsdata[row]
+		if checked == 'log':
+			isLog = True
+		else:
+			isLog = False
+		data.active_data.all_plot_axis.is_yt_plot = isLog
+		list_nxsdata[row] = data
+		cls.list_nxsdata_sorted = list_nxsdata
+	
+	def logxToggleYiPlot(cls, checked):
+		row = cls.current_table_row_selected
+		list_nxsdata = cls.list_nxsdata_sorted
+		data = list_nxsdata[row]
+		if checked == 'log':
+			isLog = True
+		else:
+			isLog = False
+		data.active_data.all_plot_axis.is_yi_plot = isLog
+		list_nxsdata[row] = data
+		cls.list_nxsdata_sorted = list_nxsdata
+	
+	def leaveYtPlot(cls):
+		pass
+	
+	def leaveYiPlot(cls):
+		pass
 	
 	def exportYtPlot(cls):
 		row = cls.current_table_row_selected
