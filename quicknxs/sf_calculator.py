@@ -43,7 +43,11 @@ class SFcalculator(QtGui.QMainWindow):
 		
 	def initConnections(cls):
 		cls.ui.yt_plot.singleClick.connect(cls.single_yt_plot)
+		cls.ui.yt_plot.leaveFigure.connect(cls.leave_yt_plot)
+		cls.ui.yt_plot.toolbar.homeClicked.connect(cls.home_yt_plot)
+		
 		cls.ui.yi_plot.singleClick.connect(cls.single_yi_plot)
+		cls.ui.yi_plot.toolbar.homeClicked.connect(cls.home_yi_plot)
 		
 	def initGui(cls):
 		palette = QtGui.QPalette()
@@ -53,6 +57,21 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.peak1_error.setPalette(palette)
 		cls.ui.peak2_error.setPalette(palette)
 		cls.ui.error_label.setPalette(palette)
+	
+	def leave_yt_plot(cls):
+		pass
+	
+	def home_yt_plot(cls):
+		[xmin, xmax, ymin, ymax] = cls.ui.yt_plot.toolbar.home_settings
+		cls.ui.yt_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+		cls.ui.yt_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		cls.ui.yt_plot.canvas.draw()
+	
+	def home_yi_plot(cls):
+		[xmin, xmax, ymin, ymax] = cls.ui.yi_plot.toolbar.home_settings
+		cls.ui.yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+		cls.ui.yi_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		cls.ui.yi_plot.canvas.draw()
 	
 	def initCurrentLoadedFile(cls):
 		_current_loaded_file = cls.current_loaded_file
@@ -317,13 +336,13 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualFromValue.setText("%.2f"%tof1)
 		cls.ui.TOFmanualToValue.setText("%.2f"%tof2)
 	
-	def tofValidation(cls, tof_auto_switch, tof1, tof2):	
+	def tofValidation(cls, tof_auto_switch, tof1, tof2, with_plot_update=True):	
 		cls.ui.dataTOFautoMode.setChecked(tof_auto_switch)
 		cls.ui.dataTOFmanualMode.setChecked(not tof_auto_switch)
 		cls.manualTOFWidgetsEnabled(not tof_auto_switch)
 		cls.ui.TOFmanualFromValue.setText("%.2f"%tof1)
 		cls.ui.TOFmanualToValue.setText("%.2f"%tof2)
-		cls.manualTOFtextFieldValidated()
+		cls.manualTOFtextFieldValidated(with_plot_update=with_plot_update)
 	
 	def saveManualTOFmode(cls):
 		tof1 = float(cls.ui.TOFmanualFromValue.text())
@@ -387,7 +406,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.TOFmanualToUnitsValue.setEnabled(status)
 		cls.ui.TOFmanualToValue.setEnabled(status)
 
-	def manualTOFtextFieldValidated(cls):
+	def manualTOFtextFieldValidated(cls, with_plot_update=True):
 		tof1 = float(cls.ui.TOFmanualFromValue.text())
 		tof2 = float(cls.ui.TOFmanualToValue.text())
 		cls.updateTableWithTOFinfos(tof1, tof2)
@@ -399,7 +418,8 @@ class SFcalculator(QtGui.QMainWindow):
 		_nxdata.active_data.tof_range = [tof_min, tof_max]
 		_list_nxsdata_sorted[cls.current_table_row_selected] = _nxdata
 		cls.list_nxsdata_sorted = _list_nxsdata_sorted
-		cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
+		if with_plot_update:
+			cls.displayPlot(row=cls.current_table_row_selected, yi_plot=False)
 		cls.fileHasBeenModified()
 		
 	def tableWidgetCellSelected(cls, row, col):
@@ -611,19 +631,21 @@ class SFcalculator(QtGui.QMainWindow):
 
 	def displayPlot(cls, row=-1, yt_plot=True, yi_plot=True):
 		if row == -1:
-			cls.clearPlot()
-			return
+			row=cls.current_table_row_selected
+			if row == -1:
+				cls.clearPlot()
+				return
 		list_nxsdata_sorted = cls.list_nxsdata_sorted
 		nxsdata = list_nxsdata_sorted[row]
 		cls.clearPlot(yt_plot=yt_plot, yi_plot=yi_plot)
 		if nxsdata is None:
 			return
 		if yt_plot:
-			cls.plotYT(nxsdata)
+			cls.plotYT(nxsdata, row)
 		if yi_plot:
-			cls.plotYI(nxsdata)
+			cls.plotYI(nxsdata, row)
 			
-	def plotYT(cls, nxsdata):
+	def plotYT(cls, nxsdata, row):
 		ytof = nxsdata.active_data.ytofdata
 		tof_min_ms = float(nxsdata.active_data.tof_axis_auto_with_margin[0])/1000
 		tof_max_ms = float(nxsdata.active_data.tof_axis_auto_with_margin[-1])/1000
@@ -635,11 +657,7 @@ class SFcalculator(QtGui.QMainWindow):
 		[peak1, peak2] = nxsdata.active_data.peak
 		peak1 = int(peak1)
 		peak2 = int(peak2)
-		
-		[back1, back2] = nxsdata.active_data.back
-		back1 = int(back1)
-		back2 = int(back2)
-		
+				
 		if cls.ui.dataTOFautoMode.isChecked():
 			[tof1, tof2] = nxsdata.active_data.tof_range_auto
 		else:
@@ -651,37 +669,93 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.yt_plot.canvas.ax.axvline(tof2, color=colors.TOF_SELECTION_COLOR)
 		
 		cls.ui.yt_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
-		cls.ui.yt_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		cls.ui.yt_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)		
 		
-		cls.ui.yt_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
-		cls.ui.yt_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
-
-		cls.ui.yt_plot.canvas.draw()
+		if nxsdata.active_data.back_flag:
+			[back1, back2] = nxsdata.active_data.back
+			back1 = int(back1)
+			back2 = int(back2)
+			cls.ui.yt_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			cls.ui.yt_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+			
+		if nxsdata.active_data.all_plot_axis.is_yt_ylog:
+			cls.ui.yt_plot.canvas.ax.set_yscale('log')
+		else:
+			cls.ui.yt_plot.canvas.ax.set_yscale('linear')
+				
+		if nxsdata.active_data.all_plot_axis.yt_data_interval is None:
+			if (nxsdata.active_data.new_detector_geometry_flag):
+				ylim = 303
+			else:
+				ylim = 255
+			cls.ui.yt_plot.canvas.ax.set_ylim(0, ylim)
+			cls.ui.yt_plot.canvas.draw()
+			[xmin, xmax] = cls.ui.yt_plot.canvas.ax.xaxis.get_view_interval()
+			[ymin, ymax] = cls.ui.yt_plot.canvas.ax.yaxis.get_view_interval()
+			nxsdata.active_data.all_plot_axis.yt_data_interval = [xmin, xmax, ymin, ymax]
+			nxsdata.active_data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
+			cls.ui.yt_plot.toolbar.home_settings = [xmin, xmax, ymin, ymax]
+			cls.saveNXSdata(nxsdata, row)
+		else:
+			[xmin, xmax, ymin, ymax] = nxsdata.active_data.all_plot_axis.yt_view_interval
+			cls.ui.yt_plot.canvas.ax.set_xlim([xmin, xmax])
+			cls.ui.yt_plot.canvas.ax.set_ylim([ymin, ymax])
+			cls.ui.yt_plot.canvas.draw()
 	
-	def plotYI(cls, nxsdata):
+	def plotYI(cls, nxsdata, row):
 		ycountsdata = nxsdata.active_data.ycountsdata
 		xaxis = range(len(ycountsdata))
 		cls.ui.yi_plot.canvas.ax.plot(ycountsdata, xaxis)
 		cls.ui.yi_plot.canvas.ax.set_xlabel(u'counts')
 		cls.ui.yi_plot.canvas.ax.set_ylabel(u'y (pixel)')
-		cls.ui.yi_plot.canvas.ax.set_xscale('log')
+#		cls.ui.yi_plot.canvas.ax.set_xscale('log')
+		
+		if nxsdata.active_data.all_plot_axis.yi_data_interval is None:
+			if (nxsdata.active_data.new_detector_geometry_flag):
+				xlim = 255
+				ylim = 303
+			else:
+				xlim = 303
+				ylim = 255
+			cls.ui.yi_plot.canvas.ax.set_ylim(0, ylim)
 
 		[peak1, peak2] = nxsdata.active_data.peak
 		peak1 = int(peak1)
 		peak2 = int(peak2)
-		
-		[back1, back2] = nxsdata.active_data.back
-		back1 = int(back1)
-		back2 = int(back2)
-		
 		cls.ui.yi_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
 		cls.ui.yi_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
 		
-		cls.ui.yi_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
-		cls.ui.yi_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
-
-		cls.ui.yi_plot.canvas.draw()
+		if nxsdata.active_data.back_flag:
+			[back1, back2] = nxsdata.active_data.back
+			back1 = int(back1)
+			back2 = int(back2)
+			cls.ui.yi_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			cls.ui.yi_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+			
+		if nxsdata.active_data.all_plot_axis.is_yi_xlog:
+			cls.ui.yi_plot.canvas.ax.set_xscale('log')
+		else:
+			cls.ui.yi_plot.canvas.ax.set_xscale('linear')
 		
+		if nxsdata.active_data.all_plot_axis.yi_data_interval is None:
+			cls.ui.yi_plot.canvas.draw()
+			[xmin, xmax] = cls.ui.yi_plot.canvas.ax.xaxis.get_view_interval()
+			[ymin, ymax] = cls.ui.yi_plot.canvas.ax.yaxis.get_view_interval()
+			nxsdata.active_data.all_plot_axis.yi_data_interval = [xmin, xmax, ymin, ymax]
+			nxsdata.active_data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
+			cls.ui.yi_plot.toolbar.home_settings = [xmin, xmax, ymin, ymax]
+			cls.saveNXSdata(nxsdata, row)
+		else:
+			[xmin, xmax, ymin, ymax] = nxsdata.active_data.all_plot_axis.yi_view_interval
+			cls.ui.yi_plot.canvas.ax.set_xlim([xmin, xmax])
+			cls.ui.yi_plot.canvas.ax.set_ylim([ymin, ymax])
+			cls.ui.yi_plot.canvas.draw()
+		
+	def saveNXSdata(cls, nxsdata, row):
+		list_nxsdata_sorted = cls.list_nxsdata_sorted
+		list_nxsdata_sorted[row] = nxsdata
+		cls.list_nxsdata_sorted = list_nxsdata_sorted
+
 	def clearPlot(cls, yt_plot=True, yi_plot=True):
 		if yt_plot:
 			cls.ui.yt_plot.clear()
@@ -702,7 +776,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def back2SpinBoxValueChanged(cls):
 		cls.peakBackSpinBoxValueChanged('back2')
 
-	def peakBackSpinBoxValueChanged(cls, type):
+	def peakBackSpinBoxValueChanged(cls, type, with_plot_update=True):
 		if 'peak' in type:
 			peak1 = cls.ui.dataPeakFromValue.value()
 			peak2 = cls.ui.dataPeakToValue.value()
@@ -733,7 +807,8 @@ class SFcalculator(QtGui.QMainWindow):
 		
 		cls.testPeakBackErrorWidgets()
 		cls.updateNXSData(row=cls.current_table_row_selected, source='spinbox', type=type)
-		cls.displayPlot(row=cls.current_table_row_selected, yt_plot=True, yi_plot=True)
+		if with_plot_update:
+			cls.displayPlot(row=cls.current_table_row_selected, yt_plot=True, yi_plot=True)
 		cls.fileHasBeenModified()
 		
 	def updateNXSData(cls, row=0, source='spinbox', type='peak1'):
@@ -760,8 +835,8 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.updateTableWidgetPeakBackTof(row, force_spinbox_source=(source == 'spinbox'))
 		
 	def dataPeakAndBackValidation(cls, with_plot_update=True):
-		cls.peakBackSpinBoxValueChanged('peak')
-		cls.peakBackSpinBoxValueChanged('back')
+		cls.peakBackSpinBoxValueChanged('peak', with_plot_update=with_plot_update)
+		cls.peakBackSpinBoxValueChanged('back', with_plot_update=with_plot_update)
 		cls.testPeakBackErrorWidgets()
 	
 	def attenuatorValueChanged(cls, value):

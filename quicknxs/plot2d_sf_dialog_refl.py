@@ -34,6 +34,7 @@ class Plot2dSFDialogREFL(QDialog):
 		self.setWindowTitle('Detector and  Pixel vs TOF  views')
 		self.init_gui()
 		self.populate_widgets()
+		self.init_home_settings()
 		
 		self.update_detector_tab_plot()
 		self.update_pixel_vs_tof_tab_plot()
@@ -81,6 +82,10 @@ class Plot2dSFDialogREFL(QDialog):
 		image = _active_data.xydata
 		utilities.output_2d_ascii_file(filename, image)
 
+	def 	init_home_settings(self):
+		home_settings_1 = self.main_gui.ui.yt_plot.toolbar.home_settings
+		self.ui.y_pixel_vs_tof_plot.toolbar.home_settings = home_settings_1
+		
 	def leave_figure_plot(self):
 		[xmin, xmax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.xaxis.get_view_interval()
 		[ymin, ymax]= self.ui.y_pixel_vs_tof_plot.canvas.ax.yaxis.get_view_interval()
@@ -90,7 +95,8 @@ class Plot2dSFDialogREFL(QDialog):
 		self.data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
 		
 	def home_clicked_plot(self):
-		[xmin,xmax,ymin,ymax] = self.data.all_plot_axis.yt_data_interval
+#		[xmin,xmax,ymin,ymax] = self.data.all_plot_axis.yt_data_interval
+		[xmin,xmax,ymin,ymax] = self.ui.y_pixel_vs_tof_plot.toolbar.home_settings
 		self.ui.y_pixel_vs_tof_plot.canvas.ax.set_xlim([xmin,xmax])
 		self.ui.y_pixel_vs_tof_plot.canvas.ax.set_ylim([ymin,ymax])
 		self.ui.y_pixel_vs_tof_plot.draw()
@@ -393,21 +399,20 @@ class Plot2dSFDialogREFL(QDialog):
 #		self.update_pixel_vs_tof_tab_plot()
 
 	def closeEvent(self, event=None):
-		# collect values
 		[tof1, tof2, peak1, peak2, back1, back2, backFlag]= self.retrieveTofPeakBack()
 		self.main_gui.ui.dataPeakFromValue.setValue(peak1)
 		self.main_gui.ui.dataPeakToValue.setValue(peak2)
 		self.main_gui.ui.dataBackFromValue.setValue(back1)
 		self.main_gui.ui.dataBackToValue.setValue(back2)
 		self.main_gui.ui.dataBackgroundFlag.setChecked(backFlag)
-		self.main_gui.dataPeakAndBackValidation(False)
+		self.main_gui.dataPeakAndBackValidation(with_plot_update=False)
 		self.main_gui.ui.dataBackFromLabel.setEnabled(backFlag)
 		self.main_gui.ui.dataBackFromValue.setEnabled(backFlag)
 		self.main_gui.ui.dataBackToLabel.setEnabled(backFlag)
 		self.main_gui.ui.dataBackToValue.setEnabled(backFlag)
 		
 		tof_auto_switch = self.ui.tof_auto_flag.isChecked()
-		self.main_gui.tofValidation(tof_auto_switch, tof1, tof2)
+		self.main_gui.tofValidation(tof_auto_switch, tof1, tof2, with_plot_update=False)
 			
 		self.main_gui.displayPlot()
 		

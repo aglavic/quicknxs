@@ -238,7 +238,7 @@ class DisplayPlots(object):
 			cls.it_plot_ui.canvas.ax.set_yscale('linear')
 		cls.it_plot_ui.canvas.draw()
 
-		return
+#		return
 			
 		if cls.activeData.all_plot_axis.it_data_interval is None:
 			cls.it_plot_ui.canvas.draw()
