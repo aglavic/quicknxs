@@ -63,14 +63,14 @@ class SFcalculator(QtGui.QMainWindow):
 	
 	def home_yt_plot(cls):
 		[xmin, xmax, ymin, ymax] = cls.ui.yt_plot.toolbar.home_settings
-		cls.ui.yt_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-		cls.ui.yt_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		cls.ui.yt_plot.canvas.ax.set_xlim([xmin, xmax])
+		cls.ui.yt_plot.canvas.ax.set_ylim([ymin, ymax])
 		cls.ui.yt_plot.canvas.draw()
 	
 	def home_yi_plot(cls):
 		[xmin, xmax, ymin, ymax] = cls.ui.yi_plot.toolbar.home_settings
-		cls.ui.yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-		cls.ui.yi_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		cls.ui.yi_plot.canvas.ax.set_xlim([xmin, xmax])
+		cls.ui.yi_plot.canvas.ax.set_ylim([ymin, ymax])
 		cls.ui.yi_plot.canvas.draw()
 	
 	def initCurrentLoadedFile(cls):
