@@ -65,6 +65,8 @@ class SFcalculator(QtGui.QMainWindow):
 	def logxToggleYiPlot(cls, checked):
 		row = cls.current_table_row_selected
 		list_nxsdata = cls.list_nxsdata_sorted
+		if list_nxsdata == []:
+			return
 		data = list_nxsdata[row]
 		if checked == 'log':
 			isLog = True
@@ -77,6 +79,8 @@ class SFcalculator(QtGui.QMainWindow):
 	def leaveYtPlot(cls):
 		row = cls.current_table_row_selected
 		list_nxsdata = cls.list_nxsdata_sorted
+		if list_nxsdata == []:
+			return
 		data = list_nxsdata[row]
 		[xmin,xmax] = cls.ui.yt_plot.canvas.ax.xaxis.get_view_interval()
 		[ymin,ymax] = cls.ui.yt_plot.canvas.ax.yaxis.get_view_interval()
@@ -277,7 +281,8 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.displayMetadata()
 			
 	def removeRow(cls):
-		_row = cls.current_table_row_selected
+		_selection = cls.ui.tableWidget.selectedRanges()[0]
+		_row = _selection.topRow()
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		nbr_entries = len(_list_nxsdata_sorted)
 		if nbr_entries <= 1:
