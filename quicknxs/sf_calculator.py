@@ -94,6 +94,8 @@ class SFcalculator(QtGui.QMainWindow):
 	def leaveYiPlot(cls):
 		row = cls.current_table_row_selected
 		list_nxsdata = cls.list_nxsdata_sorted
+		if list_nxsdata == []:
+			return
 		data = list_nxsdata[row]
 		[xmin,xmax] = cls.ui.yi_plot.canvas.ax.xaxis.get_view_interval()
 		[ymin,ymax] = cls.ui.yi_plot.canvas.ax.yaxis.get_view_interval()
