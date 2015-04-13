@@ -75,10 +75,30 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.list_nxsdata_sorted = list_nxsdata
 	
 	def leaveYtPlot(cls):
-		pass
+		row = cls.current_table_row_selected
+		list_nxsdata = cls.list_nxsdata_sorted
+		data = list_nxsdata[row]
+		[xmin,xmax] = cls.ui.yt_plot.canvas.ax.xaxis.get_view_interval()
+		[ymin,ymax] = cls.ui.yt_plot.canvas.ax.yaxis.get_view_interval()
+		cls.ui.yt_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+		cls.ui.yt_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		cls.ui.yt_plot.draw()
+		data.active_data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
+		list_nxsdata[row] = data
+		cls.list_nxsdata_sorted = list_nxsdata
 	
 	def leaveYiPlot(cls):
-		pass
+		row = cls.current_table_row_selected
+		list_nxsdata = cls.list_nxsdata_sorted
+		data = list_nxsdata[row]
+		[xmin,xmax] = cls.ui.yi_plot.canvas.ax.xaxis.get_view_interval()
+		[ymin,ymax] = cls.ui.yi_plot.canvas.ax.yaxis.get_view_interval()
+		cls.ui.yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+		cls.ui.yi_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+		cls.ui.yi_plot.draw()
+		data.active_data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
+		list_nxsdata[row] = data
+		cls.list_nxsdata_sorted = list_nxsdata
 	
 	def exportYtPlot(cls):
 		row = cls.current_table_row_selected
