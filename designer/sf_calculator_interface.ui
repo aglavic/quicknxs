@@ -1227,6 +1227,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editIncidentMediumList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1636</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1245,5 +1261,6 @@
   <slot>manualTOFtextFieldValidated()</slot>
   <slot>incidentMediumComboBoxChanged()</slot>
   <slot>savingConfiguration()</slot>
+  <slot>editIncidentMediumList()</slot>
  </slots>
 </ui>

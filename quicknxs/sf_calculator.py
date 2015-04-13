@@ -12,6 +12,7 @@ from fill_sf_gui_table import FillSFGuiTable
 from load_nx_data import LoadNXData
 from sf_single_plot_click import SFSinglePlotClick
 from check_sf_run_reduction_button_status import CheckSfRunReductionButtonStatus
+from incident_medium_list_editor import IncidentMediumListEditor
 
 import colors
 import numpy as np
@@ -244,6 +245,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.dataBackgroundFlag.setEnabled(is_enabled)
 		cls.ui.tableWidget.setEnabled(is_enabled)
 		cls.ui.incidentMediumComboBox.setEnabled(is_enabled)
+		cls.ui.toolButton.setEnabled(is_enabled)
 		cls.ui.dataTOFautoMode.setEnabled(is_enabled)
 		cls.ui.dataTOFmanualMode.setEnabled(is_enabled)
 		if is_enabled:
@@ -944,3 +946,6 @@ class SFcalculator(QtGui.QMainWindow):
 	def attenuatorValueChanged(cls, value):
 		cls.fileHasBeenModified()			
 		
+	def editIncidentMediumList(cls):
+		_incident_medium_object = IncidentMediumListEditor(parent=cls)
+		_incident_medium_object.show()

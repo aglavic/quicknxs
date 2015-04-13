@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Mon Apr 13 17:08:50 2015
+# Created: Mon Apr 13 17:26:15 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,7 +34,7 @@ class Ui_MainWindow(object):
         self.incidentMediumComboBox.addItem("")
         self.horizontalLayout_2.addWidget(self.incidentMediumComboBox)
         self.toolButton = QtGui.QToolButton(self.centralwidget)
-        self.toolButton.setEnabled(False)
+        self.toolButton.setEnabled(True)
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout_2.addWidget(self.toolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -405,6 +405,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.TOFmanualToValue, QtCore.SIGNAL("returnPressed()"), MainWindow.manualTOFtextFieldValidated)
         QtCore.QObject.connect(self.incidentMediumComboBox, QtCore.SIGNAL("currentIndexChanged(int)"), MainWindow.incidentMediumComboBoxChanged)
         QtCore.QObject.connect(self.actionSavingConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.savingConfiguration)
+        QtCore.QObject.connect(self.toolButton, QtCore.SIGNAL("clicked()"), MainWindow.editIncidentMediumList)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
