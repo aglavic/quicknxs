@@ -11,6 +11,7 @@ from load_sf_config_and_populate_gui import LoadSFConfigAndPopulateGUI
 from fill_sf_gui_table import FillSFGuiTable
 from load_nx_data import LoadNXData
 from sf_single_plot_click import SFSinglePlotClick
+from check_sf_run_reduction_button_status import CheckSfRunReductionButtonStatus
 
 import colors
 import numpy as np
@@ -21,6 +22,7 @@ class SFcalculator(QtGui.QMainWindow):
 	main_gui = None
 	data_list = []
 	big_table = None
+	big_table_status = None  # only a fully True table will validate the GO_REDUCTION button
 	big_table_nxdata = []
 	is_using_si_slits = False
 	loaded_list_of_runs = []
@@ -180,6 +182,12 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.actionSavingAsConfiguration.setEnabled(wdg_enabled)
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
+		cls.checkRunReductionButton()
+
+	def checkRunReductionButton(cls):
+		_check_status_object = CheckSfRunReductionButtonStatus(parent=cls)
+		_is_everything_ok_to_go = _check_status_object.isEverythingReady()
+		cls.ui.generateSFfileButton.setEnabled(_is_everything_ok_to_go)
 		
 	def fileHasBeenModified(cls):
 		dialog_title = cls.window_title + cls.current_loaded_file
@@ -532,6 +540,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxdata  = _list_nxsdata_sorted[row]
 		if (not is_peak_back_fully_defined) or force_spinbox_source:
+			
 			cls.updatePeakBackTofWidgets(row)
 			_at_least_one_bad = False
 
@@ -902,6 +911,7 @@ class SFcalculator(QtGui.QMainWindow):
 		if with_plot_update:
 			cls.displayPlot(row=cls.current_table_row_selected, yt_plot=True, yi_plot=True)
 		cls.fileHasBeenModified()
+		cls.checkGui()
 		
 	def updateNXSData(cls, row=0, source='spinbox', type='peak1'):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted

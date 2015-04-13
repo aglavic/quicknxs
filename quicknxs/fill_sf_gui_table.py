@@ -117,7 +117,7 @@ class FillSFGuiTable(object):
 			_item.setForeground(_brush)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r, 0, _item)
-
+			
 	def clearTable(cls):
 		nbrRow = cls.parent.ui.tableWidget.rowCount()
 		if nbrRow > 0:

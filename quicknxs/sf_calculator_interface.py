@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Thu Apr  9 14:59:32 2015
+# Created: Mon Apr 13 17:08:50 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,6 +33,10 @@ class Ui_MainWindow(object):
         self.incidentMediumComboBox.setObjectName("incidentMediumComboBox")
         self.incidentMediumComboBox.addItem("")
         self.horizontalLayout_2.addWidget(self.incidentMediumComboBox)
+        self.toolButton = QtGui.QToolButton(self.centralwidget)
+        self.toolButton.setEnabled(False)
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_2.addWidget(self.toolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -377,6 +381,8 @@ class Ui_MainWindow(object):
         self.actionSavingConfiguration = QtGui.QAction(MainWindow)
         self.actionSavingConfiguration.setEnabled(False)
         self.actionSavingConfiguration.setObjectName("actionSavingConfiguration")
+        self.actionEdit_Incident_Medium_List = QtGui.QAction(MainWindow)
+        self.actionEdit_Incident_Medium_List.setObjectName("actionEdit_Incident_Medium_List")
         self.menuFile.addAction(self.actionLoadingConfiguration)
         self.menuFile.addAction(self.actionSavingAsConfiguration)
         self.menuFile.addAction(self.actionSavingConfiguration)
@@ -407,6 +413,7 @@ class Ui_MainWindow(object):
         self.runSequenceLineEdit.setToolTip(QtGui.QApplication.translate("MainWindow", "1234 or 1234,1236,1239 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
         self.runSequenceLineEdit.setText(QtGui.QApplication.translate("MainWindow", "120142, 120143", None, QtGui.QApplication.UnicodeUTF8))
         self.incidentMediumComboBox.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select or Define Incident Medium ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolButton.setText(QtGui.QApplication.translate("MainWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
         self.back2_error.setText(QtGui.QApplication.translate("MainWindow", "*", None, QtGui.QApplication.UnicodeUTF8))
@@ -446,13 +453,14 @@ class Ui_MainWindow(object):
         self.sfFileNameLabel.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SF FILE", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLoadingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Loading Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "Configuration", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoadingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadingConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+O", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSavingAsConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Saving Configuration ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSavingAsConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save As ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSavingAsConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+Shift+S", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSavingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Saving Configuration", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSavingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSavingConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+S", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEdit_Incident_Medium_List.setText(QtGui.QApplication.translate("MainWindow", "Edit Incident Medium List ...", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidgetnolog import MPLWidgetNoLog
 from .mplwidgetxlog import MPLWidgetXLog

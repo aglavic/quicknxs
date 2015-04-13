@@ -54,6 +54,16 @@
           </item>
          </widget>
         </item>
+        <item>
+         <widget class="QToolButton" name="toolButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -897,7 +907,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Configuration</string>
     </property>
     <addaction name="actionLoadingConfiguration"/>
     <addaction name="actionSavingAsConfiguration"/>
@@ -911,7 +921,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Loading Configuration ...</string>
+    <string>Load ...</string>
    </property>
    <property name="shortcut">
     <string>Meta+O</string>
@@ -922,7 +932,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Saving Configuration ...</string>
+    <string>Save As ...</string>
    </property>
    <property name="shortcut">
     <string>Meta+Shift+S</string>
@@ -933,10 +943,15 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Saving Configuration</string>
+    <string>Save</string>
    </property>
    <property name="shortcut">
     <string>Meta+S</string>
+   </property>
+  </action>
+  <action name="actionEdit_Incident_Medium_List">
+   <property name="text">
+    <string>Edit Incident Medium List ...</string>
    </property>
   </action>
  </widget>
