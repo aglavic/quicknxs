@@ -13,6 +13,7 @@ from load_nx_data import LoadNXData
 from sf_single_plot_click import SFSinglePlotClick
 from check_sf_run_reduction_button_status import CheckSfRunReductionButtonStatus
 from incident_medium_list_editor import IncidentMediumListEditor
+from reduction_sf_calculator import ReductionSfCalculator
 
 import colors
 import numpy as np
@@ -949,3 +950,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def editIncidentMediumList(cls):
 		_incident_medium_object = IncidentMediumListEditor(parent=cls)
 		_incident_medium_object.show()
+		
+	def generateSFfile(cls):
+		runReduction = ReductionSfCalculator(parent=cls)
+		

@@ -32,7 +32,7 @@
            <string>1234 or 1234,1236,1239 or 1234-1238</string>
           </property>
           <property name="text">
-           <string>120142, 120143</string>
+           <string>120153-120154</string>
           </property>
          </widget>
         </item>
@@ -1243,6 +1243,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>generateSFfileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>generateSFfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1588</x>
+     <y>1100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1262,5 +1278,6 @@
   <slot>incidentMediumComboBoxChanged()</slot>
   <slot>savingConfiguration()</slot>
   <slot>editIncidentMediumList()</slot>
+  <slot>generateSFfile()</slot>
  </slots>
 </ui>
