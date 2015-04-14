@@ -17,8 +17,10 @@ class SortNXSData(object):
 						
 		_sortedArrayOfNXSData = [arrayOfNXSDataToSort[0]]
 		_positionIndexNXSDataToPosition=0
-		for indexToPosition in range(1,nbr_runs):
-			_nxsdataToPosition = arrayOfNXSDataToSort[indexToPosition]
+		
+		for source_index in range(1,nbr_runs):
+			_is_same_nxs = False
+			_nxsdataToPosition = arrayOfNXSDataToSort[source_index]
 			for indexInPlace in range(len(_sortedArrayOfNXSData)):
 				_nxsdataToCompareWith = _sortedArrayOfNXSData[indexInPlace]
 				compareTwoNXSData = CompareTwoNXSDataForSFcalculator(_nxsdataToCompareWith, _nxsdataToPosition)
@@ -30,14 +32,16 @@ class SortNXSData(object):
 					_positionIndexNXSDataToPosition += 1
 				else:
 					_new_nxsdata = cls.mergedNXSData(_nxsdataToPosition, _nxsdataToCompareWith)
-					_sortedArrayOfNXSData[indexToPosition] = _new_nxsdata
+					_sortedArrayOfNXSData[indexInPlace] = _new_nxsdata
+					_is_same_nxs = True
 					break
-			_sortedArrayOfNXSData.insert(_positionIndexNXSDataToPosition, _nxsdataToPosition)
+			if not _is_same_nxs:
+				_sortedArrayOfNXSData.insert(_positionIndexNXSDataToPosition, _nxsdataToPosition)
 		cls.sortedArrayOfNXSData = _sortedArrayOfNXSData	
 					
 	def mergedNXSData(cls, nxsdata1, nxsdata2):
-		_full_file_name1 = nxsdata1.active_data.full_file_name
-		_full_file_name2 = nxsdata2.active_data.full_file_name
+		_full_file_name1 = nxsdata1.active_data.filename
+		_full_file_name2 = nxsdata2.active_data.filename
 		_new_nxsdata =  NXSData([_full_file_name1, _full_file_name2], bins=500)
 		return _new_nxsdata
 	
