@@ -3,7 +3,6 @@ from PyQt4.QtCore import Qt
 from incident_medium_list_editor_interface import Ui_Dialog as UiDialog
 from utilities import removeEmptyStrElementAndUpdateIndexSelected
 
-
 class IncidentMediumListEditor(QDialog):
 	
 	sf_gui = None
@@ -16,7 +15,6 @@ class IncidentMediumListEditor(QDialog):
 		cls.setWindowModality(False)
 		cls.ui = UiDialog()
 		cls.ui.setupUi(cls)
-		
 		cls.initGui()
 		
 	def initGui(cls):
@@ -30,5 +28,12 @@ class IncidentMediumListEditor(QDialog):
 		cls.ui.textEdit.setText(_text)
 		
 	def validateEvent(cls):
-		print 'in validate'
+		text_medium = cls.ui.textEdit.toPlainText()
+		text_list = text_medium.split('\n')
+		[text_list, current_index] = removeEmptyStrElementAndUpdateIndexSelected(text_list, cls.current_index)
+		text_list.insert(0, 'Select or Define Incident Medium ...')
+		cls.sf_gui.ui.incidentMediumComboBox.clear()
+		cls.sf_gui.ui.incidentMediumComboBox.addItems(text_list)
+		cls.sf_gui.ui.incidentMediumComboBox.setCurrentIndex(current_index)
+		cls.close()
 		

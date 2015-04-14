@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Incident Medium List</string>
+   <string>Incident Medium List Editor</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

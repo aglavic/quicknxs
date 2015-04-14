@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/incident_medium_list_editor_interface.ui'
 #
-# Created: Mon Apr 13 17:58:44 2015
+# Created: Tue Apr 14 09:04:35 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,6 +35,6 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Incident Medium List", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Incident Medium List Editor", None, QtGui.QApplication.UnicodeUTF8))
         self.validateButton.setText(QtGui.QApplication.translate("Dialog", "Validate", None, QtGui.QApplication.UnicodeUTF8))
 
