@@ -30,6 +30,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 		cls.list_NXSData = []
 		_list_runs = cls.list_runs
 		for _runs in _list_runs:
+			print _runs
 			_full_file_name = utilities.findFullFileName(_runs)
 			if _full_file_name != '':
 				_data = NXSData(_full_file_name, bins=500, is_auto_peak_finder=True)

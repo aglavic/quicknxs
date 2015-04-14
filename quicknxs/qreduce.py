@@ -243,6 +243,8 @@ class NXSData(object):
         #raise RuntimeError, 'No file found for index %i'%filename
       #filename=fn
     
+    cls.list_run_numbers = []
+    
     all_options=cls._get_all_options(options)
     if type(filename) == type([]):
       for i in range(len(filename)):
@@ -366,6 +368,7 @@ class NXSData(object):
         _lambda_requested_1 = ''
         _lambda_requested_2 = ''
         nxs = 'ws_event'
+        _list_run_numbers = []
         for _filename in filename:
 
           try:
@@ -375,7 +378,7 @@ class NXSData(object):
               
               # retrieve lambda requested value
               mt_run = nxs.getRun()
-              self.list_run_numbers.append(nxs.getRun().getProperty('run_number').value) #TODO HARDCODED STRING
+              _list_run_numbers.append(mt_run.getProperty('run_number').value) #TODO HARDCODED STRING
               _lambda_requested_1 = mt_run.getProperty('LambdaRequest').value #TODO HARDCODED STRING
               _index += 1
             else:
@@ -388,11 +391,14 @@ class NXSData(object):
                 debug('Lambda Requested of files do not match!')
                 info('Lambda Requested do not match!')
                 return False
-
+              _list_run_numbers.append(mt_run.getProperty('run_number').value)
+              
               nxs=Plus(LHSWorkspace=randomString,
                    RHSWorkspace='tmp',OutputWorkspace=randomString)
               DeleteWorkspace(tmp)
             
+            self.list_run_numbers = _list_run_numbers
+          
           except IOError:
             strFilename = ",".join(filename)
             debug('Could not read nxs files %s' % strFilename, exc_info=True)
