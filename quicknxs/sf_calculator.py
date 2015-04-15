@@ -33,6 +33,7 @@ class SFcalculator(QtGui.QMainWindow):
 	current_table_row_selected = -1
 	current_loaded_file = 'tmp.xml'
 	time_click1 = -1
+	bin_size = 200 #micros
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -260,7 +261,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_new_runs = oListRuns.getFinalList()
 		_old_runs = cls.loaded_list_of_runs
 		_list_runs = np.unique(np.hstack([_old_runs, _new_runs]))
-		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs)
+		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs, parent=cls)
 		_big_table = o_load_and_sort_nxsdata.getTableData()
 		if _big_table != [] :
 			cls.big_table = _big_table

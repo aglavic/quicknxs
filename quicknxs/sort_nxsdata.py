@@ -9,15 +9,17 @@ class Position(object):
 class SortNXSData(object):
 
 	sortedArrayOfNXSData = None
+	sf_gui = None
 	
-	def __init__(cls, arrayOfNXSDataToSort): 
+        def __init__(cls, arrayOfNXSDataToSort, parent=None): 
 		nbr_runs = len(arrayOfNXSDataToSort)
 		if nbr_runs<2:
-			cls.sortedArrayOfNXSData = arrayOfNXSDataToSort
+ 			cls.sortedArrayOfNXSData = arrayOfNXSDataToSort
 						
+		cls.sf_gui = parent
 		_sortedArrayOfNXSData = [arrayOfNXSDataToSort[0]]
 		_positionIndexNXSDataToPosition=0
-		
+    		
 		for source_index in range(1,nbr_runs):
 			_is_same_nxs = False
 			_nxsdataToPosition = arrayOfNXSDataToSort[source_index]
@@ -42,7 +44,7 @@ class SortNXSData(object):
 	def mergedNXSData(cls, nxsdata1, nxsdata2):
 		_full_file_name1 = nxsdata1.active_data.filename
 		_full_file_name2 = nxsdata2.active_data.filename
-		_new_nxsdata =  NXSData([_full_file_name1, _full_file_name2], bins=500)
+		_new_nxsdata =  NXSData([_full_file_name1, _full_file_name2], bins=cls.sf_gui.bin_size)
 		return _new_nxsdata
 	
 	def getSortedList(cls):

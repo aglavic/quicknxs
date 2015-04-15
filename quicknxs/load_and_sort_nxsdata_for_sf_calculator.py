@@ -18,9 +18,11 @@ class LoadAndSortNXSDataForSFcalculator(object):
 	                 'LambdaRequest','vATT']
 	big_table = []
 	is_using_si_slits = False
+	sf_gui = None
 	
-	def __init__(cls, list_runs):
+	def __init__(cls, list_runs, parent=None):
 		cls.list_runs = list_runs
+		cls.sf_gui = parent
 		cls.loadNXSData()
 		cls.sortNXSData()
 		cls.fillTable()
@@ -33,7 +35,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 			print _runs
 			_full_file_name = utilities.findFullFileName(_runs)
 			if _full_file_name != '':
-				_data = NXSData(_full_file_name, bins=500, is_auto_peak_finder=True)
+				_data = NXSData(_full_file_name, bins=cls.sf_gui.bin_size, is_auto_peak_finder=True)
 				if _data is not None:
 					cls.list_NXSData.append(_data)
 					cls.loaded_list_runs.append(_runs)
@@ -41,7 +43,7 @@ class LoadAndSortNXSDataForSFcalculator(object):
 	def sortNXSData(cls):
 		if cls.list_NXSData == []:
 			return
-		oSortNXSDataArray = SortNXSData(cls.list_NXSData)
+		oSortNXSDataArray = SortNXSData(cls.list_NXSData, parent=cls.sf_gui)
 		cls.list_NXSData_sorted = oSortNXSDataArray.getSortedList()
 
 	def fillTable(cls):
