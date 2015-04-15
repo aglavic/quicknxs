@@ -16,12 +16,12 @@ class CompareTwoNXSDataForSFcalculator(object):
 		cls.nexusToCompareWithRun = nxsdataToCompareWith.active_data.nxs.getRun()
 		cls.nexusToPositionRun = nxsdataToPosition.active_data.nxs.getRun()
 		
-		compare1 = cls.compareParameter('vATT','ascending')
+		compare1 = cls.compareParameter('LambdaRequest','descending')
 		if compare1 != 0:
 			cls.resultComparison = compare1
 			return
 		
-		compare2 = cls.compareParameter('LambdaRequest','descending')
+		compare2 = cls.compareParameter('vATT','ascending')
 		if compare2 != 0:
 			cls.resultComparison = compare2
 			return

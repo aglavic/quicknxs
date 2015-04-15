@@ -269,12 +269,13 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.loaded_list_of_runs = o_load_and_sort_nxsdata.getListOfRunsLoaded()
 			cls.is_using_si_slits = o_load_and_sort_nxsdata.is_using_si_slits
 			cls.fillGuiTable()
+			cls.ui.runSequenceLineEdit.setText("")
+			cls.checkGui()
+			cls.tableWidgetCellSelected(0, 0)
+			cls.fileHasBeenModified()					
 		else:
-			info('No Files loaded!')
-		cls.ui.runSequenceLineEdit.setText("")
-		cls.checkGui()
-		cls.tableWidgetCellSelected(0, 0)
-		cls.fileHasBeenModified()					
+			ret = QtGui.QMessageBox.information(cls, "No Files Loaded!","Check The list of runs")
+#			info('No Files loaded!')
 		
 	def fillGuiTable(cls):
 		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
