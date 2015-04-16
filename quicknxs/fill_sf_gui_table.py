@@ -120,9 +120,9 @@ class FillSFGuiTable(object):
 							_value = float(_value)/1000
 							_value = ("%.2f" % _value)
 						else:
-							_value = str(int(float(_value)))
+							_value = str(float(_value))
 					else:
-						_value = "%d"%int(float(_value))
+						_value = "%.d"%(int(float(_value)))
 					_brush.setColor(colors.VALUE_OK)
 				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)
