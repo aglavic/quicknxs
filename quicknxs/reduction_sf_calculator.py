@@ -7,6 +7,7 @@ class ReductionSfCalculator(object):
 	table_settings = []
 	index_col = [0,1,5,10,11,12,13,14,15]
 	nbr_row = -1
+	nbr_scripts = 0
 	
 	def __init__(cls, parent=None):
 		cls.sf_gui = parent
@@ -33,9 +34,46 @@ class ReductionSfCalculator(object):
 	def createScripts(cls):
 		_data = cls.table_settings
 		scripts = []
+
+		from_to_index_same_lambda = cls.generateIndexSameLambda()
+		nbr_scripts = cls.nbr_scripts
 		
+		incident_medium = cls.getIncidentMedium()
+		output_file_name = clg.getOutputFileName()
+		
+		for i in range(nbr_scripts):
+			from_index = from_to_index_same_lambda[i,0]
+			to_index = from_to_index_same_lambda[i,1]
+
+			string_runs = cls.getStringRuns(_data, from_index, to_index)
+			list_peak_back = cls.getListPeakBack(_data, from_index, to_index)
+			tof_range = clg.getTofRange(_data, from_index)
+			
+
+
+	def getStringRuns(cls, data, from_index, to_index):
+		return ''
+
+	def getListPeakBack(cls, data, from_index, to_index):
+		return []
+	
+	def getIncidentMedium(cls):
+		return ''
+	
+	def getOutputFileName(cls):
+		return ''
+	
+	def getTofRange(cls):
+		return []
+
+	
+	def generateIndexSameLambda(cls):
+		_data = cls.table_settings
+
 		lambda_list = _data[:,2]		
 		nbr_scripts = len(set(lambda_list))
+		cls.nbr_scripts = nbr_scripts
+		
 		from_to_index_same_lambda = np.zeros((nbr_scripts, 2))
 		
 		first_index_lambda = 0
@@ -51,4 +89,4 @@ class ReductionSfCalculator(object):
 			if  i == (cls.nbr_row-1):
 				from_to_index_same_lambda[index_script,:] = [ first_index_lambda, i]
 
-
+		return from_to_index_same_lambda
