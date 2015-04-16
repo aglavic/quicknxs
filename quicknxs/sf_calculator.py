@@ -196,6 +196,7 @@ class SFcalculator(QtGui.QMainWindow):
 		dialog_title = cls.window_title + cls.current_loaded_file
 		new_dialog_title = dialog_title + '*'
 		cls.setWindowTitle(new_dialog_title)
+		cls.checkGui()
 		
 	def resetFileHasBeenModified(cls):
 		dialog_title = cls.window_title + cls.current_loaded_file
