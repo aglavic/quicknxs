@@ -180,12 +180,12 @@ class SFcalculator(QtGui.QMainWindow):
 		else:
 			wdg_enabled = False
 			cls.setWindowTitle(cls.window_title + cls.current_loaded_file)
-		cls.enabledWidgets(wdg_enabled)
 		cls.testPeakBackErrorWidgets()
 		cls.ui.actionSavingAsConfiguration.setEnabled(wdg_enabled)
 		cls.ui.actionSavingConfiguration.setEnabled(wdg_enabled)
 		cls.ui.tableWidget.setEnabled(wdg_enabled)
 		cls.checkRunReductionButton()
+		cls.enabledWidgets(wdg_enabled)
 
 	def checkRunReductionButton(cls):
 		_check_status_object = CheckSfRunReductionButtonStatus(parent=cls)
@@ -396,8 +396,8 @@ class SFcalculator(QtGui.QMainWindow):
 			status = cls.importConfiguration(filename)
 			if status:
 				cls.setWindowTitle(cls.window_title + filename)
-			cls.checkGui()
 			cls.tableWidgetCellSelected(0, 0)
+			cls.checkGui()
 
 	def savingAsConfiguration(cls):
 		_path = cls.main_gui.path_config
@@ -490,19 +490,37 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.fileHasBeenModified()
 
 	def updateTableWithTOFinfos(cls, tof1_ms, tof2_ms):
+		'''update all the rows that have the same lambda requested 
+		'''
+		list_row = cls.getListRowWithSameLambda()
+		for index, _row in enumerate(list_row):
+			if index == 0:
+				color = cls.ui.tableWidget.item(_row, 0).backgroundColor()
+			_item = QtGui.QTableWidgetItem("%.2f"%tof1_ms)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_brush_OK = QtGui.QBrush()
+			_brush_OK.setColor(colors.VALUE_OK)			
+			_item.setForeground(_brush_OK)
+			_item.setBackgroundColor(color)
+			cls.ui.tableWidget.setItem(_row, 14, _item)
+			_item = QtGui.QTableWidgetItem("%.2f"%tof2_ms)
+			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			_brush_OK = QtGui.QBrush()
+			_brush_OK.setColor(colors.VALUE_OK)			
+			_item.setForeground(_brush_OK)
+			_item.setBackgroundColor(color)
+			cls.ui.tableWidget.setItem(_row, 15, _item)
+
+	def getListRowWithSameLambda(cls):
 		_row = cls.current_table_row_selected
-		_item = QtGui.QTableWidgetItem("%.2f"%tof1_ms)
-		_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-		_brush_OK = QtGui.QBrush()
-		_brush_OK.setColor(colors.VALUE_OK)			
-		_item.setForeground(_brush_OK)
-		cls.ui.tableWidget.setItem(_row, 14, _item)
-		_item = QtGui.QTableWidgetItem("%.2f"%tof2_ms)
-		_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-		_brush_OK = QtGui.QBrush()
-		_brush_OK.setColor(colors.VALUE_OK)			
-		_item.setForeground(_brush_OK)
-		cls.ui.tableWidget.setItem(_row, 15, _item)
+		_lambda_requested = cls.ui.tableWidget.item(_row,5).text()
+		nbr_row = cls.ui.tableWidget.rowCount()
+		list_row = []
+		for i in range(nbr_row):
+			_lambda_to_compare_with = cls.ui.tableWidget.item(i, 5).text()
+			if _lambda_to_compare_with == _lambda_requested:
+				list_row.append(i)
+		return list_row
 
 	def manualTOFWidgetsEnabled(cls, status):
 		cls.ui.TOFmanualFromLabel.setEnabled(status)
