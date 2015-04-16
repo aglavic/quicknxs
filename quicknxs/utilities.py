@@ -110,6 +110,8 @@ def output_big_Q_ascii_file(file_name,
                             y_axis,
                             y_error_axis):
     
+    if os.path.isfile(file_name):
+	os.remove(file_name)
     f=open(file_name,'w')
     
     sz = y_axis.shape # (nbr_pixel, nbr_tof)
@@ -172,6 +174,8 @@ def write_ascii_file(filename, text):
     '''
     produce the output ascii file
     '''    
+    if os.path.isfile(filename):
+	os.remove(filename)
     f = open(filename, 'w')
     for _line in text:
         f.write(_line + '\n')
