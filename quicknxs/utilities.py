@@ -178,6 +178,8 @@ def write_ascii_file(filename, text):
     f.close()
 
 def createAsciiFile(filename, str_list):
+    if os.path.isfile(filename):
+	os.remove(filename)
     f = open(filename,'w')
     for _line in str_list:
         f.write(_line)

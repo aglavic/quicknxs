@@ -1041,7 +1041,7 @@
    <sender>actionSavingAsConfiguration</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>savingConfiguration()</slot>
+   <slot>savingAsConfiguration()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Wed Apr 15 10:56:07 2015
+# Created: Thu Apr 16 11:12:59 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -399,7 +399,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.runSequenceLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.runSequenceLineEditEvent)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), MainWindow.tableWidgetRightClick)
         QtCore.QObject.connect(self.sfFileNameBrowseButton, QtCore.SIGNAL("clicked()"), MainWindow.browseFile)
-        QtCore.QObject.connect(self.actionSavingAsConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.savingConfiguration)
+        QtCore.QObject.connect(self.actionSavingAsConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.savingAsConfiguration)
         QtCore.QObject.connect(self.dataTOFautoMode, QtCore.SIGNAL("clicked()"), MainWindow.selectAutoTOF)
         QtCore.QObject.connect(self.dataTOFmanualMode, QtCore.SIGNAL("clicked()"), MainWindow.selectManualTOF)
         QtCore.QObject.connect(self.actionLoadingConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.loadingConfiguration)
