@@ -691,7 +691,7 @@ class SFcalculator(QtGui.QMainWindow):
 			tof = [tof1, tof2]
 			_nxdata.active_data.peak = peak
 			_nxdata.active_data.back = back
-			_nxdata.active_data.tof_range_auto = tof
+			_nxdata.active_data.tof_range = tof
 
 			_big_table = cls.big_table
 			tof_auto_flag = str2bool(_big_table[row, 16])
