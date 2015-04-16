@@ -15,7 +15,7 @@ class CompareTwoNXSDataForSFcalculator(object):
 	def __init__(cls, nxsdataToCompareWith, nxsdataToPosition):
 		cls.nexusToCompareWithRun = nxsdataToCompareWith.active_data.nxs.getRun()
 		cls.nexusToPositionRun = nxsdataToPosition.active_data.nxs.getRun()
-		
+				
 		compare1 = cls.compareParameter('LambdaRequest','descending')
 		if compare1 != 0:
 			cls.resultComparison = compare1
@@ -26,23 +26,27 @@ class CompareTwoNXSDataForSFcalculator(object):
 			cls.resultComparison = compare2
 			return
 		
-		compare3 = cls.compareParameter('S2HWidth','ascending')
+		compare3 = cls.compareParameter('SiHWidth','ascending', param_backup='S2HWidth')
 		if compare3 != 0:
 			cls.resultComparison = compare3
 			return
 		
-		compare4 = cls.compareParameter('S2VHeight','ascending')
+		compare4 = cls.compareParameter('SiVHeight','ascending', param_backup = 'S2VHeight')
 		if compare4 != 0:
 			cls.resultComparison = compare4
 			return
 		
-	def compareParameter(cls, param, order):
+	def compareParameter(cls, param, order, param_backup=None):
 		_nexusToCompareWithRun = cls.nexusToCompareWithRun
 		_nexusToPositionRun = cls.nexusToPositionRun
 		
-		_paramNexusToCompareWith = float(_nexusToCompareWithRun.getProperty(param).value[0])
-		_paramNexusToPosition = float(_nexusToPositionRun.getProperty(param).value[0])
-		
+		try:
+			_paramNexusToCompareWith = float(_nexusToCompareWithRun.getProperty(param).value[0])
+			_paramNexusToPosition = float(_nexusToPositionRun.getProperty(param).value[0])
+		except:
+			_paramNexusToCompareWith = float(_nexusToCompareWithRun.getProperty(param_backup).value[0])
+			_paramNexusToPosition = float(_nexusToPositionRun.getProperty(param_backup).value[0])
+			
 		if order == 'ascending':
 			resultLessThan = -1
 			resultMoreThan = 1

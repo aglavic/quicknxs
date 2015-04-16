@@ -32,7 +32,7 @@
            <string>1234 or 1234,1236,1239 or 1234-1238</string>
           </property>
           <property name="text">
-           <string>128218-128220</string>
+           <string>124296-124301</string>
           </property>
          </widget>
         </item>
@@ -730,6 +730,18 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>2</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>300</height>
+         </size>
+        </property>
         <property name="contextMenuPolicy">
          <enum>Qt::CustomContextMenu</enum>
         </property>
@@ -859,6 +871,12 @@
        <widget class="QPlainTextEdit" name="sfFileNamePreview">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>100</height>
+         </size>
         </property>
         <property name="textInteractionFlags">
          <set>Qt::NoTextInteraction</set>

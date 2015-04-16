@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Wed Apr 15 10:23:32 2015
+# Created: Wed Apr 15 10:56:07 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -295,6 +295,12 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_40)
         self.tableWidget = QtGui.QTableWidget(self.centralwidget)
         self.tableWidget.setEnabled(False)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(2)
+        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
+        self.tableWidget.setSizePolicy(sizePolicy)
+        self.tableWidget.setMinimumSize(QtCore.QSize(0, 300))
         self.tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(16)
@@ -349,6 +355,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.sfFileNamePreview = QtGui.QPlainTextEdit(self.centralwidget)
         self.sfFileNamePreview.setEnabled(False)
+        self.sfFileNamePreview.setMinimumSize(QtCore.QSize(0, 100))
         self.sfFileNamePreview.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.sfFileNamePreview.setObjectName("sfFileNamePreview")
         self.verticalLayout.addWidget(self.sfFileNamePreview)
@@ -413,7 +420,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "SF Calculator", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Run or Sequence of Runs:", None, QtGui.QApplication.UnicodeUTF8))
         self.runSequenceLineEdit.setToolTip(QtGui.QApplication.translate("MainWindow", "1234 or 1234,1236,1239 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
-        self.runSequenceLineEdit.setText(QtGui.QApplication.translate("MainWindow", "128218-128220", None, QtGui.QApplication.UnicodeUTF8))
+        self.runSequenceLineEdit.setText(QtGui.QApplication.translate("MainWindow", "124296-124301", None, QtGui.QApplication.UnicodeUTF8))
         self.incidentMediumComboBox.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select or Define Incident Medium ...", None, QtGui.QApplication.UnicodeUTF8))
         self.toolButton.setText(QtGui.QApplication.translate("MainWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
