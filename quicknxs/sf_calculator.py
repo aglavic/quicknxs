@@ -15,6 +15,7 @@ from check_sf_run_reduction_button_status import CheckSfRunReductionButtonStatus
 from incident_medium_list_editor import IncidentMediumListEditor
 from reduction_sf_calculator import ReductionSfCalculator
 from init_sfcalculator_file_menu import InitSFCalculatorFileMenu
+from reduced_sfcalculator_config_files_handler import ReducedSFCalculatorConfigFilesHandler
 
 import colors
 import numpy as np
@@ -35,8 +36,10 @@ class SFcalculator(QtGui.QMainWindow):
 	current_loaded_file = 'tmp.xml'
 	time_click1 = -1
 	bin_size = 200 #micros
-	file_menu_object = None
 	file_menu_action_list = []
+	file_menu_object = None
+	list_action = []
+	reduced_files_loaded_object = None
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -69,8 +72,15 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.peak1_error.setPalette(palette)
 		cls.ui.peak2_error.setPalette(palette)
 		cls.ui.error_label.setPalette(palette)
-		
 		cls.initFileMenu()
+		cls.reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
+		cls.initConfigGui()
+		
+	def initConfigGui(cls):
+		from quicknxs.config import reflsfcalculatorlastloadedfiles
+		reflsfcalculatorlastloadedfiles.switch_config('config_files')
+		if reflsfcalculatorlastloadedfiles.config_files_path != '':
+			cls.main_gui.path_config =  reflsfcalculatorlastloadedfiles.config_files_path
 		
 	def initFileMenu(cls):
 		cls.file_menu_object = InitSFCalculatorFileMenu(cls)
@@ -427,6 +437,14 @@ class SFcalculator(QtGui.QMainWindow):
 				cls.setWindowTitle(cls.window_title + filename)
 			cls.tableWidgetCellSelected(0, 0)
 			cls.checkGui()
+			
+			if cls.reduced_files_loaded_object is None:
+				_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
+			else:
+				_reduced_files_loaded_object = cls.reduced_files_loaded_object
+			_reduced_files_loaded_object.addFile(filename)
+			_reduced_files_loaded_object.updateGui()
+			cls.reduced_files_loaded_object = _reduced_files_loaded_object
 
 	def savingAsConfiguration(cls):
 		_path = cls.main_gui.path_config
@@ -449,6 +467,13 @@ class SFcalculator(QtGui.QMainWindow):
 		filename = makeSureFileHasExtension(filename)
 		cls.exportConfiguration(filename)
 		cls.setWindowTitle(cls.window_title + filename)
+		if cls.reduced_files_loaded_object is None:
+			_reduced_files_loaded_object = ReducedConfigFilesHandler(cls)
+		else:
+			_reduced_files_loaded_object = cls.reduced_files_loaded_object
+		_reduced_files_loaded_object.addFile(filename)
+		_reduced_files_loaded_object.updateGui()
+		cls.reduced_files_loaded_object = _reduced_files_loaded_object
 					
 	def exportConfiguration(cls, filename):
 		_configObject= CreateSFConfigXmlFile(parent=cls, filename=filename)
@@ -1004,3 +1029,15 @@ class SFcalculator(QtGui.QMainWindow):
 	def generateSFfile(cls):
 		runReduction = ReductionSfCalculator(parent=cls)
 		
+	def saveConfigFiles(cls):
+		cls.reduced_files_loaded_object.save()
+		cls.guiConfig()
+
+	def guiConfig(cls):
+		from quicknxs.config import reflsfcalculatorlastloadedfiles
+		reflsfcalculatorlastloadedfiles.switch_config('config_files')
+		reflsfcalculatorlastloadedfiles.config_files_path = cls.main_gui.path_config
+		reflsfcalculatorlastloadedfiles.switch_config('default')
+	
+	def closeEvent(cls, event=None):
+		cls.saveConfigFiles()
