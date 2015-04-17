@@ -1,9 +1,11 @@
 import numpy as np
+from utilities import convertTOF
+from mantid.simpleapi import *
+import sfCalculator
 
 class ReductionSfCalculator(object):
 	
 	sf_gui = None
-	caller_function_name = 'sfCalculator.calculate'
 	table_settings = []
 	index_col = [0,1,5,10,11,12,13,14,15]
 	nbr_row = -1
@@ -13,7 +15,7 @@ class ReductionSfCalculator(object):
 		cls.sf_gui = parent
 		
 		cls.collectTableSettings()
-		cls.createScripts()
+		cls.createAndLaunchScripts()
 		
 	def collectTableSettings(cls):
 		nbr_row = cls.sf_gui.ui.tableWidget.rowCount()
@@ -31,42 +33,69 @@ class ReductionSfCalculator(object):
 				
 		cls.table_settings = _table_settings
 		
-	def createScripts(cls):
-		_data = cls.table_settings
+	def createAndLaunchScripts(cls):
 		scripts = []
 
 		from_to_index_same_lambda = cls.generateIndexSameLambda()
 		nbr_scripts = cls.nbr_scripts
 		
 		incident_medium = cls.getIncidentMedium()
-		output_file_name = clg.getOutputFileName()
+		output_file_name = cls.getOutputFileName()
 		
 		for i in range(nbr_scripts):
-			from_index = from_to_index_same_lambda[i,0]
-			to_index = from_to_index_same_lambda[i,1]
+			from_index = int(from_to_index_same_lambda[i,0])
+			to_index = int(from_to_index_same_lambda[i,1])
 
-			string_runs = cls.getStringRuns(_data, from_index, to_index)
-			list_peak_back = cls.getListPeakBack(_data, from_index, to_index)
-			tof_range = clg.getTofRange(_data, from_index)
+			if (to_index - from_index) <= 1:
+				continue
+
+			string_runs = cls.getStringRuns(from_index, to_index)
+			list_peak_back = cls.getListPeakBack(from_index, to_index)
+			tof_range = cls.getTofRange(from_index)
 			
+			cls.launchScript(string_runs = string_runs,
+			                 list_peak_back = list_peak_back,
+			                 incident_medium = incident_medium,
+			                 output_file_name = output_file_name,
+			                 tof_range = tof_range)
+			
+			cls.refreshOutputFileContainPreview(output_file_name)
 
+	def launchScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
+		sfCalculator.calculate(string_runs = string_runs,
+		                       list_peak_back = list_peak_back,
+		                       incident_medium = incident_medium,
+		                       output_file_name = output_file_name,
+		                       tof_range = tof_range)
 
-	def getStringRuns(cls, data, from_index, to_index):
-		return ''
+	def refreshOutputFileContainPreview(cls, output_file_name):
+		cls.sf_gui.displayConfigFile(output_file_name)
 
-	def getListPeakBack(cls, data, from_index, to_index):
-		return []
+	def getStringRuns(cls, from_index, to_index):
+		data = cls.table_settings
+		string_list = []
+		for i in range(from_index, to_index+1):
+			string_list.append(str(int(data[i,0])) + ":" + str(int(data[i,1])))
+		return ",".join(string_list)
+
+	def getListPeakBack(cls, from_index, to_index):
+		data = cls.table_settings
+		return data[from_index:to_index+1, 3:7]
 	
 	def getIncidentMedium(cls):
-		return ''
+		return cls.sf_gui.ui.incidentMediumComboBox.currentText()
 	
 	def getOutputFileName(cls):
-		return ''
+		output_file_name = cls.sf_gui.ui.sfFileNameLabel.text()
+		return output_file_name
 	
-	def getTofRange(cls):
-		return []
+	def getTofRange(cls, from_index):
+		data = cls.table_settings
+		from_tof_ms = data[from_index, 7]
+		to_tof_ms = data[from_index, 8 ]
+		tof_from_to_micros = convertTOF([from_tof_ms, to_tof_ms], from_units='ms', to_units='micros')
+		return tof_from_to_micros
 
-	
 	def generateIndexSameLambda(cls):
 		_data = cls.table_settings
 
