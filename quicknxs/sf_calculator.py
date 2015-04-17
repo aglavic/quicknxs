@@ -14,6 +14,7 @@ from sf_single_plot_click import SFSinglePlotClick
 from check_sf_run_reduction_button_status import CheckSfRunReductionButtonStatus
 from incident_medium_list_editor import IncidentMediumListEditor
 from reduction_sf_calculator import ReductionSfCalculator
+from init_sfcalculator_file_menu import InitSFCalculatorFileMenu
 
 import colors
 import numpy as np
@@ -34,6 +35,8 @@ class SFcalculator(QtGui.QMainWindow):
 	current_loaded_file = 'tmp.xml'
 	time_click1 = -1
 	bin_size = 200 #micros
+	file_menu_object = None
+	file_menu_action_list = []
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -66,6 +69,32 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.peak1_error.setPalette(palette)
 		cls.ui.peak2_error.setPalette(palette)
 		cls.ui.error_label.setPalette(palette)
+		
+		cls.initFileMenu()
+		
+	def initFileMenu(cls):
+		cls.file_menu_object = InitSFCalculatorFileMenu(cls)
+		
+	def launchConfigFile1(cls):
+		pass
+	def launchConfigFile2(cls):
+		pass
+	def launchConfigFile3(cls):
+		pass
+	def launchConfigFile4(cls):
+		pass
+	def launchConfigFile5(cls):
+		pass
+	def launchConfigFile6(cls):
+		pass
+	def launchConfigFile7(cls):
+		pass
+	def launchConfigFile8(cls):
+		pass
+	def launchConfigFile9(cls):
+		pass
+	def launchConfigFile10(cls):
+		pass
 		
 	def logxToggleYiPlot(cls, checked):
 		row = cls.current_table_row_selected
