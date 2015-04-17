@@ -107,7 +107,12 @@ class ReducedSFCalculatorConfigFilesHandler(object):
 		           QtCore.Qt.Key_1,
 		           QtCore.Qt.Key_2,
 		           QtCore.Qt.Key_3,
-		           QtCore.Qt.Key_4]
+		           QtCore.Qt.Key_4,
+		           QtCore.Qt.Key_5,
+		           QtCore.Qt.Key_6,
+		           QtCore.Qt.Key_7,
+		           QtCore.Qt.Key_8,
+		           QtCore.Qt.Key_9]
 		for i in range(self.total_files_loaded):
 			_file = self.config_files[i].fullFileName
 			_key = listKey[i]

@@ -450,6 +450,10 @@ class SFcalculator(QtGui.QMainWindow):
 		_reduced_files_loaded_object.updateGui()
 		cls.reduced_files_loaded_object = _reduced_files_loaded_object
 
+	def savingConfiguration(cls):
+		filename = cls.current_loaded_file
+		cls.savingConfigurationFileDefined(filename)
+
 	def savingAsConfiguration(cls):
 		_path = cls.main_gui.path_config
 		filename = QtGui.QFileDialog.getSaveFileName(cls,
@@ -458,14 +462,9 @@ class SFcalculator(QtGui.QMainWindow):
 		                                             "XML files (*.xml);;All files (*.*)")
 		if not(filename == ''):
 			cls.current_loaded_file = filename
-			cls.resetFileHasBeenModified()
-			cls.main_gui.path_config = os.path.dirname(filename)
-			filename = makeSureFileHasExtension(filename)
-			cls.exportConfiguration(filename)
-			cls.setWindowTitle(cls.window_title + filename)
+			cls.savingConfigurationFileDefined(filename)
 			
-	def savingConfiguration(cls):
-		filename = cls.current_loaded_file
+	def savingConfigurationFileDefined(cls, filename):
 		cls.resetFileHasBeenModified()
 		cls.main_gui.path_config = os.path.dirname(filename)
 		filename = makeSureFileHasExtension(filename)
@@ -478,7 +477,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_reduced_files_loaded_object.addFile(filename)
 		_reduced_files_loaded_object.updateGui()
 		cls.reduced_files_loaded_object = _reduced_files_loaded_object
-					
+								
 	def exportConfiguration(cls, filename):
 		_configObject= CreateSFConfigXmlFile(parent=cls, filename=filename)
 		
