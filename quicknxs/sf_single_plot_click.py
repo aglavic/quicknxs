@@ -16,12 +16,12 @@ class SFSinglePlotClick(object):
 		cls.nxsdata = list_nxsdata_sorted[row]
 		
 		if plot_type == 'yi':
-			cls.single_yi_plot_click()
+			cls.singleYIPlotClick()
 		
 		if plot_type == 'yt':
-			cls.single_yt_plot_click()
+			cls.singleYTIPlotClick()
 		
-	def single_yi_plot_click(cls):
+	def singleYIPlotClick(cls):
 		self = cls.self
 
 		if self.time_click1 == -1:
@@ -40,7 +40,7 @@ class SFSinglePlotClick(object):
 			
 		self.time_click1 = -1
 	
-	def single_yt_plot_click(cls):
+	def singleYTIPlotClick(cls):
 		self = cls.self
 
 		if self.time_click1 == -1:

@@ -41,6 +41,7 @@ class SFcalculator(QtGui.QMainWindow):
 	file_menu_object = None
 	list_action = []
 	reduced_files_loaded_object = None
+	event_progressbar = None
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -76,7 +77,19 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.initFileMenu()
 		cls.reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
 		cls.initConfigGui()
-		
+		cls.event_progressbar = QtGui.QProgressBar(cls.ui.statusbar)
+		cls.event_progressbar.setMinimumSize(20,14)
+		cls.event_progressbar.setMaximumSize(140,100)
+		cls.ui.statusbar.addPermanentWidget(cls.event_progressbar)
+		cls.event_progressbar.setVisible(False)
+
+	def updateProgressBar(cls, percent_progress):
+		cls.event_progressbar.setVisible(True)
+		cls.event_progressbar.setValue(percent_progress*100)
+		cls.event_progressbar.update()
+		if percent_progress == 100:
+			pass
+
 	def initConfigGui(cls):
 		from quicknxs.config import reflsfcalculatorlastloadedfiles
 		reflsfcalculatorlastloadedfiles.switch_config('config_files')
