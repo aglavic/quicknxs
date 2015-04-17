@@ -91,6 +91,8 @@ class SFcalculator(QtGui.QMainWindow):
 		if progress == 1:
 			time.sleep(2)
 			cls.event_progressbar.setVisible(False)
+			cls.event_progressbar.setValue(0)
+			cls.event_progressbar.update()
 
 	def initConfigGui(cls):
 		from quicknxs.config import reflsfcalculatorlastloadedfiles
