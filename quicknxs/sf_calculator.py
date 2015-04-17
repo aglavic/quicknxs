@@ -16,6 +16,7 @@ from incident_medium_list_editor import IncidentMediumListEditor
 from reduction_sf_calculator import ReductionSfCalculator
 from init_sfcalculator_file_menu import InitSFCalculatorFileMenu
 from reduced_sfcalculator_config_files_handler import ReducedSFCalculatorConfigFilesHandler
+from sf_calculator_config_file_launcher import SFCalculatorConfigFileLauncher
 
 import colors
 import numpy as np
@@ -86,25 +87,25 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.file_menu_object = InitSFCalculatorFileMenu(cls)
 		
 	def launchConfigFile1(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 0)
 	def launchConfigFile2(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 1)
 	def launchConfigFile3(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 2)
 	def launchConfigFile4(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 3)
 	def launchConfigFile5(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 4)
 	def launchConfigFile6(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 5)
 	def launchConfigFile7(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 6)
 	def launchConfigFile8(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 7)
 	def launchConfigFile9(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 8)
 	def launchConfigFile10(cls):
-		pass
+		SFCalculatorConfigFileLauncher(cls, 9)
 		
 	def logxToggleYiPlot(cls, checked):
 		row = cls.current_table_row_selected
@@ -429,22 +430,25 @@ class SFcalculator(QtGui.QMainWindow):
 		                                            "XML files (*.xml);;All files (*.*)")
 		
 		if not(filename == ''):
-			cls.current_loaded_file = filename
-			cls.resetFileHasBeenModified()			
-			cls.main_gui.path_config = os.path.dirname(filename)
-			status = cls.importConfiguration(filename)
-			if status:
-				cls.setWindowTitle(cls.window_title + filename)
-			cls.tableWidgetCellSelected(0, 0)
-			cls.checkGui()
+			cls.loadingConfigurationFileDefined(filename)
 			
-			if cls.reduced_files_loaded_object is None:
-				_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
-			else:
-				_reduced_files_loaded_object = cls.reduced_files_loaded_object
-			_reduced_files_loaded_object.addFile(filename)
-			_reduced_files_loaded_object.updateGui()
-			cls.reduced_files_loaded_object = _reduced_files_loaded_object
+	def loadingConfigurationFileDefined(cls, filename):
+		cls.current_loaded_file = filename
+		cls.resetFileHasBeenModified()			
+		cls.main_gui.path_config = os.path.dirname(filename)
+		status = cls.importConfiguration(filename)
+		if status:
+			cls.setWindowTitle(cls.window_title + filename)
+		cls.tableWidgetCellSelected(0, 0)
+		cls.checkGui()
+		
+		if cls.reduced_files_loaded_object is None:
+			_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
+		else:
+			_reduced_files_loaded_object = cls.reduced_files_loaded_object
+		_reduced_files_loaded_object.addFile(filename)
+		_reduced_files_loaded_object.updateGui()
+		cls.reduced_files_loaded_object = _reduced_files_loaded_object
 
 	def savingAsConfiguration(cls):
 		_path = cls.main_gui.path_config
