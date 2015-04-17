@@ -55,12 +55,12 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.initConnections()
 		
 	def initConnections(cls):
-		cls.ui.yt_plot.singleClick.connect(cls.single_yt_plot)
+		cls.ui.yt_plot.singleClick.connect(cls.singleYTPlot)
 		cls.ui.yt_plot.toolbar.homeClicked.connect(cls.homeYtPlot)
 		cls.ui.yt_plot.toolbar.exportClicked.connect(cls.exportYtPlot)
 		cls.ui.yt_plot.leaveFigure.connect(cls.leaveYtPlot)
 		
-		cls.ui.yi_plot.singleClick.connect(cls.single_yi_plot)
+		cls.ui.yi_plot.singleClick.connect(cls.singleYIPlot)
 		cls.ui.yi_plot.toolbar.homeClicked.connect(cls.homeYiPlot)
 		cls.ui.yi_plot.toolbar.exportClicked.connect(cls.exportYiPlot)
 		cls.ui.yi_plot.leaveFigure.connect(cls.leaveYiPlot)
@@ -83,11 +83,11 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.statusbar.addPermanentWidget(cls.event_progressbar)
 		cls.event_progressbar.setVisible(False)
 
-	def updateProgressBar(cls, percent_progress):
+	def updateProgressBar(cls, progress):
 		cls.event_progressbar.setVisible(True)
-		cls.event_progressbar.setValue(percent_progress*100)
+		cls.event_progressbar.setValue(progress*100)
 		cls.event_progressbar.update()
-		if percent_progress == 100:
+		if progress == 100:
 			pass
 
 	def initConfigGui(cls):
@@ -255,10 +255,10 @@ class SFcalculator(QtGui.QMainWindow):
 		dialog_title = cls.window_title + cls.current_loaded_file
 		cls.setWindowTitle(dialog_title)
 		
-	def single_yt_plot(cls, is_pan_or_zoom_activated):
+	def singleYTPlot(cls, is_pan_or_zoom_activated):
 		SFSinglePlotClick(cls, 'yt', is_pan_or_zoom_activated = is_pan_or_zoom_activated)
 		
-	def single_yi_plot(cls, is_pan_or_zoom_activated):
+	def singleYIPlot(cls, is_pan_or_zoom_activated):
 		SFSinglePlotClick(cls, 'yi', is_pan_or_zoom_activated = is_pan_or_zoom_activated)
 				
 	def testPeakBackErrorWidgets(cls):

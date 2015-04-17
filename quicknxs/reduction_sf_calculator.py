@@ -41,6 +41,7 @@ class ReductionSfCalculator(object):
 		
 		incident_medium = cls.getIncidentMedium()
 		output_file_name = cls.getOutputFileName()
+		cls.sf_gui.updateProgressBar(0.1)
 		
 		for i in range(nbr_scripts):
 			from_index = int(from_to_index_same_lambda[i,0])
@@ -60,6 +61,8 @@ class ReductionSfCalculator(object):
 			                 tof_range = tof_range)
 			
 			cls.refreshOutputFileContainPreview(output_file_name)
+			cls.sf_gui.updateProgressBar(float(i+1)/float(nbr_scripts))
+			cls.sf_gui.ui.retranslateUi(cls.sf_gui)
 
 	def launchScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
 		sfCalculator.calculate(string_runs = string_runs,
