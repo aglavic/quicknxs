@@ -21,6 +21,7 @@ from sf_calculator_config_file_launcher import SFCalculatorConfigFileLauncher
 import colors
 import numpy as np
 import os
+import time
 
 class SFcalculator(QtGui.QMainWindow):
 	_open_instances = []
@@ -87,8 +88,9 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.event_progressbar.setVisible(True)
 		cls.event_progressbar.setValue(progress*100)
 		cls.event_progressbar.update()
-		if progress == 100:
-			pass
+		if progress == 1:
+			time.sleep(2)
+			cls.event_progressbar.setVisible(False)
 
 	def initConfigGui(cls):
 		from quicknxs.config import reflsfcalculatorlastloadedfiles
