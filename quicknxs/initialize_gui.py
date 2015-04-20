@@ -17,16 +17,19 @@ class InitializeGui(object):
 		window_title = 'QuickNXS for REF_L'
 		self.setWindowTitle(u'%s   %s'%(window_title, str_version))
 		self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
+		self.cache_indicator.setVisible(False)
 		self.ui.statusbar.addPermanentWidget(self.cache_indicator)
 		button=QtGui.QPushButton('Empty Cache')
 		self.ui.statusbar.addPermanentWidget(button)
 		button.pressed.connect(self.empty_cache)
 		button.setFlat(True)
 		button.setMaximumSize(150, 20)
+		button.setVisible(False)
 		
 		self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
 		self.eventProgress.setMinimumSize(20, 14)
 		self.eventProgress.setMaximumSize(140, 100)
+		self.eventProgress.setVisible(False)
 		self.ui.statusbar.addPermanentWidget(self.eventProgress)
 		
 		#set up the header of the big table
