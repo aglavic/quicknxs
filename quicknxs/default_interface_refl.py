@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Apr 20 16:03:35 2015
+# Created: Mon Apr 20 16:53:12 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -168,7 +168,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.addWidget(self.autoPeakBackSelectionFrame)
         self.autoTofFlag = QtGui.QCheckBox(self.leftEntries)
         self.autoTofFlag.setCheckable(True)
-        self.autoTofFlag.setChecked(False)
+        self.autoTofFlag.setChecked(True)
         self.autoTofFlag.setObjectName("autoTofFlag")
         self.verticalLayout_8.addWidget(self.autoTofFlag)
         self.verticalLayout_5.addLayout(self.verticalLayout_8)
@@ -259,19 +259,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addLayout(self.verticalLayout_18)
         spacerItem5 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_5.addItem(spacerItem5)
-        self.groupBox_2 = QtGui.QGroupBox(self.leftEntries)
-        self.groupBox_2.setEnabled(False)
-        self.groupBox_2.setFlat(True)
-        self.groupBox_2.setObjectName("groupBox_2")
-        self.gridLayout_16 = QtGui.QGridLayout(self.groupBox_2)
-        self.gridLayout_16.setMargin(0)
-        self.gridLayout_16.setSpacing(1)
-        self.gridLayout_16.setObjectName("gridLayout_16")
-        self.logarithmic_colorscale = QtGui.QCheckBox(self.groupBox_2)
-        self.logarithmic_colorscale.setChecked(True)
-        self.logarithmic_colorscale.setObjectName("logarithmic_colorscale")
-        self.gridLayout_16.addWidget(self.logarithmic_colorscale, 1, 0, 1, 1)
-        self.verticalLayout_5.addWidget(self.groupBox_2)
         self.plotTab = QtGui.QTabWidget(self.mainSplitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(2)
@@ -1461,7 +1448,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.LogRvsQ_2, QtCore.SIGNAL("clicked()"), MainWindow.reduce_plot_LogRvsQ_2_radiobutton)
         QtCore.QObject.connect(self.loadReducedAsciiDataSet, QtCore.SIGNAL("clicked()"), MainWindow.load_reduced_ascii)
         QtCore.QObject.connect(self.refreshStitchingAsciiPlot, QtCore.SIGNAL("clicked()"), MainWindow.refresh_stitching_ascii_plot)
-        QtCore.QObject.connect(self.logarithmic_colorscale, QtCore.SIGNAL("stateChanged(int)"), MainWindow.toggleColorbars)
         QtCore.QObject.connect(self.dataLowResFromValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_lowres_spinbox_validation)
         QtCore.QObject.connect(self.useNormalizationFlag, QtCore.SIGNAL("toggled(bool)"), MainWindow.normalization_switch)
         QtCore.QObject.connect(self.dataPeakToValue, QtCore.SIGNAL("editingFinished()"), MainWindow.data_peak_spinbox_validation)
@@ -1491,8 +1477,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionSF_Calculator, QtCore.SIGNAL("triggered()"), MainWindow.launch_SFcalculator)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.numberSearchEntry, self.eventTofBins)
-        MainWindow.setTabOrder(self.eventTofBins, self.logarithmic_colorscale)
-        MainWindow.setTabOrder(self.logarithmic_colorscale, self.plotTab)
+        MainWindow.setTabOrder(self.eventTofBins, self.plotTab)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "QuickNXS REF_L", None, QtGui.QApplication.UnicodeUTF8))
@@ -1536,9 +1521,6 @@ class Ui_MainWindow(object):
         self.scalingFactorSlitsWidthFlag.setText(QtGui.QApplication.translate("MainWindow", "Match slits width", None, QtGui.QApplication.UnicodeUTF8))
         self.sfBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.selectIncidentMediumList.setItemText(0, QtGui.QApplication.translate("MainWindow", "Select Incident Medium ...", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Plot Options", None, QtGui.QApplication.UnicodeUTF8))
-        self.logarithmic_colorscale.setToolTip(QtGui.QApplication.translate("MainWindow", "Logarithmic colorscale in the maps", None, QtGui.QApplication.UnicodeUTF8))
-        self.logarithmic_colorscale.setText(QtGui.QApplication.translate("MainWindow", "Log Colorscale", None, QtGui.QApplication.UnicodeUTF8))
         self.data_selection_error_label.setText(QtGui.QApplication.translate("MainWindow", "SELECTION ERROR", None, QtGui.QApplication.UnicodeUTF8))
         self.dataBackFromLabel.setText(QtGui.QApplication.translate("MainWindow", "Back2", None, QtGui.QApplication.UnicodeUTF8))
         self.data_back2_error.setText(QtGui.QApplication.translate("MainWindow", "*", None, QtGui.QApplication.UnicodeUTF8))

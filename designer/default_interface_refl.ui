@@ -398,7 +398,7 @@ p, li { white-space: pre-wrap; }
              <bool>true</bool>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -634,40 +634,6 @@ p, li { white-space: pre-wrap; }
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="title">
-           <string>Plot Options</string>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_16">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>1</number>
-           </property>
-           <item row="1" column="0">
-            <widget class="QCheckBox" name="logarithmic_colorscale">
-             <property name="toolTip">
-              <string>Logarithmic colorscale in the maps</string>
-             </property>
-             <property name="text">
-              <string>Log Colorscale</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
         </item>
        </layout>
       </widget>
@@ -3675,7 +3641,6 @@ p, li { white-space: pre-wrap; }
  <tabstops>
   <tabstop>numberSearchEntry</tabstop>
   <tabstop>eventTofBins</tabstop>
-  <tabstop>logarithmic_colorscale</tabstop>
   <tabstop>plotTab</tabstop>
  </tabstops>
  <resources>
@@ -4319,22 +4284,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>950</x>
      <y>609</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>logarithmic_colorscale</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>toggleColorbars()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>133</x>
-     <y>1090</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>543</x>
-     <y>416</y>
     </hint>
    </hints>
   </connection>
