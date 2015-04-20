@@ -999,6 +999,8 @@ class MainGUI(QtGui.QMainWindow):
 		#[r,c] = self.getCurrentRowColumnSelected()
 		r = self._cur_row_selected
 		c = self._cur_column_selected
+		if c>0:
+			c=1
 		_data = self.bigTableData[r,c]
 		if _data is None:
 			return
@@ -3285,6 +3287,16 @@ class MainGUI(QtGui.QMainWindow):
 		# make sure the update is shown in the interface
 		self.eventProgress.update()
 
+	def updateProgressBar(self, progress):
+		self.eventProgress.setVisible(True)
+		self.eventProgress.setValue(progress*100)
+		self.eventProgress.update()
+		if progress == 1:
+			time.sleep(2)
+			self.eventProgress.setVisible(False)
+			self.eventProgress.setValue(0)
+			self.eventProgress.update()
+
 ####### Calculations and data treatment
 
 	def updateStateFile(self, ignore):
@@ -3504,6 +3516,8 @@ Do you want to try to restore the working reduction list?""",
 		bigTableData = self.bigTableData
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row, col]
 		_active_data =  data.active_data
 		tof1 = str(float(tof1)*1000)
@@ -3526,6 +3540,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 
@@ -3556,6 +3572,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 
@@ -3592,6 +3610,8 @@ Do you want to try to restore the working reduction list?""",
 #      [row,col] = self.getCurrentRowColumnSelected()
 			row = self._cur_row_selected
 			col = self._cur_column_selected
+			if col != 0:
+				col = 1
 			data = bigTableData[row,col]
 			data = data.active_data
 
@@ -3629,6 +3649,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 
@@ -3655,6 +3677,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 
@@ -3693,6 +3717,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 
@@ -3734,6 +3760,8 @@ Do you want to try to restore the working reduction list?""",
 		#[r,c] = self.getCurrentRowColumnSelected()
 		r = self._cur_row_selected
 		c = self._cur_column_selected
+		if c != 0:
+			c = 1
 		_data = self.bigTableData[r,c]
 		data = _data.active_data
 		if data is None:
@@ -3777,7 +3805,11 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
+		if data is None:
+			return
 		data = data.active_data
 
 		lowres1 = self.ui.dataLowResFromValue.value()
@@ -3821,6 +3853,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 
@@ -3862,6 +3896,8 @@ Do you want to try to restore the working reduction list?""",
 		#[row,col] = self.getCurrentRowColumnSelected()
 		row = self._cur_row_selected
 		col = self._cur_column_selected
+		if col != 0:
+			col = 1
 		data = bigTableData[row,col]
 		data = data.active_data
 

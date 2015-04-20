@@ -186,6 +186,8 @@ class REFLReduction(object):
 
 		listWorkspaces = []
 
+		cls.main_gui.updateProgressBar(0.1)
+
 		for row in range(nbrRow):
 
 			dataCell = main_gui.ui.reductionTable.item(row,0).text()
@@ -250,6 +252,8 @@ class REFLReduction(object):
 			              ScalingFactorFile=scalingFactorFile,
 			              SlitsWidthFlag=slitsWidthFlag,
 			              OutputWorkspace=outputWorkspace)
+			
+			cls.main_gui.updateProgressBar(float(row)/float(nbrRow))
 
 			# save data back into bigTableData
 			configObject = cls.saveReducedData(configObject, outputWorkspace)
