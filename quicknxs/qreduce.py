@@ -1816,7 +1816,7 @@ class LRDataset(object):
     self.run_number = mt_run.getProperty('run_number').value
 #    if len(lr) > 1:
  #     self.run_number = 
-    self.lambda_requested = mt_run.getProperty('LambdaRequest').value[0]
+    self.lambda_requested = float(mt_run.getProperty('LambdaRequest').value[0])
     self.lambda_requested_units = mt_run.getProperty('LambdaRequest').units
     self.thi = mt_run.getProperty('thi').value[0]
     self.thi_units = mt_run.getProperty('thi').units

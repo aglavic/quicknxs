@@ -3941,6 +3941,8 @@ Do you want to try to restore the working reduction list?""",
 			col = 1
 
 		data = bigTableData[row,col]
+		if data is None:
+			return
 		data = data.active_data
 
 		lowres1 = self.ui.normLowResFromValue.value()
@@ -4056,8 +4058,6 @@ Do you want to try to restore the working reduction list?""",
 
 		if data is None:
 			return
-
-#		_active_data = data.active_data
 
 		if c==0: #data
 
@@ -4235,16 +4235,13 @@ Do you want to try to restore the working reduction list?""",
 	@log_call
 	@waiting_effects
 	def loading_configuration(self):
+		print 'in loading_configuration'
 
 		_path = self.path_config
 		filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
 
 		if not (filename == ""):
 			self.loading_configuration_file(filename)
-
-		#loadConfig = LoadingConfiguration(self)
-		#if loadConfig.statusOk:
-			#self.enableWidgets(checkStatus=True)
 
 			if self.reducedFilesLoadedObject is None:
 				_reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
@@ -4256,12 +4253,6 @@ Do you want to try to restore the working reduction list?""",
 
 
 	def loading_configuration_file(self, filename):
-		#loadConfig = LoadingConfiguration(self, filename=filename)
-		#if loadConfig.statusOk:
-			#PopulateReductionTable(self)
-		#return
-
-#    try:
 		self.path_config = os.path.dirname(filename)
 
 		# make sure the reductionTable is empty
@@ -4272,9 +4263,6 @@ Do you want to try to restore the working reduction list?""",
 
 		self.loadConfigAndPopulateGui(filename)
 		self.enableWidgets(checkStatus=True)
-
-		# except:
-			#warning('Could not open configuration file!')
 
 	@log_call
 	def saving_configuration(self):
@@ -4796,11 +4784,14 @@ Do you want to try to restore the working reduction list?""",
 		# start parsing xml file
 		_row = 0
 		for node in RefLData:
+			print 'in row: %d' % _row
 
 			self.ui.reductionTable.insertRow(_row)
 
 			# data 
 			_data_sets = self.getNodeValue(node,'data_sets')
+			print "_data_sets:"
+			print _data_sets
 			self.addItemToBigTable(_data_sets, _row, 0, editableFlag=True)
 
 			# norm
@@ -4845,7 +4836,6 @@ Do you want to try to restore the working reduction list?""",
 				_first_file_name = self.getNodeValue(node, 'data_full_file_name')
 				if _first_file_name == '': # no full_file_name defined
 					_first_file_name = nexus_utilities.findNeXusFullPath(int(_data_sets))                    
-#          _first_file_name = FileFinder.findRuns("REF_L%d" %int(_data_sets))[0] #TODO HARDCODED INSTRUMENT
 				else:
 					_first_file_name = _first_file_name.split(',')
 
@@ -4905,11 +4895,14 @@ Do you want to try to restore the working reduction list?""",
 				_norm_full_file_name = _norm_full_file_name.split(',')
 			except:
 				_norm_full_file_name = ''
-
+				
 			_metadataObject = self.getMetadataObject(node)
 			_metadataObject.data_full_file_name = _data_full_file_name
 			_metadataObject.norm_full_file_name = _norm_full_file_name
 			self.bigTableData[_row,2] = _metadataObject
+			#print 'at row %d' % _row
+			#print _metadataObject.data_low_res
+			#print
 
 			_row += 1
 
@@ -5072,6 +5065,9 @@ Do you want to try to restore the working reduction list?""",
 
 		_norm_lambda = self.getNodeValue(node, 'norm_lambda_requested')
 		iMetadata.norm_lambda_requested = _norm_lambda
+
+		print iMetadata.data_low_res
+		print
 
 		return iMetadata
 

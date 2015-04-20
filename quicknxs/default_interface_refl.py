@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Wed Mar 11 15:45:15 2015
+# Created: Mon Apr 20 09:50:06 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -191,6 +191,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_16.addWidget(self.label_32)
         self.horizontalLayout_26 = QtGui.QHBoxLayout()
         self.horizontalLayout_26.setObjectName("horizontalLayout_26")
+        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.horizontalLayout_26.addItem(spacerItem3)
         self.angleOffsetValue = QtGui.QLineEdit(self.geometryCorrectionFrame)
         self.angleOffsetValue.setMaximumSize(QtCore.QSize(50, 16777215))
         self.angleOffsetValue.setObjectName("angleOffsetValue")
@@ -208,8 +210,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_16.addLayout(self.horizontalLayout_26)
         self.verticalLayout_15.addWidget(self.geometryCorrectionFrame)
         self.verticalLayout_5.addLayout(self.verticalLayout_15)
-        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_5.addItem(spacerItem3)
         self.verticalLayout_18 = QtGui.QVBoxLayout()
         self.verticalLayout_18.setObjectName("verticalLayout_18")
         self.scalingFactorFlag = QtGui.QCheckBox(self.leftEntries)
@@ -526,6 +526,7 @@ class Ui_MainWindow(object):
         self.dataLowResFlag.setObjectName("dataLowResFlag")
         self.horizontalLayout_82.addWidget(self.dataLowResFlag)
         self.dataLowResFromLabel = QtGui.QLabel(self.frame_15)
+        self.dataLowResFromLabel.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.dataLowResFromLabel.setObjectName("dataLowResFromLabel")
         self.horizontalLayout_82.addWidget(self.dataLowResFromLabel)
         spacerItem9 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
@@ -547,6 +548,7 @@ class Ui_MainWindow(object):
         self.dataLowResFromValue.setObjectName("dataLowResFromValue")
         self.horizontalLayout_82.addWidget(self.dataLowResFromValue)
         self.dataLowResToLabel = QtGui.QLabel(self.frame_15)
+        self.dataLowResToLabel.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.dataLowResToLabel.setObjectName("dataLowResToLabel")
         self.horizontalLayout_82.addWidget(self.dataLowResToLabel)
         spacerItem10 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
@@ -824,6 +826,7 @@ class Ui_MainWindow(object):
         self.normLowResFlag.setObjectName("normLowResFlag")
         self.horizontalLayout_83.addWidget(self.normLowResFlag)
         self.normLowResFromLabel = QtGui.QLabel(self.frame_20)
+        self.normLowResFromLabel.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.normLowResFromLabel.setObjectName("normLowResFromLabel")
         self.horizontalLayout_83.addWidget(self.normLowResFromLabel)
         spacerItem15 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
@@ -845,6 +848,7 @@ class Ui_MainWindow(object):
         self.normLowResFromValue.setObjectName("normLowResFromValue")
         self.horizontalLayout_83.addWidget(self.normLowResFromValue)
         self.normLowResToLabel = QtGui.QLabel(self.frame_20)
+        self.normLowResToLabel.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.normLowResToLabel.setObjectName("normLowResToLabel")
         self.horizontalLayout_83.addWidget(self.normLowResToLabel)
         spacerItem16 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
@@ -1168,7 +1172,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(True)
+        self.reductionTable.horizontalHeader().setVisible(False)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
         self.reductionTable.horizontalHeader().setSortIndicatorShown(False)
@@ -1339,7 +1343,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.mainSplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 21))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
@@ -1417,7 +1421,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(0)
+        self.dataNormTabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)
