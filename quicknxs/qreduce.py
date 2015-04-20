@@ -1207,7 +1207,7 @@ class LConfigDataset(object):
   data_full_file_name = ''
   data_peak = ['0','0']
   data_back = ['0','0']
-  data_low_res = ['0','0']
+  data_low_res = ['50','200']
   data_back_flag = True
   data_low_res_flag = True
   data_lambda_requested = -1
@@ -1222,7 +1222,7 @@ class LConfigDataset(object):
   norm_peak = ['0','0']
   norm_back = ['0','0']
   norm_back_flag = True
-  norm_low_res = ['0','0']
+  norm_low_res = ['50','200']
   norm_low_res_flag = True
   norm_lambda_requested = -1
  

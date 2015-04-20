@@ -4784,14 +4784,10 @@ Do you want to try to restore the working reduction list?""",
 		# start parsing xml file
 		_row = 0
 		for node in RefLData:
-			print 'in row: %d' % _row
-
 			self.ui.reductionTable.insertRow(_row)
 
 			# data 
 			_data_sets = self.getNodeValue(node,'data_sets')
-			print "_data_sets:"
-			print _data_sets
 			self.addItemToBigTable(_data_sets, _row, 0, editableFlag=True)
 
 			# norm
@@ -5065,9 +5061,6 @@ Do you want to try to restore the working reduction list?""",
 
 		_norm_lambda = self.getNodeValue(node, 'norm_lambda_requested')
 		iMetadata.norm_lambda_requested = _norm_lambda
-
-		print iMetadata.data_low_res
-		print
 
 		return iMetadata
 
@@ -5921,7 +5914,6 @@ Do you want to try to restore the working reduction list?""",
 		for i in range(nbr_row):
 
 			_data = bigTableData[i,2]
-#			_active_data = _data.active_data
 
 			self.ui.dataStitchingTable.insertRow(i)
 
@@ -6070,6 +6062,7 @@ Do you want to try to restore the working reduction list?""",
 		from matplotlib import __version__ as mplversion
 		from h5py.version import version as h5pyversion
 		from h5py.version import hdf5_version as hdf5version
+		from version import str_version
 		try:
 			from PyQt4.pyqtconfig import Configuration
 			pyqtversion=Configuration().pyqt_version_str

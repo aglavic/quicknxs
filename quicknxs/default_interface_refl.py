@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Mon Apr 20 09:50:06 2015
+# Created: Mon Apr 20 16:03:35 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1172,7 +1172,7 @@ class Ui_MainWindow(object):
         self.reductionTable.setHorizontalHeaderItem(5, item)
         item = QtGui.QTableWidgetItem()
         self.reductionTable.setHorizontalHeaderItem(6, item)
-        self.reductionTable.horizontalHeader().setVisible(False)
+        self.reductionTable.horizontalHeader().setVisible(True)
         self.reductionTable.horizontalHeader().setDefaultSectionSize(50)
         self.reductionTable.horizontalHeader().setMinimumSectionSize(25)
         self.reductionTable.horizontalHeader().setSortIndicatorShown(False)
@@ -1408,7 +1408,6 @@ class Ui_MainWindow(object):
         self.actionSF_Calculator.setObjectName("actionSF_Calculator")
         self.actionMetadataFinder = QtGui.QAction(MainWindow)
         self.actionMetadataFinder.setObjectName("actionMetadataFinder")
-        self.menuHelp.addAction(self.actionManual)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionLoadConfiguration_2)
@@ -1421,7 +1420,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.plotTab.setCurrentIndex(0)
-        self.dataNormTabWidget.setCurrentIndex(1)
+        self.dataNormTabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.actionOpen, QtCore.SIGNAL("triggered()"), MainWindow.fileOpenDialog)
         QtCore.QObject.connect(self.actionClear_Overwrite, QtCore.SIGNAL("triggered()"), MainWindow.clearOverwrite)
         QtCore.QObject.connect(self.actionLoad_Extraction, QtCore.SIGNAL("triggered()"), MainWindow.loadExtraction)

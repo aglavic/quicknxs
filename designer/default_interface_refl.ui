@@ -703,7 +703,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="tab">
                  <property name="enabled">
@@ -2952,7 +2952,7 @@ p, li { white-space: pre-wrap; }
                      <number>0</number>
                     </property>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="horizontalHeaderDefaultSectionSize">
                      <number>50</number>
@@ -2988,7 +2988,7 @@ p, li { white-space: pre-wrap; }
                      <number>20</number>
                     </attribute>
                     <attribute name="horizontalHeaderVisible">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </attribute>
                     <attribute name="verticalHeaderCascadingSectionResizes">
                      <bool>false</bool>
@@ -3449,7 +3449,6 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionManual"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>

@@ -117,7 +117,7 @@ class Plot2dDialogREFL(QDialog):
 		                             origin='lower', extent=[0,xmax,0,ymax])
 		self.ui.detector_plot.set_xlabel(u'x (pixel)')
 		self.ui.detector_plot.set_ylabel(u'y (pixel)')
-	
+		
 		[lowres1, lowres2, lowresFlag, peak1, peak2, back1, back2, backFlag] = self.retrieveLowResPeakBack()
 	
 		if lowresFlag:
