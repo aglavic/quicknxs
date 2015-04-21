@@ -37,7 +37,10 @@ def _run(argv=[]):
   from quicknxs import config
   config.instrument=config.proxy.add_alias('ref_l', 'instrument')
 
-  from quicknxs.main_gui import MainGUI
+  if config.instrument.NAME == 'REF_M':
+    from quicknxs.refm_main_gui import MainGUI
+  else:
+    from quicknxs.refl_main_gui import MainGUI
   window=MainGUI(argv)
   window.show()
   splash.finish(window)

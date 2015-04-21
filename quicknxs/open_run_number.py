@@ -94,30 +94,30 @@ class OpenRunNumber(object):
 
 		data_active = data.active_data
 		if is_data:
-#			config_file.data_full_file_name = data_active.full_file_name
 			data_active.peak= config_file.data_peak
 			data_active.back = config_file.data_back
 			data_active.low_res = config_file.data_low_res
 			data_active.back_flag = config_file.data_back_flag
 			data_active.low_res_flag = config_file.data_low_res_flag
-#			data_active.lambda_requested = config_file.data_lambda_requested
 		else:
 			data_active.use_if_flag = config_file.norm_flag
-#			data_active.full_file_name = config_file.norm_full_file_name
 			data_active.peak = config_file.norm_peak
 			data_active.back = config_file.norm_back
 			data_active.low_res = config_file.norm_low_res
 			data_active.back_flag = config_file.norm_back_flag
 			data_active.low_res_flag = config_file.norm_low_res_flag
-#			data_active.lambda_requested = config_file.norm_lambda_requested
-
-		data_active.tof_range = config_file.tof_range
-		data_active.q_range = config_file.q_range
-		data_active.lambda_range = config_file.lambda_range
-		data_active.tof_auto_flag = config_file.tof_auto_flag
-	  
+			
+		if is_data:
+			data_active.tof_range = config_file.tof_range
+			data_active.tof_auto_flag = config_file.tof_auto_flag
+	
+			if config_file.q_range[0] != '':
+				data_active.q_range = config_file.q_range
+			
+			if config_file.lambda_range[0] != '':
+				data_active.lambda_range = config_file.lambda_range
+			  
 		return config_file
-
 
 	def addToConfigParameters(cls, data, row, is_data):
 		config_file = cls.self.bigTableData[row,2]
@@ -141,9 +141,6 @@ class OpenRunNumber(object):
 			config_file.norm_back_flag = data_active.back_flag
 			config_file.norm_low_res_flag = data_active.low_res_flag
 
-		#config_file.tof_range = data_active.tof_range
-		#config_file.q_range = data_active.q_range
-		#config_file.lambda_range = data_active.lambda_range
 		config_file.tof_auto_flag = data_active.tof_range_auto
 	  
 		return config_file

@@ -29,13 +29,13 @@ class SelectionBigTableChanged(object):
 			col_index = 0
 		row_index = row
 		
+		self.ui.dataNormTabWidget.setCurrentIndex(col_index)
 		cls.load_and_display_cell()
 		_active_data = cls.retrieve_active_data(row_index, col_index)
 		self.active_data = _active_data
 		cls.active_data = _active_data
 		
 		cls.record_new_row_col_selected()
-		self.ui.dataNormTabWidget.setCurrentIndex(col_index)
 				
 	def load_and_display_cell(cls):
 		cell = cls.self.ui.reductionTable.selectedItems()

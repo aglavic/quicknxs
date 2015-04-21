@@ -228,9 +228,76 @@ class REFLReduction(object):
 			
 			tofRange = [float(configObject.tof_range[0]), float(configObject.tof_range[-1])]
 #            qmin = str(configObject.q_range[0])
-			outputWorkspace = str("reflectivity_%s" % runNumbers)
+			outputWorkspace = str("reflectivity_%s" % runNumbers[0])
 			listWorkspaces.append(outputWorkspace)
 
+			print '-> RunNumbers:'
+			print runNumbers
+			print '-> NormalizationRunNumber: ' 
+			print normalizationRunNumbers
+			print '-> SignalPeakPixelRange: '
+			print signalPeakPixelRange
+			print '-> SubtracSignalBackground: '
+			print subtractSignalBackground
+			print '-> SignalBackgroundPixelRange: '
+			print signalBackgroundPixelRange
+			print '-> NormFlag: '
+			print normFlag
+			print '-> NormPeakPixelRange: '
+			print normPeakPixelRange
+			print '-> NormBackgroundPixelRange: '
+			print normBackgroundPixelRange
+			print '-> SubtracNormBackground: '
+			print subtractNormBackground
+			print '-> LowResDataAxisPixelRangeFlag: '
+			print lowResDataAxisPixelRangeFlag
+			print '-> LowRessDataAxisPixelRange: '
+			print lowResDataAxisPixelRange
+			print '-> LowResNormAxisPixelRangeFlag: '
+			print lowResNormAxisPixelRangeFlag
+			print '-> LowResNormAxisPixelRange: '
+			print lowResNormAxisPixelRange
+			print '-> TOFRange: '
+			print tofRange
+			print '-> incidentMediumSelected: '
+			print incidentMediumSelected
+			print '-> GeometryCorrectionFlag: '
+			print geometryCorrectionFlag
+			print '-> Qmin: '
+			print qmin
+			print '-> QStep: '
+			print qstep
+			print '-> ScalingFactorFile: '
+			print scalingFactorFile
+			print '-> SlitsWidthsFlag: '
+			print slitsWidthFlag
+			print '-> Outputworkspace: '
+			print outputWorkspace
+			
+			#RefLReduction(RunNumbers=[119656],
+				      #NormalizationRunNumber=119670,
+				      #SignalPeakPixelRange=[152, 164],
+				      #SubtractSignalBackground=True,
+				      #SignalBackgroundPixelRange=[149, 167],
+				      #NormFlag=True,
+				      #NormPeakPixelRange=[152, 163],
+				      #NormBackgroundPixelRange=[149, 167],
+				      #SubtractNormBackground=True,
+				      #LowResDataAxisPixelRangeFlag=True,
+				      #LowResDataAxisPixelRange=[98, 158],
+				      #LowResNormAxisPixelRangeFlag=True,
+				      #LowResNormAxisPixelRange=[98, 158],
+				      #TOFRange=[50407.0, 62821.0],
+				      #IncidentMediumSelected='Air_3',
+				      #GeometryCorrectionFlag=False,
+				      #QMin=0.005,
+				      #QStep=0.01,
+				      #AngleOffset=0.009,
+				      #AngleOffsetError=0.001,
+			#ScalingFactorFile='/SNS/REF_L/IPTS-11601/shared/directBeamDatabaseFall2014_after_16DEC.cfg',
+			#SlitsWidthFlag=True,
+				      #OutputWorkspace='reflectivity_119656')			
+			
 			RefLReduction(RunNumbers=runNumbers,
 			              NormalizationRunNumber=normalizationRunNumbers,
 			              SignalPeakPixelRange=signalPeakPixelRange,
