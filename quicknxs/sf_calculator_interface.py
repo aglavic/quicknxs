@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Fri Apr 17 16:09:01 2015
+# Created: Tue Apr 21 14:27:55 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -368,6 +368,10 @@ class Ui_MainWindow(object):
         self.generateSFfileButton.setEnabled(False)
         self.generateSFfileButton.setObjectName("generateSFfileButton")
         self.horizontalLayout_4.addWidget(self.generateSFfileButton)
+        self.exportButton = QtGui.QPushButton(self.centralwidget)
+        self.exportButton.setEnabled(False)
+        self.exportButton.setObjectName("exportButton")
+        self.horizontalLayout_4.addWidget(self.exportButton)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_5.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -415,6 +419,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionSavingConfiguration, QtCore.SIGNAL("triggered()"), MainWindow.savingConfiguration)
         QtCore.QObject.connect(self.toolButton, QtCore.SIGNAL("clicked()"), MainWindow.editIncidentMediumList)
         QtCore.QObject.connect(self.generateSFfileButton, QtCore.SIGNAL("clicked()"), MainWindow.generateSFfile)
+        QtCore.QObject.connect(self.exportButton, QtCore.SIGNAL("clicked()"), MainWindow.exportScript)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -461,7 +466,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "SF File Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameLabel.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
-        self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SF FILE", None, QtGui.QApplication.UnicodeUTF8))
+        self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SCALING FACTORS", None, QtGui.QApplication.UnicodeUTF8))
+        self.exportButton.setText(QtGui.QApplication.translate("MainWindow", "EXPORT ...", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "Configuration", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadingConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+O", None, QtGui.QApplication.UnicodeUTF8))

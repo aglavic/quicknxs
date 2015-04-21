@@ -1,22 +1,37 @@
 import numpy as np
-from utilities import convertTOF
+from utilities import convertTOF, createAsciiFile
 from mantid.simpleapi import *
+from PyQt4 import QtGui
 import sfCalculator
+import time
 
 class ReductionSfCalculator(object):
 	
 	sf_gui = None
+	export_script_flag = False
+	export_script_file = ''
+	export_script = []
 	table_settings = []
 	index_col = [0,1,5,10,11,12,13,14,15]
 	nbr_row = -1
 	nbr_scripts = 0
 	
-	def __init__(cls, parent=None):
+	def __init__(cls, parent=None, export_script_flag=False):
 		cls.sf_gui = parent
+		cls.export_script_flag = export_script_flag
 		
+		if export_script_flag:
+			_path = cls.sf_gui.main_gui.path_config
+			_filter = u'python (*.py)::All (*.*)'
+			filename = QtGui.QFileDialog.getSaveFileName(cls.sf_gui, 'Export Script File', _path, filter=_filter)
+			if not(filename == ''):
+				cls.export_script_file = filename
+				cls.prepareExportScript()
+			else:
+				return
 		cls.collectTableSettings()
 		cls.createAndLaunchScripts()
-		
+				
 	def collectTableSettings(cls):
 		nbr_row = cls.sf_gui.ui.tableWidget.rowCount()
 		cls.nbr_row = nbr_row
@@ -54,15 +69,26 @@ class ReductionSfCalculator(object):
 			list_peak_back = cls.getListPeakBack(from_index, to_index)
 			tof_range = cls.getTofRange(from_index)
 			
-			cls.launchScript(string_runs = string_runs,
-			                 list_peak_back = list_peak_back,
-			                 incident_medium = incident_medium,
-			                 output_file_name = output_file_name,
-			                 tof_range = tof_range)
+			if not cls.export_script:
+				cls.launchScript(string_runs = string_runs,
+					         list_peak_back = list_peak_back,
+					         incident_medium = incident_medium,
+					         output_file_name = output_file_name,
+					         tof_range = tof_range)
 			
-			cls.refreshOutputFileContainPreview(output_file_name)
+				cls.refreshOutputFileContainPreview(output_file_name)
+			else:
+				cls.exportScript(string_runs = string_runs,
+					         list_peak_back = list_peak_back,
+					         incident_medium = incident_medium,
+					         output_file_name = output_file_name,
+					         tof_range = tof_range)
+	
 			cls.sf_gui.updateProgressBar(float(i+1)/float(nbr_scripts))
 			cls.sf_gui.ui.retranslateUi(cls.sf_gui)
+		
+		if cls.exportScript:
+			createAsciiFile(cls.export_script_file, cls.export_script)
 
 	def launchScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
 		sfCalculator.calculate(string_runs = string_runs,
@@ -70,6 +96,39 @@ class ReductionSfCalculator(object):
 		                       incident_medium = incident_medium,
 		                       output_file_name = output_file_name,
 		                       tof_range = tof_range)
+
+	def prepareExportScript(cls):
+		script = []
+		script.append('#quicksNXS sfCalculator scaling factor calculation script\n')
+		_date = time.strftime("%d_%m_%Y")
+		script.append('# Script  automatically generated on ' + _date + '\n')
+		script.append('\n')
+		script.append('import os\n')
+		script.append('import mantid\n')
+		script.append('from mantid.simpleapi import *\n')
+		script.append('import sfCalculator\n')
+		cls.export_script = script
+
+	def exportScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
+		filename = cls.export_script_file
+		cls.export_script.append('\n')
+		_script_exe = 'sfCalculator.calculate(string_runs="%s",' %string_runs
+		_script_exe += "list_peak_back=["
+		
+		[nbr_row, nbr_col] = list_peak_back.shape
+		
+		_list = []
+		for _row in range(nbr_row):
+			_peak_back = list_peak_back[_row]
+			_term = "[%d,%d,%d,%d]"%(_peak_back[0], _peak_back[1], _peak_back[2], _peak_back[3])
+			_list.append(_term)
+		_script_exe += ",".join(_list) + "],"
+		
+		_script_exe += 'incident_medium="%s",' % incident_medium
+		_script_exe += 'output_file_name="%s",' % output_file_name
+		_script_exe += "tof_range=[%f,%f])\n" % (tof_range[0],tof_range[1]) 
+		
+		cls.export_script.append(_script_exe)
 
 	def refreshOutputFileContainPreview(cls, output_file_name):
 		cls.sf_gui.displayConfigFile(output_file_name)

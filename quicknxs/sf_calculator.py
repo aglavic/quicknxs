@@ -248,6 +248,7 @@ class SFcalculator(QtGui.QMainWindow):
 		_check_status_object = CheckSfRunReductionButtonStatus(parent=cls)
 		_is_everything_ok_to_go = _check_status_object.isEverythingReady()
 		cls.ui.generateSFfileButton.setEnabled(_is_everything_ok_to_go)
+		cls.ui.exportButton.setEnabled(_is_everything_ok_to_go)
 		
 	def fileHasBeenModified(cls):
 		dialog_title = cls.window_title + cls.current_loaded_file
@@ -1048,6 +1049,9 @@ class SFcalculator(QtGui.QMainWindow):
 		
 	def generateSFfile(cls):
 		runReduction = ReductionSfCalculator(parent=cls)
+		
+	def exportScript(cls):
+		runReduction = ReductionSfCalculator(parent=cls, export_script_flag=True)
 		
 	def saveConfigFiles(cls):
 		cls.reduced_files_loaded_object.save()
