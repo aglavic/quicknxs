@@ -9,51 +9,51 @@ import sys
 
 # if script was run from commandline
 try:
-  if os.path.abspath(__file__).endswith('scripts/quicknxs'):
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    if os.path.abspath(__file__).endswith('scripts/quicknxs'):
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 except NameError:
-  pass
+    pass
 
 # first thing to do is starting the logging system
 from quicknxs.gui_logging import setup_system, check_runstate
 
 def _run(argv=[]):
-  from PyQt4.QtGui import QApplication, QSplashScreen, QPixmap
-  from PyQt4.QtCore import Qt
-  app=QApplication(argv)
-  from quicknxs import icons_rc, version  #@UnusedImport
-  splash=QSplashScreen(QPixmap(u':/General/logo_refl_hq.png'))
-  #splash.setStyleSheet("qproperty-alignment: AlignBottom;")
-  splash.showMessage(u"""<html>
-                          <div style="margin-bottom: 420;"> &nbsp;</div>
-                          <div style="font-size: 12pt; margin-bottom: 15;">
-                            <b>QuickNXS</b> Version %s
-                          </div>
-                          <div>Starting up...</div>
-                        </html>"""%version.str_version,
-                     alignment=Qt.AlignBottom|Qt.AlignHCenter)
-  splash.show()
-  # set instrument configuration
-  from quicknxs import config
-  config.instrument=config.proxy.add_alias('ref_l', 'instrument')
+    from PyQt4.QtGui import QApplication, QSplashScreen, QPixmap
+    from PyQt4.QtCore import Qt
+    app=QApplication(argv)
+    from quicknxs import icons_rc, version  #@UnusedImport
+    splash=QSplashScreen(QPixmap(u':/General/logo_refl_hq.png'))
+    #splash.setStyleSheet("qproperty-alignment: AlignBottom;")
+    splash.showMessage(u"""<html>
+                       <div style="margin-bottom: 420;"> &nbsp;</div>
+                       <div style="font-size: 12pt; margin-bottom: 15;">
+                       <b>QuickNXS</b> Version %s
+                       </div>
+                       <div>Starting up...</div>
+                       </html>"""%version.str_version,
+                                 alignment=Qt.AlignBottom|Qt.AlignHCenter)
+    splash.show()
+    # set instrument configuration
+    from quicknxs import config
+    config.instrument=config.proxy.add_alias('ref_l', 'instrument')
 
-  if config.instrument.NAME == 'REF_M':
-    from quicknxs.refm_main_gui import MainGUI
-  else:
-    from quicknxs.refl_main_gui import MainGUI
-  window=MainGUI(argv)
-  window.show()
-  splash.finish(window)
-  return app.exec_()
+    if config.instrument.NAME == 'REF_M':
+        from quicknxs.refm_main_gui import MainGUI
+    else:
+        from quicknxs.refl_main_gui import MainGUI
+    window=MainGUI(argv)
+    window.show()
+    splash.finish(window)
+    return app.exec_()
 
 if __name__=='__main__':
-  from quicknxs import config
-  if config.instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
-    if check_runstate():
-      # make sure the debug.log is not overwritten and only one version
-      # of the program per user is running
-      print "Another instance is already running"
-      sys.exit(0)
-  setup_system()
-  if 'QuickNXS.app' in sys.argv[0]: sys.argv.pop(-1)
-  sys.exit(_run(sys.argv[1:]))
+    from quicknxs import config
+    if config.instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
+        if check_runstate():
+            # make sure the debug.log is not overwritten and only one version
+            # of the program per user is running
+            print "Another instance is already running"
+            sys.exit(0)
+    setup_system()
+    if 'QuickNXS.app' in sys.argv[0]: sys.argv.pop(-1)
+    sys.exit(_run(sys.argv[1:]))
