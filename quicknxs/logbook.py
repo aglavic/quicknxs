@@ -1,5 +1,5 @@
-import main_gui
+import refl_main_gui
 
 def append(text):
-    main_gui.MainGUI.logbook.append(text)
+    refl_main_gui.MainGUI.logbook.append(text)
         
