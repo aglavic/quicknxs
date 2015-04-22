@@ -36,6 +36,17 @@ class CompareTwoNXSDataForSFcalculator(object):
 			cls.resultComparison = compare4
 			return
 		
+		compare5 = cls.compareParameter('S1HWidth','ascending')
+		if compare5 != 0:
+			cls.resultComparison = compare5
+			return
+		
+		compare6 = cls.compareParameter('S1VHeight','ascending')
+		if compare6 != 0:
+			cls.resultComparison = compare6
+			return
+		
+		
 	def compareParameter(cls, param, order, param_backup=None):
 		_nexusToCompareWithRun = cls.nexusToCompareWithRun
 		_nexusToPositionRun = cls.nexusToPositionRun
