@@ -451,22 +451,26 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.loadingConfigurationFileDefined(filename)
 			
 	def loadingConfigurationFileDefined(cls, filename):
-		cls.current_loaded_file = filename
-		cls.resetFileHasBeenModified()			
-		cls.main_gui.path_config = os.path.dirname(filename)
-		status = cls.importConfiguration(filename)
-		if status:
-			cls.setWindowTitle(cls.window_title + filename)
-		cls.tableWidgetCellSelected(0, 0)
-		cls.checkGui()
-		
-		if cls.reduced_files_loaded_object is None:
-			_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
-		else:
-			_reduced_files_loaded_object = cls.reduced_files_loaded_object
-		_reduced_files_loaded_object.addFile(filename)
-		_reduced_files_loaded_object.updateGui()
-		cls.reduced_files_loaded_object = _reduced_files_loaded_object
+		try:
+			cls.current_loaded_file = filename
+			cls.resetFileHasBeenModified()			
+			cls.main_gui.path_config = os.path.dirname(filename)
+			status = cls.importConfiguration(filename)
+			if status:
+				cls.setWindowTitle(cls.window_title + filename)
+			cls.tableWidgetCellSelected(0, 0)
+			cls.checkGui()
+				
+			if cls.reduced_files_loaded_object is None:
+				_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
+			else:
+				_reduced_files_loaded_object = cls.reduced_files_loaded_object
+			_reduced_files_loaded_object.addFile(filename)
+			_reduced_files_loaded_object.updateGui()
+			cls.reduced_files_loaded_object = _reduced_files_loaded_object
+		except: 
+			info('Error loading configuration!')
+			
 
 	def savingConfiguration(cls):
 		filename = cls.current_loaded_file
