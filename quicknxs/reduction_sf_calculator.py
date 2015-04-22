@@ -85,9 +85,9 @@ class ReductionSfCalculator(object):
 					         tof_range = tof_range)
 	
 			cls.sf_gui.updateProgressBar(float(i+1)/float(nbr_scripts))
-			cls.sf_gui.ui.retranslateUi(cls.sf_gui)
+#			cls.sf_gui.ui.retranslateUi(cls.sf_gui)
 		
-		if cls.exportScript:
+		if cls.export_script_flag:
 			createAsciiFile(cls.export_script_file, cls.export_script)
 
 	def launchScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
@@ -149,6 +149,8 @@ class ReductionSfCalculator(object):
 	
 	def getOutputFileName(cls):
 		output_file_name = cls.sf_gui.ui.sfFileNameLabel.text()
+		print 'output_file_name:'
+		print output_file_name
 		return output_file_name
 	
 	def getTofRange(cls, from_index):

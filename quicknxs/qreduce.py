@@ -233,6 +233,7 @@ class NXSData(object):
     MAX_CACHE=20 #: Number of datasets that are kept in the cache
     MAX_MEMORY_USED=80 #: percentage max of memory used
     _cache=[]
+    _cache_filename = []
 
     @log_both
     def __new__(cls, filename, **options):
@@ -244,17 +245,19 @@ class NXSData(object):
             #filename=fn
 
         cls.list_run_numbers = []
-
-        print 'in __new__'
-
         all_options=cls._get_all_options(options)
-        if type(filename) == type([]):
+        
+        if (type(filename) == type([]) and (len(filename) > 1)):
             for i in range(len(filename)):
                 filename[i] = os.path.abspath(filename[i])
                 cached_names=[] #fixme (add cached names when loading more than 1 file)
         else:
+            if type(filename) == type([]):
+                filename = filename[0]
             filename=os.path.abspath(filename)
             cached_names=[item.origin for item in cls._cache]
+            print 'cached_names: '
+            print cached_names
 #            if all_options['use_caching'] and filename in cached_names:
             if filename in cached_names:
                 print filename
@@ -264,7 +267,8 @@ class NXSData(object):
                 compare_options['callback']=None
                 if cached_object._options==compare_options:
                     return cached_object
-
+                    
+                    
                 # else
         self=object.__new__(cls)
         self._options=all_options
@@ -285,10 +289,10 @@ class NXSData(object):
         #print '***** Memory usage so far !!! *****'
         #print psutil.virtual_memory()
 
-        if all_options['use_caching']:
-            if filename in cached_names:
-                cache_index=cached_names.index(filename)
-                cls._cache.pop(cache_index)
+#        if all_options['use_caching']:
+        if filename in cached_names:
+            cache_index=cached_names.index(filename)
+            cls._cache.pop(cache_index)
 
             # make sure we stay below the 80% of memory used
             #while psutil.virtual_memory().percent >= cls.MAX_MEMORY_USED:
@@ -299,9 +303,13 @@ class NXSData(object):
             # make sure cache does not get bigger than MAX_CACHE items or 80% of available memory
             while len(cls._cache)>=cls.MAX_CACHE:
                 cls._cache.pop(0)
-            cls._cache.append(self)
+                cls._cache.append(self)
+                
         # remove callback function to make the object Pickleable
         self._options['callback']=None
+
+        # add current object to cache f
+        cls._cache.append(self)
 
         return self
 

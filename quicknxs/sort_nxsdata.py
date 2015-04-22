@@ -44,7 +44,7 @@ class SortNXSData(object):
 	def mergedNXSData(cls, nxsdata1, nxsdata2):
 		_full_file_name1 = nxsdata1.active_data.filename
 		_full_file_name2 = nxsdata2.active_data.filename
-		_new_nxsdata =  NXSData([_full_file_name1, _full_file_name2], bins=cls.sf_gui.bin_size)
+		_new_nxsdata =  NXSData([_full_file_name1, _full_file_name2], bins=cls.sf_gui.bin_size, is_auto_peak_finder=True)
 		return _new_nxsdata
 	
 	def getSortedList(cls):
