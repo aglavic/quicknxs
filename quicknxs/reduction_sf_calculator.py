@@ -22,7 +22,7 @@ class ReductionSfCalculator(object):
 		
 		if export_script_flag:
 			_path = cls.sf_gui.main_gui.path_config
-			_filter = u'python (*.py)::All (*.*)'
+			_filter = u'python (*.py);;All (*.*)'
 			filename = QtGui.QFileDialog.getSaveFileName(cls.sf_gui, 'Export Script File', _path, filter=_filter)
 			if not(filename == ''):
 				cls.export_script_file = filename
@@ -99,7 +99,7 @@ class ReductionSfCalculator(object):
 
 	def prepareExportScript(cls):
 		script = []
-		script.append('#quicksNXS sfCalculator scaling factor calculation script\n')
+		script.append('# quicksNXS sfCalculator scaling factor calculation script\n')
 		_date = time.strftime("%d_%m_%Y")
 		script.append('# Script  automatically generated on ' + _date + '\n')
 		script.append('\n')
