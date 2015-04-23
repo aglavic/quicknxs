@@ -87,6 +87,8 @@ class MainGUI(QtGui.QMainWindow):
     active_file=u''
     last_mtime=0. #: Stores the last time the current file has been modified
     _active_data=None
+    current_loaded_file = '~/tmp.xml'
+    window_title = 'QuickNXS for REF_L - '
 
     # will save the data and norm objects according to their position in the bigTable
     # [data, norm, metadata from config file]
@@ -202,6 +204,28 @@ class MainGUI(QtGui.QMainWindow):
     #def logtoggle(self, checked):
         #self.isLog = checked
         #self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
+
+    def fileHasBeenModified(self):
+	dialog_title = self.window_title + self.current_loaded_file
+	new_dialog_title = dialog_title + '*'
+	self.setWindowTitle(new_dialog_title)
+		
+    def resetFileHasBeenModified(self):
+	dialog_title = self.window_title + self.current_loaded_file
+	self.setWindowTitle(dialog_title)
+
+    def eventTofBinsEvent(self):
+	self.fileHasBeenModified()
+    def qStepEvent(self):
+	self.fileHasBeenModified()
+    def autoBackSelectionWidthEvent(self):
+	self.fileHasBeenModified()
+    def autoTofFlagEvent(self):
+	self.fileHasBeenModified()
+    def selectIncidentMediumListEvent(self, value):
+	self.fileHasBeenModified()
+	
+
 
     # export plot into ascii files
     def export_ix(self):
@@ -497,6 +521,8 @@ class MainGUI(QtGui.QMainWindow):
 #      [r,c] = self.getCurrentRowColumnSelected()
             r = self._cur_row_selected
             c = self._cur_column_selected
+            if c > 0:
+                c= 1
             data = self.bigTableData[r,c]
             if data is None:
                 status = False
@@ -3401,7 +3427,7 @@ Do you want to try to restore the working reduction list?""",
         bigTableData[row, col] = data
         self.bigTableData = bigTableData
         self.auto_tof_switch(tof_auto_switch_status)
-
+	self.fileHasBeenModified()
 
     def data_background_switch(self):
         '''
@@ -3433,6 +3459,7 @@ Do you want to try to restore the working reduction list?""",
         self.plot_overview_REFL(plot_yi=True, plot_yt=True)
 
         CheckErrorWidgets(self)
+	self.fileHasBeenModified()
 
 
     def data_low_res_switch(self):
@@ -3463,6 +3490,7 @@ Do you want to try to restore the working reduction list?""",
 
         # refresh plot
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+	self.fileHasBeenModified()
 
     def normalization_switch(self, flag):
         '''
@@ -3511,6 +3539,7 @@ Do you want to try to restore the working reduction list?""",
 
         # save new settings
         self.save_new_settings()
+	self.fileHasBeenModified()
 
     def normalization_background_switch(self):
         '''
@@ -3537,7 +3566,7 @@ Do you want to try to restore the working reduction list?""",
 
         self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     def normalization_low_res_switch(self):
         '''
@@ -3568,13 +3597,13 @@ Do you want to try to restore the working reduction list?""",
 
         # refresh plots
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
-
+	self.fileHasBeenModified()
 
     def data_peak_and_back_validation(self, withPlotUpdate=True):
         self.data_peak_spinbox_validation(withPlotUpdate=withPlotUpdate)
         self.data_back_spinbox_validation(withPlotUpdate=withPlotUpdate)
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     # data peak spinboxes
     def data_peak_spinbox_validation(self, withPlotUpdate=True):
@@ -3617,7 +3646,7 @@ Do you want to try to restore the working reduction list?""",
         self.save_new_settings()
 
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     # data back spinboxes
     def data_back_spinbox_validation(self, withPlotUpdate=True):
@@ -3663,7 +3692,7 @@ Do you want to try to restore the working reduction list?""",
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     # data low resolution spinboxes
     def data_lowres_spinbox_validation(self):
@@ -3706,11 +3735,12 @@ Do you want to try to restore the working reduction list?""",
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     def norm_peak_and_back_validation(self, withPlotUpdate=False):
         self.norm_peak_spinbox_validation(withPlotUpdate)
         self.norm_back_spinbox_validation(withPlotUpdate)
+	self.fileHasBeenModified()
 
     # norm peak spinboxes
     def norm_peak_spinbox_validation(self, withPlotUpdate=True):
@@ -3753,7 +3783,7 @@ Do you want to try to restore the working reduction list?""",
             self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     # norm back spinboxes
     def norm_back_spinbox_validation(self, withPlotUpdate=True):
@@ -3796,7 +3826,7 @@ Do you want to try to restore the working reduction list?""",
             self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 
         CheckErrorWidgets(self)
-
+	self.fileHasBeenModified()
 
     # data low resolution spinboxes
     def norm_lowres_spinbox_validation(self):
@@ -3837,15 +3867,19 @@ Do you want to try to restore the working reduction list?""",
 
         # refresh plots
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
+	self.fileHasBeenModified()
 
     def useAutoPeakBackSelectionCheckBox(self, status):
         self.ui.autoPeakBackSelectionFrame.setEnabled(status)
+	self.fileHasBeenModified()
 
     def useGeometryCorrectionCheckBox(self, status):
         self.ui.geometryCorrectionFrame.setEnabled(status)
+	self.fileHasBeenModified()
 
     def useScalingFactorConfigCheckBox(self, status):
         self.ui.scalingFactorConfigFrame.setEnabled(status)
+	self.fileHasBeenModified()
 
     def reduction_table_right_click(self, pos):
         menu = QtGui.QMenu(self)
@@ -3873,6 +3907,8 @@ Do you want to try to restore the working reduction list?""",
             self.reduction_table_delete_row()
         elif action == displayMeta:
             self.reduction_table_display_metadata()
+	    
+	self.fileHasBeenModified()
 
     def reduction_table_copy(self):
         _item = self.ui.reductionTable.selectedItems()
@@ -4082,7 +4118,6 @@ Do you want to try to restore the working reduction list?""",
     @log_call
     @waiting_effects
     def loading_configuration(self):
-        print 'in loading_configuration'
 
         _path = self.path_config
         filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
@@ -4098,6 +4133,8 @@ Do you want to try to restore the working reduction list?""",
             _reducedFilesLoadedObject.updateGui()
             self.reducedFilesLoadedObject = _reducedFilesLoadedObject
 
+            self.current_loaded_file = filename
+	    self.resetFileHasBeenModified()
 
     def loading_configuration_file(self, filename):
         self.path_config = os.path.dirname(filename)
@@ -4112,10 +4149,18 @@ Do you want to try to restore the working reduction list?""",
         self.enableWidgets(checkStatus=True)
 
     @log_call
-    def saving_configuration(self):
+    def saving_configuration_as(self):
         _path = self.path_config
         filename = QtGui.QFileDialog.getSaveFileName(self, 'Save Configuration File', _path)
         if not(filename == ""):
+	    self.savingConfigurationStep2(filename)
+	    
+    @log_call
+    def saving_configuration(self):
+	filename = self.current_loaded_file
+	self.savingConfigurationStep2(filename)
+    
+    def savingConfigurationStep2(self, filename):
             self.path = os.path.dirname(filename)
             self.saveConfig(filename)
             if self.reducedFilesLoadedObject is None:
@@ -4125,7 +4170,10 @@ Do you want to try to restore the working reduction list?""",
             _reducedFilesLoadedObject.addFile(filename)
             _reducedFilesLoadedObject.updateGui()
             self.reducedFilesLoadedObject = _reducedFilesLoadedObject
-
+	    
+	    self.current_loaded_file = filename
+	    self.resetFileHasBeenModified()
+	    
     @log_call
     def saveConfig(self, filename):
 
@@ -4192,7 +4240,7 @@ Do you want to try to restore the working reduction list?""",
                     data_back_flag = _metadata.data_back_flag
                     data_low_res_flag = _metadata.data_low_res_flag
                     data_lambda_requested = _metadata.data_lambda_requested
-                    tof = _metadata.tof
+                    tof = _metadata.tof_range
 
                     # for old config file that do not have this flag yet
                     try:
@@ -4693,7 +4741,7 @@ Do you want to try to restore the working reduction list?""",
         if filename is not u'':
             self.ui.scalingFactorFile.setText(filename)
             self.populate_sf_widgets(filename)
-
+	    self.fileHasBeenModified()
 
     def populate_sf_widgets(self, filename):
         listMedium = self.parse_scaling_factor_file(filename)
@@ -5412,6 +5460,7 @@ Do you want to try to restore the working reduction list?""",
 
         # switch to first tab
         self.ui.dataNormTabWidget.setCurrentIndex(0)  
+	self.fileHasBeenModified()
 
     def data_stitching_is_auto(self):
         self.data_stitching_mode('auto')

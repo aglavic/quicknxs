@@ -14,8 +14,9 @@ class InitializeGui(object):
 		
 		cls.self = self
 		
-		window_title = 'QuickNXS for REF_L'
-		self.setWindowTitle(u'%s   %s'%(window_title, str_version))
+		window_title = self.window_title
+#		self.setWindowTitle(u'%s   %s'%(window_title, str_version))
+                self.setWindowTitle(u'%s%s' %(window_title, '~/tmp.xml'))
 		self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
 		self.cache_indicator.setVisible(False)
 		self.ui.statusbar.addPermanentWidget(self.cache_indicator)

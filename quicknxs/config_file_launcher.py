@@ -13,5 +13,7 @@ class ConfigFileLauncher(object):
 		self.reducedFilesLoadedObject = _configObject
 		self.loading_configuration_file(_filename)
 		self.fileMenuObject.activate_file_at_index(file_index)
+		self.current_loaded_file = _filename
+		self.resetFileHasBeenModified()
 	
 	
