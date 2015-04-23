@@ -225,8 +225,6 @@ class MainGUI(QtGui.QMainWindow):
     def selectIncidentMediumListEvent(self, value):
 	self.fileHasBeenModified()
 	
-
-
     # export plot into ascii files
     def export_ix(self):
         ExportPlotAscii(self, type='ix')
@@ -307,6 +305,16 @@ class MainGUI(QtGui.QMainWindow):
         ConfigFileLauncher(self, 3)
     def launch_config_file5(self):
         ConfigFileLauncher(self, 4)
+    def launch_config_file6(self):
+        ConfigFileLauncher(self, 5)
+    def launch_config_file7(self):
+        ConfigFileLauncher(self, 6)
+    def launch_config_file8(self):
+        ConfigFileLauncher(self, 7)
+    def launch_config_file9(self):
+        ConfigFileLauncher(self, 8)
+    def launch_config_file10(self):
+        ConfigFileLauncher(self, 9)
 
     def launch_SFcalculator(self):
         sfCalculator = SFcalculator(self)

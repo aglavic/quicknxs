@@ -12,7 +12,7 @@ class ReducedConfigFilesHandler(object):
 	configFiles = []
 	activeFileIndex = -1
 	totalFilesLoaded = 0
-	TOTAL_NUMBER_OF_FILES = 5
+	TOTAL_NUMBER_OF_FILES = 10
 	
 	def __init__(self, mainGui):
 		self.mainGui = mainGui
@@ -26,13 +26,23 @@ class ReducedConfigFilesHandler(object):
 		file3 = refllastloadedfiles.reduce3
 		file4 = refllastloadedfiles.reduce4
 		file5 = refllastloadedfiles.reduce5
-		file = [file1, file2, file3, file4, file5]
+		file6 = refllastloadedfiles.reduce6
+		file7 = refllastloadedfiles.reduce7
+		file8 = refllastloadedfiles.reduce8
+		file9 = refllastloadedfiles.reduce9
+		file10 = refllastloadedfiles.reduce10
+		file = [file1, file2, file3, file4, file5, file6, file7, file8, file9, file10]
 		date1 = refllastloadedfiles.date1
 		date2 = refllastloadedfiles.date2
 		date3 = refllastloadedfiles.date3
 		date4 = refllastloadedfiles.date4
 		date5 = refllastloadedfiles.date5
-		date = [date1, date2, date3, date4, date5]
+		date6 = refllastloadedfiles.date6
+		date7 = refllastloadedfiles.date7
+		date8 = refllastloadedfiles.date8
+		date9 = refllastloadedfiles.date9
+		date10 = refllastloadedfiles.date10
+		date = [date1, date2, date3, date4, date5, date6, date7, date8, date9, date10]
 		for i in range(self.TOTAL_NUMBER_OF_FILES):
 			if file[i] != '':
 				_fileLoad = FileLoadedObject(file[i], date[i])
@@ -97,7 +107,12 @@ class ReducedConfigFilesHandler(object):
 		           QtCore.Qt.Key_1,
 		           QtCore.Qt.Key_2,
 		           QtCore.Qt.Key_3,
-		           QtCore.Qt.Key_4]
+		           QtCore.Qt.Key_4,
+		           QtCore.Qt.Key_5,
+		           QtCore.Qt.Key_6,
+		           QtCore.Qt.Key_7,
+		           QtCore.Qt.Key_8,
+		           QtCore.Qt.Key_9]
 		for i in range(self.totalFilesLoaded):
 			_file = self.configFiles[i].fullFileName
 			_key = listKey[i]
@@ -130,4 +145,24 @@ class ReducedConfigFilesHandler(object):
 			refllastloadedfiles.reduce5 = self.configFiles[4].fullFileName
 			refllastloadedfiles.date5 = self.configFiles[4].lastTimeUsed
 			
+		if self.totalFilesLoaded>5 and self.configFiles[5].fullFileName != '':
+			refllastloadedfiles.reduce6 = self.configFiles[5].fullFileName
+			refllastloadedfiles.date6 = self.configFiles[5].lastTimeUsed
+	
+		if self.totalFilesLoaded>6 and self.configFiles[6].fullFileName != '':
+			refllastloadedfiles.reduce7 = self.configFiles[6].fullFileName
+			refllastloadedfiles.date7 = self.configFiles[6].lastTimeUsed
+
+		if self.totalFilesLoaded>7 and self.configFiles[7].fullFileName != '':
+			refllastloadedfiles.reduce8 = self.configFiles[7].fullFileName
+			refllastloadedfiles.date8 = self.configFiles[7].lastTimeUsed
+					
+		if self.totalFilesLoaded>8 and self.configFiles[8].fullFileName != '':
+			refllastloadedfiles.reduce59= self.configFiles[8].fullFileName
+			refllastloadedfiles.date9 = self.configFiles[8].lastTimeUsed
+
+		if self.totalFilesLoaded>9 and self.configFiles[9].fullFileName != '':
+			refllastloadedfiles.reduce10 = self.configFiles[9].fullFileName
+			refllastloadedfiles.date10 = self.configFiles[9].lastTimeUsed
+
 		refllastloadedfiles.switch_config('default')
