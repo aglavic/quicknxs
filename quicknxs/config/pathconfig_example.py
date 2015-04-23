@@ -6,7 +6,7 @@ well as all available configurations are stored in the
 config_path_options.ini file in the same folder.
 '''
 
-config_path='/tmp/path_config'
+config_path='~/tmp/path_config'
 
 test='hallo'
 
