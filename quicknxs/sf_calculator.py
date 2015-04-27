@@ -43,6 +43,7 @@ class SFcalculator(QtGui.QMainWindow):
 	list_action = []
 	reduced_files_loaded_object = None
 	event_progressbar = None
+	is_manual_edit_of_tableWidget = True
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -316,6 +317,7 @@ class SFcalculator(QtGui.QMainWindow):
 		
 	def runSequenceLineEditEvent(cls):
 		run_sequence = cls.ui.runSequenceLineEdit.text()
+		cls.is_manual_edit_of_tableWidget = False
 		oListRuns = RunSequenceBreaker(run_sequence)
 		_new_runs = oListRuns.getFinalList()
 		_old_runs = cls.loaded_list_of_runs
@@ -334,7 +336,7 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.fileHasBeenModified()					
 		else:
 			ret = QtGui.QMessageBox.information(cls, "No Files Loaded!","Check The list of runs")
-#			info('No Files loaded!')
+		cls.is_manual_edit_of_tableWidget = True
 		
 	def fillGuiTable(cls):
 		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
@@ -453,6 +455,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def loadingConfigurationFileDefined(cls, filename):
 		try:
 			cls.current_loaded_file = filename
+			cls.is_manual_edit_of_tableWidget = False
 			cls.resetFileHasBeenModified()			
 			cls.main_gui.path_config = os.path.dirname(filename)
 			status = cls.importConfiguration(filename)
@@ -468,9 +471,10 @@ class SFcalculator(QtGui.QMainWindow):
 			_reduced_files_loaded_object.addFile(filename)
 			_reduced_files_loaded_object.updateGui()
 			cls.reduced_files_loaded_object = _reduced_files_loaded_object
+			cls.is_manual_edit_of_tableWidget = True			
 		except: 
 			info('Error loading configuration!')
-			
+			cls.is_manual_edit_of_tableWidget = True
 
 	def savingConfiguration(cls):
 		filename = cls.current_loaded_file
@@ -634,6 +638,10 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.displaySelectedRow(row)
 		cls.updateTableWidgetPeakBackTof(row)
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
+
+	def tableWidgetCellEntered(cls, row, col):
+		if cls.is_manual_edit_of_tableWidget:
+			print cls.ui.tableWidget.item(row, col)
 
 	def incidentMediumComboBoxChanged(cls):
 		cls.fileHasBeenModified()

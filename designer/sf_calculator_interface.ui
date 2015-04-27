@@ -1303,6 +1303,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellChanged(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>tableWidgetCellEntered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>828</x>
+     <y>624</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>828</x>
+     <y>573</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1324,5 +1340,6 @@
   <slot>editIncidentMediumList()</slot>
   <slot>generateSFfile()</slot>
   <slot>exportScript()</slot>
+  <slot>tableWidgetCellEntered()</slot>
  </slots>
 </ui>
