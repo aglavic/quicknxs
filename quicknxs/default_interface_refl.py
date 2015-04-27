@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Apr 23 12:12:54 2015
+# Created: Mon Apr 27 14:41:08 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1176,9 +1176,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addWidget(self.splitter)
         self.horizontalLayout_11 = QtGui.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.clearTableButton = QtGui.QPushButton(self.widget)
-        self.clearTableButton.setObjectName("clearTableButton")
-        self.horizontalLayout_11.addWidget(self.clearTableButton)
         spacerItem24 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem24)
         self.reduceButton = QtGui.QPushButton(self.widget)
@@ -1440,7 +1437,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellClicked(int,int)"), MainWindow.bigTable_selection_changed)
         QtCore.QObject.connect(self.reduceButton, QtCore.SIGNAL("clicked()"), MainWindow.runReduction)
         QtCore.QObject.connect(self.reductionTable, QtCore.SIGNAL("cellDoubleClicked(int,int)"), MainWindow.reduction_table_cell_double_clicked)
-        QtCore.QObject.connect(self.clearTableButton, QtCore.SIGNAL("clicked()"), MainWindow.clear_reductionTable)
         QtCore.QObject.connect(self.autoSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_auto)
         QtCore.QObject.connect(self.manualSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_manual)
         QtCore.QObject.connect(self.oneSF, QtCore.SIGNAL("clicked()"), MainWindow.data_stitching_is_1)
@@ -1603,7 +1599,6 @@ class Ui_MainWindow(object):
         self.reductionTable.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.reductionTable.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("MainWindow", "New Column", None, QtGui.QApplication.UnicodeUTF8))
-        self.clearTableButton.setText(QtGui.QApplication.translate("MainWindow", "Clear Table", None, QtGui.QApplication.UnicodeUTF8))
         self.reduceButton.setText(QtGui.QApplication.translate("MainWindow", "R E D U C E", None, QtGui.QApplication.UnicodeUTF8))
         self.RvsQ.setText(QtGui.QApplication.translate("MainWindow", "R vs Q", None, QtGui.QApplication.UnicodeUTF8))
         self.RQ4vsQ.setText(QtGui.QApplication.translate("MainWindow", "RQ^4 vs Q", None, QtGui.QApplication.UnicodeUTF8))

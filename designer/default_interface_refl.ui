@@ -3026,13 +3026,6 @@ p, li { white-space: pre-wrap; }
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_11">
                 <item>
-                 <widget class="QPushButton" name="clearTableButton">
-                  <property name="text">
-                   <string>Clear Table</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <spacer name="horizontalSpacer_3">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -4100,22 +4093,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>816</x>
      <y>935</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>850</x>
-     <y>556</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearTableButton</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>clear_reductionTable()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>504</x>
-     <y>1057</y>
     </hint>
     <hint type="destinationlabel">
      <x>850</x>

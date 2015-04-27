@@ -725,7 +725,7 @@ class MainGUI(QtGui.QMainWindow):
 
         self.bigTable_selection_changed(row, column)
 
-    def remove_row_reductionTable(self):
+    def removeRowReductionTable(self):
         nbrRow = self.ui.reductionTable.rowCount()
         if nbrRow == 0:
             return
@@ -3884,32 +3884,35 @@ Do you want to try to restore the working reduction list?""",
         menu = QtGui.QMenu(self)
         modify = menu.addAction("Edit ...")
         menu.addSeparator()
-        copy = menu.addAction("Copy")
-        paste = menu.addAction("Paste")
-        if self.reduction_table_copied_field != '':
-            paste.setEnabled(True)  
-        else:
-            paste.setEnabled(False)
-        menu.addSeparator()
+        #copy = menu.addAction("Copy")
+        #paste = menu.addAction("Paste")
+        #if self.reduction_table_copied_field != '':
+            #paste.setEnabled(True)  
+        #else:
+            #paste.setEnabled(False)
+        #menu.addSeparator()
         removeRow = menu.addAction("Delete Row")
+	clearTable = menu.addAction('Clear Table')
         menu.addSeparator()
         displayMeta = menu.addAction("Display Metadata ...")
         action = menu.exec_(QtGui.QCursor.pos())
 
         if action == modify:
-            self.reduction_table_edit()
-        elif action == copy:
-            self.reduction_table_copy()
-        elif action == paste:
-            self.reduction_table_paste()
+            self.reductionTableEdit()
+        #elif action == copy:
+            #self.reductionTableCopy()
+        #elif action == paste:
+            #self.reductionTablePaste()
         elif action == removeRow:
-            self.reduction_table_delete_row()
+            self.reductionTableDeleteRow()
+	elif action == clearTable:
+	    self.reductionTableClearTable()
         elif action == displayMeta:
-            self.reduction_table_display_metadata()
+            self.reductionTableDisplayMetadata()
 	    
 	self.fileHasBeenModified()
 
-    def reduction_table_copy(self):
+    def reductionTableCopy(self):
         _item = self.ui.reductionTable.selectedItems()
         self.reduction_table_copied_field = _item[0].text()
         #[row,col] = self.getCurrentRowColumnSelected()
@@ -3917,7 +3920,7 @@ Do you want to try to restore the working reduction list?""",
         col = self._cur_column_selected
         self.reduction_table_copied_row_col = [row,col]
 
-    def reduction_table_paste(self):
+    def reductionTablePaste(self):
         #[newrow, newcol] = self.getCurrentRowColumnSelected()
         newrow = self._cur_row_selected
         newcol = self._cur_column_selected
@@ -3929,14 +3932,14 @@ Do you want to try to restore the working reduction list?""",
         self.bigTableData = bigTable
         self._fileOpenDoneREFL(data=bigTable[newrow, newcol])
 
-    def 	reduction_table_edit(self):
+    def reductionTableEdit(self):
         ''' Modify data or norm run number '''
         [row,col] = self.getCurrentRowColumnSelected()
         _editTable = TableReductionRunEditor(parent=self, col=col, row=row)
         _editTable.show()
 
     @waiting_effects
-    def reduction_table_display_metadata(self):
+    def reductionTableDisplayMetadata(self):
         bigTableData = self.bigTableData
 #    [row,col] = self.getCurrentRowColumnSelected()
         row = self._cur_row_selected
@@ -3948,9 +3951,23 @@ Do you want to try to restore the working reduction list?""",
         _displayMeta = DisplayMetadata(self, active_data)
         _displayMeta.show()
 
-    def reduction_table_delete_row(self):
-        self.remove_row_reductionTable()
+    def reductionTableDeleteRow(self):
+        self.removeRowReductionTable()
 
+    def reductionTableClearTable(self):
+	self.clear_plot_overview_REFL(True)
+	self.clear_plot_overview_REFL(False)
+	self.clearMetadataWidgets()
+	nbrRow = self.ui.reductionTable.rowCount()
+	bigTableData = self.bigTableData
+	for _row in range(nbrRow):
+	    bigTableData = np.delete(bigTableData, 0, axis=0)
+	    self.ui.reductionTable.removeRow(0)
+	self.bigTableData = bigTableData
+	self.ui.reductionTable.show()
+	self.allTabWidgetsEnabler(enableFlag=False)
+	self.ui.reductionTable.setEnabled(False)
+	
     def save_new_settings(self):
         '''
         This function will retrieve all the settings (peak, background...)

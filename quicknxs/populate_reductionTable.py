@@ -49,6 +49,7 @@ class PopulateReductionTable(object):
 						else:
 							_norm_run_number = _obj_config.norm_sets
 							_isOk = self.isPeakBackSelectionOkFromConfig(_obj_config, type='norm')
+							_brush = QtGui.QBrush()							
 							if _isOk:
 								_brush.setColor(colors.VALUE_OK)
 							else:
@@ -59,6 +60,7 @@ class PopulateReductionTable(object):
 				else:
 					_run_number = _obj.active_data.run_number
 					_item = QtGui.QTableWidgetItem(_run_number)
+					_brush = QtGui.QBrush()
 					if c==0:
 						_isOk = self.isPeakBackSelectionOkFromNXSdata(_obj.active_data)
 						cls.addMetadata(r, _obj)
