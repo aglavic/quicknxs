@@ -127,8 +127,11 @@ class FillSFGuiTable(object):
 				_item = QtGui.QTableWidgetItem(_value)
 				_item.setForeground(_brush)
 				_color = QtGui.QColor(back_color)
-				_item.setBackgroundColor(_color)				
-				_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)				
+				_item.setBackgroundColor(_color)
+				if k in [10,11,12,13]:
+					_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsEditable)				
+				else:
+					_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 				parent.ui.tableWidget.setItem(r,k,_item)
 
 			_run_number = str(int(_row[0]))

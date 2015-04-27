@@ -626,6 +626,8 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.fileHasBeenModified()
 		
 	def tableWidgetCellSelected(cls, row, col):
+		if col != 0:
+			return
 		cls.current_table_row_selected = row
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
