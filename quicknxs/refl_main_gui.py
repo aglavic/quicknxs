@@ -3657,22 +3657,14 @@ Do you want to try to restore the working reduction list?""",
 
     # data back spinboxes
     def data_back_spinbox_validation(self, withPlotUpdate=True):
-        '''
-        This function, reached when the user is done editing the
-        spinboxes (ENTER, leaving the spinbox) 
-        will make sure the min value is < max value  
-        '''
-
-        # get current row and column selected
-        #[r,c] = self.getCurrentRowColumnSelected()
         r = self._cur_row_selected
         c = self._cur_column_selected
         if c != 0:
             c = 1
         _data = self.bigTableData[r,c]
+	if _data is None:
+	    return
         data = _data.active_data
-        if data is None:
-            return
 
         back1 = self.ui.dataBackFromValue.value()
         back2 = self.ui.dataBackToValue.value()
@@ -4153,6 +4145,7 @@ Do you want to try to restore the working reduction list?""",
 
         self.loadConfigAndPopulateGui(filename)
         self.enableWidgets(checkStatus=True)
+        CheckErrorWidgets(self)
 
     @log_call
     def saving_configuration_as(self):
