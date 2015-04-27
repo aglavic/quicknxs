@@ -2092,7 +2092,6 @@ class MainGUI(QtGui.QMainWindow):
     #@log_call
     def openByNumber(self):
         OpenRunNumber(self)
-
         PopulateReductionTable(self)
         # selection
         _row = self._prev_row_selected
@@ -4126,7 +4125,6 @@ Do you want to try to restore the working reduction list?""",
     @log_call
     @waiting_effects
     def loading_configuration(self):
-
         _path = self.path_config
         filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
 
@@ -4465,14 +4463,6 @@ Do you want to try to restore the working reduction list?""",
         for node in RefLData:
             self.ui.reductionTable.insertRow(_row)
 
-            # data 
-            _data_sets = self.getNodeValue(node,'data_sets')
-            self.addItemToBigTable(_data_sets, _row, 0, editableFlag=False)
-
-            # norm
-            _norm_sets = self.getNodeValue(node,'norm_dataset')
-            self.addItemToBigTable(_norm_sets, _row, 6, editableFlag=False)
-
             # incident angle
             try:
                 _incident_angle = self.getNodeValue(node,'incident_angle')
@@ -4575,9 +4565,16 @@ Do you want to try to restore the working reduction list?""",
             _metadataObject.data_full_file_name = _data_full_file_name
             _metadataObject.norm_full_file_name = _norm_full_file_name
             self.bigTableData[_row,2] = _metadataObject
-            #print 'at row %d' % _row
-            #print _metadataObject.data_low_res
-            #print
+
+            # data 
+            _data_sets = self.getNodeValue(node,'data_sets')
+	    _isOk = self.isPeakBackSelectionOkFromConfig(_metadataObject, type='data')
+            self.addItemToBigTable(_data_sets, _row, 0, isCheckOk=True, isOk=_isOk)
+
+            # norm
+            _norm_sets = self.getNodeValue(node,'norm_dataset')
+	    _isOk = self.isPeakBackSelectionOkFromConfig(_metadataObject, type='norm')
+            self.addItemToBigTable(_norm_sets, _row, 6, isCheckOk=True, isOk=_isOk)
 
             _row += 1
 
@@ -4663,6 +4660,38 @@ Do you want to try to restore the working reduction list?""",
                                do_plot=True,
                                update_table=False)
 
+    def isPeakBackSelectionOkFromNXSdata(self, active_data):
+	peak = active_data.peak
+	back = active_data.back
+	back_flag = active_data.back_flag
+	return self.isPeakBackSelectionOk(peak, back, back_flag)
+
+    def isPeakBackSelectionOkFromConfig(self, _metadataObject, type='data'):
+	if type == 'data':
+	    peak = _metadataObject.data_peak
+	    back = _metadataObject.data_back
+	    back_flag = _metadataObject.data_back_flag
+	else:
+	    peak = _metadataObject.norm_peak
+	    back = _metadataObject.norm_back
+	    back_flag = _metadataObject.norm_back_flag
+	return self.isPeakBackSelectionOk(peak, back, back_flag)
+	
+    def isPeakBackSelectionOk(self, peak, back, back_flag):
+	if back_flag:
+	    peak_min = int(min(peak))
+	    peak_max = int(max(peak))
+	    back_min = int(min(back))
+	    back_max = int(max(back))
+	    if back_min > peak_min:
+		return False
+	    if back_max < peak_max:
+		return False
+	    if peak_min == peak_max:
+		return False
+	    return True
+	else:
+	    return True
 
     def getMetadataObject(self, node):
         '''
@@ -5479,7 +5508,6 @@ Do you want to try to restore the working reduction list?""",
     def data_stitching_is_1(self):
         self.data_stitching_mode('1')
 
-
     def manual_entry_of_sf_table(self):
         bigTableData = self.bigTableData
 
@@ -5630,12 +5658,10 @@ Do you want to try to restore the working reduction list?""",
         '''
         will refresh the content of the reductionTable (lambda, Q ranges...)
         '''
-        print 'update_reduction_table'
         bigTableData = self.bigTableData
         nbr_row = self.ui.reductionTable.rowCount()
 
         for i in range(nbr_row):
-
             _data = bigTableData[i,0]
             _active_data = _data.active_data
             lambda_range = _active_data.lambda_range
@@ -5660,16 +5686,18 @@ Do you want to try to restore the working reduction list?""",
             _item = QtGui.QTableWidgetItem(str(incident_angle))
             self.ui.reductionTable.setItem(i,1,_item)
 
-    def addItemToBigTable(self, value, row, column, editableFlag=False):
+    def addItemToBigTable(self, value, row, column, editableFlag=False, isCheckOk=False, isOk=False):
         '''
         Add element by element in the BigTable
         '''
         _item = QtGui.QTableWidgetItem(str(value))
-        if editableFlag:
-            color = QtGui.QColor(13,24,241)
-        else:
-            color = QtGui.QColor(100,100,150)
-        _item.setForeground(color)
+	_brush = QtGui.QBrush()
+	if isCheckOk:
+	    if isOk:
+		_brush.setColor(colors.VALUE_OK)
+	    else:
+		_brush.setColor(colors.VALUE_BAD)
+	    _item.setForeground(_brush)
         if not editableFlag:
             _item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
 

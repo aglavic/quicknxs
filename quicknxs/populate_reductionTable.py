@@ -37,22 +37,39 @@ class PopulateReductionTable(object):
 					else:
 						if c == 0:
 							_data_run_number = _obj_config.data_sets
+							_isOk = self.isPeakBackSelectionOkFromConfig(_obj_config, type='data')
 							_item = QtGui.QTableWidgetItem(_data_run_number)
-							_item.setForeground(QtGui.QColor(13,24,241))
+							_brush = QtGui.QBrush()
+							if _isOk:
+								_brush.setColor(colors.VALUE_OK)
+							else:
+								_brush.setColor(colors.VALUE_BAD)
+							_item.setForeground(_brush)
 							self.ui.reductionTable.setItem(r,0,_item)						
 						else:
 							_norm_run_number = _obj_config.norm_sets
+							_isOk = self.isPeakBackSelectionOkFromConfig(_obj_config, type='norm')
+							if _isOk:
+								_brush.setColor(colors.VALUE_OK)
+							else:
+								_brush.setColor(colors.VALUE_BAD)
 							_item = QtGui.QTableWidgetItem(_norm_run_number)
-							_item.setForeground(QtGui.QColor(13,24,241))
+							_item.setForeground(_brush)
 							self.ui.reductionTable.setItem(r,6,_item)						
 				else:
 					_run_number = _obj.active_data.run_number
 					_item = QtGui.QTableWidgetItem(_run_number)
-					_item.setForeground(QtGui.QColor(13,24,241))
-
-					self.ui.reductionTable.setItem(r,col,_item)
 					if c==0:
+						_isOk = self.isPeakBackSelectionOkFromNXSdata(_obj.active_data)
 						cls.addMetadata(r, _obj)
+					else:
+						_isOk = self.isPeakBackSelectionOkFromNXSdata(_obj.active_data)
+					if _isOk:
+						_brush.setColor(colors.VALUE_OK)
+					else:
+						_brush.setColor(colors.VALUE_BAD)
+					_item.setForeground(_brush)
+					self.ui.reductionTable.setItem(r,col,_item)
 						
 	def clearTable(cls):
 		cls.self.ui.reductionTable.clearContents()
