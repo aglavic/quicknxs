@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDialog, QPalette, QFileDialog
+from PyQt4.QtGui import QDialog, QPalette, QFileDialog, QApplication
 from PyQt4.QtCore import Qt
 from plot_dialog_refl_interface import Ui_Dialog as UiPlot
 from mplwidget import MPLWidget
@@ -477,7 +477,6 @@ class PlotSFDialogREFL(QDialog):
 			ui_plot1.canvas.ax.set_xscale('log')
 		else:
 			ui_plot1.canvas.ax.set_xscale('linear')
-#		ui_plot1.canvas.ax.set_ylim(0,self.nbr_pixel_y_axis-1)		
 		ui_plot1.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
 		ui_plot1.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
 
@@ -507,7 +506,6 @@ class PlotSFDialogREFL(QDialog):
 			ui_plot2.canvas.ax.set_yscale('log')
 		else:
 			ui_plot2.canvas.ax.set_yscale('linear')
-#		ui_plot2.canvas.ax.set_xlim(0,self.nbr_pixel_y_axis-1)
 		ui_plot2.canvas.ax.axvline(peak1, color=colors.PEAK_SELECTION_COLOR)
 		ui_plot2.canvas.ax.axvline(peak2, color=colors.PEAK_SELECTION_COLOR)
 		
@@ -532,7 +530,9 @@ class PlotSFDialogREFL(QDialog):
 		self.main_gui.ui.dataBackFromValue.setValue(back1)
 		self.main_gui.ui.dataBackToValue.setValue(back2)
 		self.main_gui.ui.dataBackgroundFlag.setChecked(back_flag)
-		self.main_gui.dataPeakAndBackValidation(False)
+		QApplication.processEvents()
+                self.main_gui.peakBackSpinBoxValueChanged(['peak','back'], with_plot_update=False)
+		self.main_gui.testPeakBackErrorWidgets()
 		self.main_gui.ui.dataBackFromLabel.setEnabled(back_flag)
 		self.main_gui.ui.dataBackFromValue.setEnabled(back_flag)
 		self.main_gui.ui.dataBackToLabel.setEnabled(back_flag)

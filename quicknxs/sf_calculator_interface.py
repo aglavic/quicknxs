@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Tue Apr 28 11:17:13 2015
+# Created: Tue Apr 28 14:22:07 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1658, 1147)
+        MainWindow.resize(1656, 1221)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_5 = QtGui.QHBoxLayout(self.centralwidget)
@@ -301,7 +301,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(2)
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
-        self.tableWidget.setMinimumSize(QtCore.QSize(0, 300))
+        self.tableWidget.setMinimumSize(QtCore.QSize(0, 350))
         self.tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(16)
@@ -359,7 +359,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.sfFileNamePreview = QtGui.QPlainTextEdit(self.centralwidget)
         self.sfFileNamePreview.setEnabled(False)
-        self.sfFileNamePreview.setMinimumSize(QtCore.QSize(0, 100))
+        self.sfFileNamePreview.setMinimumSize(QtCore.QSize(0, 60))
         self.sfFileNamePreview.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.sfFileNamePreview.setObjectName("sfFileNamePreview")
         self.verticalLayout.addWidget(self.sfFileNamePreview)
@@ -379,7 +379,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1658, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1656, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

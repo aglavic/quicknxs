@@ -1081,7 +1081,7 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.fileHasBeenModified()
 		cls.checkGui()
 		
-	def updateNXSData(cls, row=0, source='spinbox', type='peak1'):
+	def updateNXSData(cls, row=0, source='spinbox', type=['peak']):
 		_list_nxsdata_sorted = cls.list_nxsdata_sorted
 		_nxsdata_row = _list_nxsdata_sorted[row]
 		if 'peak' in type:
@@ -1092,7 +1092,7 @@ class SFcalculator(QtGui.QMainWindow):
 				peak1 = cls.ui.tableWidget.item(row, 10).text()
 				peak2 = cls.u.tableWidget.item(row, 11).text()
 			_nxsdata_row.active_data.peak = [peak1, peak2]
-		else:
+		if 'back' in type:
 			if source == 'spinbox':
 				back1 = str(cls.ui.dataBackFromValue.value())
 				back2 = str(cls.ui.dataBackToValue.value())

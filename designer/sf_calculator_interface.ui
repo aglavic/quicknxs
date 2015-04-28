@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1658</width>
-    <height>1147</height>
+    <width>1656</width>
+    <height>1221</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -739,7 +739,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>300</height>
+          <height>350</height>
          </size>
         </property>
         <property name="contextMenuPolicy">
@@ -893,7 +893,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>60</height>
          </size>
         </property>
         <property name="textInteractionFlags">
@@ -947,7 +947,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1658</width>
+     <width>1656</width>
      <height>21</height>
     </rect>
    </property>
