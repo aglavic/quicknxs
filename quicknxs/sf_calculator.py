@@ -640,8 +640,25 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
 
 	def tableWidgetCellEntered(cls, row, col):
-		if cls.is_manual_edit_of_tableWidget:
-			print cls.ui.tableWidget.item(row, col)
+		pass
+		#if cls.is_manual_edit_of_tableWidget:
+			#cell_value = cls.ui.tableWidget.item(row,col).text()
+			#_list_nxsdata_sorted = cls.list_nxsdata_sorted
+			#_nxdata = _list_nxsdata_sorted[row]
+			#if col in [10, 11]:
+				#[peak1, peak2] = _nxdata.active_data.peak
+				#if col == 10:
+					#_nxdata.active_data.peak = [cell_value, peak2]
+				#else:
+					#_nxdata.active_data.peak = [peak1, cell_value]
+			#elif col in [12,13]:
+				#[back1, back2] = _nxdata.active_data.back
+				#if col == 12:
+					#_nxdata.active_data.back = [cell_value, back2]
+				#else:
+					#_nxdata.active_data.back = [back1, cell_value]
+			#_list_nxsdata_sorted[row] = _nxdata
+			#cls.list_nxsdata_sorted = _list_nxsdata_sorted
 
 	def incidentMediumComboBoxChanged(cls):
 		cls.fileHasBeenModified()
