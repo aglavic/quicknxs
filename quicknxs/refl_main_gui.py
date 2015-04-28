@@ -4216,6 +4216,9 @@ Do you want to try to restore the working reduction list?""",
         import mantid
         strArray.append(' <mantid_version>' + mantid.__version__ + '</mantid_version>\n')
 
+	# generator
+	strArray.append('<generator>quickNXS</generator>\n')
+
         # metadata
         strArray.append(' <DataSeries>\n')
 
