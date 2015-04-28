@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Mon Apr 27 15:59:43 2015
+# Created: Tue Apr 28 11:17:13 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -338,6 +338,9 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(14, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(15, item)
+        self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
+        self.tableWidget.horizontalHeader().setSortIndicatorShown(False)
+        self.tableWidget.verticalHeader().setDefaultSectionSize(45)
         self.verticalLayout.addWidget(self.tableWidget)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")

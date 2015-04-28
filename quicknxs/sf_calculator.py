@@ -632,12 +632,33 @@ class SFcalculator(QtGui.QMainWindow):
 	def tableWidgetCellSelected(cls, row, col):
 		if col != 0:
 			return
+		cls.showWhichRowIsLoading(row)
+		QtGui.QApplication.processEvents()		
 		cls.current_table_row_selected = row
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
 		cls.updateTableWidgetPeakBackTof(row)
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
+		cls.showWhichRowIsActivated(row)
+		
+	def showWhichRowIsLoading(cls, row):
+		nbr_row = cls.ui.tableWidget.rowCount()
+		for i in range(nbr_row):
+			if row == i:
+				_item = QtGui.QTableWidgetItem("loading...")
+			else:
+				_item = QtGui.QTableWidgetItem("%d"%i)
+			cls.ui.tableWidget.setVerticalHeaderItem(i, _item)
+
+	def showWhichRowIsActivated(cls, row):
+		nbr_row = cls.ui.tableWidget.rowCount()
+		for i in range(nbr_row):
+			if row == i:
+				_item = QtGui.QTableWidgetItem("ACTIVE")
+			else:
+				_item = QtGui.QTableWidgetItem("%d"%i)
+			cls.ui.tableWidget.setVerticalHeaderItem(i, _item)
 
 	def tableWidgetCellEntered(cls, row, col):
 		pass
