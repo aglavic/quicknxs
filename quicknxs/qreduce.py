@@ -256,8 +256,6 @@ class NXSData(object):
                 filename = filename[0]
             filename=os.path.abspath(filename)
             cached_names=[item.origin for item in cls._cache]
-            print 'cached_names: '
-            print cached_names
 #            if all_options['use_caching'] and filename in cached_names:
             if filename in cached_names:
                 print filename

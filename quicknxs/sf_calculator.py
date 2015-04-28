@@ -44,6 +44,7 @@ class SFcalculator(QtGui.QMainWindow):
 	reduced_files_loaded_object = None
 	event_progressbar = None
 	is_manual_edit_of_tableWidget = True
+	nbr_nxs_runs_to_display_warning = 10
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -320,6 +321,11 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.is_manual_edit_of_tableWidget = False
 		oListRuns = RunSequenceBreaker(run_sequence)
 		_new_runs = oListRuns.getFinalList()
+		if len(_new_runs) > cls.nbr_nxs_runs_to_display_warning:
+			ok_to_continue = cls.displayWarningMessageAboutNbrFilesToLoad(len(_new_runs))
+			if not ok_to_continue:
+				return
+
 		_old_runs = cls.loaded_list_of_runs
 		_list_runs = np.unique(np.hstack([_old_runs, _new_runs]))
 		o_load_and_sort_nxsdata = LoadAndSortNXSDataForSFcalculator(_list_runs, parent=cls)
@@ -337,6 +343,15 @@ class SFcalculator(QtGui.QMainWindow):
 		else:
 			ret = QtGui.QMessageBox.information(cls, "No Files Loaded!","Check The list of runs")
 		cls.is_manual_edit_of_tableWidget = True
+		
+	def displayWarningMessageAboutNbrFilesToLoad(cls, nbr_files):
+		mesg = QtGui.QMessageBox.warning(cls, "Large number of NeXus to process!", 
+		                                 "You are about to load %d files!" %nbr_files,
+		                                 QtGui.QMessageBox.Cancel, 
+		                                 QtGui.QMessageBox.Ok)
+		if mesg == QtGui.QMessageBox.Cancel:
+			return False
+		return True
 		
 	def fillGuiTable(cls):
 		_fill_gui_object = FillSFGuiTable(parent=cls, table=cls.big_table, is_using_si_slits=cls.is_using_si_slits)
