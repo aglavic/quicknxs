@@ -70,6 +70,7 @@ class ImportXMLquickNXSConfig(object):
             if _row == 0:
                 _first_file_name = self.getNodeValue(node, 'data_full_file_name')
                 if _first_file_name == '': # no full_file_name defined
+		    _data_sets = self.getNodeValue(node, 'data_sets')
                     _first_file_name = nexus_utilities.findNeXusFullPath(int(_data_sets))         #FIXME           
                 else:
                     _first_file_name = _first_file_name.split(',')

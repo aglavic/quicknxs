@@ -922,7 +922,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>GENERRATE SCALING FACTORS</string>
+           <string>GENERATE SCALING FACTORS</string>
           </property>
          </widget>
         </item>

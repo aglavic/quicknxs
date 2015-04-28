@@ -298,7 +298,8 @@ class REFLReduction(object):
 			#SlitsWidthFlag=True,
 				      #OutputWorkspace='reflectivity_119656')			
 			
-			RefLReduction(RunNumbers=runNumbers,
+				      #RefLReduction(RunNumbers=runNumbers,
+			LiquidsReflectometryReduction(RunNumbers=runNumbers,
 			              NormalizationRunNumber=normalizationRunNumbers,
 			              SignalPeakPixelRange=signalPeakPixelRange,
 			              SubtractSignalBackground=subtractSignalBackground,

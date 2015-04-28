@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Tue Apr 28 14:22:07 2015
+# Created: Tue Apr 28 16:11:41 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -470,7 +470,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "SF File Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameLabel.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
-        self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERRATE SCALING FACTORS", None, QtGui.QApplication.UnicodeUTF8))
+        self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERATE SCALING FACTORS", None, QtGui.QApplication.UnicodeUTF8))
         self.exportButton.setText(QtGui.QApplication.translate("MainWindow", "EXPORT ...", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "Configuration", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load ...", None, QtGui.QApplication.UnicodeUTF8))
