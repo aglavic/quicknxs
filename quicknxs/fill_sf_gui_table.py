@@ -42,6 +42,10 @@ class FillSFGuiTable(object):
 				_prev_lambda = _new_lambda
 			
 			parent.ui.tableWidget.insertRow(r)
+			
+			if r == 0:
+				_item = QtGui.QTableWidgetItem("ACTIVE")
+				parent.ui.tableWidget.setVerticalHeaderItem(r, _item)
 						
 			_atte = int(_row[1])
 			_widget = QtGui.QSpinBox()
@@ -55,7 +59,7 @@ class FillSFGuiTable(object):
 			_item = QtGui.QTableWidgetItem(_lambda_min)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			_color = QtGui.QColor(back_color)
-			_item.setBackgroundColor(_color)			
+			_item.setBackgroundColor(_color)
 			parent.ui.tableWidget.setItem(r,2,_item)
 			
 			_lambda_max = str(float(_row[3]))
@@ -147,7 +151,7 @@ class FillSFGuiTable(object):
 			_item.setBackgroundColor(_color)
 			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 			parent.ui.tableWidget.setItem(r, 0, _item)
-			
+		
 	def  newBackgroundColor(cls):
 		_index_color =cls.index_color + 1
 		sz_color_back_list = len(colors.COLOR_BACKGROUND_LIST)
