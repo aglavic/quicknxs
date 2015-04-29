@@ -72,6 +72,7 @@ class InitializeGui(object):
 		
 		cls.defineRightDefaultPath()
 		cls.initFileMenu()
+		cls.initAutoPeakBackFinderWidgets(self)
 		self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
 		cls.initConfigGui()
 		cls.initErrorWidgets()
@@ -79,6 +80,16 @@ class InitializeGui(object):
 		
 		self.ui.numberSearchEntry.setFocus()
 		
+	def initAutoPeakBackFinderWidgets(cls, self):
+		self.ui.actionAutomaticPeakFinder.setVisible(False)
+		self.ui.label.setVisible(False)
+		self.ui.label_10.setVisible(False)
+		self.ui.label_11.setVisible(False)
+		self.ui.autoBackSelectionWidth.setVisible(False)
+		self.ui.findPeakBack.setVisible(False)
+		self.ui.autoTofFlag.setVisible(False)
+		self.ui.autoPeakBackSelectionFrame.setVisible(False)
+
 	def defineRightDefaultPath(cls):
 		import socket
 		if socket.gethostname() == 'lrac.sns.gov': #TODO HARDCODED STRING
