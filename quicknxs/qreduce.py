@@ -1717,7 +1717,7 @@ class LRDataset(object):
         if read_options['is_auto_peak_finder']:
             pf = PeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
             peaks=pf.get_peaks()
-            main_peak = peaks[0]
+            main_peak = 2*peaks[0]
             peak1 = int(main_peak[0] - main_peak[1])
             peak2 = int(main_peak[0] + main_peak[1])
             output.peak = [str(peak1), str(peak2)]

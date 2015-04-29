@@ -141,34 +141,40 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.list_nxsdata_sorted = list_nxsdata
 	
 	def leaveYtPlot(cls):
-		row = cls.current_table_row_selected
-		list_nxsdata = cls.list_nxsdata_sorted
-		if list_nxsdata == []:
-			return
-		data = list_nxsdata[row]
-		[xmin,xmax] = cls.ui.yt_plot.canvas.ax.xaxis.get_view_interval()
-		[ymin,ymax] = cls.ui.yt_plot.canvas.ax.yaxis.get_view_interval()
-		cls.ui.yt_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-		cls.ui.yt_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
-		cls.ui.yt_plot.draw()
-		data.active_data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
-		list_nxsdata[row] = data
-		cls.list_nxsdata_sorted = list_nxsdata
+		try:
+			row = cls.current_table_row_selected
+			list_nxsdata = cls.list_nxsdata_sorted
+			if list_nxsdata == []:
+				return
+			data = list_nxsdata[row]
+			[xmin,xmax] = cls.ui.yt_plot.canvas.ax.xaxis.get_view_interval()
+			[ymin,ymax] = cls.ui.yt_plot.canvas.ax.yaxis.get_view_interval()
+			cls.ui.yt_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+			cls.ui.yt_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+			cls.ui.yt_plot.draw()
+			data.active_data.all_plot_axis.yt_view_interval = [xmin, xmax, ymin, ymax]
+			list_nxsdata[row] = data
+			cls.list_nxsdata_sorted = list_nxsdata
+		except:
+			pass
 	
 	def leaveYiPlot(cls):
-		row = cls.current_table_row_selected
-		list_nxsdata = cls.list_nxsdata_sorted
-		if list_nxsdata == []:
-			return
-		data = list_nxsdata[row]
-		[xmin,xmax] = cls.ui.yi_plot.canvas.ax.xaxis.get_view_interval()
-		[ymin,ymax] = cls.ui.yi_plot.canvas.ax.yaxis.get_view_interval()
-		cls.ui.yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
-		cls.ui.yi_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
-		cls.ui.yi_plot.draw()
-		data.active_data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
-		list_nxsdata[row] = data
-		cls.list_nxsdata_sorted = list_nxsdata
+		try:
+			row = cls.current_table_row_selected
+			list_nxsdata = cls.list_nxsdata_sorted
+			if list_nxsdata == []:
+				return
+			data = list_nxsdata[row]
+			[xmin,xmax] = cls.ui.yi_plot.canvas.ax.xaxis.get_view_interval()
+			[ymin,ymax] = cls.ui.yi_plot.canvas.ax.yaxis.get_view_interval()
+			cls.ui.yi_plot.canvas.ax.xaxis.set_data_interval(xmin, xmax)
+			cls.ui.yi_plot.canvas.ax.yaxis.set_data_interval(ymin, ymax)
+			cls.ui.yi_plot.draw()
+			data.active_data.all_plot_axis.yi_view_interval = [xmin, xmax, ymin, ymax]
+			list_nxsdata[row] = data
+			cls.list_nxsdata_sorted = list_nxsdata
+		except:
+			pass
 	
 	def exportYtPlot(cls):
 		row = cls.current_table_row_selected
@@ -465,31 +471,33 @@ class SFcalculator(QtGui.QMainWindow):
 		                                            "XML files (*.xml);;All files (*.*)")
 		
 		if not(filename == ''):
+			cls.enabledWidgets(False)
 			cls.loadingConfigurationFileDefined(filename)
+			cls.enabledWidgets(True)
 			
 	def loadingConfigurationFileDefined(cls, filename):
-		try:
-			cls.current_loaded_file = filename
-			cls.is_manual_edit_of_tableWidget = False
-			cls.resetFileHasBeenModified()			
-			cls.main_gui.path_config = os.path.dirname(filename)
-			status = cls.importConfiguration(filename)
-			if status:
-				cls.setWindowTitle(cls.window_title + filename)
-			cls.tableWidgetCellSelected(0, 0)
-			cls.checkGui()
-				
-			if cls.reduced_files_loaded_object is None:
-				_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
-			else:
-				_reduced_files_loaded_object = cls.reduced_files_loaded_object
-			_reduced_files_loaded_object.addFile(filename)
-			_reduced_files_loaded_object.updateGui()
-			cls.reduced_files_loaded_object = _reduced_files_loaded_object
-			cls.is_manual_edit_of_tableWidget = True			
-		except: 
-			info('Error loading configuration!')
-			cls.is_manual_edit_of_tableWidget = True
+#		try:
+		cls.current_loaded_file = filename
+		cls.is_manual_edit_of_tableWidget = False
+		cls.resetFileHasBeenModified()			
+		cls.main_gui.path_config = os.path.dirname(filename)
+		status = cls.importConfiguration(filename)
+		if status:
+			cls.setWindowTitle(cls.window_title + filename)
+		cls.tableWidgetCellSelected(0, 0)
+		cls.checkGui()
+			
+		if cls.reduced_files_loaded_object is None:
+			_reduced_files_loaded_object = ReducedSFCalculatorConfigFilesHandler(cls)
+		else:
+			_reduced_files_loaded_object = cls.reduced_files_loaded_object
+		_reduced_files_loaded_object.addFile(filename)
+		_reduced_files_loaded_object.updateGui()
+		cls.reduced_files_loaded_object = _reduced_files_loaded_object
+		cls.is_manual_edit_of_tableWidget = True			
+		#except: 
+			#info('Error loading configuration!')
+			#cls.is_manual_edit_of_tableWidget = True
 
 	def savingConfiguration(cls):
 		filename = cls.current_loaded_file
@@ -676,27 +684,30 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.ui.tableWidget.setVerticalHeaderItem(i, _item)
 
 	def tableWidgetCellEntered(cls, row, col):
-		if row == cls.current_table_row_selected:
-			cell_value = cls.ui.tableWidget.item(row,col).text()
-			_list_nxsdata_sorted = cls.list_nxsdata_sorted
-			_nxdata = _list_nxsdata_sorted[row]
-			if col in [10, 11]:
-				[peak1, peak2] = _nxdata.active_data.peak
-				if col == 10:
-					_nxdata.active_data.peak = [cell_value, peak2]
-				else:
-					_nxdata.active_data.peak = [peak1, cell_value]
-			elif col in [12,13]:
-				[back1, back2] = _nxdata.active_data.back
-				if col == 12:
-					_nxdata.active_data.back = [cell_value, back2]
-				else:
-					_nxdata.active_data.back = [back1, cell_value]
-			_list_nxsdata_sorted[row] = _nxdata
-			cls.list_nxsdata_sorted = _list_nxsdata_sorted
-			cls.displaySelectedRow(row)
-			cls.updateTableWidgetPeakBackTof(row)
-			cls.displayPlot(row, yt_plot=True, yi_plot=True)			
+		try:
+			if row == cls.current_table_row_selected:
+				cell_value = cls.ui.tableWidget.item(row,col).text()
+				_list_nxsdata_sorted = cls.list_nxsdata_sorted
+				_nxdata = _list_nxsdata_sorted[row]
+				if col in [10, 11]:
+					[peak1, peak2] = _nxdata.active_data.peak
+					if col == 10:
+						_nxdata.active_data.peak = [cell_value, peak2]
+					else:
+						_nxdata.active_data.peak = [peak1, cell_value]
+				elif col in [12,13]:
+					[back1, back2] = _nxdata.active_data.back
+					if col == 12:
+						_nxdata.active_data.back = [cell_value, back2]
+					else:
+						_nxdata.active_data.back = [back1, cell_value]
+				_list_nxsdata_sorted[row] = _nxdata
+				cls.list_nxsdata_sorted = _list_nxsdata_sorted
+				cls.displaySelectedRow(row)
+				cls.updateTableWidgetPeakBackTof(row)
+				cls.displayPlot(row, yt_plot=True, yi_plot=True)	
+		except:
+			pass
 
 	def incidentMediumComboBoxChanged(cls):
 		cls.fileHasBeenModified()
