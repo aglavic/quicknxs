@@ -1639,20 +1639,28 @@ class LRDataset(object):
             autotmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 1.7) * 1e-4
 
             # wider t range for display only
-            tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 2.5) * 1e-4
-            tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
+            #tmin = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  - 2.5) * 1e-4
+            #tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
 
         else:
 
             autotmin = np.float(output.tof_range[0])
             autotmax = np.float(output.tof_range[1])
 
-            tmin = np.float(autotmin - 0.4e4)
-            tmax = np.float(autotmax + 0.4e4)
+            #tmin = np.float(autotmin - 0.4e4)
+            #tmax = np.float(autotmax + 0.4e4)
+
+        tmin = 0
+        if nxs.getRun().getProperty('Speed1').value[0] == 60:
+            tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 2.5) * 1e-4
+        else:
+            tmax = output.dMD/H_OVER_M_NEUTRON*(output.lambda_requested + 0.5  + 4.5) * 1e-4
 
         output.tof_range_auto = [autotmin, autotmax] #microS
         output.tof_range_auto_with_margin = [tmin, tmax] #microS
         output.tof_range = [autotmin, autotmax] # for the first time, initialize tof_range like auto (microS)
+
+        print output.tof_range_auto
 
         output.q_range = LRDataset.calculate_q_range(output)
         output.lambda_range = LRDataset.calculate_lambda_range(output)

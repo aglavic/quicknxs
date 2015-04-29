@@ -60,6 +60,7 @@ class DisplayPlots(object):
 			cls.tofRangeAuto = cls.getTOFrangeInMs(_active_data.tof_range)
 		else:
 			cls.tofRangeAuto = cls.getTOFrangeInMs(_active_data.tof_range_auto)
+
 		cls.tofAxis = cls.getTOFrangeInMs(_active_data.tof_axis_auto_with_margin)
 		cls.fullTofAxis = cls.getFullTOFinMs(_active_data.tof_axis_auto_with_margin)
 		
@@ -394,14 +395,14 @@ class DisplayPlots(object):
 		return [_element_min, _element_max]
 
 	def getTOFrangeInMs(cls, tof_axis):
-		if tof_axis[0] > 1000:
+		if tof_axis[-1] > 1000:
 			coeff = 1e-3
 		else:
 			coeff = 1
 		return [tof_axis[0] * coeff, tof_axis[-1]*coeff]
 		
 	def getFullTOFinMs(cls, tof_axis):
-		if tof_axis[0] > 1000:
+		if tof_axis[-1] > 1000:
 			return tof_axis / float(1000)
 		else:
 			return tof_axis
