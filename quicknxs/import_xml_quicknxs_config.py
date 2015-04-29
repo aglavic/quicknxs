@@ -148,7 +148,8 @@ class ImportXMLquickNXSConfig(object):
             self.addItemToBigTable(_norm_sets, _row, 6, isCheckOk=True, isOk=_isOk)
 
             _row += 1
-
+	    QtGui.QApplication.processEvents()
+	    
         # select first data file
         self.ui.dataNormTabWidget.setCurrentIndex(0)
         self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(0,0,0,0),True)                                                                                   	

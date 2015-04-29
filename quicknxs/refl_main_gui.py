@@ -4138,7 +4138,6 @@ Do you want to try to restore the working reduction list?""",
     def loading_configuration(self):
         _path = self.path_config
         filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
-
         if not (filename == ""):
             self.loading_configuration_file(filename)
 
@@ -4155,6 +4154,7 @@ Do you want to try to restore the working reduction list?""",
 
     def loading_configuration_file(self, filename):
         self.path_config = os.path.dirname(filename)
+	QtGui.QApplication.processEvents()
 
         # make sure the reductionTable is empty
         nbrRow = self.ui.reductionTable.rowCount()
