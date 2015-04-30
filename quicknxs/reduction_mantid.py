@@ -274,8 +274,8 @@ class REFLReduction(object):
 			print '-> Outputworkspace: '
 			print outputWorkspace
 			
-			RefLReduction(RunNumbers=runNumbers,
-			#LiquidsReflectometryReduction(RunNumbers=runNumbers,
+			#RefLReduction(RunNumbers=runNumbers,
+			LiquidsReflectometryReduction(RunNumbers=runNumbers,
 			              NormalizationRunNumber=normalizationRunNumbers,
 			              SignalPeakPixelRange=signalPeakPixelRange,
 			              SubtractSignalBackground=subtractSignalBackground,
@@ -294,6 +294,7 @@ class REFLReduction(object):
 			              QMin=qmin,
 			              QStep=qstep,
 			              ScalingFactorFile=scalingFactorFile,
+			              CropFirstAndLastPoints = False,
 			              SlitsWidthFlag=slitsWidthFlag,
 			              OutputWorkspace=outputWorkspace)
 			
