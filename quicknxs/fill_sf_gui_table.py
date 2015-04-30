@@ -114,7 +114,7 @@ class FillSFGuiTable(object):
 			for k in range(10,16):
 				_value = _row[k]
 				_brush = QtGui.QBrush()
-				if _value == '0' or _value == 'N/A':
+				if _value == '0' or _value == 'N/A' or _value == '':
 					_value = 'N/A'
 					_brush.setColor(colors.VALUE_BAD)
 					is_any_red = True

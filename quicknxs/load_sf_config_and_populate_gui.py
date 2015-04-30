@@ -27,9 +27,10 @@ class LoadSFConfigAndPopulateGUI(object):
 			cls.parseDom()
 			cls.populateSFGui()
 			cls.initListNxsdataSorted()
-			
-		cls.sf_gui.big_table = cls.sf_data_table
-		cls.loading_status = True
+			cls.sf_gui.big_table = cls.sf_data_table
+			return
+		
+		cls.loading_status = False
 
 	def initListNxsdataSorted(cls):
 		nbr_row = cls.nbr_row_loaded
