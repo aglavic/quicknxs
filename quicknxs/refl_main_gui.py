@@ -3690,10 +3690,10 @@ Do you want to try to restore the working reduction list?""",
 	    status = False
 	else:
 	    status = self.isAllPeakBackSelectionOk()
-	self.ui.actionAbout.setEnabled(status)
+	self.ui.reduceButton.setEnabled(status)
 
     def isAllPeakBackSelectionOk(self):
-	pass
+	return True
 
 
     # data low resolution spinboxes
