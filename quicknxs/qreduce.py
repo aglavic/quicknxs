@@ -1321,7 +1321,7 @@ class LRDataset(object):
     use_it_flag = True
     peak = ['0','0']
     back = ['0','0']
-    low_res = ['0','0']
+    low_res = ['0','255']
     back_flag = True
     low_res_flag = True
     #tof_range = ['0','0'] 
@@ -1385,53 +1385,6 @@ class LRDataset(object):
         '''
         self.origin=('none', 'none')
         self.all_plot_axis = AllPlotAxis()
-
-    @classmethod
-    @log_call
-    def from_histogram(cls, data, read_options):
-        '''
-        Create object from a histogram Nexus file.
-        '''
-        output=cls()
-        output.read_options=read_options
-        output._collect_info(data)
-
-        output.tof_edges=data['bank1/time_of_flight'].value #TODO HARDCODED STRING
-        # the data arrays
-        output.data=data['bank1/data'].value.astype(float) # 3D dataset #TODO HARDCODED STRING
-        output.xydata=data['bank1']['data_x_y'].value.transpose().astype(float) # 2D dataset #TODO HARDCODED STRING
-        output.xtofdata=data['bank1']['data_x_time_of_flight'].value.astype(float) # 2D dataset #TODO HARDCODED STRING
-
-        try:
-            #TODO HARDCODED STRING
-            mon_tof_from=data['monitor1']['time_of_flight'].value.astype(float)*\
-                output.dist_mod_det/output.dist_mod_mon
-            mon_I_from=data['monitor1']['data'].value.astype(float) #TODO HARDCODED STRING
-            mod_data=histogram((mon_tof_from[:-1]+mon_tof_from[1:])/2., output.tof_edges,
-                               weights=mon_I_from)[0]
-            output.mon_data=mod_data
-        except KeyError:
-            output.mon_data=None
-        return output
-
-    @classmethod
-    @log_call
-    def from_old_format(cls, data, read_options):
-        '''
-        Create object from a histogram Nexus file.
-        '''
-        output=cls()
-        output.read_options=read_options
-        output._collect_info(data)
-
-        # first ToF edge is 0, prevent that
-        #TODO HARDCODED STRING
-        output.tof_edges=data['bank1/time_of_flight'].value[1:]
-        # the data arrays
-        output.data=data['bank1/data'].value.astype(float)[:, :, 1:] # 3D dataset
-        output.xydata=output.data.sum(axis=2).transpose()
-        output.xtofdata=output.data.sum(axis=1)
-        return output
 
     @staticmethod
     def populateOutputWithMetadata(_output):
@@ -1657,8 +1610,6 @@ class LRDataset(object):
         output.tof_range_auto_with_margin = [tmin, tmax] #microS
         output.tof_range = [autotmin, autotmax] # for the first time, initialize tof_range like auto (microS)
 
-        print output.tof_range_auto
-
         output.q_range = LRDataset.calculate_q_range(output)
         output.lambda_range = LRDataset.calculate_lambda_range(output)
         output.incident_angle = LRDataset.calculate_incident_angle(output)
@@ -1685,10 +1636,10 @@ class LRDataset(object):
         output.tof_axis_auto_with_margin = _tof_axis
 
         ## keep only the low resolution range requested
-#    print read_options['low_res_range_flag']
         low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
         from_pixel = min(low_res_range)
         to_pixel = max(low_res_range)
+        output.low_res = [str(from_pixel), str(to_pixel)]
 
         # keep only low resolution range defined
         Ixyt = Ixyt[from_pixel:to_pixel,:,:]
