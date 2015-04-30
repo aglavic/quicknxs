@@ -1977,7 +1977,7 @@ class MainGUI(QtGui.QMainWindow):
     if event.inaxes is None:
       return
     self.x_position_indicator.setText(u" x=%g"%event.xdata)
-    self.y_position_indicator.setText(u" y=%g"%event.xdata)
+    self.y_position_indicator.setText(u" y=%g"%event.ydata)
 
   def plotRelese(self, event):
     self._picked_line=None
