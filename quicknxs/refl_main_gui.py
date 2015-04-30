@@ -318,6 +318,15 @@ class MainGUI(QtGui.QMainWindow):
     def launch_config_file10(self):
         ConfigFileLauncher(self, 9)
 
+    def primaryFractionFlagEvent(self, status):
+	self.primaryFractionRangeWidgetsStatus(status)
+	
+    def primaryFractionRangeWidgetsStatus(self, status):
+	self.ui.dataPrimToLabel.setVisible(status)
+	self.ui.dataPrimFromLabel.setVisible(status)
+	self.ui.dataPrimToValue.setVisible(status)
+	self.ui.dataPrimFromValue.setVisible(status)
+
     def launch_SFcalculator(self):
         sfCalculator = SFcalculator(self)
         sfCalculator.show()
@@ -2905,34 +2914,8 @@ class MainGUI(QtGui.QMainWindow):
 
             self._live_selection = None  
 
-
         if event.button is not None:
             self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=False, plot_ix=False)
-
-
-        #if event.button==1 and self.ui.xy_overview.toolbar._active is None and \
-                #event.xdata is not None:
-            #self.ui.refXPos.setValue(event.xdata)
-        #elif event.button==3 and self.ui.xy_overview.toolbar._active is None and \
-                #event.ydata is not None:
-            #ypos=self.ui.refYPos.value()
-            #yw=self.ui.refYWidth.value()
-            #yl=ypos-yw/2.
-            #yr=ypos+yw/2.
-            #pl=self._picked_line
-            #if pl=='yl' or (pl is None and abs(event.ydata-yl)<abs(event.ydata-yr)):
-                #yl=event.ydata
-                #self._picked_line='yl'
-            #else:
-                #yr=event.ydata
-                #self._picked_line='yr'
-            #ypos=(yr+yl)/2.
-            #yw=(yr-yl)
-            #self.auto_change_active=True
-            #self.ui.refYPos.setValue(ypos)
-            #self.auto_change_active=False
-            #self.ui.refYWidth.setValue(yw)
-
 
     def plotPickX(self, event):
         '''
@@ -3469,6 +3452,7 @@ Do you want to try to restore the working reduction list?""",
 
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()	
 
 
     def data_low_res_switch(self):
@@ -3549,6 +3533,7 @@ Do you want to try to restore the working reduction list?""",
         # save new settings
         self.save_new_settings()
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()		
 
     def normalization_background_switch(self):
         '''
@@ -3576,7 +3561,8 @@ Do you want to try to restore the working reduction list?""",
         self.plot_overview_REFL(plot_yi=True, plot_yt=True)    
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
-
+	self.checkRunReductionButton()	
+	
     def normalization_low_res_switch(self):
         '''
         With or without normalization low resolution range
@@ -3656,6 +3642,7 @@ Do you want to try to restore the working reduction list?""",
 
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()	
 
     # data back spinboxes
     def data_back_spinbox_validation(self, withPlotUpdate=True):
@@ -3694,6 +3681,20 @@ Do you want to try to restore the working reduction list?""",
 
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()
+	
+    def checkRunReductionButton(self):
+	status = True
+	nbr_row = self.ui.reductionTable.rowCount()
+	if nbr_row == 0:
+	    status = False
+	else:
+	    status = self.isAllPeakBackSelectionOk()
+	self.ui.actionAbout.setEnabled(status)
+
+    def isAllPeakBackSelectionOk(self):
+	pass
+
 
     # data low resolution spinboxes
     def data_lowres_spinbox_validation(self):
@@ -3737,11 +3738,12 @@ Do you want to try to restore the working reduction list?""",
 
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()	
 
     def norm_peak_and_back_validation(self, withPlotUpdate=False):
         self.norm_peak_spinbox_validation(withPlotUpdate)
         self.norm_back_spinbox_validation(withPlotUpdate)
-	self.fileHasBeenModified()
+	self.fileHasBeenModified()	
 
     # norm peak spinboxes
     def norm_peak_spinbox_validation(self, withPlotUpdate=True):
@@ -3785,6 +3787,7 @@ Do you want to try to restore the working reduction list?""",
 
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()		
 
     # norm back spinboxes
     def norm_back_spinbox_validation(self, withPlotUpdate=True):
@@ -3828,6 +3831,7 @@ Do you want to try to restore the working reduction list?""",
 
         CheckErrorWidgets(self)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()		
 
     # data low resolution spinboxes
     def norm_lowres_spinbox_validation(self):
@@ -3869,6 +3873,7 @@ Do you want to try to restore the working reduction list?""",
         # refresh plots
         self.plot_overview_REFL(plot_ix=True, plot_yt=True, plot_yi=True)
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()		
 
     def useAutoPeakBackSelectionCheckBox(self, status):
         self.ui.autoPeakBackSelectionFrame.setEnabled(status)
@@ -3913,6 +3918,7 @@ Do you want to try to restore the working reduction list?""",
             self.reductionTableDisplayMetadata()
 	    
 	self.fileHasBeenModified()
+	self.checkRunReductionButton()		
 
     def reductionTableCopy(self):
         _item = self.ui.reductionTable.selectedItems()

@@ -73,12 +73,22 @@ class InitializeGui(object):
 		cls.defineRightDefaultPath()
 		cls.initFileMenu()
 		cls.initAutoPeakBackFinderWidgets(self)
+		cls.initPrimaryFractionRangeWidgets(self)
 		self.reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
 		cls.initConfigGui()
 		cls.initErrorWidgets()
 		self.allPlotAxis = AllPlotAxis()
 		
 		self.ui.numberSearchEntry.setFocus()
+
+	def 	initPrimaryFractionRangeWidgets(cls, self):
+		self.ui.dataPrimaryFractionFlag.setVisible(False)
+		self.ui.dataPrimToLabel.setVisible(False)
+		self.ui.dataPrimFromLabel.setVisible(False)
+		self.ui.dataPrimToValue.setVisible(False)
+		self.ui.dataPrimFromValue.setVisible(False)
+		self.ui.dataPrimToError.setVisible(False)
+		self.ui.dataPrimFromError.setVisible(False)
 		
 	def initAutoPeakBackFinderWidgets(cls, self):
 		self.ui.actionAutomaticPeakFinder.setVisible(False)

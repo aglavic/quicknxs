@@ -69,7 +69,7 @@ class ReductionObject(object):
 		# if the oData is empty, retrieve info from oConfig
 		if oData is None:
 			self.logbook('-> data: oData is None => we need to retrieve it from config object')
-			oData = self.populate_data_object(main_gui, oConfig, 'data')
+			oData = self.populateDataObject(main_gui, oConfig, 'data')
 		self.oData = oData
 
 		# retrieve norm if user wants norm and if normCell is not empty
@@ -80,7 +80,7 @@ class ReductionObject(object):
 				# make sure the norm flag is on in the config file
 				if oConfig.norm_flag:
 					self.logbook('---> yes, we want to use normalization file')
-					oNorm = self.populate_data_object(main_gui, oConfig, 'norm')
+					oNorm = self.populateDataObject(main_gui, oConfig, 'norm')
 				else:
 					self.logbook('---> no, we do not want to use normalization file')
 			else: # make sure the flag is ON         
@@ -100,7 +100,7 @@ class ReductionObject(object):
 			self.main_gui.ui.logbook.undo()
 			self.main_gui.ui.logbook.append(text)
 
-	def populate_data_object(self, main_gui, oConfig, type):
+	def populateDataObject(self, main_gui, oConfig, type):
 		'''
 		will retrieve all the info from the oConfig table and will populate the oData object
 		type is either 'data' or 'norm'

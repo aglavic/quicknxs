@@ -85,7 +85,7 @@ class ReductionSfCalculator(object):
 					         tof_range = tof_range)
 	
 			cls.sf_gui.updateProgressBar(float(i+1)/float(nbr_scripts))
-			QtGui.QApplication.processEvents(int)
+			QtGui.QApplication.processEvents()
 		
 		if cls.export_script_flag:
 			createAsciiFile(cls.export_script_file, cls.export_script)
