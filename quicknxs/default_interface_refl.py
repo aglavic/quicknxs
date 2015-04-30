@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/default_interface_refl.ui'
 #
-# Created: Thu Apr 30 10:49:11 2015
+# Created: Thu Apr 30 14:50:38 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -1246,7 +1246,7 @@ class Ui_MainWindow(object):
         spacerItem24 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem24)
         self.reduceButton = QtGui.QPushButton(self.widget)
-        self.reduceButton.setEnabled(False)
+        self.reduceButton.setEnabled(True)
         self.reduceButton.setMinimumSize(QtCore.QSize(600, 0))
         self.reduceButton.setObjectName("reduceButton")
         self.horizontalLayout_11.addWidget(self.reduceButton)
@@ -1395,7 +1395,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.mainSplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1674, 25))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")

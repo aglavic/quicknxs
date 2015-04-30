@@ -3906,6 +3906,7 @@ Do you want to try to restore the working reduction list?""",
 
         if action == modify:
             self.reductionTableEdit()
+	    SelectionBigTableChanged(self, force_update=True)
         #elif action == copy:
             #self.reductionTableCopy()
         #elif action == paste:

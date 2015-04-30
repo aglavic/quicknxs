@@ -11,7 +11,7 @@ class SelectionBigTableChanged(object):
 	is_data = True
 	active_data = None
 	
-	def __init__(cls, self):
+	def __init__(cls, self, force_update=False):
 		cls.self = self
 		cls.current_row = self._cur_row_selected
 		cls.current_column = self._cur_column_selected
@@ -19,7 +19,7 @@ class SelectionBigTableChanged(object):
 		column = cls.current_column
 		row = cls.current_row
 		
-		if cls.same_cell_selected():
+		if (not force_update) and (cls.same_cell_selected()):
 			return
 		
 		if column == 6:

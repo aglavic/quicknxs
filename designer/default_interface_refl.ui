@@ -3204,7 +3204,7 @@ p, li { white-space: pre-wrap; }
                 <item>
                  <widget class="QPushButton" name="reduceButton">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="minimumSize">
                    <size>
@@ -3567,7 +3567,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1674</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
