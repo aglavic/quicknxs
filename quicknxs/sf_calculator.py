@@ -442,7 +442,7 @@ class SFcalculator(QtGui.QMainWindow):
 		return [row, col]
 	
 	def browseFile(cls):
-		_filter = u'SF config (*.txt);;All (*.*)'
+		_filter = u'SF config (*.cfg);;All (*.*)'
 		fileSelector = QtGui.QFileDialog()
 		fileSelector.setFileMode(QtGui.QFileDialog.AnyFile)
 		fileSelector.setFilter(_filter)
@@ -450,6 +450,7 @@ class SFcalculator(QtGui.QMainWindow):
 		fileSelector.setDirectory(cls.main_gui.path_ascii)
 		if (fileSelector.exec_()):
 			file_name = str(fileSelector.selectedFiles()[0])
+			file_name = makeSureFileHasExtension(file_name, default_ext='.cfg')
 			if not os.path.isfile(file_name):
 				touch(file_name)
 			cls.displayConfigFile(file_name)

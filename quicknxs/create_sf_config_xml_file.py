@@ -13,6 +13,7 @@ class CreateSFConfigXmlFile(object):
 	def __init__(cls, parent=None, filename=''):
 		cls.sf_gui = parent
 		cls.output_filename = filename
+		cls.str_array = []
 		
 		cls.makeTopPart()
 		cls.makeMainPart()
