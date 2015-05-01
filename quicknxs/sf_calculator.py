@@ -45,6 +45,7 @@ class SFcalculator(QtGui.QMainWindow):
 	event_progressbar = None
 	is_manual_edit_of_tableWidget = True
 	nbr_nxs_runs_to_display_warning = 10
+	user_click_exit = False
 	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
@@ -125,6 +126,15 @@ class SFcalculator(QtGui.QMainWindow):
 		SFCalculatorConfigFileLauncher(cls, 8)
 	def launchConfigFile10(cls):
 		SFCalculatorConfigFileLauncher(cls, 9)
+		
+	def 	forceTypeToInt(cls, array_value, default_value=1):
+		final_array_value = []
+		for _value in array_value:
+			if _value == '' or _value == 'N/A':
+				final_array_value.append(default_value)
+			else:
+				final_array_value.append(int(_value))
+		return final_array_value
 		
 	def logxToggleYiPlot(cls, checked):
 		row = cls.current_table_row_selected
@@ -656,15 +666,46 @@ class SFcalculator(QtGui.QMainWindow):
 	def tableWidgetCellSelected(cls, row, col):
 		if col != 0:
 			return
+		#cls.user_click_col0 = True
 		cls.showWhichRowIsLoading(row)
 		QtGui.QApplication.processEvents()		
 		cls.current_table_row_selected = row
 		rangeSelected = QtGui.QTableWidgetSelectionRange(row, 0, row, 15)
 		cls.ui.tableWidget.setRangeSelected(rangeSelected, True)
 		cls.displaySelectedRow(row)
-		cls.updateTableWidgetPeakBackTof(row)
+		cls.savePeakBackTofToBigTable(row)
+		cls.updatePeakBackTofWidgets(row)
 		cls.displayPlot(row, yt_plot=True, yi_plot=True)
 		cls.showWhichRowIsActivated(row)
+		#cls.user_click_col0 = False
+		
+	def savePeakBackTofToBigTable(cls, row):
+		peak1 = cls.ui.tableWidget.item(row, 10).text()
+		peak2 = cls.ui.tableWidget.item(row, 11).text()
+		back1 = cls.ui.tableWidget.item(row, 12).text()
+		back2 = cls.ui.tableWidget.item(row, 13).text()
+		tof1 = cls.ui.tableWidget.item(row, 14).text()
+		tof2 = cls.ui.tableWidget.item(row, 15).text()
+		peak = [peak1, peak2]
+		back = [back1, back2]
+		if float(tof1) < 1000:
+			tof1 = str(float(tof1)*1000)
+			tof2 = str(float(tof2)*1000)
+		tof = [tof1, tof2]
+		_list_nxsdata_sorted = cls.list_nxsdata_sorted
+		_nxdata  = _list_nxsdata_sorted[row]
+		_nxdata.active_data.peak = peak
+		_nxdata.active_data.back = back
+		_nxdata.active_data.tof_range = tof
+
+		_big_table = cls.big_table
+		tof_auto_flag = str2bool(_big_table[row, 16])
+		_nxdata.active_data.tof_auto_flag = tof_auto_flag
+		cls.ui.dataTOFautoMode.setChecked(tof_auto_flag)
+		cls.ui.dataTOFmanualMode.setChecked(not tof_auto_flag)
+
+		_list_nxsdata_sorted[row] = _nxdata
+		cls.list_nxsdata_sorted = _list_nxsdata_sorted
 		
 	def showWhichRowIsLoading(cls, row):
 		nbr_row = cls.ui.tableWidget.rowCount()
@@ -685,6 +726,9 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.ui.tableWidget.setVerticalHeaderItem(i, _item)
 
 	def tableWidgetCellEntered(cls, row, col):
+		print 'tableWidgetCellEntered'
+		if cls.user_click_exit:
+			return
 		try:
 			if row == cls.current_table_row_selected:
 				cell_value = cls.ui.tableWidget.item(row,col).text()
@@ -833,30 +877,7 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.ui.tableWidget.setItem(row,0,_item)
 
 		else:
-			peak1 = cls.ui.tableWidget.item(row, 10).text()
-			peak2 = cls.ui.tableWidget.item(row, 11).text()
-			back1 = cls.ui.tableWidget.item(row, 12).text()
-			back2 = cls.ui.tableWidget.item(row, 13).text()
-			tof1 = cls.ui.tableWidget.item(row, 14).text()
-			tof2 = cls.ui.tableWidget.item(row, 15).text()
-			peak = [peak1, peak2]
-			back = [back1, back2]
-			if float(tof1) < 1000:
-				tof1 = str(float(tof1)*1000)
-				tof2 = str(float(tof2)*1000)
-			tof = [tof1, tof2]
-			_nxdata.active_data.peak = peak
-			_nxdata.active_data.back = back
-			_nxdata.active_data.tof_range = tof
-
-			_big_table = cls.big_table
-			tof_auto_flag = str2bool(_big_table[row, 16])
-			_nxdata.active_data.tof_auto_flag = tof_auto_flag
-			cls.ui.dataTOFautoMode.setChecked(tof_auto_flag)
-			cls.ui.dataTOFmanualMode.setChecked(not tof_auto_flag)
-
-			_list_nxsdata_sorted[row] = _nxdata
-			cls.list_nxsdata_sorted = _list_nxsdata_sorted
+			cls.savePeakBackTofToBigTable(row)
 			cls.updatePeakBackTofWidgets(row)
 		
 	def updatePeakBackTofWidgets(cls, row):
@@ -865,11 +886,19 @@ class SFcalculator(QtGui.QMainWindow):
 		if _nxsdata_row == None:
 			return
 		[peak1, peak2] = _nxsdata_row.active_data.peak
+		if peak1 == '' or peak1 == 'N/A':
+			peak1 = 0
 		cls.ui.dataPeakFromValue.setValue(int(peak1))
+		if peak2 == '' or peak2 == 'N/A':
+			peak2 = 255
 		cls.ui.dataPeakToValue.setValue(int(peak2))
 		
 		[back1, back2] = _nxsdata_row.active_data.back
+		if back1 == '' or back1 == 'N/A':
+			back1 = 0
 		cls.ui.dataBackFromValue.setValue(int(back1))
+		if back2 == '' or back2 == 'N/A':
+			back2 = 255
 		cls.ui.dataBackToValue.setValue(int(back2))
 
 		[tof1, tof2] = _nxsdata_row.active_data.tof_range_auto
@@ -936,6 +965,7 @@ class SFcalculator(QtGui.QMainWindow):
 #		cls.ui.yt_plot.canvas.ax.set_yscale('log')
 
 		[peak1, peak2] = nxsdata.active_data.peak
+		[peak1, peak2] = cls.forceTypeToInt([peak1, peak2])
 		peak1 = int(peak1)
 		peak2 = int(peak2)
 				
@@ -954,6 +984,7 @@ class SFcalculator(QtGui.QMainWindow):
 		
 		if nxsdata.active_data.back_flag:
 			[back1, back2] = nxsdata.active_data.back
+			[back1, back2] = cls.forceTypeToInt([back1, back2], default_value=1)
 			back1 = int(back1)
 			back2 = int(back2)
 			cls.ui.yt_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
@@ -1001,6 +1032,7 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.ui.yi_plot.canvas.ax.set_ylim(0, ylim)
 
 		[peak1, peak2] = nxsdata.active_data.peak
+		[peak1, peak2] = cls.forceTypeToInt([peak1, peak2])
 		peak1 = int(peak1)
 		peak2 = int(peak2)
 		cls.ui.yi_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
@@ -1008,6 +1040,7 @@ class SFcalculator(QtGui.QMainWindow):
 		
 		if nxsdata.active_data.back_flag:
 			[back1, back2] = nxsdata.active_data.back
+			[back1, back2] = cls.forceTypeToInt([back1, back2])
 			back1 = int(back1)
 			back2 = int(back2)
 			cls.ui.yi_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
@@ -1145,4 +1178,5 @@ class SFcalculator(QtGui.QMainWindow):
 		reflsfcalculatorlastloadedfiles.switch_config('default')
 	
 	def closeEvent(cls, event=None):
+		cls.user_click_exit = True
 		cls.saveConfigFiles()
