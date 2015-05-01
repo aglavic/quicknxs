@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Thu Apr 30 09:12:25 2015
+# Created: Fri May  1 12:50:19 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,6 +92,7 @@ class Ui_MainWindow(object):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
         self.dataBackToValue.setPalette(palette)
+        self.dataBackToValue.setMinimum(-1)
         self.dataBackToValue.setMaximum(255)
         self.dataBackToValue.setProperty("value", 255)
         self.dataBackToValue.setObjectName("dataBackToValue")
@@ -126,6 +127,7 @@ class Ui_MainWindow(object):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
         self.dataPeakToValue.setPalette(palette)
+        self.dataPeakToValue.setMinimum(-1)
         self.dataPeakToValue.setMaximum(255)
         self.dataPeakToValue.setProperty("value", 255)
         self.dataPeakToValue.setObjectName("dataPeakToValue")
@@ -160,6 +162,7 @@ class Ui_MainWindow(object):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
         self.dataPeakFromValue.setPalette(palette)
+        self.dataPeakFromValue.setMinimum(-1)
         self.dataPeakFromValue.setMaximum(255)
         self.dataPeakFromValue.setProperty("value", 0)
         self.dataPeakFromValue.setObjectName("dataPeakFromValue")
@@ -194,6 +197,7 @@ class Ui_MainWindow(object):
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
         self.dataBackFromValue.setPalette(palette)
+        self.dataBackFromValue.setMinimum(-1)
         self.dataBackFromValue.setMaximum(255)
         self.dataBackFromValue.setProperty("value", 0)
         self.dataBackFromValue.setObjectName("dataBackFromValue")
@@ -379,7 +383,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1656, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1656, 25))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")

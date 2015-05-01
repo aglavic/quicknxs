@@ -127,7 +127,7 @@ class SFcalculator(QtGui.QMainWindow):
 	def launchConfigFile10(cls):
 		SFCalculatorConfigFileLauncher(cls, 9)
 		
-	def 	forceTypeToInt(cls, array_value, default_value=1):
+	def 	forceTypeToInt(cls, array_value, default_value=-1):
 		final_array_value = []
 		for _value in array_value:
 			if _value == '' or _value == 'N/A':
@@ -298,6 +298,22 @@ class SFcalculator(QtGui.QMainWindow):
 			_show_widgets_1 = False
 			_show_widgets_2 = False
 			
+			if (peak_from == -1):
+				cls.ui.peak1_error.setVisible(True)
+				cls.ui.error_label.setVisible(True)
+				
+			if (peak_to == -1):
+				cls.ui.peak2_error.setVisible(True)
+				cls.ui.error_label.setVisible(True)
+				
+			if (back_from == -1):
+				cls.ui.back1_error.setVisible(True)
+				cls.ui.error_label.setVisible(True)
+				
+			if (back_to == -1):
+				cls.ui.back2_error.setVisible(True)
+				cls.ui.error_label.setVisible(True)
+				
 			if back_flag:
 				if back_from > peak_from:
 					_show_widgets_1 = True
@@ -726,7 +742,6 @@ class SFcalculator(QtGui.QMainWindow):
 			cls.ui.tableWidget.setVerticalHeaderItem(i, _item)
 
 	def tableWidgetCellEntered(cls, row, col):
-		print 'tableWidgetCellEntered'
 		if cls.user_click_exit:
 			return
 		try:
@@ -771,71 +786,81 @@ class SFcalculator(QtGui.QMainWindow):
 			[peak1, peak2] = _nxdata.active_data.peak
 			[back1, back2]  = _nxdata.active_data.back
 			
-			_item = QtGui.QTableWidgetItem(peak1)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			if peak1 == '-1':
+				peak1 = 'N/A'
+			cls.ui.tableWidget.item(row, 10).setText(peak1)
 			if back1 > peak1:
-				_brush_BAD = QtGui.QBrush()
-				_brush_BAD.setColor(colors.VALUE_BAD)
-				_item.setForeground(_brush_BAD)
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_BAD)
 				_font = QtGui.QFont()
 				_font.setBold(True)
 				_font.setItalic(True)
-				_item.setFont(_font)
 				_at_least_one_bad = True
 			else:
-				_brush_OK = QtGui.QBrush()
-				_brush_OK.setColor(colors.VALUE_OK)
-				_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row, 10, _item)
-			
-			_item = QtGui.QTableWidgetItem(peak2)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			if back2 < peak2:
-				_brush_BAD = QtGui.QBrush()
-				_brush_BAD.setColor(colors.VALUE_BAD)
-				_item.setForeground(_brush_BAD)
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_OK)
 				_font = QtGui.QFont()
-				_font.setBold(True)
-				_font.setItalic(True)
-				_item.setFont(_font)
-				_at_least_one_bad = True
-			else:
-				_brush_OK = QtGui.QBrush()
-				_brush_OK.setColor(colors.VALUE_OK)
-				_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row, 11, _item)
-			
-			_item = QtGui.QTableWidgetItem(back1)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-			if back1 > peak1:
-				_brush_BAD = QtGui.QBrush()				
-				_brush_BAD.setColor(colors.VALUE_BAD)
-				_font = QtGui.QFont()
-				_font.setBold(True)
-				_font.setItalic(True)
-				_item.setFont(_font)
-				_item.setForeground(_brush_BAD)
-			else:
-				_brush_OK = QtGui.QBrush()
-				_brush_OK.setColor(colors.VALUE_OK)
-				_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row, 12, _item)
+				_font.setBold(False)
+				_font.setItalic(False)
+			cls.ui.tableWidget.item(row, 10).setForeground(_brush)
+			cls.ui.tableWidget.item(row, 10).setFont(_font)
 
-			_item = QtGui.QTableWidgetItem(back2)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			if peak2 == '-1':
+				peak2 = 'N/A'
+			cls.ui.tableWidget.item(row, 11).setText(peak2)
 			if back2 < peak2:
-				_brush_BAD = QtGui.QBrush()
-				_brush_BAD.setColor(colors.VALUE_BAD)
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_BAD)
 				_font = QtGui.QFont()
 				_font.setBold(True)
 				_font.setItalic(True)
-				_item.setFont(_font)
-				_item.setForeground(_brush_BAD)
+				_at_least_one_bad = True
 			else:
-				_brush_OK = QtGui.QBrush()
-				_brush_OK.setColor(colors.VALUE_OK)
-				_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row, 13, _item)
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_OK)
+				_font = QtGui.QFont()
+				_font.setBold(False)
+				_font.setItalic(False)
+			cls.ui.tableWidget.item(row, 11).setFont(_font)
+			cls.ui.tableWidget.item(row, 11).setForeground(_brush)
+
+			if back1 == '-1':
+				back1 = 'N/A'
+			cls.ui.tableWidget.item(row, 12).setText(back1)
+			if back1 > peak1:
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_at_least_one_bad = True
+			else:
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_OK)
+				_font = QtGui.QFont()
+				_font.setBold(False)
+				_font.setItalic(False)
+			cls.ui.tableWidget.item(row, 12).setFont(_font)
+			cls.ui.tableWidget.item(row, 12).setForeground(_brush)
+
+			if back2 == '-1':
+				back2 =  'N/A'
+			cls.ui.tableWidget.item(row, 13).setText(back2)
+			if back2 < peak2:
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_BAD)
+				_font = QtGui.QFont()
+				_font.setBold(True)
+				_font.setItalic(True)
+				_at_least_one_bad = True
+			else:
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_OK)
+				_font = QtGui.QFont()
+				_font.setBold(False)
+				_font.setItalic(False)
+			cls.ui.tableWidget.item(row, 13).setFont(_font)
+			cls.ui.tableWidget.item(row, 13).setForeground(_brush)
 
 			tof_auto_flag = _nxdata.active_data.tof_auto_flag
 			cls.ui.dataTOFautoMode.setChecked(tof_auto_flag)
@@ -848,33 +873,31 @@ class SFcalculator(QtGui.QMainWindow):
 			if float(tof1) > 1000:
 				tof1 = "%.2f" % (float(tof1)/1000)
 				tof2 = "%.2f" % (float(tof2)/1000)
-			_item = QtGui.QTableWidgetItem(tof1)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+
+			cls.ui.tableWidget.item(row, 14).setText(tof1)
 			_brush_OK = QtGui.QBrush()
 			_brush_OK.setColor(colors.VALUE_OK)			
-			_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row, 14, _item)
-			_item = QtGui.QTableWidgetItem(tof2)
-			_item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+			cls.ui.tableWidget.item(row, 14).setForeground(_brush_OK)
+
+			cls.ui.tableWidget.item(row, 15).setText(tof2)
 			_brush_OK = QtGui.QBrush()
 			_brush_OK.setColor(colors.VALUE_OK)			
-			_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row, 15, _item)
-			
-			_item = cls.ui.tableWidget.item(row,0)
+			cls.ui.tableWidget.item(row, 15).setForeground(_brush_OK)
+
 			if _at_least_one_bad:
-				_brush_BAD = QtGui.QBrush()
-				_brush_BAD.setColor(colors.VALUE_BAD)
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_BAD)
 				_font = QtGui.QFont()
 				_font.setBold(True)
 				_font.setItalic(True)
-				_item.setFont(_font)
-				_item.setForeground(_brush_BAD)
 			else:
-				_brush_OK = QtGui.QBrush()
-				_brush_OK.setColor(colors.VALUE_OK)			
-				_item.setForeground(_brush_OK)
-			cls.ui.tableWidget.setItem(row,0,_item)
+				_brush = QtGui.QBrush()
+				_brush.setColor(colors.VALUE_OK)
+				_font = QtGui.QFont()
+				_font.setBold(False)
+				_font.setItalic(False)
+			cls.ui.tableWidget.item(row, 10).setFont(_font)
+			cls.ui.tableWidget.item(row, 10).setForeground(_brush)
 
 		else:
 			cls.savePeakBackTofToBigTable(row)
@@ -887,7 +910,7 @@ class SFcalculator(QtGui.QMainWindow):
 			return
 		[peak1, peak2] = _nxsdata_row.active_data.peak
 		if peak1 == '' or peak1 == 'N/A':
-			peak1 = 0
+			peak1 = -1
 		cls.ui.dataPeakFromValue.setValue(int(peak1))
 		if peak2 == '' or peak2 == 'N/A':
 			peak2 = 255
@@ -895,7 +918,7 @@ class SFcalculator(QtGui.QMainWindow):
 		
 		[back1, back2] = _nxsdata_row.active_data.back
 		if back1 == '' or back1 == 'N/A':
-			back1 = 0
+			back1 = -1
 		cls.ui.dataBackFromValue.setValue(int(back1))
 		if back2 == '' or back2 == 'N/A':
 			back2 = 255
@@ -979,16 +1002,20 @@ class SFcalculator(QtGui.QMainWindow):
 		cls.ui.yt_plot.canvas.ax.axvline(tof1, color=colors.TOF_SELECTION_COLOR)
 		cls.ui.yt_plot.canvas.ax.axvline(tof2, color=colors.TOF_SELECTION_COLOR)
 		
-		cls.ui.yt_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
-		cls.ui.yt_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)		
+		if peak1 != -1:
+			cls.ui.yt_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		if peak2 != -1:
+			cls.ui.yt_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)		
 		
 		if nxsdata.active_data.back_flag:
 			[back1, back2] = nxsdata.active_data.back
 			[back1, back2] = cls.forceTypeToInt([back1, back2], default_value=1)
 			back1 = int(back1)
 			back2 = int(back2)
-			cls.ui.yt_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
-			cls.ui.yt_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+			if back1 != -1:
+				cls.ui.yt_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			if back2 != -1:
+				cls.ui.yt_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
 			
 		if nxsdata.active_data.all_plot_axis.is_yt_ylog:
 			cls.ui.yt_plot.canvas.ax.set_yscale('log')
@@ -1035,16 +1062,20 @@ class SFcalculator(QtGui.QMainWindow):
 		[peak1, peak2] = cls.forceTypeToInt([peak1, peak2])
 		peak1 = int(peak1)
 		peak2 = int(peak2)
-		cls.ui.yi_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
-		cls.ui.yi_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
+		if peak1 != -1:
+			cls.ui.yi_plot.canvas.ax.axhline(peak1, color=colors.PEAK_SELECTION_COLOR)
+		if peak2 != -1:
+			cls.ui.yi_plot.canvas.ax.axhline(peak2, color=colors.PEAK_SELECTION_COLOR)
 		
 		if nxsdata.active_data.back_flag:
 			[back1, back2] = nxsdata.active_data.back
 			[back1, back2] = cls.forceTypeToInt([back1, back2])
 			back1 = int(back1)
 			back2 = int(back2)
-			cls.ui.yi_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
-			cls.ui.yi_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
+			if back1 != -1:
+				cls.ui.yi_plot.canvas.ax.axhline(back1, color=colors.BACK_SELECTION_COLOR)
+			if back2 != -1:
+				cls.ui.yi_plot.canvas.ax.axhline(back2, color=colors.BACK_SELECTION_COLOR)
 			
 		if nxsdata.active_data.all_plot_axis.is_yi_xlog:
 			cls.ui.yi_plot.canvas.ax.set_xscale('log')
