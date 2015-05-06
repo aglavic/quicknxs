@@ -458,4 +458,4 @@ class Plot2dDialogREFL(QDialog):
 			self.main_gui.ui.normLowResToValue.setEnabled(lowresFlag)
 			
 		self.main_gui.tofValidation(tof_auto_switch,  tof1, tof2)
-		self.main_gui.plot_overview_REFL()
+		#self.main_gui.plot_overview_REFL()

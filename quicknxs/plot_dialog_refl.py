@@ -228,7 +228,7 @@ class PlotDialogREFL(QDialog):
 		_back = self.data.back
 		[peak1, peak2] = _peak
 		[back1, back2] = _back
-		back_flag = self.data.back_flag
+		back_flag = utilities.str2bool(self.data.back_flag)
 		self.ui.jim_back_flag.setChecked(back_flag)
 		self.ui.john_back_flag.setChecked(back_flag)
 		

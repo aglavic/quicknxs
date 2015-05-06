@@ -57,13 +57,9 @@ class CheckErrorWidgets(object):
 	      
 			self.ui.norm_selection_error_label.setVisible(bError)  
 
-		_item = self.ui.reductionTable.item(row,col_index)
+		_brush_color = QtGui.QBrush()
 		if bError:
-			_brush_BAD = QtGui.QBrush()
-			_brush_BAD.setColor(colors.VALUE_BAD)
-			_item.setForeground(_brush_BAD)
+			_brush_color.setColor(colors.VALUE_BAD)
 		else:
-			_brush_OK = QtGui.QBrush()
-			_brush_OK.setColor(colors.VALUE_OK)			
-			_item.setForeground(_brush_OK)
-		self.ui.reductionTable.setItem(row,col_index,_item)
+			_brush_color = QtGui.QBrush()
+		self.ui.reductionTable.item(row, col_index).setForeground(_brush_color)

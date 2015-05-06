@@ -1110,26 +1110,31 @@ class MainGUI(QtGui.QMainWindow):
             [qmin,qmax] = data.q_range
             [lmin,lmax] = data.lambda_range
 
-            _item_min = QtGui.QTableWidgetItem(str(qmin))
-            _item_min.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
-            _item_max = QtGui.QTableWidgetItem(str(qmax))
-            _item_max.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
-            _item_lmin = QtGui.QTableWidgetItem(str(lmin))
-            _item_lmin.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
-            _item_lmax = QtGui.QTableWidgetItem(str(lmax))
-            _item_lmax.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
-            _item_incident = QtGui.QTableWidgetItem(str(incident_angle))
-            _item_incident.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
+            #_item_min = QtGui.QTableWidgetItem(str(qmin))
+            #_item_min.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
+            #_item_max = QtGui.QTableWidgetItem(str(qmax))
+            #_item_max.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
+            #_item_lmin = QtGui.QTableWidgetItem(str(lmin))
+            #_item_lmin.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
+            #_item_lmax = QtGui.QTableWidgetItem(str(lmax))
+            #_item_lmax.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
+            #_item_incident = QtGui.QTableWidgetItem(str(incident_angle))
+            #_item_incident.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)      
 
-#      [row, column] = self.getCurrentRowColumnSelected()
             row = self._cur_row_selected
             column = self._cur_column_selected
 
-            self.ui.reductionTable.setItem(row, 4, _item_min)
-            self.ui.reductionTable.setItem(row, 5, _item_max)
-            self.ui.reductionTable.setItem(row, 2, _item_lmin)
-            self.ui.reductionTable.setItem(row, 3, _item_lmax)
-            self.ui.reductionTable.setItem(row, 1, _item_incident)
+            #self.ui.reductionTable.setItem(row, 4, _item_min)
+            #self.ui.reductionTable.setItem(row, 5, _item_max)
+            #self.ui.reductionTable.setItem(row, 2, _item_lmin)
+            #self.ui.reductionTable.setItem(row, 3, _item_lmax)
+            #self.ui.reductionTable.setItem(row, 1, _item_incident)
+
+	    self.ui.reductionTable.item(row, 1).setText(incident_angle)
+	    self.ui.reductionTable.item(row, 2).setText(str(lmin))
+	    self.ui.reductionTable.item(row, 3).setText(str(lmax))
+	    self.ui.reductionTable.item(row, 4).setText(str(qmin))
+	    self.ui.reductionTable.item(row, 5).setText(str(qmax))
 
         else: # normalization
 
