@@ -4,6 +4,7 @@ import logbook
 import os, time
 import nexus_utilities
 from qreduce import NXSData
+from refl_reduction_thread import REFLReductionThread
 
 class ReductionObject(object):
 
@@ -149,6 +150,7 @@ class REFLReduction(object):
 
 	main_gui = None
 	script = []
+	nbr_reduction_done = 0
 
 	def logbook(cls, text):
 		# add log book message
@@ -274,43 +276,67 @@ class REFLReduction(object):
 			print '-> Outputworkspace: '
 			print outputWorkspace
 			
-			#RefLReduction(RunNumbers=runNumbers,
-			LiquidsReflectometryReduction(RunNumbers=runNumbers,
-			              NormalizationRunNumber=normalizationRunNumbers,
-			              SignalPeakPixelRange=signalPeakPixelRange,
-			              SubtractSignalBackground=subtractSignalBackground,
-			              SignalBackgroundPixelRange=signalBackgroundPixelRange,
-			              NormFlag=normFlag,
-			              NormPeakPixelRange=normPeakPixelRange,
-			              NormBackgroundPixelRange=normBackgroundPixelRange,
-			              SubtractNormBackground=subtractNormBackground,
-			              LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
-			              LowResDataAxisPixelRange=lowResDataAxisPixelRange,
-			              LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
-			              LowResNormAxisPixelRange=lowResNormAxisPixelRange,
-			              TOFRange=tofRange,
-			              IncidentMediumSelected=incidentMediumSelected,
-			              GeometryCorrectionFlag=geometryCorrectionFlag,
-			              QMin=qmin,
-			              QStep=qstep,
-			              ScalingFactorFile=scalingFactorFile,
-			              CropFirstAndLastPoints = False,
-			              SlitsWidthFlag=slitsWidthFlag,
-			              OutputWorkspace=outputWorkspace)
+			thread = REFLReductionThread()
+			thread.setupReduction(parent=cls,
+			                      row=row,
+			                      RunNumbers=runNumbers,
+			                      NormalizationRunNumber=normalizationRunNumbers,
+			                      SignalPeakPixelRange=signalPeakPixelRange,
+			                      SubtractSignalBackground=subtractSignalBackground,
+			                      SignalBackgroundPixelRange=signalBackgroundPixelRange,
+			                      NormFlag=normFlag,
+			                      NormPeakPixelRange=normPeakPixelRange,
+			                      NormBackgroundPixelRange=normBackgroundPixelRange,
+			                      SubtractNormBackground=subtractNormBackground,
+			                      LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
+			                      LowResDataAxisPixelRange=lowResDataAxisPixelRange,
+			                      LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
+			                      LowResNormAxisPixelRange=lowResNormAxisPixelRange,
+			                      TOFRange=tofRange,
+			                      IncidentMediumSelected=incidentMediumSelected,
+			                      GeometryCorrectionFlag=geometryCorrectionFlag,
+			                      QMin=qmin,
+			                      QStep=qstep,
+			                      ScalingFactorFile=scalingFactorFile,
+			                      CropFirstAndLastPoints = False,
+			                      SlitsWidthFlag=slitsWidthFlag,
+			                      OutputWorkspace=outputWorkspace)
+			thread.start()
 			
-			cls.main_gui.updateProgressBar(float(row)/float(nbrRow))
+			#RefLReduction(RunNumbers=runNumbers,
+			#LiquidsReflectometryReduction(RunNumbers=runNumbers,
+			              #NormalizationRunNumber=normalizationRunNumbers,
+			              #SignalPeakPixelRange=signalPeakPixelRange,
+			              #SubtractSignalBackground=subtractSignalBackground,
+			              #SignalBackgroundPixelRange=signalBackgroundPixelRange,
+			              #NormFlag=normFlag,
+			              #NormPeakPixelRange=normPeakPixelRange,
+			              #NormBackgroundPixelRange=normBackgroundPixelRange,
+			              #SubtractNormBackground=subtractNormBackground,
+			              #LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
+			              #LowResDataAxisPixelRange=lowResDataAxisPixelRange,
+			              #LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
+			              #LowResNormAxisPixelRange=lowResNormAxisPixelRange,
+			              #TOFRange=tofRange,
+			              #IncidentMediumSelected=incidentMediumSelected,
+			              #GeometryCorrectionFlag=geometryCorrectionFlag,
+			              #QMin=qmin,
+			              #QStep=qstep,
+			              #ScalingFactorFile=scalingFactorFile,
+			              #CropFirstAndLastPoints = False,
+			              #SlitsWidthFlag=slitsWidthFlag,
+			              #OutputWorkspace=outputWorkspace)
+			
+			#cls.main_gui.updateProgressBar(float(row)/float(nbrRow))
 
 			# save data back into bigTableData
-			configObject = cls.saveReducedData(configObject, outputWorkspace)
-			bigTableData[row,2] = configObject
+			#configObject = cls.saveReducedData(configObject, outputWorkspace)
+			#bigTableData[row,2] = configObject
 
-		cls.removeTempWorkspaces(listWorkspaces)
-
-		### DEBUGGING
-		##utilities.output_ascii_file('/mnt/hgfs/j35/Matlab/compareMantidquickNXS/data/quicknxs_after_final_cleaning.txt',
-		##red1.final_q_axis,
-		##red1.final_y_axis,
-		##red1.final_e_axis)
+			print 'here'
+			
+		time.sleep(5)
+#		cls.removeTempWorkspaces(listWorkspaces)
 
 		main_gui.bigTableData = bigTableData
 
@@ -322,6 +348,9 @@ class REFLReduction(object):
 		end_time = time.time()
 		cls.logbook('data reduction ... DONE (in %g seconds)!' % (end_time - start_time))
 		cls.logbook('================================================')
+		
+	def reductionThreadDone(cls):
+		cls.nbr_reduction_done += 1
 
 	def saveReducedData(cls, configObject, outputWorkspace):
 		configObject.proton_charge = float(mtd[outputWorkspace].getRun().getProperty('gd_prtn_chrg').value)

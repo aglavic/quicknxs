@@ -76,6 +76,7 @@ from sf_calculator import SFcalculator
 from table_reduction_run_editor import TableReductionRunEditor
 from export_xml_quicknxs_config import ExportXMLquickNXSConfig
 from import_xml_quicknxs_config import ImportXMLquickNXSConfig
+from refl_reduction_thread import REFLReductionThread
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -169,6 +170,8 @@ class MainGUI(QtGui.QMainWindow):
     initiateReflectivityPlot=QtCore.pyqtSignal(bool)
     reflectivityUpdated=QtCore.pyqtSignal(bool)
 
+    thread_reduction = None
+
     def __init__(self, argv=[], parent=None):
         if parent is None:
             QtGui.QMainWindow.__init__(self)
@@ -181,31 +184,6 @@ class MainGUI(QtGui.QMainWindow):
         install_gui_handler(self)
         InitializeGui(self)
         MakeGuiConnections(self)
-
-        ## open file after GUI is shown
-        #if '-ipython' in argv:
-            #self.run_ipython()
-        #else:
-            #self.ipython=None
-        #if len(argv)>0:
-            #if sys.version_info[0]<3:
-                ## if non ascii character in filenames interprete it as utf8
-                #argv=[unicode(argi, 'utf8', 'ignore') for argi in argv]
-            ## delay action to be run within event loop, this allows the error handling to work
-            #if argv[0][-4:]=='.dat':
-                #self.trigger('loadExtraction', argv[0])
-            #elif len(argv)==1:
-                #if argv[0][-4:]=='.nxs':
-                    #self.trigger('fileOpen', argv[0])
-                #else:
-                    #self.trigger('openByNumber', argv[0])
-            #else:
-                #self.trigger('automaticExtraction', argv)
-        #else:
-
-    #def logtoggle(self, checked):
-        #self.isLog = checked
-        #self.plot_overview_REFL(plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True)
 
     def fileHasBeenModified(self):
 	dialog_title = self.window_title + self.current_loaded_file
@@ -3700,7 +3678,6 @@ Do you want to try to restore the working reduction list?""",
     def isAllPeakBackSelectionOk(self):
 	return True
 
-
     # data low resolution spinboxes
     def data_lowres_spinbox_validation(self):
         '''
@@ -4393,18 +4370,19 @@ Do you want to try to restore the working reduction list?""",
             sf = _data.sf_auto
 
     @log_call
-    @waiting_effects
+#@waiting_effects
     def runReduction(self):
-        '''
-        Run the full reduction
-        '''
-        bigTableData = self.bigTableData
-        if bigTableData[0,0] is None:
-            warning(u'Define at least one data run to reduce.',
-                    extra={'title': u'Define a dataset'})
-            return
 
-        _reduction = REFLReduction(self)
+	bigTableData = self.bigTableData
+	if bigTableData[0,0] is None:
+	    warning(u'Define at least one data run to reduce.',
+	            extra={'title': u'Define a dataset'})
+	    return
+	
+	_reduction = REFLReduction(self)
+	
+
+    def runReductionStep2(self):
 
         # calculate auto SF coefficient
         self.calculate_autoSF()
