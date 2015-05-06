@@ -3602,7 +3602,7 @@ Do you want to try to restore the working reduction list?""",
     def data_peak_and_back_validation(self, withPlotUpdate=True):
         self.data_peak_spinbox_validation(withPlotUpdate=withPlotUpdate)
         self.data_back_spinbox_validation(withPlotUpdate=withPlotUpdate)
-        CheckErrorWidgets(self)
+#        CheckErrorWidgets(self)
 	self.fileHasBeenModified()
 
     # data peak spinboxes
