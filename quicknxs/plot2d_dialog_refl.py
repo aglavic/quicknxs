@@ -258,10 +258,10 @@ class Plot2dDialogREFL(QDialog):
 
 		peak = _data.peak
 		back = _data.back
-		back_flag = _data.back_flag
+		back_flag = utilities.str2bool(_data.back_flag)
 		low_res = _data.low_res
-		low_res_flag = _data.low_res_flag
-		tof_auto_flag = _data.tof_auto_flag
+		low_res_flag = utilities.str2bool(_data.low_res_flag)
+		tof_auto_flag = utilities.str2bool(_data.tof_auto_flag)
 		tof_range_auto = _data.tof_range_auto
 		tof_range = _data.tof_range
 	
