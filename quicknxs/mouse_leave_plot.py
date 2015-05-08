@@ -16,7 +16,6 @@ class MouseLeavePlot(object):
 		else:
 			cls.leave_figure_plot(type)
 
-
 	def leave_all_figure_plot(cls, type, r=-1, c=-1):
 		self = cls.self
 		nbr_row = self.ui.reductionTable.rowCount()

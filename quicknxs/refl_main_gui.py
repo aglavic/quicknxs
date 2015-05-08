@@ -322,7 +322,7 @@ class MainGUI(QtGui.QMainWindow):
 
     def set_debug(self):
         '''
-          Switch on debug mode logging during normal execuation.
+          Switch on debug mode logging during normal execution.
         '''
         from logging import getLogger, DEBUG
         logger=getLogger()
@@ -332,15 +332,15 @@ class MainGUI(QtGui.QMainWindow):
                 handler.setLevel(DEBUG)
         info('Logger debug mode is now active')
 
-    def _install_exc(self):
-        '''
-        Installs excepthook overwrite in GUI process for IPython.
-        '''
-        sys.excepthook=excepthook_overwrite
-        debug('Installed excepthook overwrite')
-        # set matplotlib fonts back to default
-        from mplwidget import _set_default_rc
-        _set_default_rc()
+    #def _install_exc(self):
+        #'''
+        #Installs excepthook overwrite in GUI process for IPython.
+        #'''
+        #sys.excepthook=excepthook_overwrite
+        #debug('Installed excepthook overwrite')
+        ## set matplotlib fonts back to default
+        #from mplwidget import _set_default_rc
+        #_set_default_rc()
 
     @log_input
     def processDelayedTrigger(self, item, args):
@@ -384,9 +384,7 @@ class MainGUI(QtGui.QMainWindow):
         bin_type=0
 
         if do_add:
-
             # get list of previously loaded runs
-#      [r,c] = self.getCurrentRowColumnSelected()
             row = self._cur_row_selected
             col = self._cur_column_selected
             if c is not 0:
@@ -475,7 +473,6 @@ class MainGUI(QtGui.QMainWindow):
             return
 
         self.active_data = data.active_data
-#    self.active_data = data
         self.filename = data.origin
 
         info(u"%s loaded"%(filename))
@@ -492,8 +489,6 @@ class MainGUI(QtGui.QMainWindow):
 
         if do_plot:
             self.plot_overview_REFL()
-            #self.initiateProjectionPlot.emit(False)
-            #self.initiateReflectivityPlot.emit(False)    
 
     def allTabWidgetsEnabler(self, enableFlag = False):
         self.ui.tab.setEnabled(enableFlag)
@@ -759,161 +754,161 @@ class MainGUI(QtGui.QMainWindow):
         self._prev_col_selected = -1
         self.bigTable_selection_changed(row, col)   
 
-    def populateReflectivityTable(self, data):
-        return
-        # will populate the recap table
+    #def populateReflectivityTable(self, data):
+        #return
+        ## will populate the recap table
 
-        _selected_row = self.ui.reductionTable.selectedRanges()
+        #_selected_row = self.ui.reductionTable.selectedRanges()
 
-        # are we replacing or adding a new entry
-        do_add = False
-        #if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
-            #do_add = True
+        ## are we replacing or adding a new entry
+        #do_add = False
+        ##if self.ui.addRunNumbers.isEnabled() and self.ui.addRunNumbers.isChecked():
+            ##do_add = True
 
-        if do_add:
-            #[r,c] = self.getCurrentRowColumnSelected()
-            r = self._cur_row_selected
-            c = self._cur_column_selected
+        #if do_add:
+            ##[r,c] = self.getCurrentRowColumnSelected()
+            #r = self._cur_row_selected
+            #c = self._cur_column_selected
 
-            if c !=0:
-                _column = 6
-            else:
-                _column = 0
+            #if c !=0:
+                #_column = 6
+            #else:
+                #_column = 0
 
-            _row = r
+            #_row = r
 
-            _run_number = data.list_run_numbers.join(',')
-            _item = QtGui.QTableWidgetItem(data._run_number)
-            _item.setForeground(QtGui.QColor(13,24,241))
-#      _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
-            self.ui.reductionTable.setItem(r, _column, _item)
+            #_run_number = data.list_run_numbers.join(',')
+            #_item = QtGui.QTableWidgetItem(data._run_number)
+            #_item.setForeground(QtGui.QColor(13,24,241))
+##      _item.setFlags(QtCore.Qt.ItemIsEditable or QtCore.Qt.ItemIsSelectable or QtCore.Qt.ItemIsEnabled)
+            #self.ui.reductionTable.setItem(r, _column, _item)
 
-            self._prev_row_selected = _row
-            self._prev_col_selected = _column      
+            #self._prev_row_selected = _row
+            #self._prev_col_selected = _column      
 
-        else:
-            # add new row each time a data is selected
-            if self.ui.dataNormTabWidget.currentIndex() == 0: #data
-                _column = 0
-            else:
-                _column = 6
+        #else:
+            ## add new row each time a data is selected
+            #if self.ui.dataNormTabWidget.currentIndex() == 0: #data
+                #_column = 0
+            #else:
+                #_column = 6
 
-            # empty table, let's add a row
-            if _selected_row == []:
-                self.ui.reductionTable.insertRow(0)
-                _selected_row = 0
-            else:
-                _selected_row = _selected_row[0].bottomRow()
-                self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,0,
-                                                                                         _selected_row,0), False)
-                self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,6,
-                                                                                         _selected_row,6), False)
+            ## empty table, let's add a row
+            #if _selected_row == []:
+                #self.ui.reductionTable.insertRow(0)
+                #_selected_row = 0
+            #else:
+                #_selected_row = _selected_row[0].bottomRow()
+                #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,0,
+                                                                                         #_selected_row,0), False)
+                #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_selected_row,6,
+                                                                                         #_selected_row,6), False)
 
-            _item = QtGui.QTableWidgetItem(data.active_data.run_number)
+            #_item = QtGui.QTableWidgetItem(data.active_data.run_number)
 
-            # if run is normalization, do not create a new row
-            if _column == 6:
-                _row = _selected_row
-            else:
-                # if selected row has already a data run number -> create a new row
-                _current_item = self.ui.reductionTable.item(_selected_row, 0)
-                if _current_item is None:
-                    # insert new item (data or normalization run number)
-                    _row = _selected_row
-                else:
-                    # find out last row
-                    _row = self.ui.reductionTable.rowCount()
-                    self.ui.reductionTable.insertRow(_row)
+            ## if run is normalization, do not create a new row
+            #if _column == 6:
+                #_row = _selected_row
+            #else:
+                ## if selected row has already a data run number -> create a new row
+                #_current_item = self.ui.reductionTable.item(_selected_row, 0)
+                #if _current_item is None:
+                    ## insert new item (data or normalization run number)
+                    #_row = _selected_row
+                #else:
+                    ## find out last row
+                    #_row = self.ui.reductionTable.rowCount()
+                    #self.ui.reductionTable.insertRow(_row)
 
-#      _item.setFlags(QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-            _item.setForeground(QtGui.QColor(13,24,241))
-            self.ui.reductionTable.setItem(_row, _column, _item)
-#      self.ui.reductionTable.editItem(_row, _column, _item)
-            self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
-                                                                                     _column,
-                                                                                     _row,
-                                                                                     _column), True)
-            self._prev_row_selected = _row
-            self._prev_col_selected = _column
+##      _item.setFlags(QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            #_item.setForeground(QtGui.QColor(13,24,241))
+            #self.ui.reductionTable.setItem(_row, _column, _item)
+##      self.ui.reductionTable.editItem(_row, _column, _item)
+            #self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(_row,
+                                                                                     #_column,
+                                                                                     #_row,
+                                                                                     #_column), True)
+            #self._prev_row_selected = _row
+            #self._prev_col_selected = _column
 
-        if _column == 0:
+        #if _column == 0:
 
-            color = QtGui.QColor(100,100,150)
+            #color = QtGui.QColor(100,100,150)
 
-            # add incident angle
-            incident_angle = data.active_data.incident_angle
-            _item_angle = QtGui.QTableWidgetItem(incident_angle)
-            _item_angle.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
-            _item_angle.setForeground(color)
-            self.ui.reductionTable.setItem(_row,1,_item_angle)
+            ## add incident angle
+            #incident_angle = data.active_data.incident_angle
+            #_item_angle = QtGui.QTableWidgetItem(incident_angle)
+            #_item_angle.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            #_item_angle.setForeground(color)
+            #self.ui.reductionTable.setItem(_row,1,_item_angle)
 
-            [from_l, to_l] = data.active_data.lambda_range
-            _item_from_l = QtGui.QTableWidgetItem(str(from_l))
-            _item_from_l.setForeground(color)
-            _item_from_l.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
-            self.ui.reductionTable.setItem(_row, 2, _item_from_l)
-            _item_to_l = QtGui.QTableWidgetItem(str(to_l))
-            _item_to_l.setForeground(color)
-            _item_to_l.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
-            self.ui.reductionTable.setItem(_row, 3, _item_to_l)
+            #[from_l, to_l] = data.active_data.lambda_range
+            #_item_from_l = QtGui.QTableWidgetItem(str(from_l))
+            #_item_from_l.setForeground(color)
+            #_item_from_l.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            #self.ui.reductionTable.setItem(_row, 2, _item_from_l)
+            #_item_to_l = QtGui.QTableWidgetItem(str(to_l))
+            #_item_to_l.setForeground(color)
+            #_item_to_l.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            #self.ui.reductionTable.setItem(_row, 3, _item_to_l)
 
-            [from_q, to_q] = data.active_data.q_range
-            _item_from_q = QtGui.QTableWidgetItem(str(from_q))
-            _item_from_q.setForeground(color)
-            _item_from_q.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
-            self.ui.reductionTable.setItem(_row, 4, _item_from_q)
-            _item_to_q = QtGui.QTableWidgetItem(str(to_q))
-            _item_to_q.setForeground(color)
-            _item_to_q.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
-            self.ui.reductionTable.setItem(_row, 5, _item_to_q)
+            #[from_q, to_q] = data.active_data.q_range
+            #_item_from_q = QtGui.QTableWidgetItem(str(from_q))
+            #_item_from_q.setForeground(color)
+            #_item_from_q.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            #self.ui.reductionTable.setItem(_row, 4, _item_from_q)
+            #_item_to_q = QtGui.QTableWidgetItem(str(to_q))
+            #_item_to_q.setForeground(color)
+            #_item_to_q.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            #self.ui.reductionTable.setItem(_row, 5, _item_to_q)
 
 
-    @log_call
-    def _fileOpenDone(self, data=None, filename=None, do_plot=None):
-        base=os.path.basename(filename)
-        if data is None:
-            self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
-            return
-        self.channels=data.keys()
+    #@log_call
+    #def _fileOpenDone(self, data=None, filename=None, do_plot=None):
+        #base=os.path.basename(filename)
+        #if data is None:
+            #self.ui.currentChannel.setText(u'<b>!!!NO DATA IN FILE %s!!!</b>'%base)
+            #return
+        #self.channels=data.keys()
 
-        currentChannel=0
-        for i in range(12):
-            if getattr(self.ui, 'selectedChannel%i'%i).isChecked():
-                currentChannel=i
+        #currentChannel=0
+        #for i in range(12):
+            #if getattr(self.ui, 'selectedChannel%i'%i).isChecked():
+                #currentChannel=i
 
-        if currentChannel<len(self.channels):
-            self.active_channel=self.channels[currentChannel]
-        else:
-            self.active_channel=self.channels[0]
-            self.ui.selectedChannel0.setChecked(True)
-        for i, channel in enumerate(self.channels):
-            getattr(self.ui, 'selectedChannel%i'%i).show()
-            getattr(self.ui, 'selectedChannel%i'%i).setText(channel)
-        for i in range(len(self.channels), 12):
-            getattr(self.ui, 'selectedChannel%i'%i).hide()
+        #if currentChannel<len(self.channels):
+            #self.active_channel=self.channels[currentChannel]
+        #else:
+            #self.active_channel=self.channels[0]
+            #self.ui.selectedChannel0.setChecked(True)
+        #for i, channel in enumerate(self.channels):
+            #getattr(self.ui, 'selectedChannel%i'%i).show()
+            #getattr(self.ui, 'selectedChannel%i'%i).setText(channel)
+        #for i in range(len(self.channels), 12):
+            #getattr(self.ui, 'selectedChannel%i'%i).hide()
 
-        self.active_data=data
-        self.last_mtime=os.path.getmtime(filename)
-        info(u"%s loaded"%(filename))
-        self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
+        #self.active_data=data
+        #self.last_mtime=os.path.getmtime(filename)
+        #info(u"%s loaded"%(filename))
+        #self.cache_indicator.setText('Cache Size: %.1fMB'%(NXSData.get_cachesize()/1024.**2))
 
-        norm=self.getNorm()
-        self.auto_change_active=True
-        if self.ui.fanReflectivity.isChecked():
-            self.ui.rangeStart.setValue(self.cut_areas['fan'][0])
-            self.ui.rangeEnd.setValue(self.cut_areas['fan'][1])
-        elif norm in self.cut_areas:
-            self.ui.rangeStart.setValue(self.cut_areas[norm][0])
-            self.ui.rangeEnd.setValue(self.cut_areas[norm][1])
-        else:
-            self.ui.rangeStart.setValue(0)
-            self.ui.rangeEnd.setValue(0)
-        self.auto_change_active=False
+        #norm=self.getNorm()
+        #self.auto_change_active=True
+        #if self.ui.fanReflectivity.isChecked():
+            #self.ui.rangeStart.setValue(self.cut_areas['fan'][0])
+            #self.ui.rangeEnd.setValue(self.cut_areas['fan'][1])
+        #elif norm in self.cut_areas:
+            #self.ui.rangeStart.setValue(self.cut_areas[norm][0])
+            #self.ui.rangeEnd.setValue(self.cut_areas[norm][1])
+        #else:
+            #self.ui.rangeStart.setValue(0)
+            #self.ui.rangeEnd.setValue(0)
+        #self.auto_change_active=False
 
-        self.fileLoaded.emit()
-        if do_plot:
-            self.initiateProjectionPlot.emit(False)
-            self.initiateReflectivityPlot.emit(False)
+        #self.fileLoaded.emit()
+        #if do_plot:
+            #self.initiateProjectionPlot.emit(False)
+            #self.initiateReflectivityPlot.emit(False)
 
     def empty_cache(self):
         """
@@ -933,45 +928,39 @@ class MainGUI(QtGui.QMainWindow):
         if instrument.NAME == 'REF_L': #TODO HARDCODED INSTRUMENT
             return
 
-        if self.auto_change_active or not self.active_data:
-            return
-        color=str(self.ui.color_selector.currentText())
-        if color!=self.color and self.color is not None:
-            self.color=color
-            plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
-                   self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
-                   self.ui.xy_overview, self.ui.xtof_overview]
-            for plot in plots:
-                plot.clear_fig()
-        elif self.color is None:
-            self.color=color
-        if self.ui.plotTab.currentIndex()!=4 and self._gisansThread:
-            self._gisansThread.finished.disconnect()
-            self._gisansThread.terminate()
-            self._gisansThread.wait(100)
-            self._gisansThread=None
-        if self.ui.plotTab.currentIndex()==0:
-            self.plot_overview()
-        if self.ui.plotTab.currentIndex()==1:
-            self.plot_xy()
-        if self.ui.plotTab.currentIndex()==2:
-            self.plot_xtof()
-        if self.ui.plotTab.currentIndex()==3:
-            self.plot_offspec()
-        if self.ui.plotTab.currentIndex()==4:
-            self.plot_gisans()
-        if self.ui.plotTab.currentIndex()==5:
-            self.update_daslog()
+        #if self.auto_change_active or not self.active_data:
+            #return
+        #color=str(self.ui.color_selector.currentText())
+        #if color!=self.color and self.color is not None:
+            #self.color=color
+            #plots=[self.ui.xy_pp, self.ui.xy_mp, self.ui.xy_pm, self.ui.xy_mm,
+                   #self.ui.xtof_pp, self.ui.xtof_mp, self.ui.xtof_pm, self.ui.xtof_mm,
+                   #self.ui.xy_overview, self.ui.xtof_overview]
+            #for plot in plots:
+                #plot.clear_fig()
+        #elif self.color is None:
+            #self.color=color
+        #if self.ui.plotTab.currentIndex()!=4 and self._gisansThread:
+            #self._gisansThread.finished.disconnect()
+            #self._gisansThread.terminate()
+            #self._gisansThread.wait(100)
+            #self._gisansThread=None
+        #if self.ui.plotTab.currentIndex()==0:
+            #self.plot_overview()
+        #if self.ui.plotTab.currentIndex()==1:
+            #self.plot_xy()
+        #if self.ui.plotTab.currentIndex()==2:
+            #self.plot_xtof()
+        #if self.ui.plotTab.currentIndex()==3:
+            #self.plot_offspec()
+        #if self.ui.plotTab.currentIndex()==4:
+            #self.plot_gisans()
+        #if self.ui.plotTab.currentIndex()==5:
+            #self.update_daslog()
 
     @log_call
     def plot_overview(self):
-        '''
-        X vs. Y and X vs. Tof for main channel.
-        '''
-        if instrument.NAME == "REF_M": #TODO HARDCODED INSTRUMENT
-            self.plot_overview_REFM()
-        else:
-            self.plot_overview_REFL()
+	self.plot_overview_REFL()
 
     def clear_plot_overview_REFL(self, isData, plot_yt=True, plot_yi=True, plot_it=True, plot_ix=True):
         if isData:
@@ -1370,260 +1359,260 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.TOFmanualFromValue.setText(stmin)
         self.ui.TOFmanualToValue.setText(stmax)
 
-    @log_call
-    def plot_xy(self):
-        '''
-        X vs. Y plots for all channels.
-        '''
-        plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_pm, self.ui.xy_mp]
-        for i in range(len(self.active_data), 4):
-            if plots[i].cplot is not None:
-                plots[i].clear()
-                plots[i].draw()
-        imin=1e20
-        imax=1e-20
-        xynormed=[]
-        for dataset in self.active_data[:4]:
-            d=dataset.xydata/dataset.proton_charge
-            xynormed.append(d)
-            imin=min(imin, d[d>0].min())
-            imax=max(imax, d.max())
+    #@log_call
+    #def plot_xy(self):
+        #'''
+        #X vs. Y plots for all channels.
+        #'''
+        #plots=[self.ui.xy_pp, self.ui.xy_mm, self.ui.xy_pm, self.ui.xy_mp]
+        #for i in range(len(self.active_data), 4):
+            #if plots[i].cplot is not None:
+                #plots[i].clear()
+                #plots[i].draw()
+        #imin=1e20
+        #imax=1e-20
+        #xynormed=[]
+        #for dataset in self.active_data[:4]:
+            #d=dataset.xydata/dataset.proton_charge
+            #xynormed.append(d)
+            #imin=min(imin, d[d>0].min())
+            #imax=max(imax, d.max())
 
-        if len(xynormed)>1:
-            self.ui.frame_xy_mm.show()
-            if len(xynormed)==4:
-                self.ui.frame_xy_sf.show()
-            else:
-                self.ui.frame_xy_sf.hide()
-        else:
-            self.ui.frame_xy_mm.hide()
-            self.ui.frame_xy_sf.hide()
+        #if len(xynormed)>1:
+            #self.ui.frame_xy_mm.show()
+            #if len(xynormed)==4:
+                #self.ui.frame_xy_sf.show()
+            #else:
+                #self.ui.frame_xy_sf.hide()
+        #else:
+            #self.ui.frame_xy_mm.hide()
+            #self.ui.frame_xy_sf.hide()
 
-        for i, datai in enumerate(xynormed):
-            if self.ui.tthPhi.isChecked():
-                plots[i].clear()
-                rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
-                phi_range=datai.shape[0]*rad_per_pixel*180./pi
-                tth_range=datai.shape[1]*rad_per_pixel*180./pi
-                phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
-                tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi #TODO MAGIC NUMBER
+        #for i, datai in enumerate(xynormed):
+            #if self.ui.tthPhi.isChecked():
+                #plots[i].clear()
+                #rad_per_pixel=dataset.det_size_x/dataset.dist_sam_det/dataset.xydata.shape[1]
+                #phi_range=datai.shape[0]*rad_per_pixel*180./pi
+                #tth_range=datai.shape[1]*rad_per_pixel*180./pi
+                #phi0=self.ui.refYPos.value()*rad_per_pixel*180./pi
+                #tth0=(dataset.dangle-dataset.dangle0)-(304-dataset.dpix)*rad_per_pixel*180./pi #TODO MAGIC NUMBER
 
-                plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                                aspect='auto', cmap=self.color, origin='lower',
-                                extent=[tth_range+tth0, tth0, phi0, phi0-phi_range])
-                plots[i].set_xlabel(u'2$\\Theta{}$ [°]')
-                plots[i].set_ylabel(u'$\\phi{}$ [°]')
-            else:
-                plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                                aspect='auto', cmap=self.color, origin='lower')
-                plots[i].set_xlabel(u'x [pix]')
-                plots[i].set_ylabel(u'y [pix]')
-            plots[i].set_title(self.channels[i])
-            if plots[i].cplot is not None:
-                plots[i].cplot.set_clim([imin, imax])
-            if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
-                plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
-            plots[i].draw()
+                #plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                                #aspect='auto', cmap=self.color, origin='lower',
+                                #extent=[tth_range+tth0, tth0, phi0, phi0-phi_range])
+                #plots[i].set_xlabel(u'2$\\Theta{}$ [°]')
+                #plots[i].set_ylabel(u'$\\phi{}$ [°]')
+            #else:
+                #plots[i].imshow(datai, log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                                #aspect='auto', cmap=self.color, origin='lower')
+                #plots[i].set_xlabel(u'x [pix]')
+                #plots[i].set_ylabel(u'y [pix]')
+            #plots[i].set_title(self.channels[i])
+            #if plots[i].cplot is not None:
+                #plots[i].cplot.set_clim([imin, imax])
+            #if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
+                #plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+            #plots[i].draw()
 
-    @log_call
-    def plot_xtof(self):
-        '''
-        X vs. ToF plots for all channels.
-        '''
-        imin=1e20
-        imax=1e-20
-        xtofnormed=[]
-        ref_norm=self.getNorm()
-        if ref_norm is not None:
-            ref_norm=ref_norm.Rraw
-            ref_norm=where(ref_norm>0, ref_norm, 1.)
+    #@log_call
+    #def plot_xtof(self):
+        #'''
+        #X vs. ToF plots for all channels.
+        #'''
+        #imin=1e20
+        #imax=1e-20
+        #xtofnormed=[]
+        #ref_norm=self.getNorm()
+        #if ref_norm is not None:
+            #ref_norm=ref_norm.Rraw
+            #ref_norm=where(ref_norm>0, ref_norm, 1.)
 
-        for dataset in self.active_data[:4]:
-            d=dataset.xtofdata/dataset.proton_charge
-            if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
-                # normalize all datasets for wavelength distribution
-                d=d/ref_norm[newaxis, :]
-            xtofnormed.append(d)
-            imin=min(imin, d[d>0].min())
-            imax=max(imax, d.max())
-        lamda=self.active_data[self.active_channel].lamda
-        tof=self.active_data[self.active_channel].tof
+        #for dataset in self.active_data[:4]:
+            #d=dataset.xtofdata/dataset.proton_charge
+            #if self.ui.normalizeXTof.isChecked() and ref_norm is not None:
+                ## normalize all datasets for wavelength distribution
+                #d=d/ref_norm[newaxis, :]
+            #xtofnormed.append(d)
+            #imin=min(imin, d[d>0].min())
+            #imax=max(imax, d.max())
+        #lamda=self.active_data[self.active_channel].lamda
+        #tof=self.active_data[self.active_channel].tof
 
-        plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
-        for i in range(len(self.active_data), 4):
-            if plots[i].cplot is not None:
-                plots[i].clear()
-                plots[i].draw()
+        #plots=[self.ui.xtof_pp, self.ui.xtof_mm, self.ui.xtof_pm, self.ui.xtof_mp]
+        #for i in range(len(self.active_data), 4):
+            #if plots[i].cplot is not None:
+                #plots[i].clear()
+                #plots[i].draw()
 
-        if len(xtofnormed)>1:
-            self.ui.frame_xtof_mm.show()
-            if len(xtofnormed)==4:
-                self.ui.frame_xtof_sf.show()
-            else:
-                self.ui.frame_xtof_sf.hide()
-        else:
-            self.ui.frame_xtof_mm.hide()
-            self.ui.frame_xtof_sf.hide()
-        for i, datai in enumerate(xtofnormed):
-            if self.ui.xLamda.isChecked():
-                plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                                aspect='auto', cmap=self.color, extent=[lamda[0], lamda[-1], 0, datai.shape[0]-1])
-                plots[i].set_xlabel(u'$\\lambda{}$ [Å]')
-            else:
-                plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
-                                aspect='auto', cmap=self.color, extent=[tof[0]*1e-3, tof[-1]*1e-3, 0, datai.shape[0]-1])
-                plots[i].set_xlabel(u'ToF [ms]')
-            plots[i].set_title(self.channels[i])
-            plots[i].set_ylabel(u'x [pix]')
-            if plots[i].cplot is not None:
-                plots[i].cplot.set_clim([imin, imax])
-            if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
-                plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
-            plots[i].draw()
+        #if len(xtofnormed)>1:
+            #self.ui.frame_xtof_mm.show()
+            #if len(xtofnormed)==4:
+                #self.ui.frame_xtof_sf.show()
+            #else:
+                #self.ui.frame_xtof_sf.hide()
+        #else:
+            #self.ui.frame_xtof_mm.hide()
+            #self.ui.frame_xtof_sf.hide()
+        #for i, datai in enumerate(xtofnormed):
+            #if self.ui.xLamda.isChecked():
+                #plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                                #aspect='auto', cmap=self.color, extent=[lamda[0], lamda[-1], 0, datai.shape[0]-1])
+                #plots[i].set_xlabel(u'$\\lambda{}$ [Å]')
+            #else:
+                #plots[i].imshow(datai[::-1], log=self.ui.logarithmic_colorscale.isChecked(), imin=imin, imax=imax,
+                                #aspect='auto', cmap=self.color, extent=[tof[0]*1e-3, tof[-1]*1e-3, 0, datai.shape[0]-1])
+                #plots[i].set_xlabel(u'ToF [ms]')
+            #plots[i].set_title(self.channels[i])
+            #plots[i].set_ylabel(u'x [pix]')
+            #if plots[i].cplot is not None:
+                #plots[i].cplot.set_clim([imin, imax])
+            #if plots[i].cplot is not None and self.ui.show_colorbars.isChecked() and plots[i].cbar is None:
+                #plots[i].cbar=plots[i].canvas.fig.colorbar(plots[i].cplot)
+            #plots[i].draw()
 
-    @log_call
-    def plot_projections(self, preserve_lim=False):
-        '''
-        Create projections of the data on the x and y axes.
-        The x-projection can also be done be means of quantile calculation,
-        which means that the ToF intensities are calculation which are
-        exceeded by a certain number of points. This can be helpful to better
-        separate the specular reflection from bragg-sheets
-        '''
-        if self.active_data is None:
-            return
+    #@log_call
+    #def plot_projections(self, preserve_lim=False):
+        #'''
+        #Create projections of the data on the x and y axes.
+        #The x-projection can also be done be means of quantile calculation,
+        #which means that the ToF intensities are calculation which are
+        #exceeded by a certain number of points. This can be helpful to better
+        #separate the specular reflection from bragg-sheets
+        #'''
+        #if self.active_data is None:
+            #return
 
-        if instrument.NAME=="REF_L": #TODO HARDCODED INSTRUMENT
-            data = self.active_data
-        else:
-            data=self.active_data[self.active_channel]
+        #if instrument.NAME=="REF_L": #TODO HARDCODED INSTRUMENT
+            #data = self.active_data
+        #else:
+            #data=self.active_data[self.active_channel]
 
-        xproj=data.xdata
-        yproj=data.ydata
+        #xproj=data.xdata
+        #yproj=data.ydata
 
-        x_peak=self.ui.refXPos.value()
-        x_width=self.ui.refXWidth.value()
-        y_pos=self.ui.refYPos.value()
-        y_width=self.ui.refYWidth.value()
-        bg_pos=self.ui.bgCenter.value()
-        bg_width=self.ui.bgWidth.value()
+        #x_peak=self.ui.refXPos.value()
+        #x_width=self.ui.refXWidth.value()
+        #y_pos=self.ui.refYPos.value()
+        #y_width=self.ui.refYWidth.value()
+        #bg_pos=self.ui.bgCenter.value()
+        #bg_width=self.ui.bgWidth.value()
 
-        if preserve_lim:
-            xview=self.ui.x_project.canvas.ax.axis()
-            yview=self.ui.y_project.canvas.ax.axis()
-        xxlim=(0, len(xproj)-1)
-        xylim=(xproj[xproj>0].min(), xproj.max()*2)
-        yxlim=(0, len(yproj)-1)
-        yylim=(yproj[yproj>0].min(), yproj.max()*2)
+        #if preserve_lim:
+            #xview=self.ui.x_project.canvas.ax.axis()
+            #yview=self.ui.y_project.canvas.ax.axis()
+        #xxlim=(0, len(xproj)-1)
+        #xylim=(xproj[xproj>0].min(), xproj.max()*2)
+        #yxlim=(0, len(yproj)-1)
+        #yylim=(yproj[yproj>0].min(), yproj.max()*2)
 
-        if self._x_projection is None:
-            self._x_projection=self.ui.x_project.plot(xproj, color='blue')[0]
-            self.ui.x_project.set_xlabel(u'x [pix]')
-            self.ui.x_project.set_ylabel(u'I$_{max}$')
-            xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
-            xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
-            xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
-            xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='black')
-            xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='black')
+        #if self._x_projection is None:
+            #self._x_projection=self.ui.x_project.plot(xproj, color='blue')[0]
+            #self.ui.x_project.set_xlabel(u'x [pix]')
+            #self.ui.x_project.set_ylabel(u'I$_{max}$')
+            #xpos=self.ui.x_project.canvas.ax.axvline(x_peak, color='black')
+            #xleft=self.ui.x_project.canvas.ax.axvline(x_peak-x_width/2., color='red')
+            #xright=self.ui.x_project.canvas.ax.axvline(x_peak+x_width/2., color='red')
+            #xleft_bg=self.ui.x_project.canvas.ax.axvline(bg_pos-bg_width/2., color='black')
+            #xright_bg=self.ui.x_project.canvas.ax.axvline(bg_pos+bg_width/2., color='black')
 
-            self._y_projection=self.ui.y_project.plot(yproj, color='blue')[0]
-            self.ui.y_project.set_xlabel(u'y [pix]')
-            self.ui.y_project.set_ylabel(u'I$_{max}$')
-            yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='green')
-            yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='green')
-            ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='black')
-            self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right, ybg)
-        else:
-            self._x_projection.set_ydata(xproj)
-            self._y_projection.set_ydata(yproj)
-            lines=self.proj_lines
-            lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
-            lines[1].set_xdata([x_peak, x_peak])
-            lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
-            lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
-            lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
-            lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
-            lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
-            lines[7].set_ydata([self.y_bg, self.y_bg])
-        if preserve_lim:
-            self.ui.x_project.canvas.ax.axis(xview)
-            self.ui.y_project.canvas.ax.axis(yview)
-        if self.ui.logarithmic_y.isChecked():
-            self.ui.x_project.set_yscale('log')
-            self.ui.y_project.set_yscale('log')
-        else:
-            self.ui.x_project.set_yscale('linear')
-            self.ui.y_project.set_yscale('linear')
-        self.ui.x_project.canvas.ax.set_xlim(*xxlim)
-        self.ui.x_project.canvas.ax.set_ylim(*xylim)
-        self.ui.y_project.canvas.ax.set_xlim(*yxlim)
-        self.ui.y_project.canvas.ax.set_ylim(*yylim)
+            #self._y_projection=self.ui.y_project.plot(yproj, color='blue')[0]
+            #self.ui.y_project.set_xlabel(u'y [pix]')
+            #self.ui.y_project.set_ylabel(u'I$_{max}$')
+            #yreg_left=self.ui.y_project.canvas.ax.axvline(y_pos-y_width/2., color='green')
+            #yreg_right=self.ui.y_project.canvas.ax.axvline(y_pos+y_width/2., color='green')
+            #ybg=self.ui.y_project.canvas.ax.axhline(self.y_bg, color='black')
+            #self.proj_lines=(xleft, xpos, xright, xleft_bg, xright_bg, yreg_left, yreg_right, ybg)
+        #else:
+            #self._x_projection.set_ydata(xproj)
+            #self._y_projection.set_ydata(yproj)
+            #lines=self.proj_lines
+            #lines[0].set_xdata([x_peak-x_width/2., x_peak-x_width/2.])
+            #lines[1].set_xdata([x_peak, x_peak])
+            #lines[2].set_xdata([x_peak+x_width/2., x_peak+x_width/2.])
+            #lines[3].set_xdata([bg_pos-bg_width/2., bg_pos-bg_width/2.])
+            #lines[4].set_xdata([bg_pos+bg_width/2., bg_pos+bg_width/2.])
+            #lines[5].set_xdata([y_pos-y_width/2., y_pos-y_width/2.])
+            #lines[6].set_xdata([y_pos+y_width/2., y_pos+y_width/2.])
+            #lines[7].set_ydata([self.y_bg, self.y_bg])
+        #if preserve_lim:
+            #self.ui.x_project.canvas.ax.axis(xview)
+            #self.ui.y_project.canvas.ax.axis(yview)
+        #if self.ui.logarithmic_y.isChecked():
+            #self.ui.x_project.set_yscale('log')
+            #self.ui.y_project.set_yscale('log')
+        #else:
+            #self.ui.x_project.set_yscale('linear')
+            #self.ui.y_project.set_yscale('linear')
+        #self.ui.x_project.canvas.ax.set_xlim(*xxlim)
+        #self.ui.x_project.canvas.ax.set_ylim(*xylim)
+        #self.ui.y_project.canvas.ax.set_xlim(*yxlim)
+        #self.ui.y_project.canvas.ax.set_ylim(*yylim)
 
-        self.ui.x_project.draw()
-        self.ui.y_project.draw()
+        #self.ui.x_project.draw()
+        #self.ui.y_project.draw()
 
-    @log_call
-    def calc_refl(self):
-        if self.active_data is None:
-            return False
-        data=self.active_data[self.active_channel]
-        if self.ui.directPixelOverwrite.value()>=0:
-            dpix=self.ui.directPixelOverwrite.value()
-        else:
-            dpix=None
-        if self.ui.trustDANGLE.isChecked():
-            try:
-                tth=data.dangle-float(self.ui.dangle0Overwrite.text())
-            except ValueError:
-                tth=None
-        else:
-            grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./pi
-            tth=data.sangle*2.-(data.dpix-self.ui.refXPos.value())*grad_per_pixel
-        bg_poly_regions=None
-        # get additional background options from dialog, if it has been opened
-        if self.background_dialog:
-            bg_tof_constant=self.background_dialog.ui.presumeIofLambda.isChecked()
-            if self.background_dialog.ui.polyregionActive.isChecked():
-                bg_poly_regions=list(self.background_dialog.polygons)
-            bg_scale=self.background_dialog.ui.scaleFactor.value()
-        else:
-            bg_tof_constant=False
-            bg_scale=1.
-        if type(self.active_data.number) is list:
-            number='['+",".join(map(str, self.active_data.number))+']'
-        else:
-            number=str(self.active_data.number)
-        normalization=self.getNorm()
-        options=dict(
-            x_pos=self.ui.refXPos.value(),
-            x_width=self.ui.refXWidth.value(),
-            y_pos=self.ui.refYPos.value(),
-            y_width=self.ui.refYWidth.value(),
-            bg_pos=self.ui.bgCenter.value(),
-            bg_width=self.ui.bgWidth.value(),
-            scale=10**self.ui.refScale.value(),
-            extract_fan=self.ui.fanReflectivity.isChecked(),
-            P0=self.ui.rangeStart.value(),
-            PN=self.ui.rangeEnd.value(),
-            number=number,
-            tth=tth,
-            dpix=dpix,
-            bg_tof_constant=bg_tof_constant,
-            bg_poly_regions=bg_poly_regions,
-            # scale background by 0. if BG box not checked
-            bg_scale_factor=(bg_scale*self.ui.bgActive.isChecked()),
-            normalization=normalization,
-        )
+    #@log_call
+    #def calc_refl(self):
+        #if self.active_data is None:
+            #return False
+        #data=self.active_data[self.active_channel]
+        #if self.ui.directPixelOverwrite.value()>=0:
+            #dpix=self.ui.directPixelOverwrite.value()
+        #else:
+            #dpix=None
+        #if self.ui.trustDANGLE.isChecked():
+            #try:
+                #tth=data.dangle-float(self.ui.dangle0Overwrite.text())
+            #except ValueError:
+                #tth=None
+        #else:
+            #grad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]*180./pi
+            #tth=data.sangle*2.-(data.dpix-self.ui.refXPos.value())*grad_per_pixel
+        #bg_poly_regions=None
+        ## get additional background options from dialog, if it has been opened
+        #if self.background_dialog:
+            #bg_tof_constant=self.background_dialog.ui.presumeIofLambda.isChecked()
+            #if self.background_dialog.ui.polyregionActive.isChecked():
+                #bg_poly_regions=list(self.background_dialog.polygons)
+            #bg_scale=self.background_dialog.ui.scaleFactor.value()
+        #else:
+            #bg_tof_constant=False
+            #bg_scale=1.
+        #if type(self.active_data.number) is list:
+            #number='['+",".join(map(str, self.active_data.number))+']'
+        #else:
+            #number=str(self.active_data.number)
+        #normalization=self.getNorm()
+        #options=dict(
+            #x_pos=self.ui.refXPos.value(),
+            #x_width=self.ui.refXWidth.value(),
+            #y_pos=self.ui.refYPos.value(),
+            #y_width=self.ui.refYWidth.value(),
+            #bg_pos=self.ui.bgCenter.value(),
+            #bg_width=self.ui.bgWidth.value(),
+            #scale=10**self.ui.refScale.value(),
+            #extract_fan=self.ui.fanReflectivity.isChecked(),
+            #P0=self.ui.rangeStart.value(),
+            #PN=self.ui.rangeEnd.value(),
+            #number=number,
+            #tth=tth,
+            #dpix=dpix,
+            #bg_tof_constant=bg_tof_constant,
+            #bg_poly_regions=bg_poly_regions,
+            ## scale background by 0. if BG box not checked
+            #bg_scale_factor=(bg_scale*self.ui.bgActive.isChecked()),
+            #normalization=normalization,
+        #)
 
-        self.refl=Reflectivity(data, **options)
-        self.ui.datasetAi.setText(u"%.3f°"%(self.refl.ai*180./pi))
-        self.ui.datasetROI.setText(u"%.4g"%(self.refl.Iraw.sum()))
-        if normalization is not None:
-            if self.ui.fanReflectivity.isChecked():
-                self.cut_areas['fan']=(self.ui.rangeStart.value(), self.ui.rangeEnd.value())
-            else:
-                self.cut_areas[normalization]=(self.ui.rangeStart.value(), self.ui.rangeEnd.value())
-        return True
+        #self.refl=Reflectivity(data, **options)
+        #self.ui.datasetAi.setText(u"%.3f°"%(self.refl.ai*180./pi))
+        #self.ui.datasetROI.setText(u"%.4g"%(self.refl.Iraw.sum()))
+        #if normalization is not None:
+            #if self.ui.fanReflectivity.isChecked():
+                #self.cut_areas['fan']=(self.ui.rangeStart.value(), self.ui.rangeEnd.value())
+            #else:
+                #self.cut_areas[normalization]=(self.ui.rangeStart.value(), self.ui.rangeEnd.value())
+        #return True
 
     @log_call
     def plot_refl(self, preserve_lim=False):
@@ -2629,7 +2618,7 @@ class MainGUI(QtGui.QMainWindow):
 
     @waiting_effects          
     def bigTable_selection_changed(self, row, column):    
-        self.userClickedInTable = True
+#        self.userClickedInTable = True
         self.editing_flag = True
         if self.same_cell_selected(row, column):
             return
@@ -2639,9 +2628,9 @@ class MainGUI(QtGui.QMainWindow):
         SelectionBigTableChanged(self)
 
     def data_norm_tab_changed(self, index):
-        if self.userClickedInTable:
-            self.userClickedInTable = False
-            return
+        #if self.userClickedInTable:
+            #self.userClickedInTable = False
+            #return
 
         [r,col] = self.getTrueCurrentRowColumnSelected()
 
@@ -2663,7 +2652,6 @@ class MainGUI(QtGui.QMainWindow):
         self.ui.reductionTable.setRangeSelected(QtGui.QTableWidgetSelectionRange(r,col,r,col),True)                                                                                   	
 
         self.bigTable_selection_changed(r, col)
-
 
     @log_input
     def reductionTableChanged(self, item):

@@ -61,9 +61,9 @@ class MakeGuiConnections(object):
         
         self.fileLoaded.connect(self.updateLabels)
         self.fileLoaded.connect(self.plotActiveTab)
-        self.initiateProjectionPlot.connect(self.plot_projections)
-        self.initiateReflectivityPlot.connect(self.plot_refl)
-        self.initiateReflectivityPlot.connect(self.updateStateFile)
+        #self.initiateProjectionPlot.connect(self.plot_projections)
+        #self.initiateReflectivityPlot.connect(self.plot_refl)
+        #self.initiateReflectivityPlot.connect(self.updateStateFile)
         
         for plot in [self.ui.data_yt_plot, 
                      self.ui.data_it_plot,

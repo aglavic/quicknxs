@@ -57,10 +57,14 @@ class DisplayPlots(object):
 			cls.ylim = 255
 		
 		if cls.self.retain_all:
-			cls.activeData.all_plot_axis.yi_view_interval = self.global_yi_view_interval
-			cls.activeData.all_plot_axis.yt_view_interval = self.global_yt_view_interval
-			cls.activeData.all_plot_axis.it_view_interval = self.global_it_view_interval
-			cls.activeData.all_plot_axis.ix_view_interval = self.global_ix_view_interval
+			_active_data.all_plot_axis.yi_view_interval = cls.self.global_yi_view_interval
+			_active_data.all_plot_axis.yt_view_interval = cls.self.global_yt_view_interval
+			_active_data.all_plot_axis.it_view_interval = cls.self.global_it_view_interval
+			_active_data.all_plot_axis.ix_view_interval = cls.self.global_ix_view_interval
+			_active_data.all_plot_axis.yi_data_interval = cls.self.global_yi_view_interval
+			_active_data.all_plot_axis.yt_data_interval = cls.self.global_yt_view_interval
+			_active_data.all_plot_axis.it_data_interval = cls.self.global_it_view_interval
+			_active_data.all_plot_axis.ix_data_interval = cls.self.global_ix_view_interval
 
 			_active_data = cls.activeData
 			_data.active_data = _active_data
