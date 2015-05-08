@@ -256,18 +256,19 @@ class NXSData(object):
                 filename = filename[0]
             filename=os.path.abspath(filename)
             cached_names=[item.origin for item in cls._cache]
-#            if all_options['use_caching'] and filename in cached_names:
+            #if all_options['use_caching'] and filename in cached_names:
             if filename in cached_names:
                 print filename
                 cache_index=cached_names.index(filename)
                 cached_object=cls._cache[cache_index]
                 compare_options=dict(all_options)
                 compare_options['callback']=None
-                if cached_object._options==compare_options:
-                    return cached_object
-                    
+                return cached_object
+                #if cached_object._options==compare_options:
+                    #return cached_object
                     
                 # else
+ 
         self=object.__new__(cls)
         self._options=all_options
         # create empty attributes

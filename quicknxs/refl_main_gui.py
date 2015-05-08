@@ -160,6 +160,11 @@ class MainGUI(QtGui.QMainWindow):
     timeClick1 = -1
 
     allPlotAxis = None
+    retain_all = False # retain the zoom/rectangle box selection (as requested by John)
+    global_yi_view_interval = None
+    global_yt_view_interval = None
+    global_it_view_interval = None
+    global_ix_view_interval = None
 
     exportStitchingAsciiSettings = None
     reduction_table_copied_field = ''
@@ -231,13 +236,13 @@ class MainGUI(QtGui.QMainWindow):
 
     # leave figure 
     def leave_figure_yi_plot(self):
-        MouseLeavePlot(self, type='yi')
+        MouseLeavePlot(self, type='yi', retain_all=self.retain_all)
     def leave_figure_yt_plot(self):
-        MouseLeavePlot(self, type='yt')
+        MouseLeavePlot(self, type='yt', retain_all=self.retain_all)
     def leave_figure_it_plot(self):
-        MouseLeavePlot(self, type='it')
+        MouseLeavePlot(self, type='it', retain_all=self.retain_all)
     def leave_figure_ix_plot(self):
-        MouseLeavePlot(self, type='ix')
+        MouseLeavePlot(self, type='ix', retain_all=self.retain_all)
     def leave_figure_data_stitching_plot(self):
         MouseLeavePlot(self, type='stitching')
 

@@ -56,6 +56,16 @@ class DisplayPlots(object):
 			cls.xlim = 303
 			cls.ylim = 255
 		
+		if cls.self.retain_all:
+			cls.activeData.all_plot_axis.yi_view_interval = self.global_yi_view_interval
+			cls.activeData.all_plot_axis.yt_view_interval = self.global_yt_view_interval
+			cls.activeData.all_plot_axis.it_view_interval = self.global_it_view_interval
+			cls.activeData.all_plot_axis.ix_view_interval = self.global_ix_view_interval
+
+			_active_data = cls.activeData
+			_data.active_data = _active_data
+			self.bigTableData[row,col] = _data
+		
 		if self.ui.dataTOFmanualMode.isChecked():
 			cls.tofRangeAuto = cls.getTOFrangeInMs(_active_data.tof_range)
 		else:
@@ -112,11 +122,7 @@ class DisplayPlots(object):
 			else:
 				self.ui.normNameOfFile.setText('%s'%(cls.filename))
 			cls.displayMetadata()
-		
-		#_active_data = cls.activeData
-		#_data.active_data = _active_data
-		#self.bigTableData[row,col] = _data
-			
+					
 	def displayMetadata(cls):
 		cls.clearMetadataWidgets()
 		d = cls.activeData
