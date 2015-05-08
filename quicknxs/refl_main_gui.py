@@ -4381,9 +4381,6 @@ Do you want to try to restore the working reduction list?""",
 	
 	_reduction = REFLReduction(self)
 	
-
-    def runReductionStep2(self):
-
         # calculate auto SF coefficient
         self.calculate_autoSF()
         bigTableData = self.bigTableData

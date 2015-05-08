@@ -85,7 +85,10 @@ class REFLReductionThread(QtCore.QThread):
 	configObject = cls.saveReducedData(configObject, outputWorkspace)
 	cls.parent.bigTableData[cls.row,2] = configObject
 	
-	AnalysisDataService.remove(outputWorkspace)
+	#AnalysisDataService.remove(outputWorkspace)
+	
+	cls.parent.reductionThreadDone()
+	cls.parent.checkIfAllDone()
 	
     def saveReducedData(cls, configObject, outputWorkspace):
 	    configObject.proton_charge = float(mtd[outputWorkspace].getRun().getProperty('gd_prtn_chrg').value)

@@ -151,6 +151,7 @@ class REFLReduction(object):
 	main_gui = None
 	script = []
 	nbr_reduction_done = 0
+	nbr_total_reduction = 0
 
 	def logbook(cls, text):
 		# add log book message
@@ -170,6 +171,7 @@ class REFLReduction(object):
 
 		# number of reduction process to run
 		nbrRow = main_gui.ui.reductionTable.rowCount()
+		cls.nbr_total_reduction = nbrRow
 
 		cls.removePreviousWorkspaces()
 		start_time = time.time()
@@ -276,74 +278,70 @@ class REFLReduction(object):
 			print '-> Outputworkspace: '
 			print outputWorkspace
 			
-			thread = REFLReductionThread()
-			thread.setupReduction(parent=cls,
-			                      row=row,
-			                      RunNumbers=runNumbers,
-			                      NormalizationRunNumber=normalizationRunNumbers,
-			                      SignalPeakPixelRange=signalPeakPixelRange,
-			                      SubtractSignalBackground=subtractSignalBackground,
-			                      SignalBackgroundPixelRange=signalBackgroundPixelRange,
-			                      NormFlag=normFlag,
-			                      NormPeakPixelRange=normPeakPixelRange,
-			                      NormBackgroundPixelRange=normBackgroundPixelRange,
-			                      SubtractNormBackground=subtractNormBackground,
-			                      LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
-			                      LowResDataAxisPixelRange=lowResDataAxisPixelRange,
-			                      LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
-			                      LowResNormAxisPixelRange=lowResNormAxisPixelRange,
-			                      TOFRange=tofRange,
-			                      IncidentMediumSelected=incidentMediumSelected,
-			                      GeometryCorrectionFlag=geometryCorrectionFlag,
-			                      QMin=qmin,
-			                      QStep=qstep,
-			                      ScalingFactorFile=scalingFactorFile,
-			                      CropFirstAndLastPoints = False,
-			                      SlitsWidthFlag=slitsWidthFlag,
-			                      OutputWorkspace=outputWorkspace)
-			thread.start()
+			#thread = REFLReductionThread()
+			#thread.setupReduction(parent=cls,
+			                      #row=row,
+			                      #RunNumbers=runNumbers,
+			                      #NormalizationRunNumber=normalizationRunNumbers,
+			                      #SignalPeakPixelRange=signalPeakPixelRange,
+			                      #SubtractSignalBackground=subtractSignalBackground,
+			                      #SignalBackgroundPixelRange=signalBackgroundPixelRange,
+			                      #NormFlag=normFlag,
+			                      #NormPeakPixelRange=normPeakPixelRange,
+			                      #NormBackgroundPixelRange=normBackgroundPixelRange,
+			                      #SubtractNormBackground=subtractNormBackground,
+			                      #LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
+			                      #LowResDataAxisPixelRange=lowResDataAxisPixelRange,
+			                      #LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
+			                      #LowResNormAxisPixelRange=lowResNormAxisPixelRange,
+			                      #TOFRange=tofRange,
+			                      #IncidentMediumSelected=incidentMediumSelected,
+			                      #GeometryCorrectionFlag=geometryCorrectionFlag,
+			                      #QMin=qmin,
+			                      #QStep=qstep,
+			                      #ScalingFactorFile=scalingFactorFile,
+			                      #CropFirstAndLastPoints = False,
+			                      #SlitsWidthFlag=slitsWidthFlag,
+			                      #OutputWorkspace=outputWorkspace)
+			#thread.start()
 			
 			#RefLReduction(RunNumbers=runNumbers,
-			#LiquidsReflectometryReduction(RunNumbers=runNumbers,
-			              #NormalizationRunNumber=normalizationRunNumbers,
-			              #SignalPeakPixelRange=signalPeakPixelRange,
-			              #SubtractSignalBackground=subtractSignalBackground,
-			              #SignalBackgroundPixelRange=signalBackgroundPixelRange,
-			              #NormFlag=normFlag,
-			              #NormPeakPixelRange=normPeakPixelRange,
-			              #NormBackgroundPixelRange=normBackgroundPixelRange,
-			              #SubtractNormBackground=subtractNormBackground,
-			              #LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
-			              #LowResDataAxisPixelRange=lowResDataAxisPixelRange,
-			              #LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
-			              #LowResNormAxisPixelRange=lowResNormAxisPixelRange,
-			              #TOFRange=tofRange,
-			              #IncidentMediumSelected=incidentMediumSelected,
-			              #GeometryCorrectionFlag=geometryCorrectionFlag,
-			              #QMin=qmin,
-			              #QStep=qstep,
-			              #ScalingFactorFile=scalingFactorFile,
-			              #CropFirstAndLastPoints = False,
-			              #SlitsWidthFlag=slitsWidthFlag,
-			              #OutputWorkspace=outputWorkspace)
+			LiquidsReflectometryReduction(RunNumbers=runNumbers,
+			              NormalizationRunNumber=normalizationRunNumbers,
+			              SignalPeakPixelRange=signalPeakPixelRange,
+			              SubtractSignalBackground=subtractSignalBackground,
+			              SignalBackgroundPixelRange=signalBackgroundPixelRange,
+			              NormFlag=normFlag,
+			              NormPeakPixelRange=normPeakPixelRange,
+			              NormBackgroundPixelRange=normBackgroundPixelRange,
+			              SubtractNormBackground=subtractNormBackground,
+			              LowResDataAxisPixelRangeFlag=lowResDataAxisPixelRangeFlag,
+			              LowResDataAxisPixelRange=lowResDataAxisPixelRange,
+			              LowResNormAxisPixelRangeFlag=lowResNormAxisPixelRangeFlag,
+			              LowResNormAxisPixelRange=lowResNormAxisPixelRange,
+			              TOFRange=tofRange,
+			              IncidentMediumSelected=incidentMediumSelected,
+			              GeometryCorrectionFlag=geometryCorrectionFlag,
+			              QMin=qmin,
+			              QStep=qstep,
+			              ScalingFactorFile=scalingFactorFile,
+			              CropFirstAndLastPoints = False,
+			              SlitsWidthFlag=slitsWidthFlag,
+			              OutputWorkspace=outputWorkspace)
 			
-			#cls.main_gui.updateProgressBar(float(row)/float(nbrRow))
+			cls.main_gui.updateProgressBar(float(row-1)/float(nbrRow))
 
-			# save data back into bigTableData
-			#configObject = cls.saveReducedData(configObject, outputWorkspace)
-			#bigTableData[row,2] = configObject
+			#save data back into bigTableData
+			configObject = cls.saveReducedData(configObject, outputWorkspace)
+			bigTableData[row,2] = configObject
 
-			print 'here'
-			
-		time.sleep(5)
-#		cls.removeTempWorkspaces(listWorkspaces)
+		cls.removeTempWorkspaces(listWorkspaces)
 
 		main_gui.bigTableData = bigTableData
-
 		cls.logbook('')
 
-		## put back the object created in the bigTable to speed up next preview / load
-		#main_gui.bigTableData = bigTableData
+		# put back the object created in the bigTable to speed up next preview / load
+		main_gui.bigTableData = bigTableData
 
 		end_time = time.time()
 		cls.logbook('data reduction ... DONE (in %g seconds)!' % (end_time - start_time))
@@ -351,6 +349,10 @@ class REFLReduction(object):
 		
 	def reductionThreadDone(cls):
 		cls.nbr_reduction_done += 1
+
+	def checkIfAllDone(cls):
+		if cls.nbr_reduction_done == cls.nbr_total_reduction:
+			print 'DONE !!!!!!'
 
 	def saveReducedData(cls, configObject, outputWorkspace):
 		configObject.proton_charge = float(mtd[outputWorkspace].getRun().getProperty('gd_prtn_chrg').value)
