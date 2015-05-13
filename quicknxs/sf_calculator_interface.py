@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Wed May 13 09:20:38 2015
+# Created: Wed May 13 10:34:38 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -388,6 +388,8 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
+        self.menuTools = QtGui.QMenu(self.menubar)
+        self.menuTools.setObjectName("menuTools")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -403,10 +405,14 @@ class Ui_MainWindow(object):
         self.actionSavingConfiguration.setObjectName("actionSavingConfiguration")
         self.actionEdit_Incident_Medium_List = QtGui.QAction(MainWindow)
         self.actionEdit_Incident_Medium_List.setObjectName("actionEdit_Incident_Medium_List")
+        self.clearSFconentFileMenu = QtGui.QAction(MainWindow)
+        self.clearSFconentFileMenu.setObjectName("clearSFconentFileMenu")
         self.menuFile.addAction(self.actionLoadingConfiguration)
         self.menuFile.addAction(self.actionSavingAsConfiguration)
         self.menuFile.addAction(self.actionSavingConfiguration)
+        self.menuTools.addAction(self.clearSFconentFileMenu)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.runSequenceLineEdit, QtCore.SIGNAL("returnPressed()"), MainWindow.runSequenceLineEditEvent)
@@ -429,6 +435,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.generateSFfileButton, QtCore.SIGNAL("clicked()"), MainWindow.generateSFfile)
         QtCore.QObject.connect(self.exportButton, QtCore.SIGNAL("clicked()"), MainWindow.exportScript)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL("cellChanged(int,int)"), MainWindow.tableWidgetCellEntered)
+        QtCore.QObject.connect(self.clearSFconentFileMenu, QtCore.SIGNAL("triggered()"), MainWindow.clearSFContentFile)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -476,8 +483,9 @@ class Ui_MainWindow(object):
         self.sfFileNameLabel.setText(QtGui.QApplication.translate("MainWindow", "N/A", None, QtGui.QApplication.UnicodeUTF8))
         self.sfFileNameBrowseButton.setText(QtGui.QApplication.translate("MainWindow", "Browse ...", None, QtGui.QApplication.UnicodeUTF8))
         self.generateSFfileButton.setText(QtGui.QApplication.translate("MainWindow", "GENERATE SCALING FACTORS", None, QtGui.QApplication.UnicodeUTF8))
-        self.exportButton.setText(QtGui.QApplication.translate("MainWindow", "EXPORT ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.exportButton.setText(QtGui.QApplication.translate("MainWindow", "EXPORT SCRIPT ...", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "Configuration", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuTools.setTitle(QtGui.QApplication.translate("MainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Load ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoadingConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSavingAsConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save As ...", None, QtGui.QApplication.UnicodeUTF8))
@@ -485,6 +493,7 @@ class Ui_MainWindow(object):
         self.actionSavingConfiguration.setText(QtGui.QApplication.translate("MainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSavingConfiguration.setShortcut(QtGui.QApplication.translate("MainWindow", "Meta+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_Incident_Medium_List.setText(QtGui.QApplication.translate("MainWindow", "Edit Incident Medium List ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.clearSFconentFileMenu.setText(QtGui.QApplication.translate("MainWindow", "Clear Content SF File", None, QtGui.QApplication.UnicodeUTF8))
 
 from mplwidgetnolog import MPLWidgetNoLog
 from .mplwidgetxlog import MPLWidgetXLog

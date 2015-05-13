@@ -126,6 +126,12 @@ class SFcalculator(QtGui.QMainWindow):
 		SFCalculatorConfigFileLauncher(cls, 8)
 	def launchConfigFile10(cls):
 		SFCalculatorConfigFileLauncher(cls, 9)
+	
+	def clearSFContentFile(cls):
+		sf_file_name = cls.ui.sfFileNameLabel.text()
+		if os.path.isfile(sf_file_name):
+			write_ascii_file(sf_file_name, [''])
+			cls.displayConfigFile(sf_file_name)
 		
 	def 	forceTypeToInt(cls, array_value, default_value=-1):
 		final_array_value = []
@@ -486,6 +492,8 @@ class SFcalculator(QtGui.QMainWindow):
 	def displayConfigFile(cls, file_name):
 		data = import_ascii_file(file_name)
 		if not data:
+			data = 'EMPTY FILE'
+		if data == [''] or data == '\n':
 			data = 'EMPTY FILE'
 		cls.ui.sfFileNamePreview.setPlainText(data)
 		cls.ui.sfFileNamePreview.setEnabled(True)

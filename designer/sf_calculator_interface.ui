@@ -950,7 +950,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>EXPORT ...</string>
+           <string>EXPORT SCRIPT ...</string>
           </property>
          </widget>
         </item>
@@ -977,7 +977,14 @@
     <addaction name="actionSavingAsConfiguration"/>
     <addaction name="actionSavingConfiguration"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="clearSFconentFileMenu"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoadingConfiguration">
@@ -1016,6 +1023,11 @@
   <action name="actionEdit_Incident_Medium_List">
    <property name="text">
     <string>Edit Incident Medium List ...</string>
+   </property>
+  </action>
+  <action name="clearSFconentFileMenu">
+   <property name="text">
+    <string>Clear Content SF File</string>
    </property>
   </action>
  </widget>
@@ -1355,6 +1367,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>clearSFconentFileMenu</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearSFContentFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>827</x>
+     <y>610</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>runSequenceLineEditEvent()</slot>
@@ -1377,5 +1405,6 @@
   <slot>generateSFfile()</slot>
   <slot>exportScript()</slot>
   <slot>tableWidgetCellEntered()</slot>
+  <slot>clearSFContentFile()</slot>
  </slots>
 </ui>
