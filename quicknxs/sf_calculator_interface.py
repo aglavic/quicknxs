@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/sf_calculator_interface.ui'
 #
-# Created: Fri May  1 12:50:19 2015
+# Created: Wed May 13 09:20:38 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -350,6 +350,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_2 = QtGui.QLabel(self.centralwidget)
         self.label_2.setEnabled(True)
+        self.label_2.setMinimumSize(QtCore.QSize(100, 0))
         self.label_2.setMaximumSize(QtCore.QSize(80, 16777215))
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_3.addWidget(self.label_2)
