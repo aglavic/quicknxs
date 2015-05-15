@@ -37,7 +37,8 @@ import numpy as np
 from random import randint
 import constants
 import psutil
-from peakfinder import PeakFinder
+#from peakfinder import PeakFinder
+from reflpeakfinder import ReflPeakFinder
 from all_plot_axis import AllPlotAxis
 
 ### Parameters needed for some calculations.
@@ -1672,11 +1673,14 @@ class LRDataset(object):
         output.ycountsdata = Iyi.astype(float)
 
         if read_options['is_auto_peak_finder']:
-            pf = PeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
-            peaks=pf.get_peaks()
-            main_peak = 2*peaks[0]
-            peak1 = int(main_peak[0] - main_peak[1])
-            peak2 = int(main_peak[0] + main_peak[1])
+            #pf = PeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
+            #peaks=pf.get_peaks()
+            #main_peak = 2*peaks[0]
+            #peak1 = int(main_peak[0] - main_peak[1])
+            #peak2 = int(main_peak[0] + main_peak[1])
+            pf = ReflPeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
+            peaks=pf.getPeaks()
+            [peak1, peak2]  = peaks[0]
             output.peak = [str(peak1), str(peak2)]
 
             backOffsetFromPeak = read_options['back_offset_from_peak']
