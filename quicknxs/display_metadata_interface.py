@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/display_metadata_interface.ui'
 #
-# Created: Wed Mar 18 13:45:10 2015
+# Created: Mon May 18 16:28:29 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,26 @@ from PyQt4 import QtCore, QtGui
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1178, 979)
+        Dialog.resize(1334, 963)
         self.verticalLayout_2 = QtGui.QVBoxLayout(Dialog)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.searchLabel = QtGui.QLabel(Dialog)
+        self.searchLabel.setObjectName("searchLabel")
+        self.horizontalLayout_3.addWidget(self.searchLabel)
+        self.searchLineEdit = QtGui.QLineEdit(Dialog)
+        self.searchLineEdit.setObjectName("searchLineEdit")
+        self.horizontalLayout_3.addWidget(self.searchLineEdit)
+        self.clearButton = QtGui.QPushButton(Dialog)
+        self.clearButton.setText("")
+        self.clearButton.setObjectName("clearButton")
+        self.horizontalLayout_3.addWidget(self.clearButton)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.tabWidget = QtGui.QTabWidget(Dialog)
         self.tabWidget.setObjectName("tabWidget")
         self.Metadata = QtGui.QWidget()
@@ -36,8 +53,8 @@ class Ui_Dialog(object):
         self.verticalLayout_4.addWidget(self.metadataTable)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
         self.saveMetadataAsAsciiButton = QtGui.QPushButton(self.Metadata)
         self.saveMetadataAsAsciiButton.setEnabled(False)
         self.saveMetadataAsAsciiButton.setObjectName("saveMetadataAsAsciiButton")
@@ -70,8 +87,8 @@ class Ui_Dialog(object):
         self.unselectAllButton = QtGui.QPushButton(self.Configure)
         self.unselectAllButton.setObjectName("unselectAllButton")
         self.horizontalLayout.addWidget(self.unselectAllButton)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem3)
         self.exportConfigurationButton = QtGui.QPushButton(self.Configure)
         self.exportConfigurationButton.setObjectName("exportConfigurationButton")
         self.horizontalLayout.addWidget(self.exportConfigurationButton)
@@ -83,16 +100,19 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.tabWidget)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), Dialog.userChangedTab)
         QtCore.QObject.connect(self.saveMetadataAsAsciiButton, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAscii)
         QtCore.QObject.connect(self.exportConfigurationButton, QtCore.SIGNAL("clicked()"), Dialog.exportConfiguration)
         QtCore.QObject.connect(self.importConfigurationButton, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
         QtCore.QObject.connect(self.unselectAllButton, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
+        QtCore.QObject.connect(self.searchLineEdit, QtCore.SIGNAL("textEdited(QString)"), Dialog.liveEditSearchLineEdit)
+        QtCore.QObject.connect(self.clearButton, QtCore.SIGNAL("clicked()"), Dialog.clearSearchLineEdit)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Display Metadata", None, QtGui.QApplication.UnicodeUTF8))
+        self.searchLabel.setText(QtGui.QApplication.translate("Dialog", "loop", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Units", None, QtGui.QApplication.UnicodeUTF8))

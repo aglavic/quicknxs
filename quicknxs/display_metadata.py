@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QDialog, QPalette, QCheckBox, QTableWidgetItem, QFileDialog
+from PyQt4.QtGui import QDialog, QPalette, QCheckBox, QTableWidgetItem, QFileDialog, QPixmap, QIcon
 from display_metadata_interface import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
 from xml.dom import minidom
@@ -10,7 +10,7 @@ import time
 class DisplayMetadata(QDialog):
 	
 	#TODO HARDCODED STRING
-	dom_filename = '/SNS/users/j35/nexus_metadata_list.xml'  #for testing only
+	#dom_filename = '/SNS/users/j35/nexus_metadata_list.xml'  #for testing only
 	
 	_open_instances = []
 	active_data = None
@@ -20,6 +20,9 @@ class DisplayMetadata(QDialog):
 	table = []
 	list_metadata_selected = []
 	mt_run = None
+	
+	list_keys = []
+	list_values = []
 	
 	def __init__(cls, main_gui, active_data, parent=None):
 		QDialog.__init__(cls, parent=parent)
@@ -40,10 +43,27 @@ class DisplayMetadata(QDialog):
 		cls.active_data = active_data
 		cls.init_gui()
 		
+		cls.initListMetadata()
 		cls.retrieveListMetadataPreviouslySelected()
 		cls.populateMetadataTable()
 		cls.populateConfigTable()
 		
+	def initListMetadata(cls):
+		nxs = cls.active_data.nxs
+		cls.mt_run = nxs.getRun()
+		cls.list_keys = cls.mt_run.keys()
+		sz = len(cls.list_keys)
+		cls.list_values = np.zeros(sz, dtype=bool)
+	
+	def clearSearchLineEdit(cls):
+		cls.ui.searchLineEdit.setText('')
+		cls.populateMetadataTable()
+		cls.populateConfigTable()
+		
+	def liveEditSearchLineEdit(cls):
+		cls.populateMetadataTable()
+		cls.populateConfigTable()
+			
 	def clearMetadataTable(cls):
 		_meta_table = cls.ui.metadataTable
 		nbr_row = _meta_table.rowCount()
@@ -65,15 +85,17 @@ class DisplayMetadata(QDialog):
 			cls.ui.saveMetadataAsAsciiButton.setEnabled(False)
 			return
 		else:
-			nxs = cls.active_data.nxs
-			cls.mt_run = nxs.getRun()
-			list_keys = cls.mt_run.keys()
+			list_keys = cls.list_keys
+			search_string = cls.ui.searchLineEdit.text()
 			_index = 0
 			for _key in list_keys:
 				if _key in list_metadata_selected:
+					_name = _key
+					if (search_string != '') and (not(search_string.lower() in _name.lower())):
+						continue
+					
 					cls.ui.metadataTable.insertRow(_index)
 
-					_name = _key
 					_nameItem = QTableWidgetItem(_name)
 					cls.ui.metadataTable.setItem(_index, 0, _nameItem)
 					
@@ -88,26 +110,30 @@ class DisplayMetadata(QDialog):
 		
 	def populateConfigTable(cls):
 		cls.clearConfigTable()
-		nxs = cls.active_data.nxs
-		cls.mt_run = nxs.getRun()
-		list_keys = cls.mt_run.keys()
+		list_keys = cls.list_keys
+		list_values = cls.list_values
+		search_string = cls.ui.searchLineEdit.text()
 		
 		_metadata_table = cls.list_metadata_selected
 		
 		_index = 0
 		for _key in list_keys:
-			cls.ui.configureTable.insertRow(_index)
-
 			_name = _key
 
-			_yesNo = QCheckBox()
-			if _name in _metadata_table:
-				_yesNo.setChecked(True)
-			_yesNo.setText('')
-			cls.ui.configureTable.setCellWidget(_index, 0, _yesNo)
+			if (search_string != '') and (not(search_string.lower() in _name.lower())):
+				continue
+			cls.ui.configureTable.insertRow(_index)
 
 			_nameItem = QTableWidgetItem(_name)
 			cls.ui.configureTable.setItem(_index, 1, _nameItem)
+
+			_yesNo = QCheckBox()
+			_index = list_keys.index(_name)
+			_value = list_values[_index]
+			_yesNo.setChecked(_value)
+			_yesNo.setText('')
+			_yesNo.stateChanged.connect(cls.configTableEdited)
+			cls.ui.configureTable.setCellWidget(_index, 0, _yesNo)
 			
 			[value, units] = cls.retrieveValueUnits(_name)
 			_valueItem = QTableWidgetItem(value)
@@ -137,24 +163,35 @@ class DisplayMetadata(QDialog):
 		listMetadataSelected = metadataSelected.metadata_list
 		cls.list_metadata_selected = listMetadataSelected
 		metadataSelected.switch_config('default')
+		_list_values = cls.list_values
+		for idx, val in enumerate(cls.list_keys):
+			if val in metadataSelected:
+				_list_values[idx] = True
+			else:
+				_list_values[idx] = False
+		cls.list_values = _list_values
 
 	def init_gui(cls):
 		_run_number = cls.active_data.run_number
 		title = ('Metadata of run %s'%_run_number)
 		cls.setWindowTitle(title)
+		magIcon = QPixmap('../icons/magnifier.png')
+		cls.ui.searchLabel.setPixmap(magIcon)
+		clearIcon = QIcon('../icons/clear.png')
+		cls.ui.clearButton.setIcon(clearIcon)
 		
-		return
-		dom = minidom.parse(cls.dom_filename)
-		cls.fields = dom.getElementsByTagName('field')
-		_full_file_name = cls.active_data.full_file_name
+		#return
+		#dom = minidom.parse(cls.dom_filename)
+		#cls.fields = dom.getElementsByTagName('field')
+		#_full_file_name = cls.active_data.full_file_name
 
-		nbr_row = len(cls.fields)
-		nbr_column = len(_full_file_name)
-		cls.table = np.empty((nbr_row, nbr_column), dtype=object)
+		#nbr_row = len(cls.fields)
+		#nbr_column = len(_full_file_name)
+		#cls.table = np.empty((nbr_row, nbr_column), dtype=object)
 		
-		for i in range(nbr_column):
-			_file_name = _full_file_name[i]
-			_nxs = LoadEventNexus(Filename=str(_file_name))
+		#for i in range(nbr_column):
+			#_file_name = _full_file_name[i]
+			#_nxs = LoadEventNexus(Filename=str(_file_name))
 	
 	def close_gui(cls):
 		cls.close()
@@ -173,15 +210,40 @@ class DisplayMetadata(QDialog):
 			cls.populateMetadataTable()
 			
 	def getNewListMetadataSelected(cls):
+		_list_keys= cls.list_keys
+		_list_values = cls.list_values
+		_list_metadata_selected = []
+		for idx,val in enumerate(_list_values):
+			if val == True:
+				_list_metadata_selected.append(_list_keys[idx])
+		return _list_metadata_selected
+
+		#_config_table = cls.ui.configureTable
+		#nbr_row = _config_table.rowCount()
+		#_list_metadata_selected = []
+		#for r in range(nbr_row):
+			#_is_selected = _config_table.cellWidget(r,0).isChecked()
+			#if _is_selected:
+				#_name = _config_table.item(r,1).text()
+				#_list_metadata_selected.append(_name)
+		#return _list_metadata_selected
+
+	def configTableEdited(cls, value):
+		_list_keys = cls.list_keys
+		_list_values = cls.list_values
 		_config_table = cls.ui.configureTable
 		nbr_row = _config_table.rowCount()
 		_list_metadata_selected = []
 		for r in range(nbr_row):
 			_is_selected = _config_table.cellWidget(r,0).isChecked()
+			_name = _config_table.item(r,1).text()
 			if _is_selected:
-				_name = _config_table.item(r,1).text()
 				_list_metadata_selected.append(_name)
-		return _list_metadata_selected
+			_index = _list_keys.index(_name)
+			_list_values[_index] = _is_selected
+
+		cls.list_values = _list_values
+		cls.list_metadata_selected = _list_metadata_selected
 
 	def saveListMetadataSelected(cls):
 		_listMetadata = cls.list_metadata_selected

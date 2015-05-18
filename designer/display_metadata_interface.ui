@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1178</width>
-    <height>979</height>
+    <width>1334</width>
+    <height>963</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,59 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="searchLabel">
+       <property name="text">
+        <string>loop</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="searchLineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clearButton">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Metadata">
       <attribute name="title">
@@ -246,6 +296,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>searchLineEdit</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>Dialog</receiver>
+   <slot>liveEditSearchLineEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1112</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>481</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clearButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>clearSearchLineEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1296</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>481</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>close_gui()</slot>
@@ -256,5 +338,10 @@
   <slot>saveMetadataListAsAscii()</slot>
   <slot>unselectAll()</slot>
   <slot>sortSelectedColumn()</slot>
+  <slot>liveEditSearchLineEdit()</slot>
+  <slot>clearSearchLineEdit()</slot>
+  <slot>leftArrowSearchButton()</slot>
+  <slot>rightArrowSearchButton()</slot>
+  <slot>configTableEdited()</slot>
  </slots>
 </ui>

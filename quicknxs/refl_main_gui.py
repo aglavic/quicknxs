@@ -446,25 +446,25 @@ class MainGUI(QtGui.QMainWindow):
 
             self._fileOpenDoneREFL(data, filename, do_plot)
 
-    @log_input
-    def fileOpenSum(self, filenames, do_plot=True):
-        '''
-        Open and sum up several datafiles and plot the data.
-        '''
-        folder, base=os.path.split(filenames[0])
-        if folder!=self.active_folder:
-            self.onPathChanged(base, folder)
-        self.active_file=base
-        info(u"Reading files %s..."%(filenames[0]))
-        try:
-            data=NXSMultiData(filenames,
-                              bin_type=self.ui.eventBinMode.currentIndex(),
-                              bins=self.ui.eventTofBins.value(),
-                              callback=self.updateEventReadout)
-        except:
-            warning('Could not open files to sum them up:', exc_info=True)
-            return
-        self._fileOpenDone(data, filenames[0], do_plot)
+    #@log_input
+    #def fileOpenSum(self, filenames, do_plot=True):
+        #'''
+        #Open and sum up several datafiles and plot the data.
+        #'''
+        #folder, base=os.path.split(filenames[0])
+        #if folder!=self.active_folder:
+            #self.onPathChanged(base, folder)
+        #self.active_file=base
+        #info(u"Reading files %s..."%(filenames[0]))
+        #try:
+            #data=NXSMultiData(filenames,
+                              #bin_type=self.ui.eventBinMode.currentIndex(),
+                              #bins=self.ui.eventTofBins.value(),
+                              #callback=self.updateEventReadout)
+        #except:
+            #warning('Could not open files to sum them up:', exc_info=True)
+            #return
+        #self._fileOpenDone(data, filenames[0], do_plot)
 
     @log_call
     def _fileOpenDoneREFL(self, data=None, filename=None, do_plot=True, update_table=True):
