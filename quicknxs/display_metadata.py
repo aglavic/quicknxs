@@ -165,7 +165,7 @@ class DisplayMetadata(QDialog):
 		metadataSelected.switch_config('default')
 		_list_values = cls.list_values
 		for idx, val in enumerate(cls.list_keys):
-			if val in metadataSelected:
+			if val in listMetadataSelected:
 				_list_values[idx] = True
 			else:
 				_list_values[idx] = False
@@ -229,7 +229,6 @@ class DisplayMetadata(QDialog):
 		#return _list_metadata_selected
 
 	def configTableEdited(cls, value):
-		print 'herererere'
 		_list_keys = cls.list_keys
 		_list_values = cls.list_values
 		_config_table = cls.ui.configureTable
