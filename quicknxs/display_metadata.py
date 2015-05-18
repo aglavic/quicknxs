@@ -115,21 +115,21 @@ class DisplayMetadata(QDialog):
 		search_string = cls.ui.searchLineEdit.text()
 		
 		_metadata_table = cls.list_metadata_selected
-		
 		_index = 0
 		for _key in list_keys:
 			_name = _key
 
-			if (search_string != '') and (not(search_string.lower() in _name.lower())):
+			if (search_string.strip() != '') and (not(search_string.lower() in _name.lower())):
 				continue
+
 			cls.ui.configureTable.insertRow(_index)
 
 			_nameItem = QTableWidgetItem(_name)
 			cls.ui.configureTable.setItem(_index, 1, _nameItem)
 
 			_yesNo = QCheckBox()
-			_index = list_keys.index(_name)
-			_value = list_values[_index]
+			_id = list_keys.index(_name)
+			_value = list_values[_id]
 			_yesNo.setChecked(_value)
 			_yesNo.setText('')
 			_yesNo.stateChanged.connect(cls.configTableEdited)
@@ -229,6 +229,7 @@ class DisplayMetadata(QDialog):
 		#return _list_metadata_selected
 
 	def configTableEdited(cls, value):
+		print 'herererere'
 		_list_keys = cls.list_keys
 		_list_values = cls.list_values
 		_config_table = cls.ui.configureTable
