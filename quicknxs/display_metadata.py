@@ -54,16 +54,16 @@ class DisplayMetadata(QDialog):
 		cls.list_keys = cls.mt_run.keys()
 		sz = len(cls.list_keys)
 		cls.list_values = np.zeros(sz, dtype=bool)
-	
+			
+	def liveEditSearchLineEdit(cls, str):
+		cls.populateMetadataTable()
+		cls.populateConfigTable()
+		
 	def clearSearchLineEdit(cls):
 		cls.ui.searchLineEdit.setText('')
 		cls.populateMetadataTable()
 		cls.populateConfigTable()
-		
-	def liveEditSearchLineEdit(cls):
-		cls.populateMetadataTable()
-		cls.populateConfigTable()
-			
+
 	def clearMetadataTable(cls):
 		_meta_table = cls.ui.metadataTable
 		nbr_row = _meta_table.rowCount()

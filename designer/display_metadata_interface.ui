@@ -67,7 +67,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="Metadata">
       <attribute name="title">
@@ -281,6 +281,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>clearButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>clearSearchLineEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1296</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>481</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>unselectAllButton</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
@@ -312,22 +328,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>clearButton</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>clearSearchLineEdit()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1296</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>666</x>
-     <y>481</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>close_gui()</slot>
@@ -343,5 +343,6 @@
   <slot>leftArrowSearchButton()</slot>
   <slot>rightArrowSearchButton()</slot>
   <slot>configTableEdited()</slot>
+  <slot>liveEditSearchLineEnter()</slot>
  </slots>
 </ui>

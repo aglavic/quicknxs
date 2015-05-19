@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/display_metadata_interface.ui'
 #
-# Created: Mon May 18 16:28:29 2015
+# Created: Tue May 19 15:02:04 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -100,14 +100,14 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addWidget(self.tabWidget)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), Dialog.userChangedTab)
         QtCore.QObject.connect(self.saveMetadataAsAsciiButton, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAscii)
         QtCore.QObject.connect(self.exportConfigurationButton, QtCore.SIGNAL("clicked()"), Dialog.exportConfiguration)
         QtCore.QObject.connect(self.importConfigurationButton, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
+        QtCore.QObject.connect(self.clearButton, QtCore.SIGNAL("clicked()"), Dialog.clearSearchLineEdit)
         QtCore.QObject.connect(self.unselectAllButton, QtCore.SIGNAL("clicked()"), Dialog.unselectAll)
         QtCore.QObject.connect(self.searchLineEdit, QtCore.SIGNAL("textEdited(QString)"), Dialog.liveEditSearchLineEdit)
-        QtCore.QObject.connect(self.clearButton, QtCore.SIGNAL("clicked()"), Dialog.clearSearchLineEdit)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
