@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/metadata_finder_interface.ui'
 #
-# Created: Wed Mar 18 13:28:02 2015
+# Created: Tue May 19 16:45:13 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,7 +23,6 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.runNumberEdit = QtGui.QLineEdit(Dialog)
-        self.runNumberEdit.setText("")
         self.runNumberEdit.setObjectName("runNumberEdit")
         self.horizontalLayout.addWidget(self.runNumberEdit)
         self.inputErrorLabel = QtGui.QLabel(Dialog)
@@ -34,6 +33,18 @@ class Ui_Dialog(object):
         self.inputErrorLabel.setFont(font)
         self.inputErrorLabel.setObjectName("inputErrorLabel")
         self.horizontalLayout.addWidget(self.inputErrorLabel)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.searchLabel = QtGui.QLabel(Dialog)
+        self.searchLabel.setObjectName("searchLabel")
+        self.horizontalLayout.addWidget(self.searchLabel)
+        self.searchLineEdit = QtGui.QLineEdit(Dialog)
+        self.searchLineEdit.setObjectName("searchLineEdit")
+        self.horizontalLayout.addWidget(self.searchLineEdit)
+        self.clearButton = QtGui.QPushButton(Dialog)
+        self.clearButton.setText("")
+        self.clearButton.setObjectName("clearButton")
+        self.horizontalLayout.addWidget(self.clearButton)
         self.verticalLayout_4.addLayout(self.horizontalLayout)
         self.tabWidget = QtGui.QTabWidget(Dialog)
         self.tabWidget.setTabPosition(QtGui.QTabWidget.South)
@@ -55,8 +66,8 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.metadataTable)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
         self.saveAsciiButton = QtGui.QPushButton(self.tab)
         self.saveAsciiButton.setObjectName("saveAsciiButton")
         self.horizontalLayout_3.addWidget(self.saveAsciiButton)
@@ -86,8 +97,8 @@ class Ui_Dialog(object):
         self.unselectAll.setEnabled(False)
         self.unselectAll.setObjectName("unselectAll")
         self.horizontalLayout_2.addWidget(self.unselectAll)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
         self.exportConfiguration = QtGui.QPushButton(self.tab_2)
         self.exportConfiguration.setEnabled(False)
         self.exportConfiguration.setObjectName("exportConfiguration")
@@ -109,13 +120,17 @@ class Ui_Dialog(object):
         QtCore.QObject.connect(self.importConfiguration, QtCore.SIGNAL("clicked()"), Dialog.importConfiguration)
         QtCore.QObject.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), Dialog.userChangedTab)
         QtCore.QObject.connect(self.saveAsciiButton, QtCore.SIGNAL("clicked()"), Dialog.saveMetadataListAsAsciiFile)
+        QtCore.QObject.connect(self.searchLineEdit, QtCore.SIGNAL("textEdited(QString)"), Dialog.searchLineEditLive)
+        QtCore.QObject.connect(self.clearButton, QtCore.SIGNAL("clicked()"), Dialog.searchLineEditClear)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Metadata Finder", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Run(s) number:", None, QtGui.QApplication.UnicodeUTF8))
         self.runNumberEdit.setToolTip(QtGui.QApplication.translate("Dialog", "1234 or 1234,1236 or 1234-1238", None, QtGui.QApplication.UnicodeUTF8))
-        self.inputErrorLabel.setText(QtGui.QApplication.translate("Dialog", "ERROR WHIE PARSING ! CHECK YOUR INPUT  ", None, QtGui.QApplication.UnicodeUTF8))
+        self.runNumberEdit.setText(QtGui.QApplication.translate("Dialog", "124622", None, QtGui.QApplication.UnicodeUTF8))
+        self.inputErrorLabel.setText(QtGui.QApplication.translate("Dialog", "ERROR WHILE PARSING ! CHECK YOUR INPUT  ", None, QtGui.QApplication.UnicodeUTF8))
+        self.searchLabel.setText(QtGui.QApplication.translate("Dialog", "loop", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Run #", None, QtGui.QApplication.UnicodeUTF8))
         self.metadataTable.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "IPTS", None, QtGui.QApplication.UnicodeUTF8))
         self.saveAsciiButton.setText(QtGui.QApplication.translate("Dialog", "Save List as ASCII ...", None, QtGui.QApplication.UnicodeUTF8))

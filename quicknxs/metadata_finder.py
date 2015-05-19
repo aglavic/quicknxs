@@ -1,5 +1,5 @@
-from PyQt4.QtGui import QDialog, QPalette, QTableWidgetItem, QCheckBox, QFileDialog, QMessageBox, QPushButton
-from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QDialog, QPalette, QTableWidgetItem, QCheckBox, QFileDialog, QMessageBox, QPushButton, QPixmap, QIcon
+from PyQt4.QtCore import Qt, QSize
 from metadata_finder_interface import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
 from run_sequence_breaker import RunSequenceBreaker
@@ -8,6 +8,7 @@ import utilities
 import os
 import time
 import nexus_utilities
+import numpy as np
 
 class MetadataFinder(QDialog):
 	
@@ -18,6 +19,9 @@ class MetadataFinder(QDialog):
 	list_nxs = []
 	list_filename = []
 	list_runs = []
+	
+	list_values = []
+	list_keys = []
 	
 	WARNING_NBR_FILES = 10
 	
@@ -51,6 +55,26 @@ class MetadataFinder(QDialog):
 		cls.ui.configureTable.setColumnWidth(2,300)
 		cls.ui.configureTable.setColumnWidth(3,300)
 		
+		magIcon = QPixmap('../icons/magnifier.png')
+		cls.ui.searchLabel.setPixmap(magIcon)
+		clearIcon = QIcon('../icons/clear.png')
+		cls.ui.clearButton.setIcon(clearIcon)
+		sz = QSize(15,15)
+		cls.ui.clearButton.setIconSize(sz)
+		
+	def initListMetadata(cls):
+		_nxs = cls.list_nxs[0]
+		mt_run = _nxs.getRun()
+		cls.list_keys = mt_run.keys()
+		sz = len(cls.list_keys)
+		cls.list_values = np.zeros(sz, dtype=bool)
+
+	def searchLineEditLive(cls, txt):
+		print 'search line edit live'
+
+	def searchLineEditClear(cls):
+		print 'search line edit clear'
+
 	def retrieveListMetadataPreviouslySelected(cls):
 		from quicknxs.config import metadataSelected
 		metadataSelected.switch_config('listMetadata')
@@ -220,6 +244,8 @@ class MetadataFinder(QDialog):
 				column_index += 1
 			
 			_index += 1
+			
+		cls.initListMetadata()
 		
 	def unselectAll(cls):
 		_config_table = cls.ui.configureTable

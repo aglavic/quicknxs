@@ -1,4 +1,5 @@
 from PyQt4.QtGui import QDialog, QPalette, QCheckBox, QTableWidgetItem, QFileDialog, QPixmap, QIcon
+from PyQt4.QtCore import QSize
 from display_metadata_interface import Ui_Dialog as UiDialog
 from mantid.simpleapi import *
 from xml.dom import minidom
@@ -179,6 +180,8 @@ class DisplayMetadata(QDialog):
 		cls.ui.searchLabel.setPixmap(magIcon)
 		clearIcon = QIcon('../icons/clear.png')
 		cls.ui.clearButton.setIcon(clearIcon)
+		sz = QSize(15,15)
+		cls.ui.clearButton.setIconSize(sz)
 		
 		#return
 		#dom = minidom.parse(cls.dom_filename)
