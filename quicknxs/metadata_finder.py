@@ -25,6 +25,8 @@ class MetadataFinder(QDialog):
 	
 	WARNING_NBR_FILES = 10
 	
+	first_load = True
+	
 	def __init__(cls, main_gui, parent=None):
 		cls.main_gui = main_gui
 		
@@ -35,7 +37,6 @@ class MetadataFinder(QDialog):
 		cls.ui.setupUi(cls)
 		
 		cls.initGui()
-		cls.retrieveListMetadataPreviouslySelected()
 		
 	def initList(cls):
 		cls.list_runs = []
@@ -61,6 +62,9 @@ class MetadataFinder(QDialog):
 		cls.ui.clearButton.setIcon(clearIcon)
 		sz = QSize(15,15)
 		cls.ui.clearButton.setIconSize(sz)
+		#cls.ui.clearButton.setVisible(False)
+		#cls.ui.searchLabel.setVisible(False)
+		#cls.ui.searchLineEdit.setVisible(False)
 		
 	def initListMetadata(cls):
 		_nxs = cls.list_nxs[0]
@@ -70,10 +74,13 @@ class MetadataFinder(QDialog):
 		cls.list_values = np.zeros(sz, dtype=bool)
 
 	def searchLineEditLive(cls, txt):
-		print 'search line edit live'
+		cls.populateconfigureTable()
+		cls.list_metadata_selected = cls.getNewListMetadataSelected()
+		cls.loadAndPopulateMetadataTable()
 
 	def searchLineEditClear(cls):
-		print 'search line edit clear'
+		cls.ui.searchLineEdit.setText('')
+		cls.populateconfigureTable()
 
 	def retrieveListMetadataPreviouslySelected(cls):
 		from quicknxs.config import metadataSelected
@@ -81,6 +88,13 @@ class MetadataFinder(QDialog):
 		listMetadataSelected = metadataSelected.metadata_list
 		cls.list_metadata_selected = listMetadataSelected
 		metadataSelected.switch_config('default')
+		_list_values = cls.list_values
+		for idx, val in enumerate(cls.list_keys):
+			if val in listMetadataSelected:
+				_list_values[idx] = True
+			else:
+				_list_values[idx] = False
+		cls.list_values = _list_values
 		
 	def clearMetadataTable(cls):
 		_meta_table = cls.ui.metadataTable
@@ -104,10 +118,13 @@ class MetadataFinder(QDialog):
 	def runNumberEditEvent(cls):
 		cls.initList()
 		cls.clearMetadataTable()
+		cls.loadNxs()
 		cls.populateMetadataTable()
 		cls.populateconfigureTable()
 		cls.ui.runNumberEdit.setText("")
 		cls.updateGUI()
+		cls.list_metadata_selected = cls.getNewListMetadataSelected()
+		cls.loadAndPopulateMetadataTable()
 		
 	def updateGUI(cls):
 		if cls.list_nxs != []:
@@ -125,20 +142,35 @@ class MetadataFinder(QDialog):
 		if cls.list_filename == []:
 			return
 		cls.clearConfigureTable()
-		_filename = cls.list_filename[0]
-		nxs = LoadEventNexus(Filename=_filename)
-		list_keys = nxs.getRun().keys()
-		_metadata_table = cls.list_metadata_selected
+		#_filename = cls.list_filename[0]
+		#nxs = LoadEventNexus(Filename=_filename)
+		
+		nxs = cls.list_nxs[0]
+		if cls.first_load:
+			cls.first_load = False
+			#mt_run = nxs.getRun()
+			#cls.list_keys = mt_run.keys()
+			cls.initListMetadata()
+			cls.retrieveListMetadataPreviouslySelected()
+
+		list_keys = cls.list_keys
+		list_values = cls.list_values
+		search_string = cls.ui.searchLineEdit.text().lower()
 
 		_index = 0
 		for _key in list_keys:
+			_name = _key
+			if (search_string.strip() != '') and (not(search_string in _name.lower())):
+				continue
+			
 			cls.ui.configureTable.insertRow(_index)
 
 			_yesNo = QCheckBox()
-			_name = _key
-			if _name in _metadata_table:			
-				_yesNo.setChecked(True)
+			_id = list_keys.index(_name)
+			_value = list_values[_id]
+			_yesNo.setChecked(_value)
 			_yesNo.setText('')
+			_yesNo.stateChanged.connect(cls.configTableEdited)
 			cls.ui.configureTable.setCellWidget(_index, 0, _yesNo)
 
 			_nameItem = QTableWidgetItem(_name)
@@ -151,6 +183,23 @@ class MetadataFinder(QDialog):
 			cls.ui.configureTable.setItem(_index, 3, _unitsItem)
 			
 			_index += 1
+			
+	def configTableEdited(cls, value):
+		_list_keys = cls.list_keys
+		_list_values = cls.list_values
+		_config_table = cls.ui.configureTable
+		nbr_row = _config_table.rowCount()
+		_list_metadata_selected = []
+		for r in range(nbr_row):
+			_is_selected = _config_table.cellWidget(r,0).isChecked()
+			_name = _config_table.item(r,1).text()
+			if _is_selected:
+				_list_metadata_selected.append(_name)
+			_index = _list_keys.index(_name)
+			_list_values[_index] = _is_selected
+
+		cls.list_values = _list_values
+		cls.list_metadata_selected = _list_metadata_selected
 			
 	def retrieveValueUnits(cls, mt_run, _name):
 		_name = str(_name)
@@ -166,7 +215,11 @@ class MetadataFinder(QDialog):
 		_units = mt_run.getProperty(_name).units
 		return [_value, _units]
 
-	def populateMetadataTable(cls):
+	def loadAndPopulateMetadataTable(cls):
+		cls.loadNxs()
+		cls.populateMetadataTable()
+		
+	def loadNxs(cls):
 		cls.clearMetadataTable()
 		run_sequence = cls.ui.runNumberEdit.text()
 		oListRuns = RunSequenceBreaker(run_sequence)
@@ -206,7 +259,7 @@ class MetadataFinder(QDialog):
 					return
 				cls.list_filename.append(_filename)
 				randomString = utilities.generate_random_workspace_name()
-				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)
+				_nxs = LoadEventNexus(Filename=_filename, OutputWorkspace=randomString, MetaDataOnly=True)							
 				cls.list_nxs.append(_nxs)
 		
 		cls.ui.inputErrorLabel.setVisible(False)
@@ -218,7 +271,10 @@ class MetadataFinder(QDialog):
 			_header.append(name)
 		cls.ui.metadataTable.setHorizontalHeaderLabels(_header)
 		list_nxs = cls.list_nxs
-				
+			
+	def populateMetadataTable(cls):
+		list_metadata_selected = cls.list_metadata_selected
+		
 		_index = 0
 		for i in range(len(cls.list_nxs)):
 			cls.ui.metadataTable.insertRow(_index)
@@ -245,8 +301,6 @@ class MetadataFinder(QDialog):
 			
 			_index += 1
 			
-		cls.initListMetadata()
-		
 	def unselectAll(cls):
 		_config_table = cls.ui.configureTable
 		nbr_row = _config_table.rowCount()
@@ -303,9 +357,14 @@ class MetadataFinder(QDialog):
 		return parse_path[3]
 	
 	def userChangedTab(cls, int):
+		#search_label_visible = True
 		if int ==0: #metadata
 			cls.list_metadata_selected = cls.getNewListMetadataSelected()
-			cls.populateMetadataTable()
+			cls.loadAndPopulateMetadataTable()
+			#search_label_visible = False
+		#cls.ui.searchLabel.setVisible(search_label_visible)
+		#cls.ui.searchLineEdit.setVisible(search_label_visible)
+		#cls.ui.clearButton.setVisible(search_label_visible)
 			
 	def getNewListMetadataSelected(cls):
 		_config_table = cls.ui.configureTable

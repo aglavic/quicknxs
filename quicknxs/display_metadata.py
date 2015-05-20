@@ -113,14 +113,14 @@ class DisplayMetadata(QDialog):
 		cls.clearConfigTable()
 		list_keys = cls.list_keys
 		list_values = cls.list_values
-		search_string = cls.ui.searchLineEdit.text()
+		search_string = cls.ui.searchLineEdit.text().lower()
 		
 		_metadata_table = cls.list_metadata_selected
 		_index = 0
 		for _key in list_keys:
 			_name = _key
 
-			if (search_string.strip() != '') and (not(search_string.lower() in _name.lower())):
+			if (search_string.strip() != '') and (not(search_string in _name.lower())):
 				continue
 
 			cls.ui.configureTable.insertRow(_index)
