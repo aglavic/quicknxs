@@ -126,6 +126,9 @@ def get_xpos(data, dangle0_overwrite=None, direct_pixel_overwrite=-1,
     dp=data.dpix
   rad_per_pixel=data.det_size_x/data.dist_sam_det/data.xydata.shape[1]
   pix_position=dp-(ai*2-tth_bank)/rad_per_pixel
+  if pix_position<=0 or pix_position>len(xproj):
+    # if position does not make sense, use center of detector
+    pix_position=len(xproj)/2
 
   # locate peaks using CWT peak finder algorithm
   pf=PeakFinder(arange(data.active_area_x[1]-data.active_area_x[0]),
