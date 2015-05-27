@@ -8,22 +8,31 @@ class PeakFinderDerivation(object):
     edata_firstderi = []
     five_highest_ydata = []
     five_highest_xdata = []
+    sum_peak_counts = -1
+    sum_peak_counts_time_pixel = -1
+    peak_pixel = -1
     
     def __init__(cls, xdata, ydata, edata, back_offset=3):
-        cls.xdata_firstderi = []
-        cls.ydata_firstderi = []
-        cls.edata_firstderi = []
-        cls.peaks = [-1, -1]
-        five_highest_ydata = []
-        five_highest_xdata = []
+        cls.initArrays()
 
         cls.xdata = np.array(xdata)
         cls.ydata = np.array(ydata)
         cls.edata = np.array(edata)
         
-        cls.calculateFirstDerivative()
         cls.calculate5HighestPoints()
+        cls.calculatePeakPixel()
+        cls.calculateFirstDerivative()
         
+    def initArrays(cls):
+        cls.xdata_firstderi = []
+        cls.ydata_firstderi = []
+        cls.edata_firstderi = []
+        cls.peaks = [-1, -1]
+        cls.five_highest_ydata = []
+        cls.five_highest_xdata = []
+        cls.sum_five_highest_ydata = -1
+        cls.peak_pixel = -1
+
     def calculateFirstDerivative(cls):
         xdata = cls.xdata
         ydata = cls.ydata
@@ -55,6 +64,23 @@ class PeakFinderDerivation(object):
         _5decreasing_sort_index = _decreasing_sort_index[0:5]
         cls.five_highest_xdata = _xdata[_5decreasing_sort_index]
         
+    def calculatePeakPixel(cls):    
+        cls.sum_peak_counts = sum(cls.five_highest_ydata)
+        _sum_peak_counts_time_pixel = -1
+        for index,yvalue in enumerate(cls.five_highest_ydata):
+            _sum_peak_counts_time_pixel += yvalue * cls.five_highest_xdata[index]
+        cls.sum_peak_counts_time_pixel = _sum_peak_counts_time_pixel
+        cls.peak_pixel = round(cls.sum_peak_counts_time_pixel / cls.sum_peak_counts)
+    
+    def getPeakPixel(cls):
+        return cls.peak_pixel
+        
+    def getSumPeakCounts(cls):
+        return cls.sum_peak_counts
+    
+    def getSumPeakCountsTimePixel(cls):
+        return cls.sum_peak_counts_time_pixel
+
     def get5HighestPoints(cls):
         return [cls.five_highest_xdata, cls.five_highest_ydata]
         

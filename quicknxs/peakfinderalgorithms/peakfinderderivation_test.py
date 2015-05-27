@@ -41,8 +41,29 @@ class TestPeakFinderDerivation(unittest.TestCase):
         high_y = high_y.tolist()
         self.assertEqual(high_y, [32351., 28999., 19351., 9503., 2796.])
 
+    def test_calculatePeakPixel_sumPeakCounts(self):
+        '''Step3 - calculate peak pixel using run 125682 to check calculation of 5 highest points - sum_xdata '''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+        sum_five_highest_xdata = peakfinder1.getSumPeakCounts()
+        self.assertEqual(sum_five_highest_xdata, 93000.0)
+
+    def test_calcuatePeakPixel_sumPeakCountTimePixel(self):
+        '''Step3 - calculate peak pixel using run 125682 to check calculation of 5 highest points - sum_ydata '''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+        sum_five_highest_ydata = peakfinder1.getSumPeakCountsTimePixel()
+        self.assertEqual(sum_five_highest_ydata, 14438061.0)
+
+    def test_calculatePeakPixel_peakPixelValue(self):
+        '''Step3 - calculate peak pixel value using run 125682'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+        peak_pixel = peakfinder1.getPeakPixel()
+        self.assertEqual(peak_pixel, 155.0)
+
     def test_calculatefirstderivative_xaxis(self):
-        '''Step3 - derivative: testing the first derivative calculation - axis x'''
+        '''Step4 - derivative: testing the first derivative calculation - axis x'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
         peakfinder = PeakFinderDerivation(xdata, ydata, edata)
         [xdata_first, ydata_first] = peakfinder.getFirstDerivative()
@@ -50,7 +71,7 @@ class TestPeakFinderDerivation(unittest.TestCase):
         self.assertEqual(xdata10, [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5])
     
     def test_calculatefirstderivative_yaxis(self):
-        '''Step3 - derivative: testing the first derivative calculation - axis y'''
+        '''Step4 - derivative: testing the first derivative calculation - axis y'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
         peakfinder = PeakFinderDerivation(xdata, ydata, edata)
         [xdata_first, ydata_first] = peakfinder.getFirstDerivative()
