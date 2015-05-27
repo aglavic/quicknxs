@@ -6,20 +6,28 @@ class PeakFinderDerivation(object):
     xdata_firstderi = []
     ydata_firstderi = []
     edata_firstderi = []
+    five_highest_ydata = []
+    five_highest_xdata = []
     
     def __init__(cls, xdata, ydata, edata, back_offset=3):
         cls.xdata_firstderi = []
         cls.ydata_firstderi = []
         cls.edata_firstderi = []
         cls.peaks = [-1, -1]
+        five_highest_ydata = []
+        five_highest_xdata = []
 
-        xdata = np.array(xdata)
-        ydata = np.array(ydata)
-        edata = np.array(edata)
+        cls.xdata = np.array(xdata)
+        cls.ydata = np.array(ydata)
+        cls.edata = np.array(edata)
         
-        cls.calculateFirstDerivative(xdata, ydata, edata)
+        cls.calculateFirstDerivative()
+        cls.calculate5HighestPoints()
         
-    def calculateFirstDerivative(cls, xdata, ydata, edata):
+    def calculateFirstDerivative(cls):
+        xdata = cls.xdata
+        ydata = cls.ydata
+        
         _xdata_firstderi = []
         _ydata_firstderi = []
         for i in range(len(xdata)-1):
@@ -33,9 +41,32 @@ class PeakFinderDerivation(object):
         
         cls.xdata_firstderi = _xdata_firstderi
         cls.ydata_firstderi = _ydata_firstderi
-    
+        
+    def calculate5HighestPoints(cls):
+        _xdata = cls.xdata
+        _ydata = cls.ydata
+        
+        _sort_ydata = np.sort(_ydata)
+        _decreasing_sort_ydata = _sort_ydata[::-1]
+        cls.five_highest_ydata = _decreasing_sort_ydata[0:5]
+        
+        _sort_index = np.argsort(_ydata)
+        _decreasing_sort_index = _sort_index[::-1]
+        _5decreasing_sort_index = _decreasing_sort_index[0:5]
+        cls.five_highest_xdata = _xdata[_5decreasing_sort_index]
+        
+    def get5HighestPoints(cls):
+        return [cls.five_highest_xdata, cls.five_highest_ydata]
+        
     def getFirstDerivative(cls):
         return [cls.xdata_firstderi, cls.ydata_firstderi]
         
     def getPeaks(cls):
         return cls.peaks
+    
+if __name__ == "__main__":
+    from file_loading_utility import loadCsvFile
+    [xdata, ydata, edata] = loadCsvFile('easy_data_set.csv')
+    peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+    [high_x, high_y] = peakfinder1.get5HighestPoints()
+    
