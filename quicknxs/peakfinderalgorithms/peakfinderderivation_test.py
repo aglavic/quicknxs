@@ -13,6 +13,18 @@ class TestPeakFinderDerivation(unittest.TestCase):
         xdata10 = xdata[0:10]
         self.assertEqual(xdata10, [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0])
     
+    def test_loadcsvfile_yaxis(self):
+        '''checking that loadCsvFile works correctly on yaxis'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        ydata10 = ydata[0:10]
+        self.assertEqual(ydata10, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 5.0])
+
+    def test_loadcsvfile_eaxis(self):
+        '''checking that loadCsvFile works correctly on eaxis'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        edata10 = edata[0:10]
+        self.assertEqual(edata10, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.236067977])
+
     def test_calculatefirstderivative_xaxis(self):
         '''testing the first derivative calculation - axis x'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
