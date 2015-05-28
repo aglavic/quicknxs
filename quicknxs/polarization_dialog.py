@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/polarization_dialog.ui'
 #
-# Created: Thu Mar 20 12:44:30 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Thu May 28 09:48:59 2015
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -102,6 +102,9 @@ class Ui_Dialog(object):
     self.PolLabel.setText(_fromUtf8(""))
     self.PolLabel.setObjectName(_fromUtf8("PolLabel"))
     self.horizontalLayout.addWidget(self.PolLabel)
+    self.exportFRButton = QtGui.QPushButton(self.groupBox)
+    self.exportFRButton.setObjectName(_fromUtf8("exportFRButton"))
+    self.horizontalLayout.addWidget(self.exportFRButton)
     self.verticalLayout.addLayout(self.horizontalLayout)
     self.groupBox1 = QtGui.QGroupBox(self.splitter)
     sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
@@ -149,6 +152,9 @@ class Ui_Dialog(object):
     self.pushButton_4 = QtGui.QPushButton(self.groupBox1)
     self.pushButton_4.setObjectName(_fromUtf8("pushButton_4"))
     self.horizontalLayout_4.addWidget(self.pushButton_4)
+    self.pushButton_6 = QtGui.QPushButton(self.groupBox1)
+    self.pushButton_6.setObjectName(_fromUtf8("pushButton_6"))
+    self.horizontalLayout_4.addWidget(self.pushButton_6)
     self.pushButton_3 = QtGui.QPushButton(self.groupBox1)
     self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
     self.horizontalLayout_4.addWidget(self.pushButton_3)
@@ -200,6 +206,10 @@ class Ui_Dialog(object):
     self.exportButton.setEnabled(False)
     self.exportButton.setObjectName(_fromUtf8("exportButton"))
     self.horizontalLayout_5.addWidget(self.exportButton)
+    self.exportDetButton = QtGui.QPushButton(self.widget_2)
+    self.exportDetButton.setEnabled(False)
+    self.exportDetButton.setObjectName(_fromUtf8("exportDetButton"))
+    self.horizontalLayout_5.addWidget(self.exportDetButton)
     self.verticalLayout_5.addLayout(self.horizontalLayout_5)
     self.widget = QtGui.QWidget(self.splitter_3)
     self.widget.setObjectName(_fromUtf8("widget"))
@@ -230,6 +240,9 @@ class Ui_Dialog(object):
     QtCore.QObject.connect(self.pushButton_5, QtCore.SIGNAL(_fromUtf8("pressed()")), Dialog.assignFM)
     QtCore.QObject.connect(self.polErrorbars, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.update_fr)
     QtCore.QObject.connect(self.exportButton, QtCore.SIGNAL(_fromUtf8("pressed()")), Dialog.exportPolarizationParameters)
+    QtCore.QObject.connect(self.exportFRButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.exportFR)
+    QtCore.QObject.connect(self.exportDetButton, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.exportFRDetector)
+    QtCore.QObject.connect(self.pushButton_6, QtCore.SIGNAL(_fromUtf8("clicked()")), Dialog.addXMultiple)
     QtCore.QMetaObject.connectSlotsByName(Dialog)
 
   def retranslateUi(self, Dialog):
@@ -240,6 +253,7 @@ class Ui_Dialog(object):
     self.FR1.setText(_translate("Dialog", "0", None))
     self.label_5.setText(_translate("Dialog", "SF2", None))
     self.FR2.setText(_translate("Dialog", "0", None))
+    self.exportFRButton.setText(_translate("Dialog", "Export", None))
     self.groupBox1.setTitle(_translate("Dialog", "Contributing Datasets", None))
     self.pushButton_2.setText(_translate("Dialog", "Add", None))
     self.pushButton.setText(_translate("Dialog", "Clear", None))
@@ -253,6 +267,7 @@ class Ui_Dialog(object):
     item = self.wlTable.horizontalHeaderItem(3)
     item.setText(_translate("Dialog", "FM Run", None))
     self.pushButton_4.setText(_translate("Dialog", "Add", None))
+    self.pushButton_6.setText(_translate("Dialog", "Add Multiple...", None))
     self.pushButton_3.setText(_translate("Dialog", "Clear", None))
     item = self.xTable.horizontalHeaderItem(0)
     item.setText(_translate("Dialog", "Run No.", None))
@@ -261,7 +276,8 @@ class Ui_Dialog(object):
     self.groupBox_2.setTitle(_translate("Dialog", "Polarization Parameters", None))
     self.label.setText(_translate("Dialog", "Wavelength Dependance", None))
     self.polErrorbars.setText(_translate("Dialog", "Show Errorbars", None))
-    self.exportButton.setText(_translate("Dialog", "Export Result", None))
+    self.exportButton.setText(_translate("Dialog", "Export Parames.", None))
+    self.exportDetButton.setText(_translate("Dialog", "Export Det.", None))
     self.label_4.setText(_translate("Dialog", "Detector Position Dependance", None))
 
 from .mplwidget import MPLWidget

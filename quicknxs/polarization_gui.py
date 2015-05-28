@@ -5,7 +5,7 @@ measurements of the direct beam.
 '''
 
 from numpy import where, ones_like, array, sqrt, hstack, argsort, float64, savetxt
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog
+from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QInputDialog
 from polarization_dialog import Ui_Dialog
 from .qreduce import Reflectivity
 from .mpfit import mpfit
@@ -181,6 +181,11 @@ class PolarizationDialog(QDialog):
     self.polarization_parameters=None
     self.ui.exportButton.setEnabled(False)
     self.ui.wlTable.setRowCount(0)
+    self.ui.wavelengthPol.clear()
+    self.ui.flippingRatios.clear()
+    self.ui.wavelengthPol.draw()
+    self.ui.flippingRatios.draw()
+    self.ui.exportButton.setEnabled(False)
 
   def assignFM(self):
     tbl=self.ui.wlTable
@@ -310,6 +315,67 @@ class PolarizationDialog(QDialog):
         savetxt(f, array([x, y, fy]).T)
         f.close()
 
+  def exportFR(self):
+    name=QFileDialog.getSaveFileName(parent=self, caption=u'Select export file name',
+                                     filter='ASCII files (*.dat);;All files (*.*)')
+    if name!='':
+      name=unicode(name)
+      if not name.endswith('.dat'):
+        name+=u'.dat'
+      lamdas=[]
+      FR1s=[]
+      dFR1s=[]
+      FR2s=[]
+      dFR2s=[]
+      for i, (ignore, I, ignore) in enumerate(self._WLitems):
+        lamda=I.values()[0].lamda
+        reg=((lamda>=float(self.ui.wlTable.item(i, 1).text()))&
+             (lamda<=float(self.ui.wlTable.item(i, 2).text())))
+        lamdas.append(lamda[reg])
+        if '++' in I and '+-' in I:
+          fr, dfr=self.calc_fr(I['++'], I['+-'])
+          FR2s.append(fr[reg])
+          dFR2s.append(dfr[reg])
+        if '++' in I and '-+' in I:
+          fr, dfr=self.calc_fr(I['++'], I['-+'])
+          FR1s.append(fr[reg])
+          dFR1s.append(dfr[reg])
+      if len(FR1s)!=len(lamdas):
+        FR1s=hstack(lamdas)*0.;dFR1s=hstack(lamdas)*0.
+      else:
+        FR1s=hstack(FR1s);dFR1s=hstack(dFR1s)
+      if len(FR2s)!=len(lamdas):
+        FR2s=hstack(lamdas)*0.;dFR2s=hstack(lamdas)*0.
+      else:
+        FR2s=hstack(FR2s);dFR2s=hstack(dFR2s)
+      lamdas=hstack(lamdas)
+      f=open(name, 'w')
+      f.write('## Wavelength dependence of flipping ratio\n')
+      f.write('# lambda, FR1, dFR1, FR2, dFR2, P1, P2\n')
+      savetxt(f, array([lamdas, FR1s, dFR1s, FR2s, dFR2s,
+                        sqrt((FR1s-1.)/(FR1s+1.)), sqrt((FR2s-1.)/(FR2s+1.))]).T)
+      f.close()
+
+  def exportFRDetector(self):
+    '''
+      Save the x,lamda vs. FR data to ASCII file.
+    '''
+    name=QFileDialog.getSaveFileName(parent=self, caption=u'Select export file name',
+                                     filter='ASCII files (*.dat);;All files (*.*)')
+    if name!='':
+      name=unicode(name)
+    else:
+      return
+    f=open(name, 'w')
+    f.write('## Pixel dependence of flipping ratio\n# lambda, X, FR1, dFR1\n')
+    for ignore, I, xpos in self._Xitems:
+      lamda=I.values()[0].lamda
+      fr, dfr=self.calc_fr(I['++'], I['+-'])
+      reg=I['++'].Rraw>0
+      savetxt(f, array([ones_like(fr[reg])*xpos, lamda[reg], fr[reg], dfr[reg]]).T)
+      f.write('\n')
+    f.close()
+
   def addX(self):
     self._Xitems.append(self.Icurrent)
     row=self.ui.xTable.rowCount()
@@ -320,6 +386,32 @@ class PolarizationDialog(QDialog):
     self._auto_change_active=False
     if len(self._Xitems)>2:
       self.drawXFR()
+      self.ui.exportDetButton.setEnabled(True)
+
+  def addXMultiple(self):
+    '''
+      Convenience function to add multiple subsequent datasets for different detector angles.
+    '''
+    items, OK=QInputDialog.getInt(self, u'Add multiple datasets',
+                              u'Enter the number of subsequent datasets to be added:',
+                              value=1, min=0, max=304, step=1)
+    if not OK or items==0:
+      return
+    self.addX()
+    if items==1:
+      return
+    self._x_items_to_go=items-1
+    self.parent_window.initiateReflectivityPlot.connect(self._addXMultiple)
+    self.parent_window.nextFile()
+
+  def _addXMultiple(self):
+    self._x_items_to_go-=1
+    self.addX()
+    if self._x_items_to_go==0:
+      self._x_items_to_go=None
+      self.parent_window.initiateReflectivityPlot.disconnect(self._addXMultiple)
+      return
+    self.parent_window.nextFile()
 
   def drawXFR(self):
     plot=self.ui.detectorPol
@@ -342,6 +434,9 @@ class PolarizationDialog(QDialog):
   def clearX(self):
     self._Xitems=[]
     self.ui.xTable.setRowCount(0)
+    self.ui.detectorPol.clear()
+    self.ui.detectorPol.draw()
+    self.ui.exportDetButton.setEnabled(False)
 
   def closeEvent(self, *args, **kwargs):
     # disconnect when closed as object is not actually destroyed and will slow down plots

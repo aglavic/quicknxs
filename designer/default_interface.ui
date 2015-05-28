@@ -570,7 +570,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>251</width>
+             <width>256</width>
              <height>129</height>
             </rect>
            </property>
@@ -753,7 +753,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>145</width>
+             <width>256</width>
              <height>128</height>
             </rect>
            </property>
@@ -2689,6 +2689,8 @@
     <addaction name="actionPrevious_File"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_Extraction"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport_Raw_Data"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -2790,6 +2792,7 @@
    <addaction name="actionPrevious_File"/>
    <addaction name="actionNext_File"/>
    <addaction name="actionReduce"/>
+   <addaction name="actionExport_Raw_Data"/>
    <addaction name="separator"/>
    <addaction name="separator"/>
    <addaction name="actionNorm"/>
@@ -3180,6 +3183,18 @@
   <action name="actionShow_Logs">
    <property name="text">
     <string>Show Logs...</string>
+   </property>
+  </action>
+  <action name="actionExport_Raw_Data">
+   <property name="icon">
+    <iconset resource="../icons/icons.qrc">
+     <normaloff>:/General/exportRawData.png</normaloff>:/General/exportRawData.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Raw Data...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the raw, unnormalized intensity data of the current dataset.</string>
    </property>
   </action>
  </widget>
@@ -4663,6 +4678,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExport_Raw_Data</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportRawData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>fileOpenDialog()</slot>
@@ -4717,5 +4748,6 @@
   <slot>live_open()</slot>
   <slot>open_database_search()</slot>
   <slot>open_logfile_viewer()</slot>
+  <slot>exportRawData()</slot>
  </slots>
 </ui>

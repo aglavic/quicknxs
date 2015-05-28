@@ -75,6 +75,8 @@ class HeaderCreator(object):
     self.bgs=[]
     self.bg_polys=[]
     for item in self.norms+self.refls:
+      if item is None:
+        continue
       default=True
       for option in self.bg_options:
         if item.options[option]!=Reflectivity.DEFAULT_OPTIONS[option]:
@@ -100,6 +102,8 @@ class HeaderCreator(object):
     '''
     self.evts=[]
     for item in self.norms+self.refls:
+      if item is None:
+        continue
       if type(item.origin) is list:
         if not item.origin[0][0].endswith('event.nxs'):
           continue
@@ -133,6 +137,8 @@ class HeaderCreator(object):
     options.append('File')
     data=[]
     for i, norm in enumerate(self.norms):
+      if norm is None:
+        continue
       datai=[i+1]+[norm.options[option] for option in self.direct_beam_options]
       if len(self.evts)>0:
         if type(norm.origin) is list and norm.origin[0][0].endswith('event.nxs')\
@@ -178,7 +184,10 @@ class HeaderCreator(object):
     data=[]
     for i, refl in enumerate(self.refls):
       datai=[refl.options[option] for option in self.dataset_options]
-      datai.append(self.norms.index(refl.options['normalization'])+1)
+      if refl.options['normalization'] is None:
+        datai.append('None')
+      else:
+        datai.append(self.norms.index(refl.options['normalization'])+1)
       if len(self.evts)>0:
         if type(refl.origin) is list and refl.origin[0][0].endswith('event.nxs')\
            or refl.origin[0].endswith('event.nxs'):
@@ -268,6 +277,8 @@ class HeaderCreator(object):
     output=u'[%s]\n'%section
     section_head=[]
     column_fstrings=[]
+    if len(data)==0:
+      return output
     # first run through all data and headers to determine each column widths
     for option in options:
       column_leni=len(option)

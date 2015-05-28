@@ -127,6 +127,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="exportFRButton">
+            <property name="text">
+             <string>Export</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -213,6 +220,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButton_6">
+            <property name="text">
+             <string>Add Multiple...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButton_3">
             <property name="text">
              <string>Clear</string>
@@ -293,7 +307,17 @@
                 <bool>false</bool>
                </property>
                <property name="text">
-                <string>Export Result</string>
+                <string>Export Parames.</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="exportDetButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Export Det.</string>
                </property>
               </widget>
              </item>
@@ -352,8 +376,8 @@
    <slot>addWL()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>116</x>
-     <y>469</y>
+     <x>137</x>
+     <y>455</y>
     </hint>
     <hint type="destinationlabel">
      <x>2</x>
@@ -368,8 +392,8 @@
    <slot>clearWL()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>298</x>
-     <y>469</y>
+     <x>281</x>
+     <y>455</y>
     </hint>
     <hint type="destinationlabel">
      <x>-2</x>
@@ -384,8 +408,8 @@
    <slot>addX()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>111</x>
-     <y>598</y>
+     <x>132</x>
+     <y>588</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -400,8 +424,8 @@
    <slot>clearX()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>443</x>
-     <y>598</y>
+     <x>417</x>
+     <y>588</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -416,8 +440,8 @@
    <slot>update_fr()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>232</x>
-     <y>569</y>
+     <x>252</x>
+     <y>556</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -448,8 +472,8 @@
    <slot>update_fr()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>478</x>
-     <y>355</y>
+     <x>556</x>
+     <y>378</y>
     </hint>
     <hint type="destinationlabel">
      <x>779</x>
@@ -464,12 +488,60 @@
    <slot>exportPolarizationParameters()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>728</x>
+     <x>668</x>
      <y>363</y>
     </hint>
     <hint type="destinationlabel">
      <x>774</x>
      <y>378</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportFRButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>exportFR()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>373</x>
+     <y>374</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>774</x>
+     <y>247</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportDetButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>exportFRDetector()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>732</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>775</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_6</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>addXMultiple()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>209</x>
+     <y>572</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>509</y>
     </hint>
    </hints>
   </connection>
@@ -482,5 +554,8 @@
   <slot>update_fr()</slot>
   <slot>assignFM()</slot>
   <slot>exportPolarizationParameters()</slot>
+  <slot>exportFR()</slot>
+  <slot>exportFRDetector()</slot>
+  <slot>addXMultiple()</slot>
  </slots>
 </ui>

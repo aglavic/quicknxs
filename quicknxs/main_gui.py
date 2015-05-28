@@ -6,7 +6,7 @@ Module including main GUI class with all signal handling and plot creation.
 import os
 import sys
 from glob import glob
-from numpy import where, pi, newaxis, log10
+from numpy import where, pi, newaxis, log10, savetxt, array
 from matplotlib.lines import Line2D
 from PyQt4 import QtGui, QtCore, QtWebKit
 
@@ -1967,6 +1967,36 @@ class MainGUI(QtGui.QMainWindow):
       return
     reducer=Reducer(self, self.ref_list_channels, self.reduction_list)
     reducer.execute()
+
+  @log_call
+  def exportRawData(self):
+    '''
+    Save the intensity of the current dataset into an ASXII file.
+    '''
+    if self.refl is None:
+      return
+    name=QtGui.QFileDialog.getSaveFileName(parent=self, caption=u'Select export file name',
+                                     filter='ASCII files (*.dat);;All files (*.*)')
+    if name!='':
+      name=unicode(name)
+    else:
+      return
+    refl=self.refl
+    header=HeaderCreator([refl])
+    f=open(name, 'wb')
+    f.write((header.as_comments()%{'datatype': 'RawData',
+                                  'indices': refl.options['number'],
+                                  'states': self.active_channel}).encode('utf8'))
+    f.write(header.get_data_comment([u'λ', u'I', u'dI', u'I_norm', u'dI_norm', u'BG', u'dBG',
+                                     u'(I-BG)', u'd(I-BG)'],
+                                    [u'Å', u'cts', u'cts',
+                                     u'cts/(pC*pix)', u'cts/(pC*pix)',
+                                     u'cts/(pC*pix)', u'cts/(pC*pix)',
+                                     u'cts/(pC*pix)', u'cts/(pC*pix)',
+                                     ]).encode('utf8'))
+    savetxt(f, array([refl.lamda, refl.Iraw, refl.dIraw, refl.I, refl.dI,
+                      refl.BG, refl.dBG, refl.Rraw, refl.dRraw]).T, delimiter='\t', fmt='%-18e')
+    f.close()
 
   def plotMouseEvent(self, event):
     '''
