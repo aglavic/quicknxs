@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>487</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -167,6 +167,16 @@
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="export_SA">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Spin-Asymmetry</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

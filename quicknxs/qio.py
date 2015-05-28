@@ -569,7 +569,7 @@ class Exporter(object):
   but can also be helpful for scripts which export data.
   '''
 
-  def __init__(self, channels, refls, sample_length=10.):
+  def __init__(self, channels, refls, sample_length=10., spin_asymmetry=False):
     self.norms=[]
     for refli in refls:
       if refli.options['normalization'] not in self.norms:
@@ -585,6 +585,8 @@ class Exporter(object):
     self.exported_files_all=[]
     self.exported_files_data=[]
     self.exported_files_plots=[]
+    self.spin_asymmetry=spin_asymmetry and (('++' in channels and '--' in channels) or
+                                            ('+' in channels and '-' in channels))
 
   @log_call
   def read_data(self):
@@ -634,6 +636,19 @@ class Exporter(object):
       d=d[order.flatten(), :]
 
       output_data[channel]=d
+    if self.spin_asymmetry:
+      if '++' in self.channels:
+        p=output_data['++']
+        m=output_data['--']
+      else:
+        p=output_data['+']
+        m=output_data['-']
+      d=p.copy()
+      d[:, 1]=(p[:, 1]-m[:, 1])/(p[:, 1]+m[:, 1])
+      dp_scale=(1.-d[:, 1])/(p[:, 1]+m[:, 1])
+      dm_scale=(-1.-d[:, 1])/(p[:, 1]+m[:, 1])
+      d[:, 2]=np.sqrt(p[:, 2]**2*dp_scale**2+m[:, 2]**2*dm_scale**2)
+      output_data['SA']=d
     self.output_data['Specular']=output_data
 
   @log_call
@@ -768,7 +783,9 @@ class Exporter(object):
     for key, output_data in self.output_data.items():
       if multi_ascii:
         debug('Export multi_ascii')
-        for channel in self.channels:
+        for channel in output_data.keys():
+          if channel in ['column_names', 'column_units', 'ki_max']:
+            continue
           value=output_data[channel]
           output=ofname.replace('{item}', key).replace('{state}', channel)\
                        .replace('{instrument}', instrument.NAME)\
@@ -798,7 +815,7 @@ class Exporter(object):
           of.close()
           self.exported_files_all.append(output);self.exported_files_data.append(output)
       if combined_ascii:
-        debug('Export multi_ascii')
+        debug('Export combined_ascii')
         output=ofname.replace('{item}', key).replace('{state}', 'all')\
                      .replace('{instrument}', instrument.NAME)\
                      .replace('{type}', 'dat').replace('{numbers}', self.ind_str)
@@ -811,7 +828,9 @@ class Exporter(object):
                                 'states': u", ".join(self.channels),
                                 }).encode('utf8'))
           # write all channel data separated by three empty lines and one comment
-          for channel in self.channels:
+          for channel in output_data.keys():
+            if channel in ['column_names', 'column_units', 'ki_max']:
+              continue
             of.write((u'# Start of channel %s\n'%channel).encode('utf8'))
             of.write((self.file_header.get_data_comment(output_data['column_names'],
                                                        output_data['column_units'])

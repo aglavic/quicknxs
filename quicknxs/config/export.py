@@ -11,6 +11,7 @@ exportOffSpecular=False
 exportOffSpecularCorr=False
 exportOffSpecularSmoothed=False
 exportGISANS=False
+export_SA=False
 
 sampleSize=10.
 

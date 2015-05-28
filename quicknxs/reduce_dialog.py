@@ -3,8 +3,8 @@
 
 # Form implementation generated from reading ui file 'designer/reduce_dialog.ui'
 #
-# Created: Tue Oct 22 17:34:57 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Thu May 28 15:42:09 2015
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +27,7 @@ except AttributeError:
 class Ui_Dialog(object):
   def setupUi(self, Dialog):
     Dialog.setObjectName(_fromUtf8("Dialog"))
-    Dialog.resize(400, 487)
+    Dialog.resize(400, 497)
     icon = QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/General/logo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     Dialog.setWindowIcon(icon)
@@ -104,6 +104,10 @@ class Ui_Dialog(object):
     self.verticalLayout_3.addWidget(self.export_2)
     spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
     self.verticalLayout_3.addItem(spacerItem)
+    self.export_SA = QtGui.QCheckBox(self.groupBox)
+    self.export_SA.setEnabled(False)
+    self.export_SA.setObjectName(_fromUtf8("export_SA"))
+    self.verticalLayout_3.addWidget(self.export_SA)
     self.horizontalLayout.addWidget(self.groupBox)
     self.verticalLayout_2.addWidget(self.widget)
     self.groupBox_3 = QtGui.QGroupBox(self.tab)
@@ -297,6 +301,7 @@ class Ui_Dialog(object):
     self.export_3.setText(_translate("Dialog", "- / --/+V", None))
     self.export_1.setText(_translate("Dialog", "+-/-V", None))
     self.export_2.setText(_translate("Dialog", "-+", None))
+    self.export_SA.setText(_translate("Dialog", "Spin-Asymmetry", None))
     self.groupBox_3.setTitle(_translate("Dialog", "Output Formats", None))
     self.multiAscii.setText(_translate("Dialog", "ASCII for each channel", None))
     self.combinedAscii.setText(_translate("Dialog", "Combined ASCII", None))

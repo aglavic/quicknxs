@@ -79,7 +79,8 @@ class Reducer(object):
 
     # calculate and collect reflectivities
     self.exporter=Exporter(self.channels, self.refls,
-                           sample_length=opts['sampleSize'])
+                           sample_length=opts['sampleSize'],
+                           spin_asymmetry=opts['export_SA'])
     info('Re-reading all datasets...')
     self.exporter.read_data()
 
@@ -430,6 +431,9 @@ class ReduceDialog(QDialog, Reducer):
       else:
         checkbutton.setEnabled(False)
         checkbutton.hide()
+    if ('++' in self.channels and '--' in self.channels) or (
+        '+' in self.channels and '-' in self.channels):
+      self.ui.export_SA.setEnabled(True)
     if FROM_MANTID:
       self.ui.mantidplot.setEnabled(True)
     for key, value in export.items(): #@UndefinedVariable
@@ -501,6 +505,12 @@ class ReduceDialog(QDialog, Reducer):
     opts['foldername']=unicode(self.ui.directoryEntry.text())
     opts['naming']=unicode(self.ui.fileNameEntry.text())
     opts['sampleSize']=self.ui.sampleSize.value()
+    opts['export_SA']=self.ui.export_SA.isChecked()
+    # remove channels not selected for export
+    for i in reversed(range(max(len(self.channels), 4))):
+      checkbutton=getattr(self.ui, 'export_'+str(i))
+      if not checkbutton.isChecked():
+        self.channels.pop(i)
 
   @log_call
   def save_email_texts(self):
