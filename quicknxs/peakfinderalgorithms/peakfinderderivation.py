@@ -121,16 +121,16 @@ class PeakFinderDerivation(object):
         _std_deviation_counts_firstderi = cls.std_deviation_counts_firstderi
 
         px_offset = 0
-        while abs(_counts[int(round(_deri_min_pixel_value - px_offset))]) > _std_deviation_counts_firstderi:
+        while abs(_counts[int(_deri_min_pixel_value - px_offset)]) > _std_deviation_counts_firstderi:
             px_offset += 1
-        _peak_min_final_value = int(round(_deri_min_pixel_value - px_offset))
+        _peak_min_final_value = _pixel[int(_deri_min_pixel_value - px_offset)]
             
         px_offset = 0
         while abs(_counts[int(round(_deri_max_pixel_value + px_offset))]) > _std_deviation_counts_firstderi:
             px_offset += 1
-        _peak_max_final_value = int(round(_deri_max_pixel_value - px_offset))
+        _peak_max_final_value = _pixel[int(round(_deri_max_pixel_value + px_offset))]
         
-        cls.peaks = [_peak_min_final_value, _peak_max_final_value]
+        cls.peaks = [int(_peak_min_final_value), np.ceil(_peak_max_final_value)]
 
     # getters
 

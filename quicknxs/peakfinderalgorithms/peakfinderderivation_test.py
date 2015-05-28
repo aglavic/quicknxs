@@ -125,21 +125,21 @@ class TestPeakFinderDerivation(unittest.TestCase):
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
         peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
         peaks = peakfinder1.getPeaks()
-        self.assertEqual(peaks, [151, 156])
+        self.assertEqual(peaks, [151, 159])
     
     def test_case_medium_data_set(self):
         '''using run 124211'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/medium_data_set.csv')
         peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
         peaks = peakfinder1.getPeaks()
-        self.assertEqual(peaks, [151, 156])
+        self.assertEqual(peaks, [151, 159])
     
     def test_case_hard_data_set(self):
         '''using run 124135'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/hard_data_set.csv')
         peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
         peaks = peakfinder1.getPeaks()
-        self.assertEqual(peaks, [145,155])
+        self.assertEqual(peaks, [145,164])
     
 if __name__ == '__main__':
     unittest.main()
