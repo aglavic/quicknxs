@@ -130,7 +130,7 @@ class PeakFinderDerivation(object):
             px_offset += 1
         _peak_max_final_value = _pixel[int(round(_deri_max_pixel_value + px_offset))]
         
-        cls.peaks = [int(_peak_min_final_value), np.ceil(_peak_max_final_value)]
+        cls.peaks = [int(_peak_min_final_value), int(np.ceil(_peak_max_final_value))]
 
     # getters
 
