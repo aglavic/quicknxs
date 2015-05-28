@@ -21,7 +21,7 @@ class PeakFinderDerivation(object):
     peak_max_final_value = -1
     peak_min_final_value = -1
     
-    def __init__(cls, xdata, ydata, edata, back_offset=3):
+    def __init__(cls, xdata, ydata, edata=[], back_offset=3):
         cls.initArrays()
 
         cls.xdata = np.array(xdata)

@@ -38,7 +38,8 @@ from random import randint
 import constants
 import psutil
 #from peakfinder import PeakFinder
-from reflpeakfinder import ReflPeakFinder
+#from reflpeakfinder import ReflPeakFinder
+from peakfinderalgorithms.peakfinderderivation import PeakFinderDerivation
 from all_plot_axis import AllPlotAxis
 
 ### Parameters needed for some calculations.
@@ -1678,9 +1679,13 @@ class LRDataset(object):
             #main_peak = 2*peaks[0]
             #peak1 = int(main_peak[0] - main_peak[1])
             #peak2 = int(main_peak[0] + main_peak[1])
-            pf = ReflPeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
-            peaks=pf.getPeaks()
-            [peak1, peak2]  = peaks[0]
+            #pf = ReflPeakFinder(range(len(output.ycountsdata)), output.ycountsdata)
+            #peaks=pf.getPeaks()
+            pf = PeakFinderDerivation(range(len(output.ycountsdata)), output.ycountsdata)
+            [peak1, peak2]  = pf.getPeaks()
+            print peak1
+            print peak2
+            print 'peak1 and peak2'
             output.peak = [str(peak1), str(peak2)]
 
             backOffsetFromPeak = read_options['back_offset_from_peak']
