@@ -121,21 +121,21 @@ class TestPeakFinderDerivation(unittest.TestCase):
         self.assertAlmostEqual(std_deviation_counts_firstderi, 1741.838, delta=0.001)
 
     def test_case_easy_data_set(self):
-        '''using run 125682'''
+        '''Step7 - calculate final peak range using run 125682 (easy data set)'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
         peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
         peaks = peakfinder1.getPeaks()
         self.assertEqual(peaks, [151, 159])
     
     def test_case_medium_data_set(self):
-        '''using run 124211'''
+        '''Step7 - calculate final peak range using run 124211 (medium data set)'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/medium_data_set.csv')
         peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
         peaks = peakfinder1.getPeaks()
         self.assertEqual(peaks, [151, 159])
     
     def test_case_hard_data_set(self):
-        '''using run 124135'''
+        '''Step7 - calculate final peak range using run 124135 (hard data set)'''
         [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/hard_data_set.csv')
         peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
         peaks = peakfinder1.getPeaks()
