@@ -78,28 +78,68 @@ class TestPeakFinderDerivation(unittest.TestCase):
         ydata10= ydata_first[0:10]
         self.assertEqual(ydata10, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 1.0, -1.0])
 
+    def test_calculateMinMaxDervativePixels_minValue(self):
+        '''Step5 - calculate min derivative counts value'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder = PeakFinderDerivation(xdata, ydata, edata)
+        min_derivative_value = peakfinder.getMinDerivativeValue()
+        self.assertEqual(min_derivative_value, -19496.0)
 
-    #def test_case_easy_data_set(self):
-        #'''using run 125682'''
-        #[xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
-        #peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
-        #peaks = peakfinder1.getPeaks()
-        #self.assertEqual(peaks, [151, 159])
-    
-    #def test_case_medium_data_set(self):
-        #'''using run 124211'''
-        #[xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/medium_data_set.csv')
-        #peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
-        #peaks = peakfinder1.getPeaks()
-        #self.assertEqual(peaks, [151, 159])
-    
-    #def test_case_hard_data_set(self):
-        #'''using run 124135'''
-        #[xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/hard_data_set.csv')
-        #peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
-        #peaks = peakfinder1.getPeaks()
-        #self.assertEqual(peaks, [145,164])
+    def test_calculateMinMaxDervativePixels_maxValue(self):
+        '''Step5 - calculate max derivative counts value'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder = PeakFinderDerivation(xdata, ydata, edata)
+        max_derivative_value = peakfinder.getMaxDerivativeValue()
+        self.assertEqual(max_derivative_value, 16555.0)
 
+    def test_calculateMinMaxDervativePixels_minPixelValue(self):
+        '''Step5 - calculate pixel of min derivative counts value'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder = PeakFinderDerivation(xdata, ydata, edata)
+        min_pixel_derivative_value = peakfinder.getMinDerivationPixelValue()
+        self.assertEqual(min_pixel_derivative_value, 153.5)
+
+    def test_calculateMinMaxDervativePixels_maxPixelValue(self):
+        '''Step5 - calculate pixel of max derivative counts value'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder = PeakFinderDerivation(xdata, ydata, edata)
+        max_pixel_derivative_value = peakfinder.getMaxDerivationPixelValue()
+        self.assertEqual(max_pixel_derivative_value, 156.5)
+
+    def test_calculateAvgAndStdDerivation_mean_counts_firstderi(self):
+        '''Step6 - calculate average of first derivation counts'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder = PeakFinderDerivation(xdata, ydata, edata)
+        mean_counts_firstderi = peakfinder.getAverageOfFirstDerivationCounts()
+        self.assertEqual(mean_counts_firstderi, 0)
+
+    def test_calculateAvgAndStdDerivation_std_deviation_counts_firstderi(self):
+        '''Step6 - calculate standard deviation of first derivation counts'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder = PeakFinderDerivation(xdata, ydata, edata)
+        std_deviation_counts_firstderi = peakfinder.getStdDeviationOfFirstDerivationCounts()
+        self.assertAlmostEqual(std_deviation_counts_firstderi, 1741.838, delta=0.001)
+
+    def test_case_easy_data_set(self):
+        '''using run 125682'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/easy_data_set.csv')
+        peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+        peaks = peakfinder1.getPeaks()
+        self.assertEqual(peaks, [151, 156])
+    
+    def test_case_medium_data_set(self):
+        '''using run 124211'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/medium_data_set.csv')
+        peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+        peaks = peakfinder1.getPeaks()
+        self.assertEqual(peaks, [151, 156])
+    
+    def test_case_hard_data_set(self):
+        '''using run 124135'''
+        [xdata, ydata, edata] = loadCsvFile('peakfinderalgorithms/hard_data_set.csv')
+        peakfinder1 = PeakFinderDerivation(xdata, ydata, edata)
+        peaks = peakfinder1.getPeaks()
+        self.assertEqual(peaks, [145,155])
     
 if __name__ == '__main__':
     unittest.main()

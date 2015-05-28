@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 class PeakFinderDerivation(object):
     
@@ -11,6 +12,14 @@ class PeakFinderDerivation(object):
     sum_peak_counts = -1
     sum_peak_counts_time_pixel = -1
     peak_pixel = -1
+    deri_min = 1
+    deri_max = -1
+    deri_min_pixel_value = -1
+    deri_max_pixel_value = -1
+    mean_counts_firstderi = -1
+    std_deviation_counts_firstderi = -1
+    peak_max_final_value = -1
+    peak_min_final_value = -1
     
     def __init__(cls, xdata, ydata, edata, back_offset=3):
         cls.initArrays()
@@ -19,9 +28,13 @@ class PeakFinderDerivation(object):
         cls.ydata = np.array(ydata)
         cls.edata = np.array(edata)
         
-        cls.calculate5HighestPoints()
-        cls.calculatePeakPixel()
-        cls.calculateFirstDerivative()
+        cls.calculate5HighestPoints() #step2
+        cls.calculatePeakPixel() #step3
+
+        cls.calculateFirstDerivative() #step4
+        cls.calculateMinMaxDerivativePixels() #step5
+        cls.calculateAvgAndStdDerivative() #step6
+        cls.calculateMinMaxSignalPixel() #step7
         
     def initArrays(cls):
         cls.xdata_firstderi = []
@@ -32,25 +45,15 @@ class PeakFinderDerivation(object):
         cls.five_highest_xdata = []
         cls.sum_five_highest_ydata = -1
         cls.peak_pixel = -1
+        cls.deri_min = 1
+        cls.deri_max = -1
+        cls.deri_min_pixel_value = -1
+        cls.deri_max_pixel_value = -1
+        cls.mean_counts_firstderi = -1
+        cls.std_deviation_counts_firstderi = -1
+        cls.peak_max_final_value = -1
+        cls.peak_min_final_value = -1
 
-    def calculateFirstDerivative(cls):
-        xdata = cls.xdata
-        ydata = cls.ydata
-        
-        _xdata_firstderi = []
-        _ydata_firstderi = []
-        for i in range(len(xdata)-1):
-            _left_x = xdata[i]
-            _right_x = xdata[i+1]
-            _xdata_firstderi.append(np.mean([_left_x, _right_x]))
-            
-            _left_y = ydata[i]
-            _right_y = ydata[i+1]
-            _ydata_firstderi.append((_right_y - _left_y)/(_right_x - _left_x))
-        
-        cls.xdata_firstderi = _xdata_firstderi
-        cls.ydata_firstderi = _ydata_firstderi
-        
     def calculate5HighestPoints(cls):
         _xdata = cls.xdata
         _ydata = cls.ydata
@@ -71,6 +74,83 @@ class PeakFinderDerivation(object):
             _sum_peak_counts_time_pixel += yvalue * cls.five_highest_xdata[index]
         cls.sum_peak_counts_time_pixel = _sum_peak_counts_time_pixel
         cls.peak_pixel = round(cls.sum_peak_counts_time_pixel / cls.sum_peak_counts)
+
+    def calculateFirstDerivative(cls):
+        xdata = cls.xdata
+        ydata = cls.ydata
+        
+        _xdata_firstderi = []
+        _ydata_firstderi = []
+        for i in range(len(xdata)-1):
+            _left_x = xdata[i]
+            _right_x = xdata[i+1]
+            _xdata_firstderi.append(np.mean([_left_x, _right_x]))
+            
+            _left_y = ydata[i]
+            _right_y = ydata[i+1]
+            _ydata_firstderi.append((_right_y - _left_y)/(_right_x - _left_x))
+        
+        cls.xdata_firstderi = _xdata_firstderi
+        cls.ydata_firstderi = _ydata_firstderi
+        
+    def calculateMinMaxDerivativePixels(cls):
+        _pixel = cls.xdata_firstderi
+        _counts_firstderi = cls.ydata_firstderi
+        
+        _sort_counts_firstderi = np.sort(_counts_firstderi)
+        cls.deri_min = _sort_counts_firstderi[0]
+        cls.deri_max = _sort_counts_firstderi[-1]
+        
+        _sort_index = np.argsort(_counts_firstderi)
+        cls.deri_min_pixel_value = min([_pixel[_sort_index[0]], _pixel[_sort_index[-1]]])
+        cls.deri_max_pixel_value = max([_pixel[_sort_index[0]], _pixel[_sort_index[-1]]])
+        
+    def calculateAvgAndStdDerivative(cls):
+        _counts_firstderi = np.array(cls.ydata_firstderi)
+        cls.mean_counts_firstderi = np.mean(_counts_firstderi)
+        _mean_counts_firstderi = np.mean(_counts_firstderi * _counts_firstderi)
+        cls.std_deviation_counts_firstderi = math.sqrt(_mean_counts_firstderi)
+
+    def calculateMinMaxSignalPixel(cls):
+        _counts = cls.ydata_firstderi
+        _pixel = cls.xdata_firstderi
+
+        _deri_min_pixel_value = cls.deri_min_pixel_value
+        _deri_max_pixel_value = cls.deri_max_pixel_value
+
+        _std_deviation_counts_firstderi = cls.std_deviation_counts_firstderi
+
+        px_offset = 0
+        while abs(_counts[int(round(_deri_min_pixel_value - px_offset))]) > _std_deviation_counts_firstderi:
+            px_offset += 1
+        _peak_min_final_value = int(round(_deri_min_pixel_value - px_offset))
+            
+        px_offset = 0
+        while abs(_counts[int(round(_deri_max_pixel_value + px_offset))]) > _std_deviation_counts_firstderi:
+            px_offset += 1
+        _peak_max_final_value = int(round(_deri_max_pixel_value - px_offset))
+        
+        cls.peaks = [_peak_min_final_value, _peak_max_final_value]
+
+    # getters
+
+    def getAverageOfFirstDerivationCounts(cls):
+        return cls.mean_counts_firstderi
+
+    def getStdDeviationOfFirstDerivationCounts(cls):
+        return cls.std_deviation_counts_firstderi
+
+    def getMinDerivativeValue(cls):
+        return cls.deri_min
+    
+    def getMaxDerivativeValue(cls):
+        return cls.deri_max
+
+    def getMinDerivationPixelValue(cls):
+        return cls.deri_min_pixel_value
+    
+    def getMaxDerivationPixelValue(cls):
+        return cls.deri_max_pixel_value
     
     def getPeakPixel(cls):
         return cls.peak_pixel
