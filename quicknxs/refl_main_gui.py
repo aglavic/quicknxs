@@ -2628,9 +2628,10 @@ class MainGUI(QtGui.QMainWindow):
         SelectionBigTableChanged(self)
 
     def data_norm_tab_changed(self, index):
-        #if self.userClickedInTable:
-            #self.userClickedInTable = False
-            #return
+	if index == 0:
+	    self.ui.listRunsLabel.setText("Data Runs:")
+	else:
+	    self.ui.listRunsLabel.setText("Norm Runs:")
 
         [r,col] = self.getTrueCurrentRowColumnSelected()
 
