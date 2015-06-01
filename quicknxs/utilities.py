@@ -345,3 +345,4 @@ def removeEmptyStrElementAndUpdateIndexSelected(str_list, index_selected):
 	    if final_index >= i:
 		final_index -= 1
     return [final_list, final_index]
+

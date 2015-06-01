@@ -4398,7 +4398,7 @@ Do you want to try to restore the working reduction list?""",
         self.ui.reflectivity_plot.setEnabled(status)
         self.ui.RvsQ.setEnabled(status)
         self.ui.RQ4vsQ.setEnabled(status)
-        self.ui.LogRvsQ.setEnabled(status)
+        self.ui.LogRvsQ.setEnabled(False)
         # stitching tab
         self.ui.dataStitchingTable.setEnabled(status)
         self.ui.autoSF.setEnabled(status)
@@ -4407,7 +4407,7 @@ Do you want to try to restore the working reduction list?""",
         self.ui.data_stitching_plot.setEnabled(status)
         self.ui.RvsQ_2.setEnabled(status)
         self.ui.RQ4vsQ_2.setEnabled(status)
-        self.ui.LogRvsQ_2.setEnabled(status)
+        self.ui.LogRvsQ_2.setEnabled(False)
 
     def initializeReduceViewObject(self):
         bigTableData = self.bigTableData
@@ -4430,8 +4430,11 @@ Do you want to try to restore the working reduction list?""",
         self.reduce_plot_radiobuttons(option='RQ4vsQ')
 
     def reduce_plot_LogRvsQ_radiobutton(self):
-        self.reduce_plot_radiobuttons(option='LogRvsQ')
-
+	try:
+	    self.reduce_plot_radiobuttons(option='LogRvsQ')
+	except RuntimeError:
+	    print 'matplotlib bug!'
+	    
     def reduce_plot_radiobuttons(self, option='RvsQ'):
         status_RvsQ = False
         status_RQ4vsQ = False
@@ -4448,7 +4451,7 @@ Do you want to try to restore the working reduction list?""",
         self.ui.RQ4vsQ.setChecked(status_RQ4vsQ)
         self.ui.LogRvsQ.setChecked(status_LogRvsQ)
 
-        self.replot_reduced_data()
+	self.replot_reduced_data()
 
     def reduce_plot_RvsQ_2_radiobutton(self):
         self.stitching_plot_radiobuttons(option='RvsQ')
@@ -4457,7 +4460,10 @@ Do you want to try to restore the working reduction list?""",
         self.stitching_plot_radiobuttons(option='RQ4vsQ')
 
     def reduce_plot_LogRvsQ_2_radiobutton(self):
-        self.stitching_plot_radiobuttons(option='LogRvsQ')
+	try:
+	    self.stitching_plot_radiobuttons(option='LogRvsQ')
+	except RuntimeError:
+	    print 'matplotlib bug!'
 
     def stitching_plot_radiobuttons(self, option='RvsQ'):
         status_RvsQ = False
@@ -4519,9 +4525,6 @@ Do you want to try to restore the working reduction list?""",
         self.stitchingAsciiWidgetObject.updateDisplay(isylog=_isylog, isxlog=_isxlog)
 
     def replot_reduced_data(self):
-        '''
-        plot the data after reduction
-        '''
         bigTableData = self.bigTableData
         nbr_row = self.ui.reductionTable.rowCount()
 
@@ -4697,6 +4700,8 @@ Do you want to try to restore the working reduction list?""",
             return [_final_y_axis, _final_e_axis]
 
         # Log(R) vs Q
+	# make sure there is no <= 0 values of _y_axis
+	_y_axis[_y_axis <=0] = np.nan
         _final_y_axis = np.log(_y_axis)
 #    _final_e_axis = np.log(_e_axis)
         _final_e_axis = _e_axis  ## FIXME

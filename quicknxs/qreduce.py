@@ -1683,9 +1683,6 @@ class LRDataset(object):
             #peaks=pf.getPeaks()
             pf = PeakFinderDerivation(range(len(output.ycountsdata)), output.ycountsdata)
             [peak1, peak2]  = pf.getPeaks()
-            print peak1
-            print peak2
-            print 'peak1 and peak2'
             output.peak = [str(peak1), str(peak2)]
 
             backOffsetFromPeak = read_options['back_offset_from_peak']
