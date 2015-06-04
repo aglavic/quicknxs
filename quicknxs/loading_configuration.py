@@ -3,7 +3,7 @@ from logging import info
 import os
 from xml.dom import minidom
 from numpy import empty
-from qreduce import LConfigDataset
+from lconfigdataset import LConfigDataset
 
 class LoadingConfiguration(object):
 	
