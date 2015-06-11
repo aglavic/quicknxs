@@ -4026,7 +4026,6 @@ Do you want to try to restore the working reduction list?""",
         # put back info in right place
         self.bigTableData[r,2] = data
 
-
     def getTrueCurrentRowColumnSelected(self):
         '''
         will determine the current row and column selected in the big Table.

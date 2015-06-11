@@ -230,53 +230,58 @@ class REFLReduction(object):
 			if lowResNormAxisPixelRange[0] == lowResNormAxisPixelRange[1]:
 				lowResNormAxisPixelRangeFlag = False
 			
-			tofRange = [float(configObject.tof_range[0]), float(configObject.tof_range[-1])]
+			if float(configObject.tof_range[0]) < 100:
+				tofRange = [float(configObject.tof_range[0])*1000., float(configObject.tof_range[-1])*1000.]
+			else:
+				tofRange = [float(configObject.tof_range[0]), float(configObject.tof_range[-1])]
+			
 #            qmin = str(configObject.q_range[0])
 			outputWorkspace = str("reflectivity_%s" % runNumbers[0])
 			listWorkspaces.append(outputWorkspace)
 
-			print '-> RunNumbers:'
-			print runNumbers
-			print '-> NormalizationRunNumber: ' 
-			print normalizationRunNumbers
-			print '-> SignalPeakPixelRange: '
-			print signalPeakPixelRange
-			print '-> SubtracSignalBackground: '
-			print subtractSignalBackground
-			print '-> SignalBackgroundPixelRange: '
-			print signalBackgroundPixelRange
-			print '-> NormFlag: '
-			print normFlag
-			print '-> NormPeakPixelRange: '
-			print normPeakPixelRange
-			print '-> NormBackgroundPixelRange: '
-			print normBackgroundPixelRange
-			print '-> SubtracNormBackground: '
-			print subtractNormBackground
-			print '-> LowResDataAxisPixelRangeFlag: '
-			print lowResDataAxisPixelRangeFlag
-			print '-> LowRessDataAxisPixelRange: '
-			print lowResDataAxisPixelRange
-			print '-> LowResNormAxisPixelRangeFlag: '
-			print lowResNormAxisPixelRangeFlag
-			print '-> LowResNormAxisPixelRange: '
-			print lowResNormAxisPixelRange
-			print '-> TOFRange: '
-			print tofRange
-			print '-> incidentMediumSelected: '
-			print incidentMediumSelected
-			print '-> GeometryCorrectionFlag: '
-			print geometryCorrectionFlag
-			print '-> Qmin: '
-			print qmin
-			print '-> QStep: '
-			print qstep
-			print '-> ScalingFactorFile: '
-			print scalingFactorFile
-			print '-> SlitsWidthsFlag: '
-			print slitsWidthFlag
-			print '-> Outputworkspace: '
-			print outputWorkspace
+			if False:
+				print '-> RunNumbers:'
+				print runNumbers
+				print '-> NormalizationRunNumber: ' 
+				print normalizationRunNumbers
+				print '-> SignalPeakPixelRange: '
+				print signalPeakPixelRange
+				print '-> SubtracSignalBackground: '
+				print subtractSignalBackground
+				print '-> SignalBackgroundPixelRange: '
+				print signalBackgroundPixelRange
+				print '-> NormFlag: '
+				print normFlag
+				print '-> NormPeakPixelRange: '
+				print normPeakPixelRange
+				print '-> NormBackgroundPixelRange: '
+				print normBackgroundPixelRange
+				print '-> SubtracNormBackground: '
+				print subtractNormBackground
+				print '-> LowResDataAxisPixelRangeFlag: '
+				print lowResDataAxisPixelRangeFlag
+				print '-> LowRessDataAxisPixelRange: '
+				print lowResDataAxisPixelRange
+				print '-> LowResNormAxisPixelRangeFlag: '
+				print lowResNormAxisPixelRangeFlag
+				print '-> LowResNormAxisPixelRange: '
+				print lowResNormAxisPixelRange
+				print '-> TOFRange: '
+				print tofRange
+				print '-> incidentMediumSelected: '
+				print incidentMediumSelected
+				print '-> GeometryCorrectionFlag: '
+				print geometryCorrectionFlag
+				print '-> Qmin: '
+				print qmin
+				print '-> QStep: '
+				print qstep
+				print '-> ScalingFactorFile: '
+				print scalingFactorFile
+				print '-> SlitsWidthsFlag: '
+				print slitsWidthFlag
+				print '-> Outputworkspace: '
+				print outputWorkspace
 			
 			#thread = REFLReductionThread()
 			#thread.setupReduction(parent=cls,
