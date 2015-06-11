@@ -1639,10 +1639,13 @@ class LRDataset(object):
         output.tof_axis_auto_with_margin = _tof_axis
 
         ## keep only the low resolution range requested
-        low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
-        from_pixel = min(low_res_range)
-        to_pixel = max(low_res_range)
-        output.low_res = [str(from_pixel), str(to_pixel)]
+        from_pixel = 0
+        if output.new_detector_geometry_flag:
+#            low_res_range = [int(read_options['low_res_range'][0]), int(read_options['low_res_range'][1])]
+            to_pixel = 255
+        else:
+            to_pixel = 303
+#            output.low_res = [str(from_pixel), str(to_pixel)]
 
         # keep only low resolution range defined
         Ixyt = Ixyt[from_pixel:to_pixel,:,:]
