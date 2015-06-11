@@ -4122,18 +4122,22 @@ Do you want to try to restore the working reduction list?""",
         _path = self.path_config
         filename = QtGui.QFileDialog.getOpenFileName(self,'Open Configuration File', _path)      
         if not (filename == ""):
-            self.loading_configuration_file(filename)
 
-            if self.reducedFilesLoadedObject is None:
-                _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
-            else:
-                _reducedFilesLoadedObject = self.reducedFilesLoadedObject
-            _reducedFilesLoadedObject.addFile(filename)
-            _reducedFilesLoadedObject.updateGui()
-            self.reducedFilesLoadedObject = _reducedFilesLoadedObject
-
-            self.current_loaded_file = filename
-	    self.resetFileHasBeenModified()
+	    try:
+		self.loading_configuration_file(filename)
+	    
+		if self.reducedFilesLoadedObject is None:
+		    _reducedFilesLoadedObject = ReducedConfigFilesHandler(self)
+		else:
+		    _reducedFilesLoadedObject = self.reducedFilesLoadedObject
+		_reducedFilesLoadedObject.addFile(filename)
+		_reducedFilesLoadedObject.updateGui()
+		self.reducedFilesLoadedObject = _reducedFilesLoadedObject
+		
+		self.current_loaded_file = filename
+		self.resetFileHasBeenModified()
+	    except:
+		warning("Wrong File Format!")
 
     def loading_configuration_file(self, filename):
         self.path_config = os.path.dirname(filename)
