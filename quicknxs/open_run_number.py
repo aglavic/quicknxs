@@ -1,6 +1,7 @@
 from mantid.simpleapi import *
 from logging import info
-from qreduce import NXSData, LConfigDataset
+from qreduce import NXSData
+from lconfigdataset import LConfigDataset
 from display_plots import DisplayPlots
 import nexus_utilities
 
