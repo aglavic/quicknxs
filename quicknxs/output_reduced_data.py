@@ -6,6 +6,7 @@ from export_stitching_ascii_settings import ExportStitchingAsciiSettings
 from mantid.simpleapi import *
 import os
 import utilities
+import numpy as np
 
 
 class OutputReducedData(QDialog):
@@ -130,7 +131,7 @@ class OutputReducedData(QDialog):
 		
 		for i in range(nbrRow):
 			tmp_wks_name = 'wks_' + str(i)
-			_data = _bigTableData[i,0]
+			_data = _bigTableData[i,2]
 			
 			_q_axis = _data.reduce_q_axis
 			_y_axis = _data.reduce_y_axis[:-1]
@@ -215,12 +216,14 @@ class OutputReducedData(QDialog):
 		
 	def applySF(self, _data, y_array, e_array):
 		if self.mainGui.ui.autoSF.isChecked():
-		  _sf = _data.sf_auto
+			_sf = _data.sf_auto
 		elif self.mainGui.ui.manualSF.isChecked():
-		  _sf = _data.sf_manual
+			_sf = _data.sf_manual
 		else:
-		  _sf = 1
+			_sf = 1
 		
+		y_array = np.array(y_array, dtype=np.float)
+		e_array = np.array(e_array, dtype=np.float)
 		y_array /= _sf
 		e_array /= _sf
 		
