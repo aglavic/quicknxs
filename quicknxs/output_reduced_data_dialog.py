@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'designer/output_reduced_data_dialog.ui'
 #
-# Created: Tue Dec 23 15:57:03 2014
+# Created: Fri Jun 12 13:51:37 2015
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -82,7 +82,7 @@ class Ui_Dialog(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">dQ<span style=\" vertical-align:sub;\">0</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.dq0Value.setText(QtGui.QApplication.translate("Dialog", "0.0009", None, QtGui.QApplication.UnicodeUTF8))
+        self.dq0Value.setText(QtGui.QApplication.translate("Dialog", "0.0004", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Dialog", "1/Å", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Dialog", "ΔQ/Q", None, QtGui.QApplication.UnicodeUTF8))
         self.dQoverQvalue.setText(QtGui.QApplication.translate("Dialog", "0.01", None, QtGui.QApplication.UnicodeUTF8))

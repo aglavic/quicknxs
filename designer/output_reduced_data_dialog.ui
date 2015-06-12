@@ -39,7 +39,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLineEdit" name="dq0Value">
          <property name="text">
-          <string>0.0009</string>
+          <string>0.0004</string>
          </property>
         </widget>
        </item>
