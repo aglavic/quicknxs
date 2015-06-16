@@ -4368,7 +4368,7 @@ Do you want to try to restore the working reduction list?""",
             sf = _data.sf_auto
 
     @log_call
-#@waiting_effects
+    @waiting_effects
     def runReduction(self):
 
 	bigTableData = self.bigTableData
@@ -4548,6 +4548,9 @@ Do you want to try to restore the working reduction list?""",
             _y_axis = _data.y_axis_for_display
             _e_axis = _data.e_axis_for_display
             sf = _data.sf
+
+	    _y_axis = np.array(_y_axis, dtype=np.float)
+	    _e_axis = np.array(_e_axis, dtype=np.float)
 
             _y_axis = _y_axis / sf
             _e_axis = _e_axis / sf
