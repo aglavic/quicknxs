@@ -1,0 +1,7 @@
+# to run unit tests
+> cd autopopulatemaintable
+> nosetests -v --rednose
+
+# to run acceptance tests
+> cd ..
+> lettuce -v autopopulatemaintable

@@ -1,0 +1,9 @@
+# to run unit tests
+Move to top folder
+> nosetests --rednose -v tests/
+
+# to run acceptance tests
+> lettuce tests/
+
+# to run all tests
+> paver

@@ -3,9 +3,9 @@ from numpy import empty
 import sys
 from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from maintableautofill import MainTableAutoFill
+from quicknxs.autopopulatemaintable.maintableautofill import MainTableAutoFill
 from mock import MagicMock
-from lconfigdataset import LConfigDataset
+from quicknxs.lconfigdataset import LConfigDataset
 
 
 class TestMainTableAutoFill(unittest.TestCase):
