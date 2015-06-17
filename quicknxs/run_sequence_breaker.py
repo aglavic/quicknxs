@@ -3,9 +3,11 @@ class RunSequenceBreaker(object):
 	final_list = None
 	str_final_list = None
 	
-	def __init__(cls, run_sequence):
+	def __init__(cls, run_sequence=None):
 		final_list = []
 		str_final_list = []
+		if run_sequence is None:
+			return
 		try:
 			# remove white spaces
 			_run_sequence = run_sequence.replace(" ", "")
