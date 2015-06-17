@@ -110,7 +110,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(main_gui, program_main_gui)
 
     def test_check_input_parameters_case6(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty'''
+        ''' Step2 - Assert that LconfigData set correctly loaded '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         main_gui.bigTableData[0:5,2] = LConfigDataset()
@@ -120,7 +120,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertIsInstance(_maintable_big_table_data_3rd_column, LConfigDataset)
         
     def test_check_input_parameters_case7(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty with true reset table'''
+        ''' Step2 - Assert that bigtable data is empty with reset table true '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         main_gui.bigTableData[0:5,2] = LConfigDataset()
@@ -129,8 +129,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_maintable_big_table_data, None)
 
     def test_check_input_parameters_case8(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
-        and they have runs defined '''
+        ''' Step2 - assert first lconfig correctly loaded without reset table '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         _lconfig1 = LConfigDataset()
@@ -147,8 +146,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_first_data_set, '123')
         
     def test_check_input_parameters_case9(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
-        and they have runs defined with reset table'''
+        ''' Step2 - Assert that bigtable data is empty '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         _lconfig1 = LConfigDataset()
@@ -163,8 +161,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_maintable_big_table_data, None)
 
     def test_check_input_parameters_case10(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
-        and they have runs defined '''
+        ''' Step2 - Assert wrong input of data set from lconfigd '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         _lconfig1 = LConfigDataset()
@@ -181,8 +178,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertNotEqual(_first_data_set, '222')
     
     def test_check_input_parameters_case11(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
-        and they have runs defined '''
+        ''' Step2 - Assert correct input of 3rd lconfigdataset '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         _lconfig1 = LConfigDataset()
@@ -199,8 +195,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_first_data_set, '456')
         
     def test_check_input_parameters_case12(self):
-        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
-        and they have runs defined '''
+        ''' Step2 - Assert correct input of first lconfig '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         _lconfig1 = LConfigDataset()
@@ -229,9 +224,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
         maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
         _list_lconfigdatasets_runs = maintable.list_of_run_from_lconfig
-        self.assertEqual(_list_lconfigdatasets_runs, ['123','456','789'])
+        self.assertEqual(_list_lconfigdatasets_runs, [123, 456, 789])
 
-    def test_check_full_list_of_runs_case1(self):
+    def test_check_full_list_of_runs_only_raw_input(self):
         ''' Step2 - Assert that the full list is the given list when reset_table is true'''
         list_of_run_from_input = '10,13,15-19,22'
         maintable = MainTableAutoFill(list_of_run_from_input=list_of_run_from_input, reset_table=True)
@@ -239,5 +234,21 @@ class TestMainTableAutoFill(unittest.TestCase):
         calculated_full_list = maintable.full_list_of_runs
         self.assertEqual(expected_full_list, calculated_full_list)
     
+    def test_check_full_list_of_runs_both_raw_input_input(self):
+        ''' Step2 - Assert that the full list is the given list when reset_table is False and there are files already loaded'''
+        main_gui = MagicMock()
+        main_gui.bigTableData = empty((20,3), dtype=object)
+        _lconfig1 = LConfigDataset()
+        _lconfig1.data_sets = '20'
+        _lconfig2 = LConfigDataset()
+        _lconfig2.data_sets = '22'
+        _lconfig3 = LConfigDataset()
+        _lconfig3.data_sets = '24'
+        main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
+        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        expected_full_list = [1, 2, 20, 22, 24]
+        calculated_full_list = maintable.full_list_of_runs
+        self.assertEqual(expected_full_list, calculated_full_list)
+
 if __name__ == '__main__':
     unittest.main()

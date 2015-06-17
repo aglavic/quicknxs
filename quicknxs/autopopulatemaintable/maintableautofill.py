@@ -30,10 +30,10 @@ class MainTableAutoFill(object):
         _full_list_of_runs = []
         if self.list_of_run_from_input is not None:
             for _run in self.list_of_run_from_input:
-                _full_list_of_runs.append(_run)
+                _full_list_of_runs.append(int(_run))
         if self.list_of_run_from_lconfig is not None:
             for _run in self.list_of_run_from_lconfig:      
-                _full_list_of_runs.append(_run) 
+                _full_list_of_runs.append(int(_run))
         self.full_list_of_runs = _full_list_of_runs
 
     def calculate_discrete_list_of_runs(self):
