@@ -109,7 +109,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(main_gui, program_main_gui)
 
     def test_check_input_parameters_case6(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty'''
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty'''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         main_gui.bigTableData[0:5,2] = LConfigDataset()
@@ -119,7 +119,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertIsInstance(_maintable_big_table_data_3rd_column, LConfigDataset)
         
     def test_check_input_parameters_case7(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty with true reset table'''
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty with true reset table'''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         main_gui.bigTableData[0:5,2] = LConfigDataset()
@@ -128,7 +128,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_maintable_big_table_data, None)
 
     def test_check_input_parameters_case8(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
         and they have runs defined '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
@@ -146,7 +146,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_first_data_set, '123')
         
     def test_check_input_parameters_case9(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
         and they have runs defined with reset table'''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
@@ -162,7 +162,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_maintable_big_table_data, None)
 
     def test_check_input_parameters_case10(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
         and they have runs defined '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
@@ -180,7 +180,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertNotEqual(_first_data_set, '222')
     
     def test_check_input_parameters_case11(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
         and they have runs defined '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
@@ -198,7 +198,7 @@ class TestMainTableAutoFill(unittest.TestCase):
         self.assertEqual(_first_data_set, '456')
         
     def test_check_input_parameters_case12(self):
-        ''' Ste2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
+        ''' Step2 - Make sure that if data have been loaded, the 3rd column of bigTable is not empty
         and they have runs defined '''
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)

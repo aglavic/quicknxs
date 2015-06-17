@@ -1,4 +1,7 @@
-from runsequencebreaker import RunSequenceBreaker
+import sys
+from os import path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from quicknxs.run_sequence_breaker import RunSequenceBreaker
 
 class MainTableAutoFill(object):
 
@@ -30,7 +33,9 @@ class MainTableAutoFill(object):
         main_gui = cls.main_gui
         if main_gui is None:
             return
-        cls.big_table_data = main_gui.bigTableData
+        _big_table_data = main_gui.bigTableData
+        cls.big_table_data = _big_table_data
+        extract_runs = ExtractLConfigDataSetRuns(_big_table_data[:,2])
 
 if __name__ == "__main__":
     maintable = MainTableAutoFill('1,2,3,5-10,15,16', reset_table=True)
