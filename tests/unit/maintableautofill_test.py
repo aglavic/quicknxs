@@ -13,7 +13,6 @@ class TestMainTableAutoFill(unittest.TestCase):
     def setUp(self):
         ''''setup variables used by tests '''
         self.list_of_run_from_input = "1,2"
-        pass
 
     ## step0 ##
     def test_null_raw_list(self):
@@ -54,19 +53,19 @@ class TestMainTableAutoFill(unittest.TestCase):
 
     ## step1 ##
     def test_list_of_files_case1(self):
-        ''' Step1 - check discrete list of files - [1, 2, 3, 4, 5]'''
+        ''' Step1 - check discrete list of files - "1, 2, 3, 4, 5" '''
         maintable = MainTableAutoFill(list_of_run_from_input='1, 2, 3, 4, 5')
         data_list = maintable.list_of_run_from_input
         self.assertEqual(data_list, [1, 2, 3, 4, 5])
         
     def test_list_of_files_case2(self):
-        ''' Step1 - check discrete list of files - [1, 2, 3, 5-10, 15, 16]'''
+        ''' Step1 - check discrete list of files - "1, 2, 3, 5-10, 15, 16" '''
         maintable = MainTableAutoFill(list_of_run_from_input='1, 2, 3, 5-10, 15, 16')
         data_list = maintable.list_of_run_from_input
         self.assertEqual(data_list, [1, 2, 3, 5, 6, 7, 8, 9, 10, 15, 16])
 
     def test_list_of_files_case3(self):
-        ''' Step1 - check discrete list of files - [1, 5-10, 15, 16, 20-22]'''
+        ''' Step1 - check discrete list of files - "1, 5-10, 15, 16, 20-22" '''
         maintable = MainTableAutoFill(list_of_run_from_input='1, 5-10, 15, 16, 20-22')
         data_list = maintable.list_of_run_from_input
         self.assertEqual(data_list, [1, 5, 6, 7, 8, 9, 10, 15, 16, 20, 21, 22])
@@ -249,6 +248,16 @@ class TestMainTableAutoFill(unittest.TestCase):
         expected_full_list = [1, 2, 20, 22, 24]
         calculated_full_list = maintable.full_list_of_runs
         self.assertEqual(expected_full_list, calculated_full_list)
+        
+    def test_threading_case1(self):
+        ''' Assert threading of list of files "1,2,5-8,10,12" '''
+        list_of_run_from_input = "1, 2, 5-8, 10, 12"
+        maintable = MainTableAutoFill(list_of_run_from_input = list_of_run_from_input, reset_table = True)
+        #maintable.loading_all_runs()
+        
+        
+    
+        
 
 if __name__ == '__main__':
     unittest.main()
