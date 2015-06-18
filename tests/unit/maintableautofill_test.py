@@ -251,9 +251,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         
     def test_threading_case1(self):
         ''' Assert threading of list of files "1,2,5-8,10,12" '''
-        list_of_run_from_input = "1, 2, 5-8, 10, 12"
+        list_of_run_from_input = "1, 2, 3, 4"
         maintable = MainTableAutoFill(list_of_run_from_input = list_of_run_from_input, reset_table = True)
-        #maintable.loading_all_runs()
+        maintable.loading_all_runs()
         
         
     

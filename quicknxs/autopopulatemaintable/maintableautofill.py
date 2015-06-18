@@ -4,6 +4,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from quicknxs.run_sequence_breaker import RunSequenceBreaker
 from quicknxs.autopopulatemaintable.extract_lconfigdataset_runs import ExtractLConfigDataSetRuns
 from thread import AThread
+import time
 
 class MainTableAutoFill(object):
 
@@ -39,11 +40,23 @@ class MainTableAutoFill(object):
         
     def loading_all_runs(self):
         _list_of_runs = self.full_list_of_runs
-        for _run in _list_of_runs:
-            thread = AThread(_run)
-            thread.start()
-            
+        self.number_of_runs = len(_list_of_runs)
+        self.runs_loaded = 0
+        self.init_thread_array(len(_list_of_runs))
+        for index, _run in enumerate(_list_of_runs):
+            _thread = self.thread_array[index]
+            _thread.setup(self, _run)
+            _thread.start()
+
+        while (self.runs_loaded < self.number_of_runs):
+            time.sleep(0.5)
         
+    def init_thread_array(self, sz):
+        _thread_array = []
+        for i in range(sz):
+            _thread_array.append(AThread())
+        self.thread_array = _thread_array
+
     def calculate_discrete_list_of_runs(self):
         _raw_run_from_input = self.raw_run_from_input
         sequence_breaker = RunSequenceBreaker(_raw_run_from_input)
