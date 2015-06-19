@@ -1,4 +1,5 @@
 MANIFEST.in
+README
 compile_gui.sh
 setup.cfg
 setup.py
@@ -93,6 +94,7 @@ icons/addRef.png
 icons/addRef.svg
 icons/autoRef.png
 icons/autoRef.svg
+icons/clear.png
 icons/clearNorm.png
 icons/clearNorm.svg
 icons/clearRef.png
@@ -125,6 +127,7 @@ icons/logo.svg
 icons/logo_hq.png
 icons/logo_refl.png
 icons/logo_refl_hq.png
+icons/magnifier.png
 icons/plotSettings.png
 icons/reduce.png
 icons/reduce.svg
@@ -186,6 +189,7 @@ quicknxs/initialize_gui.py
 quicknxs/ipython_tools.py
 quicknxs/ipython_widget.py
 quicknxs/isis_calculate_sf.py
+quicknxs/lconfigdataset.py
 quicknxs/load_and_sort_nxsdata_for_sf_calculator.py
 quicknxs/load_nx_data.py
 quicknxs/load_sf_config_and_populate_gui.py
@@ -236,6 +240,8 @@ quicknxs/reduction_mantid.py
 quicknxs/reduction_quicknxs.py
 quicknxs/reduction_sf_calculator.py
 quicknxs/refl_main_gui.py
+quicknxs/refl_reduction_thread.py
+quicknxs/reflpeakfinder.py
 quicknxs/refm_main_gui.py
 quicknxs/run_sequence_breaker.py
 quicknxs/selection_bigTable_changed.py
@@ -348,10 +354,3 @@ quicknxs/htmldoc/yregion.png
 quicknxs/htmldoc/yregionmap.png
 scripts/quicknxs
 tests/__init__.py
-tests/isis_calculate_sf_test.py
-tests/main_gui_test.py
-tests/qcalc_test.py
-tests/qio_test.py
-tests/qreduce_test.py
-tests/test1_event.nxs
-tests/test1_histo.nxs

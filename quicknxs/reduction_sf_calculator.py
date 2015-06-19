@@ -108,14 +108,14 @@ class ReductionSfCalculator(object):
 				pair = item.strip().split(':')
 				run_list.append(int(pair[0]))
 				att_list.append(int(pair[1]))
-			
+				
 			LRScalingFactors(DirectBeamRuns = run_list,
 			                 Attenuators = att_list,
-			                 IncidentMedium = incident_medium,
+			                 IncidentMedium = str(incident_medium),
 			                 TOFRange = tof_range, TOFSteps = 200,
 			                 SignalPeakPixelRange = peak_ranges, 
 			                 SignalBackgroundPixelRange = bck_ranges,
-			                 ScalingFactorFile= output_file_name)
+			                 ScalingFactorFile= str(output_file_name))
 			
 		else:
 			sfCalculator.calculate(string_runs = string_runs,
@@ -169,7 +169,7 @@ class ReductionSfCalculator(object):
 			_script_exe += '"' + incident_medium + '", TOFRange = ['
 			str_tof_list = ', '.join(map(lambda x: str(x), tof_range))
 			_script_exe += str_tof_list + '], TOFSteps=200, '
-			_script_exe += 'SignalBackgroundPixelRange=['
+			_script_exe += 'SignalPeakPixelRange=['
 			str_peak_range = ', '.join(map(lambda x: str(x), peak_ranges))
 			_script_exe += str_peak_range + '], SignalBackgroundPixelRange = ['
 			str_back_range = ', '.join(map(lambda x: str(x), bck_ranges))
