@@ -108,14 +108,14 @@ class ReductionSfCalculator(object):
 				pair = item.strip().split(':')
 				run_list.append(int(pair[0]))
 				att_list.append(int(pair[1]))
-			
+				
 			LRScalingFactors(DirectBeamRuns = run_list,
 			                 Attenuators = att_list,
-			                 IncidentMedium = incident_medium,
+			                 IncidentMedium = str(incident_medium),
 			                 TOFRange = tof_range, TOFSteps = 200,
 			                 SignalPeakPixelRange = peak_ranges, 
 			                 SignalBackgroundPixelRange = bck_ranges,
-			                 ScalingFactorFile= output_file_name)
+			                 ScalingFactorFile= str(output_file_name))
 			
 		else:
 			sfCalculator.calculate(string_runs = string_runs,
@@ -162,30 +162,22 @@ class ReductionSfCalculator(object):
 				att_list.append(int(pair[1]))
 		
 			_script_exe = 'LRScalingFactors(DirectBeamRuns = ['
-			str_run_list = ','.join(map(lambda x: str(x), run_list))
+			str_run_list = ', '.join(map(lambda x: str(x), run_list))
 			_script_exe += str_run_list + '], Attenuators = ['
-			str_att_list = ','.join(map(lambda x: str(x), att_list))
+			str_att_list = ', '.join(map(lambda x: str(x), att_list))
 			_script_exe += str_att_list + '], IncidentMedium = '
 			_script_exe += '"' + incident_medium + '", TOFRange = ['
-			str_tof_list = ','.join(map(lambda x: str(x), tof_range))
+			str_tof_list = ', '.join(map(lambda x: str(x), tof_range))
 			_script_exe += str_tof_list + '], TOFSteps=200, '
-			_script_exe += 'SignalBackgroundPixelRange=['
-			str_peak_range = ','.join(map(lambda x: str(x), peak_ranges))
+			_script_exe += 'SignalPeakPixelRange=['
+			str_peak_range = ', '.join(map(lambda x: str(x), peak_ranges))
 			_script_exe += str_peak_range + '], SignalBackgroundPixelRange = ['
-			str_back_range = ','.join(map(lambda x: str(x), bck_ranges))
+			str_back_range = ', '.join(map(lambda x: str(x), bck_ranges))
 			_script_exe += str_back_range + '], ScalingFactorFile = "'
 			_script_exe += output_file_name + '")'
 			
-			cls.exportScript.append(_script_exe)
-		
-			#LRScalingFactors(DirectBeamRuns = run_list,
-		                         #Attenuators = att_list,
-		                         #IncidentMedium = incident_medium,
-		                         #TOFRange = tof_range, TOFSteps = 200,
-		                         #SignalPeakPixelRange = peak_ranges, 
-		                         #SignalBackgroundPixelRange = bck_ranges,
-		                         #ScalingFactorFile= output_file_name)			
-			
+			cls.export_script.append(_script_exe)
+					
 		else:
 			_script_exe = 'sfCalculator.calculate(string_runs="%s",' %string_runs
 			_script_exe += "list_peak_back=["
