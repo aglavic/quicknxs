@@ -4,6 +4,7 @@ from mantid.simpleapi import *
 from PyQt4 import QtGui
 import sfCalculator
 import time
+from .decorators import waiting_effects
 
 class ReductionSfCalculator(object):
 	
@@ -49,6 +50,7 @@ class ReductionSfCalculator(object):
 				
 		cls.table_settings = _table_settings
 		
+	@waiting_effects
 	def createAndLaunchScripts(cls):
 		scripts = []
 

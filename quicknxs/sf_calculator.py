@@ -105,25 +105,34 @@ class SFcalculator(QtGui.QMainWindow):
 		
 	def initFileMenu(cls):
 		cls.file_menu_object = InitSFCalculatorFileMenu(cls)
-		
+	
 	def launchConfigFile1(cls):
 		SFCalculatorConfigFileLauncher(cls, 0)
+
 	def launchConfigFile2(cls):
 		SFCalculatorConfigFileLauncher(cls, 1)
+
 	def launchConfigFile3(cls):
 		SFCalculatorConfigFileLauncher(cls, 2)
+
 	def launchConfigFile4(cls):
 		SFCalculatorConfigFileLauncher(cls, 3)
+
 	def launchConfigFile5(cls):
 		SFCalculatorConfigFileLauncher(cls, 4)
+
 	def launchConfigFile6(cls):
 		SFCalculatorConfigFileLauncher(cls, 5)
+
 	def launchConfigFile7(cls):
 		SFCalculatorConfigFileLauncher(cls, 6)
+
 	def launchConfigFile8(cls):
 		SFCalculatorConfigFileLauncher(cls, 7)
+
 	def launchConfigFile9(cls):
 		SFCalculatorConfigFileLauncher(cls, 8)
+
 	def launchConfigFile10(cls):
 		SFCalculatorConfigFileLauncher(cls, 9)
 	
