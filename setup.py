@@ -16,16 +16,16 @@ except ImportError:
   pass
 
 
-__package_name__='QuickNXS'
+__package_name__='QuickNXSL'
 __author__="Jean Bilheux"
-__copyright__="Copyright 2012-2013"
+__copyright__="Copyright 2012-2015"
 __license__="GPL v3"
 __email__="bilheuxjm@ornl.gov"
 __author_email__=__email__
 __url__="http://"
 __description__='''Liquids reflectometer data reduction software'''
 
-__scripts__=['scripts/quicknxs']
+__scripts__=['scripts/quicknxsl']
 __py_modules__=[]
 __package_dir__={}
 __packages__=['quicknxs', 'quicknxs.config']
@@ -75,7 +75,7 @@ elif 'py2app' in sys.argv:
   import py2app #@UnusedImport @UnresolvedImport
   __data_files__=[]
   __options__={
-               'app': ["scripts/quicknxs"],
+               'app': ["scripts/quicknxsl"],
                'options': {'py2app': {
                           'optimize': 1,
                           'compressed': False,
@@ -145,5 +145,5 @@ setup(name=__package_name__,
 
 if 'py2app' in sys.argv:
   # add qt.conf which fixes issues with the app and a currently installed qt4 library
-  open('dist/QuickNXS.app/Contents/Resources/qt.conf', 'w').write(open('dist_data/qt.conf', 'r').read())
+  open('dist/QuickNXSL.app/Contents/Resources/qt.conf', 'w').write(open('dist_data/qt.conf', 'r').read())
   
