@@ -15,6 +15,7 @@ class ReductionSfCalculator(object):
 	index_col = [0,1,5,10,11,12,13,14,15]
 	nbr_row = -1
 	nbr_scripts = 0
+	new_sfcalculator_script = True
 	
 	def __init__(cls, parent=None, export_script_flag=False):
 		cls.sf_gui = parent
@@ -91,44 +92,118 @@ class ReductionSfCalculator(object):
 			createAsciiFile(cls.export_script_file, cls.export_script)
 
 	def launchScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
-		sfCalculator.calculate(string_runs = string_runs,
-		                       list_peak_back = list_peak_back,
-		                       incident_medium = incident_medium,
-		                       output_file_name = output_file_name,
-		                       tof_range = tof_range)
+		if cls.new_sfcalculator_script:
+			peak_ranges = []
+			bck_ranges = []
+			for item in list_peak_back:
+				peak_ranges.append(int(item[0]))
+				peak_ranges.append(int(item[1]))
+				bck_ranges.append(int(item[2]))
+				bck_ranges.append(int(item[3]))
+			
+			run_list = []
+			att_list = []
+			toks = string_runs.strip().split(',')
+			for item in toks:
+				pair = item.strip().split(':')
+				run_list.append(int(pair[0]))
+				att_list.append(int(pair[1]))
+			
+			LRScalingFactors(DirectBeamRuns = run_list,
+			                 Attenuators = att_list,
+			                 IncidentMedium = incident_medium,
+			                 TOFRange = tof_range, TOFSteps = 200,
+			                 SignalPeakPixelRange = peak_ranges, 
+			                 SignalBackgroundPixelRange = bck_ranges,
+			                 ScalingFactorFile= output_file_name)
+			
+		else:
+			sfCalculator.calculate(string_runs = string_runs,
+			                       list_peak_back = list_peak_back,
+			                       incident_medium = incident_medium,
+			                       output_file_name = output_file_name,
+			                       tof_range = tof_range)
 
 	def prepareExportScript(cls):
 		script = []
-		script.append('# quicksNXS sfCalculator scaling factor calculation script\n')
+		if cls.new_sfcalculator_script:			
+			script.append('# quicksNXS LRScalingFactors scaling factor calculation script\n')
+		else:
+			script.append('# quicksNXS sfCalculator scaling factor calculation script\n')
 		_date = time.strftime("%d_%m_%Y")
 		script.append('# Script  automatically generated on ' + _date + '\n')
 		script.append('\n')
 		script.append('import os\n')
 		script.append('import mantid\n')
 		script.append('from mantid.simpleapi import *\n')
-		script.append('import sfCalculator\n')
+		if not cls.new_sfcalculator_script:
+			script.append('import sfCalculator\n')
 		cls.export_script = script
 
 	def exportScript(cls, string_runs = '', list_peak_back=[], incident_medium = '', output_file_name = '', tof_range = []):
 		filename = cls.export_script_file
 		cls.export_script.append('\n')
-		_script_exe = 'sfCalculator.calculate(string_runs="%s",' %string_runs
-		_script_exe += "list_peak_back=["
+
+		if cls.new_sfcalculator_script:
+			peak_ranges = []
+			bck_ranges = []
+			for item in list_peak_back:
+				peak_ranges.append(int(item[0]))
+				peak_ranges.append(int(item[1]))
+				bck_ranges.append(int(item[2]))
+				bck_ranges.append(int(item[3]))
 		
-		[nbr_row, nbr_col] = list_peak_back.shape
+			run_list = []
+			att_list = []
+			toks = string_runs.strip().split(',')
+			for item in toks:
+				pair = item.strip().split(':')
+				run_list.append(int(pair[0]))
+				att_list.append(int(pair[1]))
 		
-		_list = []
-		for _row in range(nbr_row):
-			_peak_back = list_peak_back[_row]
-			_term = "[%d,%d,%d,%d]"%(_peak_back[0], _peak_back[1], _peak_back[2], _peak_back[3])
-			_list.append(_term)
-		_script_exe += ",".join(_list) + "],"
+			_script_exe = 'LRScalingFactors(DirectBeamRuns = ['
+			str_run_list = ','.join(map(lambda x: str(x), string_runs))
+			_script_exe += str_run_list + '], Attenuators = ['
+			str_att_list = ','.join(map(lambda x: str(x), att_list))
+			_script_exe += str_att_list + '], IncidentMedium = '
+			_script_exe += '"' + incident_medium + '", TOFRange = ['
+			str_tof_list = ','.join(map(lambda x: str(x), tof_range))
+			_script_exe += str_tof_list + '], TOFSteps=200, '
+			_script_exe += 'SignalBackgroundPixelRange=['
+			str_peak_range = ','.join(map(lambda x: str(x), peak_ranges))
+			_script_exe += str_peak_range + '], SignalBackgroundPixelRange = ['
+			str_back_range = ','.join(map(lambda x: str(x), bck_ranges))
+			_script_exe += str_back_range + '], ScalingFactorFile = "'
+			_script_exe += output_file_name + '")'
+			
+			cls.exportScript.append(_script_exe)
 		
-		_script_exe += 'incident_medium="%s",' % incident_medium
-		_script_exe += 'output_file_name="%s",' % output_file_name
-		_script_exe += "tof_range=[%f,%f])\n" % (tof_range[0],tof_range[1]) 
-		
-		cls.export_script.append(_script_exe)
+			#LRScalingFactors(DirectBeamRuns = run_list,
+		                         #Attenuators = att_list,
+		                         #IncidentMedium = incident_medium,
+		                         #TOFRange = tof_range, TOFSteps = 200,
+		                         #SignalPeakPixelRange = peak_ranges, 
+		                         #SignalBackgroundPixelRange = bck_ranges,
+		                         #ScalingFactorFile= output_file_name)			
+			
+		else:
+			_script_exe = 'sfCalculator.calculate(string_runs="%s",' %string_runs
+			_script_exe += "list_peak_back=["
+			
+			[nbr_row, nbr_col] = list_peak_back.shape
+			
+			_list = []
+			for _row in range(nbr_row):
+				_peak_back = list_peak_back[_row]
+				_term = "[%d,%d,%d,%d]"%(_peak_back[0], _peak_back[1], _peak_back[2], _peak_back[3])
+				_list.append(_term)
+			_script_exe += ",".join(_list) + "],"
+			
+			_script_exe += 'incident_medium="%s",' % incident_medium
+			_script_exe += 'output_file_name="%s",' % output_file_name
+			_script_exe += "tof_range=[%f,%f])\n" % (tof_range[0],tof_range[1]) 
+			
+			cls.export_script.append(_script_exe)
 
 	def refreshOutputFileContainPreview(cls, output_file_name):
 		cls.sf_gui.displayConfigFile(output_file_name)
