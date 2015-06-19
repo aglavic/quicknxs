@@ -162,7 +162,7 @@ class ReductionSfCalculator(object):
 				att_list.append(int(pair[1]))
 		
 			_script_exe = 'LRScalingFactors(DirectBeamRuns = ['
-			str_run_list = ','.join(map(lambda x: str(x), string_runs))
+			str_run_list = ','.join(map(lambda x: str(x), run_list))
 			_script_exe += str_run_list + '], Attenuators = ['
 			str_att_list = ','.join(map(lambda x: str(x), att_list))
 			_script_exe += str_att_list + '], IncidentMedium = '
