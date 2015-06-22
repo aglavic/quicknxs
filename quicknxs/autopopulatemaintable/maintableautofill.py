@@ -48,6 +48,7 @@ class MainTableAutoFill(object):
     def run(self):
         self.locate_runs()
         self.loading_runs()
+        self.sorting_runs()
         
     def locate_runs(self):
         _list_of_runs = self.full_list_of_runs
@@ -64,6 +65,9 @@ class MainTableAutoFill(object):
         
     def loading_runs(self):
         _list_full_file_name = self.list_full_file_name
+        if len(_list_full_file_name) < 2:
+            return
+        
         self.runs_loaded = 0
         self.number_of_runs = len(_list_full_file_name)
         self.init_loaded_thread_array(len(_list_full_file_name))
@@ -74,6 +78,15 @@ class MainTableAutoFill(object):
     
         while (self.runs_loaded < self.number_of_runs):
             time.sleep(0.5)
+
+
+    def sorting_runs(self):
+        if len(_list_full_file_name) < 2:
+            return
+        
+        pass
+    
+    
 
     def init_filename_thread_array(self, sz):
         _filename_thread_array = []

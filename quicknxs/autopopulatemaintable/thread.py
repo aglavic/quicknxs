@@ -17,8 +17,12 @@ class LocateRunThread(QtCore.QThread):
     
     def run(self):
         full_file_name = nexus_utilities.findNeXusFullPath(self.run_number)
-        self.parent.list_full_file_name[self.index] = full_file_name
-        self.parent.runs_found += 1
+        if full_file_name == '':
+            self.parent.number_of_runs = self.parent.number_of_runs - 1
+            self.parent.list_full_file_name.pop()
+        else:
+            self.parent.list_full_file_name[self.index] = full_file_name
+            self.parent.runs_found += 1
             
     def stop(self):
         pass

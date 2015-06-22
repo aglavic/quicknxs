@@ -277,8 +277,8 @@ class TestMainTableAutoFill(unittest.TestCase):
         calculated_full_list = maintable.full_list_of_runs
         self.assertEqual(expected_full_list, calculated_full_list)
         
-    def test_threading_case1(self):
-        ''' Assert threading of list of files "1,2,5-8,10,12" '''
+    def test_retrieving_full_file_name(self):
+        ''' Assert retrieving nexus file name '''
         list_of_run_from_input = "1, 2, 3, 4"
         maintable = MainTableAutoFill(list_of_run_from_input = list_of_run_from_input, 
                                       reset_table = True)
@@ -287,6 +287,16 @@ class TestMainTableAutoFill(unittest.TestCase):
             maintable.locate_runs()
             self.assertEqual(maintable.list_full_file_name[0], 'nexus_full_file_name.nxs')
     
+    def test_failing_retrieving_any_of_the_file_name(self):
+        ''' Assert failing retrieving any of the file name '''
+        list_of_run_from_input = "1, 2, 3, 4"
+        maintable = MainTableAutoFill(list_of_run_from_input = list_of_run_from_input, 
+                                      reset_table = True)
+        with patch('nexus_utilities.findNeXusFullPath', 
+                   MagicMock(return_value="")) as mock:
+            maintable.locate_runs()
+            self.assertEqual(len(maintable.list_full_file_name), 0)
+
     def test_retrieving_metadata(self):
         ''' Assert retrieving metadata of full_file_name ['file1.nxs'] '''
         nxs1 = MagicMock()
@@ -301,7 +311,20 @@ class TestMainTableAutoFill(unittest.TestCase):
             maintable.loading_runs()
             list_nxs = maintable.list_nxs
             self.assertEqual(list_nxs[0].active_data.full_file_name, list_full_file_name[0])
-            
+
+    def test_retrieving_metadata_when_no_file_found(self):
+        ''' Assert retrieving metadata when no file has been found '''
+        maintable = MainTableAutoFill(list_of_run_from_input = [''], reset_table = True)
+        nxs1 = MagicMock()
+        with patch('qreduce.NXSData', MagicMock(return_value=nxs1)) as mock:
+            maintable.loading_runs()
+            list_nxs = maintable.list_nxs
+            self.assertEqual(list_nxs, [])
+
+    def test_sorting_runs(self):
+        ''' Assert 3 runs are correctly sorted according '''
+        
+
 
 if __name__ == '__main__':
     unittest.main()
