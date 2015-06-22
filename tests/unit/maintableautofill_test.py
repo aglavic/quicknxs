@@ -2,11 +2,14 @@ import unittest
 from numpy import empty
 import sys
 from os import path
+from mock import MagicMock, patch
+sys.modules['mantid'] = MagicMock()
+sys.modules['mantid.simpleapi'] = MagicMock()
+sys.modules['nexus_utilities'] = MagicMock()
+sys.modules['qreduce'] = MagicMock()
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from quicknxs.autopopulatemaintable.maintableautofill import MainTableAutoFill
-from mock import MagicMock
 from quicknxs.lconfigdataset import LConfigDataset
-
 
 class TestMainTableAutoFill(unittest.TestCase):
     
@@ -74,21 +77,26 @@ class TestMainTableAutoFill(unittest.TestCase):
     def test_check_input_parameters_case1(self):
         ''' Step2 - check that there are no pre-loaded data in BigTableData (3rd column)'''
         main_gui = None
-        maintable = MainTableAutoFill(main_gui = main_gui, list_of_run_from_input = self.list_of_run_from_input)
+        maintable = MainTableAutoFill(main_gui = main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input)
         program_main_gui = maintable.main_gui
         self.assertEqual(main_gui, program_main_gui)
 
     def test_check_input_parameters_case2(self):
         ''' Step2 - check that there are no pre-loaded data in BigTableData (3rd column) with a false reset table flag'''
         main_gui = None
-        maintable = MainTableAutoFill(main_gui = main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table=False)
+        maintable = MainTableAutoFill(main_gui = main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table=False)
         program_main_gui = maintable.main_gui
         self.assertEqual(main_gui, program_main_gui)
         
     def test_check_input_parameters_case3(self):
         ''' Step2 - check that there are no pre-loaded data in BigTableData (3rd column) with a true reset table flag'''
         main_gui = None
-        maintable = MainTableAutoFill(main_gui = main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table=True)
+        maintable = MainTableAutoFill(main_gui = main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table=True)
         program_main_gui = maintable.main_gui
         self.assertEqual(main_gui, program_main_gui)
 
@@ -96,7 +104,8 @@ class TestMainTableAutoFill(unittest.TestCase):
         ''' Step2 - check that there are no pre-loaded data in BigTableData (3rd column)'''
         main_gui = MagicMock()
         main_gui.BigTableData = empty((20,3), dtype=object)
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input)
         program_main_gui = maintable.main_gui
         self.assertEqual(main_gui, program_main_gui)
     
@@ -104,7 +113,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         ''' Step2 - check that there are no pre-loaded data in BigTableData (3rd column) with true reset table'''
         main_gui = MagicMock()
         main_gui.BigTableData = empty((20,3), dtype=object)
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table=True)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table=True)
         program_main_gui = maintable.main_gui
         self.assertEqual(main_gui, program_main_gui)
 
@@ -113,7 +124,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         main_gui.bigTableData[0:5,2] = LConfigDataset()
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = False)
         _maintable_big_table_data = maintable.big_table_data
         _maintable_big_table_data_3rd_column = _maintable_big_table_data[0,2]
         self.assertIsInstance(_maintable_big_table_data_3rd_column, LConfigDataset)
@@ -123,7 +136,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         main_gui = MagicMock()
         main_gui.bigTableData = empty((20,3), dtype=object)
         main_gui.bigTableData[0:5,2] = LConfigDataset()
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = True)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = True)
         _maintable_big_table_data = maintable.big_table_data
         self.assertEqual(_maintable_big_table_data, None)
 
@@ -138,7 +153,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         _lconfig3 = LConfigDataset()
         _lconfig3.data_sets = '789'
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = False)
         _maintable_big_table_data = maintable.big_table_data
         _maintable_big_table_data_3rd_column = _maintable_big_table_data[0:3,2]
         _first_data_set = _maintable_big_table_data_3rd_column[0].data_sets
@@ -155,7 +172,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         _lconfig3 = LConfigDataset()
         _lconfig3.data_sets = '789'
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = True)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = True)
         _maintable_big_table_data = maintable.big_table_data
         self.assertEqual(_maintable_big_table_data, None)
 
@@ -170,7 +189,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         _lconfig3 = LConfigDataset()
         _lconfig3.data_sets = '789'
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = False)
         _maintable_big_table_data = maintable.big_table_data
         _maintable_big_table_data_3rd_column = _maintable_big_table_data[0:3,2]
         _first_data_set = _maintable_big_table_data_3rd_column[0].data_sets
@@ -187,7 +208,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         _lconfig3 = LConfigDataset()
         _lconfig3.data_sets = '789'
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = False)
         _maintable_big_table_data = maintable.big_table_data
         _maintable_big_table_data_3rd_column = _maintable_big_table_data[0:3,2]
         _first_data_set = _maintable_big_table_data_3rd_column[1].data_sets
@@ -221,14 +244,17 @@ class TestMainTableAutoFill(unittest.TestCase):
         _lconfig3 = LConfigDataset()
         _lconfig3.data_sets = '789'
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = False)
         _list_lconfigdatasets_runs = maintable.list_of_run_from_lconfig
         self.assertEqual(_list_lconfigdatasets_runs, [123, 456, 789])
 
     def test_check_full_list_of_runs_only_raw_input(self):
         ''' Step2 - Assert that the full list is the given list when reset_table is true'''
         list_of_run_from_input = '10,13,15-19,22'
-        maintable = MainTableAutoFill(list_of_run_from_input=list_of_run_from_input, reset_table=True)
+        maintable = MainTableAutoFill(list_of_run_from_input=list_of_run_from_input, 
+                                      reset_table=True)
         expected_full_list = [10, 13, 15, 16, 17, 18, 19, 22]
         calculated_full_list = maintable.full_list_of_runs
         self.assertEqual(expected_full_list, calculated_full_list)
@@ -244,7 +270,9 @@ class TestMainTableAutoFill(unittest.TestCase):
         _lconfig3 = LConfigDataset()
         _lconfig3.data_sets = '24'
         main_gui.bigTableData[0:3,2] = [_lconfig1, _lconfig2, _lconfig3]
-        maintable = MainTableAutoFill(main_gui= main_gui, list_of_run_from_input = self.list_of_run_from_input, reset_table = False)
+        maintable = MainTableAutoFill(main_gui= main_gui, 
+                                      list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = False)
         expected_full_list = [1, 2, 20, 22, 24]
         calculated_full_list = maintable.full_list_of_runs
         self.assertEqual(expected_full_list, calculated_full_list)
@@ -252,12 +280,28 @@ class TestMainTableAutoFill(unittest.TestCase):
     def test_threading_case1(self):
         ''' Assert threading of list of files "1,2,5-8,10,12" '''
         list_of_run_from_input = "1, 2, 3, 4"
-        maintable = MainTableAutoFill(list_of_run_from_input = list_of_run_from_input, reset_table = True)
-        maintable.loading_all_runs()
-        
-        
+        maintable = MainTableAutoFill(list_of_run_from_input = list_of_run_from_input, 
+                                      reset_table = True)
+        with patch('nexus_utilities.findNeXusFullPath', 
+                   MagicMock(return_value="nexus_full_file_name.nxs")) as mock:
+            maintable.locate_runs()
+            self.assertEqual(maintable.list_full_file_name[0], 'nexus_full_file_name.nxs')
     
-        
+    def test_retrieving_metadata(self):
+        ''' Assert retrieving metadata of full_file_name ['file1.nxs'] '''
+        nxs1 = MagicMock()
+        nxs1.active_data.lambda_requested = 12
+        nxs1.active_data.theta = 5
+        nxs1.active_data.full_file_name = 'file1.nxs'
+        maintable = MainTableAutoFill(list_of_run_from_input = self.list_of_run_from_input, 
+                                      reset_table = True)
+        list_full_file_name = ['file1.nxs','file2.nxs']
+        with patch('qreduce.NXSData', MagicMock(return_value=nxs1)) as mock:
+            maintable.list_full_file_name = list_full_file_name
+            maintable.loading_runs()
+            list_nxs = maintable.list_nxs
+            self.assertEqual(list_nxs[0].active_data.full_file_name, list_full_file_name[0])
+            
 
 if __name__ == '__main__':
     unittest.main()

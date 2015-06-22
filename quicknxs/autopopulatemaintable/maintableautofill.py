@@ -1,12 +1,16 @@
 import sys
+import time
 from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from quicknxs.run_sequence_breaker import RunSequenceBreaker
 from quicknxs.autopopulatemaintable.extract_lconfigdataset_runs import ExtractLConfigDataSetRuns
-from thread import AThread
-import time
+from thread import LocateRunThread, LoadRunThread
+import qreduce
 
 class MainTableAutoFill(object):
+
+    list_full_file_name = []
+    list_nxs = []
 
     def __init__(self, main_gui = None, list_of_run_from_input = '', data_type_selected = 'data', reset_table = True):
         if data_type_selected != 'data':
@@ -23,6 +27,9 @@ class MainTableAutoFill(object):
         self.list_of_run_from_lconfig = None
         self.full_list_of_runs = None
 
+        self.runs_found = 0
+        self.runs_loaded = 0
+
         self.calculate_discrete_list_of_runs() # step1 -> list_new_runs
         
         self.big_table_data = None
@@ -38,24 +45,53 @@ class MainTableAutoFill(object):
                 _full_list_of_runs.append(int(_run))
         self.full_list_of_runs = _full_list_of_runs
         
-    def loading_all_runs(self):
+    def run(self):
+        self.locate_runs()
+        self.loading_runs()
+        
+    def locate_runs(self):
         _list_of_runs = self.full_list_of_runs
         self.number_of_runs = len(_list_of_runs)
-        self.runs_loaded = 0
-        self.init_thread_array(len(_list_of_runs))
+        self.runs_found = 0
+        self.init_filename_thread_array(len(_list_of_runs))
         for index, _run in enumerate(_list_of_runs):
-            _thread = self.thread_array[index]
-            _thread.setup(self, _run)
+            _thread = self.filename_thread_array[index]
+            _thread.setup(self, _run, index)
             _thread.start()
 
-        while (self.runs_loaded < self.number_of_runs):
+        while (self.runs_found < self.number_of_runs):
             time.sleep(0.5)
         
-    def init_thread_array(self, sz):
-        _thread_array = []
+    def loading_runs(self):
+        _list_full_file_name = self.list_full_file_name
+        self.runs_loaded = 0
+        self.number_of_runs = len(_list_full_file_name)
+        self.init_loaded_thread_array(len(_list_full_file_name))
+        for index, _file_name in enumerate(_list_full_file_name):
+            _thread = self.loaded_thread_array[index]
+            _thread.setup(self, _file_name, index)
+            _thread.start()
+    
+        while (self.runs_loaded < self.number_of_runs):
+            time.sleep(0.5)
+
+    def init_filename_thread_array(self, sz):
+        _filename_thread_array = []
+        _list_full_file_name = []
         for i in range(sz):
-            _thread_array.append(AThread())
-        self.thread_array = _thread_array
+            _filename_thread_array.append(LocateRunThread())
+            _list_full_file_name.append('')
+        self.filename_thread_array = _filename_thread_array
+        self.list_full_file_name = _list_full_file_name
+
+    def init_loaded_thread_array(self, sz):
+        _loaded_thread_array = []
+        _list_nxs = []
+        for i in range(sz):
+            _loaded_thread_array.append(LoadRunThread())
+            _list_nxs.append(None)
+        self.loaded_thread_array = _loaded_thread_array
+        self.list_nxs = _list_nxs
 
     def calculate_discrete_list_of_runs(self):
         _raw_run_from_input = self.raw_run_from_input
