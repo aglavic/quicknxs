@@ -26,7 +26,8 @@ class MainTableAutoFill(object):
         self.main_gui = main_gui
         self.list_of_run_from_lconfig = None
         self.full_list_of_runs = None
-
+        self.list_nx_sorted = None
+        
         self.runs_found = 0
         self.runs_loaded = 0
 
@@ -79,14 +80,18 @@ class MainTableAutoFill(object):
         while (self.runs_loaded < self.number_of_runs):
             time.sleep(0.5)
 
-
     def sorting_runs(self):
+        _list_full_file_name = self.list_full_file_name
         if len(_list_full_file_name) < 2:
-            return
-        
-        pass
-    
-    
+            self.list_nxs_sorted = self.list_nxs
+            
+        else:
+            sortList = SortNexusList(parent = self.main_gui, 
+                                     list_nxs = self.list_nxs, 
+                                     criteria1 = ['lambda_requested','decrease'],
+                                     criteria2 = ['theta','increase'])
+            _list_nxs_sorted = sortList.list_nxs_sorted
+            self.list_nxs_sorted = _list_nxs_sorted
 
     def init_filename_thread_array(self, sz):
         _filename_thread_array = []
