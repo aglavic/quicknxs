@@ -94,17 +94,12 @@ class MainTableAutoFill(object):
             self.list_nxs_sorted = self.list_nxs
 
         else:
-            sortList = SortNexusList(parent=self.main_gui,
+            sort_list = SortNexusList(parent=self.main_gui,
                                      list_nxs=self.list_nxs,
                                      criteria1=['lambda_requested', 'decrease'],
                                      criteria2=['theta', 'increase'])
-            _list_nxs_sorted = sortList.list_nxs_sorted
+            _list_nxs_sorted = sort_list.list_nxs_sorted
             self.list_nxs_sorted = _list_nxs_sorted
-
-
-
-
-
 
     def init_filename_thread_array(self, sz):
         _filename_thread_array = []
@@ -139,5 +134,5 @@ class MainTableAutoFill(object):
         self.list_of_run_from_lconfig = _extract_runs.list_runs()
 
 if __name__ == "__main__":
-    maintable = MainTableAutoFill('1,2,3,5-10,15,16', reset_table=True)
+    maintable = MainTableAutoFill('1, 2, 3, 5-10, 15, 16', reset_table=True)
 
