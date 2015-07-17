@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 '''
-  Script used for setup and installation purpose. 
-  
+  Script used for setup and installation purpose.
+
   The script can create exe stand alone programs under windows, but py2app doesn't word until now.
 '''
 
@@ -16,7 +16,7 @@ except ImportError:
   pass
 
 
-__package_name__='QuickNXS'
+__package_name__='QuickNXSL'
 __author__="Jean Bilheux"
 __copyright__="Copyright 2012-2013"
 __license__="GPL v3"
@@ -25,14 +25,14 @@ __author_email__=__email__
 __url__="http://"
 __description__='''Liquids reflectometer data reduction software'''
 
-__scripts__=['scripts/quicknxs']
+__scripts__=['scripts/quicknxsl']
 __py_modules__=[]
 __package_dir__={}
-__packages__=['quicknxs', 'quicknxs.config']
-__package_data__={'quicknxs': ['default_config.cfg', 'htmldoc/*', 'genx_templates/*.gx']}
+__packages__=['quicknxsl', 'quicknxsl.config']
+__package_data__={'quicknxsl': ['default_config.cfg', 'htmldoc/*', 'genx_templates/*.gx']}
 
 __data_files__=[('/usr/share/applications', ['dist_data/sns-quicknxs.desktop']),
-                ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxs.png'])]
+                ('/usr/share/icons/gnome/128x128/apps/', ['dist_data/quicknxsl.png'])]
 
 if "py2exe" in sys.argv:
   import py2exe #@UnusedImport @UnresolvedImport
@@ -52,7 +52,7 @@ if "py2exe" in sys.argv:
   sys.path.append(pexe)
   __options__={
                 "windows": [ {
-                            "script": "scripts/quicknxs",
+                            "script": "scripts/quicknxsl",
                             "icon_resources": [(1, "icons/logo.ico")],
                             }, ], # executable for py2exe is windows application
                 "options": {  "py2exe": {
@@ -75,12 +75,12 @@ elif 'py2app' in sys.argv:
   import py2app #@UnusedImport @UnresolvedImport
   __data_files__=[]
   __options__={
-               'app': ["scripts/quicknxs"],
+               'app': ["scripts/quicknxsl"],
                'options': {'py2app': {
                           'optimize': 1,
                           'compressed': False,
                           'argv_emulation': False,
-                          'iconfile': 'dist_data/quicknxs.icns',
+                          'iconfile': 'dist_data/quicknxsl.icns',
                           'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork'],
                           'packages': ['h5py', 'zmq', 'pygments', 'IPython'],
                           'excludes': [ 'doctest', 'tcl', 'tk', 'Tkinter',
@@ -122,7 +122,7 @@ if ('sdist' in sys.argv or 'py2exe' in sys.argv or 'py2app' in sys.argv) and \
 if '--nocheck' in sys.argv:
   sys.argv.remove('--nocheck')
 
-from quicknxs.version import str_version
+from quicknxsl.version import str_version
 __version__=str_version
 
 #### Run the setup command with the selected parameters ####
@@ -146,4 +146,3 @@ setup(name=__package_name__,
 if 'py2app' in sys.argv:
   # add qt.conf which fixes issues with the app and a currently installed qt4 library
   open('dist/QuickNXS.app/Contents/Resources/qt.conf', 'w').write(open('dist_data/qt.conf', 'r').read())
-  
