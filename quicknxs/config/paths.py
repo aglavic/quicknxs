@@ -3,14 +3,14 @@
 Configured path variables.
 '''
 
-import os, sys
+import os, sys, platform
 
 config_file=''
 from getpass import getuser
 
 # define global path variables usable in config strings or other modules
 HOME=os.path.expanduser(u'~')
-CFG_PATH=os.path.join(HOME, u'.quicknxs')
+CFG_PATH=os.path.join(HOME, u'.quicknxs', platform.node())
 CFG_FILE=os.path.join(CFG_PATH, u'config.cfg')
 if sys.version_info[0]>=3:
   USER=getuser()
