@@ -1,0 +1,12 @@
+# QuickNXS - A tool for reducing data collected at the [Magnetism Reflectometer][1]
+
+This is a fork of [Artur Glavic's][2] project.
+
+To build a distribution, do:
+$ python setup.py sdist
+
+
+## References
+
+[1]: http://neutrons.ornl.gov/mr/
+[2]: https://github.com/aglavic/quicknxs

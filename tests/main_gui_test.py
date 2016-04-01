@@ -8,13 +8,14 @@ from PyQt4.QtCore import QLocale#, Qt
 
 from quicknxs.main_gui import MainGUI
 from quicknxs.qreduce import NXSData, Reflectivity
+from quicknxs.config.paths import CFG_PATH
 
 dot=QLocale().decimalPoint()
 if not isinstance(dot, basestring):
   dot=dot.toAscii()
 
 TEST_DATASET=os.path.join(os.path.dirname(os.path.abspath(__file__)), u'test1_histo.nxs')
-statepath=os.path.join(os.path.expanduser('~/.quicknxs'), 'run_state.dat')
+statepath=os.path.join(CFG_PATH, 'run_state.dat')
 
 class MainGUIGeneral(unittest.TestCase):
   def setUp(self):
