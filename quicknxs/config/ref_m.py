@@ -9,7 +9,7 @@ NAME='REF_M'
 BEAMLINE='4A'
 
 # for the search of files by number
-data_base=u'/SNS/REF_M'
+data_base=u'/home/glavic_a/data/MR/examples'
 BASE_SEARCH=u'*/data/REF_M_%s_'
 OLD_BASE_SEARCH=u'*/*/%s/NeXus/REF_M_%s*'
 LIVE_DATA=u'/SNS/REF_M/shared/LiveData/meta_data.xml'
@@ -46,7 +46,7 @@ DATABASE_ADDITIONAL_FIELDS=[
                             ('s3h', 'S3VHeight', float),
                            ]
 
-database_file=u'/SNS/REF_M/shared/quicknxs_database'
+database_file=u'/home/glavic_a/data/MR/examples/shared/quicknxs_database'
 
 DATABASE_DIRECT_BEAM_COMPARE=[
                               ('s1h', 'S1VHeight', float, 1.0),

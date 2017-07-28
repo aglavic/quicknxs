@@ -18,8 +18,9 @@ except NameError:
 from quicknxs.gui_logging import setup_system, check_runstate
 
 def _run(argv=[]):
-  from PyQt4.QtGui import QApplication, QSplashScreen, QPixmap
-  from PyQt4.QtCore import Qt
+  from PyQt5.QtWidgets import QApplication, QSplashScreen
+  from PyQt5.QtGui import QPixmap
+  from PyQt5.QtCore import Qt
   app=QApplication(argv)
   from quicknxs import icons_rc, version  #@UnusedImport
   splash=QSplashScreen(QPixmap(u':/General/logo_hq.png'))

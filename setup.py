@@ -61,7 +61,7 @@ if "py2exe" in sys.argv:
                                            ],
                               "optimize": 1, # Keep docstring (e.g. Shell usage)
                               "skip_archive": True, # setting not to move compiled code into library.zip file
-                              'packages': ['PyQt4', 'h5py', 'zmq', 'pygments', 'IPython'],
+                              'packages': ['PyQt5', 'h5py', 'zmq', 'pygments', 'IPython'],
                               "dll_excludes": [],
                               'excludes': [ 'doctest', 'tcl', 'tk', 'Tkinter',
                                            '_gtkagg', '_tkagg', '_wxagg',
@@ -81,7 +81,7 @@ elif 'py2app' in sys.argv:
                           'compressed': False,
                           'argv_emulation': False,
                           'iconfile': 'dist_data/quicknxs.icns',
-                          'includes': ['sip', 'PyQt4._qt', 'PyQt4.QtWebKit', 'PyQt4.QtNetwork'],
+                          'includes': ['sip', 'PyQt5._qt', 'PyQt5.QtWebKit', 'PyQt5.QtNetwork'],
                           'packages': ['h5py', 'zmq', 'pygments', 'IPython'],
                           'excludes': [ 'doctest', 'tcl', 'tk', 'Tkinter',
                                        '_gtkagg', '_tkagg', '_wxagg',

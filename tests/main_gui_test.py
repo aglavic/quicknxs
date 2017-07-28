@@ -2,9 +2,9 @@
 
 import os
 import unittest
-from PyQt4.QtGui import QApplication, QMainWindow
-from PyQt4.QtTest import QTest
-from PyQt4.QtCore import QLocale#, Qt
+from PyQt5.QtGui import QApplication, QMainWindow
+from PyQt5.QtTest import QTest
+from PyQt5.QtCore import QLocale#, Qt
 
 from quicknxs.main_gui import MainGUI
 from quicknxs.qreduce import NXSData, Reflectivity

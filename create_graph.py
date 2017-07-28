@@ -21,12 +21,12 @@ for line in dot.splitlines():
     continue
   elif line.startswith('"quicknxs/'):
     line=line.replace('style=filled', 'style=filled, color="#00aa00" shape=box, fontsize=24').replace('quicknxs/', '')
-  if 'PyQt4' in line or 'email' in line or 'scipy' in line or 'matplotlib/' in line or \
+  if 'PyQt5' in line or 'email' in line or 'scipy' in line or 'matplotlib/' in line or \
       'IPython' in line:
     line=line.split('/')[0]+'";'
     if first_add:
       first_add=False
-      out_dot.append('"PyQt4" [style=filled, color="#aa0000", fontsize=36];')
+      out_dot.append('"PyQt5" [style=filled, color="#aa0000", fontsize=36];')
       out_dot.append('"scipy" [style=filled, color="#aaaaff", fontsize=30];')
       out_dot.append('"numpy" [style=filled, color="#0000aa", fontsize=32, fontcolor=white];')
       out_dot.append('"matplotlib" [style=filled, color="#aa00aa", fontsize=32];')

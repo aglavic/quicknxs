@@ -1,72 +1,57 @@
 # -*- coding: utf-8 -*-
-#@PydevCodeAnalysisIgnore
 
 # Form implementation generated from reading ui file 'designer/nxs_widget.ui'
 #
-# Created: Fri Oct 25 12:46:52 2013
-#      by: PyQt4 UI code generator 4.10
+# Created by: PyQt5 UI code generator 5.7
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-  _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-  def _fromUtf8(s):
-    return s
-
-try:
-  _encoding = QtGui.QApplication.UnicodeUTF8
-  def _translate(context, text, disambig):
-    return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-  def _translate(context, text, disambig):
-    return QtGui.QApplication.translate(context, text, disambig)
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_NXSWidget(object):
   def setupUi(self, NXSWidget):
-    NXSWidget.setObjectName(_fromUtf8("NXSWidget"))
+    NXSWidget.setObjectName("NXSWidget")
     NXSWidget.resize(621, 599)
-    self.verticalLayout = QtGui.QVBoxLayout(NXSWidget)
-    self.verticalLayout.setMargin(0)
-    self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-    self.splitter_2 = QtGui.QSplitter(NXSWidget)
+    self.verticalLayout = QtWidgets.QVBoxLayout(NXSWidget)
+    self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+    self.verticalLayout.setObjectName("verticalLayout")
+    self.splitter_2 = QtWidgets.QSplitter(NXSWidget)
     self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
-    self.splitter_2.setObjectName(_fromUtf8("splitter_2"))
-    self.nodeTree = QtGui.QTreeWidget(self.splitter_2)
-    self.nodeTree.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+    self.splitter_2.setObjectName("splitter_2")
+    self.nodeTree = QtWidgets.QTreeWidget(self.splitter_2)
+    self.nodeTree.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
     self.nodeTree.setProperty("showDropIndicator", False)
-    self.nodeTree.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-    self.nodeTree.setObjectName(_fromUtf8("nodeTree"))
-    self.nodeTree.headerItem().setText(0, _fromUtf8("1"))
+    self.nodeTree.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+    self.nodeTree.setObjectName("nodeTree")
+    self.nodeTree.headerItem().setText(0, "1")
     self.nodeTree.header().setVisible(False)
-    self.splitter = QtGui.QSplitter(self.splitter_2)
+    self.splitter = QtWidgets.QSplitter(self.splitter_2)
     self.splitter.setOrientation(QtCore.Qt.Vertical)
-    self.splitter.setObjectName(_fromUtf8("splitter"))
+    self.splitter.setObjectName("splitter")
     self.nodePlotter = MPLWidget(self.splitter)
-    self.nodePlotter.setObjectName(_fromUtf8("nodePlotter"))
-    self.nodeInfoWidget = QtGui.QScrollArea(self.splitter)
+    self.nodePlotter.setObjectName("nodePlotter")
+    self.nodeInfoWidget = QtWidgets.QScrollArea(self.splitter)
     self.nodeInfoWidget.setWidgetResizable(True)
-    self.nodeInfoWidget.setObjectName(_fromUtf8("nodeInfoWidget"))
-    self.scrollAreaWidgetContents = QtGui.QWidget()
+    self.nodeInfoWidget.setObjectName("nodeInfoWidget")
+    self.scrollAreaWidgetContents = QtWidgets.QWidget()
     self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 292, 276))
-    self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
-    self.verticalLayout_2 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
-    self.verticalLayout_2.setMargin(0)
-    self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-    self.nodeInfo = QtGui.QTextEdit(self.scrollAreaWidgetContents)
+    self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+    self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+    self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+    self.verticalLayout_2.setObjectName("verticalLayout_2")
+    self.nodeInfo = QtWidgets.QTextEdit(self.scrollAreaWidgetContents)
     self.nodeInfo.setReadOnly(True)
-    self.nodeInfo.setObjectName(_fromUtf8("nodeInfo"))
+    self.nodeInfo.setObjectName("nodeInfo")
     self.verticalLayout_2.addWidget(self.nodeInfo)
     self.nodeInfoWidget.setWidget(self.scrollAreaWidgetContents)
     self.verticalLayout.addWidget(self.splitter_2)
 
     self.retranslateUi(NXSWidget)
-    QtCore.QObject.connect(self.nodeTree, QtCore.SIGNAL(_fromUtf8("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)")), NXSWidget.itemChanged)
+    self.nodeTree.currentItemChanged['QTreeWidgetItem*','QTreeWidgetItem*'].connect(NXSWidget.itemChanged)
     QtCore.QMetaObject.connectSlotsByName(NXSWidget)
 
   def retranslateUi(self, NXSWidget):
-    NXSWidget.setWindowTitle(_translate("NXSWidget", "Form", None))
+    _translate = QtCore.QCoreApplication.translate
+    NXSWidget.setWindowTitle(_translate("NXSWidget", "Form"))
 
 from .mplwidget import MPLWidget

@@ -4,7 +4,7 @@ Dialogs connected to the main GUI for separate display of specific plots.
 '''
 
 
-from PyQt4.QtGui import QDialog, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QVBoxLayout
 from numpy import array, argsort, arange
 from matplotlib.gridspec import GridSpec
 from .mplwidget import MPLWidget

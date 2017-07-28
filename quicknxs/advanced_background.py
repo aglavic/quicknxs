@@ -3,7 +3,7 @@
   Module for advanced definition of background subtraction.
 '''
 
-from PyQt4.QtGui import QDialog, QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 from matplotlib.patches import Polygon, Rectangle
 from numpy import array, sqrt
 from .background_dialog import Ui_Dialog

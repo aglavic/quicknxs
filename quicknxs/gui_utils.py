@@ -19,9 +19,9 @@ from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 
-from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, \
+from PyQt5.QtWidgets import QDialog, QMessageBox, QFileDialog, QVBoxLayout, QLabel, QProgressBar, \
                         QApplication, QSizePolicy, QListWidgetItem
-from PyQt4.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 
 from matplotlib.lines import Line2D
 from matplotlib.patches import Ellipse

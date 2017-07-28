@@ -8,7 +8,7 @@ author: Paweł Jarosz, Artur Glavic
 
 import atexit
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 DEFAULT_INSTANCE_ARGS=['qtconsole', '--pylab=inline', '--colors=linux']
 

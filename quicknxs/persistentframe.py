@@ -3,7 +3,7 @@
   doc
 '''
 
-from PyQt4.QtGui import QFrame
+from PyQt5.QtWidgets import QFrame
 
 class PersistentFrame(QFrame):
   do_hide=True

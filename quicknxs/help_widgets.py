@@ -4,8 +4,9 @@
 '''
 
 import re
-from PyQt4.QtGui import QSpinBox, QWidget, QHBoxLayout, QLabel, QPushButton, QIcon, QTableWidget
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QSpinBox, QWidget, QHBoxLayout, QLabel, QPushButton, QTableWidget
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from .filter_widget import Ui_FilterWidget
 
 class LimitingSpinBox(QSpinBox):

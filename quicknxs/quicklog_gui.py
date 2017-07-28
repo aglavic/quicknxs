@@ -11,8 +11,9 @@ The logformat should be:
 
 import time
 import logging
-from PyQt4.QtGui import QMainWindow, QTreeWidgetItem, QFileDialog, QColor
-from PyQt4.QtCore import Qt, QFileSystemWatcher, QObject, pyqtSignal
+from PyQt5.QtWidgets import QMainWindow, QTreeWidgetItem, QFileDialog
+from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt, QFileSystemWatcher, QObject, pyqtSignal
 from .quicklog_window import Ui_MainWindow
 
 class Logfile(QObject):

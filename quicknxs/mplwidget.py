@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 import os
 import tempfile
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtGui, QtCore, QtWidgets
 import matplotlib.cm
 import matplotlib.colors
 from . import icons_rc #@UnusedImport
 from .config import plotting
 
 # set the default backend to be compatible with Qt in case someone uses pylab from IPython console
-matplotlib.use('Qt4Agg')
+matplotlib.use('Qt5Agg')
 def _set_default_rc():
   matplotlib.rc('font', **plotting.font)
   matplotlib.rc('savefig', **plotting.savefig)
@@ -18,8 +18,8 @@ cmap=matplotlib.colors.LinearSegmentedColormap.from_list('default',
                   ['#0000ff', '#00ff00', '#ffff00', '#ff0000', '#bd7efc', '#000000'], N=256)
 matplotlib.cm.register_cmap('default', cmap=cmap)
 
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4 import NavigationToolbar2QT
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5 import NavigationToolbar2QT
 from matplotlib.cbook import Stack
 from matplotlib.colors import LogNorm, Normalize
 from matplotlib.figure import Figure
@@ -96,12 +96,12 @@ class NavigationToolbar(NavigationToolbar2QT):
     # Add the x,y location widget at the right side of the toolbar
     # The stretch factor is 1 which means any resizing of the toolbar
     # will resize this label instead of the buttons.
-    self.locLabel=QtGui.QLabel("", self)
+    self.locLabel=QtWidgets.QLabel("", self)
     self.locLabel.setAlignment(
             QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
     self.locLabel.setSizePolicy(
-        QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
-                          QtGui.QSizePolicy.Ignored))
+        QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                          QtWidgets.QSizePolicy.Ignored))
     self.labelAction=self.addWidget(self.locLabel)
     if self.coordinates:
       self.labelAction.setVisible(True)
@@ -195,10 +195,10 @@ class NavigationToolbar(NavigationToolbar2QT):
 
     filename=os.path.join(tempfile.gettempdir(), u"quicknxs_print.png")
     self.canvas.print_figure(filename, dpi=600)
-    imgpix=QtGui.QPixmap(filename)
+    imgpix=QtWidgets.QPixmap(filename)
     os.remove(filename)
 
-    imgobj=QtGui.QLabel()
+    imgobj=QtWidgets.QLabel()
     imgobj.setPixmap(imgpix)
     imgobj.setMask(imgpix.mask())
     imgobj.setGeometry(0, 0, imgpix.width(), imgpix.height())
@@ -213,7 +213,7 @@ class NavigationToolbar(NavigationToolbar2QT):
     printer.setResolution(600)
     printer.setOrientation(QtGui.QPrinter.Landscape)
 
-    pd=QtGui.QPrintPreviewDialog(printer)
+    pd=QtWidgets.QPrintPreviewDialog(printer)
     pd.paintRequested.connect(getPrintData)
     pd.exec_()
 
@@ -234,14 +234,14 @@ class NavigationToolbar(NavigationToolbar2QT):
             filters.append(filter_)
       filters=';;'.join(filters)
 
-      fname=QtGui.QFileDialog.getSaveFileName(self, u"Choose a filename to save to", start, filters)
+      fname=QtWidgets.QFileDialog.getSaveFileName(self, u"Choose a filename to save to", start, filters)
       if fname:
           try:
               self.canvas.print_figure(unicode(fname))
           except Exception, e:
-              QtGui.QMessageBox.critical(
+              QtWidgets.QMessageBox.critical(
                   self, "Error saving file", str(e),
-                  QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+                  QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.NoButton)
 
   def toggle_log(self, *args):
     ax=self.canvas.ax
@@ -279,8 +279,8 @@ class MplCanvas(FigureCanvas):
     FigureCanvas.__init__(self, self.fig)
     #self.fc = FigureCanvas(self.fig)
     FigureCanvas.setSizePolicy(self,
-                              QtGui.QSizePolicy.Expanding,
-                              QtGui.QSizePolicy.Expanding)
+                              QtWidgets.QSizePolicy.Expanding,
+                              QtWidgets.QSizePolicy.Expanding)
     FigureCanvas.updateGeometry(self)
 
   def format_labels(self):
@@ -309,16 +309,16 @@ class MplCanvas(FigureCanvas):
       return 'png'
 
 
-class MPLWidget(QtGui.QWidget):
+class MPLWidget(QtWidgets.QWidget):
   cplot=None
   cbar=None
 
   def __init__(self, parent=None, with_toolbar=True, coordinates=False):
-    QtGui.QWidget.__init__(self, parent)
+    QtWidgets.QWidget.__init__(self, parent)
     self.canvas=MplCanvas()
     self.canvas.ax2=None
-    self.vbox=QtGui.QVBoxLayout()
-    self.vbox.setMargin(1)
+    self.vbox=QtWidgets.QVBoxLayout()
+    #self.vbox.setMargin(1)
     self.vbox.addWidget(self.canvas)
     if with_toolbar:
       self.toolbar=NavigationToolbar(self.canvas, self)
@@ -334,9 +334,9 @@ class MPLWidget(QtGui.QWidget):
     In some cases the zoom cursor does not reset when leaving the plot.
     '''
     if self.toolbar:
-      QtGui.QApplication.restoreOverrideCursor()
+      QtWidgets.QApplication.restoreOverrideCursor()
       self.toolbar._lastCursor=None
-    return QtGui.QWidget.leaveEvent(self, event)
+    return QtWidgets.QWidget.leaveEvent(self, event)
 
   def set_config(self, config):
     self.canvas.fig.subplots_adjust(**config)

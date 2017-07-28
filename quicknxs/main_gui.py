@@ -8,7 +8,7 @@ import sys
 from glob import glob
 from numpy import where, pi, newaxis, log10, savetxt, array
 from matplotlib.lines import Line2D
-from PyQt4 import QtGui, QtCore, QtWebKit
+from PyQt5 import QtWidgets, QtGui, QtCore, QtWebKit
 
 #from logging import info, debug
 from .advanced_background import BackgroundDialog
@@ -52,7 +52,7 @@ class gisansCalcThread(QtCore.QThread):
     self.gisans=gisans
 
 
-class MainGUI(QtGui.QMainWindow):
+class MainGUI(QtWidgets.QMainWindow):
   '''
   The program top level window with all direct event handling.
   '''
@@ -112,9 +112,9 @@ class MainGUI(QtGui.QMainWindow):
 
   def __init__(self, argv=[], parent=None):
     if parent is None:
-      QtGui.QMainWindow.__init__(self)
+      QtWidgets.QMainWindow.__init__(self)
     else:
-      QtGui.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
+      QtWidgets.QMainWindow.__init__(self, parent, QtCore.Qt.Window)
 
     self.auto_change_active=True
     if gui.interface!='default':
@@ -125,20 +125,20 @@ class MainGUI(QtGui.QMainWindow):
     self.setWindowTitle(u'QuickNXS   %s'%str_version)
 
     # widgets in the statusbar
-    self.x_position_indicator=QtGui.QLabel(u" x=%g"%0.)
-    self.x_position_indicator.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    self.x_position_indicator=QtWidgets.QLabel(u" x=%g"%0.)
+    self.x_position_indicator.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
     self.x_position_indicator.setMaximumWidth(100)
     self.x_position_indicator.setMinimumWidth(100)
     self.ui.statusbar.addPermanentWidget(self.x_position_indicator)
-    self.y_position_indicator=QtGui.QLabel(u" y=%g"%0.)
-    self.y_position_indicator.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+    self.y_position_indicator=QtWidgets.QLabel(u" y=%g"%0.)
+    self.y_position_indicator.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
     self.y_position_indicator.setMaximumWidth(100)
     self.y_position_indicator.setMinimumWidth(100)
     self.ui.statusbar.addPermanentWidget(self.y_position_indicator)
 
-    self.cache_indicator=QtGui.QLabel("Cache Size: 0.0MB")
+    self.cache_indicator=QtWidgets.QLabel("Cache Size: 0.0MB")
     self.ui.statusbar.addPermanentWidget(self.cache_indicator)
-    button=QtGui.QPushButton('Empty Cache')
+    button=QtWidgets.QPushButton('Empty Cache')
     self.ui.statusbar.addPermanentWidget(button)
     button.pressed.connect(self.empty_cache)
     button.setFlat(True)
@@ -149,7 +149,7 @@ class MainGUI(QtGui.QMainWindow):
       getattr(self.ui, 'selectedChannel%i'%i).hide()
 
     # create progress bar in statusbar
-    self.eventProgress=QtGui.QProgressBar(self.ui.statusbar)
+    self.eventProgress=QtWidgets.QProgressBar(self.ui.statusbar)
     self.eventProgress.setMinimumSize(20, 14)
     self.eventProgress.setMaximumSize(140, 100)
     self.ui.statusbar.addPermanentWidget(self.eventProgress)
@@ -325,6 +325,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     Open a new datafile and plot the data.
     '''
+    print filename
     folder, base=os.path.split(filename)
     if folder!=self.active_folder:
       self.onPathChanged(base, folder)
@@ -1155,11 +1156,11 @@ class MainGUI(QtGui.QMainWindow):
     table.setHorizontalHeaderLabels(['Name']+self.channels+['Unit'])
     for j, key in enumerate(sorted(self.active_data[0].logs.keys(), key=lambda s: s.lower())):
       table.insertRow(j)
-      table.setItem(j, 0, QtGui.QTableWidgetItem(key))
+      table.setItem(j, 0, QtWidgets.QTableWidgetItem(key))
       table.setItem(j, len(self.channels)+1,
-                    QtGui.QTableWidgetItem(self.active_data[0].log_units[key]))
+                    QtWidgets.QTableWidgetItem(self.active_data[0].log_units[key]))
       for i, _channel, data in self.active_data.numitems():
-        item=QtGui.QTableWidgetItem(u'%g'%data.logs[key])
+        item=QtWidgets.QTableWidgetItem(u'%g'%data.logs[key])
         item.setToolTip(u'MIN: %g   MAX: %g'%(data.log_minmax[key]))
         table.setItem(j, i+1, item)
     table.resizeColumnsToContents()
@@ -1177,9 +1178,9 @@ class MainGUI(QtGui.QMainWindow):
       filter_=u'Old Nexus (*.nxs);;All (*.*)'
     else:
       filter_=u'Event Nexus (*event.nxs);;All (*.*)'
-    filenames=QtGui.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
+    filenames=QtWidgets.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
                                                directory=self.active_folder,
-                                               filter=filter_)
+                                               filter=filter_)[0]
     if filenames:
       filenames=map(unicode, filenames)
       if len(filenames)==1:
@@ -1198,7 +1199,7 @@ class MainGUI(QtGui.QMainWindow):
       filter_=u'Old Nexus (*.nxs);;All (*.*)'
     else:
       filter_=u'Event Nexus (*event.nxs);;All (*.*)'
-    filenames=QtGui.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
+    filenames=QtWidgets.QFileDialog.getOpenFileNames(self, u'Open NXS file...',
                                                directory=self.active_folder,
                                                filter=filter_)
     if filenames:
@@ -1225,7 +1226,7 @@ class MainGUI(QtGui.QMainWindow):
     if number is None:
       number=self.ui.numberSearchEntry.text()
     info('Trying to locate file number %s...'%number)
-    QtGui.QApplication.instance().processEvents()
+    QtWidgets.QApplication.instance().processEvents()
     if self.ui.histogramActive.isChecked():
       search=glob(os.path.join(instrument.data_base, (instrument.BASE_SEARCH%number)+u'histo.nxs'))
     elif self.ui.oldFormatActive.isChecked():
@@ -1259,7 +1260,7 @@ class MainGUI(QtGui.QMainWindow):
     used for this extraction for further processing.
     '''
     if filename is None and self._pending_header is None:
-      filename=QtGui.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
+      filename=QtWidgets.QFileDialog.getOpenFileName(self, u'Create extraction from file header...',
                                                directory=paths.results,
                                                filter=u'Extracted Dataset (*.dat)')
     if filename==u'':
@@ -1336,6 +1337,7 @@ class MainGUI(QtGui.QMainWindow):
     
     The result is shown in the table and can be modified by the user.
     '''
+    last_file=''
     self.clearRefList(do_plot=False)
     for filename in sorted(filenames):
       # read files data and extract reflectivity
@@ -1407,7 +1409,7 @@ class MainGUI(QtGui.QMainWindow):
       end_idx=next_item.Q.shape[0]-next_item.options['P0']
       overlap_idx=where(item.Q>=next_item.Q[end_idx-1])[0][-1]
       self.ui.reductionTable.setItem(idx, 3,
-                       QtGui.QTableWidgetItem(str(overlap_idx)))
+                       QtWidgets.QTableWidgetItem(str(overlap_idx)))
 
   @log_call
   def onPathChanged(self, base, folder):
@@ -1458,7 +1460,7 @@ class MainGUI(QtGui.QMainWindow):
       # only update the list if it has changed
       self.ui.file_list.clear()
       for item in newlist:
-        listitem=QtGui.QListWidgetItem(item, self.ui.file_list)
+        listitem=QtWidgets.QListWidgetItem(item, self.ui.file_list)
         if item==base:
           self.ui.file_list.setCurrentItem(listitem)
     else:
@@ -1608,23 +1610,23 @@ class MainGUI(QtGui.QMainWindow):
       self.ref_norm[number]=self.refl
       idx=sorted(self.ref_norm.keys()).index(number)
       self.ui.normalizeTable.insertRow(idx)
-      item=QtGui.QTableWidgetItem(number)
+      item=QtWidgets.QTableWidgetItem(number)
       item.setTextColor(QtGui.QColor(100, 0, 0))
       item.setBackgroundColor(QtGui.QColor(200, 200, 200))
-      self.ui.normalizeTable.setItem(idx, 0, QtGui.QTableWidgetItem(item))
-      self.ui.normalizeTable.setItem(idx, 1, QtGui.QTableWidgetItem(str(lamda)))
-      item=QtGui.QTableWidgetItem(str(opts['x_pos']))
+      self.ui.normalizeTable.setItem(idx, 0, QtWidgets.QTableWidgetItem(item))
+      self.ui.normalizeTable.setItem(idx, 1, QtWidgets.QTableWidgetItem(str(lamda)))
+      item=QtWidgets.QTableWidgetItem(str(opts['x_pos']))
       item.setBackgroundColor(QtGui.QColor(200, 200, 200))
-      self.ui.normalizeTable.setItem(idx, 2, QtGui.QTableWidgetItem(item))
-      self.ui.normalizeTable.setItem(idx, 3, QtGui.QTableWidgetItem(str(opts['x_width'])))
-      item=QtGui.QTableWidgetItem(str(opts['y_pos']))
+      self.ui.normalizeTable.setItem(idx, 2, QtWidgets.QTableWidgetItem(item))
+      self.ui.normalizeTable.setItem(idx, 3, QtWidgets.QTableWidgetItem(str(opts['x_width'])))
+      item=QtWidgets.QTableWidgetItem(str(opts['y_pos']))
       item.setBackgroundColor(QtGui.QColor(200, 200, 200))
-      self.ui.normalizeTable.setItem(idx, 4, QtGui.QTableWidgetItem(item))
-      self.ui.normalizeTable.setItem(idx, 5, QtGui.QTableWidgetItem(str(opts['y_width'])))
-      item=QtGui.QTableWidgetItem(str(opts['bg_pos']))
+      self.ui.normalizeTable.setItem(idx, 4, QtWidgets.QTableWidgetItem(item))
+      self.ui.normalizeTable.setItem(idx, 5, QtWidgets.QTableWidgetItem(str(opts['y_width'])))
+      item=QtWidgets.QTableWidgetItem(str(opts['bg_pos']))
       item.setBackgroundColor(QtGui.QColor(200, 200, 200))
-      self.ui.normalizeTable.setItem(idx, 6, QtGui.QTableWidgetItem(item))
-      self.ui.normalizeTable.setItem(idx, 7, QtGui.QTableWidgetItem(str(opts['bg_width'])))
+      self.ui.normalizeTable.setItem(idx, 6, QtWidgets.QTableWidgetItem(item))
+      self.ui.normalizeTable.setItem(idx, 7, QtWidgets.QTableWidgetItem(str(opts['bg_width'])))
       self.ui.normalizationLabel.setText(u",".join(map(str, sorted(self.ref_norm.keys()))))
       self.ui.normalizeTable.resizeColumnsToContents()
     elif do_remove:
@@ -1675,7 +1677,7 @@ class MainGUI(QtGui.QMainWindow):
       return fittings[self._norm_selected]
     else:
       if self._norm_selected is None:
-        result=QtGui.QInputDialog.getItem(self, 'Select Normalization',
+        result=QtWidgets.QInputDialog.getItem(self, 'Select Normalization',
                                           'There are more than one normalizations\nfor this wavelength available,\nplease select one:',
                                           indices, editable=False)
         if not result[1]:
@@ -1768,37 +1770,37 @@ class MainGUI(QtGui.QMainWindow):
     idx=len(self.reduction_list)-1
     self.auto_change_active=True
 
-    item=QtGui.QTableWidgetItem(opts['number'])
+    item=QtWidgets.QTableWidgetItem(opts['number'])
     item.setTextColor(QtGui.QColor(100, 0, 0))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 0, item)
     self.ui.reductionTable.setItem(idx, 1,
-                                   QtGui.QTableWidgetItem("%.4f"%(opts['scale'])))
+                                   QtWidgets.QTableWidgetItem("%.4f"%(opts['scale'])))
     self.ui.reductionTable.setItem(idx, 2,
-                                   QtGui.QTableWidgetItem(str(opts['P0'])))
+                                   QtWidgets.QTableWidgetItem(str(opts['P0'])))
     self.ui.reductionTable.setItem(idx, 3,
-                                   QtGui.QTableWidgetItem(str(opts['PN'])))
-    item=QtGui.QTableWidgetItem(str(opts['x_pos']))
+                                   QtWidgets.QTableWidgetItem(str(opts['PN'])))
+    item=QtWidgets.QTableWidgetItem(str(opts['x_pos']))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 4, item)
     self.ui.reductionTable.setItem(idx, 5,
-                                   QtGui.QTableWidgetItem(str(opts['x_width'])))
-    item=QtGui.QTableWidgetItem(str(opts['y_pos']))
+                                   QtWidgets.QTableWidgetItem(str(opts['x_width'])))
+    item=QtWidgets.QTableWidgetItem(str(opts['y_pos']))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 6, item)
     self.ui.reductionTable.setItem(idx, 7,
-                                   QtGui.QTableWidgetItem(str(opts['y_width'])))
-    item=QtGui.QTableWidgetItem(str(opts['bg_pos']))
+                                   QtWidgets.QTableWidgetItem(str(opts['y_width'])))
+    item=QtWidgets.QTableWidgetItem(str(opts['bg_pos']))
     item.setBackgroundColor(QtGui.QColor(200, 200, 200))
     self.ui.reductionTable.setItem(idx, 8, item)
     self.ui.reductionTable.setItem(idx, 9,
-                                   QtGui.QTableWidgetItem(str(opts['bg_width'])))
+                                   QtWidgets.QTableWidgetItem(str(opts['bg_width'])))
     self.ui.reductionTable.setItem(idx, 10,
-                                   QtGui.QTableWidgetItem(str(opts['dpix'])))
+                                   QtWidgets.QTableWidgetItem(str(opts['dpix'])))
     self.ui.reductionTable.setItem(idx, 11,
-                                   QtGui.QTableWidgetItem("%.4f"%opts['tth']))
+                                   QtWidgets.QTableWidgetItem("%.4f"%opts['tth']))
     self.ui.reductionTable.setItem(idx, 12,
-                                   QtGui.QTableWidgetItem(str(opts['normalization'].options['number'])))
+                                   QtWidgets.QTableWidgetItem(str(opts['normalization'].options['number'])))
     self.ui.reductionTable.resizeColumnsToContents()
     self.auto_change_active=False
     # emit signals
@@ -1975,7 +1977,7 @@ class MainGUI(QtGui.QMainWindow):
     '''
     if self.refl is None:
       return
-    name=QtGui.QFileDialog.getSaveFileName(parent=self, caption=u'Select export file name',
+    name=QtWidgets.QFileDialog.getSaveFileName(parent=self, caption=u'Select export file name',
                                      filter='ASCII files (*.dat);;All files (*.*)')
     if name!='':
       name=unicode(name)
@@ -2156,7 +2158,7 @@ class MainGUI(QtGui.QMainWindow):
         else:
           Inew=Ival*10**(0.01*steps)
         self.ui.reductionTable.setItem(i, 1,
-                                   QtGui.QTableWidgetItem("%.4f"%(Inew)))
+                                   QtWidgets.QTableWidgetItem("%.4f"%(Inew)))
 
   def changeColorScale(self, event):
     '''
@@ -2279,13 +2281,13 @@ class MainGUI(QtGui.QMainWindow):
     # setup a file in the users directroy making sure the application is not run twice
     # the file also stores the current working state for reload after a crash (reduced data)
     if os.path.exists(paths.STATE_FILE):
-      _result=QtGui.QMessageBox.warning(self, "Previous Crash",
+      _result=QtWidgets.QMessageBox.warning(self, "Previous Crash",
 """There is a state file but no running process for it, 
 this could indicate a previous crash.
 
 Do you want to try to restore the working reduction list?""",
-          buttons=QtGui.QMessageBox.Yes|QtGui.QMessageBox.No)
-      if _result==QtGui.QMessageBox.Yes:
+          buttons=QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+      if _result==QtWidgets.QMessageBox.Yes:
         self._pending_header=open(paths.STATE_FILE, 'r').read()
         QtCore.QTimer.singleShot(1500, self.loadExtraction)
     open(paths.STATE_FILE, 'w').write('Running PID %i\n'%os.getpid())
@@ -2354,7 +2356,7 @@ Do you want to try to restore the working reduction list?""",
         logger.removeHandler(handler)
     debug('GUI handler removed, closing window')
     # actually close the window
-    QtGui.QMainWindow.closeEvent(self, event)
+    QtWidgets.QMainWindow.closeEvent(self, event)
 
   @log_call
   def open_advanced_background(self):
@@ -2415,7 +2417,7 @@ Do you want to try to restore the working reduction list?""",
   @log_call
   def open_filter_dialog(self):
     filter_=u'Reflectivity (*.dat);;All (*.*)'
-    names=QtGui.QFileDialog.getOpenFileNames(self, u'Select reflectivity file(s)...',
+    names=QtWidgets.QFileDialog.getOpenFileNames(self, u'Select reflectivity file(s)...',
                                              directory=paths.results,
                                              filter=filter_)
     if names:
@@ -2457,7 +2459,7 @@ Do you want to try to restore the working reduction list?""",
     name=unicode(trigger.text())
     info(u'Executing script "%s"...'%name)
     code=self._extension_scripts[name]
-    gls={'app': QtGui.QApplication.instance(), 'gui': self, 'data': self.active_data}
+    gls={'app': QtWidgets.QApplication.instance(), 'gui': self, 'data': self.active_data}
     exec code in gls
 
   def helpDialog(self):
@@ -2465,9 +2467,9 @@ Do you want to try to restore the working reduction list?""",
     Open a HTML page with the program documentation and place it on the right
     side of the current screen.
     '''
-    dia=QtGui.QDialog(self)
+    dia=QtWidgets.QDialog(self)
     dia.setWindowTitle(u'QuickNXS Manual')
-    verticalLayout=QtGui.QVBoxLayout(dia)
+    verticalLayout=QtWidgets.QVBoxLayout(dia)
     dia.setLayout(verticalLayout)
     webview=QtWebKit.QWebView(dia)
     webview.load(QtCore.QUrl.fromLocalFile(paths.DOC_INDEX))
@@ -2475,7 +2477,7 @@ Do you want to try to restore the working reduction list?""",
     # set width of the page to fit the document and height to the same as the main window
     dia.resize(700, self.height())
     pos=-700
-    dw=QtGui.QDesktopWidget()
+    dw=QtWidgets.QDesktopWidget()
     for i in range(dw.screenCount()):
       pos+=dw.screenGeometry(i).width()
       if pos>self.pos().x():
@@ -2489,12 +2491,12 @@ Do you want to try to restore the working reduction list?""",
     from h5py.version import version as h5pyversion
     from h5py.version import hdf5_version as hdf5version
     try:
-      from PyQt4.pyqtconfig import Configuration
+      from PyQt5.pyqtconfig import Configuration
       pyqtversion=Configuration().pyqt_version_str
     except ImportError:
       pyqtversion='Unknown'
 
-    QtGui.QMessageBox.about(self, 'About QuickNXS',
+    QtWidgets.QMessageBox.about(self, 'About QuickNXS',
 '''
 QuickNXS - SNS Magnetism Reflectometer data reduction program
   Version %s on Python %s
@@ -2503,7 +2505,7 @@ Library Versions:
   Numpy %s
   Matplotlib %s
   Qt %s
-  PyQt4 %s
+  PyQt5 %s
   H5py %s
   HDF5 %s
 '''%(str_version, sys.version, npversion, mplversion,

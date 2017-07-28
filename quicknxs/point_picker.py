@@ -6,7 +6,7 @@ A dialog to delete unwanted points from a reflectivity curve.
 import sys
 import numpy as np
 from os import path
-from PyQt4.QtGui import QDialog, QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem
 from .point_picker_dialog import Ui_Dialog
 
 class PointPicker(QDialog):

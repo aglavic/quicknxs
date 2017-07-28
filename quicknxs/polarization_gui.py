@@ -5,7 +5,7 @@ measurements of the direct beam.
 '''
 
 from numpy import where, ones_like, array, sqrt, hstack, argsort, float64, savetxt
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QFileDialog, QInputDialog
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QFileDialog, QInputDialog
 from polarization_dialog import Ui_Dialog
 from .qreduce import Reflectivity
 from .mpfit import mpfit

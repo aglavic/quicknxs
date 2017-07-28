@@ -6,8 +6,8 @@ A dialog to browse through the sample database created by the autorefl script.
 import tempfile
 import os
 import atexit
-from PyQt4.QtGui import QDialog, QWidget, QVBoxLayout, QTableWidgetItem
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QDialog, QWidget, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtCore import pyqtSignal
 
 from .config import instrument as config
 from . import database
