@@ -26,7 +26,10 @@ else:
     from IPython.lib import guisupport #@UnusedImport
     from IPython.core.getipython import get_ipython #@UnresolvedImport @Reimport
 
-from IPython.config.application import catch_config_error
+try:
+  from traitlets.config.application import catch_config_error
+except ImportError:
+  from IPython.config.application import catch_config_error
 from .gui_logging import ip_excepthook_overwrite
 
 if IPython.__version__<'1.0':

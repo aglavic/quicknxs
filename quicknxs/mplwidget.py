@@ -275,13 +275,13 @@ class MplCanvas(FigureCanvas):
     self.xaxis_style='linear'
     self.yaxis_style='linear'
     self.format_labels()
-    self.ax.hold(True)
+    #self.ax.hold(True)
     FigureCanvas.__init__(self, self.fig)
     #self.fc = FigureCanvas(self.fig)
-    FigureCanvas.setSizePolicy(self,
+    FigureCanvas.setSizePolicy(self, #@UndefinedVariable
                               QtGui.QSizePolicy.Expanding,
                               QtGui.QSizePolicy.Expanding)
-    FigureCanvas.updateGeometry(self)
+    FigureCanvas.updateGeometry(self) #@UndefinedVariable
 
   def format_labels(self):
     self.ax.set_title(self.PlotTitle)

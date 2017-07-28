@@ -8,7 +8,11 @@ import sys
 from glob import glob
 from numpy import where, pi, newaxis, log10, savetxt, array
 from matplotlib.lines import Line2D
-from PyQt4 import QtGui, QtCore, QtWebKit
+from PyQt4 import QtGui, QtCore
+try:
+  from PyQt4 import QtWebKit
+except ImportError:
+  QtWebKit=None
 
 #from logging import info, debug
 from .advanced_background import BackgroundDialog
