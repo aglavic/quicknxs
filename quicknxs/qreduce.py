@@ -36,7 +36,7 @@ from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
-ANALYZER_IN=(0., 100.) # position and maximum deviation of analyzer in it's working position
+ANALYZER_IN=(-623, -520) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
 POLY_CORR_PARAMS=[-4.74152261e-05,-4.62469580e-05, 1.25995446e-02, 2.13654008e-02,
