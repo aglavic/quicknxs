@@ -106,8 +106,8 @@ if 'install' not in sys.argv:
 
 # make sure revision is correct before building
 from subprocess import call
-if not 'py2exe' in sys.argv:
-  call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
+#if not 'py2exe' in sys.argv:
+#  call(['/usr/bin/env', 'python', 'dist_data/update_version.py'])
 if ('sdist' in sys.argv or 'py2exe' in sys.argv or 'py2app' in sys.argv) and \
     not '--nocheck' in sys.argv:
   print "Running unit test before compiling build distribution."

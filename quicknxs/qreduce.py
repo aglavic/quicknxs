@@ -36,7 +36,8 @@ from .ipython_tools import AttributePloter, StringRepr, NiceDict
 
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
-ANALYZER_IN=(-623, -520) # position and maximum deviation of analyzer in it's working position
+ANALYZER_IN=(0, 100) # position and maximum deviation of analyzer in it's working position
+NEW_ANALYZER_IN=(-623, -520) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
 POLY_CORR_PARAMS=[-4.74152261e-05,-4.62469580e-05, 1.25995446e-02, 2.13654008e-02,
@@ -289,7 +290,8 @@ class NXSData(object):
       smpt=0.
 
     # select the type of measurement that has been used
-    if abs(ana-ANALYZER_IN[0])<ANALYZER_IN[1]: # is analyzer is in position
+    start_time_str = nxs[channels[0]]['start_time'].value[0]
+    if is_analyzer_in(ana, start_time_str): # is analyzer is in position
       if channels[0] in [m[1] for m in MAPPING_12FULL]:
         self.measurement_type='Polarization Analysis w/E-Field'
         mapping=list(MAPPING_12FULL)
@@ -1260,6 +1262,24 @@ class MRDataset(object):
     '''A attribute to quickly plot data in the qt console'''
     return AttributePloter(self, ['xdata', 'xydata', 'ydata', 'xtofdata', 'tofdata', 'data'])
 
+def is_analyzer_in(position, start_time_str):
+    """
+        Determine whether the analyzer is in.
+        The analyzer position has changed in Augst 2017.
+
+        :param position: position of the analyzer
+        :param start_time_str: time as a string
+    """
+    is_analyzer_in = abs(position-ANALYZER_IN[0])<ANALYZER_IN[1]
+    try:
+        date_str = start_time_str.split('T')[0]
+        parts_str = date_str.split('-')
+        year_month_int = int("%s%s" % (parts_str[0], parts_str[1]))
+        if year_month_int >= 201708:
+            is_analyzer_in = abs(position-NEW_ANALYZER_IN[0])<NEW_ANALYZER_IN[1]
+    except:
+        warn("Problem parsing start time")
+    return is_analyzer_in
 
 def time_from_header(filename, nxs=None):
   '''
