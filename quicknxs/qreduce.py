@@ -37,7 +37,7 @@ from .ipython_tools import AttributePloter, StringRepr, NiceDict
 ### Parameters needed for some calculations.
 H_OVER_M_NEUTRON=3.956034e-7 # h/m_n [m²/s]
 ANALYZER_IN=(0, 100) # position and maximum deviation of analyzer in it's working position
-NEW_ANALYZER_IN=(-623, -520) # position and maximum deviation of analyzer in it's working position
+NEW_ANALYZER_IN=(-620, 150) # position and maximum deviation of analyzer in it's working position
 POLARIZER_IN=(-348., 50.) # position and maximum deviation of polarizer in it's working position
 SUPERMIRROR_IN=(19.125, 10.) # position and maximum deviation of the supermirror translation
 POLY_CORR_PARAMS=[-4.74152261e-05,-4.62469580e-05, 1.25995446e-02, 2.13654008e-02,
@@ -280,9 +280,11 @@ class NXSData(object):
       return False
     try:
       ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
+      ana_trans=nxs[channels[0]]['instrument/analyzer/AnalyzerTrans/value'].value[0]
       pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
     except KeyError:
       ana=-1.e10
+      ana_trans=-1.e10
       pol=-1.e10
     try:
       smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
@@ -291,7 +293,7 @@ class NXSData(object):
 
     # select the type of measurement that has been used
     start_time_str = nxs[channels[0]]['start_time'].value[0]
-    if is_analyzer_in(ana, start_time_str): # is analyzer is in position
+    if is_analyzer_in(ana, ana_trans, start_time_str): # is analyzer is in position
       if channels[0] in [m[1] for m in MAPPING_12FULL]:
         self.measurement_type='Polarization Analysis w/E-Field'
         mapping=list(MAPPING_12FULL)
@@ -1262,12 +1264,13 @@ class MRDataset(object):
     '''A attribute to quickly plot data in the qt console'''
     return AttributePloter(self, ['xdata', 'xydata', 'ydata', 'xtofdata', 'tofdata', 'data'])
 
-def is_analyzer_in(position, start_time_str):
+def is_analyzer_in(position, trans_position, start_time_str):
     """
         Determine whether the analyzer is in.
-        The analyzer position has changed in Augst 2017.
+        The analyzer position has changed in August 2017.
 
-        :param position: position of the analyzer
+        :param position: position of the analyzer lift
+        :param trans_position: position of the analyzer translation
         :param start_time_str: time as a string
     """
     is_analyzer_in = abs(position-ANALYZER_IN[0])<ANALYZER_IN[1]
@@ -1276,9 +1279,10 @@ def is_analyzer_in(position, start_time_str):
         parts_str = date_str.split('-')
         year_month_int = int("%s%s" % (parts_str[0], parts_str[1]))
         if year_month_int >= 201708:
-            is_analyzer_in = abs(position-NEW_ANALYZER_IN[0])<NEW_ANALYZER_IN[1]
+            is_analyzer_in = abs(trans_position-NEW_ANALYZER_IN[0])<NEW_ANALYZER_IN[1]
     except:
-        warn("Problem parsing start time")
+        warn("Problem parsing start time: use more recent definition for analyzer position")
+        is_analyzer_in = abs(trans_position-NEW_ANALYZER_IN[0])<NEW_ANALYZER_IN[1]
     return is_analyzer_in
 
 def time_from_header(filename, nxs=None):
