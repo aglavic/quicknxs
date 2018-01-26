@@ -280,12 +280,16 @@ class NXSData(object):
       return False
     try:
       ana=nxs[channels[0]]['instrument/analyzer/AnalyzerLift/value'].value[0]
-      ana_trans=nxs[channels[0]]['instrument/analyzer/AnalyzerTrans/value'].value[0]
       pol=nxs[channels[0]]['instrument/polarizer/PolLift/value'].value[0]
     except KeyError:
       ana=-1.e10
-      ana_trans=-1.e10
       pol=-1.e10
+
+    try:
+      ana_trans=nxs[channels[0]]['instrument/analyzer/AnalyzerTrans/value'].value[0]
+    except KeyError:
+      ana_trans=-1.e10
+
     try:
       smpt=nxs[channels[0]]['DASlogs/SMPolTrans/value'].value[0]
     except KeyError:
