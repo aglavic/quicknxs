@@ -296,33 +296,50 @@ class NXSData(object):
       smpt=0.
 
     # select the type of measurement that has been used
+    # Skip the labels, since the conditions defining the polarizer/analyzer positions
+    # have changed substantially since the DAS upgrade.
     start_time_str = nxs[channels[0]]['start_time'].value[0]
-    if is_analyzer_in(ana, ana_trans, start_time_str): # is analyzer is in position
-      if channels[0] in [m[1] for m in MAPPING_12FULL]:
-        self.measurement_type='Polarization Analysis w/E-Field'
-        mapping=list(MAPPING_12FULL)
-      else:
-        self.measurement_type='Polarization Analysis'
-        mapping=list(MAPPING_FULLPOL)
-    elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
-         abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
-      if channels[0] in [m[1] for m in MAPPING_12HALF]:
-        self.measurement_type='Polarized w/E-Field'
-        mapping=list(MAPPING_12HALF)
-      else:
-        self.measurement_type='Polarized'
-        mapping=list(MAPPING_HALFPOL)
-    elif 'DASlogs' in nxs[channels[0]] and \
-          nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
-          channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
-      self.measurement_type='Electric Field'
-      mapping=list(MAPPING_EFIELD)
-    elif len(channels)==1:
-      self.measurement_type='Unpolarized'
-      mapping=list(MAPPING_UNPOL)
-    else:
-      self.measurement_type='Unknown'
-      mapping=[]
+    assign_labels = True
+    try:
+        date_str = start_time_str.split('T')[0]
+        parts_str = date_str.split('-')
+        year_month_int = int("%s%s" % (parts_str[0], parts_str[1]))
+        if year_month_int >= 201807:
+            assign_labels = False
+    except:
+        warn("Problem parsing start time: skipping labels")
+        assign_labels = False
+
+    self.measurement_type = ''
+    mapping = []
+    if assign_labels:
+        if is_analyzer_in(ana, ana_trans, start_time_str): # is analyzer is in position
+          if channels[0] in [m[1] for m in MAPPING_12FULL]:
+            self.measurement_type='Polarization Analysis w/E-Field'
+            mapping=list(MAPPING_12FULL)
+          else:
+            self.measurement_type='Polarization Analysis'
+            mapping=list(MAPPING_FULLPOL)
+        elif abs(pol-POLARIZER_IN[0])<POLARIZER_IN[1] or \
+             abs(smpt-SUPERMIRROR_IN[0])<SUPERMIRROR_IN[1]: # is bender or supermirror polarizer is in position
+          if channels[0] in [m[1] for m in MAPPING_12HALF]:
+            self.measurement_type='Polarized w/E-Field'
+            mapping=list(MAPPING_12HALF)
+          else:
+            self.measurement_type='Polarized'
+            mapping=list(MAPPING_HALFPOL)
+        elif 'DASlogs' in nxs[channels[0]] and \
+              nxs[channels[0]]['DASlogs'].get('SP_HV_Minus') is not None and \
+              channels!=[u'entry-Off_Off']: # is E-field cart connected and not only 0V measured
+          self.measurement_type='Electric Field'
+          mapping=list(MAPPING_EFIELD)
+        elif len(channels)==1:
+          self.measurement_type='Unpolarized'
+          mapping=list(MAPPING_UNPOL)
+        else:
+          self.measurement_type='Unknown'
+          mapping=[]
+
     # check that all channels have a mapping entry
     for channel in channels:
       if not channel in [m[1] for m in mapping]:

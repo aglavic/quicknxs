@@ -6,8 +6,8 @@
 
 from subprocess import Popen, PIPE
 try:
-  tag, revision, rev_name=unicode(Popen(['git', 'describe'], stdout=PIPE).communicate()[0],
-                                  encoding='utf8').split('-', 3)
+  tag, maj_revision, revision=unicode(Popen(['git', 'describe'], stdout=PIPE).communicate()[0],
+                                  encoding='utf8').split('.', 3)
 except ValueError:
   tag=unicode(Popen(['git', 'describe'], stdout=PIPE).communicate()[0], encoding='utf8')
   revision=u'0'
